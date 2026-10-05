@@ -44,6 +44,22 @@ upwr_cat <- c(
 )
 
 
+# ---- Stałe role statystyk ----------------------------------------------------
+# Ten sam kolor oznacza tę samą statystykę w całym kursie. Wektor jest nazwany
+# etykietami statystyk (do scale_color_manual); wartości bez nazw z upwr_cat.
+
+stat_colors <- c(
+  "Średnia"           = upwr_accent,
+  "Mediana"           = unname(upwr_cat["niebo"]),
+  "Śr. ucinana (10%)" = unname(upwr_cat["szalwia"])
+)
+
+# Kolor z palety kategorycznej bez nazwy. Indeksowanie upwr_cat["niebo"] zostawia
+# nazwę, która w c("Mediana" = upwr_cat["niebo"]) skleja się do "Mediana.niebo"
+# i psuje dopasowanie koloru do poziomu w scale_*_manual().
+upwr_col <- function(name) unname(upwr_cat[name])
+
+
 # ---- Skale ciągłe ------------------------------------------------------------
 
 # Sekwencyjna burgundowa (7 punktów)

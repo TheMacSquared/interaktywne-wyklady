@@ -881,10 +881,8 @@ ch3_server <- function(input, output, session) {
                  linewidth = 1.2) +
       scale_color_manual(
         name = NULL,
-        breaks = c("Średnia", "Mediana", "Śr. ucinana (10%)"),
-        values = c("Średnia" = upwr_accent,
-                   "Mediana" = upwr_cat["niebo"],
-                   "Śr. ucinana (10%)" = upwr_cat["szalwia"])
+        breaks = names(stat_colors),
+        values = stat_colors
       ) +
       scale_linetype_manual(
         name = NULL,
@@ -894,8 +892,10 @@ ch3_server <- function(input, output, session) {
                    "Śr. ucinana (10%)" = "dotted")
       ) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
+      guides(color    = guide_legend(override.aes = list(linewidth = 1.4)),
+             linetype = guide_legend(override.aes = list(linewidth = 1.4))) +
       labs(x = "Zarobki (zł)", y = "Liczba osób") +
-      theme(legend.position = "top")
+      theme(legend.position = "top", legend.key.width = unit(2.4, "lines"))
   }))
 
   output$ch3_rob_outliers_count <- renderUI({
