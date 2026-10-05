@@ -269,6 +269,21 @@ ch4_ui <- list(
       rozkład Exp(1), mierzony w godzinach. To dwie strony tego samego
       procesu."),
 
+    lc_p("Wróćmy do sklepu z rozdziału 3, do którego klienci wchodzą średnio czterech
+      na godzinę. Zamiast liczyć klientów w godzinie, mierzymy, jak długo czekamy
+      na następnego. Ten czas może wynieść dowolną wartość dodatnią, więc jest
+      zmienną ciągłą."),
+
+    figure_panel(
+      label = "Ryc. 4.5",
+      width_mode = "text",
+      exp_widget("ch4_expo", "Od czekania na klienta do rozkładu wykładniczego", "Czekaj na klienta",
+        list(kind = "expo", lambda = 4, window = 60, width = 5, unit = "obserwacja",
+             sub = "czas do pierwszego klienta",
+             xTitle = "X, czyli czas oczekiwania na pierwszego klienta (min)",
+             aria = "Czas oczekiwania na pierwszego klienta i histogram powtórzeń"))
+    ),
+
     lc_p("Gęstość ma największą wartość w zerze i maleje wykładniczo. Rozkład
       wykładniczy ma też prostą dystrybuantę, więc prawdopodobieństwa można
       liczyć bez całkowania."),
@@ -280,7 +295,7 @@ ch4_ui <- list(
     lc_p("Scenariusze w panelu mają różne jednostki czasu, podane w etykietach."),
 
     figure_panel(
-      label = "Ryc. 4.5",
+      label = "Ryc. 4.6",
       title = "Rozkład wykładniczy Exp(λ)",
       full_width = TRUE,
       lc_toolbar(
@@ -348,7 +363,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.6",
+      label = "Ryc. 4.7",
       title = "Rozkład t-Studenta t(df)",
       full_width = TRUE,
       lc_toolbar(
@@ -399,7 +414,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.7",
+      label = "Ryc. 4.8",
       title = "Rozkład χ²(df)",
       full_width = TRUE,
       lc_toolbar(
@@ -452,7 +467,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.8",
+      label = "Ryc. 4.9",
       title = "Rozkład LogN(μ, σ)",
       full_width = TRUE,
       lc_toolbar(
@@ -546,6 +561,21 @@ ch4_lnorm_defs <- list(
 # --------------------------------------------------------------------------
 
 ch4_server <- function(input, output, session) {
+
+  # --- Ryc. 4.5: czas oczekiwania → rozkład wykładniczy (experiment.js) ---
+  X <- exp_X
+  exp_texts(input, output, "ch4_expo", list(
+    tagList("Startujemy z zegarem w zerze i czekamy na pierwszego klienta. Czas oczekiwania jest
+      za każdym razem inny, a przed obserwacją go nie znamy."),
+    tagList("Z każdej obserwacji robimy jedną liczbę: ", X(), " to czas oczekiwania w minutach.
+      Może wynieść dowolną wartość dodatnią, nie tylko całkowitą, więc to zmienna losowa ciągła."),
+    tagList("Powtarzamy obserwacje i zliczamy, ile czasów trafia do przedziałów po 5 minut.
+      Dla zmiennej ciągłej liczy się przedział, a nie pojedyncza wartość. Wykres urywa się na
+      60 minutach: dłuższe czekanie jest rzadkie."),
+    tagList("Częstości w przedziałach układają się wzdłuż krzywej: najwięcej krótkich czasów, potem
+      wykładniczy spadek. To gęstość rozkładu wykładniczego z λ = 4 na godzinę, czyli ze średnim
+      czasem oczekiwania 15 minut.")
+  ))
 
   # --- Widget 1: Krok po kroku ---
   # Krok widgetu (1..7) żyje w przeglądarce; zmiana rozkładu lub próby nie cofa kroku.

@@ -2,6 +2,42 @@
 # CHAPTER 3: Rozkłady dyskretne
 # ============================================================================
 
+# Widget „eksperyment → zmienna losowa → rozkład” (animacja w experiment.js).
+# Konfiguracja trafia do JS jako JSON; teksty kroków renderuje serwer.
+# options: list(label, values, selected), gdy widget ma przełącznik liczby n.
+exp_widget <- function(id, title, roll_label, config, options = NULL) {
+  lc_step_widget(id,
+    title = title,
+    steps = c("Eksperyment", "Zmienna losowa", "Powtarzamy", "Rozkład"),
+    toolbar = lc_toolbar(
+      if (!is.null(options)) lc_group(options$label,
+        tags$div(class = "lc-seg", role = "group", `aria-label` = options$label,
+          lapply(options$values, function(v) tags$button(type = "button",
+            `data-exp-n` = v, `aria-pressed` = if (v == options$selected) "true" else "false", v))
+        )
+      ),
+      tags$button(type = "button", class = "lc-action is-solid", `data-exp` = "roll",
+        lc_icon("shuffle"), tags$span(roll_label)),
+      lc_step_from(3,
+        tags$div(class = "lc-seg", role = "group", `aria-label` = "Więcej powtórzeń",
+          tags$button(type = "button", `data-exp` = "roll10", "+10"),
+          tags$button(type = "button", `data-exp` = "roll100", "+100"),
+          tags$button(type = "button", `data-exp` = "roll1000", "+1000")
+        )
+      )
+    ),
+    body = tags$div(class = "lc-exp",
+      `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE))
+  )
+}
+
+# Teksty kroków widgetu eksperymentu: lista czterech fragmentów HTML.
+exp_texts <- function(input, output, id, texts) {
+  step <- lc_step_server(id, input)$step
+  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
+}
+exp_X <- function() tags$code("X", .noWS = "outside")
+
 ch3_ui <- list(
   id = "ch-dyskretne", num = "03", title = "Rozkłady dyskretne",
   content = tagList(
@@ -112,23 +148,9 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.2",
       width_mode = "text",
-      lc_step_widget("ch3_exp",
-        title = "Od rzutu kostkami do rozkładu",
-        steps = c("Eksperyment", "Zmienna losowa", "Powtarzamy", "Rozkład"),
-        toolbar = lc_toolbar(
-          tags$button(type = "button", class = "lc-action is-solid", `data-exp` = "roll",
-            lc_icon("shuffle"), tags$span("Rzuć kostkami")),
-          lc_step_from(3,
-            tags$div(class = "lc-seg", role = "group", `aria-label` = "Więcej rzutów",
-              tags$button(type = "button", `data-exp` = "roll10", "+10"),
-              tags$button(type = "button", `data-exp` = "roll100", "+100"),
-              tags$button(type = "button", `data-exp` = "roll1000", "+1000")
-            )
-          )
-        ),
-        body = tags$div(class = "lc-exp",
-          `data-config` = '{"n":6,"faces":6,"hit":6}')
-      )
+      exp_widget("ch3_exp", "Od rzutu kostkami do rozkładu", "Rzuć kostkami",
+        list(kind = "dice", n = 6, faces = 6, hit = 6, xTitle = "X, czyli liczba szóstek",
+             aria = "Rzut sześcioma kostkami, liczba szóstek i histogram powtórzeń"))
     ),
 
     lc_formula_box(withMathJax(
@@ -190,6 +212,19 @@ ch3_ui <- list(
       to liczba zdarzeń w ustalonym przedziale czasu lub przestrzeni ma ",
       gloss("rozkład Poissona", "rozkład Poissona"), " Pois(λ)."),
 
+    lc_p("Zobaczmy to na przykładzie sklepu. Klienci wchodzą w losowych momentach,
+      średnio czterech na godzinę. Obserwujemy kolejne godziny i liczymy, ilu
+      klientów w nich weszło."),
+
+    figure_panel(
+      label = "Ryc. 3.4",
+      width_mode = "text",
+      exp_widget("ch3_exp_pois", "Od godziny w sklepie do rozkładu Poissona", "Obserwuj godzinę",
+        list(kind = "poisson", lambda = 4, window = 60, kmax = 11, unit = "godzina",
+             sub = "liczba klientów w tej godzinie", xTitle = "X, czyli liczba klientów w godzinie",
+             aria = "Klienci wchodzący do sklepu w ciągu godziny, liczba klientów i histogram powtórzeń"))
+    ),
+
     lc_formula_box(withMathJax(
       "$$P(X = k) = \\frac{\\lambda^k e^{-\\lambda}}{k!}, \\quad E(X) = \\lambda, \\quad Var(X) = \\lambda$$"
     )),
@@ -204,7 +239,7 @@ ch3_ui <- list(
       tylko 0.053."),
 
     figure_panel(
-      label = "Ryc. 3.4",
+      label = "Ryc. 3.5",
       title = "Rozkład Poissona Pois(λ)",
       full_width = TRUE,
       lc_toolbar(
@@ -253,6 +288,19 @@ ch3_ui <- list(
       w której pada pierwszy sukces, ma ",
       gloss("rozkład geometryczny", "rozkład geometryczny"), " Geom(p)."),
 
+    lc_p("Rzucamy kostką tak długo, aż wypadnie szóstka. W każdej serii liczba
+      rzutów jest inna: czasem szóstka pada od razu, czasem trzeba czekać
+      kilkanaście rzutów."),
+
+    figure_panel(
+      label = "Ryc. 3.6",
+      width_mode = "text",
+      exp_widget("ch3_exp_geom", "Od rzutów do pierwszej szóstki do rozkładu geometrycznego", "Rzucaj do szóstki",
+        list(kind = "geometric", faces = 6, hit = 6, kmax = 12, unit = "seria",
+             sub = "liczba rzutów do pierwszej szóstki", xTitle = "X, czyli numer rzutu z pierwszą szóstką",
+             aria = "Rzuty kostką do pierwszej szóstki, liczba rzutów i histogram powtórzeń"))
+    ),
+
     lc_formula_box(withMathJax(
       "$$P(X = k) = (1-p)^{k-1} \\cdot p, \\quad E(X) = \\frac{1}{p}, \\quad Var(X) = \\frac{1-p}{p^2}$$"
     )),
@@ -265,7 +313,7 @@ ch3_ui <- list(
       (5/6)¹⁰ ≈ 0.162."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.7",
       title = "Rozkład geometryczny Geom(p)",
       full_width = TRUE,
       lc_toolbar(
@@ -309,7 +357,7 @@ ch3_ui <- list(
       i przedział ±1 SD można włączyć na wykresie."),
 
     figure_panel(
-      label = "Ryc. 3.6",
+      label = "Ryc. 3.8",
       title = "Cztery rozkłady obok siebie",
       full_width = TRUE,
       checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
@@ -375,22 +423,45 @@ ch3_geom_defs <- list(
 
 ch3_server <- function(input, output, session) {
 
-  # --- Ryc. 3.2: rzut kostkami, zmienna losowa, rozkład (animacja w experiment.js) ---
-  ch3_exp_step <- lc_step_server("ch3_exp", input)$step
-  output$ch3_exp_text <- renderUI({
-    switch(ch3_exp_step(),
-      tagList("Rzucamy sześcioma kostkami naraz. Wynikiem doświadczenia jest sześć liczb
-        oczek, ale przed rzutem nie wiemy, jakie to będą liczby. Rzuć kostkami kilka razy."),
-      tagList("Interesuje nas jedna liczba z każdego rzutu: ", tags$code("X", .noWS = "outside"),
-        " to liczba szóstek. Każdy rzut daje wartość ze zbioru 0, 1, …, 6, a przed rzutem
-        nie wiemy której. Liczba zależna od przypadku to zmienna losowa."),
-      tagList("Powtarzamy doświadczenie i zliczamy, ile razy wypadła każda wartość ", tags$code("X", .noWS = "outside"),
-        ". Najpierw rzuć kilka razy, potem dokładaj po 10, 100 i 1000 rzutów."),
-      tagList("Liczebności dzielimy przez liczbę rzutów i dostajemy częstości względne. Zbliżają się
-        do prawdopodobieństw P(X = k) (kółka). Lista wartości X z ich prawdopodobieństwami to
-        rozkład prawdopodobieństwa zmiennej X.")
-    )
-  })
+  # --- Ryc. 3.2, 3.4, 3.6: eksperyment → zmienna losowa → rozkład (experiment.js) ---
+  X <- exp_X
+
+  exp_texts(input, output, "ch3_exp", list(
+    tagList("Rzucamy sześcioma kostkami naraz. Wynikiem doświadczenia jest sześć liczb
+      oczek, ale przed rzutem nie wiemy, jakie to będą liczby. Rzuć kostkami kilka razy."),
+    tagList("Interesuje nas jedna liczba z każdego rzutu: ", X(), " to liczba szóstek.
+      Każdy rzut daje wartość ze zbioru 0, 1, …, 6, a przed rzutem nie wiemy której.
+      Liczba zależna od przypadku to zmienna losowa."),
+    tagList("Powtarzamy doświadczenie i zliczamy, ile razy wypadła każda wartość ", X(),
+      ". Najpierw rzuć kilka razy, potem dokładaj po 10, 100 i 1000 rzutów."),
+    tagList("Liczebności dzielimy przez liczbę rzutów i dostajemy częstości względne. Zbliżają się
+      do prawdopodobieństw P(X = k) (kółka). Lista wartości X z ich prawdopodobieństwami to
+      rozkład prawdopodobieństwa zmiennej X.")
+  ))
+
+  exp_texts(input, output, "ch3_exp_pois", list(
+    tagList("Obserwujemy sklep przez godzinę. Klienci wchodzą w losowych momentach, średnio
+      czterech na godzinę, ale w żadnej godzinie nie wiemy, kiedy i ilu ich będzie."),
+    tagList("Z każdej godziny robimy jedną liczbę: ", X(), " to liczba klientów, którzy weszli
+      w jej trakcie. Zależy od przypadku, więc jest zmienną losową."),
+    tagList("Obserwujemy kolejne godziny i zliczamy, ile razy wystąpiła każda wartość ", X(),
+      ". Najpierw kilka godzin, potem dokładaj po 10, 100 i 1000. Wykres urywa się na
+      10 klientach: większe liczby są tak rzadkie, że nie mieszczą się na osi."),
+    tagList("Częstości względne zbliżają się do rozkładu Poissona z λ = 4 (kółka). Do jego zapisu
+      wystarczy jedna liczba, średnia liczba zdarzeń λ: P(X = k) = λᵏ e⁻λ / k!.")
+  ))
+
+  exp_texts(input, output, "ch3_exp_geom", list(
+    tagList("Rzucamy jedną kostką tak długo, aż wypadnie szóstka. Kostki pojawiają się jedna
+      po drugiej, a długość serii jest za każdym razem inna."),
+    tagList("Z każdej serii robimy jedną liczbę: ", X(), " to numer rzutu, w którym padła pierwsza
+      szóstka. Przed serią nie wiemy, ile rzutów to zajmie, więc X jest zmienną losową."),
+    tagList("Powtarzamy serie i zliczamy, ile razy wypadła każda wartość ", X(),
+      ". Wykres urywa się na 12 rzutach: dłuższe serie zdarzają się rzadziej i nie
+      mieszczą się na osi."),
+    tagList("Częstości względne zbliżają się do rozkładu geometrycznego Geom(1/6) (kółka). Najczęściej
+      pierwsza szóstka pada już w pierwszym rzucie, a średnio czekamy na nią 6 rzutów.")
+  ))
 
   # --- Widget 1: Jednostajny dyskretny (bez zmian) ---
   ch3_unif_data <- reactive({

@@ -85,6 +85,23 @@ ch6_ui <- list(
     # ========================================================================
     # WIDGET 1: Eksperyment CTG (kluczowy)
     # ========================================================================
+    lc_h2("ch6-kostki", "Najpierw kostki: suma, która układa się w dzwon"),
+
+    lc_p("Zanim wrócimy do średnich, zobaczmy to zjawisko na kostkach. Suma oczek
+      z jednej kostki rozkłada się równomiernie, ale już z kilku kostek zaczyna
+      przypominać dzwon. Średnia oczek to suma podzielona przez n, więc ma ten
+      sam kształt, tylko inną skalę. Zmieniaj liczbę kostek i porównuj histogram
+      z krzywą normalną."),
+
+    figure_panel(
+      label = "Ryc. 6.1",
+      width_mode = "text",
+      exp_widget("ch6_sumdice", "Suma oczek z n kostek", "Rzuć kostkami",
+        list(kind = "sumdice", n = 1, xTitle = "X, czyli suma oczek",
+             aria = "Suma oczek z n kostek i histogram powtórzeń"),
+        options = list(label = "Liczba kostek", values = c(1, 2, 5, 10), selected = 1))
+    ),
+
     lc_h2("ch6-eksperyment", "Eksperyment: średnie z dowolnego rozkładu"),
 
     lc_p("Twierdzenie najłatwiej sprawdzić, powtarzając losowanie wiele razy. Panel
@@ -95,7 +112,7 @@ ch6_ui <- list(
       lub n czyści zebrane średnie."),
 
     figure_panel(
-      label = "Ryc. 6.1",
+      label = "Ryc. 6.2",
       title = "Symulacja: średnie z dowolnego rozkładu → normalny",
       full_width = TRUE,
       lc_toolbar(
@@ -147,7 +164,7 @@ ch6_ui <- list(
       własną skalę osi, więc porównujemy kształt, a nie szerokość."),
 
     figure_panel(
-      label = "Ryc. 6.2",
+      label = "Ryc. 6.3",
       title = "Rozkład średnich dla różnych n",
       full_width = TRUE,
       selectInput("ch6_effect_dist", "Rozkład populacji:",
@@ -196,7 +213,7 @@ ch6_ui <- list(
       dla n = 1, 2, 5 i 30, na wspólnych osiach."),
 
     figure_panel(
-      label = "Ryc. 6.3",
+      label = "Ryc. 6.4",
       full_width = TRUE,
       lc_step_widget("ch6_why",
         title = "Od jednej obserwacji do średniej z 30",
@@ -236,6 +253,20 @@ ch6_ui <- list(
 # --------------------------------------------------------------------------
 
 ch6_server <- function(input, output, session) {
+
+  # --- Ryc. 6.1: suma n kostek → rozkład normalny (experiment.js) ---
+  X <- exp_X
+  exp_texts(input, output, "ch6_sumdice", list(
+    tagList("Rzucamy n kostkami naraz i dodajemy oczka. Liczbę kostek można zmienić w każdej chwili
+      (zmiana czyści zebrane rzuty). Zacznij od jednej."),
+    tagList(X(), " to suma oczek ze wszystkich kostek. Przed rzutem jej nie znamy, więc to zmienna
+      losowa. Dla jednej kostki zakres to 1–6, dla dziesięciu 10–60."),
+    tagList("Powtarzamy rzuty i zliczamy sumy. Zmieniaj liczbę kostek i obserwuj kształt histogramu:
+      jedna kostka daje płaski rozkład, kilka kostek coraz wyraźniejszy dzwon."),
+    tagList("Częstości zbliżają się do rozkładu sumy, a przy większej liczbie kostek ten rozkład
+      pokrywa się z krzywą normalną. Dla jednej kostki krzywa wyraźnie nie pasuje, a o tym mówi CTG:
+      przybliżenie poprawia się wraz ze wzrostem n.")
+  ))
 
   # --- Widget 1: Eksperyment CTG ---
   collected_means <- reactiveVal(numeric(0))

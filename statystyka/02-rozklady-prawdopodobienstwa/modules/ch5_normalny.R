@@ -46,6 +46,21 @@ ch5_ui <- list(
       o centralnym twierdzeniu granicznym. Najpierw zobaczmy, jak parametry
       zmieniają kształt krzywej."),
 
+    lc_h2("ch5-galton", "Skąd się bierze dzwon?"),
+
+    lc_p("Zanim zobaczymy, jak parametry zmieniają krzywą, sprawdźmy, skąd się
+      ten kształt bierze. Na desce Galtona kulka spada przez rzędy kołków i na
+      każdym odbija się losowo w lewo albo w prawo. Miejsce, w którym ląduje,
+      jest sumą wielu drobnych, niezależnych losowych przesunięć."),
+
+    figure_panel(
+      label = "Ryc. 5.1",
+      width_mode = "text",
+      exp_widget("ch5_galton", "Deska Galtona: od odbić do rozkładu normalnego", "Puść kulkę",
+        list(kind = "galton", rows = 10, xTitle = "X, czyli liczba odbić w prawo",
+             aria = "Deska Galtona, liczba odbić w prawo i histogram powtórzeń"))
+    ),
+
     # ========================================================================
     # WIDGET 1: Dwa parametry, nieskończone możliwości
     # ========================================================================
@@ -57,7 +72,7 @@ ch5_ui <- list(
       ciała N(36.6, 0.4)."),
 
     figure_panel(
-      label = "Ryc. 5.1",
+      label = "Ryc. 5.2",
       title = "Eksploracja N(μ, σ)",
       full_width = TRUE,
       lc_toolbar(
@@ -101,7 +116,7 @@ ch5_ui <- list(
       i N(178, 7) dla mężczyzn."),
 
     figure_panel(
-      label = "Ryc. 5.2",
+      label = "Ryc. 5.3",
       title = "Dwie krzywe normalne",
       full_width = TRUE,
       lc_toolbar(
@@ -156,7 +171,7 @@ ch5_ui <- list(
       80 punktów przy średniej 65 i SD 10."),
 
     figure_panel(
-      label = "Ryc. 5.3",
+      label = "Ryc. 5.4",
       title = "Kalkulator z-score",
       full_width = TRUE,
       lc_toolbar(
@@ -197,7 +212,7 @@ ch5_ui <- list(
     lc_p("Panel zaznacza szukane pole pod krzywą N(0, 1) i podaje wynik."),
 
     figure_panel(
-      label = "Ryc. 5.4",
+      label = "Ryc. 5.5",
       title = "Kalkulator prawdopodobieństw N(0, 1)",
       full_width = TRUE,
       lc_toolbar(
@@ -245,6 +260,21 @@ ch5_ui <- list(
 # --------------------------------------------------------------------------
 
 ch5_server <- function(input, output, session) {
+
+  # --- Ryc. 5.1: deska Galtona → rozkład normalny (experiment.js) ---
+  X <- exp_X
+  exp_texts(input, output, "ch5_galton", list(
+    tagList("Kulka spada przez 10 rzędów kołków. Na każdym odbija się w lewo (L) albo w prawo (P)
+      z równym prawdopodobieństwem. Puść kulkę kilka razy: każda wybiera inną drogę."),
+    tagList(X(), " to liczba odbić w prawo, czyli miejsce, w którym kulka wyląduje. Przed startem
+      nie wiemy, ile ich będzie, więc X jest zmienną losową. To suma 10 niezależnych odbić,
+      z których każde daje 0 albo 1."),
+    tagList("Puszczamy kolejne kulki i zliczamy, ile wylądowało w każdym miejscu. Dokładaj
+      po 10, 100 i 1000."),
+    tagList("Częstości układają się w dzwon. Krzywa to rozkład normalny o tej samej średniej
+      i odchyleniu standardowym. Taki kształt powstaje, gdy wynik składa się z wielu drobnych,
+      losowych wpływów. Dlaczego tak się dzieje, wyjaśni następny rozdział.")
+  ))
 
   # --- Presety ---
   observeEvent(input$ch5_preset_std, {

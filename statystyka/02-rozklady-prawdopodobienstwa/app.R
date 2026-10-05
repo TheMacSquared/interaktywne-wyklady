@@ -100,6 +100,15 @@ ui <- lecture_page(
       .lc-exp-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
       .lc-exp-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
       .lc-exp-ball { fill: var(--upwr-accent); }
+      .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
+      .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
+      .lc-exp-peg { fill: var(--upwr-ink-subtle); }
+      .lc-exp-trail { stroke: var(--upwr-accent); stroke-width: 2; opacity: .55; }
+      .lc-exp-curve { stroke: var(--upwr-ink); stroke-width: 2.5; }
+      .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+      .lc-exp-slot { fill: none; stroke: var(--upwr-rule); stroke-width: 1.5; stroke-dasharray: 3 4; }
+      .lc-exp-event { fill: var(--upwr-ink-subtle); stroke: var(--upwr-surface); stroke-width: 1.5; }
+      .lc-exp-event.is-hit { fill: var(--upwr-accent); }
     ")),
     # Dwa wykresy obok siebie, gdy panel ma miejsce; pod sobą na telefonie.
     tags$style(HTML("
