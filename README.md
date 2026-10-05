@@ -44,8 +44,11 @@ Najprościej hubem — jeden spis wszystkich wykładów w przeglądarce, bez wra
 do terminala między wykładami:
 
 ```bash
-scripts/hub          # albo dwuklik w Wyklady.command
+scripts/hub          # albo dwuklik w Wyklady.command (macOS) / Wyklady.bat (Windows)
 ```
+
+Pliki do dwukliku sprawdzają przed startem, czy jest R i pakiety potrzebne
+wykładom, i proponują doinstalowanie brakujących.
 
 Hub wykrywa wykłady sam, więc lista nigdy się nie rozjeżdża z repo. Uruchomione
 wykłady zostają żywe, dzięki czemu powrót do wcześniejszego zachowuje jego stan —

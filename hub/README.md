@@ -5,7 +5,8 @@ resztę klikasz w przeglądarce.
 
 ## Uruchamianie
 
-Dwuklik w `Wyklady.command` (Finder) albo z terminala:
+Dwuklik w `Wyklady.bat` (Windows) lub `Wyklady.command` (macOS, Finder)
+albo z terminala:
 
 ```bash
 scripts/hub
@@ -13,6 +14,20 @@ scripts/hub
 
 Hub startuje na `http://127.0.0.1:7700` i sam otwiera przeglądarkę.
 Inny port: `PORT=8000 scripts/hub`.
+
+Pliki do dwukliku uruchamiają `hub/start.R`, który przed startem:
+
+- sprawdza wersję R (≥ 4.1) i pakiety huba (`shiny`, `processx`) — bez nich kończy
+  z gotowym poleceniem `install.packages(...)`
+- zbiera pakiety wykładów parserem R z `app.R`, `modules/` i `<przedmiot>/R/`
+  (bez uruchamiania kodu; pakiety za `requireNamespace()` mają fallback i są pomijane),
+  wypisuje, których wykładów dotyczą braki, i pyta, czy je zainstalować; odmowa
+  nie blokuje huba — nie zadziałają tylko wykłady z brakami
+- gdy hub już działa na tym porcie, tylko otwiera go w przeglądarce
+
+`Wyklady.bat` szuka R w `PATH`, w rejestrze (`HKLM`/`HKCU\SOFTWARE\R-core\R`)
+i w `Program Files\R` / `%LOCALAPPDATA%\Programs\R`. Plik musi mieć końce linii
+CRLF — pilnuje tego `.gitattributes`.
 
 ## Jak to działa na zajęciach
 
@@ -46,12 +61,15 @@ przez parser R, nie przez uruchamianie kodu.
 | „Nie udało się uruchomić wykładu" | błąd w kodzie wykładu | komunikat zawiera koniec logu; pełny log jest w `tempdir()` jako `hub-<wyklad>.log` |
 | port zajęty | został proces po poprzedniej sesji | `pkill -f "shiny::runApp"` |
 | brak pakietu `processx` | jedyna zależność huba | `install.packages("processx")` |
+| „Nie znaleziono R” (Windows) | R nie jest zainstalowane | zainstaluj R z <https://cran.r-project.org> i uruchom plik ponownie |
+| „System Windows ochronił komputer” | SmartScreen przy pierwszym uruchomieniu | „Więcej informacji” → „Uruchom mimo to” |
 
 ## Struktura
 
 ```text
 hub/
 ├── app.R                # UI, obsługa kliknięć, statusy
+├── start.R              # start z Wyklady.bat / .command: R, pakiety, drugi start
 └── R/
     ├── discovery.R      # skan repo i metadane wykładów
     ├── processes.R      # start, status, zatrzymywanie procesów

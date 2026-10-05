@@ -6,10 +6,5 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PORT="${PORT:-7700}"
-
-echo "Hub wykładów — http://127.0.0.1:${PORT}"
-echo "Zatrzymanie: Ctrl+C albo zamknięcie tego okna."
-echo
-
-exec Rscript -e "shiny::runApp('hub', port = ${PORT}, host = '127.0.0.1', launch.browser = TRUE)"
+# hub/start.R sprawdza pakiety i nie startuje drugiego huba, gdy jeden już działa.
+exec Rscript hub/start.R

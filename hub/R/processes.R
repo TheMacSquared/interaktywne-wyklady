@@ -91,7 +91,7 @@ hub_start <- function(key, dir, hub_url) {
   log_path <- file.path(tempdir(), paste0("hub-", gsub("[^A-Za-z0-9]", "-", key), ".log"))
 
   process <- processx::process$new(
-    command   = file.path(R.home("bin"), "Rscript"),
+    command   = file.path(R.home("bin"), if (.Platform$OS.type == "windows") "Rscript.exe" else "Rscript"),
     args      = c("-e", code),
     stdout    = log_path,
     stderr    = "2>&1",
