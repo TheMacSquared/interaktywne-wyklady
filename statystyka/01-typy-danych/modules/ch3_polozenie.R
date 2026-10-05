@@ -892,8 +892,10 @@ ch3_server <- function(input, output, session) {
                    "Śr. ucinana (10%)" = "dotted")
       ) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      guides(color    = guide_legend(override.aes = list(linewidth = 1.4)),
-             linetype = guide_legend(override.aes = list(linewidth = 1.4))) +
+      # Jedna legenda: style linii przeniesione do legendy koloru
+      guides(linetype = "none",
+             color = guide_legend(override.aes = list(
+               linetype = c("solid", "dashed", "dotted")))) +
       labs(x = "Zarobki (zł)", y = "Liczba osób") +
       theme(legend.position = "top", legend.key.width = unit(2.4, "lines"))
   }))
