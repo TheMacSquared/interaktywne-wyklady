@@ -19,7 +19,7 @@
 #' @param panel czy rysować ramkę panelu
 #'
 #' @return obiekt theme()
-theme_upwr <- function(base_size   = 11,
+theme_upwr <- function(base_size   = 14,
                        base_family = "",
                        grid        = c("both", "x", "y", "none"),
                        panel       = FALSE) {
@@ -39,8 +39,8 @@ theme_upwr <- function(base_size   = 11,
       # Osie
       axis.line  = ggplot2::element_line(color = upwr_reference, linewidth = 0.4),
       axis.ticks = ggplot2::element_line(color = upwr_reference, linewidth = 0.3),
-      axis.text  = ggplot2::element_text(color = upwr_ink_soft, size = ggplot2::rel(0.85)),
-      axis.title = ggplot2::element_text(color = upwr_ink,      size = ggplot2::rel(0.95)),
+      axis.text  = ggplot2::element_text(color = upwr_ink_soft, size = ggplot2::rel(1.0)),
+      axis.title = ggplot2::element_text(color = upwr_ink,      size = ggplot2::rel(1.15)),
 
       # Tytuły
       plot.title = ggplot2::element_text(
@@ -67,8 +67,8 @@ theme_upwr <- function(base_size   = 11,
       # Legenda
       legend.background = ggplot2::element_blank(),
       legend.key        = ggplot2::element_blank(),
-      legend.title      = ggplot2::element_text(color = upwr_ink,      size = ggplot2::rel(0.85)),
-      legend.text       = ggplot2::element_text(color = upwr_ink_soft, size = ggplot2::rel(0.8)),
+      legend.title      = ggplot2::element_text(color = upwr_ink,      size = ggplot2::rel(1.0)),
+      legend.text       = ggplot2::element_text(color = upwr_ink_soft, size = ggplot2::rel(1.0)),
       legend.position   = "right",
 
       # Panele (facets)
@@ -76,7 +76,7 @@ theme_upwr <- function(base_size   = 11,
       strip.text       = ggplot2::element_text(
         color  = upwr_ink,
         face   = "italic",
-        size   = ggplot2::rel(0.9),
+        size   = ggplot2::rel(1.0),
         margin = ggplot2::margin(t = 4, b = 4)
       ),
 
