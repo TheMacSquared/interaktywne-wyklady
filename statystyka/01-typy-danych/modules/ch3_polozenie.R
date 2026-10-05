@@ -764,7 +764,7 @@ ch3_server <- function(input, output, session) {
       scale_color_manual(
         name = NULL,
         breaks = c("Średnia", "Mediana"),
-        values = c("Średnia" = upwr_accent, "Mediana" = upwr_cat["niebo"])
+        values = stat_colors[c("Średnia", "Mediana")]
       ) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
       labs(x = "Zarobki (zł)", y = "Liczba osób") +
@@ -1006,7 +1006,7 @@ ch3_server <- function(input, output, session) {
                        fill = upwr_reference, color = "white", alpha = 0.5) +
         geom_density(linewidth = 1.2, color = upwr_secondary) +
         geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
-        scale_color_manual(values = c("Kobiety" = upwr_accent, "Mężczyźni" = upwr_cat["niebo"])) +
+        scale_color_manual(values = c("Kobiety" = upwr_accent, "Mężczyźni" = upwr_col("niebo"))) +
         labs(x = "Wzrost (cm)", y = "Gęstość", color = NULL) +
                 theme(legend.position = "top")
 
@@ -1021,7 +1021,7 @@ ch3_server <- function(input, output, session) {
                        fill = upwr_reference, color = "white", alpha = 0.5) +
         geom_density(linewidth = 1.2, color = upwr_secondary) +
         geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
-        scale_color_manual(values = c("Rower" = upwr_cat["szalwia"], "Autobus" = upwr_cat["bursztyn"], "Auto" = upwr_accent)) +
+        scale_color_manual(values = c("Rower" = upwr_col("szalwia"), "Autobus" = upwr_col("bursztyn"), "Auto" = upwr_accent)) +
         labs(x = "Czas dojazdu (min)", y = "Gęstość", color = NULL) +
                 theme(legend.position = "top")
     }
@@ -1088,7 +1088,7 @@ ch3_server <- function(input, output, session) {
                label = paste0(round(q_val, 1), " cm"),
                vjust = -0.5, hjust = -0.1,
                fontface = "bold", size = 5, color = upwr_secondary) +
-      scale_fill_manual(values = c("TRUE" = upwr_cat["niebo"], "FALSE" = upwr_reference)) +
+      scale_fill_manual(values = c("TRUE" = upwr_col("niebo"), "FALSE" = upwr_reference)) +
       labs(x = "Wzrost (cm)", y = "Liczba studentów") +
       theme()
   }))

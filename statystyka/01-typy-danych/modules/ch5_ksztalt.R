@@ -260,8 +260,8 @@ ch5_server <- function(input, output, session) {
       facet_wrap(~typ, scales = "free_x") +
       scale_fill_manual(values = c(
         "Lewostronnie skośny" = upwr_accent,
-        "Symetryczny" = upwr_cat["szalwia"],
-        "Prawostronnie skośny" = upwr_cat["niebo"]
+        "Symetryczny" = upwr_col("szalwia"),
+        "Prawostronnie skośny" = upwr_col("niebo")
       )) +
       labs(x = "Wartość", y = "Gęstość") +
       theme(legend.position = "none",
@@ -285,7 +285,7 @@ ch5_server <- function(input, output, session) {
       geom_vline(aes(xintercept = med, color = "Mediana"), linewidth = 1.2, linetype = "dashed") +
       scale_color_manual(name = NULL,
         breaks = c("Średnia", "Mediana"),
-        values = c("Średnia" = upwr_accent, "Mediana" = upwr_cat["niebo"])) +
+        values = stat_colors[c("Średnia", "Mediana")]) +
       labs(x = d$label, y = "Gęstość") +
       theme(legend.position = "top")
   }))
@@ -434,7 +434,7 @@ ch5_server <- function(input, output, session) {
       geom_vline(aes(xintercept = med, color = "Mediana"), linewidth = 1.1, linetype = "dashed") +
       scale_color_manual(name = NULL,
         breaks = c("Średnia", "Mediana"),
-        values = c("Średnia" = upwr_accent, "Mediana" = upwr_cat["niebo"])) +
+        values = stat_colors[c("Średnia", "Mediana")]) +
       labs(x = d$label, y = "Gęstość") +
       theme(legend.position = "top")
   }))
