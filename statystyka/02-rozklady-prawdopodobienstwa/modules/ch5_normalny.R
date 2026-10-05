@@ -46,19 +46,21 @@ ch5_ui <- list(
       o centralnym twierdzeniu granicznym. Najpierw zobaczmy, jak parametry
       zmieniają kształt krzywej."),
 
-    lc_h2("ch5-galton", "Skąd się bierze dzwon?"),
+    lc_h2("ch5-dzwon", "Skąd się bierze dzwon?"),
 
     lc_p("Zanim zobaczymy, jak parametry zmieniają krzywą, sprawdźmy, skąd się
-      ten kształt bierze. Na desce Galtona kulka spada przez rzędy kołków i na
-      każdym odbija się losowo w lewo albo w prawo. Miejsce, w którym ląduje,
-      jest sumą wielu drobnych, niezależnych losowych przesunięć."),
+      ten kształt bierze. Masa ciała zależy od wielu drobnych, niezależnych
+      wpływów: genów, odżywiania, stylu życia, wieku. Każdy z nich dodaje
+      do wyniku coś niewielkiego, a suma takich wpływów układa się w dzwon.
+      Panel waży kolejne losowo wybrane osoby."),
 
     figure_panel(
       label = "Ryc. 5.1",
       width_mode = "text",
-      exp_widget("ch5_galton", "Deska Galtona: od odbić do rozkładu normalnego", "Puść kulkę",
-        list(kind = "galton", rows = 10, xTitle = "X, czyli liczba odbić w prawo",
-             aria = "Deska Galtona, liczba odbić w prawo i histogram powtórzeń"))
+      exp_widget("ch5_waga", "Ważenie ludzi: od jednej osoby do rozkładu normalnego", "Zważ osobę",
+        list(kind = "weight", mu = 70, sd = 12, lo = 30, hi = 110, width = 5,
+             sub = "masa ciała tej osoby", xTitle = "X, czyli masa ciała (kg)",
+             aria = "Ważenie losowych osób, masa ciała i histogram powtórzeń"))
     ),
 
     # ========================================================================
@@ -261,19 +263,18 @@ ch5_ui <- list(
 
 ch5_server <- function(input, output, session) {
 
-  # --- Ryc. 5.1: deska Galtona → rozkład normalny (experiment.js) ---
+  # --- Ryc. 5.1: ważenie osób → rozkład normalny (experiment.js) ---
   X <- exp_X
-  exp_texts(input, output, "ch5_galton", list(
-    tagList("Kulka spada przez 10 rzędów kołków. Na każdym odbija się w lewo (L) albo w prawo (P)
-      z równym prawdopodobieństwem. Puść kulkę kilka razy: każda wybiera inną drogę."),
-    tagList(X(), " to liczba odbić w prawo, czyli miejsce, w którym kulka wyląduje. Przed startem
-      nie wiemy, ile ich będzie, więc X jest zmienną losową. To suma 10 niezależnych odbić,
-      z których każde daje 0 albo 1."),
-    tagList("Puszczamy kolejne kulki i zliczamy, ile wylądowało w każdym miejscu. Dokładaj
-      po 10, 100 i 1000."),
-    tagList("Częstości układają się w dzwon. Krzywa to rozkład normalny o tej samej średniej
-      i odchyleniu standardowym. Taki kształt powstaje, gdy wynik składa się z wielu drobnych,
-      losowych wpływów. Dlaczego tak się dzieje, wyjaśni następny rozdział.")
+  exp_texts(input, output, "ch5_waga", list(
+    tagList("Losujemy osobę z dużej grupy dorosłych i ważymy ją. Waga pokazuje masę ciała
+      w kilogramach, ale przed ważeniem nie wiemy, ile to będzie. Zważ kilka osób."),
+    tagList(X(), " to masa ciała wylosowanej osoby w kilogramach. Może wynieść dowolną wartość
+      z przedziału, nie tylko całkowitą, więc to zmienna losowa ciągła."),
+    tagList("Ważymy kolejne osoby i zliczamy, ile mas trafia do przedziałów po 5 kg.
+      Dokładaj po 10, 100 i 1000 osób."),
+    tagList("Częstości w przedziałach układają się w dzwon. Krzywa to rozkład normalny
+      N(μ, σ) z μ = 70 kg i σ = 12 kg. Taki kształt pojawia się, gdy cecha jest sumą wielu
+      drobnych, niezależnych wpływów. Dlaczego tak się dzieje, wyjaśni następny rozdział.")
   ))
 
   # --- Presety ---

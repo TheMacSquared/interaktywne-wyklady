@@ -106,7 +106,12 @@ ui <- lecture_page(
       .lc-exp-drop { stroke: var(--upwr-cat-niebo); stroke-width: 2; stroke-linecap: round; }
       .lc-exp-sun { fill: var(--upwr-single-alt); }
       .lc-exp-sunray { stroke: var(--upwr-single-alt); stroke-width: 2.5; stroke-linecap: round; }
-      .lc-exp-peg { fill: var(--upwr-ink-subtle); }
+      .lc-exp-person { fill: var(--upwr-ink-soft); }
+      .lc-exp-scale { fill: var(--upwr-rule); stroke: var(--upwr-ink-subtle); }
+      .lc-exp-gauge { fill: none; stroke: var(--upwr-rule); stroke-width: 6; }
+      .lc-exp-gaugetick { stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+      .lc-exp-needle { stroke: var(--upwr-accent); stroke-width: 3; stroke-linecap: round; }
+      .lc-exp-needlehub { fill: var(--upwr-accent); }
       .lc-exp-trail { stroke: var(--upwr-accent); stroke-width: 2; opacity: .55; }
       .lc-exp-curve { stroke: var(--upwr-ink); stroke-width: 2.5; }
       .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }

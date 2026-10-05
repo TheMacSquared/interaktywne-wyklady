@@ -5,7 +5,7 @@
 //   "geometric" kostka do pierwszej szóstki, X = liczba rzutów (geometryczny)
 //   "poisson"   zdarzenia na osi czasu, X = liczba zdarzeń w oknie
 //   "expo"      czas do pierwszego zdarzenia, X ciągły (wykładniczy)
-//   "galton"    deska Galtona, X = liczba odbić w prawo (→ normalny)
+//   "weight"    ważenie osób, X = masa ciała (ciągły, → normalny)
 //   "sumdice"   n kostek, X = suma oczek (CTG); n zmienia się przyciskami [data-exp-n]
 // Numer kroku czyta z data-lc-step korzenia widgetu, przyciski z [data-exp].
 // Rysuje SVG; serwer R nie bierze udziału (tekst kroków renderuje R).
@@ -327,57 +327,66 @@
     };
   };
 
-  KINDS.galton = function (cfg) {
-    var R = cfg.rows || 10, CX = W / 2, DX = 28, Y0 = 16, DY = 11;
+  KINDS.weight = function (cfg) {
+    var mu = cfg.mu || 70, sd = cfg.sd || 12, LO = cfg.lo || 30, HI = cfg.hi || 110, w = cfg.width || 5;
+    var K = Math.round((HI - LO) / w), GX = 410, GY = 64, GR = 44, PX = 250;
+    function cdf(x) {
+      var z = (x - mu) / (sd * Math.SQRT2), t = 1 / (1 + 0.3275911 * Math.abs(z));
+      var erf = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 +
+        t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-z * z);
+      return 0.5 * (1 + (z >= 0 ? erf : -erf));
+    }
     var bins = [];
-    for (var k = 0; k <= R; k++) bins.push({ label: String(k), prob: choose(R, k) * Math.pow(0.5, R) });
-    var mu = R / 2, sd = Math.sqrt(R) / 2;
-    function pos(path, r) {
-      var rights = 0;
-      for (var i = 0; i < r; i++) rights += path[i];
-      return { x: CX + (2 * rights - r) * DX / 2, y: Y0 + r * DY };
+    for (var i = 0; i < K; i++) {
+      var a = i === 0 ? -Infinity : LO + i * w, b = i === K - 1 ? Infinity : LO + (i + 1) * w;
+      bins.push({ label: String(LO + i * w), prob: (b === Infinity ? 1 : cdf(b)) - (a === -Infinity ? 0 : cdf(a)) });
     }
-    function point(path, f) {
-      var r = Math.min(R, Math.floor(f)), a = pos(path, r), b = pos(path, Math.min(R, r + 1)), u = f - r;
-      return r >= R ? a : { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
-    }
+    function ang(v) { return Math.PI * (1 - (Math.min(HI, Math.max(LO, v)) - LO) / (HI - LO)); }
+    function pt(v, r) { var a = ang(v); return [GX + r * Math.cos(a), GY - r * Math.sin(a)]; }
     return {
-      bins: bins, sub: "liczba odbić w prawo", unit: "kulka", extra: 70, noDrop: true,
+      bins: bins, sub: cfg.sub || "masa ciała tej osoby", unit: "osoba",
       overlay: "curve", curveLabel: "krzywa normalna",
-      curve: function (t) { return normPdf((t - 0.5 - mu) / sd) / sd; },
+      edge: function (i) { return i % 2 === 0 ? String(LO + i * w) : ""; },
+      curve: function (t) { var x = LO + t * w; return Math.exp(-Math.pow((x - mu) / sd, 2) / 2) / (sd * Math.sqrt(2 * Math.PI)) * w; },
+      fmtX: function (x) { return typeof x === "number" ? x.toFixed(1) + " kg" : x; },
       run: function () {
-        var path = [], x = 0;
-        for (var i = 0; i < R; i++) { var d = Math.random() < 0.5 ? 0 : 1; path.push(d); x += d; }
-        return { path: path, x: x };
+        var u = 1 - Math.random(), v = Math.random();
+        return { x: mu + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) };
       },
-      binOf: function (x) { return x; },
+      binOf: function (x) { return Math.max(0, Math.min(K - 1, Math.floor((x - LO) / w))); },
       draw: function (g, o, hi, prog) {
-        for (var r = 0; r < R; r++) {
-          for (var j = 0; j <= r; j++) {
-            svg("circle", { cx: CX + (j - r / 2) * DX, cy: Y0 + r * DY + 2, r: 2.4, class: "lc-exp-peg" }, g);
-          }
+        svg("path", { d: "M " + (GX - GR) + " " + GY + " A " + GR + " " + GR + " 0 0 1 " + (GX + GR) + " " + GY, class: "lc-exp-gauge" }, g);
+        [30, 50, 70, 90, 110].forEach(function (v) {
+          var a = pt(v, GR - 6), b = pt(v, GR + 2), l = pt(v, GR + 13);
+          svg("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], class: "lc-exp-gaugetick" }, g);
+          svg("text", { x: l[0], y: l[1] + 4, "text-anchor": "middle", class: "lc-exp-tick" }, g, String(v));
+        });
+        svg("rect", { x: PX - 28, y: 60, width: 56, height: 8, rx: 3, class: "lc-exp-scale" }, g);
+        var x = o ? (o.xTrue !== undefined ? o.xTrue : o.x) : LO, f = o ? (prog === undefined ? 1 : prog) : 0;
+        // pierwsze 30% animacji: osoba podchodzi na wagę, potem wskazówka się ustawia
+        var WALK = 0.3, walk = Math.min(1, f / WALK), ng = Math.max(0, (f - WALK) / (1 - WALK));
+        if (o) {
+          var bw = 12 + (Math.min(HI, Math.max(LO, x)) - LO) / (HI - LO) * 16;
+          var cx = PX - 130 * Math.pow(1 - walk, 2), stepping = walk < 1, bob = stepping ? Math.sin(f * 90) * 2.5 : 0;
+          svg("circle", { cx: cx, cy: 14 - Math.abs(bob) * 0.4, r: 7, class: "lc-exp-person" }, g);
+          svg("rect", { x: cx - bw / 2, y: 24 - Math.abs(bob) * 0.4, width: bw, height: 24, rx: 7, class: "lc-exp-person" }, g);
+          svg("rect", { x: cx - bw / 4 - 3, y: 46 - Math.max(0, bob), width: 6, height: 14 + Math.max(0, bob), rx: 2, class: "lc-exp-person" }, g);
+          svg("rect", { x: cx + bw / 4 - 3, y: 46 - Math.max(0, -bob), width: 6, height: 14 + Math.max(0, -bob), rx: 2, class: "lc-exp-person" }, g);
         }
-        if (!o) return;
-        var path = o.path || o.pathTrue, f = prog === undefined ? R : prog * R, pts = [pos(path, 0)];
-        for (var r2 = 1; r2 <= Math.floor(f); r2++) pts.push(pos(path, r2));
-        var head = point(path, f);
-        if (f > Math.floor(f)) pts.push(head);
-        svg("polyline", { points: pts.map(function (q) { return q.x + "," + q.y; }).join(" "),
-          class: "lc-exp-trail", fill: "none" }, g);
-        svg("circle", { cx: head.x, cy: head.y, r: 5.5, class: "lc-exp-ball" }, g);
+        var v = LO + (x - LO) * (1 - Math.pow(1 - ng, 3) * Math.cos(ng * 10)), tip = pt(v, GR - 10);
+        svg("line", { x1: GX, y1: GY, x2: tip[0], y2: tip[1], class: "lc-exp-needle" }, g);
+        svg("circle", { cx: GX, cy: GY, r: 4, class: "lc-exp-needlehub" }, g);
       },
       animate: function (o, fast, redraw, done) {
         if (REDUCE) { done(); return; }
-        var frames = fast ? R * 2 : R * 5, i = 0;
+        var frames = fast ? 10 : 42, i = 0;
         var t = setInterval(function () {
           i++;
-          redraw({ x: "?", pathTrue: o.path }, false, i / frames);
+          redraw({ x: "?", xTrue: o.x }, false, i / frames);
           if (i >= frames) { clearInterval(t); done(); }
-        }, fast ? 14 : 28);
+        }, fast ? 25 : 35);
       },
-      log: function (o) {
-        return { cells: o.path.map(function (d) { return { t: d ? "P" : "L", hit: !!d }; }), x: o.x };
-      }
+      log: function (o) { return { cells: [], x: o.x.toFixed(1) + " kg" }; }
     };
   };
 
@@ -481,6 +490,9 @@
         if (kind.edge) {
           svg("text", { x: edgeX(i), y: PB + 18, "text-anchor": "middle", class: "lc-exp-tick is-x" }, gLow, kind.edge(i));
           if (isTail) svg("text", { x: x, y: PB + 18, "text-anchor": "middle", class: "lc-exp-tick is-x" }, gLow, "…");
+          if (i === nb - 1 && !isTail) {
+            svg("text", { x: edgeX(nb), y: PB + 18, "text-anchor": "middle", class: "lc-exp-tick is-x" }, gLow, kind.edge(nb));
+          }
         } else if (i % thin === 0 || isTail) {
           svg("text", { x: x, y: PB + 18, "text-anchor": "middle", class: "lc-exp-tick is-x" }, gLow, bins[i].label);
         }
