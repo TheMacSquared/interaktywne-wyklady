@@ -75,6 +75,32 @@ ui <- lecture_page(
   header_extras = tagList(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
+    includeScript(file.path(app_dir, "modules", "experiment.js")),
+    tags$style(HTML("
+      .lc-exp-svg { display: block; width: 100%; height: auto; }
+      .lc-exp-die { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+      .lc-exp-die.is-hit { fill: var(--upwr-accent-tint); stroke: var(--upwr-accent); stroke-width: 3; }
+      .lc-exp-pip { fill: var(--upwr-ink); }
+      .lc-exp-pip.is-hit { fill: var(--upwr-accent); }
+      .lc-exp-q { font: 700 26px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-exp-read { font: 700 20px var(--upwr-mono); fill: var(--upwr-accent); }
+      .lc-exp-read.is-plain { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-exp-sub { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+      .lc-exp-log { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-exp-log.is-hit { fill: var(--upwr-accent); font-weight: 700; }
+      .lc-exp-log.is-x { fill: var(--upwr-ink); font-weight: 700; }
+      .lc-exp-grid { stroke: var(--upwr-rule-soft); }
+      .lc-exp-axis { stroke: var(--upwr-ink-subtle); }
+      .lc-exp-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-exp-tick.is-x { font-size: 14px; fill: var(--upwr-ink-soft); }
+      .lc-exp-val { font: 600 12px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-exp-bar { fill: var(--upwr-accent); opacity: .85; }
+      .lc-exp-theory { fill: var(--upwr-surface); stroke: var(--upwr-ink); stroke-width: 2; }
+      .lc-exp-prob { font: 11px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-exp-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+      .lc-exp-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-exp-ball { fill: var(--upwr-accent); }
+    ")),
     # Dwa wykresy obok siebie, gdy panel ma miejsce; pod sobą na telefonie.
     tags$style(HTML("
       .lc-cdf { container-type: inline-size; }

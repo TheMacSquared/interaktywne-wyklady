@@ -104,6 +104,33 @@ ch3_ui <- list(
       próba kończy się sukcesem albo porażką, prawdopodobieństwo sukcesu p
       jest w każdej próbie takie samo, a próby są od siebie niezależne."),
 
+    lc_p("Prześledźmy, skąd bierze się taki rozkład, na przykładzie, który da się
+      zobaczyć. Rzucamy sześcioma kostkami naraz i liczymy szóstki. Każda
+      kostka to próba Bernoulliego z prawdopodobieństwem sukcesu p = 1/6,
+      więc liczba szóstek ma rozkład B(6, 1/6)."),
+
+    figure_panel(
+      label = "Ryc. 3.2",
+      width_mode = "text",
+      lc_step_widget("ch3_exp",
+        title = "Od rzutu kostkami do rozkładu",
+        steps = c("Eksperyment", "Zmienna losowa", "Powtarzamy", "Rozkład"),
+        toolbar = lc_toolbar(
+          tags$button(type = "button", class = "lc-action is-solid", `data-exp` = "roll",
+            lc_icon("shuffle"), tags$span("Rzuć kostkami")),
+          lc_step_from(3,
+            tags$div(class = "lc-seg", role = "group", `aria-label` = "Więcej rzutów",
+              tags$button(type = "button", `data-exp` = "roll10", "+10"),
+              tags$button(type = "button", `data-exp` = "roll100", "+100"),
+              tags$button(type = "button", `data-exp` = "roll1000", "+1000")
+            )
+          )
+        ),
+        body = tags$div(class = "lc-exp",
+          `data-config` = '{"n":6,"faces":6,"hit":6}')
+      )
+    ),
+
     lc_formula_box(withMathJax(
       "$$P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}, \\quad E(X) = np, \\quad Var(X) = np(1-p)$$"
     )),
@@ -117,7 +144,7 @@ ch3_ui <- list(
       a SD ≈ 1.58. Na wykresie można nałożyć na siebie cztery scenariusze."),
 
     figure_panel(
-      label = "Ryc. 3.2",
+      label = "Ryc. 3.3",
       title = "Rozkład dwumianowy B(n, p)",
       full_width = TRUE,
       lc_toolbar(
@@ -177,7 +204,7 @@ ch3_ui <- list(
       tylko 0.053."),
 
     figure_panel(
-      label = "Ryc. 3.3",
+      label = "Ryc. 3.4",
       title = "Rozkład Poissona Pois(λ)",
       full_width = TRUE,
       lc_toolbar(
@@ -238,7 +265,7 @@ ch3_ui <- list(
       (5/6)¹⁰ ≈ 0.162."),
 
     figure_panel(
-      label = "Ryc. 3.4",
+      label = "Ryc. 3.5",
       title = "Rozkład geometryczny Geom(p)",
       full_width = TRUE,
       lc_toolbar(
@@ -282,7 +309,7 @@ ch3_ui <- list(
       i przedział ±1 SD można włączyć na wykresie."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.6",
       title = "Cztery rozkłady obok siebie",
       full_width = TRUE,
       checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
@@ -347,6 +374,23 @@ ch3_geom_defs <- list(
 )
 
 ch3_server <- function(input, output, session) {
+
+  # --- Ryc. 3.2: rzut kostkami, zmienna losowa, rozkład (animacja w experiment.js) ---
+  ch3_exp_step <- lc_step_server("ch3_exp", input)$step
+  output$ch3_exp_text <- renderUI({
+    switch(ch3_exp_step(),
+      tagList("Rzucamy sześcioma kostkami naraz. Wynikiem doświadczenia jest sześć liczb
+        oczek, ale przed rzutem nie wiemy, jakie to będą liczby. Rzuć kostkami kilka razy."),
+      tagList("Interesuje nas jedna liczba z każdego rzutu: ", tags$code("X", .noWS = "outside"),
+        " to liczba szóstek. Każdy rzut daje wartość ze zbioru 0, 1, …, 6, a przed rzutem
+        nie wiemy której. Liczba zależna od przypadku to zmienna losowa."),
+      tagList("Powtarzamy doświadczenie i zliczamy, ile razy wypadła każda wartość ", tags$code("X", .noWS = "outside"),
+        ". Najpierw rzuć kilka razy, potem dokładaj po 10, 100 i 1000 rzutów."),
+      tagList("Liczebności dzielimy przez liczbę rzutów i dostajemy częstości względne. Zbliżają się
+        do prawdopodobieństw P(X = k) (kółka). Lista wartości X z ich prawdopodobieństwami to
+        rozkład prawdopodobieństwa zmiennej X.")
+    )
+  })
 
   # --- Widget 1: Jednostajny dyskretny (bez zmian) ---
   ch3_unif_data <- reactive({
