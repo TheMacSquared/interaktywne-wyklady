@@ -9,12 +9,6 @@ col_sample <- upwr_accent                   # wylosowana próba
 col_param  <- unname(upwr_cat["wrzos"])     # parametr populacji
 col_stat   <- unname(upwr_cat["bursztyn"])  # statystyka z próby
 
-pop_method_cols <- c(
-  "Prosta"    = unname(upwr_cat["niebo"]),
-  "Warstwowa" = unname(upwr_cat["szalwia"]),
-  "Wygodna"   = unname(upwr_cat["terakota"])
-)
-
 # Wydział: N = 2400 studentów, siatka 60 × 40 na wykresie.
 pop_grid_cols <- 60L
 
@@ -47,43 +41,6 @@ faculty <- make_faculty_population()
 pop_N     <- nrow(faculty)
 pop_mu    <- mean(faculty$dojazd)          # parametr: średni czas dojazdu
 pop_p     <- mean(faculty$praca)           # parametr: odsetek pracujących
-pop_share_akademik <- mean(faculty$akademik)
-
-# Próba wygodna: ankieta rozdawana w stołówce przy akademiku. Mieszkańcy
-# akademika trafiają do niej pięć razy częściej niż pozostali.
-pop_convenience_weight <- 5
-
-draw_sample_ids <- function(n, method = c("Prosta", "Warstwowa", "Wygodna")) {
-  method <- match.arg(method)
-  switch(method,
-    "Prosta" = sample(pop_N, n),
-    "Warstwowa" = {
-      # Alokacja proporcjonalna do liczebności lat studiów.
-      sizes <- table(faculty$rok)
-      alloc <- floor(n * sizes / pop_N)
-      rest <- n - sum(alloc)
-      if (rest > 0) {
-        frac <- n * sizes / pop_N - alloc
-        bump <- order(frac, decreasing = TRUE)[seq_len(rest)]
-        alloc[bump] <- alloc[bump] + 1
-      }
-      unlist(lapply(names(sizes), function(r) {
-        ids <- faculty$id[faculty$rok == as.integer(r)]
-        ids[sample.int(length(ids), alloc[[r]])]
-      }), use.names = FALSE)
-    },
-    "Wygodna" = {
-      w <- ifelse(faculty$akademik, pop_convenience_weight, 1)
-      sample(pop_N, n, prob = w)
-    }
-  )
-}
-
-# Oczekiwana średnia próby wygodnej (w przybliżeniu, dla małych n / N).
-pop_convenience_mu <- local({
-  w <- ifelse(faculty$akademik, pop_convenience_weight, 1)
-  sum(w * faculty$dojazd) / sum(w)
-})
 
 # Mały przykład do rozdziału 1: pięć osób, trzy dni pomiaru dojazdu.
 commute_people <- data.frame(

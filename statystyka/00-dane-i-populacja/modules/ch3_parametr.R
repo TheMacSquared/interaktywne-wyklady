@@ -111,16 +111,41 @@ ch3_ui <- list(
        opisuje próbę, jest znana i zmienia się od próby do próby."
     ),
 
+    lc_h2("ch3-obciazenie", "Kiedy duże n nie pomaga"),
+
     lc_p("Wszystkie próby w tym rozdziale były losowane uczciwie: każda osoba
       z listy miała tę samą szansę. Wartości p̂ rozrzucały się wtedy
-      po obu stronach p, bez przewagi jednej strony. Następny rozdział
-      pokazuje, co się dzieje, gdy próba powstaje inaczej."),
+      po obu stronach p, bez przewagi jednej strony. Taki sposób to ",
+      gloss("losowanie proste", "losowanie proste"), ". Bywa uzupełniane
+      ", gloss("losowanie warstwowe", "losowaniem warstwowym"), ", w którym
+      losuje się osobno w grupach, na przykład na każdym roku studiów,
+      tak by ich udział w próbie zgadzał się z populacją. Szczegóły
+      techniczne zostawiamy na boku. Ważne jest, czym te sposoby różnią
+      się od ",
+      gloss("próba wygodna", "próby wygodnej"), ": ankiety rozdanej
+      w stołówce, wypełnionej przez tych, którzy się zgłosili."),
+
+    lc_p("W 1936 roku tygodnik Literary Digest zebrał ponad dwa miliony
+      odpowiedzi i błędnie wskazał zwycięzcę wyborów prezydenckich w USA.
+      Ankietę wysłano czytelnikom, właścicielom telefonów i samochodów,
+      a odpowiedziała część z nich. Duża liczba odpowiedzi dała bardzo małą
+      zmienność próbkową, ale wokół złej wartości. Taki systematyczny błąd
+      w jedną stronę nazywamy ", gloss("obciążenie", "obciążeniem"), "."),
+
+    lc_note("Zasada", rule = TRUE,
+      "Losowanie zabezpiecza przed obciążeniem, a duże n zmniejsza
+       zmienność próbkową. Jedno nie zastąpi drugiego."
+    ),
+
+    lc_p("Do tego, jak próby bywają zniekształcone, wracamy w wykładzie 07.
+      Teraz zobaczymy, że nawet uczciwie wylosowana próba potrafi
+      pokazać wzorzec, którego w populacji nie ma."),
 
     lc_chapter_next(
       num       = "04",
-      title     = "Dobór próby",
-      lead      = "kiedy duża próba nie pomaga",
-      target_id = "ch-dobor"
+      title     = "Przypadek czy wzorzec?",
+      lead      = "czy to, co widać w próbie, widać też w populacji",
+      target_id = "ch-przypadek"
     )
   )
 )

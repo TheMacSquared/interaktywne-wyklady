@@ -92,6 +92,8 @@ ch5_ui <- list(
        próbę i zmienia się od próby do próby.",
       "Losowanie chroni przed obciążeniem, duże n zmniejsza zmienność
        próbkową. Jedno nie zastąpi drugiego.",
+      "Wzorzec w próbie może być dziełem przypadku. Jak często sam szum
+       daje taki obraz, zależy od n.",
       "Opis dotyczy próby, wnioskowanie przenosi wynik na populację
        i zawsze niesie niepewność."
     ),
