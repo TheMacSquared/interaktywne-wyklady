@@ -12,7 +12,7 @@ ch3_ui <- list(
       kicker = "Rozdział 03 · Dane i populacja",
       num    = "03",
       title  = "Liczba, której nie znamy, i liczba, którą mamy.",
-      lead   = "Odsetek pracujących studentów na całym wydziale to jedna,
+      lead   = "Odsetek studentów, którzy zdali egzamin, to dla całego wydziału jedna,
                 konkretna liczba, ale zwykle nikt jej nie zna. Z próby
                 liczymy jej odpowiednik i ta liczba za każdym razem wychodzi
                 trochę inna. Pierwszą nazywamy parametrem, drugą statystyką."
@@ -60,38 +60,38 @@ ch3_ui <- list(
       z daną cechą podzielona przez liczbę wszystkich jednostek. Jeśli
       w próbie 50 osób pracuje 19, to p̂ = 19/50 = 0.38."),
 
-    lc_h2("ch3-zmiennosc", "Każda garść daje inny wynik"),
+    lc_h2("ch3-zmiennosc", "Każda grupka daje inny wynik"),
 
     lc_p("W prawdziwym badaniu mamy jedną próbę i jedną wartość statystyki.
-      Żeby zobaczyć, co to znaczy, wyobraźmy sobie wydział jako worek studentów:
-      jedni pracują zarobkowo, drudzy nie. Worek jest nieprzezroczysty,
-      więc nie znamy odsetka pracujących.
-      Możemy tylko sięgnąć ręką i wyciągnąć garść. W naszym worku, inaczej
-      niż w życiu, można to robić do woli, a na końcu zajrzeć do środka."),
+      Żeby zobaczyć, co to znaczy, wróćmy do egzaminu ze statystyki. Cały
+      wydział siedzi za drzwiami z napisem EGZAMIN i nie widzimy, kto zdał.
+      Możemy tylko poprosić, żeby wyszła grupka osób, i zapytać każdą o wynik.
+      W naszych drzwiach, inaczej niż w życiu, można to robić do woli,
+      a na końcu zajrzeć do środka."),
 
     figure_panel(
       label = "Ryc. 3.1",
       width_mode = "text",
-      scene_widget("ch3_worek", "Garść studentów z worka: od jednej próby do rozkładu p̂",
-        steps = c("Garść", "Statystyka", "Powtarzamy", "Worek"),
-        labels = c("Wyciągnij garść", "Wyciągnij garść", "Wyciągnij garść", "Wyciągnij garść"),
-        options = list(list(name = "n", label = "Osób w garści (n)",
+      scene_widget("ch3_worek", "Grupka z egzaminu: od jednej próby do rozkładu p̂",
+        steps = c("Grupka", "Statystyka", "Powtarzamy", "Drzwi"),
+        labels = c("Wywołaj grupkę", "Wywołaj grupkę", "Wywołaj grupkę", "Wywołaj grupkę"),
+        options = list(list(name = "n", label = "Osób w grupce (n)",
                             values = c(10, 25, 100), selected = 25)),
-        config = list(kind = "bag", p = round(pop_p, 4), n = 25,
-                      aria = "Worek kulek, garść wyciągnięta z worka i histogram odsetków p̂ z kolejnych garści"))
+        config = list(kind = "bag", p = round(pop_zdal, 4), n = 25,
+                      aria = "Drzwi z napisem egzamin, grupka osób, które wyszły, i histogram odsetków p̂ z kolejnych grupek"))
     ),
 
-    lc_p("Prawdziwy odsetek pracujących na wydziale wynosi p = ",
-      paste0(lc_fmt(pop_p, 3), ". Przy n = 25 kolejne wartości p̂ wypadają typowo
-      w przedziale od około ", lc_fmt(pop_p - 2 * sqrt(pop_p * (1 - pop_p) / 25), 2),
-      " do ", lc_fmt(pop_p + 2 * sqrt(pop_p * (1 - pop_p) / 25), 2), ", a przy n = 100
-      od około ", lc_fmt(pop_p - 2 * sqrt(pop_p * (1 - pop_p) / 100), 2), " do ",
-      lc_fmt(pop_p + 2 * sqrt(pop_p * (1 - pop_p) / 100), 2), ". Parametr się
-      nie zmienia: to ten sam worek i ta sama liczba. Zmienia się tylko garść,
+    lc_p("Prawdziwy odsetek zdających na wydziale wynosi p = ",
+      paste0(lc_fmt(pop_zdal, 3), ". Przy n = 25 kolejne wartości p̂ wypadają typowo
+      w przedziale od około ", lc_fmt(pop_zdal - 2 * sqrt(pop_zdal * (1 - pop_zdal) / 25), 2),
+      " do ", lc_fmt(pop_zdal + 2 * sqrt(pop_zdal * (1 - pop_zdal) / 25), 2), ", a przy n = 100
+      od około ", lc_fmt(pop_zdal - 2 * sqrt(pop_zdal * (1 - pop_zdal) / 100), 2), " do ",
+      lc_fmt(pop_zdal + 2 * sqrt(pop_zdal * (1 - pop_zdal) / 100), 2), ". Parametr się
+      nie zmienia: to ci sami studenci i ta sama liczba. Zmienia się tylko grupka,
       a razem z nią statystyka. To zjawisko nazywamy "),
       gloss("zmienność próbkowa", "zmiennością próbkową"), "."),
 
-    lc_p("Większa garść nie usuwa zmienności próbkowej, ale ją zmniejsza.
+    lc_p("Większa grupka nie usuwa zmienności próbkowej, ale ją zmniejsza.
       Wiedząc, jak duża jest ta zmienność, można z jednej próby powiedzieć,
       w jakim zakresie prawdopodobnie leży parametr. Na tym pomyśle zbudowane
       są przedziały ufności z wykładu 03."),
@@ -103,7 +103,7 @@ ch3_ui <- list(
 
     lc_h2("ch3-obciazenie", "Kiedy duże n nie pomaga"),
 
-    lc_p("Garście z worka były losowane uczciwie: każdy student miał tę samą
+    lc_p("Grupki zza drzwi były losowane uczciwie: każdy student miał tę samą
       szansę. Taki sposób to ", gloss("losowanie proste", "losowanie proste"),
       ". Bywa uzupełniane ", gloss("losowanie warstwowe", "losowaniem warstwowym"),
       ", w którym losuje się osobno w grupach, na przykład na każdym roku
@@ -159,18 +159,17 @@ ch3_ui <- list(
 ch3_server <- function(input, output, session) {
 
   scene_texts(input, output, "ch3_worek", list(
-    tagList("Wydział to worek studentów: czerwona buźka z prostą kreską to student, który pracuje,
-      niebieska uśmiechnięta to taki, który nie pracuje. Nie widzimy worka ani odsetka pracujących.
-      Wyciągnij garść i zobacz, co w niej jest."),
-    tagList("Liczymy pracujących i dzielimy przez liczbę osób w garści. To statystyka ",
-      tags$code("p̂", .noWS = "outside"), ": znamy ją, bo mamy garść w ręku. Wyciągnij kilka garści
+    tagList("Za drzwiami z napisem EGZAMIN siedzi cały wydział. Nie widzimy, kto zdał. Wywołaj grupkę:
+      wyjdzie kilka osób i powie, jak im poszło. Uśmiechnięta zielona buźka to ktoś, kto zdał, smutna czerwona to ktoś, kto nie zdał."),
+    tagList("Liczymy, ilu z grupki zdało, i dzielimy przez liczbę osób. To statystyka ",
+      tags$code("p̂", .noWS = "outside"), ": znamy ją, bo grupka stoi przed nami. Wywołaj kilka grupek
       i porównaj wyniki."),
-    tagList("Studenci wracają do worka, wyciągamy kolejną garść i znowu liczymy ",
-      tags$code("p̂", .noWS = "outside"), ". Każda garść spada żetonem nad swoją wartością. Dokładaj po 10,
-      100 i 1000, a potem zmień liczbę osób w garści."),
-    tagList("Odsłaniamy worek: ", tags$code("p", .noWS = "outside"), " to prawdziwy odsetek pracujących.
-      Parametr jest jeden i stały, a statystyka skacze wokół niego. Im większa garść,
-      tym ciaśniej skupiają się wyniki, ale z jednej garści nie wiemy, po której
+    tagList("Grupka wraca za drzwi, wywołujemy kolejną i znowu liczymy ",
+      tags$code("p̂", .noWS = "outside"), ". Każda grupka spada żetonem nad swoją wartością. Dokładaj po 10,
+      100 i 1000, a potem zmień liczbę osób w grupce."),
+    tagList("Otwieramy drzwi: ", tags$code("p", .noWS = "outside"), " to prawdziwy odsetek tych, którzy zdali.
+      Parametr jest jeden i stały, a statystyka skacze wokół niego. Im większa grupka,
+      tym ciaśniej skupiają się wyniki, ale z jednej grupki nie wiemy, po której
       stronie ", tags$code("p", .noWS = "outside"), " leży.")
   ))
 

@@ -97,15 +97,15 @@
     var PL = 60, PR = 610, PT = 232, PB = 372;
     var st = { n: cfg.n || 25, draws: [], counts: new Array(NB).fill(0), last: null, shown: 0 };
     var jar = (function () {
-      // 60 kulek w słoiku w stałym układzie, odsetek czerwonych = P
-      var r = rng(7), red = Math.round(P * 60), arr = [];
-      for (var i = 0; i < 60; i++) arr.push(i < red ? 1 : 0);
+      // 49 osób w sali w stałym układzie, odsetek zdających = P
+      var r = rng(7), red = Math.round(P * 49), arr = [];
+      for (var i = 0; i < 49; i++) arr.push(i < red ? 1 : 0);
       shuffle(arr, r);
       return arr;
     })();
 
     function bagBall(g, x, y, r, v) {
-      drawFace(g, x, y, r, v ? "is-work" : "is-free", v ? "flat" : "smile");
+      drawFace(g, x, y, r, v ? "is-pass" : "is-fail", v ? "smile" : "frown");
     }
     function binOf(ph) { return Math.max(0, Math.min(NB - 1, Math.round(ph * 20))); }
     function slotX(i) { return PL + (PR - PL) * (i + 0.5) / NB; }
@@ -120,21 +120,27 @@
     }
 
     function drawBag(g, reveal) {
+      // drzwi z napisem EGZAMIN; po odsłonięciu otwarte, widać salę pełną studentów
+      svg("rect", { x: 40, y: 14, width: 160, height: 28, rx: 5, class: "lc-sc-sign" }, g);
+      svg("text", { x: 120, y: 34, "text-anchor": "middle", class: "lc-sc-sign-t" }, g, "EGZAMIN");
       if (!reveal) {
-        svg("path", { d: "M 70 62 C 20 90 20 190 50 200 C 90 212 150 212 190 200 C 220 190 220 90 170 62 Z", class: "lc-sc-sack" }, g);
-        svg("path", { d: "M 70 62 C 90 46 150 46 170 62 C 150 70 90 70 70 62 Z", class: "lc-sc-sack-top" }, g);
-        svg("path", { d: "M 82 56 C 100 44 140 44 158 56", class: "lc-sc-rope", fill: "none" }, g);
-        svg("text", { x: 120, y: 150, "text-anchor": "middle", class: "lc-sc-big" }, g, "?");
-        svg("text", { x: 120, y: 226, "text-anchor": "middle", class: "lc-sc-sub" }, g, "wydział w worku");
+        svg("rect", { x: 46, y: 50, width: 148, height: 156, rx: 4, class: "lc-sc-door" }, g);
+        svg("rect", { x: 62, y: 66, width: 52, height: 56, rx: 3, class: "lc-sc-door-panel" }, g);
+        svg("rect", { x: 126, y: 66, width: 52, height: 56, rx: 3, class: "lc-sc-door-panel" }, g);
+        svg("rect", { x: 62, y: 134, width: 116, height: 56, rx: 3, class: "lc-sc-door-panel" }, g);
+        svg("circle", { cx: 176, cy: 134, r: 5, class: "lc-sc-handle" }, g);
+        svg("text", { x: 120, y: 226, "text-anchor": "middle", class: "lc-sc-sub" }, g, "wydział za drzwiami");
       } else {
-        svg("rect", { x: 30, y: 52, width: 180, height: 150, rx: 18, class: "lc-sc-jar" }, g);
-        var cols = 10, r = 8.2, s = 17.2;
+        svg("rect", { x: 46, y: 50, width: 148, height: 156, rx: 4, class: "lc-sc-room" }, g);
+        var cols = 7, s = 19.5;
         jar.forEach(function (v, i) {
           var row = Math.floor(i / cols), col = i % cols;
-          bagBall(g, 42 + col * s + (row % 2 ? s / 2 : 0) + 8, 66 + row * 21, r, v);
+          if (row > 6) return;
+          bagBall(g, 62 + col * s + (row % 2 ? s / 2 : 0) - 2, 66 + row * 20, 7.4, v);
         });
+        svg("path", { d: "M 46 50 L 24 58 L 24 214 L 46 206 Z", class: "lc-sc-door" }, g);
         svg("text", { x: 120, y: 226, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "w worku pracuje " + fmt(P * 100, 0) + "%");
+          "w sali: zdało " + fmt(P * 100, 0) + "%");
       }
     }
 
@@ -159,8 +165,8 @@
         return { x: PL + (PR - PL) * (t * 20 + 0.5) / NB, label: fmt(t, 1) };
       }));
       svg("text", { x: (PL + PR) / 2, y: PB + 38, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "odsetek pracujących w garści, p̂");
-      var info = "garści: " + st.draws.length;
+        "odsetek, który zdał w grupce, p̂");
+      var info = "grupek: " + st.draws.length;
       if (step >= 4 && st.draws.length > 1) {
         var lo = Math.min.apply(null, st.draws.map(function (d) { return d.ph; }));
         var hi = Math.max.apply(null, st.draws.map(function (d) { return d.ph; }));
@@ -188,18 +194,18 @@
     function drawLog(g, step) {
       if (!st.draws.length) {
         svg("text", { x: W / 2, y: 300, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "Wyciągnij garść, żeby zobaczyć, kto w niej jest.");
+          "Wywołaj grupkę, żeby zobaczyć, kto wyszedł.");
         return;
       }
       st.draws.slice(-6).reverse().forEach(function (d, i) {
         var y = 262 + i * 24, g2 = svg("g", { opacity: 1 - i * 0.14 }, g);
-        svg("text", { x: 120, y: y, class: "lc-sc-log" }, g2, "garść " + d.no);
+        svg("text", { x: 120, y: y, class: "lc-sc-log" }, g2, "grupka " + d.no);
         if (step >= 2) {
           svg("text", { x: 220, y: y, class: "lc-sc-log" }, g2,
-            d.k + " z " + d.n + " pracuje");
+            d.k + " z " + d.n + " zdało");
           svg("text", { x: 400, y: y, class: "lc-sc-log is-x" }, g2, "p̂ = " + fmt(d.ph, 2));
         } else {
-          svg("text", { x: 220, y: y, class: "lc-sc-log" }, g2, d.k + " z " + d.n + " pracuje");
+          svg("text", { x: 220, y: y, class: "lc-sc-log" }, g2, d.k + " z " + d.n + " zdało");
         }
       });
     }
@@ -223,11 +229,11 @@
               "p̂ = " + d.k + "/" + d.n + " = " + fmt(d.ph, 2));
           } else {
             svg("text", { x: 428, y: 196, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-              d.k + " z " + d.n + " osób pracuje");
+              d.k + " z " + d.n + " zdało");
           }
         }
       } else {
-        svg("text", { x: 428, y: 100, "text-anchor": "middle", class: "lc-sc-sub" }, g, "tu pojawi się garść");
+        svg("text", { x: 428, y: 100, "text-anchor": "middle", class: "lc-sc-sub" }, g, "tu wyjdzie grupka");
       }
     }
 
@@ -252,7 +258,7 @@
         var upto = Math.max(1, Math.ceil(u * d.n)), local = (u * d.n) % 1;
         api.stage.textContent = "";
         drawStage(api.stage, step, { upto: upto, flying: u < 1, u: u >= 1 ? 1 : ease(local === 0 ? 1 : local),
-          from: [190, 70], done: u >= 1 });
+          from: [130, 130], done: u >= 1 });
       }, function () {
         commit(d);
         var land = function () {

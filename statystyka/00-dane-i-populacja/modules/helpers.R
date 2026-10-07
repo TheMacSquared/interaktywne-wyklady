@@ -47,6 +47,7 @@ faculty$zdal <- local({
 pop_N     <- nrow(faculty)
 pop_mu    <- mean(faculty$dojazd)          # parametr: średni czas dojazdu
 pop_p     <- mean(faculty$praca)           # parametr: odsetek pracujących
+pop_zdal  <- mean(faculty$zdal)            # parametr: odsetek, który zdał egzamin
 
 # Mały przykład do rozdziału 1: pięć osób, trzy dni pomiaru dojazdu.
 commute_people <- data.frame(
