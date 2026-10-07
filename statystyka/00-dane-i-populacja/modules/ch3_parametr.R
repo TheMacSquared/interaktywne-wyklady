@@ -116,15 +116,15 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.2",
       width_mode = "text",
-      scene_widget("ch3_latarka", "Losowanie i latarka: dwa sposoby, dwa wyniki",
-        steps = c("Losowanie", "Latarka", "Powtarzamy"),
-        labels = c("Losuj próbę", "Świeć latarką", "Próba obu rodzajów"),
+      scene_widget("ch3_latarka", "Telefon i biblioteka: dwa sposoby, dwa wyniki",
+        steps = c("Telefon", "Biblioteka", "Powtarzamy"),
+        labels = c("Zadzwoń do losowych", "Idź do biblioteki", "Próba obu rodzajów"),
         options = list(list(name = "n", label = "Liczebność próby (n)",
                             values = c(20, 50, 300), selected = 50, from = 3)),
         more_from = 3,
         config = list(kind = "spot", n = 50, mu = round(pop_zdal, 4),
                       d = as.integer(faculty$zdal), a = as.integer(faculty$biblioteka),
-                      aria = "Tłum studentów po egzaminie, losowanie i latarka świecąca na bibliotekę, odsetki zdających w próbach"))
+                      aria = "Tłum studentów po egzaminie, telefon do losowych osób, ankieta w bibliotece i odsetki zdających w próbach"))
     ),
 
     lc_p("W 1936 roku tygodnik Literary Digest zebrał ponad dwa miliony
@@ -174,14 +174,15 @@ ch3_server <- function(input, output, session) {
   ))
 
   scene_texts(input, output, "ch3_latarka", list(
-    tagList("Każda kropka to student po egzaminie, ciemne kropki to ci, którzy siedzą w bibliotece. Pionowa
-      linia to prawdziwy odsetek tych, którzy zdali, czyli parametr ", tags$code("p", .noWS = "outside"), ". Losujemy próbę tak, że każdy ma równą szansę, i liczymy jej ",
-      tags$code("p̂", .noWS = "outside"), "."),
-    tagList("Teraz pytamy tych, których najłatwiej znaleźć: siedzących w bibliotece. Latarka oświetla
-      tych, którzy stoją blisko, i tylko oni trafiają do próby. Kto siedzi w bibliotece, ten częściej zdał,
-      więc ", tags$code("p̂", .noWS = "outside"), " ucieka w prawo od ", tags$code("p", .noWS = "outside"), "."),
-    tagList("Dokładaj próby obu rodzajów. Wyniki z losowania rozkładają się wokół ", tags$code("p", .noWS = "outside"), ",
-      wyniki z latarki wokół zbyt wysokiej wartości. Zwiększ n: obie chmury się zwężają,
-      ale latarka trafia coraz pewniej obok ", tags$code("p", .noWS = "outside"), ". Duże n zmniejsza zmienność, ale nie usuwa obciążenia.")
+    tagList("Każda kropka to student po egzaminie, ciemne kropki to ci, którzy siedzą w bibliotece. Dzwonisz do losowych osób
+      z listy i pytasz, czy zdały. Buźki pokazują ich odpowiedzi, a na dole ląduje ", tags$code("p̂", .noWS = "outside"),
+      " z tej próby. Linia to prawdziwy odsetek ", tags$code("p", .noWS = "outside"), "."),
+    tagList("Teraz nie chce Ci się dzwonić. Idziesz do biblioteki i pytasz tych, których tam spotkasz. W bibliotece
+      siedzą ci, którzy się uczą, więc prawie wszyscy zdali: same uśmiechnięte buźki. Wynik wygląda świetnie,
+      ale mówi o bibliotece, a nie o całym wydziale, i ",
+      tags$code("p̂", .noWS = "outside"), " ucieka w prawo od ", tags$code("p", .noWS = "outside"), "."),
+    tagList("Dokładaj próby obu rodzajów. Wyniki z telefonów rozkładają się wokół ", tags$code("p", .noWS = "outside"), ",
+      wyniki z biblioteki wokół zbyt wysokiej wartości. Zwiększ n: obie chmury się zwężają,
+      ale biblioteka trafia coraz pewniej obok ", tags$code("p", .noWS = "outside"), ". Duże n zmniejsza zmienność, ale nie usuwa obciążenia.")
   ))
 }

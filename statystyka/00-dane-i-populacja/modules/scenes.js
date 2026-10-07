@@ -3,7 +3,7 @@
 // config.kind:
 //   "bag"  garść kulek z worka: p̂ z kolejnych garści (zmienność próbkowa)
 //   "tea"  herbata z mlekiem: ilu zgadujących trafia tyle, co pani (przypadek czy umiejętność)
-//   "spot" latarka na tłumie: losowanie a próba wygodna (obciążenie)
+//   "spot" telefon do losowych osób a ankieta w bibliotece (próba wygodna, obciążenie)
 // Numer kroku czyta z data-lc-step korzenia widgetu. Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
 //   [data-sc-opt]  "nazwa:wartość" (przełączniki opcji, np. n:25)
@@ -486,34 +486,26 @@
   };
 
   // =========================================================================
-  // SPOT: latarka na tłumie
+  // SPOT: losowanie a biblioteka
   // =========================================================================
   KINDS.spot = function (cfg, api) {
     var D = cfg.d, A = cfg.a, N = D.length, MU = cfg.mu;
     var AX0 = 60, AX1 = 600, RY = { rand: 296, spot: 336 };
     var AMIN = 0, AMAX = 1;
     var st = { n: cfg.n || 50, rand: [], spot: [], last: null, lastMode: null, beam: 0 };
-    var LAMP = [24, 112];
 
-    // położenie kropek: biblioteka po lewej, reszta w pozostałej części kampusu
+    // położenie kropek: biblioteka (budynek) po lewej, reszta w pozostałej części kampusu
     var pos = (function () {
       var r = rng(11), out = [];
       for (var i = 0; i < N; i++) {
-        if (A[i]) {
-          var ang = r() * Math.PI * 2, rad = Math.sqrt(r());
-          out.push([92 + Math.cos(ang) * rad * 62, 112 + Math.sin(ang) * rad * 74]);
-        } else {
-          out.push([190 + r() * 430, 16 + r() * 190]);
-        }
+        if (A[i]) out.push([30 + r() * 132, 66 + r() * 130]);
+        else out.push([200 + r() * 420, 16 + r() * 190]);
       }
       return out;
     })();
 
-    // waga w próbie wygodnej: kto stoi bliżej latarki, ten częściej w niej jest
-    var wSpot = pos.map(function (p) {
-      var dx = p[0] - 40, dy = p[1] - 112;
-      return Math.exp(-(dx * dx + dy * dy) / (2 * 110 * 110)) + 0.012;
-    });
+    // w bibliotece spotkasz prawie wyłącznie tych, którzy tam siedzą
+    var wSpot = A.map(function (a) { return a ? 1 : 0.004; });
 
     function sampleRand(n) {
       var idx = [], used = {};
@@ -531,28 +523,27 @@
     function mean(idx) { return idx.reduce(function (s, i) { return s + D[i]; }, 0) / idx.length; }
     function ax(v) { return AX0 + (AX1 - AX0) * (Math.min(AMAX, Math.max(AMIN, v)) - AMIN) / (AMAX - AMIN); }
 
-    function drawCrowd(g, sel, mode, beamU) {
-      // latarka i wiązka (tylko w trybie latarki)
-      if (mode === "spot") {
-        var w = 330 * (beamU === undefined ? 1 : beamU);
-        svg("path", { d: "M 34 112 L " + (34 + w) + " " + (112 - 105 * (w / 330 + 0.05)) + " L " +
-          (34 + w) + " " + (112 + 105 * (w / 330 + 0.05)) + " Z", class: "lc-sc-beam" }, g);
-      }
+    function drawCrowd(g, sel, mode) {
+      // budynek biblioteki
+      svg("path", { d: "M 8 50 L 94 20 L 180 50 Z", class: "lc-sc-roof" }, g);
+      svg("rect", { x: 14, y: 50, width: 160, height: 158, class: "lc-sc-lib" }, g);
+      svg("text", { x: 94, y: 44, "text-anchor": "middle", class: "lc-sc-lib-t" }, g, "BIBLIOTEKA");
+      svg("rect", { x: 78, y: 188, width: 32, height: 20, class: "lc-sc-lib-door" }, g);
       var inSel = {};
       (sel || []).forEach(function (i) { inSel[i] = 1; });
       for (var i = 0; i < N; i++) {
         if (inSel[i]) continue;
-        svg("circle", { cx: pos[i][0], cy: pos[i][1], r: 2.3, class: A[i] ? "lc-sc-dot is-dorm" : "lc-sc-dot" }, g);
+        svg("circle", { cx: pos[i][0], cy: pos[i][1], r: 2.3, class: A[i] ? "lc-sc-dot is-dorm" : "lc-sc-dot",
+          opacity: sel && sel.length ? 0.45 : 1 }, g);
       }
       (sel || []).forEach(function (i) {
-        svg("circle", { cx: pos[i][0], cy: pos[i][1], r: 4.4, class: "lc-sc-dot is-sel " + (A[i] ? "is-dorm" : "") }, g);
+        drawFace(g, pos[i][0], pos[i][1], 5.2, D[i] ? "is-pass" : "is-fail", D[i] ? "smile" : "frown");
       });
-      // budynek akademika i latarka
-      svg("text", { x: 92, y: 214, "text-anchor": "middle", class: "lc-sc-sub" }, g, "biblioteka");
-      if (mode === "spot" || api.step() >= 2) {
-        svg("g", { transform: "translate(" + LAMP[0] + "," + LAMP[1] + ")" }, g);
-        svg("circle", { cx: LAMP[0], cy: LAMP[1], r: 9, class: "lc-sc-lamp" }, g);
-        svg("rect", { x: LAMP[0] - 5, y: LAMP[1] + 8, width: 10, height: 18, rx: 3, class: "lc-sc-lamp-handle" }, g);
+      if (mode === "spot") {
+        // ankieter z podkładką przy wejściu do biblioteki
+        svg("circle", { cx: 196, cy: 168, r: 7, class: "lc-sc-person" }, g);
+        svg("rect", { x: 188, y: 177, width: 16, height: 22, rx: 6, class: "lc-sc-person" }, g);
+        svg("rect", { x: 202, y: 180, width: 9, height: 13, rx: 1.5, class: "lc-sc-clip" }, g);
       }
     }
 
@@ -564,7 +555,7 @@
       svg("line", { x1: ax(MU), x2: ax(MU), y1: 250, y2: 372, class: "lc-sc-param" }, g);
       svg("text", { x: ax(MU) + 6, y: 262, class: "lc-sc-param-t" }, g, "p = " + fmt(MU, 2));
       var rows = step >= 2 ? ["rand", "spot"] : ["rand"];
-      var names = { rand: "losowanie", spot: "latarka" };
+      var names = { rand: "losowanie", spot: "biblioteka" };
       rows.forEach(function (m) {
         var y = RY[m] + (step >= 2 ? 0 : 20);
         svg("text", { x: 6, y: y + 4, class: "lc-sc-sub" }, g, names[m]);
@@ -586,13 +577,12 @@
       }
     }
 
-    function render(sel, mode, beamU) {
+    function render(sel, mode) {
       var step = api.step();
       api.stage.textContent = ""; api.low.textContent = "";
       drawCrowd(api.stage, sel === undefined ? (st.last ? st.last.idx : []) : sel,
-        mode === undefined ? (st.last ? st.last.mode : (step >= 2 ? "spot" : "rand")) : mode, beamU);
+        mode === undefined ? (st.last ? st.last.mode : (step >= 2 ? "spot" : "rand")) : mode);
       drawStrip(api.low, step);
-      var rd = step >= 3 ? null : null; void rd;
     }
 
     function modeFor(step, alt) { return step === 1 ? "rand" : step === 2 ? "spot" : alt; }
@@ -605,13 +595,9 @@
         st.last = { idx: idx, mode: mode, xbar: xb }; st.lastMode = mode;
         render(); done();
       };
-      if (mode === "spot") {
-        tween(fast ? 110 : 600, function (u) { render(u >= 1 ? idx : [], "spot", ease(u)); }, finish);
-      } else {
-        tween(fast ? 110 : 500, function (u) {
-          render(idx.slice(0, Math.ceil(idx.length * ease(u))), "rand");
-        }, finish);
-      }
+      tween(fast ? 110 : 600, function (u) {
+        render(idx.slice(0, Math.ceil(idx.length * ease(u))), mode);
+      }, finish);
       void step;
     }
 

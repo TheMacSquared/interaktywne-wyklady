@@ -90,3 +90,8 @@
 .lc-sc-door-panel { fill: none; stroke: #7d5532; stroke-width: 2; }
 .lc-sc-handle { fill: var(--upwr-single-alt); stroke: var(--upwr-ink-soft); }
 .lc-sc-room { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.lc-sc-roof { fill: var(--upwr-ink-soft); }
+.lc-sc-lib { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.lc-sc-lib-t { font: 700 12px var(--upwr-mono); fill: var(--upwr-surface); letter-spacing: .1em; }
+.lc-sc-lib-door { fill: #a9784a; stroke: var(--upwr-ink-subtle); }
+.lc-sc-clip { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1; }
