@@ -380,6 +380,47 @@ jezyk_chain_widget <- figure_panel(
   ))
 )
 
+# Ćwiczenie 3: plac z 24 paletami jako Ω, palety z uszkodzonym zabezpieczeniem
+# jako A, reszta jako Aᶜ. Losowanie i odczyty działają w przeglądarce (modules/omega.js).
+jezyk_omega_widget <- figure_panel(
+  label = "Ćwiczenie 3",
+  title = "Losowa kontrola jednej palety",
+  full_width = TRUE,
+  tags$div(class = "lc-om", `data-config` = '{"n":24,"a":6}',
+    lc_toolbar(
+      lc_group("Uszkodzone palety |A|",
+        tags$div(class = "lc-seg lc-om-stepper", role = "group", `aria-label` = "Liczba uszkodzonych palet",
+          tags$button(type = "button", `data-om-a` = "-1", `aria-label` = "Jedna mniej", "−"),
+          tags$span(class = "lc-om-count", `data-om-out` = "a", "6"),
+          tags$button(type = "button", `data-om-a` = "1", `aria-label` = "Jedna więcej", "+")
+        )
+      ),
+      lc_group("Sposób wyboru",
+        tags$div(class = "lc-seg", role = "group", `aria-label` = "Sposób wyboru",
+          tags$button(type = "button", `data-om-mode` = "rand", `aria-pressed` = "true", "Losowanie"),
+          tags$button(type = "button", `data-om-mode` = "eye", `aria-pressed` = "false", "Na oko")
+        )
+      ),
+      tags$button(type = "button", class = "lc-action is-solid", `data-om` = "go",
+        lc_icon("shuffle"), tags$span("Losuj paletę")),
+      tags$div(class = "lc-seg", role = "group", `aria-label` = "Więcej wyborów",
+        tags$button(type = "button", `data-om` = "10", "+10"),
+        tags$button(type = "button", `data-om` = "100", "+100"),
+        tags$button(type = "button", `data-om` = "1000", "+1000")
+      )
+    ),
+    lc_readouts(
+      lc_readout("P(A) = |A| / |Ω|", tags$span(`data-om-out` = "p", "0.25"), color = upwr_accent),
+      lc_readout("P(Aᶜ)", tags$span(`data-om-out` = "pc", "0.75"), color = upwr_cat[["szalwia"]]),
+      lc_readout("Wybory", tags$span(`data-om-out` = "n", "0"), color = upwr_secondary),
+      lc_readout("A zaszło", tags$span(`data-om-out` = "k", "0"), color = upwr_secondary),
+      lc_readout("Częstość A", tags$span(`data-om-out` = "f", "–"), color = upwr_secondary)
+    ),
+    tags$div(class = "lc-om-stage"),
+    tags$p(class = "lc-om-status", `aria-live` = "polite")
+  )
+)
+
 jezyk_block <- list(
   id = "jezyk", title = "Język ryzyka",
   chapters = list(
@@ -844,7 +885,7 @@ jezyk_block <- list(
               )
             ),
             "Z definicji klasycznej wynikają trzy podstawowe własności. Możesz je
-               sprawdzić suwakiem poniżej: ustaw 0 palet sprzyjających (zdarzenie
+               sprawdzić w ćwiczeniu 3 poniżej: ustaw 0 palet sprzyjających (zdarzenie
                niemożliwe), potem 24 (zdarzenie pewne).",
             risk_formula(
               "P(\\Omega)=1,\\qquad P(\\emptyset)=0,\\qquad 0\\le P(A)\\le 1",
@@ -871,33 +912,28 @@ jezyk_block <- list(
         list(
           id = "paletki", title = "Zbuduj zdarzenie na siatce palet",
           body = list(
-            "Zmieniaj liczbę palet z uszkodzonym zabezpieczeniem. Siatka pokazuje
-               pełny mianownik, zdarzenie A oraz jego dopełnienie.",
-            risk_try("ustaw 6 palet i odczytaj P(A) oraz P(Aᶜ). Potem przesuń suwak na
-              0 i na 24 i sprawdź, które kafelki zmieniają kolor. Na koniec dodaj w
-              pamięci obie wartości P(A) i P(Aᶜ) dla kilku ustawień suwaka."),
-            figure_panel(
-              label = "Ćwiczenie 3",
-              title = "Losowa kontrola jednej palety",
-              full_width = TRUE,
-              lc_toolbar(
-                lc_slider("ch3_favourable", "Palety z uszkodzonym zabezpieczeniem", 0, 24, 6, 1),
-                lc_readouts(uiOutput("ch3_stats"))
-              ),
-              lc_plot("ch3_grid", ratio = "1.4/1", max_height = "430px"),
-              lc_caption(
-                "Zdarzenie A: wylosowana paleta ma uszkodzone zabezpieczenie.",
-                tone = "info"
-              )
-            ),
-            "Siatka pokazuje całe Ω naraz: 24 kafelki to mianownik, kafelki w kolorze
-               zdarzenia A to licznik. Przy sześciu uszkodzonych paletach P(A) = 0.25, a
-               pozostałe 18 kafelków tworzy dopełnienie Aᶜ o prawdopodobieństwie 0.75.
-               Przy ustawieniu 0 zdarzenie A staje się zbiorem pustym, a przy 24 —
-               całą przestrzenią; obie skrajności to własności (1.3). Niezależnie od
-               położenia suwaka P(A) i P(Aᶜ) sumują się do 1, bo każdy kafelek ma
-               dokładnie jeden z dwóch kolorów. Tę obserwację zapiszemy jako wzór (1.4)
-               w następnym rozdziale."
+            "Plac z paletami to przestrzeń Ω, obrys wokół palet z zerwaną taśmą to
+               zdarzenie A, a pozostałe palety tworzą dopełnienie Aᶜ. Przyciskami − i +
+               zmieniasz liczbę uszkodzonych palet, a losowanie pokazuje wynik ω i to,
+               czy zdarzenie A zaszło.",
+            risk_try("ustaw 6 palet i odczytaj P(A) oraz P(Aᶜ). Potem zejdź do 0 i wejdź
+              na 24 i zobacz, co dzieje się z obrysem A. Na koniec wylosuj kilkaset palet
+              i porównaj częstość A z ilorazem |A|/|Ω|, a potem przełącz sposób wyboru
+              na „na oko”."),
+            jezyk_omega_widget,
+            "Przy sześciu uszkodzonych paletach P(A) = 6/24 = 0.25, a pozostałe 18
+               palet tworzy dopełnienie Aᶜ o prawdopodobieństwie 0.75. Przy zerze
+               zdarzenie A staje się zbiorem pustym, a przy 24 całą przestrzenią; obie
+               skrajności to własności (1.3). Niezależnie od liczby uszkodzonych palet
+               P(A) i P(Aᶜ) sumują się do 1, bo każda paleta należy dokładnie do jednego
+               z dwóch zbiorów. Tę obserwację zapiszemy jako wzór (1.4) w następnym
+               rozdziale.",
+            "Losowanie łączy ten iloraz z rozdziałem 02. Przy wielu wyborach częstość
+               zdarzenia A zbliża się do |A|/|Ω|, bo każda paleta ma tę samą szansę.
+               Przy wyborze „na oko” inspektor częściej bierze palety stojące przy
+               bramie, a tam akurat stoją uszkodzone. Liczby 6 i 24 się nie zmieniają,
+               a częstość odjeżdża daleko od 0.25: iloraz z definicji 1.5 opisuje
+               tylko losowanie, w którym wyniki są jednakowo możliwe."
           )
         ),
         list(
@@ -1667,61 +1703,6 @@ jezyk_czestosc_server <- function(input, output, session) {
   })
 }
 
-jezyk_przestrzen_server <- function(input, output, session) {
-  pallet_data <- reactive({
-    req(input$ch3_favourable)
-    build_pallet_grid(input$ch3_favourable, total = 24L, columns = 6L)
-  })
-
-  output$ch3_stats <- renderUI({
-    req(input$ch3_favourable)
-    favourable <- as.integer(input$ch3_favourable)
-    probability <- classical_probability(favourable, 24L)
-
-    tagList(
-      lc_readout("Licznik |A|", favourable, color = upwr_cat[["terakota"]]),
-      lc_readout("Mianownik |Ω|", 24, color = upwr_secondary),
-      lc_readout("P(A)", risk_fmt_p(probability), color = upwr_accent),
-      lc_readout("P(Aᶜ)", risk_fmt_p(1 - probability), color = upwr_cat[["szalwia"]])
-    )
-  })
-
-  pallet_plot <- reactive({
-    data <- pallet_data()
-    data$status <- ifelse(data$favourable, "event", "complement")
-
-    ggplot(data, aes(x = column, y = -row, fill = status)) +
-      geom_tile(colour = "white", linewidth = 2, width = 0.92, height = 0.92) +
-      geom_text(aes(label = id), colour = "white", fontface = "bold", size = 4) +
-      scale_fill_manual(
-        values = c(
-          "complement" = upwr_reference,
-          "event" = upwr_cat[["terakota"]]
-        ),
-        breaks = c("complement", "event"),
-        labels = expression("Dopełnienie " * A^c, "Zdarzenie A")
-      ) +
-      coord_equal() +
-      scale_x_continuous(breaks = NULL) +
-      scale_y_continuous(breaks = NULL) +
-      labs(x = NULL, y = NULL, fill = NULL) +
-      theme(
-        panel.grid = element_blank(),
-        axis.text = element_blank(),
-        legend.position = "bottom"
-      )
-  })
-
-  zoom_plot_server(
-    "ch3_grid",
-    pallet_plot,
-    alt = paste(
-      "Siatka 24 palet. Część palet należy do zdarzenia",
-      "wylosowania palety z uszkodzonym zabezpieczeniem."
-    )
-  )
-}
-
 jezyk_zbiory_server <- function(input, output, session) {
   # Krok widgetu (1..4) żyje w przeglądarce; opis kroku jako tekst inline.
   venn_step <- lc_step_server("ch4_venn", input)$step
@@ -2133,7 +2114,6 @@ jezyk_cwiczenia_server <- function(input, output, session) {
 jezyk_server <- function(input, output, session) {
   jezyk_sytuacja_server(input, output, session)
   jezyk_czestosc_server(input, output, session)
-  jezyk_przestrzen_server(input, output, session)
   jezyk_zbiory_server(input, output, session)
   jezyk_decyzja_server(input, output, session)
   jezyk_cwiczenia_server(input, output, session)

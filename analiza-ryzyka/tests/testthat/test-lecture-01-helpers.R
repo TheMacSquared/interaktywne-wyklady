@@ -38,9 +38,6 @@ testthat::test_that("definicja klasyczna obsługuje wartości brzegowe", {
   testthat::expect_error(env$classical_probability(25, 24))
   testthat::expect_error(env$classical_probability(1, 0))
 
-  grid <- env$build_pallet_grid(6, total = 24, columns = 6)
-  testthat::expect_equal(nrow(grid), 24)
-  testthat::expect_equal(sum(grid$favourable), 6)
 })
 
 testthat::test_that("działania na zdarzeniach zachowują liczebność przestrzeni", {

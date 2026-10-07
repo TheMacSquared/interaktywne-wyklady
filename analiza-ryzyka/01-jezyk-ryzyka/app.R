@@ -62,7 +62,37 @@ ui <- lecture_page(
   lecture_num   = "01",
   lecture_title = "Od zagrożenia do prawdopodobieństwa",
   module_label  = "Analiza ryzyka · Bananpol",
-  chapters      = .chapters
+  chapters      = .chapters,
+  header_extras = tagList(
+    includeScript(file.path(app_dir, "modules", "omega.js")),
+    tags$style(HTML("
+      .lc-om-stage { margin: .6em 0 .2em; }
+      .lc-om .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+      .lc-om-svg { display: block; width: 100%; max-width: 760px; height: auto; margin: 0 auto; }
+      .lc-om-omega { fill: var(--upwr-panel); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+      .lc-om-gap { fill: var(--upwr-panel); }
+      .lc-om-gate { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-om-set { font: italic 700 22px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+      .lc-om-setsub { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-om-set.is-a, .lc-om-setsub.is-a { fill: var(--upwr-accent); }
+      .lc-om-set.is-c, .lc-om-setsub.is-c { fill: var(--upwr-cat-szalwia); }
+      .lc-om .lc-reads { margin: .2em 0 0; }
+      .lc-om-stepper .lc-om-count { min-width: 2.6em; justify-content: center; font-weight: 700; cursor: default; }
+      .lc-om-stepper button { font-size: 1.05em; min-width: 2.4em; justify-content: center; }
+      .lc-om-a { fill: none; stroke: var(--upwr-accent); stroke-width: 2; stroke-dasharray: 6 4; }
+      .lc-om-box { fill: #d8b98a; stroke: #a07c4a; stroke-width: 1; }
+      .lc-om-wood { fill: #a07c4a; }
+      .lc-om-strap { stroke: var(--upwr-ink-soft); stroke-width: 2.5; stroke-linecap: round; }
+      .lc-om-strap.is-bad { stroke: var(--upwr-cat-terakota); }
+      .lc-om-num { font: 600 11px var(--upwr-mono); fill: var(--upwr-ink); }
+      .lc-om-heat { fill: var(--upwr-cat-niebo); }
+      .lc-om-mark { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: 2; }
+      .lc-om-mark.is-final { stroke: var(--upwr-ink); stroke-width: 3; }
+      .lc-om-omega-l { font: italic 700 15px var(--upwr-sans); fill: var(--upwr-ink); }
+      .lc-om-status { margin: .3em 0 0; min-height: 1.5em; color: var(--upwr-ink-soft); }
+      .lc-om-status.is-hit { color: var(--upwr-accent); }
+    "))
+  )
 )
 
 server <- function(input, output, session) {

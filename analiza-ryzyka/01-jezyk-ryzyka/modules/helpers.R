@@ -160,20 +160,6 @@ classical_probability <- function(favourable, total) {
   favourable / total
 }
 
-build_pallet_grid <- function(favourable, total = 24L, columns = 6L) {
-  classical_probability(favourable, total)
-  if (columns < 1 || columns != as.integer(columns)) {
-    stop("columns musi być dodatnią liczbą całkowitą.", call. = FALSE)
-  }
-  ids <- seq_len(total)
-  data.frame(
-    id = ids,
-    column = (ids - 1L) %% columns + 1L,
-    row = (ids - 1L) %/% columns + 1L,
-    favourable = ids <= favourable
-  )
-}
-
 event_set_counts <- function(total, n_a, n_b, overlap) {
   values <- c(total, n_a, n_b, overlap)
   if (any(is.na(values)) || any(values != as.integer(values)) || total <= 0 ||
