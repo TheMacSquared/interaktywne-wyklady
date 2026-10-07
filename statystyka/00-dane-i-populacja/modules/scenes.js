@@ -766,9 +766,21 @@
       return out;
     }
     function trayPos(n) {
-      var cols = n <= 20 ? 10 : n <= 50 ? 17 : 25, sp = Math.min(13, 250 / cols), pts = [];
-      for (var k = 0; k < n; k++) pts.push([48 + (k % cols) * sp, 292 + Math.floor(k / cols) * sp]);
-      return { pts: pts, r: Math.min(4.4, sp * 0.36) };
+      var cols = n <= 20 ? 10 : n <= 50 ? 17 : 25, sp = Math.min(17, 270 / cols), pts = [];
+      for (var k = 0; k < n; k++) pts.push([52 + (k % cols) * sp, 296 + Math.floor(k / cols) * sp]);
+      return { pts: pts, r: sp * 0.46 };
+    }
+    function face(g, cx, cy, r, pass, op) {
+      var q = svg("g", op ? { opacity: op } : {}, g);
+      svg("circle", { cx: cx, cy: cy, r: r, class: "lc-sc-face " + (pass ? "is-pass" : "is-fail") }, q);
+      if (r >= 3.6) {
+        var e = r * 0.34, ey = cy - r * 0.2;
+        svg("circle", { cx: cx - e, cy: ey, r: r * 0.11, class: "lc-sc-face-f" }, q);
+        svg("circle", { cx: cx + e, cy: ey, r: r * 0.11, class: "lc-sc-face-f" }, q);
+        var my = cy + r * (pass ? 0.18 : 0.5), dy = r * (pass ? 0.36 : -0.3);
+        svg("path", { d: "M " + (cx - r * 0.45) + " " + my + " Q " + cx + " " + (my + dy) + " " + (cx + r * 0.45) + " " + my,
+          class: "lc-sc-face-m", fill: "none" }, q);
+      }
     }
     function cls(i, revealed, sel) {
       return "lc-sc-pdot" + (revealed ? (cfg.z[i] ? " is-pass" : " is-fail") : "") + (sel ? " is-sel" : "");
@@ -782,7 +794,7 @@
         if (step >= 2 && outside[i]) {
           svg("circle", { cx: p[0], cy: p[1], r: R, class: "lc-sc-pdot is-out" }, g);
         } else if (isSel[i]) {
-          if (!fly) svg("circle", { cx: p[0], cy: p[1], r: R + 1.8, class: cls(i, true, true) }, g);
+          if (!fly) face(g, p[0], p[1], R + 2.8, cfg.z[i]);
           else svg("circle", { cx: p[0], cy: p[1], r: R, class: cls(i, step >= 4, false), opacity: 0.25 }, g);
         } else {
           svg("circle", { cx: p[0], cy: p[1], r: R, class: cls(i, step >= 4, false), opacity: st.sel && step < 4 ? 0.5 : 1 }, g);
@@ -795,10 +807,10 @@
       else txt = "rzeczywistość: zdało " + Math.round(TRUE_P * 100) + "% (wyniki w USOS)";
       svg("text", { x: 36, y: yb + 12, class: "lc-sc-sub" }, g, txt);
       if (step >= 3) {
-        svg("circle", { cx: 40, cy: yb + 30, r: 3.4, class: "lc-sc-pdot is-pass" }, g);
-        svg("text", { x: 48, y: yb + 34, class: "lc-sc-sub" }, g, "zdał");
-        svg("circle", { cx: 90, cy: yb + 30, r: 3.4, class: "lc-sc-pdot is-fail" }, g);
-        svg("text", { x: 98, y: yb + 34, class: "lc-sc-sub" }, g, "nie zdał");
+        face(g, 42, yb + 29, 6, 1);
+        svg("text", { x: 52, y: yb + 34, class: "lc-sc-sub" }, g, "zdał");
+        face(g, 98, yb + 29, 6, 0);
+        svg("text", { x: 108, y: yb + 34, class: "lc-sc-sub" }, g, "nie zdał");
       }
     }
 
@@ -807,12 +819,11 @@
       var T = trayPos(st.sel.length), k = 0;
       st.sel.forEach(function (i, idx) {
         var p = gp(i), q = T.pts[idx], e = u === undefined ? 1 : ease(u);
-        svg("circle", { cx: p[0] + (q[0] - p[0]) * e, cy: p[1] + (q[1] - p[1]) * e,
-          r: R + (T.r - R) * e, class: cls(i, true, true) }, g);
+        face(g, p[0] + (q[0] - p[0]) * e, p[1] + (q[1] - p[1]) * e, R + 2.8 + (T.r - R - 2.8) * e, cfg.z[i]);
         k += cfg.z[i];
       });
       if (u === undefined || u >= 1) {
-        svg("text", { x: 48, y: 280, class: "lc-sc-sub" }, g,
+        svg("text", { x: 52, y: 280, class: "lc-sc-sub" }, g,
           "próba: n = " + st.sel.length + " · zdało " + k + " z " + st.sel.length);
       }
     }

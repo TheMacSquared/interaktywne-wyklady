@@ -78,3 +78,7 @@
 .lc-sc-bubble { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
 .lc-sc-bubble-t { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
 .lc-sc-phone { fill: var(--upwr-ink); }
+.lc-sc-face.is-pass { fill: var(--upwr-cat-szalwia, #3f8f5f); }
+.lc-sc-face.is-fail { fill: var(--upwr-accent); }
+.lc-sc-face-f { fill: var(--upwr-surface); }
+.lc-sc-face-m { stroke: var(--upwr-surface); stroke-width: 1.1; stroke-linecap: round; }
