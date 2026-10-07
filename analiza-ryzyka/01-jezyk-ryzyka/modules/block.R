@@ -645,7 +645,7 @@ jezyk_block <- list(
                 ),
                 tags$div(
                   tags$h4("Skumulowana częstość"),
-                  lc_plot("ch2_line", ratio = "1.7/1", max_height = "340px")
+                  lc_plot("ch2_line", ratio = "1.3/1", max_height = "340px")
                 )
               ),
               uiOutput("ch2_note"),
