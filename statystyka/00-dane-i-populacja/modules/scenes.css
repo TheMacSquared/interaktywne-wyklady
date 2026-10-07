@@ -30,7 +30,7 @@
 .lc-sc-tea { fill: #b07a45; }
 .lc-sc-steam { stroke: var(--upwr-ink-subtle); stroke-width: 1.6; stroke-linecap: round; opacity: .6; }
 .lc-sc-mark { font: 700 20px var(--upwr-sans); }
-.lc-sc-mark.is-ok { fill: var(--upwr-cat-szalwia); }
+.lc-sc-mark.is-ok { fill: var(--upwr-cat-szalwia, #3f8f5f); }
 .lc-sc-mark.is-no { fill: var(--upwr-accent); }
 .lc-sc-person { fill: var(--upwr-ink-subtle); }
 .lc-sc-person.is-lady { fill: var(--upwr-accent); }
@@ -68,9 +68,13 @@
 
 /* populacja i próba */
 .lc-sc-pdot { fill: var(--upwr-cat-niebo); }
-.lc-sc-pdot.is-work { fill: var(--upwr-single-alt); }
+.lc-sc-pdot.is-pass { fill: var(--upwr-cat-szalwia, #3f8f5f); }
+.lc-sc-pdot.is-fail { fill: var(--upwr-accent); }
 .lc-sc-pdot.is-out { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: .8; }
-.lc-sc-pdot.is-sel { stroke: var(--upwr-accent); stroke-width: 1.6; }
+.lc-sc-pdot.is-sel { stroke: var(--upwr-ink); stroke-width: 1.4; }
 .lc-sc-pbar-bg { fill: var(--upwr-cat-niebo); opacity: .45; }
-.lc-sc-pbar { fill: var(--upwr-single-alt); }
+.lc-sc-pbar { fill: var(--upwr-cat-szalwia, #3f8f5f); }
 .lc-sc-pbar.is-sample { fill: var(--upwr-accent); }
+.lc-sc-bubble { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.lc-sc-bubble-t { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-phone { fill: var(--upwr-ink); }

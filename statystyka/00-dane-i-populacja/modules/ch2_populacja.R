@@ -51,24 +51,24 @@ ch2_ui <- list(
 
     lc_h2("ch2-losowanie", "Próba z populacji"),
 
-    lc_p("Nasz wydział to populacja licząca N = ", lc_fmt(pop_N), " studentów.
-      Na wykresie każda kropka to jedna osoba z operatu, czyli z listy
-      z dziekanatu. Panel losuje z tej listy próbę o wybranej liczebności:
-      każda osoba ma tę samą szansę, że do niej trafi, niezależnie od tego,
-      gdzie stoi na liście. Kolor kropki pokazuje, czy osoba pracuje."),
+    lc_p("Wyobraźmy sobie, że wszyscy ", lc_fmt(pop_N), " studentów wydziału
+      pisało dziś egzamin ze statystyki. Wyniki będą dopiero za tydzień,
+      a Ty chcesz wiedzieć już teraz, ilu z nas zdało. Nie zadzwonisz
+      do wszystkich, więc zadzwonisz do kilkudziesięciu. Na wykresie
+      każda kropka to jedna osoba. Przejdź przez cztery kroki, a na końcu
+      sprawdzimy, jak daleko od prawdy jest to, co usłyszałeś."),
 
     figure_panel(
       label = "Ryc. 2.1",
       width_mode = "text",
-      scene_widget("ch2_populacja", "Od populacji do próby",
-        steps = c("Populacja", "Operat", "Próba", "Miniatura"),
-        labels = c("Losuj próbę", "Losuj próbę", "Losuj próbę", "Losuj próbę"),
-        options = list(list(name = "n", label = "Liczebność próby (n)", from = 3,
+      scene_widget("ch2_populacja", "Kto zdał egzamin ze statystyki?",
+        steps = c("Populacja", "Lista", "Próba", "Rzeczywistość"),
+        labels = c("Zadzwoń do kolegów", "Zadzwoń do kolegów", "Zadzwoń do kolegów", "Zadzwoń do kolegów"),
+        options = list(list(name = "n", label = "Do ilu dzwonisz (n)", from = 3,
                             values = c(20, 50, 200), selected = 50)),
         more = NULL,
-        config = list(kind = "pop", n = 50, rok = faculty$rok, a = as.integer(faculty$akademik),
-                      d = faculty$dojazd, pr = as.integer(faculty$praca),
-                      aria = "Dwa tysiące czterysta kropek reprezentujących studentów, wylosowana próba i jej udziały na tle populacji"))
+        config = list(kind = "pop", n = 50, z = as.integer(faculty$zdal),
+                      aria = "Dwa tysiące czterysta kropek reprezentujących studentów po egzaminie, wylosowana próba i odsetek, który zdał"))
     ),
 
     lc_p("Nawet przy n = 200 próba to tylko ",
@@ -101,16 +101,16 @@ ch2_ui <- list(
 
 ch2_server <- function(input, output, session) {
   scene_texts(input, output, "ch2_populacja", list(
-    tagList("Każda kropka to jeden student wydziału, razem ", tags$code("N", .noWS = "outside"), " = ", lc_fmt(pop_N),
-      ". Lista jest uporządkowana według roku studiów, dlatego u góry widać pierwszy rok, a na dole piąty. Złote kropki to studenci,
-      którzy pracują. Wylosuj próbę i zobacz, kogo wskaże przypadek."),
-    tagList("Prawdziwa lista z dziekanatu rzadko obejmuje wszystkich: ktoś jest na urlopie dziekańskim, ktoś na wymianie.
-      Puste kółka to osoby poza operatem. Próbę losujemy tylko z listy, więc ich w niej nie będzie. Dlatego populację
-      i operat trzeba ustalić, zanim zaczniemy."),
-    tagList("Wylosowane osoby przenoszą się z listy do osobnej tacy: to próba o liczebności ", tags$code("n", .noWS = "outside"),
-      ". Zmień n i losuj kilka razy. Kto trafia do próby, zmienia się za każdym razem."),
-    tagList("Pasek pokazuje, jaki odsetek studentów pracuje albo mieszka w akademiku w całej populacji i w próbie.
-      Próba jest jak miniatura populacji: podobna, ale nie identyczna, i za każdym razem trochę inna.
-      Przy n = 200 podobieństwo jest większe niż przy n = 20.")
+    tagList("Każda kropka to student, który właśnie wyszedł z egzaminu. Wyników jeszcze nie ma, więc nikt nie wie,
+      ilu zdało. Razem jest ", tags$code("N", .noWS = "outside"), " = ", lc_fmt(pop_N), " osób. Zadzwoń do kilku losowych kolegów
+      i zapytaj, jak im poszło."),
+    tagList("Zanim zadzwonisz, potrzebujesz listy numerów. Najlepsza jest lista obecności, ale ktoś był chory,
+      ktoś na wymianie. Puste kółka to osoby poza listą: nie ma ich w operacie, więc nigdy do nich nie zadzwonisz.
+      Losujemy tylko z tego, co mamy."),
+    tagList("Dzwonisz do losowych osób i każda mówi, czy zdała. Zielone to zdali, czerwone to nie. Zmień ",
+      tags$code("n", .noWS = "outside"), " i dzwoń kilka razy. Kto odbierze, zmienia się za każdym razem."),
+    tagList("Wyniki wchodzą do USOS i wiemy, jak było naprawdę. Dolny pasek porównuje rzeczywistość z tym,
+      co usłyszałeś. Z kilkudziesięciu telefonów wyszło zwykle blisko prawdy. Przy ", tags$code("n", .noWS = "outside"),
+      " = 200 jeszcze bliżej, a przy 20 zdarza się spora pomyłka.")
   ))
 }

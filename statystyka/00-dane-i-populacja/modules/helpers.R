@@ -38,6 +38,12 @@ make_faculty_population <- function(N = 2400L, seed = 2026L) {
 
 faculty <- make_faculty_population()
 
+# Wynik egzaminu ze statystyki (rozdz. 2): zdawalność rośnie z rokiem studiów.
+faculty$zdal <- local({
+  set.seed(99)
+  rbinom(nrow(faculty), 1, c(0.52, 0.60, 0.68, 0.76, 0.84)[faculty$rok]) == 1
+})
+
 pop_N     <- nrow(faculty)
 pop_mu    <- mean(faculty$dojazd)          # parametr: średni czas dojazdu
 pop_p     <- mean(faculty$praca)           # parametr: odsetek pracujących

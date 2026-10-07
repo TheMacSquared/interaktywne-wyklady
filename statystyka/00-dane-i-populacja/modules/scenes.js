@@ -742,24 +742,21 @@
   };
 
   // =========================================================================
-  // POP: populacja, operat i próba jako miniatura
+  // POP: kto zdał egzamin ze statystyki — populacja, operat, próba, rzeczywistość
   // =========================================================================
   KINDS.pop = function (cfg, api) {
-    var N = cfg.rok.length, COLS = 80, SP = 7.1, X0 = 36, Y0 = 14, R = 2.3;
-    var st = { n: cfg.n || 50, sel: null, off: null };
+    var N = cfg.z.length, COLS = 80, SP = 7.1, X0 = 36, Y0 = 14, R = 2.3;
+    var st = { n: cfg.n || 50, sel: null };
     var rand = rng(5);
-    // operat: ok. 8% osób nie ma na liście (urlop dziekański, wymiana, zaoczne)
+    // operat: ok. 8% osób nie ma na liście obecności (choroba, wymiana)
     var outside = new Array(N).fill(false);
     for (var i = 0; i < N; i++) outside[i] = rand() < 0.08;
     var inList = [];
     outside.forEach(function (o, i) { if (!o) inList.push(i); });
+    var TRUE_P = cfg.z.reduce(function (a, b) { return a + b; }, 0) / N;
 
     function gp(i) { return [X0 + (i % COLS) * SP, Y0 + Math.floor(i / COLS) * SP]; }
-    function share(arr, idx) {
-      var s = 0; idx.forEach(function (i) { s += arr[i] ? 1 : 0; });
-      return s / idx.length;
-    }
-    function allIdx() { var a = []; for (var i = 0; i < N; i++) a.push(i); return a; }
+    function allIdx() { var a = []; for (var k = 0; k < N; k++) a.push(k); return a; }
     function pick(n, pool) {
       var a = pool.slice(), out = [];
       for (var k = 0; k < n; k++) {
@@ -768,92 +765,104 @@
       }
       return out;
     }
-
     function trayPos(n) {
       var cols = n <= 20 ? 10 : n <= 50 ? 17 : 25, sp = Math.min(13, 250 / cols), pts = [];
-      for (var i = 0; i < n; i++) pts.push([48 + (i % cols) * sp, 292 + Math.floor(i / cols) * sp]);
+      for (var k = 0; k < n; k++) pts.push([48 + (k % cols) * sp, 292 + Math.floor(k / cols) * sp]);
       return { pts: pts, r: Math.min(4.4, sp * 0.36) };
     }
-
-    function dotClass(i, sel) {
-      return "lc-sc-pdot" + (cfg.pr[i] ? " is-work" : "") + (sel ? " is-sel" : "");
+    function cls(i, revealed, sel) {
+      return "lc-sc-pdot" + (revealed ? (cfg.z[i] ? " is-pass" : " is-fail") : "") + (sel ? " is-sel" : "");
     }
 
     function drawGrid(g, step, fly) {
       var isSel = {};
       if (st.sel) st.sel.forEach(function (i) { isSel[i] = 1; });
       for (var i = 0; i < N; i++) {
-        var p = gp(i);
+        var p = gp(i), rev = step >= 4 || (step >= 3 && isSel[i]) || (step < 3 && isSel[i]);
         if (step >= 2 && outside[i]) {
           svg("circle", { cx: p[0], cy: p[1], r: R, class: "lc-sc-pdot is-out" }, g);
         } else if (isSel[i]) {
-          if (!fly) svg("circle", { cx: p[0], cy: p[1], r: R + 1.8, class: dotClass(i, true) }, g);
-          else svg("circle", { cx: p[0], cy: p[1], r: R, class: dotClass(i, false), opacity: 0.25 }, g);
+          if (!fly) svg("circle", { cx: p[0], cy: p[1], r: R + 1.8, class: cls(i, true, true) }, g);
+          else svg("circle", { cx: p[0], cy: p[1], r: R, class: cls(i, step >= 4, false), opacity: 0.25 }, g);
         } else {
-          svg("circle", { cx: p[0], cy: p[1], r: R, class: dotClass(i, false), opacity: st.sel ? 0.5 : 1 }, g);
+          svg("circle", { cx: p[0], cy: p[1], r: R, class: cls(i, step >= 4, false), opacity: st.sel && step < 4 ? 0.5 : 1 }, g);
         }
+        void rev;
       }
-      var yb = Y0 + 30 * SP + 4;
-      if (step === 1) {
-        svg("text", { x: 36, y: yb + 12, class: "lc-sc-sub" }, g,
-          "N = " + N + " · lista uporządkowana według roku studiów: pierwszy rok u góry, piąty na dole");
-      } else {
-        svg("text", { x: 36, y: yb + 12, class: "lc-sc-sub" }, g,
-          "operat: " + inList.length + " osób na liście · puste kółka: poza listą, więc nie mogą trafić do próby");
+      var yb = Y0 + 30 * SP + 4, txt;
+      if (step === 1) txt = "N = " + N + " osób pisało egzamin · kto zdał, tego nikt jeszcze nie wie";
+      else if (step === 2 || step === 3) txt = "lista obecności: " + inList.length + " osób · puste kółka nie są na liście, więc nikt do nich nie zadzwoni";
+      else txt = "rzeczywistość: zdało " + Math.round(TRUE_P * 100) + "% (wyniki w USOS)";
+      svg("text", { x: 36, y: yb + 12, class: "lc-sc-sub" }, g, txt);
+      if (step >= 3) {
+        svg("circle", { cx: 40, cy: yb + 30, r: 3.4, class: "lc-sc-pdot is-pass" }, g);
+        svg("text", { x: 48, y: yb + 34, class: "lc-sc-sub" }, g, "zdał");
+        svg("circle", { cx: 90, cy: yb + 30, r: 3.4, class: "lc-sc-pdot is-fail" }, g);
+        svg("text", { x: 98, y: yb + 34, class: "lc-sc-sub" }, g, "nie zdał");
       }
-      // legenda
-      svg("circle", { cx: 40, cy: yb + 30, r: 3.4, class: "lc-sc-pdot is-work" }, g);
-      svg("text", { x: 48, y: yb + 34, class: "lc-sc-sub" }, g, "pracuje");
-      svg("circle", { cx: 110, cy: yb + 30, r: 3.4, class: "lc-sc-pdot" }, g);
-      svg("text", { x: 118, y: yb + 34, class: "lc-sc-sub" }, g, "nie pracuje");
     }
 
     function drawTray(g, u) {
       if (!st.sel) return;
-      var T = trayPos(st.sel.length);
-      st.sel.forEach(function (i, k) {
-        var p = gp(i), q = T.pts[k], e = u === undefined ? 1 : ease(u);
+      var T = trayPos(st.sel.length), k = 0;
+      st.sel.forEach(function (i, idx) {
+        var p = gp(i), q = T.pts[idx], e = u === undefined ? 1 : ease(u);
         svg("circle", { cx: p[0] + (q[0] - p[0]) * e, cy: p[1] + (q[1] - p[1]) * e,
-          r: R + (T.r - R) * e, class: dotClass(i, true) }, g);
+          r: R + (T.r - R) * e, class: cls(i, true, true) }, g);
+        k += cfg.z[i];
       });
       if (u === undefined || u >= 1) {
-        svg("text", { x: 48, y: 280, class: "lc-sc-sub" }, g, "próba: n = " + st.sel.length);
+        svg("text", { x: 48, y: 280, class: "lc-sc-sub" }, g,
+          "próba: n = " + st.sel.length + " · zdało " + k + " z " + st.sel.length);
       }
     }
 
     function drawBars(g) {
-      var items = [["pracuje zarobkowo", cfg.pr], ["mieszka w akademiku", cfg.a]];
-      var x0 = 340, w = 190, y = 284;
-      svg("text", { x: x0, y: 270, class: "lc-sc-sub" }, g, "udział w populacji i w próbie");
-      items.forEach(function (it, k) {
-        var pop = share(it[1], allIdx()), sam = st.sel ? share(it[1], st.sel) : null;
-        var yy = y + k * 62;
-        svg("text", { x: x0, y: yy + 8, class: "lc-sc-bar-t" }, g, it[0]);
-        [["populacja", pop, 0], ["próba", sam, 1]].forEach(function (b) {
-          var by = yy + 16 + b[2] * 18;
-          svg("rect", { x: x0, y: by, width: w, height: 13, rx: 3, class: "lc-sc-pbar-bg" }, g);
-          if (b[1] !== null) svg("rect", { x: x0, y: by, width: w * b[1], height: 13, rx: 3, class: "lc-sc-pbar" + (b[2] ? " is-sample" : "") }, g);
-          svg("text", { x: x0 + w + 8, y: by + 11, class: "lc-sc-tick is-x" }, g,
-            b[0] + " " + (b[1] === null ? "–" : Math.round(b[1] * 100) + "%"));
-        });
+      var x0 = 330, w = 140, y = 292;
+      var sam = st.sel ? st.sel.reduce(function (a, i) { return a + cfg.z[i]; }, 0) / st.sel.length : null;
+      svg("text", { x: x0, y: y - 10, class: "lc-sc-bar-t" }, g, "odsetek, który zdał");
+      [["rzeczywistość", TRUE_P, 0], ["próba", sam, 1]].forEach(function (b) {
+        var by = y + b[2] * 26;
+        svg("rect", { x: x0, y: by, width: w, height: 16, rx: 3, class: "lc-sc-pbar-bg" }, g);
+        if (b[1] !== null) svg("rect", { x: x0, y: by, width: w * b[1], height: 16, rx: 3, class: "lc-sc-pbar" + (b[2] ? " is-sample" : "") }, g);
+        svg("text", { x: x0 + w + 8, y: by + 13, class: "lc-sc-tick is-x" }, g,
+          b[0] + " " + (b[1] === null ? "–" : Math.round(b[1] * 100) + "%"));
       });
+    }
+
+    var SAY = [
+      ["Wyniki dopiero za tydzień.", "Zdałem czy nie zdałem?!"],
+      ["Kto był chory, tego nie ma", "na liście. Nie zadzwonię."],
+      ["Halo, zdałeś? — Chyba tak!", "Dzwonię dalej."],
+      ["No dobra, zobaczmy, jak bardzo", "się pomyliłem."]
+    ];
+    function drawStudent(g, step) {
+      var say = SAY[Math.min(step, 4) - 1];
+      svg("rect", { x: 318, y: 362, width: 214, height: 46, rx: 10, class: "lc-sc-bubble" }, g);
+      svg("path", { d: "M 532 380 L 548 388 L 532 394 Z", class: "lc-sc-bubble" }, g);
+      svg("text", { x: 330, y: 382, class: "lc-sc-bubble-t" }, g, say[0]);
+      svg("text", { x: 330, y: 399, class: "lc-sc-bubble-t" }, g, say[1]);
+      svg("circle", { cx: 578, cy: 376, r: 10, class: "lc-sc-person" }, g);
+      svg("rect", { x: 566, y: 388, width: 24, height: 22, rx: 8, class: "lc-sc-person" }, g);
+      svg("rect", { x: 592, y: 390, width: 7, height: 12, rx: 2, class: "lc-sc-phone" }, g);
     }
 
     function render(prog, fly) {
       var step = api.step();
       api.stage.textContent = ""; api.low.textContent = "";
       drawGrid(api.stage, step, fly);
+      drawStudent(api.low, step);
       if (step >= 3) {
-        if (!st.sel) {
-          svg("text", { x: 48, y: 300, class: "lc-sc-sub" }, api.low, "Wylosuj próbę, żeby zobaczyć ją w miniaturze.");
-        } else drawTray(api.low, prog);
+        if (!st.sel) svg("text", { x: 48, y: 300, class: "lc-sc-sub" }, api.low, "Zadzwoń do losowych kolegów, żeby zapytać.");
+        else drawTray(api.low, prog);
         if (step >= 4) drawBars(api.low);
       } else if (!st.sel) {
         svg("text", { x: W / 2, y: 330, "text-anchor": "middle", class: "lc-sc-sub" }, api.low,
-          step === 1 ? "Każda kropka to jedna osoba." : "Lista z dziekanatu nie obejmuje wszystkich.");
+          step === 1 ? "Każda kropka to jedna osoba po egzaminie." : "Nie wszyscy są na liście obecności.");
       } else {
+        var k = st.sel.reduce(function (a, i) { return a + cfg.z[i]; }, 0);
         svg("text", { x: W / 2, y: 330, "text-anchor": "middle", class: "lc-sc-read" }, api.low,
-          "wylosowano " + st.sel.length + " osób z " + (step === 1 ? N : inList.length));
+          "zadzwoniłeś do " + st.sel.length + " osób: zdało " + k);
       }
     }
 
@@ -867,7 +876,7 @@
         if (step >= 3) {
           tween(900, function (u) { render(u, true); }, function () { render(); done(); });
         } else {
-          tween(350, function (u) { render(); void u; }, function () { render(); done(); });
+          tween(350, function () { render(); }, function () { render(); done(); });
         }
       },
       many: function (m, done) { this.go(done); void m; }
