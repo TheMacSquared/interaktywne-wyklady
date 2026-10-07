@@ -421,6 +421,31 @@ jezyk_omega_widget <- figure_panel(
   )
 )
 
+# Schemat 1.2: macierz ryzyka 5 × 5 z oboma problemami dyrektora. Przełączniki
+# horyzontu i iloczynu pól działają w przeglądarce (modules/riskmatrix.js).
+jezyk_matrix_widget <- figure_panel(
+  label = "Schemat 1.2",
+  title = "Dwa problemy Bananpolu w macierzy ryzyka",
+  full_width = TRUE,
+  tags$div(class = "lc-rm",
+    lc_toolbar(
+      lc_group("Horyzont",
+        tags$div(class = "lc-seg", role = "group", `aria-label` = "Horyzont",
+          tags$button(type = "button", `data-rm-h` = "shift", `aria-pressed` = "true", "Jedna zmiana"),
+          tags$button(type = "button", `data-rm-h` = "year", `aria-pressed` = "false", "Rok (250 zmian)")
+        )
+      ),
+      lc_group("Numery pól",
+        tags$div(class = "lc-seg", role = "group", `aria-label` = "Numery pól",
+          tags$button(type = "button", `data-rm-prod` = "toggle", `aria-pressed` = "false", "Pokaż iloczyn p · s")
+        )
+      )
+    ),
+    tags$div(class = "lc-rm-stage"),
+    tags$p(class = "lc-rm-status", `aria-live` = "polite")
+  )
+)
+
 jezyk_block <- list(
   id = "jezyk", title = "Język ryzyka",
   chapters = list(
@@ -1367,6 +1392,13 @@ jezyk_block <- list(
                porządkować dyskusję, ale są skalami porządkowymi. Iloczyn numerów pól
                1–5 nie staje się automatycznie ilościową miarą ryzyka. Granice kategorii
                i reguły decyzji muszą być jawne.",
+            "Schemat 1.2 ustawia oba problemy dyrektora w macierzy 5 × 5. Wiersze to
+               kategorie prawdopodobieństwa z jawnymi granicami, kolumny to kategorie
+               skutku. Skutek nie jest jednym polem, tylko zakresem: poślizgnięcie może
+               skończyć się niczym albo złamaniem, kolizja ciężkim urazem albo śmiercią.
+               Przełącz horyzont z jednej zmiany na rok i zobacz, jak oba problemy
+               przesuwają się w górę, choć nic w magazynie się nie zmieniło.",
+            jezyk_matrix_widget,
             "Problem z iloczynem numerów pól łatwo zobaczyć na przykładzie. Zdarzenie
                o częstości „5 — prawie pewne” i skutku „2 — drobny” dostaje 10 punktów,
                tak samo jak zdarzenie o częstości „2 — rzadkie” i skutku „5 —
@@ -1375,6 +1407,24 @@ jezyk_block <- list(
                kategoriami też nie są równe: przejście od „rzadkiego” do „możliwego” może
                oznaczać dziesięciokrotny wzrost prawdopodobieństwa, a od „drobnego” do
                „poważnego” — zupełnie inny rodzaj szkody.",
+            lc_note("Co trzeba uzasadnić",
+              tags$p("Macierz łatwo zbudować, ale jej wynik zależy od pięciu decyzji.
+                Każdą trzeba zapisać i uzasadnić tak samo jak założenia w rachunku."),
+              tags$ol(
+                tags$li(tags$strong("Granice prawdopodobieństwa:"), " liczbowe progi
+                  kategorii, najlepiej równo logarytmiczne, np. każda kategoria
+                  dziesięć razy bardziej prawdopodobna od poprzedniej."),
+                tags$li(tags$strong("Horyzont:"), " na zmianę, na rok czy na 1000 godzin
+                  pracy. Bez horyzontu kategoria prawdopodobieństwa nic nie znaczy."),
+                tags$li(tags$strong("Kategorie skutku:"), " konkretne kryteria, np. dni
+                  zwolnienia, koszt albo trwałe następstwa, a nie same słowa."),
+                tags$li(tags$strong("Wybrany skutek:"), " typowy czy najgorszy
+                  wiarygodny. Ta decyzja przesuwa zdarzenie o kolumnę lub dwie."),
+                tags$li(tags$strong("Reguła priorytetu:"), " które pola są czerwone
+                  i dlaczego. Kolory i progi decyzji to założenie, a nie wynik
+                  rachunku.")
+              )
+            ),
             risk_check("j1_chk_macierz",
               "W macierzy 5 × 5 zdarzenie X ma pole (prawdopodobieństwo 5, skutek 2), a zdarzenie Y — pole (2, 5). Oba dostają iloczyn 10. Co z tego wynika?",
               c(

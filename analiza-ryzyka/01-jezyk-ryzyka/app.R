@@ -65,6 +65,7 @@ ui <- lecture_page(
   chapters      = .chapters,
   header_extras = tagList(
     includeScript(file.path(app_dir, "modules", "omega.js")),
+    includeScript(file.path(app_dir, "modules", "riskmatrix.js")),
     tags$style(HTML("
       .lc-om-stage { margin: .6em 0 .2em; }
       .lc-om .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
@@ -91,6 +92,28 @@ ui <- lecture_page(
       .lc-om-omega-l { font: italic 700 15px var(--upwr-sans); fill: var(--upwr-ink); }
       .lc-om-status { margin: .3em 0 0; min-height: 1.5em; color: var(--upwr-ink-soft); }
       .lc-om-status.is-hit { color: var(--upwr-accent); }
+      .lc-rm .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+      .lc-rm-svg { display: block; width: 100%; max-width: 760px; height: auto; margin: .4em auto 0; }
+      .lc-rm-cell { stroke: var(--upwr-surface); stroke-width: 2; }
+      .lc-rm-cell.z1 { fill: color-mix(in srgb, var(--upwr-cat-szalwia) 30%, var(--upwr-surface)); }
+      .lc-rm-cell.z2 { fill: color-mix(in srgb, var(--upwr-cat-kurkuma) 40%, var(--upwr-surface)); }
+      .lc-rm-cell.z3 { fill: color-mix(in srgb, var(--upwr-cat-bursztyn) 45%, var(--upwr-surface)); }
+      .lc-rm-cell.z4 { fill: color-mix(in srgb, var(--upwr-cat-terakota) 50%, var(--upwr-surface)); }
+      .lc-rm-lab { font: 600 12.5px var(--upwr-sans); fill: var(--upwr-ink); }
+      .lc-rm-range { font: 11px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-rm-axis { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+      .lc-rm-item { transition: transform .6s ease; }
+      .lc-rm-span { stroke: var(--rm-c); stroke-width: 3; stroke-linecap: round; }
+      .lc-rm-dot { fill: var(--rm-c); stroke: var(--upwr-surface); stroke-width: 2.5; }
+      .lc-rm-key { font: 700 14px var(--upwr-sans); fill: var(--upwr-surface); }
+      .lc-rm-name { font: 600 12.5px var(--upwr-sans); fill: var(--rm-c); }
+      .lc-rm-item.is-a { --rm-c: var(--upwr-cat-indygo); }
+      .lc-rm-item.is-b { --rm-c: var(--upwr-ink); }
+      .lc-rm-prod { font: 600 11px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-rm-prod.is-ten { fill: var(--upwr-accent); font-size: 13px; }
+      .lc-rm-ten { fill: none; stroke: var(--upwr-accent); stroke-width: 2.5; stroke-dasharray: 5 3; }
+      .lc-rm-status { margin: .3em 0 0; min-height: 1.5em; color: var(--upwr-ink-soft); }
+      @media (prefers-reduced-motion: reduce) { .lc-rm-item { transition: none; } }
     "))
   )
 )
