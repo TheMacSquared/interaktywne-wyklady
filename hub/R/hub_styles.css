@@ -145,6 +145,9 @@ body {
   background: rgba(245, 240, 230, .88);
 }
 #hub-overlay.is-on { display: flex; }
+
+/* Karta otwarta z zakładki wykładu tylko przechodzi dalej — bez spisu w tle. */
+body.hub-launching .hub-wrap { display: none; }
 #hub-overlay div {
   text-align: center; padding: 26px 34px;
   background: var(--hub-panel); border: 1px solid var(--hub-rule);

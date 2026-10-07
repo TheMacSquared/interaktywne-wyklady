@@ -50,6 +50,14 @@ onStop(function() hub_stop_all())
 # UI
 # ============================================================================
 
+# Nazwa karty przeglądarki dla wykładu. Ten sam wzór liczy .lc_module_link()
+# w <przedmiot>/R/lecture_layout.R — dzięki temu zakładki w pasku wykładu i
+# kafelki huba trafiają do tej samej karty, zamiast otwierać kolejne.
+hub_tab_name <- function(row) {
+  id <- if (is.na(row$lecture_id)) row$folder else row$lecture_id
+  paste0("wyklad_", gsub("[^A-Za-z0-9]", "_", paste(row$subject, id, sep = "/")))
+}
+
 hub_tile <- function(row) {
   chapters_label <- if (is.na(row$chapters)) NULL else {
     span(sprintf("%d %s", row$chapters, hub_plural_chapters(row$chapters)))
@@ -58,6 +66,7 @@ hub_tile <- function(row) {
   div(
     class = "hub-tile",
     `data-key` = row$key,
+    `data-tab` = hub_tab_name(row),
     div(
       class = "hub-tile-top",
       span(class = "hub-num", if (nzchar(row$num)) row$num else "—"),
@@ -131,8 +140,6 @@ ui <- bootstrapPage(
 (function () {
   var hubWindows = {};
 
-  function tabName(key) { return 'wyklad_' + key.replace(/[^a-zA-Z0-9]/g, '_'); }
-
   function showOverlay(title) {
     document.getElementById('hub-overlay-title').textContent = title;
     document.getElementById('hub-overlay').classList.add('is-on');
@@ -157,12 +164,16 @@ ui <- bootstrapPage(
     if ($(e.target).closest('.hub-stop').length) return;
 
     var key = this.dataset.key;
-    var name = tabName(key);
+    var name = this.dataset.tab;
     var known = hubWindows[name];
     var hasTab = !!(known && known.win && !known.win.closed && known.loaded);
 
     var win = null;
     try { win = window.open('', name); } catch (err) { win = null; }
+    // Kartę mógł otworzyć sam wykład (zakładka w jego pasku), wtedy hub jej nie
+    // zna. Wykład działa na innym porcie, więc odczyt adresu rzuca wyjątek —
+    // to znaczy, że karta pokazuje wykład i wystarczy ją przełączyć.
+    if (!hasTab && win) { try { void win.location.href; } catch (err) { hasTab = true; } }
     hubWindows[name] = { win: win, loaded: hasTab };
 
     clearMessage();
@@ -176,9 +187,10 @@ ui <- bootstrapPage(
   $(document).on('click', '.hub-stop', function (e) {
     e.stopPropagation();
     var key = this.dataset.key;
-    var rec = hubWindows[tabName(key)];
+    var name = $(this).closest('.hub-tile')[0].dataset.tab;
+    var rec = hubWindows[name];
     if (rec && rec.win && !rec.win.closed) { try { rec.win.close(); } catch (err) {} }
-    delete hubWindows[tabName(key)];
+    delete hubWindows[name];
     Shiny.setInputValue('hub_stop', { key: key, nonce: Math.random() }, { priority: 'event' });
   });
 
@@ -208,6 +220,25 @@ ui <- bootstrapPage(
       win.focus();
     }
     hubWindows[m.name] = { win: win, loaded: true };
+  });
+
+  // Zakładka w pasku wykładu otwiera hub z ?open=<przedmiot>&lecture=<id>.
+  // Ta karta ma tylko pokazać „Uruchamiam…” i przejść na port wykładu.
+  var launch = new URLSearchParams(window.location.search);
+  if (launch.get('open')) {
+    document.body.classList.add('hub-launching');
+    showOverlay(launch.get('title') || '');
+  }
+
+  Shiny.addCustomMessageHandler('hub_launch', function (m) {
+    if (m.action === 'error') {
+      hideOverlay();
+      document.body.classList.remove('hub-launching');
+      history.replaceState(null, '', window.location.pathname);
+      showMessage('<strong>Nie udało się uruchomić wykładu.</strong><pre>' + m.message + '</pre>');
+      return;
+    }
+    window.location.replace(m.url);
   });
 
   Shiny.addCustomMessageHandler('hub_status', function (m) {
@@ -327,6 +358,28 @@ server <- function(input, output, session) {
       action = action, name = msg$name, url = hub_url_for(entry)
     ))
   })
+
+  # Wejście z zakładki w pasku wykładu: uruchamiamy wykład (albo bierzemy już
+  # działający) i przekierowujemy kartę na jego port.
+  observeEvent(session$clientData$url_search, {
+    query <- parseQueryString(session$clientData$url_search)
+    if (is.null(query$open) || is.null(query$lecture)) return()
+
+    rows <- catalog()
+    row <- rows[rows$subject == query$open & !is.na(rows$lecture_id) &
+                  rows$lecture_id == query$lecture, ]
+    entry <- if (nrow(row) == 0) {
+      simpleError(sprintf("Nie znaleziono wykładu %s/%s.", query$open, query$lecture))
+    } else {
+      tryCatch(hub_start(row$key[[1]], row$dir[[1]], hub_url()), error = function(e) e)
+    }
+
+    if (inherits(entry, "error")) {
+      session$sendCustomMessage("hub_launch", list(action = "error", message = conditionMessage(entry)))
+    } else {
+      session$sendCustomMessage("hub_launch", list(action = "load", url = hub_url_for(entry)))
+    }
+  }, once = TRUE)
 
   observeEvent(input$hub_stop, {
     hub_stop(input$hub_stop$key)

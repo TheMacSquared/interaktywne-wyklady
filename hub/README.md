@@ -41,6 +41,9 @@ w tym samym stanie: suwaki, quizy i zebrane próby zostają na miejscu.
 - **Zatrzymaj** na kafelku — ubija proces jednego wykładu (zwalnia pamięć)
 - **Zatrzymaj wszystkie** — sprząta wszystko bez zamykania huba
 - logo w nagłówku wykładu wraca do spisu (tylko gdy wykład uruchomił hub)
+- zakładki w górnym pasku wykładu przełączają na inne wykłady przedmiotu jak
+  kafelki: niedziałający wykład startuje przez hub (`?open=<przedmiot>&lecture=<id>`)
+  w nowej karcie, działający tylko przełącza kartę — stan zostaje
 
 Zamknięcie huba (Ctrl+C lub zamknięcie okna Terminala) zatrzymuje wszystkie
 wykłady naraz — nie zostają procesy trzymające porty.
