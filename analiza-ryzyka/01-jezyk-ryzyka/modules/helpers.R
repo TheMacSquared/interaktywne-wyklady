@@ -36,13 +36,37 @@ risk_scenario_items <- data.frame(
 # tak samo na każdych zajęciach i dawać się testować.
 risk_scenario_pool_order <- c("injury", "peel", "cleanup", "slip", "traffic")
 
+# Przykład 1.1: druga historia z Bananpolu (wózek przy rampie), ten sam mechanizm.
+risk_rampa_items <- data.frame(
+  id = c("injury", "hit", "barrier", "reversing", "documents"),
+  text = c(
+    "Pracownik doznaje stłuczenia biodra.",
+    "Wózek uderza w pracownika.",
+    "Wyznaczone przejście dla pieszych jest oddzielone barierką od strefy manewrów.",
+    "Wózek widłowy cofa z rampy z ograniczoną widocznością.",
+    "Pracownik sprawdza dokumenty dostawy, stojąc w strefie manewrów."
+  ),
+  correct = c("consequence", "event", "safeguard", "hazard", "exposure"),
+  explanation = c(
+    "Stłuczenie jest następstwem uderzenia. Przy innym przebiegu to samo zdarzenie mogłoby skończyć się złamaniem.",
+    "Uderzenie to obserwowalny wynik, który zaszedł albo nie.",
+    "Barierka oddziela pieszych od wózków, więc działa przed zdarzeniem: usuwa ekspozycję.",
+    "Cofający wózek przy ograniczonej widoczności może spowodować szkodę, ale sam nikogo jeszcze nie skrzywdził.",
+    "Obecność człowieka w strefie manewrów to kontakt z zagrożeniem. Bez niej kolizja z pieszym nie jest możliwa."
+  ),
+  stringsAsFactors = FALSE
+)
+
+# Kolejność kart w puli przykładu 1.1 — ta sama co w dawnej liście a)–e).
+risk_rampa_pool_order <- c("injury", "hit", "barrier", "reversing", "documents")
+
 # Mapa z komponentu lc_drop_match() (kod_pola = id_karty) na format oczekiwany
 # przez score_risk_classification() (id_karty = kod_pola). Nieprzypisane karty
 # dostają "".
-assignment_to_answers <- function(assignment) {
+assignment_to_answers <- function(assignment, items = risk_scenario_items) {
   answers <- stats::setNames(
-    rep("", length(risk_scenario_items$id)),
-    risk_scenario_items$id
+    rep("", length(items$id)),
+    items$id
   )
   if (length(assignment) == 0 || is.null(names(assignment))) {
     return(answers)
@@ -58,14 +82,14 @@ assignment_to_answers <- function(assignment) {
   answers
 }
 
-score_risk_classification <- function(answers) {
-  expected_ids <- risk_scenario_items$id
+score_risk_classification <- function(answers, items = risk_scenario_items) {
+  expected_ids <- items$id
   if (is.null(names(answers)) || !all(expected_ids %in% names(answers))) {
     stop("Odpowiedzi muszą być nazwane identyfikatorami wszystkich elementów.",
          call. = FALSE)
   }
   selected <- unname(answers[expected_ids])
-  correct <- selected == risk_scenario_items$correct
+  correct <- selected == items$correct
   correct[is.na(correct)] <- FALSE
   list(
     correct = correct,

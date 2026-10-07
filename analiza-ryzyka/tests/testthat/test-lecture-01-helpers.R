@@ -90,3 +90,18 @@ testthat::test_that("przypisania z lc_drop_match przekładają się na odpowiedz
   testthat::expect_equal(unname(partial[["slip"]]), "")
   testthat::expect_equal(env$score_risk_classification(partial)$score, 1)
 })
+
+testthat::test_that("przykład 1.1 (rampa) korzysta z tej samej klasyfikacji", {
+  env <- load_lecture_helpers()
+  items <- env$risk_rampa_items
+  testthat::expect_setequal(items$correct, names(env$risk_term_labels))
+  testthat::expect_setequal(env$risk_rampa_pool_order, items$id)
+
+  full <- as.list(stats::setNames(items$id, items$correct))
+  answers <- env$assignment_to_answers(full, items)
+  testthat::expect_equal(env$score_risk_classification(answers, items)$score, 5)
+
+  full[["event"]] <- ""
+  answers <- env$assignment_to_answers(full, items)
+  testthat::expect_equal(env$score_risk_classification(answers, items)$score, 4)
+})

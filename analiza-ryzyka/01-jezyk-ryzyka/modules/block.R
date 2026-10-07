@@ -488,30 +488,28 @@ jezyk_block <- list(
                złamanie nadgarstka to dwie różne rzeczy, bo ten sam upadek może skończyć
                się siniakiem albo niczym. Gdy te role się zlewają, prawdopodobieństwo
                upadku zaczyna udawać miarę dotkliwości — a nią nie jest.",
-            risk_example("1.1", "Ta sama analiza przy rampie",
-              problem = list(
-                "Przypisz role z definicji 1.1 elementom drugiej historii z Bananpolu.",
-                risk_parts(
-                  "Pracownik doznaje stłuczenia biodra.",
-                  "Wózek uderza w pracownika.",
-                  "Wyznaczone przejście dla pieszych jest oddzielone barierką od strefy manewrów.",
-                  "Wózek widłowy cofa z rampy z ograniczoną widocznością.",
-                  "Pracownik sprawdza dokumenty dostawy, stojąc w strefie manewrów."
+            figure_panel(
+              label = "Przykład 1.1",
+              title = "Ta sama analiza przy rampie",
+              full_width = TRUE,
+              tags$p("Przypisz role z definicji 1.1 elementom drugiej historii z Bananpolu."),
+              lc_drop_match(
+                input_id = "ch1_assign_rampa",
+                items = risk_rampa_items[
+                  match(risk_rampa_pool_order, risk_rampa_items$id),
+                  c("id", "text")
+                ],
+                zones = risk_term_labels,
+                colors = c(
+                  upwr_cat[["terakota"]],
+                  upwr_cat[["bursztyn"]],
+                  upwr_accent,
+                  upwr_cat[["wrzos"]],
+                  upwr_cat[["szalwia"]]
                 )
               ),
-              steps = list(
-                list("Stłuczenie biodra jest następstwem uderzenia — ", tags$strong("skutek"),
-                  ". Przy innym przebiegu to samo zdarzenie mogłoby skończyć się złamaniem."),
-                list("Uderzenie to obserwowalny wynik, który zaszedł albo nie — ",
-                  tags$strong("zdarzenie"), "."),
-                list("Barierka oddziela pieszych od wózków, więc działa przed zdarzeniem: usuwa ",
-                  "ekspozycję — to ", tags$strong("zabezpieczenie"), "."),
-                list("Cofający wózek przy ograniczonej widoczności może spowodować szkodę, ",
-                  "ale sam nikogo jeszcze nie skrzywdził — to ", tags$strong("zagrożenie"), "."),
-                list("Obecność człowieka w strefie manewrów to kontakt z zagrożeniem — ",
-                  tags$strong("ekspozycja"), ". Bez niej kolizja z pieszym nie jest możliwa.")
-              ),
-              steps_type = "a"
+              lc_action("ch1_check_rampa", "Sprawdź klasyfikację", variant = "solid"),
+              uiOutput("ch1_feedback_rampa")
             ),
             risk_check("j1_chk_role",
               "Posadzka przy myjni skrzynek jest mokra przez całą zmianę. Jaką rolę pełni ten fakt w łańcuchu z definicji 1.1?",
@@ -1514,47 +1512,52 @@ jezyk_sytuacja_server <- function(input, output, session) {
     )
   })
 
-  checked <- reactiveVal(FALSE)
+  # Klasyfikacja kart do ról z definicji 1.1: Ćwiczenie 1 i Przykład 1.1.
+  classification_feedback <- function(assign_id, check_id, items, ok_text) {
+    checked <- reactiveVal(FALSE)
+    observeEvent(input[[check_id]], checked(TRUE))
 
-  observeEvent(input$ch1_check, {
-    checked(TRUE)
-  })
+    renderUI({
+      req(checked())
 
-  output$ch1_feedback <- renderUI({
-    req(checked())
+      answers <- assignment_to_answers(input[[assign_id]], items)
+      result <- score_risk_classification(answers, items)
 
-    answers <- assignment_to_answers(input$ch1_assign)
-    result <- score_risk_classification(answers)
+      details <- lapply(seq_len(nrow(items)), function(i) {
+        selected <- answers[[items$id[[i]]]]
+        correct_code <- items$correct[[i]]
+        is_correct <- result$correct[[i]]
+        verdict <- if (is_correct) {
+          "Dobrze rozpoznane. "
+        } else if (nzchar(selected)) {
+          paste0("Trafiło do pola ", risk_term_labels[[selected]], ". ")
+        } else {
+          "Nie trafiło do żadnego pola. "
+        }
 
-    details <- lapply(seq_len(nrow(risk_scenario_items)), function(i) {
-      selected <- answers[[risk_scenario_items$id[[i]]]]
-      correct_code <- risk_scenario_items$correct[[i]]
-      is_correct <- result$correct[[i]]
-      verdict <- if (is_correct) {
-        "Dobrze rozpoznane. "
-      } else if (nzchar(selected)) {
-        paste0("Trafiło do pola ", risk_term_labels[[selected]], ". ")
-      } else {
-        "Nie trafiło do żadnego pola. "
-      }
+        tags$li(
+          tags$strong(paste0(risk_term_labels[[correct_code]], ": ")),
+          items$text[[i]], " ", verdict,
+          items$explanation[[i]]
+        )
+      })
 
-      tags$li(
-        tags$strong(paste0(risk_term_labels[[correct_code]], ": ")),
-        risk_scenario_items$text[[i]], " ", verdict,
-        risk_scenario_items$explanation[[i]]
+      lc_status(
+        lc_verdict(tags$strong(sprintf("Wynik: %d/%d.", result$score, result$total)), type = if (result$score == result$total) "ok" else "warning"),
+        if (result$score == result$total) {
+          ok_text
+        } else {
+          " Sprawdź różnicę między źródłem szkody, kontaktem, zdarzeniem i następstwem."
+        },
+        tags$ul(details)
       )
     })
+  }
 
-    lc_status(
-      lc_verdict(tags$strong(sprintf("Wynik: %d/%d.", result$score, result$total)), type = if (result$score == result$total) "ok" else "warning"),
-      if (result$score == result$total) {
-        " Historia jest uporządkowana — można teraz zdefiniować zdarzenie do obliczeń."
-      } else {
-        " Sprawdź różnicę między źródłem szkody, kontaktem, zdarzeniem i następstwem."
-      },
-      tags$ul(details)
-    )
-  })
+  output$ch1_feedback <- classification_feedback("ch1_assign", "ch1_check", risk_scenario_items,
+    " Historia jest uporządkowana — można teraz zdefiniować zdarzenie do obliczeń.")
+  output$ch1_feedback_rampa <- classification_feedback("ch1_assign_rampa", "ch1_check_rampa",
+    risk_rampa_items, " Ten sam łańcuch opisuje zupełnie inną historię.")
 }
 
 jezyk_czestosc_server <- function(input, output, session) {
