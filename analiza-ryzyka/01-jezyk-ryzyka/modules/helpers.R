@@ -36,7 +36,8 @@ risk_scenario_items <- data.frame(
 # tak samo na każdych zajęciach i dawać się testować.
 risk_scenario_pool_order <- c("injury", "peel", "cleanup", "slip", "traffic")
 
-# Przykład 1.1: druga historia z Bananpolu (wózek przy rampie), ten sam mechanizm.
+# Ćwiczenie 1.2: druga historia z Bananpolu (wózek przy rampie). Zdania są stałe,
+# a studenci przeciągają do nich nazwy ról.
 risk_rampa_items <- data.frame(
   id = c("injury", "hit", "barrier", "reversing", "documents"),
   text = c(
@@ -57,7 +58,7 @@ risk_rampa_items <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Kolejność kart w puli przykładu 1.1 — ta sama co w dawnej liście a)–e).
+# Kolejność zdań ćwiczenia 1.2 — ta sama co w dawnej liście a)–e) przykładu 1.1.
 risk_rampa_pool_order <- c("injury", "hit", "barrier", "reversing", "documents")
 
 # Mapa z komponentu lc_drop_match() (kod_pola = id_karty) na format oczekiwany
@@ -75,6 +76,23 @@ assignment_to_answers <- function(assignment, items = risk_scenario_items) {
   for (term in names(assignment)) {
     item_id <- as.character(assignment[[term]])
     if (length(item_id) != 1 || !nzchar(item_id)) next
+    if (!item_id %in% names(answers)) next
+    if (!term %in% names(risk_term_labels)) next
+    answers[[item_id]] <- term
+  }
+  answers
+}
+
+# Wariant „wiersze” (ćwiczenie 1.2): pola to zdania, karty to role, więc mapa
+# z lc_drop_match() ma postać id_zdania = kod_roli. Puste pola dostają "".
+rows_assignment_to_answers <- function(assignment, items) {
+  answers <- stats::setNames(rep("", length(items$id)), items$id)
+  if (length(assignment) == 0 || is.null(names(assignment))) {
+    return(answers)
+  }
+  for (item_id in names(assignment)) {
+    term <- as.character(assignment[[item_id]])
+    if (length(term) != 1 || !nzchar(term)) next
     if (!item_id %in% names(answers)) next
     if (!term %in% names(risk_term_labels)) next
     answers[[item_id]] <- term

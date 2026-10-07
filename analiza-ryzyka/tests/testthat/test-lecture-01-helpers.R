@@ -91,17 +91,21 @@ testthat::test_that("przypisania z lc_drop_match przekładają się na odpowiedz
   testthat::expect_equal(env$score_risk_classification(partial)$score, 1)
 })
 
-testthat::test_that("przykład 1.1 (rampa) korzysta z tej samej klasyfikacji", {
+testthat::test_that("ćwiczenie 1.2 (rampa): role przeciągane do stałych zdań", {
   env <- load_lecture_helpers()
   items <- env$risk_rampa_items
   testthat::expect_setequal(items$correct, names(env$risk_term_labels))
   testthat::expect_setequal(env$risk_rampa_pool_order, items$id)
 
-  full <- as.list(stats::setNames(items$id, items$correct))
-  answers <- env$assignment_to_answers(full, items)
+  # Mapa z lc_drop_match: id_zdania = kod_roli.
+  full <- as.list(stats::setNames(items$correct, items$id))
+  answers <- env$rows_assignment_to_answers(full, items)
   testthat::expect_equal(env$score_risk_classification(answers, items)$score, 5)
 
-  full[["event"]] <- ""
-  answers <- env$assignment_to_answers(full, items)
+  full[["hit"]] <- ""
+  answers <- env$rows_assignment_to_answers(full, items)
   testthat::expect_equal(env$score_risk_classification(answers, items)$score, 4)
+  testthat::expect_equal(
+    env$score_risk_classification(env$rows_assignment_to_answers(NULL, items), items)$score, 0
+  )
 })

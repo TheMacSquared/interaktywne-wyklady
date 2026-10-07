@@ -676,7 +676,8 @@ lc_drop_match <- function(input_id, items, zones, colors = NULL,
                             "Bez myszy: Enter podnosi kartę, strzałki wybierają pole,",
                             "Enter upuszcza, Escape anuluje, Delete odsyła kartę do puli."
                           ),
-                          reset_label = "Zacznij od nowa") {
+                          reset_label = "Zacznij od nowa",
+                          actions = NULL, class = NULL) {
   stopifnot(all(c("id", "text") %in% names(items)), length(zones) > 0)
   if (is.null(colors)) colors <- rep(upwr_accent, length(zones))
   stopifnot(length(colors) == length(zones))
@@ -705,17 +706,20 @@ lc_drop_match <- function(input_id, items, zones, colors = NULL,
   })
 
   tags$div(
-    class = "lc-dm",
+    class = paste(c("lc-dm", class), collapse = " "),
     `data-lc-dm-input` = input_id,
     tags$p(class = "lc-dm-hint", hint),
     tags$div(class = "lc-dm-pool", cards),
     tags$div(class = "lc-dm-zones", fields),
     tags$div(class = "lc-dm-status", role = "status", `aria-live` = "polite"),
-    tags$button(
-      type = "button",
-      class = "btn lc-btn-outline lc-dm-reset",
-      `data-lc-dm-reset` = "true",
-      reset_label
+    tags$div(class = "lc-dm-actions",
+      tags$button(
+        type = "button",
+        class = "btn lc-btn-outline lc-dm-reset",
+        `data-lc-dm-reset` = "true",
+        reset_label
+      ),
+      actions
     )
   )
 }

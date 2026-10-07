@@ -1863,11 +1863,34 @@ mjx-container mjx-text {
   margin: 10px 0 12px;
 }
 
-.lc-dm-reset { margin-right: 8px; }
+.lc-dm-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+/* Wariant „wiersze”: stałe zdania jako pola, karty z nazwami do przeciągnięcia */
+.lc-dm.is-rows .lc-dm-pool { min-height: 52px; }
+.lc-dm.is-rows .lc-dm-zones { display: flex; flex-direction: column; gap: 8px; }
+.lc-dm.is-rows .lc-dm-zone {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 13em);
+  align-items: center;
+  gap: 14px;
+  border-top-width: 1px;
+  border-left: 3px solid var(--lc-dm-color);
+}
+.lc-dm.is-rows .lc-dm-zone-label {
+  font-family: var(--upwr-sans);
+  font-size: calc(15px * var(--lc-font-scale));
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.45;
+  color: var(--upwr-ink);
+}
+.lc-dm.is-rows .lc-dm-slot { min-height: 44px; }
 
 @media (max-width: 620px) {
   .lc-dm-zones { grid-template-columns: 1fr; }
   .lc-dm-card { width: 100%; }
+  .lc-dm.is-rows .lc-dm-zone { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

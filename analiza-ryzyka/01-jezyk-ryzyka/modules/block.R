@@ -460,7 +460,7 @@ jezyk_block <- list(
               źródło szkody, kontakt z nim, to, co zaszło, następstwo, czy element
               przerywający łańcuch? Dopiero potem przeciągnij kartę i sprawdź wynik."),
             figure_panel(
-              label = "Ćwiczenie 1",
+              label = "Ćwiczenie 1.1",
               title = "Od zagrożenia do zabezpieczenia",
               full_width = TRUE,
               lc_drop_match(
@@ -476,9 +476,9 @@ jezyk_block <- list(
                   upwr_accent,
                   upwr_cat[["wrzos"]],
                   upwr_cat[["szalwia"]]
-                )
+                ),
+                actions = lc_action("ch1_check", "Sprawdź klasyfikację", variant = "solid")
               ),
-              lc_action("ch1_check", "Sprawdź klasyfikację", variant = "solid"),
               uiOutput("ch1_feedback")
             ),
             "Najczęstsze pomyłki dotyczą dwóch par. Skórka bywa brana za zdarzenie,
@@ -489,26 +489,29 @@ jezyk_block <- list(
                się siniakiem albo niczym. Gdy te role się zlewają, prawdopodobieństwo
                upadku zaczyna udawać miarę dotkliwości — a nią nie jest.",
             figure_panel(
-              label = "Przykład 1.1",
+              label = "Ćwiczenie 1.2",
               title = "Ta sama analiza przy rampie",
               full_width = TRUE,
-              tags$p("Przypisz role z definicji 1.1 elementom drugiej historii z Bananpolu."),
+              tags$p("Druga historia z Bananpolu: wózek widłowy przy rampie. Przypisz
+                każdemu zdaniu rolę z definicji 1.1."),
               lc_drop_match(
                 input_id = "ch1_assign_rampa",
-                items = risk_rampa_items[
-                  match(risk_rampa_pool_order, risk_rampa_items$id),
-                  c("id", "text")
-                ],
-                zones = risk_term_labels,
-                colors = c(
-                  upwr_cat[["terakota"]],
-                  upwr_cat[["bursztyn"]],
-                  upwr_accent,
-                  upwr_cat[["wrzos"]],
-                  upwr_cat[["szalwia"]]
-                )
+                items = data.frame(id = names(risk_term_labels),
+                                   text = unname(risk_term_labels),
+                                   stringsAsFactors = FALSE),
+                zones = stats::setNames(
+                  risk_rampa_items$text[match(risk_rampa_pool_order, risk_rampa_items$id)],
+                  risk_rampa_pool_order
+                ),
+                colors = rep(upwr_reference, length(risk_rampa_pool_order)),
+                hint = paste(
+                  "Przeciągnij nazwę roli do zdania, które ją opisuje.",
+                  "Bez myszy: Enter podnosi kartę, strzałki wybierają zdanie,",
+                  "Enter upuszcza, Escape anuluje, Delete odsyła kartę do puli."
+                ),
+                class = "is-rows",
+                actions = lc_action("ch1_check_rampa", "Sprawdź klasyfikację", variant = "solid")
               ),
-              lc_action("ch1_check_rampa", "Sprawdź klasyfikację", variant = "solid"),
               uiOutput("ch1_feedback_rampa")
             ),
             risk_check("j1_chk_role",
@@ -1512,15 +1515,20 @@ jezyk_sytuacja_server <- function(input, output, session) {
     )
   })
 
-  # Klasyfikacja kart do ról z definicji 1.1: Ćwiczenie 1 i Przykład 1.1.
-  classification_feedback <- function(assign_id, check_id, items, ok_text) {
+  # Klasyfikacja do ról z definicji 1.1. Ćwiczenie 1.1: karty-zdania do pól ról;
+  # ćwiczenie 1.2 (rows = TRUE): karty-role do pól zdań.
+  classification_feedback <- function(assign_id, check_id, items, ok_text, rows = FALSE) {
     checked <- reactiveVal(FALSE)
     observeEvent(input[[check_id]], checked(TRUE))
 
     renderUI({
       req(checked())
 
-      answers <- assignment_to_answers(input[[assign_id]], items)
+      answers <- if (rows) {
+        rows_assignment_to_answers(input[[assign_id]], items)
+      } else {
+        assignment_to_answers(input[[assign_id]], items)
+      }
       result <- score_risk_classification(answers, items)
 
       details <- lapply(seq_len(nrow(items)), function(i) {
@@ -1530,9 +1538,10 @@ jezyk_sytuacja_server <- function(input, output, session) {
         verdict <- if (is_correct) {
           "Dobrze rozpoznane. "
         } else if (nzchar(selected)) {
-          paste0("Trafiło do pola ", risk_term_labels[[selected]], ". ")
+          paste0(if (rows) "Przypisana rola: " else "Trafiło do pola ",
+                 risk_term_labels[[selected]], ". ")
         } else {
-          "Nie trafiło do żadnego pola. "
+          if (rows) "Bez przypisanej roli. " else "Nie trafiło do żadnego pola. "
         }
 
         tags$li(
@@ -1557,7 +1566,7 @@ jezyk_sytuacja_server <- function(input, output, session) {
   output$ch1_feedback <- classification_feedback("ch1_assign", "ch1_check", risk_scenario_items,
     " Historia jest uporządkowana — można teraz zdefiniować zdarzenie do obliczeń.")
   output$ch1_feedback_rampa <- classification_feedback("ch1_assign_rampa", "ch1_check_rampa",
-    risk_rampa_items, " Ten sam łańcuch opisuje zupełnie inną historię.")
+    risk_rampa_items, " Ten sam łańcuch opisuje zupełnie inną historię.", rows = TRUE)
 }
 
 jezyk_czestosc_server <- function(input, output, session) {
