@@ -188,57 +188,76 @@ ch2_ui <- list(
     # ========================================================================
     lc_h2("ch2-kolory", "Manipulacja kolorami"),
 
-    lc_p("Nawet poprawnie dobrany wykres słupkowy można odczytać na różne
-      sposoby, zależnie od kolorów. Kolor nie zmienia wysokości słupków, ale
-      decyduje, na który z nich najpierw padnie wzrok. Panel pokazuje liczebności
-      kierunków z ankiety w kilku paletach: neutralnej, trzech wyróżniających
-      wybrane kategorie i czterech standardowych paletach."),
+    lc_p("Nawet poprawnie dobrany wykres można odczytać na różne sposoby,
+      zależnie od kolorów. Kolor nie zmienia danych, ale decyduje, na co
+      najpierw padnie wzrok. Panel pokazuje te same dane w kilku paletach na
+      dwóch wykresach: słupkowym dla kategorii (kierunki studiów) i mapie
+      gęstości dla danych ciągłych (wzrost i waga). Dobra paleta musi
+      sprawdzić się w obu rolach, a to dwa różne zadania."),
 
     figure_panel(
       label = "Ryc. 2.4",
       title = "Jak kolory zmieniają percepcję danych",
       lc_toolbar(
         selectInput("ch2_color_palette", "Paleta kolorów",
-            choices = c(
+          choices = list(
+            "Kolor jako komunikat" = c(
               "Neutralna (szara)" = "neutral",
-              "Ciepła (podkreśla Informatykę)" = "warm",
-              "Zimna (podkreśla Biologię)" = "cool",
-              "Stronnicza" = "biased",
-              "— Palety standardowe —" = "sep1",
+              "Wyróżnienie jednej kategorii" = "highlight"
+            ),
+            "Palety standardowe" = c(
               "Viridis" = "viridis",
-              "Set2 (ColorBrewer)" = "set2",
-              "Okabe-Ito (colorblind-safe)" = "okabe_ito",
-              "Tableau 10" = "tableau"
-            ),
-            selected = "neutral"
-            ),
-            lc_action("ch2_color_random", "Losowe kolory", icon = "shuffle", variant = "outline")
-            ),
-            lc_plot("ch2_color_plot", max_height = "380px")
+              "ColorBrewer (Set2 / YlGnBu)" = "brewer",
+              "Okabe-Ito (dla daltonistów)" = "okabe_ito",
+              "jUPWR (jamovi)" = "jupwr"
+            )
+          ),
+          selected = "neutral"
+        ),
+        lc_action("ch2_color_random", "Losowe kolory", icon = "shuffle", variant = "outline")
+      ),
+      lc_plots(pair = TRUE,
+        tags$div(
+          tags$h4("Kategorie: kierunek studiów"),
+          lc_plot("ch2_color_plot")
+        ),
+        tags$div(
+          tags$h4("Dane ciągłe: wzrost × waga"),
+          lc_plot("ch2_color_heat")
+        )
+      ),
+      uiOutput("ch2_color_caption")
     ),
 
     lc_p("Dane są za każdym razem te same: 60 osób na Informatyce, 51 na Biologii,
       49 na Ekonomii i 40 na Psychologii. Przy palecie neutralnej wszystkie
-      słupki mają jednakową wagę i porównujemy tylko ich wysokość. Paleta ciepła
-      maluje Informatykę intensywnym burgundem, a pozostałe kierunki jasnym
-      beżem, więc wykres zaczyna opowiadać o Informatyce. Paleta zimna robi to
-      samo z Biologią. Paleta stronnicza nadaje własne kolory tylko
-      najliczniejszej i najmniej licznej kategorii, a resztę zostawia szarą,
-      więc wzrok od razu porównuje skrajności. Intensywne barwy przyciągają
-      uwagę, a jasne i szare spychają kategorie na margines. Wybór kolorów nie
-      jest więc neutralny i powinien wynikać z tego, co wykres ma pokazać."),
+      słupki mają jednakową wagę i porównujemy tylko ich wysokość. Wyróżnienie
+      maluje Informatykę burgundem, a pozostałe kierunki jasnym beżem, więc
+      wykres zaczyna opowiadać o Informatyce. Na mapie gęstości ten sam zabieg
+      wyciąga na pierwszy plan tylko najgęstszy obszar, a resztę rozkładu
+      spycha w tło. Wybór kolorów nie jest więc neutralny i powinien wynikać
+      z tego, co wykres ma pokazać."),
 
-    lc_p("Gdy wszystkie kategorie mają być równorzędne, warto sięgnąć po palety
-      zaprojektowane z myślą o czytelności. Viridis jest percepcyjnie
-      równomierna (równe różnice wartości dają równe różnice w odbiorze
-      koloru), pozostaje czytelna w skali szarości i dla osób z zaburzeniami
-      widzenia barw; w wielu programach statystycznych jest domyślna.
-      Okabe-Ito zaprojektowano specjalnie z myślą o daltonistach, którzy
-      stanowią około 8% mężczyzn, i jest częstym wyborem w publikacjach
-      naukowych. Palety ColorBrewer (Set2, Set3, Paired i inne) opracowała
-      kartografka Cynthia Brewer. Tableau 10 to
-      standard w narzędziach analityki biznesowej, z wyrównaną jasnością
-      i kontrastem kolorów."),
+    lc_p("Kategorie i dane ciągłe potrzebują innych palet. Kategorie wymagają
+      kolorów wyraźnie różnych, ale bez porządku, bo Biologia nie jest
+      „większa” od Ekonomii. Dane ciągłe wymagają skali, w której jasność
+      rośnie razem z wartością, żeby od razu było widać, gdzie jest więcej.
+      Przycisk losowych kolorów psuje obie zasady: słupki dostają barwy
+      o przypadkowej wadze, a mapa skalę, w której nie da się odczytać,
+      co jest wysoko, a co nisko."),
+
+    lc_p("Dlatego standardowe palety mają zwykle dwie wersje. Viridis jest
+      percepcyjnie równomierna (równe różnice wartości dają równe różnice
+      w odbiorze koloru), pozostaje czytelna w skali szarości i dla osób
+      z zaburzeniami widzenia barw; w wielu programach statystycznych jest
+      domyślna. Palety ColorBrewer opracowała kartografka Cynthia Brewer:
+      Set2 to zestaw dla kategorii, a YlGnBu skala od żółci do granatu dla
+      wartości ciągłych. Okabe-Ito zaprojektowano z myślą o daltonistach,
+      którzy stanowią około 8% mężczyzn; ma tylko wersję dla kategorii, więc
+      mapę rysujemy odcieniami jej niebieskiego. Paleta jUPWR pochodzi
+      z jamovi, którego używamy na zajęciach: kategorie rozdziela jasnością
+      i osią żółć–błękit zamiast pary czerwień–zieleń, a dla wartości
+      ciągłych ma ciepłą skalę od jasnego różu do ciemnego burgundu."),
 
     # ========================================================================
     # WIDGET 4b: Cross-tabulation
@@ -597,75 +616,97 @@ ch2_server <- function(input, output, session) {
     ch2_random_colors(NULL)
   })
 
-  zoom_plot_server("ch2_color_plot", reactive({
-    df <- data.frame(kierunek = student_data$kierunek)
-    df_counts <- as.data.frame(table(df$kierunek))
-    names(df_counts) <- c("Kierunek", "n")
-
+  # Każda paleta ma wersję dla kategorii (cat, 4 kolory w kolejności
+  # poziomów kierunku) i dla danych ciągłych (seq, kotwice od niskich
+  # do wysokich wartości; opcjonalnie seq_at — położenie kotwic 0..1).
+  ch2_palette <- reactive({
     levels_order <- levels(student_data$kierunek)
-    if (is.null(levels_order)) levels_order <- unique(as.character(student_data$kierunek))
-
     rand_cols <- ch2_random_colors()
-    palette_choice <- input$ch2_color_palette
 
     if (!is.null(rand_cols)) {
-      fill_colors <- setNames(rand_cols, levels_order)
-      subtitle <- "Losowa paleta kolorów"
-    } else if (palette_choice == "neutral") {
-      fill_colors <- setNames(rep(upwr_reference, 4), levels_order)
-      subtitle <- "Neutralna — wszystkie kategorie równe"
-    } else if (palette_choice == "warm") {
-      fill_colors <- setNames(
-        ifelse(levels_order == "Informatyka", upwr_accent, upwr_rule),
-        levels_order
-      )
-      subtitle <- "Ciepła paleta — uwaga przyciągana do Informatyki"
-    } else if (palette_choice == "cool") {
-      fill_colors <- setNames(
-        ifelse(levels_order == "Biologia", upwr_cat["indygo"], upwr_rule),
-        levels_order
-      )
-      subtitle <- "Zimna paleta — uwaga przyciągana do Biologii"
-    } else if (palette_choice == "biased") {
-      biggest <- df_counts$Kierunek[which.max(df_counts$n)]
-      smallest <- df_counts$Kierunek[which.min(df_counts$n)]
-      cols <- setNames(rep(upwr_reference, 4), levels_order)
-      cols[as.character(biggest)]  <- upwr_accent
-      cols[as.character(smallest)] <- upwr_secondary
-      fill_colors <- cols
-      subtitle <- paste0("Stronnicza — wyróżnione skrajności: ", biggest,
-                         " i ", smallest)
-    } else if (palette_choice == "viridis") {
-      fill_colors <- setNames(
-        c("#440154", "#31688e", "#35b779", "#fde725")[1:length(levels_order)],
-        levels_order)
-      subtitle <- "Viridis — percepcyjnie równomierna, bezpieczna dla daltonistów"
-    } else if (palette_choice == "set2") {
-      fill_colors <- setNames(
-        c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")[1:length(levels_order)],
-        levels_order)
-      subtitle <- "Set2 (ColorBrewer) — popularny domyślny wybór"
-    } else if (palette_choice == "okabe_ito") {
-      fill_colors <- setNames(
-        c("#E69F00", "#56B4E9", "#009E73", "#CC79A7")[1:length(levels_order)],
-        levels_order)
-      subtitle <- "Okabe-Ito — zaprojektowana specjalnie dla daltonistów"
-    } else if (palette_choice == "tableau") {
-      fill_colors <- setNames(
-        c("#4e79a7", "#f28e2b", "#e15759", "#76b7b2")[1:length(levels_order)],
-        levels_order)
-      subtitle <- "Tableau 10 — standard w wizualizacji danych"
-    } else {
-      fill_colors <- setNames(rep(upwr_reference, length(levels_order)), levels_order)
-      subtitle <- ""
+      return(list(
+        cat = rand_cols, seq = rand_cols[1:3],
+        note = "Losowe kolory: słupki dostają przypadkowe wagi, a mapa skalę
+          bez porządku jasności."
+      ))
     }
+
+    switch(input$ch2_color_palette,
+      neutral = list(
+        cat = rep(upwr_reference, 4),
+        seq = c("#f6f3ee", upwr_rule, upwr_reference, "#3d3833"),
+        note = "Neutralna: wszystkie kategorie równe, gęstość tylko jasnością szarości."
+      ),
+      highlight = list(
+        cat = ifelse(levels_order == "Informatyka", upwr_accent, upwr_rule),
+        seq = c("#f6f3ee", upwr_rule, upwr_rule, upwr_accent),
+        seq_at = c(0, 0.5, 0.8, 1),
+        note = "Wyróżnienie: uwaga przyciągana do Informatyki i do najgęstszego
+          obszaru mapy."
+      ),
+      viridis = list(
+        cat = c("#440154", "#31688e", "#35b779", "#fde725"),
+        seq = c("#440154", "#3b528b", "#21918c", "#5ec962", "#fde725"),
+        note = "Viridis: percepcyjnie równomierna, czytelna w skali szarości
+          i dla daltonistów."
+      ),
+      brewer = list(
+        cat = c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3"),
+        seq = c("#ffffd9", "#c7e9b4", "#41b6c4", "#225ea8", "#081d58"),
+        note = "ColorBrewer: Set2 dla kategorii, YlGnBu dla wartości ciągłych."
+      ),
+      okabe_ito = list(
+        cat = c("#E69F00", "#56B4E9", "#009E73", "#CC79A7"),
+        seq = c("#eef5fa", "#0072B2"),
+        note = "Okabe-Ito: paleta tylko dla kategorii; mapa w odcieniach jej
+          niebieskiego."
+      ),
+      # Motyw „jUPWR jasny” z jamovi-upwr (jmvcore/R/themes.R): main dla
+      # kategorii, ciepla (odwrócona: od jasnych do ciemnych) dla gęstości.
+      jupwr = list(
+        cat = c("#9c3b4a", "#d99a5b", "#3f6f9e", "#7a9b8e"),
+        seq = rev(c("#6e2632", "#9c3b4a", "#c85264", "#d99a5b", "#eec79a", "#fbe3e5")),
+        note = "jUPWR: paleta wykresów z jamovi używanego na zajęciach."
+      )
+    )
+  })
+
+  output$ch2_color_caption <- renderUI({
+    lc_caption(ch2_palette()$note)
+  })
+
+  zoom_plot_server("ch2_color_plot", reactive({
+    df_counts <- as.data.frame(table(student_data$kierunek))
+    names(df_counts) <- c("Kierunek", "n")
+    fill_colors <- setNames(ch2_palette()$cat, levels(student_data$kierunek))
 
     ggplot(df_counts, aes(x = Kierunek, y = n, fill = Kierunek)) +
       geom_col(color = "white", width = 0.7) +
       geom_text(aes(label = n), vjust = -0.5, size = 5) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       scale_fill_manual(values = fill_colors, guide = "none") +
+      scale_x_discrete(labels = c("Biologia" = "Biol.", "Ekonomia" = "Ekon.",
+                                  "Informatyka" = "Inf.", "Psychologia" = "Psych.")) +
       labs(x = "Kierunek", y = "Liczebność")
+  }))
+
+  zoom_plot_server("ch2_color_heat", reactive({
+    pal <- ch2_palette()
+
+    ggplot(student_data, aes(x = wzrost, y = waga)) +
+      stat_density_2d(aes(fill = after_stat(density)), geom = "raster",
+                      contour = FALSE, n = 120) +
+      scale_fill_gradientn(
+        colours = pal$seq, values = pal$seq_at,
+        breaks = function(lim) lim, labels = c("mało", "dużo"),
+        name = "Liczba osób",
+        guide = guide_colourbar(title.position = "top", title.hjust = 0.5,
+                                barwidth = unit(9, "lines"), barheight = unit(0.6, "lines"))
+      ) +
+      scale_x_continuous(expand = c(0, 0)) +
+      scale_y_continuous(expand = c(0, 0)) +
+      labs(x = "Wzrost (cm)", y = "Waga (kg)") +
+      theme(legend.position = "bottom")
   }))
 
 

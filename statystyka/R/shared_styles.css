@@ -1916,6 +1916,8 @@ mjx-container mjx-text {
 .lc-plot .shiny-plot-output{width:100%!important;height:100%!important}
 .lc-plots{display:grid;grid-template-columns:minmax(0,1fr);gap:1.2em}
 @container lc-fig (min-width:760px){.lc-plots{grid-template-columns:repeat(2,minmax(0,1fr))}.lc-plots .lc-plot{--lc-plot-ratio:1.6/1}}
+/* Para wykresów do porównania obok siebie już w kolumnie tekstu. */
+@container lc-fig (min-width:560px){.lc-plots.is-pair{grid-template-columns:repeat(2,minmax(0,1fr))}.lc-plots.is-pair .lc-plot{--lc-plot-ratio:1.15/1}}
 
 /* Porównanie długości: widget bez wykresu */
 .lc-cmp{display:grid;gap:.9em;margin-top:.4em}

@@ -29,16 +29,16 @@
     c = c("Jeden student wydziału z jego rokiem, dojazdem i pracą.",
           "Osoba albo pojedynczy przejazd: zależy od pytania.",
           "Czas dojazdu w minutach.",
-          "Wszyscy studenci wydziału, N = 2400.",
-          "50 osób wylosowanych z wykazu dziekanatu.",
-          "Wykaz studentów z dziekanatu.",
-          "μ: średni czas dojazdu wszystkich studentów.",
-          "x̄: średni czas dojazdu w próbie.",
-          "p̂ = 0.34 w jednej próbie, 0.42 w następnej.",
-          "Ankieta w stołówce akademika zaniża średni czas dojazdu."),
+          "Wszyscy studenci, którzy pisali egzamin, N = 2400.",
+          "50 losowych kolegów, do których zadzwoniłeś.",
+          "Lista obecności na egzaminie.",
+          "p: odsetek wszystkich studentów, którzy zdali.",
+          "p̂: odsetek zdających w wywołanej grupce.",
+          "p̂ = 0.64 w jednej grupce, 0.72 w następnej.",
+          "Ankieta w bibliotece zawyża odsetek zdających."),
     stringsAsFactors = FALSE
   ),
-  c("Pojęcie", "Co to jest", "Przykład z wydziału")
+  c("Pojęcie", "Co to jest", "Przykład")
 )
 
 .ch6_notation_table <- .ch6_cheat_table(
@@ -56,7 +56,7 @@
     a = c("Losowanie proste", "Losowanie warstwowe", "Próba wygodna"),
     b = c("Każda jednostka z operatu ma tę samą szansę.",
           "Losowanie osobno w każdej warstwie, proporcjonalnie do jej wielkości.",
-          "Badamy tych, do których łatwo dotrzeć, albo tych, którzy sami się zgłosili."),
+          "Badamy tych, do których łatwo dotrzeć (np. siedzących w bibliotece), albo tych, którzy sami się zgłosili."),
     c = c("Brak obciążenia; rozrzut maleje z n.",
           "Brak obciążenia; proporcje warstw dokładne; mniejszy rozrzut, gdy warstwy się różnią.",
           "Zwykle obciążona; większe n zwęża rozrzut wokół złej wartości."),

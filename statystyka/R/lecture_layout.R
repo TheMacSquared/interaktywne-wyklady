@@ -1115,8 +1115,9 @@ lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL, max_height = NUL
 }
 
 # Dwa wykresy obok siebie od 760 px kontenera, pod sobą na węższym.
-lc_plots <- function(...) {
-  tags$div(class = "lc-plots", ...)
+# pair = TRUE: obok siebie już od 560 px (para do bezpośredniego porównania).
+lc_plots <- function(..., pair = FALSE) {
+  tags$div(class = paste(c("lc-plots", if (isTRUE(pair)) "is-pair"), collapse = " "), ...)
 }
 
 # Pusty stan wykresu lub tabeli: tekst w przerywanej ramce.

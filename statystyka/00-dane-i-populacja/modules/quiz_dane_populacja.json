@@ -58,11 +58,11 @@
     },
     {
       "id": 8,
-      "scenario": "Agronom chce poznać średni plon pszenicy w województwie i losuje gospodarstwa z rejestru.",
-      "question": "Czym jest rejestr gospodarstw?",
+      "scenario": "Student chce wiedzieć, ilu kolegów zdało egzamin, i dzwoni do osób wylosowanych z listy obecności. Kto był chory, nie jest na liście.",
+      "question": "Czym jest lista obecności?",
       "options": ["Operatem losowania", "Próbą", "Parametrem", "Zmienną"],
       "correct": 1,
-      "explanation": "Rejestr to lista jednostek, z której losujemy próbę, czyli operat losowania. Gospodarstwo spoza rejestru nie może trafić do próby."
+      "explanation": "Lista obecności to wykaz jednostek, z którego losujemy próbę, czyli operat losowania. Osoba spoza listy nie może trafić do próby."
     },
     {
       "id": 9,
@@ -90,17 +90,17 @@
     },
     {
       "id": 12,
-      "scenario": "Badaczka mierzy ciśnienie krwi 80 losowo wybranych pracowników dużej firmy. Średnia w próbie wynosi 128 mmHg.",
-      "question": "Jak oznaczymy liczbę 128 mmHg?",
-      "options": ["x̄", "μ", "σ", "p"],
+      "scenario": "Z drzwi z napisem EGZAMIN wywołano losową grupkę 50 osób. Egzamin zdały 34 z nich, czyli 68%.",
+      "question": "Jak oznaczymy liczbę 0.68?",
+      "options": ["p̂", "p", "μ", "x̄"],
       "correct": 1,
-      "explanation": "Średnią z próby oznaczamy x̄. Symbol μ jest zarezerwowany dla średniej w populacji."
+      "explanation": "Odsetek policzony z próby oznaczamy p̂. Symbol p jest zarezerwowany dla odsetka w całej populacji."
     },
     {
       "id": 13,
-      "scenario": "Badaczka mierzy ciśnienie krwi 80 losowo wybranych pracowników dużej firmy. Średnia w próbie wynosi 128 mmHg.",
-      "question": "Co się stanie, jeśli wylosuje nową próbę 80 pracowników?",
-      "options": ["Średnia będzie prawdopodobnie trochę inna", "Średnia na pewno wyniesie 128 mmHg", "Zmieni się średnie ciśnienie w populacji", "Średnia będzie na pewno wyższa"],
+      "scenario": "Z drzwi z napisem EGZAMIN wywołano losową grupkę 25 osób i zdało 17 z nich (68%). Wywołujemy drugą, równie liczną grupkę.",
+      "question": "Co się najpewniej stanie z odsetkiem zdających w drugiej grupce?",
+      "options": ["Będzie trochę inny niż 68%", "Wyniesie dokładnie 68%", "Zmieni się odsetek zdających w całej populacji", "Będzie na pewno wyższy"],
       "correct": 1,
       "explanation": "Statystyka zmienia się od próby do próby (zmienność próbkowa). Parametr populacji pozostaje ten sam."
     },
@@ -138,11 +138,11 @@
     },
     {
       "id": 18,
-      "scenario": "Biolog chce oszacować odsetek zakażonych kleszczy w parku. Zbiera kleszcze tylko wzdłuż głównej alei, bo tam najłatwiej je znaleźć.",
-      "question": "Jak nazwiemy taką próbę?",
-      "options": ["Próbą wygodną", "Losowaniem prostym", "Losowaniem warstwowym", "Badaniem pełnym"],
+      "scenario": "Ankieter pyta o wynik egzaminu wyłącznie osoby siedzące w bibliotece, bo tam najłatwiej je znaleźć. Osoby z biblioteki zdają częściej niż reszta.",
+      "question": "Jak nazwiemy taką próbę i w którą stronę przesunie się odsetek zdających?",
+      "options": ["Próba wygodna; odsetek wyjdzie zawyżony", "Próba wygodna; odsetek wyjdzie zaniżony", "Losowanie proste; wynik będzie nieobciążony", "Losowanie warstwowe; wynik będzie nieobciążony"],
       "correct": 1,
-      "explanation": "Próbę dobrano według łatwości dostępu, a nie losowo. Kleszcze przy alei mogą różnić się od tych w głębi parku."
+      "explanation": "Próbę dobrano według łatwości dostępu, a nie losowo. Ci, którzy siedzą w bibliotece, zdali częściej, więc wynik jest zawyżony, a większe n tego nie naprawi."
     },
     {
       "id": 19,
