@@ -772,13 +772,48 @@ jezyk_block <- list(
            ładunku. Przed losowaniem chce wiedzieć, jak duża jest szansa, że trafi na
            paletę z uszkodzonym zabezpieczeniem, jeśli w dostawie jest ich sześć.
            Tym razem nie potrzebujemy rejestru z poprzednich miesięcy: odpowiedź
-           wynika z samej konstrukcji losowania. Żeby ją zapisać porządnie,
-           potrzebujemy trzech pojęć — doświadczenia, przestrzeni i zdarzenia."
+           wynika z samej konstrukcji losowania. Zaczniemy od samego losowania na
+           placu, a nazwy pojęć i definicje dopiszemy, kiedy będzie już widać, co
+           opisują."
       ),
       sections = list(
         list(
-          id = "przestrzen", title = "Wyniki i zdarzenia",
+          id = "plac", title = "Losujemy paletę do kontroli",
           body = list(
+            "Wszystkie palety na placu to wyniki, które mogą wypaść w losowaniu.
+               Ten zbiór oznaczamy grecką literą Ω (omega): tutaj to 24 palety.
+               Palety z uszkodzonym zabezpieczeniem tworzą mniejszy zbiór, który
+               nazwiemy zdarzeniem A. Paleta, którą wskaże losowanie, to jeden wynik,
+               oznaczany małą literą ω. Jeśli ω leży wewnątrz obrysu A, mówimy, że
+               zdarzenie A zaszło; jeśli poza nim, A nie zaszło. Palety spoza A
+               tworzą dopełnienie Aᶜ.",
+            risk_try("wylosuj kilka palet i sprawdź, kiedy A zachodzi. Potem dołóż
+              kilkaset losowań i porównaj częstość A z ilorazem 6/24. Zmień liczbę
+              uszkodzonych palet przyciskami − i +, zejdź do 0 i wejdź na 24. Na
+              koniec przełącz sposób wyboru na „na oko”."),
+            jezyk_omega_widget,
+            "Sześć z 24 palet jest uszkodzonych, a losowanie żadnej nie wyróżnia,
+               więc szansa trafienia na uszkodzoną to 6/24 = 0.25. To samo pokazują
+               powtórzenia: przy wielu losowaniach częstość zdarzenia A układa się
+               przy 0.25, tak jak częstość poślizgnięć w rozdziale 02 układała się przy
+               modelowym P. Pozostałe 18 palet tworzy dopełnienie Aᶜ z szansą 0.75, a
+               obie szanse sumują się do 1, bo każda paleta jest albo w A, albo w Aᶜ.",
+            "Skrajne ustawienia też mają sens. Przy zerze uszkodzonych palet A jest
+               zbiorem pustym i nigdy nie zachodzi, więc jego szansa to 0. Przy 24
+               paletach A obejmuje cały plac i zachodzi przy każdym losowaniu, więc jego
+               szansa to 1.",
+            "Przy wyborze „na oko” inspektor częściej bierze palety stojące przy
+               bramie, a tam akurat stoją uszkodzone. Liczby 6 i 24 się nie zmieniają,
+               a częstość odjeżdża daleko od 0.25. Iloraz „ile sprzyjających przez ile
+               wszystkich” działa tylko wtedy, gdy każdy wynik ma tę samą szansę."
+          )
+        ),
+        list(
+          id = "przestrzen", title = "Od placu do definicji",
+          body = list(
+            "Wszystko, co widać na placu, ma w rachunku prawdopodobieństwa stałe nazwy.
+               Definicje poniżej zapisują to samo, tylko ogólnie, dla dowolnego
+               losowania.",
             risk_definition("1.3", "Doświadczenie losowe i przestrzeń zdarzeń elementarnych", c(
               "Doświadczenie losowe to procedura, którą można (przynajmniej w myśli)
                powtarzać w tych samych warunkach i której wyniku nie znamy z góry.
@@ -884,9 +919,9 @@ jezyk_block <- list(
                 narrow = "cards"
               )
             ),
-            "Z definicji klasycznej wynikają trzy podstawowe własności. Możesz je
-               sprawdzić w ćwiczeniu 3 poniżej: ustaw 0 palet sprzyjających (zdarzenie
-               niemożliwe), potem 24 (zdarzenie pewne).",
+            "Z definicji klasycznej wynikają trzy podstawowe własności. Widzieliśmy je
+               już w ćwiczeniu 3: przy zerze uszkodzonych palet A było zdarzeniem
+               niemożliwym, a przy 24 zdarzeniem pewnym.",
             risk_formula(
               "P(\\Omega)=1,\\qquad P(\\emptyset)=0,\\qquad 0\\le P(A)\\le 1",
               num = "1.3"
@@ -907,33 +942,6 @@ jezyk_block <- list(
                jedności, błąd jest gdzieś wcześniej: w liczniku, w mianowniku albo w
                tym, że dodano coś dwa razy. Ten ostatni przypadek zobaczymy w następnym
                rozdziale na diagramie Venna."
-          )
-        ),
-        list(
-          id = "paletki", title = "Zbuduj zdarzenie na siatce palet",
-          body = list(
-            "Plac z paletami to przestrzeń Ω, obrys wokół palet z zerwaną taśmą to
-               zdarzenie A, a pozostałe palety tworzą dopełnienie Aᶜ. Przyciskami − i +
-               zmieniasz liczbę uszkodzonych palet, a losowanie pokazuje wynik ω i to,
-               czy zdarzenie A zaszło.",
-            risk_try("ustaw 6 palet i odczytaj P(A) oraz P(Aᶜ). Potem zejdź do 0 i wejdź
-              na 24 i zobacz, co dzieje się z obrysem A. Na koniec wylosuj kilkaset palet
-              i porównaj częstość A z ilorazem |A|/|Ω|, a potem przełącz sposób wyboru
-              na „na oko”."),
-            jezyk_omega_widget,
-            "Przy sześciu uszkodzonych paletach P(A) = 6/24 = 0.25, a pozostałe 18
-               palet tworzy dopełnienie Aᶜ o prawdopodobieństwie 0.75. Przy zerze
-               zdarzenie A staje się zbiorem pustym, a przy 24 całą przestrzenią; obie
-               skrajności to własności (1.3). Niezależnie od liczby uszkodzonych palet
-               P(A) i P(Aᶜ) sumują się do 1, bo każda paleta należy dokładnie do jednego
-               z dwóch zbiorów. Tę obserwację zapiszemy jako wzór (1.4) w następnym
-               rozdziale.",
-            "Losowanie łączy ten iloraz z rozdziałem 02. Przy wielu wyborach częstość
-               zdarzenia A zbliża się do |A|/|Ω|, bo każda paleta ma tę samą szansę.
-               Przy wyborze „na oko” inspektor częściej bierze palety stojące przy
-               bramie, a tam akurat stoją uszkodzone. Liczby 6 i 24 się nie zmieniają,
-               a częstość odjeżdża daleko od 0.25: iloraz z definicji 1.5 opisuje
-               tylko losowanie, w którym wyniki są jednakowo możliwe."
           )
         ),
         list(
