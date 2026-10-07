@@ -74,3 +74,12 @@
 .lc-sc-pbar-bg { fill: var(--upwr-cat-niebo); opacity: .45; }
 .lc-sc-pbar { fill: var(--upwr-single-alt); }
 .lc-sc-pbar.is-sample { fill: var(--upwr-accent); }
+
+/* opis i wniosek */
+.lc-sc-frame { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.lc-sc-arrow { stroke: var(--upwr-ink-subtle); stroke-width: 2; }
+.lc-sc-ci { stroke: var(--upwr-cat-niebo); stroke-linecap: round; opacity: .8; }
+.lc-sc-ci.is-last { stroke: var(--upwr-ink-soft); opacity: 1; }
+.lc-sc-ci.is-miss { stroke: var(--upwr-accent); opacity: .9; }
+.lc-sc-cidot { fill: var(--upwr-ink-soft); }
+.lc-sc-cidot.is-miss { fill: var(--upwr-accent); }

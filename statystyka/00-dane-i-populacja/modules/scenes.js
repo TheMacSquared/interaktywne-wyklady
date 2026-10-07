@@ -875,6 +875,132 @@
   };
 
   // =========================================================================
+  // INFER: opis próby a wniosek o populacji
+  // =========================================================================
+  KINDS.infer = function (cfg, api) {
+    var N = cfg.pr.length, P = 0, i0;
+    for (i0 = 0; i0 < N; i0++) P += cfg.pr[i0];
+    P /= N;
+    var AX0 = 50, AX1 = 600, AY = 392, TOP = 186;
+    var st = { n: cfg.n || 50, draws: [], hit: 0, last: null };
+    var mini = [];
+    (function () {
+      for (var i = 0; i < N; i++) mini.push([452 + (i % 80) * 2.3, 26 + Math.floor(i / 80) * 2.3]);
+    })();
+
+    function ax(v) { return AX0 + (AX1 - AX0) * v; }
+    function wilson(k, n) {
+      var z = 1.96, ph = k / n, d = 1 + z * z / n;
+      var c = (ph + z * z / (2 * n)) / d, h = z * Math.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n)) / d;
+      return [Math.max(0, c - h), Math.min(1, c + h)];
+    }
+    function draw() {
+      var n = st.n, pool = [], i;
+      for (i = 0; i < N; i++) pool.push(i);
+      var vals = [], k = 0;
+      for (i = 0; i < n; i++) {
+        var j = i + Math.floor(Math.random() * (N - i)), t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+        vals.push(cfg.pr[pool[i]]); k += cfg.pr[pool[i]];
+      }
+      var ci = wilson(k, n);
+      return { vals: vals, k: k, n: n, ph: k / n, lo: ci[0], hi: ci[1], hit: ci[0] <= P && P <= ci[1] };
+    }
+
+    function frame(g, d, upto) {
+      var n = d.n, cols = n <= 50 ? 10 : 20, rows = Math.ceil(n / cols);
+      var s = Math.min(20, 220 / cols, 130 / rows), x0 = 38, y0 = 34;
+      svg("rect", { x: 22, y: 14, width: cols * s + 32, height: rows * s + 40, rx: 8, class: "lc-sc-frame" }, g);
+      for (var i = 0; i < Math.min(n, upto === undefined ? n : upto); i++) {
+        svg("circle", { cx: x0 + (i % cols) * s + s / 2, cy: y0 + Math.floor(i / cols) * s + s / 2, r: s * 0.36,
+          class: "lc-sc-pdot" + (d.vals[i] ? " is-work" : "") }, g);
+      }
+      svg("text", { x: 22, y: rows * s + 74, class: "lc-sc-sub" }, g, "próba: n = " + n);
+    }
+
+    function drawAxis(g, step) {
+      svg("line", { x1: AX0, x2: AX1, y1: AY, y2: AY, class: "lc-sc-axis" }, g);
+      [0, 0.2, 0.4, 0.6, 0.8, 1].forEach(function (t) {
+        svg("line", { x1: ax(t), x2: ax(t), y1: AY, y2: AY + 5, class: "lc-sc-axis" }, g);
+        svg("text", { x: ax(t), y: AY + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, fmt(t, 1));
+      });
+      svg("text", { x: (AX0 + AX1) / 2, y: AY + 38, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
+        "odsetek pracujących");
+      if (step >= 4) {
+        svg("line", { x1: ax(P), x2: ax(P), y1: TOP - 6, y2: AY, class: "lc-sc-param" }, g);
+        svg("text", { x: ax(P) + 6, y: TOP - 8, class: "lc-sc-param-t" }, g, "p = " + fmt(P, 2));
+      }
+    }
+
+    function drawRange(g, d, y, hi, big) {
+      var miss = !d.hit, cls = "lc-sc-ci" + (hi ? " is-last" : "") + (miss && api.step() >= 4 ? " is-miss" : "");
+      svg("line", { x1: ax(d.lo), x2: ax(d.hi), y1: y, y2: y, class: cls, "stroke-width": big ? 5 : 3 }, g);
+      svg("circle", { cx: ax(d.ph), cy: y, r: big ? 6 : 3.4, class: "lc-sc-cidot" + (miss && api.step() >= 4 ? " is-miss" : "") }, g);
+    }
+
+    function render(upto) {
+      var step = api.step(), g = api.stage, l = api.low;
+      g.textContent = ""; l.textContent = "";
+      var d = st.last;
+      if (!d) {
+        svg("text", { x: W / 2, y: 120, "text-anchor": "middle", class: "lc-sc-sub" }, g, "Wylosuj próbę, żeby zacząć.");
+        drawAxis(l, step);
+        return;
+      }
+      frame(g, d, upto);
+      var done = upto === undefined;
+      if (done) {
+        svg("text", { x: 272, y: 54, class: "lc-sc-read" }, g, d.k + " z " + d.n);
+        svg("text", { x: 272, y: 78, class: "lc-sc-read" }, g, "pracuje");
+        svg("text", { x: 272, y: 106, class: "lc-sc-read is-plain" }, g, "p̂ = " + fmt(d.ph, 2));
+        if (step === 1) svg("text", { x: 272, y: 132, class: "lc-sc-sub" }, g, "opis: dotyczy tylko tych osób");
+      }
+      if (step >= 2 && done) {
+        // populacja w miniaturze
+        mini.forEach(function (m, i) {
+          svg("circle", { cx: m[0], cy: m[1], r: 0.95, class: "lc-sc-pdot" + (step >= 4 && cfg.pr[i] ? " is-work" : ""), opacity: step >= 4 ? 0.9 : 0.35 }, g);
+        });
+        svg("text", { x: 452, y: 112, class: "lc-sc-sub" }, g,
+          "wydział, N = " + N + (step >= 4 ? "" : " · p = ?"));
+        svg("path", { d: "M 400 60 L 440 60", class: "lc-sc-arrow", fill: "none" }, g);
+      }
+      drawAxis(l, step);
+      if (step === 1) {
+        svg("circle", { cx: ax(d.ph), cy: 300, r: 7, class: "lc-sc-cidot" }, l);
+        svg("text", { x: ax(d.ph), y: 280, "text-anchor": "middle", class: "lc-sc-read is-plain" }, l, "p̂");
+      } else if (step === 2) {
+        drawRange(l, d, 300, true, true);
+        svg("text", { x: (ax(d.lo) + ax(d.hi)) / 2, y: 276, "text-anchor": "middle", class: "lc-sc-read is-plain" }, l,
+          "wniosek: p od " + fmt(d.lo, 2) + " do " + fmt(d.hi, 2));
+      } else {
+        var rows = st.draws.slice(-30), gap = Math.min(14, (AY - TOP - 14) / Math.max(rows.length, 6));
+        rows.forEach(function (r, i) { drawRange(l, r, TOP + 8 + i * gap, i === rows.length - 1, false); });
+        svg("text", { x: AX1, y: TOP - 26, "text-anchor": "end", class: "lc-sc-n" + (step >= 4 ? " is-hit" : "") }, l,
+          step >= 4 ? "zakres obejmuje p: " + st.hit + " z " + st.draws.length +
+            " (" + fmt(100 * st.hit / Math.max(1, st.draws.length), 0) + "%)" : "prób: " + st.draws.length);
+      }
+    }
+
+    function push(d) { st.draws.push(d); if (d.hit) st.hit++; st.last = d; }
+
+    return {
+      render: function () { render(); },
+      reset: function () { st.draws = []; st.hit = 0; st.last = null; render(); },
+      opt: function (name, v) { if (name === "n") { st.n = Number(v); this.reset(); } },
+      go: function (done) {
+        var d = draw();
+        st.last = d;
+        tween(600, function (u) { render(u >= 1 ? undefined : Math.ceil(u * d.n)); }, function () {
+          push(d); render(); done();
+        });
+      },
+      many: function (m, done) {
+        for (var i = 0; i < m; i++) push(draw());
+        render(); done();
+      }
+    };
+  };
+
+  // =========================================================================
   // widget
   // =========================================================================
   function init(root) {
