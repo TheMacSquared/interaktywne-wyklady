@@ -1,0 +1,56 @@
+.lc-sc-svg { display: block; width: 100%; height: auto; }
+.lc-sc-axis { stroke: var(--upwr-ink-subtle); }
+.lc-sc-grid { stroke: var(--upwr-rule-soft); }
+.lc-sc-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-sub { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+.lc-sc-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-n.is-hit { fill: var(--upwr-accent); font-weight: 600; }
+.lc-sc-big { font: 700 54px var(--upwr-serif); fill: var(--upwr-ink-subtle); opacity: .6; }
+.lc-sc-read { font: 700 20px var(--upwr-mono); fill: var(--upwr-accent); }
+.lc-sc-read.is-plain { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-log { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-log.is-x { fill: var(--upwr-ink); font-weight: 700; }
+
+/* worek i kulki */
+.lc-sc-sack { fill: #cdb98f; stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.lc-sc-sack-top { fill: #b8a278; stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.lc-sc-rope { stroke: var(--upwr-ink-subtle); stroke-width: 3; stroke-linecap: round; }
+.lc-sc-jar { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 2; }
+.lc-sc-ball { fill: var(--upwr-cat-niebo); stroke: var(--upwr-surface); stroke-width: 1; }
+.lc-sc-ball.is-hit { fill: var(--upwr-accent); }
+.lc-sc-token { fill: var(--upwr-accent); opacity: .85; stroke: var(--upwr-surface); stroke-width: 1; }
+.lc-sc-param { stroke: var(--upwr-ink); stroke-width: 2; stroke-dasharray: 5 4; }
+.lc-sc-param-t { font: 700 14px var(--upwr-mono); fill: var(--upwr-ink); }
+
+/* herbata */
+.lc-sc-cup { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.8; }
+.lc-sc-cup-handle { stroke: var(--upwr-ink-soft); stroke-width: 1.8; }
+.lc-sc-saucer { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.lc-sc-tea { fill: #b07a45; }
+.lc-sc-steam { stroke: var(--upwr-ink-subtle); stroke-width: 1.6; stroke-linecap: round; opacity: .6; }
+.lc-sc-mark { font: 700 20px var(--upwr-sans); }
+.lc-sc-mark.is-ok { fill: var(--upwr-cat-szalwia); }
+.lc-sc-mark.is-no { fill: var(--upwr-accent); }
+.lc-sc-person { fill: var(--upwr-ink-subtle); }
+.lc-sc-person.is-lady { fill: var(--upwr-accent); }
+.lc-sc-bow { fill: var(--upwr-single-alt); }
+.lc-sc-bar { fill: var(--upwr-ink-subtle); opacity: .55; }
+.lc-sc-bar.is-hit { fill: var(--upwr-accent); opacity: .85; }
+.lc-sc-theory { fill: var(--upwr-surface); stroke: var(--upwr-ink); stroke-width: 2; }
+
+/* latarka */
+.lc-sc-dot { fill: var(--upwr-cat-niebo); opacity: .55; }
+.lc-sc-dot.is-dorm { fill: var(--upwr-cat-indygo); opacity: .7; }
+.lc-sc-dot.is-sel { opacity: 1; stroke: var(--upwr-accent); stroke-width: 1.8; }
+.lc-sc-beam { fill: var(--upwr-single-alt); opacity: .22; }
+.lc-sc-lamp { fill: var(--upwr-single-alt); stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
+.lc-sc-lamp-handle { fill: var(--upwr-ink-soft); }
+.lc-sc-strip-bg { fill: var(--upwr-surface-sunken); opacity: .5; }
+.lc-sc-xbar.is-rand { fill: var(--upwr-cat-niebo); }
+.lc-sc-xbar.is-spot { fill: var(--upwr-single-alt); }
+.lc-sc-xbar.is-last { stroke: var(--upwr-ink); stroke-width: 2; opacity: 1; }
+.lc-sc-avg { stroke-width: 3; stroke-linecap: round; }
+.lc-sc-avg.is-rand { stroke: var(--upwr-cat-niebo); }
+.lc-sc-avg.is-spot { stroke: var(--upwr-single-alt); }
+.lc-sc-token.is-bar { opacity: .8; }

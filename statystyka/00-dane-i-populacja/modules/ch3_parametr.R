@@ -60,51 +60,41 @@ ch3_ui <- list(
       z daną cechą podzielona przez liczbę wszystkich jednostek. Jeśli
       w próbie 50 osób pracuje 19, to p̂ = 19/50 = 0.38."),
 
-    lc_h2("ch3-zmiennosc", "Każda próba daje inny wynik"),
+    lc_h2("ch3-zmiennosc", "Każda garść daje inny wynik"),
 
     lc_p("W prawdziwym badaniu mamy jedną próbę i jedną wartość statystyki.
-      W naszym wydziale możemy zrobić coś, czego w praktyce zrobić się
-      nie da: losować próbę wiele razy i sprawdzać, jakie wartości p̂
-      wychodzą. Panel zaczyna z ukrytym parametrem, tak jak w rzeczywistości.
-      Można go odsłonić, gdy uzbiera się kilkanaście prób."),
+      Żeby zobaczyć, co to znaczy, wyobraźmy sobie wydział jako worek kulek:
+      każda kulka to jeden student, czerwone pracują zarobkowo, niebieskie
+      nie. Worek jest nieprzezroczysty, więc nie znamy proporcji czerwonych.
+      Możemy tylko sięgnąć ręką i wyciągnąć garść. W naszym worku, inaczej
+      niż w życiu, można to robić do woli, a na końcu zajrzeć do środka."),
 
     figure_panel(
       label = "Ryc. 3.1",
-      title = "Odsetek pracujących w kolejnych próbach",
-      width_mode = "wide",
-      lc_toolbar(
-        lc_slider("ch3_n", "Liczebność próby (n)", 10, 400, 50, 10),
-        lc_action_group(label = "Losuj próby",
-          ch3_draw_1 = "+1", ch3_draw_10 = "+10", ch3_draw_100 = "+100"),
-        lc_action("ch3_reset", icon = "reset", variant = "ghost",
-                  aria_label = "Wyczyść próby"),
-        lc_segmented("ch3_reveal", "Parametr p", choices = c(
-          "Ukryty"     = "hide",
-          "Odsłonięty" = "show"
-        ), selected = "hide"),
-        lc_readouts(uiOutput("ch3_reads"))
-      ),
-      conditionalPanel("!output.ch3_has_draws",
-        lc_empty("Wylosuj pierwszą próbę, żeby zobaczyć jej p̂")),
-      conditionalPanel("output.ch3_has_draws",
-        lc_plot("ch3_draws_plot", ratio = "2.2/1")
-      )
+      width_mode = "text",
+      scene_widget("ch3_worek", "Garść kulek z worka: od jednej próby do rozkładu p̂",
+        steps = c("Garść", "Statystyka", "Powtarzamy", "Worek"),
+        labels = c("Wyciągnij garść", "Wyciągnij garść", "Wyciągnij garść", "Wyciągnij garść"),
+        options = list(list(name = "n", label = "Kulek w garści (n)",
+                            values = c(10, 25, 100), selected = 25)),
+        config = list(kind = "bag", p = round(pop_p, 4), n = 25,
+                      aria = "Worek kulek, garść wyciągnięta z worka i histogram odsetków p̂ z kolejnych garści"))
     ),
 
     lc_p("Prawdziwy odsetek pracujących na wydziale wynosi p = ",
-      paste0(lc_fmt(pop_p, 3), ". Przy n = 50 kolejne wartości p̂ wypadają typowo
-      w przedziale od około 0.24 do 0.52, a mniej więcej co siódma próba
-      myli się o więcej niż 0.1. Parametr się nie zmienia: to ta sama
-      populacja i ta sama liczba. Zmienia się tylko próba, a razem z nią
-      statystyka. To zjawisko nazywamy "),
+      paste0(lc_fmt(pop_p, 3), ". Przy n = 25 kolejne wartości p̂ wypadają typowo
+      w przedziale od około ", lc_fmt(pop_p - 2 * sqrt(pop_p * (1 - pop_p) / 25), 2),
+      " do ", lc_fmt(pop_p + 2 * sqrt(pop_p * (1 - pop_p) / 25), 2), ", a przy n = 100
+      od około ", lc_fmt(pop_p - 2 * sqrt(pop_p * (1 - pop_p) / 100), 2), " do ",
+      lc_fmt(pop_p + 2 * sqrt(pop_p * (1 - pop_p) / 100), 2), ". Parametr się
+      nie zmienia: to ten sam worek i ta sama liczba. Zmienia się tylko garść,
+      a razem z nią statystyka. To zjawisko nazywamy "),
       gloss("zmienność próbkowa", "zmiennością próbkową"), "."),
 
-    lc_p("Przy n = 200 te same wartości skupiają się ciaśniej, mniej więcej
-      między 0.32 a 0.44, a pomyłka większa niż 0.1 praktycznie się
-      nie zdarza. Większa próba nie usuwa zmienności próbkowej, ale ją
-      zmniejsza. Wiedząc, jak duża jest ta zmienność, można z jednej próby
-      powiedzieć, w jakim zakresie prawdopodobnie leży parametr. Na tym
-      pomyśle zbudowane są przedziały ufności z wykładu 03."),
+    lc_p("Większa garść nie usuwa zmienności próbkowej, ale ją zmniejsza.
+      Wiedząc, jak duża jest ta zmienność, można z jednej próby powiedzieć,
+      w jakim zakresie prawdopodobnie leży parametr. Na tym pomyśle zbudowane
+      są przedziały ufności z wykładu 03."),
 
     lc_note("Zasada", rule = TRUE,
       "Parametr opisuje populację, jest stały i zwykle nieznany. Statystyka
@@ -113,22 +103,34 @@ ch3_ui <- list(
 
     lc_h2("ch3-obciazenie", "Kiedy duże n nie pomaga"),
 
-    lc_p("Wszystkie próby w tym rozdziale były losowane uczciwie: każda osoba
-      z listy miała tę samą szansę. Wartości p̂ rozrzucały się wtedy
-      po obu stronach p, bez przewagi jednej strony. Taki sposób to ",
-      gloss("losowanie proste", "losowanie proste"), ". Bywa uzupełniane
-      ", gloss("losowanie warstwowe", "losowaniem warstwowym"), ", w którym
-      losuje się osobno w grupach, na przykład na każdym roku studiów,
-      tak by ich udział w próbie zgadzał się z populacją. Szczegóły
-      techniczne zostawiamy na boku. Ważne jest, czym te sposoby różnią
-      się od ",
-      gloss("próba wygodna", "próby wygodnej"), ": ankiety rozdanej
-      w stołówce, wypełnionej przez tych, którzy się zgłosili."),
+    lc_p("Garście z worka były losowane uczciwie: każda kulka miała tę samą
+      szansę. Taki sposób to ", gloss("losowanie proste", "losowanie proste"),
+      ". Bywa uzupełniane ", gloss("losowanie warstwowe", "losowaniem warstwowym"),
+      ", w którym losuje się osobno w grupach, na przykład na każdym roku
+      studiów, tak by ich udział w próbie zgadzał się z populacją. Szczegóły
+      techniczne zostawiamy na boku. Ważne jest, czym te sposoby różnią się
+      od ", gloss("próba wygodna", "próby wygodnej"), ": ankiety rozdanej
+      tam, gdzie łatwo dotrzeć, i wypełnionej przez tych, którzy się zgłosili.
+      Panel pokazuje różnicę na tłumie studentów."),
+
+    figure_panel(
+      label = "Ryc. 3.2",
+      width_mode = "text",
+      scene_widget("ch3_latarka", "Losowanie i latarka: dwa sposoby, dwie średnie",
+        steps = c("Losowanie", "Latarka", "Powtarzamy"),
+        labels = c("Losuj próbę", "Świeć latarką", "Próba obu rodzajów"),
+        options = list(list(name = "n", label = "Liczebność próby (n)",
+                            values = c(20, 50, 300), selected = 50, from = 3)),
+        more_from = 3,
+        config = list(kind = "spot", n = 50, mu = round(pop_mu, 3),
+                      d = faculty$dojazd, a = as.integer(faculty$akademik),
+                      aria = "Tłum studentów, losowanie i latarka świecąca na akademik, średnie czasu dojazdu z prób"))
+    ),
 
     lc_p("W 1936 roku tygodnik Literary Digest zebrał ponad dwa miliony
       odpowiedzi i błędnie wskazał zwycięzcę wyborów prezydenckich w USA.
       Ankietę wysłano czytelnikom, właścicielom telefonów i samochodów,
-      a odpowiedziała część z nich. Duża liczba odpowiedzi dała bardzo małą
+      a odpowiedziała część z nich. Dwa miliony odpowiedzi dały bardzo małą
       zmienność próbkową, ale wokół złej wartości. Taki systematyczny błąd
       w jedną stronę nazywamy ", gloss("obciążenie", "obciążeniem"), "."),
 
@@ -156,56 +158,31 @@ ch3_ui <- list(
 
 ch3_server <- function(input, output, session) {
 
-  ch3_draws <- reactiveVal(numeric(0))
+  scene_texts(input, output, "ch3_worek", list(
+    tagList("Wydział to worek kulek: czerwona to student, który pracuje, niebieska to
+      taki, który nie pracuje. Nie widzimy worka ani proporcji czerwonych.
+      Wyciągnij garść i zobacz, co w niej jest."),
+    tagList("Liczymy czerwone kulki i dzielimy przez liczbę kulek w garści. To statystyka ",
+      tags$code("p̂", .noWS = "outside"), ": znamy ją, bo mamy garść w ręku. Wyciągnij kilka garści
+      i porównaj wyniki."),
+    tagList("Kulki wracają do worka, wyciągamy kolejną garść i znowu liczymy ",
+      tags$code("p̂", .noWS = "outside"), ". Każda garść spada żetonem nad swoją wartością. Dokładaj po 10,
+      100 i 1000, a potem zmień liczbę kulek w garści."),
+    tagList("Odsłaniamy worek: ", tags$code("p", .noWS = "outside"), " to prawdziwy odsetek czerwonych.
+      Parametr jest jeden i stały, a statystyka skacze wokół niego. Im większa garść,
+      tym ciaśniej skupiają się wyniki, ale z jednej garści nie wiemy, po której
+      stronie ", tags$code("p", .noWS = "outside"), " leży.")
+  ))
 
-  draw_phat <- function(k) {
-    n <- input$ch3_n %||% 50
-    new <- replicate(k, mean(faculty$praca[sample(pop_N, n)]))
-    ch3_draws(c(ch3_draws(), new))
-  }
-
-  observeEvent(input$ch3_draw_1, draw_phat(1))
-  observeEvent(input$ch3_draw_10, draw_phat(10))
-  observeEvent(input$ch3_draw_100, draw_phat(100))
-  observeEvent(input$ch3_reset, ch3_draws(numeric(0)))
-  observeEvent(input$ch3_n, ch3_draws(numeric(0)), ignoreInit = TRUE)
-
-  output$ch3_has_draws <- reactive(length(ch3_draws()) > 0)
-  outputOptions(output, "ch3_has_draws", suspendWhenHidden = FALSE)
-
-  ch3_show <- reactive(identical(input$ch3_reveal, "show"))
-
-  output$ch3_reads <- renderUI({
-    d <- ch3_draws()
-    tagList(
-      lc_readout("prób", length(d)),
-      lc_readout("ostatnie p̂", if (length(d)) lc_fmt(tail(d, 1), 3) else "–",
-                 color = col_stat, swatch = TRUE),
-      lc_readout("p", if (ch3_show()) lc_fmt(pop_p, 3) else "?",
-                 color = col_param, swatch = TRUE)
-    )
-  })
-
-  zoom_plot_server("ch3_draws_plot", reactive({
-    d <- ch3_draws()
-    req(length(d) > 0)
-    df <- data.frame(i = seq_along(d), phat = d)
-    last <- df[nrow(df), ]
-    p <- ggplot(df, aes(i, phat)) +
-      geom_point(color = col_stat, alpha = if (nrow(df) > 60) 0.5 else 0.85,
-                 size = 2.2) +
-      geom_point(data = last, color = col_stat, size = 4, shape = 21,
-                 fill = "white", stroke = 1.5) +
-      scale_y_continuous(limits = c(0, 0.8), breaks = seq(0, 0.8, 0.1)) +
-      scale_x_continuous(limits = c(0.5, max(20, nrow(df)) + 0.5)) +
-      labs(x = "Numer próby", y = "p̂ (odsetek pracujących w próbie)")
-    if (ch3_show()) {
-      p <- p +
-        geom_hline(yintercept = pop_p, color = col_param, linewidth = 1.1,
-                   linetype = "dashed") +
-        annotate("text", x = 0.5, y = pop_p, label = "p", hjust = -0.3,
-                 vjust = -0.6, color = col_param, fontface = "bold", size = 5)
-    }
-    p
-  }), alt = "Wartości p̂ z kolejnych prób na tle parametru p")
+  scene_texts(input, output, "ch3_latarka", list(
+    tagList("Każda kropka to student wydziału, ciemne kropki to mieszkańcy akademika. Pionowa
+      linia to prawdziwa średnia czasu dojazdu wszystkich, czyli parametr μ. Losujemy próbę
+      tak, że każdy ma równą szansę, i liczymy jej średnią x̄."),
+    tagList("Teraz ankietę rozdajemy tam, gdzie najłatwiej: przy akademiku. Latarka oświetla
+      tych, którzy stoją blisko, i tylko oni trafiają do próby. Mieszkańcy akademika dojeżdżają
+      krótko, więc średnia z takiej próby ucieka w lewo od μ."),
+    tagList("Dokładaj próby obu rodzajów. Średnie z losowania rozkładają się wokół μ,
+      średnie z latarki wokół zbyt niskiej wartości. Zwiększ n: obie chmury się zwężają,
+      ale latarka trafia coraz pewniej obok μ. Duże n zmniejsza zmienność, ale nie usuwa obciążenia.")
+  ))
 }
