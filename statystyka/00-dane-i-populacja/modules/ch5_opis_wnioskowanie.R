@@ -39,19 +39,6 @@ ch5_ui <- list(
       dałaby inny wynik, i zawsze opiera się na założeniu, że próba
       powstała w sposób, który nie faworyzuje żadnej grupy."),
 
-    figure_panel(
-      label = "Ryc. 5.1",
-      width_mode = "text",
-      scene_widget("ch5_wniosek", "Od opisu próby do wniosku o populacji",
-        steps = c("Opis", "Wniosek", "Powtarzamy", "Parametr"),
-        labels = c("Wylosuj próbę", "Wylosuj próbę", "Wylosuj próbę", "Wylosuj próbę"),
-        options = list(list(name = "n", label = "Liczebność próby (n)", from = 3,
-                            values = c(20, 50, 200), selected = 50)),
-        more_from = 3, more = c("+10" = "m10", "+100" = "m100"),
-        config = list(kind = "infer", n = 50, pr = as.integer(faculty$praca),
-                      aria = "Próba studentów, odsetek pracujących w próbie i zakres, w którym leży odsetek w populacji"))
-    ),
-
     lc_note("Przykład",
       "Gdy prowadzący liczy średnią ocen z kolokwium w swojej grupie, a grupa
        jest jedynym, co go interesuje, wykonuje opis: grupa jest wtedy
@@ -120,16 +107,4 @@ ch5_ui <- list(
   )
 )
 
-ch5_server <- function(input, output, session) {
-  scene_texts(input, output, "ch5_wniosek", list(
-    tagList("Losujemy próbę i liczymy, ilu studentów w niej pracuje. Zdanie „w naszej próbie pracuje k z n osób”
-      to opis: dotyczy tylko zbadanych osób i jest prawdziwe bez żadnych założeń."),
-    tagList("Wniosek idzie krok dalej: z ", tags$code("p̂", .noWS = "outside"), " próbujemy powiedzieć coś o całym wydziale,
-      czyli o parametrze ", tags$code("p", .noWS = "outside"), ". Zamiast jednej liczby podajemy zakres, w którym ",
-      tags$code("p", .noWS = "outside"), " prawdopodobnie leży. Jak go policzyć, pokaże wykład 03."),
-    tagList("Każda próba daje inne ", tags$code("p̂", .noWS = "outside"), " i inny zakres. Dokładaj próby i patrz, jak zakresy
-      przesuwają się w lewo i w prawo. Zmień n: większa próba daje węższe zakresy."),
-    tagList("Odsłaniamy parametr ", tags$code("p", .noWS = "outside"), ". Zakresy, które go nie obejmują, są czerwone.
-      Większość trafia, ale nie wszystkie: wniosek zawsze niesie niepewność i dlatego nie jest tak pewny jak opis.")
-  ))
-}
+ch5_server <- function(input, output, session) {}
