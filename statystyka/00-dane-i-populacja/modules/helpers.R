@@ -44,6 +44,12 @@ faculty$zdal <- local({
   rbinom(nrow(faculty), 1, c(0.52, 0.60, 0.68, 0.76, 0.84)[faculty$rok]) == 1
 })
 
+# Kto siedzi w bibliotece (rozdz. 3, latarka): częściej ci, którzy zdali.
+faculty$biblioteka <- local({
+  set.seed(98)
+  rbinom(nrow(faculty), 1, ifelse(faculty$zdal, 0.4, 0.08)) == 1
+})
+
 pop_N     <- nrow(faculty)
 pop_mu    <- mean(faculty$dojazd)          # parametr: średni czas dojazdu
 pop_p     <- mean(faculty$praca)           # parametr: odsetek pracujących

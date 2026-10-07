@@ -491,11 +491,11 @@
   KINDS.spot = function (cfg, api) {
     var D = cfg.d, A = cfg.a, N = D.length, MU = cfg.mu;
     var AX0 = 60, AX1 = 600, RY = { rand: 296, spot: 336 };
-    var AMIN = 0, AMAX = 60;
+    var AMIN = 0, AMAX = 1;
     var st = { n: cfg.n || 50, rand: [], spot: [], last: null, lastMode: null, beam: 0 };
     var LAMP = [24, 112];
 
-    // położenie kropek: akademik po lewej, reszta w pozostałej części kampusu
+    // położenie kropek: biblioteka po lewej, reszta w pozostałej części kampusu
     var pos = (function () {
       var r = rng(11), out = [];
       for (var i = 0; i < N; i++) {
@@ -548,7 +548,7 @@
         svg("circle", { cx: pos[i][0], cy: pos[i][1], r: 4.4, class: "lc-sc-dot is-sel " + (A[i] ? "is-dorm" : "") }, g);
       });
       // budynek akademika i latarka
-      svg("text", { x: 92, y: 214, "text-anchor": "middle", class: "lc-sc-sub" }, g, "akademik");
+      svg("text", { x: 92, y: 214, "text-anchor": "middle", class: "lc-sc-sub" }, g, "biblioteka");
       if (mode === "spot" || api.step() >= 2) {
         svg("g", { transform: "translate(" + LAMP[0] + "," + LAMP[1] + ")" }, g);
         svg("circle", { cx: LAMP[0], cy: LAMP[1], r: 9, class: "lc-sc-lamp" }, g);
@@ -558,11 +558,11 @@
 
     function drawStrip(g, step) {
       svg("rect", { x: 0, y: 236, width: W, height: 150, class: "lc-sc-strip-bg" }, g);
-      axisX(g, AX0, AX1, 372, [0, 10, 20, 30, 40, 50, 60].map(function (v) { return { x: ax(v), label: String(v) }; }));
+      axisX(g, AX0, AX1, 372, [0, 0.2, 0.4, 0.6, 0.8, 1].map(function (v) { return { x: ax(v), label: fmt(v, 1) }; }));
       svg("text", { x: (AX0 + AX1) / 2, y: 410, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "średni czas dojazdu w próbie, x̄ (min)");
+        "odsetek, który zdał w próbie, p̂");
       svg("line", { x1: ax(MU), x2: ax(MU), y1: 250, y2: 372, class: "lc-sc-param" }, g);
-      svg("text", { x: ax(MU) + 6, y: 262, class: "lc-sc-param-t" }, g, "μ = " + fmt(MU, 0) + " min");
+      svg("text", { x: ax(MU) + 6, y: 262, class: "lc-sc-param-t" }, g, "p = " + fmt(MU, 2));
       var rows = step >= 2 ? ["rand", "spot"] : ["rand"];
       var names = { rand: "losowanie", spot: "latarka" };
       rows.forEach(function (m) {

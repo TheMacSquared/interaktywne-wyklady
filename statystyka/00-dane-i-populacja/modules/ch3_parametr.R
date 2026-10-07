@@ -20,19 +20,19 @@ ch3_ui <- list(
 
     lc_p("Populacja i próba to zbiory jednostek. Statystyka nie zatrzymuje się
       jednak na zbiorach, tylko streszcza je liczbami: ", gloss("średnia", "średnią"), ", odsetkiem,
-      rozrzutem. Ta sama formuła, na przykład „odsetek osób, które pracują”,
+      rozrzutem. Ta sama formuła, na przykład „odsetek osób, które zdały egzamin”,
       daje inną liczbę, gdy liczymy ją dla całej populacji, a inną, gdy dla
       próby. Te dwie liczby mają osobne nazwy i osobne oznaczenia."),
 
     lc_h2("ch3-definicje", "Dwie liczby, dwa oznaczenia"),
 
     lc_p(gloss("parametr", "Parametr"), " to liczba opisująca populację,
-      na przykład średni czas dojazdu wszystkich studentów wydziału albo
-      odsetek pracujących wśród nich. Dla danej populacji parametr ma jedną,
+      na przykład średni wynik z egzaminu wszystkich studentów wydziału albo
+      odsetek tych, którzy zdali. Dla danej populacji parametr ma jedną,
       stałą wartość. Zazwyczaj jej nie znamy, bo nie zbadaliśmy wszystkich.
       ", gloss("statystyka", "Statystyka"), " to liczba policzona z próby
-      tą samą formułą, na przykład średni czas dojazdu albo odsetek
-      pracujących wśród wylosowanych osób. Statystykę zawsze znamy, bo
+      tą samą formułą, na przykład średni wynik z egzaminu albo odsetek
+      zdających wśród wylosowanych osób. Statystykę zawsze znamy, bo
       liczymy ją z danych, które mamy w ręku."),
 
     lc_p("Żeby nie mylić tych liczb, parametry oznaczamy zwykle literami
@@ -58,7 +58,7 @@ ch3_ui <- list(
     lc_p("Średnią i odchylenie standardowe dokładnie zdefiniujemy
       w wykładzie 01. Odsetek jest prosty już teraz: to liczba jednostek
       z daną cechą podzielona przez liczbę wszystkich jednostek. Jeśli
-      w próbie 50 osób pracuje 19, to p̂ = 19/50 = 0.38."),
+      w próbie 50 osób egzamin zdały 34, to p̂ = 34/50 = 0.68."),
 
     lc_h2("ch3-zmiennosc", "Każda grupka daje inny wynik"),
 
@@ -111,20 +111,20 @@ ch3_ui <- list(
       techniczne zostawiamy na boku. Ważne jest, czym te sposoby różnią się
       od ", gloss("próba wygodna", "próby wygodnej"), ": ankiety rozdanej
       tam, gdzie łatwo dotrzeć, i wypełnionej przez tych, którzy się zgłosili.
-      Panel pokazuje różnicę na tłumie studentów."),
+      Panel pokazuje różnicę na tłumie studentów po egzaminie."),
 
     figure_panel(
       label = "Ryc. 3.2",
       width_mode = "text",
-      scene_widget("ch3_latarka", "Losowanie i latarka: dwa sposoby, dwie średnie",
+      scene_widget("ch3_latarka", "Losowanie i latarka: dwa sposoby, dwa wyniki",
         steps = c("Losowanie", "Latarka", "Powtarzamy"),
         labels = c("Losuj próbę", "Świeć latarką", "Próba obu rodzajów"),
         options = list(list(name = "n", label = "Liczebność próby (n)",
                             values = c(20, 50, 300), selected = 50, from = 3)),
         more_from = 3,
-        config = list(kind = "spot", n = 50, mu = round(pop_mu, 3),
-                      d = faculty$dojazd, a = as.integer(faculty$akademik),
-                      aria = "Tłum studentów, losowanie i latarka świecąca na akademik, średnie czasu dojazdu z prób"))
+        config = list(kind = "spot", n = 50, mu = round(pop_zdal, 4),
+                      d = as.integer(faculty$zdal), a = as.integer(faculty$biblioteka),
+                      aria = "Tłum studentów po egzaminie, losowanie i latarka świecąca na bibliotekę, odsetki zdających w próbach"))
     ),
 
     lc_p("W 1936 roku tygodnik Literary Digest zebrał ponad dwa miliony
@@ -174,14 +174,14 @@ ch3_server <- function(input, output, session) {
   ))
 
   scene_texts(input, output, "ch3_latarka", list(
-    tagList("Każda kropka to student wydziału, ciemne kropki to mieszkańcy akademika. Pionowa
-      linia to prawdziwa średnia czasu dojazdu wszystkich, czyli parametr μ. Losujemy próbę
-      tak, że każdy ma równą szansę, i liczymy jej średnią x̄."),
-    tagList("Teraz ankietę rozdajemy tam, gdzie najłatwiej: przy akademiku. Latarka oświetla
-      tych, którzy stoją blisko, i tylko oni trafiają do próby. Mieszkańcy akademika dojeżdżają
-      krótko, więc średnia z takiej próby ucieka w lewo od μ."),
-    tagList("Dokładaj próby obu rodzajów. Średnie z losowania rozkładają się wokół μ,
-      średnie z latarki wokół zbyt niskiej wartości. Zwiększ n: obie chmury się zwężają,
-      ale latarka trafia coraz pewniej obok μ. Duże n zmniejsza zmienność, ale nie usuwa obciążenia.")
+    tagList("Każda kropka to student po egzaminie, ciemne kropki to ci, którzy siedzą w bibliotece. Pionowa
+      linia to prawdziwy odsetek tych, którzy zdali, czyli parametr ", tags$code("p", .noWS = "outside"), ". Losujemy próbę tak, że każdy ma równą szansę, i liczymy jej ",
+      tags$code("p̂", .noWS = "outside"), "."),
+    tagList("Teraz pytamy tych, których najłatwiej znaleźć: siedzących w bibliotece. Latarka oświetla
+      tych, którzy stoją blisko, i tylko oni trafiają do próby. Kto siedzi w bibliotece, ten częściej zdał,
+      więc ", tags$code("p̂", .noWS = "outside"), " ucieka w prawo od ", tags$code("p", .noWS = "outside"), "."),
+    tagList("Dokładaj próby obu rodzajów. Wyniki z losowania rozkładają się wokół ", tags$code("p", .noWS = "outside"), ",
+      wyniki z latarki wokół zbyt wysokiej wartości. Zwiększ n: obie chmury się zwężają,
+      ale latarka trafia coraz pewniej obok ", tags$code("p", .noWS = "outside"), ". Duże n zmniejsza zmienność, ale nie usuwa obciążenia.")
   ))
 }
