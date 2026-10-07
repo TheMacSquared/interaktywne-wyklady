@@ -62,6 +62,21 @@
     requestAnimationFrame(frame);
   }
 
+  // Buźka: koło z oczami i ustami (smile / frown / flat); klasa koloru w cls.
+  function drawFace(g, cx, cy, r, cls, mouth, op) {
+    var q = svg("g", op ? { opacity: op } : {}, g);
+    svg("circle", { cx: cx, cy: cy, r: r, class: "lc-sc-face " + cls }, q);
+    if (r >= 3.6) {
+      var e = r * 0.34, ey = cy - r * 0.2;
+      svg("circle", { cx: cx - e, cy: ey, r: r * 0.11, class: "lc-sc-face-f" }, q);
+      svg("circle", { cx: cx + e, cy: ey, r: r * 0.11, class: "lc-sc-face-f" }, q);
+      var my = cy + r * (mouth === "smile" ? 0.18 : mouth === "flat" ? 0.4 : 0.5);
+      var dy = r * (mouth === "smile" ? 0.36 : mouth === "flat" ? 0 : -0.3);
+      svg("path", { d: "M " + (cx - r * 0.45) + " " + my + " Q " + cx + " " + (my + dy) + " " + (cx + r * 0.45) + " " + my,
+        class: "lc-sc-face-m", fill: "none" }, q);
+    }
+  }
+
   var KINDS = {};
 
   // --- wspólny szkielet histogramu z żetonami / słupkami ---------------------
@@ -89,6 +104,9 @@
       return arr;
     })();
 
+    function bagBall(g, x, y, r, v) {
+      drawFace(g, x, y, r, v ? "is-work" : "is-free", v ? "flat" : "smile");
+    }
     function binOf(ph) { return Math.max(0, Math.min(NB - 1, Math.round(ph * 20))); }
     function slotX(i) { return PL + (PR - PL) * (i + 0.5) / NB; }
 
@@ -113,11 +131,10 @@
         var cols = 10, r = 8.2, s = 17.2;
         jar.forEach(function (v, i) {
           var row = Math.floor(i / cols), col = i % cols;
-          svg("circle", { cx: 42 + col * s + (row % 2 ? s / 2 : 0) + 8, cy: 66 + row * 21, r: r,
-            class: v ? "lc-sc-ball is-hit" : "lc-sc-ball" }, g);
+          bagBall(g, 42 + col * s + (row % 2 ? s / 2 : 0) + 8, 66 + row * 21, r, v);
         });
         svg("text", { x: 120, y: 226, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "w worku " + fmt(P * 100, 0) + "% czerwonych");
+          "w worku pracuje " + fmt(P * 100, 0) + "%");
       }
     }
 
@@ -142,7 +159,7 @@
         return { x: PL + (PR - PL) * (t * 20 + 0.5) / NB, label: fmt(t, 1) };
       }));
       svg("text", { x: (PL + PR) / 2, y: PB + 38, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "odsetek czerwonych w garści, p̂");
+        "odsetek pracujących w garści, p̂");
       var info = "garści: " + st.draws.length;
       if (step >= 4 && st.draws.length > 1) {
         var lo = Math.min.apply(null, st.draws.map(function (d) { return d.ph; }));
@@ -171,7 +188,7 @@
     function drawLog(g, step) {
       if (!st.draws.length) {
         svg("text", { x: W / 2, y: 300, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "Wyciągnij garść, żeby zobaczyć, co w niej jest.");
+          "Wyciągnij garść, żeby zobaczyć, kto w niej jest.");
         return;
       }
       st.draws.slice(-6).reverse().forEach(function (d, i) {
@@ -179,10 +196,10 @@
         svg("text", { x: 120, y: y, class: "lc-sc-log" }, g2, "garść " + d.no);
         if (step >= 2) {
           svg("text", { x: 220, y: y, class: "lc-sc-log" }, g2,
-            d.k + " z " + d.n + " czerwonych");
+            d.k + " z " + d.n + " pracuje");
           svg("text", { x: 400, y: y, class: "lc-sc-log is-x" }, g2, "p̂ = " + fmt(d.ph, 2));
         } else {
-          svg("text", { x: 220, y: y, class: "lc-sc-log" }, g2, d.k + " z " + d.n + " czerwonych");
+          svg("text", { x: 220, y: y, class: "lc-sc-log" }, g2, d.k + " z " + d.n + " pracuje");
         }
       });
     }
@@ -198,7 +215,7 @@
           var pos = anim && anim.flying && i === upto - 1
             ? [anim.from[0] + (pt[0] - anim.from[0]) * anim.u, anim.from[1] + (pt[1] - anim.from[1]) * anim.u]
             : pt;
-          svg("circle", { cx: pos[0], cy: pos[1], r: L.r, class: d.balls[i] ? "lc-sc-ball is-hit" : "lc-sc-ball" }, g);
+          bagBall(g, pos[0], pos[1], L.r, d.balls[i]);
         });
         if (!anim || anim.done) {
           if (step >= 2) {
@@ -206,7 +223,7 @@
               "p̂ = " + d.k + "/" + d.n + " = " + fmt(d.ph, 2));
           } else {
             svg("text", { x: 428, y: 196, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-              d.k + " z " + d.n + " kulek jest czerwonych");
+              d.k + " z " + d.n + " osób pracuje");
           }
         }
       } else {
@@ -771,16 +788,7 @@
       return { pts: pts, r: sp * 0.46 };
     }
     function face(g, cx, cy, r, pass, op) {
-      var q = svg("g", op ? { opacity: op } : {}, g);
-      svg("circle", { cx: cx, cy: cy, r: r, class: "lc-sc-face " + (pass ? "is-pass" : "is-fail") }, q);
-      if (r >= 3.6) {
-        var e = r * 0.34, ey = cy - r * 0.2;
-        svg("circle", { cx: cx - e, cy: ey, r: r * 0.11, class: "lc-sc-face-f" }, q);
-        svg("circle", { cx: cx + e, cy: ey, r: r * 0.11, class: "lc-sc-face-f" }, q);
-        var my = cy + r * (pass ? 0.18 : 0.5), dy = r * (pass ? 0.36 : -0.3);
-        svg("path", { d: "M " + (cx - r * 0.45) + " " + my + " Q " + cx + " " + (my + dy) + " " + (cx + r * 0.45) + " " + my,
-          class: "lc-sc-face-m", fill: "none" }, q);
-      }
+      drawFace(g, cx, cy, r, pass ? "is-pass" : "is-fail", pass ? "smile" : "frown", op);
     }
     function cls(i, revealed, sel) {
       return "lc-sc-pdot" + (revealed ? (cfg.z[i] ? " is-pass" : " is-fail") : "") + (sel ? " is-sel" : "");

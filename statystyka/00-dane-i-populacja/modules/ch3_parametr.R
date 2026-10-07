@@ -63,19 +63,19 @@ ch3_ui <- list(
     lc_h2("ch3-zmiennosc", "Każda garść daje inny wynik"),
 
     lc_p("W prawdziwym badaniu mamy jedną próbę i jedną wartość statystyki.
-      Żeby zobaczyć, co to znaczy, wyobraźmy sobie wydział jako worek kulek:
-      każda kulka to jeden student, czerwone pracują zarobkowo, niebieskie
-      nie. Worek jest nieprzezroczysty, więc nie znamy proporcji czerwonych.
+      Żeby zobaczyć, co to znaczy, wyobraźmy sobie wydział jako worek studentów:
+      jedni pracują zarobkowo, drudzy nie. Worek jest nieprzezroczysty,
+      więc nie znamy odsetka pracujących.
       Możemy tylko sięgnąć ręką i wyciągnąć garść. W naszym worku, inaczej
       niż w życiu, można to robić do woli, a na końcu zajrzeć do środka."),
 
     figure_panel(
       label = "Ryc. 3.1",
       width_mode = "text",
-      scene_widget("ch3_worek", "Garść kulek z worka: od jednej próby do rozkładu p̂",
+      scene_widget("ch3_worek", "Garść studentów z worka: od jednej próby do rozkładu p̂",
         steps = c("Garść", "Statystyka", "Powtarzamy", "Worek"),
         labels = c("Wyciągnij garść", "Wyciągnij garść", "Wyciągnij garść", "Wyciągnij garść"),
-        options = list(list(name = "n", label = "Kulek w garści (n)",
+        options = list(list(name = "n", label = "Osób w garści (n)",
                             values = c(10, 25, 100), selected = 25)),
         config = list(kind = "bag", p = round(pop_p, 4), n = 25,
                       aria = "Worek kulek, garść wyciągnięta z worka i histogram odsetków p̂ z kolejnych garści"))
@@ -103,7 +103,7 @@ ch3_ui <- list(
 
     lc_h2("ch3-obciazenie", "Kiedy duże n nie pomaga"),
 
-    lc_p("Garście z worka były losowane uczciwie: każda kulka miała tę samą
+    lc_p("Garście z worka były losowane uczciwie: każdy student miał tę samą
       szansę. Taki sposób to ", gloss("losowanie proste", "losowanie proste"),
       ". Bywa uzupełniane ", gloss("losowanie warstwowe", "losowaniem warstwowym"),
       ", w którym losuje się osobno w grupach, na przykład na każdym roku
@@ -159,16 +159,16 @@ ch3_ui <- list(
 ch3_server <- function(input, output, session) {
 
   scene_texts(input, output, "ch3_worek", list(
-    tagList("Wydział to worek kulek: czerwona to student, który pracuje, niebieska to
-      taki, który nie pracuje. Nie widzimy worka ani proporcji czerwonych.
+    tagList("Wydział to worek studentów: czerwona buźka z prostą kreską to student, który pracuje,
+      niebieska uśmiechnięta to taki, który nie pracuje. Nie widzimy worka ani odsetka pracujących.
       Wyciągnij garść i zobacz, co w niej jest."),
-    tagList("Liczymy czerwone kulki i dzielimy przez liczbę kulek w garści. To statystyka ",
+    tagList("Liczymy pracujących i dzielimy przez liczbę osób w garści. To statystyka ",
       tags$code("p̂", .noWS = "outside"), ": znamy ją, bo mamy garść w ręku. Wyciągnij kilka garści
       i porównaj wyniki."),
-    tagList("Kulki wracają do worka, wyciągamy kolejną garść i znowu liczymy ",
+    tagList("Studenci wracają do worka, wyciągamy kolejną garść i znowu liczymy ",
       tags$code("p̂", .noWS = "outside"), ". Każda garść spada żetonem nad swoją wartością. Dokładaj po 10,
-      100 i 1000, a potem zmień liczbę kulek w garści."),
-    tagList("Odsłaniamy worek: ", tags$code("p", .noWS = "outside"), " to prawdziwy odsetek czerwonych.
+      100 i 1000, a potem zmień liczbę osób w garści."),
+    tagList("Odsłaniamy worek: ", tags$code("p", .noWS = "outside"), " to prawdziwy odsetek pracujących.
       Parametr jest jeden i stały, a statystyka skacze wokół niego. Im większa garść,
       tym ciaśniej skupiają się wyniki, ale z jednej garści nie wiemy, po której
       stronie ", tags$code("p", .noWS = "outside"), " leży.")

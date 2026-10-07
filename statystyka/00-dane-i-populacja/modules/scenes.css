@@ -82,3 +82,5 @@
 .lc-sc-face.is-fail { fill: var(--upwr-accent); }
 .lc-sc-face-f { fill: var(--upwr-surface); }
 .lc-sc-face-m { stroke: var(--upwr-surface); stroke-width: 1.1; stroke-linecap: round; }
+.lc-sc-face.is-work { fill: var(--upwr-accent); }
+.lc-sc-face.is-free { fill: var(--upwr-cat-niebo); }
