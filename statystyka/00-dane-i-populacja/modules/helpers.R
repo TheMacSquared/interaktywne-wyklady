@@ -84,9 +84,13 @@ scene_widget <- function(id, title, steps, config, labels, options = NULL,
       lapply(options, function(o) {
         lc_step_from(o$from %||% 1, lc_group(o$label,
           tags$div(class = "lc-seg", role = "group", `aria-label` = o$label,
-            lapply(o$values, function(v) tags$button(type = "button",
-              `data-sc-opt` = paste0(o$name, ":", v),
-              `aria-pressed` = if (v == o$selected) "true" else "false", v))
+            lapply(seq_along(o$values), function(i) {
+              v <- unname(o$values[[i]])
+              lab <- names(o$values)[[i]] %||% v
+              if (is.null(lab) || !nzchar(lab)) lab <- v
+              tags$button(type = "button", `data-sc-opt` = paste0(o$name, ":", v),
+                `aria-pressed` = if (v == o$selected) "true" else "false", lab)
+            })
           )
         ))
       }),

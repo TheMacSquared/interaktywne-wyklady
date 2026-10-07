@@ -49,6 +49,61 @@
 )
 
 # ============================================================================
+# Przełączanie wykładów z górnego paska (tylko gdy wykład uruchomił hub)
+# ============================================================================
+
+# Zakładka innego wykładu prowadzi przez hub (?open=…), który uruchamia wykład
+# albo bierze już działający i przekierowuje kartę na jego port. Nazwa karty
+# (data-lc-hub-tab) jest ta sama, której używa hub/app.R (hub_tab_name()), więc
+# klik w wykład otwarty już w innej karcie tylko ją przełącza — bez przeładowania,
+# ze stanem suwaków i quizów. Bez LC_HUB_URL zakładki zostają placeholderami.
+.lc_module_link <- function(m, is_active, hub_url) {
+  plain <- list(href = m$href, tab = NULL)
+  if (!nzchar(hub_url) || is_active) return(plain)
+
+  hits <- vapply(.LC_LECTURE_MODULE, identical, logical(1), m$slug)
+  if (!any(hits)) return(plain)
+  lecture_id <- names(.LC_LECTURE_MODULE)[hits][[1]]
+  subject <- basename(normalizePath(.LC_PROJ_ROOT, mustWork = FALSE))
+
+  list(
+    href = sprintf(
+      "%s/?open=%s&lecture=%s&title=%s", hub_url,
+      utils::URLencode(subject, reserved = TRUE),
+      utils::URLencode(lecture_id, reserved = TRUE),
+      utils::URLencode(enc2utf8(m$title), reserved = TRUE)
+    ),
+    tab = paste0("wyklad_", gsub("[^A-Za-z0-9]", "_", paste(subject, lecture_id, sep = "/")))
+  )
+}
+
+# window.open('', nazwa) zwraca istniejącą kartę o tej nazwie albo nową, pustą.
+# Karta z działającym wykładem jest na innym porcie, czyli innym originie —
+# odczyt jej adresu rzuca wyjątek i po tym poznajemy, że wystarczy ją przełączyć.
+.LC_HUB_TABS_JS <- "
+(function () {
+  if (window.__lcHubTabs) return;
+  window.__lcHubTabs = true;
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[data-lc-hub-tab]');
+    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    var menu = a.closest('details');
+    if (menu) menu.open = false;
+
+    var win = null;
+    try { win = window.open('', a.getAttribute('data-lc-hub-tab')); } catch (err) { win = null; }
+    if (!win) { window.location.href = a.href; return; }
+
+    var blank = false;
+    try { blank = win.location.href === 'about:blank'; } catch (err) { blank = false; }
+    if (blank) win.location.href = a.href;
+    win.focus();
+  });
+})();
+"
+
+# ============================================================================
 # module_tabs() — górny pasek zakładek modułów
 # ============================================================================
 
@@ -80,9 +135,11 @@ module_tabs <- function(current_slug = NULL) {
 
   tabs <- lapply(.LC_MODULES, function(m) {
     is_active <- !is.null(current_slug) && identical(m$slug, current_slug)
+    link <- .lc_module_link(m, is_active, .lc_hub_url)
     tags$a(
       class = paste("lc-tab", if (is_active) "lc-tab-active"),
-      href  = m$href,
+      href  = link$href,
+      `data-lc-hub-tab` = link$tab,
       title = m$title,
       tags$span(class = "lc-tab-num", m$num),
       tags$span(class = "lc-tab-title-full", m$title),
@@ -92,9 +149,11 @@ module_tabs <- function(current_slug = NULL) {
 
   menu_items <- lapply(.LC_MODULES, function(m) {
     is_active <- !is.null(current_slug) && identical(m$slug, current_slug)
+    link <- .lc_module_link(m, is_active, .lc_hub_url)
     tags$a(
       class = paste("lc-tabs-menu-item", if (is_active) "lc-tabs-menu-item-active"),
-      href  = m$href,
+      href  = link$href,
+      `data-lc-hub-tab` = link$tab,
       title = m$title,
       tags$span(class = "lc-tab-num", m$num),
       tags$span(class = "lc-tabs-menu-item-title", m$title)
@@ -143,7 +202,8 @@ module_tabs <- function(current_slug = NULL) {
       tags$div(class = "lc-tabs-list", tabs),
       scroll_controls[[2]]
     ),
-    menu
+    menu,
+    if (nzchar(.lc_hub_url)) tags$script(HTML(.LC_HUB_TABS_JS))
   )
 }
 

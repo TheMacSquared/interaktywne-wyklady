@@ -619,6 +619,262 @@
   };
 
   // =========================================================================
+  // ROWS: student wchodzi do tabeli (obserwacja, zmienna, n)
+  // =========================================================================
+  KINDS.rows = function (cfg, api) {
+    var N = cfg.rok.length;
+    var COLS = [
+      { key: "id", label: "Nr", x: 80 },
+      { key: "rok", label: "Rok studiów", x: 195 },
+      { key: "akademik", label: "Akademik", x: 320 },
+      { key: "dojazd", label: "Dojazd (min)", x: 440 },
+      { key: "praca", label: "Praca", x: 545 }
+    ];
+    var TY = 196, RH = 26, SHOW = 6;
+    var st = { rows: [], v: "dojazd", person: null, anim: null };
+
+    function newPerson() {
+      var i = Math.floor(Math.random() * N);
+      return { id: i + 1, rok: cfg.rok[i], akademik: cfg.a[i] ? "tak" : "nie",
+        dojazd: cfg.d[i], praca: cfg.pr[i] ? "tak" : "nie" };
+    }
+
+    function personIcon(g, x, y, scale) {
+      var q = svg("g", { transform: "translate(" + x + "," + y + ") scale(" + scale + ")" }, g);
+      svg("circle", { cx: 0, cy: -34, r: 15, class: "lc-sc-person" }, q);
+      svg("rect", { x: -20, y: -14, width: 40, height: 52, rx: 16, class: "lc-sc-person" }, q);
+      svg("rect", { x: -14, y: 34, width: 11, height: 26, rx: 4, class: "lc-sc-person" }, q);
+      svg("rect", { x: 3, y: 34, width: 11, height: 26, rx: 4, class: "lc-sc-person" }, q);
+    }
+
+    function chip(g, x, y, text, on) {
+      var w = 20 + text.length * 8.2;
+      svg("rect", { x: x, y: y, width: w, height: 28, rx: 14, class: "lc-sc-chip" }, g);
+      svg("text", { x: x + w / 2, y: y + 19, "text-anchor": "middle", class: "lc-sc-chip-t" }, g, text);
+    }
+
+    function drawPerson(g, p, px, nChips) {
+      personIcon(g, px, 82, 0.95);
+      if (!p) return;
+      var texts = [p.rok + ". rok studiów", p.akademik === "tak" ? "w akademiku" : "poza akademikiem",
+        "dojazd " + p.dojazd + " min", p.praca === "tak" ? "pracuje" : "nie pracuje"];
+      var pos = [[190, 22], [190, 62], [400, 22], [400, 62]];
+      texts.forEach(function (t, i) { if (i < nChips) chip(g, pos[i][0], pos[i][1], t); });
+    }
+
+    function cell(row, key) { return key === "id" ? String(row.id) : String(row[key]); }
+
+    function drawTable(g, step, newest) {
+      var vcol = step >= 2 ? st.v : null;
+      // nagłówek
+      svg("rect", { x: 40, y: TY - 20, width: 560, height: RH, class: "lc-sc-th" }, g);
+      COLS.forEach(function (c) {
+        if (vcol && c.key === vcol) svg("rect", { x: c.x - 54, y: TY - 20, width: 108, height: RH + (Math.min(st.rows.length, SHOW)) * RH, class: "lc-sc-colhi" }, g);
+      });
+      COLS.forEach(function (c) {
+        svg("text", { x: c.x, y: TY - 2, "text-anchor": "middle", class: "lc-sc-th-t" }, g, c.label);
+      });
+      var shown = st.rows.slice(-SHOW);
+      shown.forEach(function (r, i) {
+        var y = TY + 6 + i * RH, last = i === shown.length - 1 && step === 1;
+        if (last) svg("rect", { x: 40, y: y - 4, width: 560, height: RH - 2, class: "lc-sc-rowhi" }, g);
+        COLS.forEach(function (c) {
+          svg("text", { x: c.x, y: y + 14, "text-anchor": "middle",
+            class: "lc-sc-cell" + (vcol === c.key ? " is-hi" : "") }, g, cell(r, c.key));
+        });
+        svg("line", { x1: 40, x2: 600, y1: y + RH - 4, y2: y + RH - 4, class: "lc-sc-grid" }, g);
+      });
+      if (!shown.length) {
+        svg("text", { x: W / 2, y: TY + 60, "text-anchor": "middle", class: "lc-sc-sub" }, g,
+          "Tabela jest pusta. Poproś pierwszą osobę, żeby podeszła.");
+      }
+      var extra = st.rows.length - shown.length;
+      if (extra > 0) {
+        svg("text", { x: 320, y: TY + 6 + SHOW * RH + 14, "text-anchor": "middle", class: "lc-sc-sub" }, g,
+          "… i " + extra + " wcześniejszych wierszy");
+      }
+      svg("text", { x: 600, y: 16, "text-anchor": "end", class: "lc-sc-n" }, g, "n = " + st.rows.length);
+      void newest;
+    }
+
+    function render(person, chips, px) {
+      var step = api.step();
+      api.stage.textContent = ""; api.low.textContent = "";
+      drawPerson(api.stage, person === undefined ? st.person : person,
+        px === undefined ? 90 : px, chips === undefined ? 4 : chips);
+      drawTable(api.low, step);
+      if (step >= 2 && st.rows.length) {
+        var names = { rok: "rok studiów", akademik: "mieszkanie w akademiku", dojazd: "czas dojazdu", praca: "praca zarobkowa" };
+        svg("text", { x: 320, y: 412, "text-anchor": "middle", class: "lc-sc-sub" }, api.low,
+          "zmienna: " + names[st.v] + " (jedna kolumna, po jednej wartości na każdą osobę)");
+      }
+    }
+
+    function addOne(fast, done) {
+      var p = newPerson(), step = api.step();
+      st.person = p;
+      var chipsMs = fast ? 0 : 140;
+      tween(fast ? 120 : 520, function (u) { render(p, 0, -60 + (90 + 60) * ease(u)); }, function () {
+        var k = 0;
+        (function nextChip() {
+          render(p, k, 90);
+          if (k >= 4) {
+            setTimeout(function () { st.rows.push(p); render(); done(); }, REDUCE ? 0 : (fast ? 20 : 260));
+            return;
+          }
+          k++;
+          setTimeout(nextChip, REDUCE ? 0 : chipsMs);
+        })();
+      });
+      void step;
+    }
+
+    return {
+      render: function () { render(); },
+      reset: function () { st.rows = []; st.person = null; render(); },
+      opt: function (name, v) { if (name === "var") { st.v = v; render(); } },
+      go: function (done) { addOne(false, done); },
+      many: function (m, done) {
+        for (var i = 0; i < m; i++) { st.person = newPerson(); st.rows.push(st.person); }
+        render(); done();
+      }
+    };
+  };
+
+  // =========================================================================
+  // POP: populacja, operat i próba jako miniatura
+  // =========================================================================
+  KINDS.pop = function (cfg, api) {
+    var N = cfg.rok.length, COLS = 80, SP = 7.1, X0 = 36, Y0 = 14, R = 2.3;
+    var st = { n: cfg.n || 50, sel: null, off: null };
+    var rand = rng(5);
+    // operat: ok. 8% osób nie ma na liście (urlop dziekański, wymiana, zaoczne)
+    var outside = new Array(N).fill(false);
+    for (var i = 0; i < N; i++) outside[i] = rand() < 0.08;
+    var inList = [];
+    outside.forEach(function (o, i) { if (!o) inList.push(i); });
+
+    function gp(i) { return [X0 + (i % COLS) * SP, Y0 + Math.floor(i / COLS) * SP]; }
+    function share(arr, idx) {
+      var s = 0; idx.forEach(function (i) { s += arr[i] ? 1 : 0; });
+      return s / idx.length;
+    }
+    function allIdx() { var a = []; for (var i = 0; i < N; i++) a.push(i); return a; }
+    function pick(n, pool) {
+      var a = pool.slice(), out = [];
+      for (var k = 0; k < n; k++) {
+        var j = k + Math.floor(Math.random() * (a.length - k)), t = a[k]; a[k] = a[j]; a[j] = t;
+        out.push(a[k]);
+      }
+      return out;
+    }
+
+    function trayPos(n) {
+      var cols = n <= 20 ? 10 : n <= 50 ? 17 : 25, sp = Math.min(13, 250 / cols), pts = [];
+      for (var i = 0; i < n; i++) pts.push([48 + (i % cols) * sp, 292 + Math.floor(i / cols) * sp]);
+      return { pts: pts, r: Math.min(4.4, sp * 0.36) };
+    }
+
+    function dotClass(i, sel) {
+      return "lc-sc-pdot" + (cfg.pr[i] ? " is-work" : "") + (sel ? " is-sel" : "");
+    }
+
+    function drawGrid(g, step, fly) {
+      var isSel = {};
+      if (st.sel) st.sel.forEach(function (i) { isSel[i] = 1; });
+      for (var i = 0; i < N; i++) {
+        var p = gp(i);
+        if (step >= 2 && outside[i]) {
+          svg("circle", { cx: p[0], cy: p[1], r: R, class: "lc-sc-pdot is-out" }, g);
+        } else if (isSel[i]) {
+          if (!fly) svg("circle", { cx: p[0], cy: p[1], r: R + 1.8, class: dotClass(i, true) }, g);
+          else svg("circle", { cx: p[0], cy: p[1], r: R, class: dotClass(i, false), opacity: 0.25 }, g);
+        } else {
+          svg("circle", { cx: p[0], cy: p[1], r: R, class: dotClass(i, false), opacity: st.sel ? 0.5 : 1 }, g);
+        }
+      }
+      var yb = Y0 + 30 * SP + 4;
+      if (step === 1) {
+        svg("text", { x: 36, y: yb + 12, class: "lc-sc-sub" }, g,
+          "N = " + N + " · lista uporządkowana według roku studiów: pierwszy rok u góry, piąty na dole");
+      } else {
+        svg("text", { x: 36, y: yb + 12, class: "lc-sc-sub" }, g,
+          "operat: " + inList.length + " osób na liście · puste kółka: poza listą, więc nie mogą trafić do próby");
+      }
+      // legenda
+      svg("circle", { cx: 40, cy: yb + 30, r: 3.4, class: "lc-sc-pdot is-work" }, g);
+      svg("text", { x: 48, y: yb + 34, class: "lc-sc-sub" }, g, "pracuje");
+      svg("circle", { cx: 110, cy: yb + 30, r: 3.4, class: "lc-sc-pdot" }, g);
+      svg("text", { x: 118, y: yb + 34, class: "lc-sc-sub" }, g, "nie pracuje");
+    }
+
+    function drawTray(g, u) {
+      if (!st.sel) return;
+      var T = trayPos(st.sel.length);
+      st.sel.forEach(function (i, k) {
+        var p = gp(i), q = T.pts[k], e = u === undefined ? 1 : ease(u);
+        svg("circle", { cx: p[0] + (q[0] - p[0]) * e, cy: p[1] + (q[1] - p[1]) * e,
+          r: R + (T.r - R) * e, class: dotClass(i, true) }, g);
+      });
+      if (u === undefined || u >= 1) {
+        svg("text", { x: 48, y: 280, class: "lc-sc-sub" }, g, "próba: n = " + st.sel.length);
+      }
+    }
+
+    function drawBars(g) {
+      var items = [["pracuje zarobkowo", cfg.pr], ["mieszka w akademiku", cfg.a]];
+      var x0 = 340, w = 190, y = 284;
+      svg("text", { x: x0, y: 270, class: "lc-sc-sub" }, g, "udział w populacji i w próbie");
+      items.forEach(function (it, k) {
+        var pop = share(it[1], allIdx()), sam = st.sel ? share(it[1], st.sel) : null;
+        var yy = y + k * 62;
+        svg("text", { x: x0, y: yy + 8, class: "lc-sc-bar-t" }, g, it[0]);
+        [["populacja", pop, 0], ["próba", sam, 1]].forEach(function (b) {
+          var by = yy + 16 + b[2] * 18;
+          svg("rect", { x: x0, y: by, width: w, height: 13, rx: 3, class: "lc-sc-pbar-bg" }, g);
+          if (b[1] !== null) svg("rect", { x: x0, y: by, width: w * b[1], height: 13, rx: 3, class: "lc-sc-pbar" + (b[2] ? " is-sample" : "") }, g);
+          svg("text", { x: x0 + w + 8, y: by + 11, class: "lc-sc-tick is-x" }, g,
+            b[0] + " " + (b[1] === null ? "–" : Math.round(b[1] * 100) + "%"));
+        });
+      });
+    }
+
+    function render(prog, fly) {
+      var step = api.step();
+      api.stage.textContent = ""; api.low.textContent = "";
+      drawGrid(api.stage, step, fly);
+      if (step >= 3) {
+        if (!st.sel) {
+          svg("text", { x: 48, y: 300, class: "lc-sc-sub" }, api.low, "Wylosuj próbę, żeby zobaczyć ją w miniaturze.");
+        } else drawTray(api.low, prog);
+        if (step >= 4) drawBars(api.low);
+      } else if (!st.sel) {
+        svg("text", { x: W / 2, y: 330, "text-anchor": "middle", class: "lc-sc-sub" }, api.low,
+          step === 1 ? "Każda kropka to jedna osoba." : "Lista z dziekanatu nie obejmuje wszystkich.");
+      } else {
+        svg("text", { x: W / 2, y: 330, "text-anchor": "middle", class: "lc-sc-read" }, api.low,
+          "wylosowano " + st.sel.length + " osób z " + (step === 1 ? N : inList.length));
+      }
+    }
+
+    return {
+      render: function () { render(); },
+      reset: function () { st.sel = null; render(); },
+      opt: function (name, v) { if (name === "n") { st.n = Number(v); st.sel = null; render(); } },
+      go: function (done) {
+        var step = api.step();
+        st.sel = pick(st.n, step === 1 ? allIdx() : inList);
+        if (step >= 3) {
+          tween(900, function (u) { render(u, true); }, function () { render(); done(); });
+        } else {
+          tween(350, function (u) { render(); void u; }, function () { render(); done(); });
+        }
+      },
+      many: function (m, done) { this.go(done); void m; }
+    };
+  };
+
+  // =========================================================================
   // widget
   // =========================================================================
   function init(root) {

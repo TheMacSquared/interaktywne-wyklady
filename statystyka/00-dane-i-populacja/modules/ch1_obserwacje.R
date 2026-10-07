@@ -41,29 +41,23 @@ ch1_ui <- list(
       obserwacji, na przykład czas dojazdu jednej konkretnej studentki.
       Liczbę obserwacji oznaczamy literą n."),
 
-    lc_table(
-      data.frame(
-        id       = faculty$id[c(1, 700, 1300, 2100)],
-        rok      = faculty$rok[c(1, 700, 1300, 2100)],
-        akademik = ifelse(faculty$akademik[c(1, 700, 1300, 2100)], "tak", "nie"),
-        dojazd   = faculty$dojazd[c(1, 700, 1300, 2100)],
-        praca    = ifelse(faculty$praca[c(1, 700, 1300, 2100)], "tak", "nie"),
-        stringsAsFactors = FALSE
-      ),
-      list(
-        lc_col("id", "Nr", "row"),
-        lc_col("rok", "Rok studiów"),
-        lc_col("akademik", "Akademik", "text"),
-        lc_col("dojazd", "Dojazd (min)"),
-        lc_col("praca", "Praca", "text")
-      ),
-      prose = TRUE,
-      caption = "Cztery wiersze z danych o studentach wydziału. Wiersz to
-                 obserwacja (jeden student), kolumna to zmienna, komórka to
-                 wartość zmiennej dla jednej osoby."
+    figure_panel(
+      label = "Ryc. 1.1",
+      width_mode = "text",
+      scene_widget("ch1_tabela", "Student wchodzi do tabeli",
+        steps = c("Obserwacja", "Zmienna", "Rośnie n"),
+        labels = c("Poproś studenta", "Poproś studenta", "Poproś studenta"),
+        options = list(list(name = "var", label = "Podświetl zmienną", from = 2,
+                            values = c("Rok" = "rok", "Akademik" = "akademik",
+                                       "Dojazd" = "dojazd", "Praca" = "praca"),
+                            selected = "dojazd")),
+        more_from = 3, more = c("+10" = "m10", "+100" = "m100"),
+        config = list(kind = "rows", rok = faculty$rok, a = as.integer(faculty$akademik),
+                      d = faculty$dojazd, pr = as.integer(faculty$praca),
+                      aria = "Student podchodzi do tabeli i jego cechy zapisują się w nowym wierszu"))
     ),
 
-    lc_p("Ta mała tabela pochodzi z danych, które będą nam towarzyszyć przez
+    lc_p("Studenci z tej sceny pochodzą z danych, które będą nam towarzyszyć przez
       cały wykład: wszystkich ", lc_fmt(pop_N), " studentów jednego wydziału.
       Dla każdej osoby znamy rok studiów, to, czy mieszka w akademiku, czas
       dojazdu na zajęcia w minutach i to, czy pracuje zarobkowo. Każda
@@ -88,7 +82,7 @@ ch1_ui <- list(
       pojedynczy przejazd: osoba, dzień i zmierzony czas."),
 
     figure_panel(
-      label = "Ryc. 1.1",
+      label = "Ryc. 1.2",
       title = "Te same pomiary, dwie jednostki obserwacji",
       width_mode = "text",
       lc_toolbar(
@@ -177,4 +171,14 @@ ch1_server <- function(input, output, session) {
                   tygodnia jest zwykłą zmienną w jednej kolumnie.")
     }
   })
+
+  scene_texts(input, output, "ch1_tabela", list(
+    tagList("Student podchodzi do stołu i podaje o sobie cztery rzeczy: rok studiów, to, czy mieszka
+      w akademiku, czas dojazdu i to, czy pracuje. Cały zapis jednej osoby ląduje w jednym wierszu
+      i to jest jedna obserwacja."),
+    tagList("Kolumna to ta sama cecha zapisana dla wszystkich osób, czyli zmienna. Wybierz jedną
+      i zobacz, że jej wartości różnią się między osobami. Komórka to wartość zmiennej dla jednej osoby."),
+    tagList("Kolejni studenci dopisują kolejne wiersze. Liczba wierszy to ", tags$code("n", .noWS = "outside"),
+      ". Dokładaj po 10 i 100 i patrz, jak rośnie tabela, a jej układ w kolumnach się nie zmienia.")
+  ))
 }

@@ -54,3 +54,23 @@
 .lc-sc-avg.is-rand { stroke: var(--upwr-cat-niebo); }
 .lc-sc-avg.is-spot { stroke: var(--upwr-single-alt); }
 .lc-sc-token.is-bar { opacity: .8; }
+
+/* tabela i osoba */
+.lc-sc-chip { fill: var(--upwr-accent-tint); stroke: var(--upwr-accent); stroke-width: 1; }
+.lc-sc-chip-t { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink); }
+.lc-sc-th { fill: var(--upwr-surface-sunken); }
+.lc-sc-th-t { font: 600 12px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-cell { font: 500 14px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-cell.is-hi { fill: var(--upwr-accent); font-weight: 700; }
+.lc-sc-colhi { fill: var(--upwr-accent-tint); opacity: .7; }
+.lc-sc-rowhi { fill: var(--upwr-accent-tint); stroke: var(--upwr-accent); stroke-width: 1.5; opacity: .85; }
+.lc-sc-bar-t { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+
+/* populacja i próba */
+.lc-sc-pdot { fill: var(--upwr-cat-niebo); }
+.lc-sc-pdot.is-work { fill: var(--upwr-single-alt); }
+.lc-sc-pdot.is-out { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: .8; }
+.lc-sc-pdot.is-sel { stroke: var(--upwr-accent); stroke-width: 1.6; }
+.lc-sc-pbar-bg { fill: var(--upwr-cat-niebo); opacity: .45; }
+.lc-sc-pbar { fill: var(--upwr-single-alt); }
+.lc-sc-pbar.is-sample { fill: var(--upwr-accent); }

@@ -55,22 +55,24 @@ ch2_ui <- list(
       Na wykresie każda kropka to jedna osoba z operatu, czyli z listy
       z dziekanatu. Panel losuje z tej listy próbę o wybranej liczebności:
       każda osoba ma tę samą szansę, że do niej trafi, niezależnie od tego,
-      gdzie stoi na liście."),
+      gdzie stoi na liście. Kolor kropki pokazuje, czy osoba pracuje."),
 
     figure_panel(
       label = "Ryc. 2.1",
-      title = "Wydział jako populacja i wylosowana z niego próba",
-      width_mode = "wide",
-      lc_toolbar(
-        lc_slider("ch2_n", "Liczebność próby (n)", 10, 400, 50, 10),
-        lc_action("ch2_draw", "Losuj próbę", icon = "shuffle", variant = "solid"),
-        lc_readouts(uiOutput("ch2_reads"))
-      ),
-      lc_plot("ch2_grid_plot", ratio = "3/2")
+      width_mode = "text",
+      scene_widget("ch2_populacja", "Od populacji do próby",
+        steps = c("Populacja", "Operat", "Próba", "Miniatura"),
+        labels = c("Losuj próbę", "Losuj próbę", "Losuj próbę", "Losuj próbę"),
+        options = list(list(name = "n", label = "Liczebność próby (n)", from = 3,
+                            values = c(20, 50, 200), selected = 50)),
+        more = NULL,
+        config = list(kind = "pop", n = 50, rok = faculty$rok, a = as.integer(faculty$akademik),
+                      d = faculty$dojazd, pr = as.integer(faculty$praca),
+                      aria = "Dwa tysiące czterysta kropek reprezentujących studentów, wylosowana próba i jej udziały na tle populacji"))
     ),
 
-    lc_p("Nawet przy n = 400 próba to tylko ",
-      paste0(lc_fmt(100 * 400 / pop_N, 1), "% wydziału. Kolejne losowania wybierają
+    lc_p("Nawet przy n = 200 próba to tylko ",
+      paste0(lc_fmt(100 * 200 / pop_N, 1), "% wydziału. Kolejne losowania wybierają
       inne osoby, a kropki próby rozrzucone są po całym wykresie, bez
       skupisk w jednym miejscu. To jest właśnie cecha losowania: o tym,
       kto trafi do próby, decyduje przypadek, a nie badacz ani sami
@@ -98,35 +100,17 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
-
-  ch2_trigger <- reactiveVal(0)
-  observeEvent(input$ch2_draw, ch2_trigger(ch2_trigger() + 1))
-
-  ch2_ids <- reactive({
-    ch2_trigger()
-    req(input$ch2_n)
-    sample(pop_N, input$ch2_n)
-  })
-
-  output$ch2_reads <- renderUI({
-    n <- length(ch2_ids())
-    tagList(
-      lc_readout("populacja (N)", lc_fmt(pop_N), color = col_pop, swatch = TRUE),
-      lc_readout("próba (n)", n, color = col_sample, swatch = TRUE),
-      lc_readout("n / N", paste0(lc_fmt(100 * n / pop_N, 1), "%"))
-    )
-  })
-
-  zoom_plot_server("ch2_grid_plot", reactive({
-    ids <- ch2_ids()
-    df <- faculty
-    df$in_sample <- df$id %in% ids
-    ggplot(df, aes(gx, gy)) +
-      geom_point(data = df[!df$in_sample, ], color = col_pop, alpha = 0.35,
-                 size = 1.3) +
-      geom_point(data = df[df$in_sample, ], color = col_sample, size = 2.2) +
-      scale_y_reverse() +
-      coord_equal() +
-      theme_void()
-  }), alt = "Siatka 2400 kropek; wylosowane osoby są wyróżnione kolorem")
+  scene_texts(input, output, "ch2_populacja", list(
+    tagList("Każda kropka to jeden student wydziału, razem ", tags$code("N", .noWS = "outside"), " = ", lc_fmt(pop_N),
+      ". Lista jest uporządkowana według roku studiów, dlatego u góry widać pierwszy rok, a na dole piąty. Złote kropki to studenci,
+      którzy pracują. Wylosuj próbę i zobacz, kogo wskaże przypadek."),
+    tagList("Prawdziwa lista z dziekanatu rzadko obejmuje wszystkich: ktoś jest na urlopie dziekańskim, ktoś na wymianie.
+      Puste kółka to osoby poza operatem. Próbę losujemy tylko z listy, więc ich w niej nie będzie. Dlatego populację
+      i operat trzeba ustalić, zanim zaczniemy."),
+    tagList("Wylosowane osoby przenoszą się z listy do osobnej tacy: to próba o liczebności ", tags$code("n", .noWS = "outside"),
+      ". Zmień n i losuj kilka razy. Kto trafia do próby, zmienia się za każdym razem."),
+    tagList("Pasek pokazuje, jaki odsetek studentów pracuje albo mieszka w akademiku w całej populacji i w próbie.
+      Próba jest jak miniatura populacji: podobna, ale nie identyczna, i za każdym razem trochę inna.
+      Przy n = 200 podobieństwo jest większe niż przy n = 20.")
+  ))
 }
