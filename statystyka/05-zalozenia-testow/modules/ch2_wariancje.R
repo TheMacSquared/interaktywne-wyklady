@@ -195,6 +195,27 @@ ch2_ui <- lecture_chapter(
       odrzuca H₀ (około 0.1%) i traci moc. Test Welcha w obu układach trzyma
       się poziomu 5%."),
 
+    lc_p("Tę symulację możesz powtórzyć sam na dwóch zmianach w hali montażowej."),
+
+    # PROTOTYP SCENY (2026-10-08): dwie zmiany w hali, Student vs Welch
+    figure_panel(
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch2_hala", "Dwie zmiany w hali: ile fałszywych alarmów daje test",
+        steps = c("Pomiar", "Werdykt", "Powtarzamy", "Poziom α"),
+        labels = rep("Zmierz obie zmiany", 4),
+        options = list(
+          list(name = "n", label = "Osób: chaotyczna – spokojna",
+               values = c("50–50" = "eq", "20–80" = "few", "80–20" = "many"), selected = "few"),
+          list(name = "test", label = "Test t",
+               values = c("Student" = "student", "Welch" = "welch"), selected = "student", from = 2)
+        ),
+        config = list(kind = "welch", mu = 100, sd_chaos = 20, sd_calm = 5, alpha = 0.05,
+                      layouts = list(eq = c(50, 50), few = c(20, 80), many = c(80, 20)),
+                      layout = "few", test = "student", height = 470,
+                      aria = "Brygadzista mierzy czasy montażu na dwóch zmianach, lampka pokazuje werdykt testu t, a licznik i histogram p-wartości zbierają odsetek fałszywych alarmów"))
+    ),
+
     lc_p("Pierwszy z tych układów można ustawić na Ryc. 2.1: grupa A z 20
       obserwacjami i odchyleniem 20, grupa B z 80 obserwacjami i odchyleniem 5.
       Na Ryc. 2.3 statystyka t testu Studenta wyjdzie wtedy wyraźnie większa
@@ -248,6 +269,24 @@ ch2_ui <- lecture_chapter(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
+
+  scene_texts(input, output, "ch2_hala", list(
+    tagList("W hali montażowej pracują dwie zmiany. Na chaotycznej czasy montażu bardzo się różnią,
+      na spokojnej prawie wszyscy kończą w podobnym czasie. Brygadzista mierzy pracowników obu
+      zmian: każda kropka to jeden czas montażu, pionowa kreska to średnia zmiany. Zmierz kilka razy
+      i zobacz, jak skaczą średnie."),
+    tagList("Brygadzista nie ocenia na oko, tylko liczy test t i zapala lampkę: „różnica!”, gdy
+      p < 0.05, albo „brak różnicy”. W tej hali obie zmiany mają naprawdę tę samą średnią, więc
+      każda czerwona lampka to fałszywy alarm. Zmierz kilka razy i sprawdź, jak często się zapala."),
+    tagList("Każdy pomiar spada żetonem do histogramu p-wartości, a licznik zbiera odsetek alarmów.
+      Dokładaj po 10, 100 i 1000 pomiarów, potem zmień liczebności zmian i przełącz test
+      ze Studenta na Welcha. Przełącznik czyści licznik."),
+    tagList("Kreska α = 5% to obietnica testu: przy równych średnich alarm ma się zapalać w 5% pomiarów,
+      a każdy słupek histogramu ma mieć podobną wysokość. Student dotrzymuje jej tylko
+      przy równych zmianach. Przy 20 chaotycznych i 80 spokojnych alarmuje w około 29%
+      pomiarów, przy odwrotnym układzie prawie nigdy. Welch trzyma 5% we wszystkich
+      układach, dlatego ten kurs używa go domyślnie.")
+  ))
 
   ch2_data <- reactiveVal(NULL)
 

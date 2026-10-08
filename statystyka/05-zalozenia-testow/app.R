@@ -66,7 +66,17 @@ ui <- lecture_page(
   lecture_num   = "05",
   lecture_title = "Założenia testów",
   module_label  = "Statystyka",
-  chapters      = .chapters
+  chapters      = .chapters,
+  # Scena SVG (dwie zmiany w hali montażowej): rozdz. 2
+  header_extras = tagList(
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
+    includeScript(file.path(app_dir, "modules", "scenes.js")),
+    tags$style(HTML("
+      .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
+      .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
+      .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+    "))
+  )
 )
 
 # ============================================================================
