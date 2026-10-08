@@ -2,6 +2,66 @@
 # CHAPTER 7: ANOVA
 # ============================================================================
 
+# PROTOTYP SCENY (2026-10-08): dane stałe dla scen „Skąd się bierze rozrzut”,
+# „Dwie partie” i „Co odstaje?” (modules/scenes.js). Liczone raz przy starcie.
+.ch7_scene_parts <- function(y, g) {
+  g <- factor(g)
+  gm <- mean(y); means <- tapply(y, g, mean); nj <- tapply(y, g, length)
+  ssb <- sum(nj * (means - gm)^2); ssw <- sum((y - means[g])^2)
+  k <- nlevels(g); n <- length(y)
+  list(gm = gm, means = unname(means), ssb = ssb, ssw = ssw, sst = ssb + ssw,
+       msb = ssb / (k - 1), msw = ssw / (n - k), F = (ssb / (k - 1)) / (ssw / (n - k)))
+}
+
+.ch7_scenes <- local({
+  temps <- c("20 °C", "25 °C", "30 °C")
+
+  # 1. Skąd się bierze rozrzut: 3 komory × 5 słoików, świat rozdziału
+  set.seed(19)
+  y1 <- round(c(rnorm(5, 4.55, 0.14), rnorm(5, 4.30, 0.14), rnorm(5, 4.05, 0.14)), 2)
+  g1 <- rep(1:3, each = 5)
+  jars <- c(list(kind = "jars", height = 420, lo = 3.8, hi = 4.8, temps = temps,
+                 aria = "Słoiki jogurtu z trzech komór na osi pH",
+                 y = unname(split(y1, g1))),
+            .ch7_scene_parts(y1, g1))
+
+  # 2. Dwie partie: te same odchylenia od średnich komór, inna skala.
+  #    Świat „różnią się”: średnie daleko, słoiki ciasno; „bez znaczenia”: odwrotnie.
+  #    Rozrzut całkowity w obu światach prawie ten sam.
+  set.seed(3)
+  z <- matrix(rnorm(21), 7, 3)
+  z <- sweep(z, 2, colMeans(z)); z <- z / sqrt(sum(z^2) / 18)
+  g2 <- rep(1:3, each = 7)
+  mk <- function(m, s) {
+    y <- round(as.vector(sweep(z * s, 2, m, "+")), 2)
+    c(list(y = unname(split(y, g2))), .ch7_scene_parts(y, g2))
+  }
+  worlds <- list(kind = "worlds", height = 432, lo = 3.8, hi = 4.8, temps = temps,
+                 aria = "Dwie partie słoików: średnie komór i rozrzut w komorach",
+                 world = "diff",
+                 worlds = list(diff = mk(c(4.55, 4.30, 4.05), 0.06),
+                               same = mk(4.30 + c(0.09, -0.06, -0.03), 0.217)))
+
+  # 3. Co odstaje?: stres na trzech stanowiskach, 12 osób na grupę
+  set.seed(156)
+  grp <- c("budowa", "magazyn", "biuro")
+  d3 <- data.frame(g = factor(rep(grp, each = 12), levels = grp),
+                   y = round(c(rnorm(12, 62, 12), rnorm(12, 58, 12), rnorm(12, 48, 12))))
+  a3 <- rstatix::anova_test(d3, y ~ g)
+  gh <- rstatix::games_howell_test(d3, y ~ g)
+  stress <- list(kind = "stress", height = 420, lo = 20, hi = 90, groups = grp,
+                 aria = "Stres pracowników na trzech stanowiskach",
+                 y = unname(split(d3$y, d3$g)),
+                 means = unname(tapply(d3$y, d3$g, mean)),
+                 F = a3$F, p = a3$p,
+                 pairs = lapply(seq_len(nrow(gh)), function(i) list(
+                   a = match(gh$group1[i], grp) - 1, b = match(gh$group2[i], grp) - 1,
+                   p = gh$p.adj[i], sig = gh$p.adj[i] < 0.05)))
+
+  set.seed(NULL)
+  list(jars = jars, worlds = worlds, stress = stress)
+})
+
 ch7_ui <- list(
   id = "ch-anova", num = "09", title = "ANOVA",
   content = tagList(
@@ -114,6 +174,29 @@ ch7_ui <- list(
       \\(\\bar{x}\\) — średnia wszystkich n obserwacji. Licznik i mianownik to ",
       gloss("wariancja", "wariancje"), ": sumy kwadratów odchyleń podzielone przez
       liczby ", gloss("stopnie swobody", "stopni swobody"), ", k - 1 i n − k."),
+
+    # PROTOTYP SCENY (2026-10-08): Skąd się bierze rozrzut
+    lc_p("Tak wygląda ten podział na piętnastu słoikach z trzech komór."),
+
+    figure_panel(
+      label = "Prototyp sceny", width_mode = "text",
+      scene_widget("ch7_sc_jars",
+        title = "Skąd się bierze rozrzut",
+        steps = c("Słoiki", "Całość", "Dwie części", "F"),
+        config = .ch7_scenes$jars)
+    ),
+
+    # PROTOTYP SCENY (2026-10-08): Dwie partie
+    lc_p("Ten sam rozrzut całkowity może się podzielić zupełnie inaczej."),
+
+    figure_panel(
+      label = "Prototyp sceny", width_mode = "text",
+      title = "Dwie partie",
+      scene_static(.ch7_scenes$worlds, options = list(
+        list(name = "world", label = "Partia", selected = "diff",
+             values = c("Komory się różnią" = "diff", "Komory bez znaczenia" = "same"))
+      ))
+    ),
 
     lc_p("Gdy H₀ jest prawdziwa, średnie grup różnią się tylko przypadkowo. Licznik
       i mianownik mierzą wtedy ten sam losowy szum, więc F wychodzi w okolicach 1.
@@ -243,6 +326,17 @@ ch7_ui <- list(
       w tabeli post hoc są skorygowane (p.adj) i zwykle większe niż p-wartości
       zwykłych testów t dla tych samych par."),
 
+    # PROTOTYP SCENY (2026-10-08): Co odstaje?
+    lc_p("Tak to wygląda na stresie pracowników trzech stanowisk."),
+
+    figure_panel(
+      label = "Prototyp sceny", width_mode = "text",
+      scene_widget("ch7_sc_stress",
+        title = "Co odstaje?",
+        steps = c("Trzy grupy", "ANOVA", "Które pary"),
+        config = .ch7_scenes$stress)
+    ),
+
     lc_p("Panel używa ", gloss("test Games-Howella", "testu Games-Howella"), ".
       Każdą parę porównuje statystyką podobną do testu t, ale nie zakłada
       równych wariancji ani równych liczebności grup, a wartości krytyczne bierze z rozkładu, który uwzględnia
@@ -356,6 +450,19 @@ ch7_plural_diff <- function(n) {
 }
 
 ch7_server <- function(input, output, session) {
+
+  # PROTOTYP SCENY (2026-10-08): teksty kroków scen „Skąd się bierze rozrzut” i „Co odstaje?”
+  scene_texts(input, output, "ch7_sc_jars", list(
+    "Pięć słoików z każdej komory. Przerywana linia to średnie pH wszystkich piętnastu.",
+    "Każdy słoik leży w pewnej odległości od średniej ogólnej. Suma kwadratów tych odległości to cały rozrzut.",
+    "Drogę do słoika dzielimy w średniej jego komory: bursztynowy odcinek należy do komory, niebieski do słoika.",
+    "Każdą część dzielimy przez jej stopnie swobody. F to stosunek górnego paska do dolnego."
+  ))
+  scene_texts(input, output, "ch7_sc_stress", list(
+    "Po dwanaście osób z budowy, magazynu i biura. Kreska to średnia grupy.",
+    "ANOVA odrzuca H₀: co najmniej jedna średnia odstaje. Nie mówi, która.",
+    "Games-Howell porównuje każdą parę ze skorygowaną p-wartością."
+  ))
 
   # --- Widget: inflacja błędu I rodzaju (Ryc. 9.1) ---
 

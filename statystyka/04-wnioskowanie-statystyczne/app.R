@@ -70,6 +70,9 @@ source(file.path(app_dir, "modules", "ch9_cwiczenia.R"),        local = TRUE)
 # ============================================================================
 
 header_extras <- tagList(
+  # Sceny SVG (ANOVA, rozdz. 09): modules/scenes.js + modules/scenes.css
+  tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
+  includeScript(file.path(app_dir, "modules", "scenes.js")),
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
   tags$style(HTML("
     .ws-chart-wrap {

@@ -398,3 +398,55 @@ generate_phone_data <- function(n_per_group = 40) {
     koncentracja = round(c(plecak, biurko), 1)
   )
 }
+
+
+# ----------------------------------------------------------------------------
+# Sceny SVG (modules/scenes.js, modules/scenes.css).
+# scene_widget() — scena krokowa (kadry) w lc_step_widget(); bez przycisku
+#   akcji, opcjonalne przełączniki [data-sc-opt]. Konfiguracja trafia do JS
+#   jako JSON w data-config, więc scena i tekst liczą z tych samych danych.
+# scene_static() — scena bez kroków (jeden obraz z przełącznikiem).
+# scene_texts() — teksty kroków: lista fragmentów HTML, po jednym na krok.
+# ----------------------------------------------------------------------------
+
+.scene_options <- function(options) {
+  lapply(options, function(o) {
+    lc_step_from(o$from %||% 1, lc_group(o$label,
+      tags$div(class = "lc-seg", role = "group", `aria-label` = o$label,
+        lapply(seq_along(o$values), function(i) {
+          v <- unname(o$values[[i]])
+          lab <- names(o$values)[[i]] %||% v
+          if (is.null(lab) || !nzchar(lab)) lab <- v
+          tags$button(type = "button", `data-sc-opt` = paste0(o$name, ":", v),
+            `aria-pressed` = if (v == o$selected) "true" else "false", lab)
+        })
+      )
+    ))
+  })
+}
+
+.scene_body <- function(config) {
+  tags$div(class = "lc-sc",
+    `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA))
+}
+
+scene_widget <- function(id, title, steps, config, options = NULL) {
+  lc_step_widget(id,
+    title = title,
+    steps = steps,
+    toolbar = if (length(options)) lc_toolbar(.scene_options(options)),
+    body = .scene_body(config)
+  )
+}
+
+scene_static <- function(config, options = NULL) {
+  tags$div(class = "lc-sc-host",
+    if (length(options)) lc_toolbar(.scene_options(options)),
+    .scene_body(config)
+  )
+}
+
+scene_texts <- function(input, output, id, texts) {
+  step <- lc_step_server(id, input)$step
+  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
+}
