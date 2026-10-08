@@ -108,7 +108,7 @@ pie_vs_bar_scenarios <- list(
   list(
     name = "Duże różnice",
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
-    data = c(45, 25, 15, 10, 5),
+    data = c(25, 5, 45, 10, 15),
     colors = upwr_cat_n(5),
     pie_verdict = "Różnice widoczne, ale porównanie kątów jest trudniejsze niż długości",
     bar_verdict = "Natychmiastowe porównanie — różnice czytelne od razu",
@@ -117,7 +117,7 @@ pie_vs_bar_scenarios <- list(
   list(
     name = "Podobne wartości",
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
-    data = c(22, 21, 20, 19, 18),
+    data = c(20, 22, 18, 21, 19),
     colors = upwr_cat_n(5),
     pie_verdict = "Wycinki prawie identyczne — nie widać, która kategoria prowadzi",
     bar_verdict = "Różnice 1–2 pp. wciąż czytelne dzięki wspólnej osi",
@@ -126,7 +126,7 @@ pie_vs_bar_scenarios <- list(
   list(
     name = "Podobne + złe kolory",
     labels = c("Produkt A", "Produkt B", "Produkt C", "Produkt D", "Produkt E"),
-    data = c(22, 21, 20, 19, 18),
+    data = c(20, 22, 18, 21, 19),
     # Świadomie zły dobór kolorów — pięć odcieni tego samego burgundu.
     # Ilustracja problemu: "zbliżone wielkości + zbliżone kolory = nieczytelny wykres".
     colors = upwr_seq_burgundy[3:7],

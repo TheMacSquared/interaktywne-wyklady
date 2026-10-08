@@ -145,7 +145,7 @@ ch2_ui <- list(
         lc_segmented("ch2_scenario", "Scenariusz",
           choices = c("Duże różnice" = "1", "Podobne" = "2", "Złe kolory" = "3"))
       ),
-      lc_plots(
+      lc_plots(pair = TRUE,
         tags$div(
           tags$h4("Wykres kołowy"),
           div(style = "position: relative; width: 100%; height: 320px;",
@@ -156,12 +156,18 @@ ch2_ui <- list(
         tags$div(
           tags$h4("Wykres słupkowy, te same dane"),
           div(style = "position: relative; width: 100%; height: 320px;",
-            tags$canvas(id = "ch2_bar_canvas")
+            tags$canvas(id = "ch2_bar_canvas"),
+            uiOutput("ch2_bar_cover")
           ),
           uiOutput("ch2_scenario_bar_verdict")
         )
       ),
-      lc_readouts(uiOutput("ch2_scenario_legend"))
+      tags$div(style = "margin-top: 1.6em; font-size: 1.15em;",
+        lc_readouts(uiOutput("ch2_scenario_legend"))
+      ),
+      tags$h4("Ułóżcie produkty od najmniejszego udziału do największego"),
+      uiOutput("ch2_order_widget"),
+      uiOutput("ch2_order_result")
     ),
 
     lc_p("Przy dużych różnicach (45%, 25%, 15%, 10% i 5%) oba wykresy prowadzą
@@ -560,11 +566,24 @@ ch2_server <- function(input, output, session) {
   # Widget 2: Pie vs Bar — scenario comparison (Chart.js)
   # ========================================================================
 
-  observeEvent(input$ch2_scenario, ch2_scenario_idx(as.integer(input$ch2_scenario)))
+  # Zmiana scenariusza zaczyna rundę od nowa: nowy identyfikator widgetu
+  # ustawień (bez starych przeciągnięć) i schowane wartości.
+  ch2_round <- reactiveVal(0)
+  ch2_revealed <- reactiveVal(FALSE)
+
+  observeEvent(input$ch2_scenario, {
+    ch2_scenario_idx(as.integer(input$ch2_scenario))
+    ch2_round(ch2_round() + 1)
+    ch2_revealed(FALSE)
+  })
+
+  observeEvent(input$ch2_reveal, ch2_revealed(TRUE))
 
   ch2_current_scenario <- reactive({
     pie_vs_bar_scenarios[[ch2_scenario_idx()]]
   })
+
+  ch2_widget_id <- reactive(paste0("ch2_order_", ch2_round()))
 
   # Send scenario data to Chart.js via custom message
   observe({
@@ -572,11 +591,13 @@ ch2_server <- function(input, output, session) {
     session$sendCustomMessage("render_scenario", list(
       labels = as.list(s$labels),
       data   = as.list(s$data),
-      colors = as.list(s$colors)
+      colors = as.list(s$colors),
+      reveal = ch2_revealed()
     ))
   })
 
   output$ch2_scenario_pie_verdict <- renderUI({
+    if (!ch2_revealed()) return(NULL)
     s <- ch2_current_scenario()
     lc_caption(lc_verdict(b_(if (s$pie_ok) "OK." else "Problem."),
                           type = if (s$pie_ok) "ok" else "danger"),
@@ -584,16 +605,74 @@ ch2_server <- function(input, output, session) {
   })
 
   output$ch2_scenario_bar_verdict <- renderUI({
+    if (!ch2_revealed()) return(NULL)
     s <- ch2_current_scenario()
     lc_caption(lc_verdict(b_("OK."), type = "ok"), " ", s$bar_verdict)
+  })
+
+  output$ch2_bar_cover <- renderUI({
+    if (ch2_revealed()) return(NULL)
+    tags$div(
+      style = "position: absolute; inset: 0; display: flex; align-items: center;
+        justify-content: center; padding: 1em; text-align: center;
+        background: var(--upwr-surface); color: var(--upwr-ink-soft);",
+      "Słupki i wartości odsłonimy po ułożeniu produktów"
+    )
   })
 
   output$ch2_scenario_legend <- renderUI({
     s <- ch2_current_scenario()
     # Odczyty w kolorach wycinków pełnią rolę legendy obu wykresów.
+    # Przed odsłonięciem zamiast wartości pokazują kreskę.
     tagList(mapply(function(label, color, value) {
-      lc_readout(label, paste0(value, "%"), color = color, swatch = TRUE)
+      shown <- if (ch2_revealed()) paste0(value, "%") else "—"
+      lc_readout(label, shown, color = color, swatch = TRUE)
     }, s$labels, s$colors, s$data, SIMPLIFY = FALSE))
+  })
+
+  # Karty w puli nie są posortowane (kolejność stała dla każdego scenariusza).
+  ch2_pool_order <- c(4, 1, 5, 2, 3)
+  ch2_position_zones <- c(
+    pos1 = "1. najmniejszy", pos2 = "2.", pos3 = "3.",
+    pos4 = "4.", pos5 = "5. największy"
+  )
+
+  output$ch2_order_widget <- renderUI({
+    s <- ch2_current_scenario()
+    ids <- LETTERS[seq_along(s$labels)]
+    lc_drop_match(
+      input_id = ch2_widget_id(),
+      items = data.frame(
+        id   = ids[ch2_pool_order],
+        text = s$labels[ch2_pool_order],
+        stringsAsFactors = FALSE
+      ),
+      zones = ch2_position_zones,
+      colors = rep(upwr_reference, length(ch2_position_zones)),
+      hint = "Przeciągnijcie produkty na pozycje od najmniejszego udziału do największego.",
+      actions = lc_action("ch2_reveal", "Odsłoń odpowiedź", variant = "solid")
+    )
+  })
+
+  # Porównanie ułożenia z prawidłową kolejnością. Ułożenie zamrażamy w chwili
+  # odsłonięcia, żeby kolejne przeciągnięcia nie zmieniały wyniku.
+  output$ch2_order_result <- renderUI({
+    if (!ch2_revealed()) return(NULL)
+    s <- ch2_current_scenario()
+    assignment <- isolate(input[[ch2_widget_id()]])
+    ids <- LETTERS[seq_along(s$labels)]
+    correct_idx <- order(s$data)
+    correct_ids <- ids[correct_idx]
+    chosen <- vapply(names(ch2_position_zones), function(pos) {
+      value <- assignment[[pos]]
+      if (is.null(value)) NA_character_ else as.character(value)
+    }, character(1))
+    hits <- sum(chosen == correct_ids, na.rm = TRUE)
+    lc_caption(
+      paste0("Trafionych pozycji: ", hits, " z 5. Od najmniejszego udziału: ",
+             paste0(s$labels[correct_idx], " (", s$data[correct_idx], "%)",
+                    collapse = ", "), ".")
+    )
   })
 
   # ========================================================================

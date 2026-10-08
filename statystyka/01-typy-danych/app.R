@@ -201,6 +201,7 @@ app_extras <- tagList(
           plugins: {
             legend: { display: false },
             tooltip: {
+              enabled: !!msg.reveal,
               callbacks: {
                 label: function(ctx) { return ctx.label + ': ' + ctx.parsed + '%'; }
               }
@@ -209,7 +210,8 @@ app_extras <- tagList(
         }
       });
 
-      barChartJS = new Chart(barCtx, {
+      // Słupki (i ich wartości) rysujemy dopiero po odsłonięciu.
+      if (msg.reveal) barChartJS = new Chart(barCtx, {
         type: 'bar',
         data: {
           labels: msg.labels,
