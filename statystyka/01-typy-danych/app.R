@@ -140,6 +140,7 @@ source(file.path(project_root, "R", "lecture_layout.R"),   local = TRUE)
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),        local = TRUE)
+source(file.path(app_dir, "modules", "scene_helpers.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch1_typy.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch2_jakosciowe.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_polozenie.R"),  local = TRUE)
@@ -156,6 +157,14 @@ source(file.path(app_dir, "modules", "ch8_cwiczenia.R"),  local = TRUE)
 # App-specyficzne extras — przekazywane do lecture_page() jako header_extras
 # (CSS i JS layoutu są już inkludowane przez lecture_page)
 app_extras <- tagList(
+  # Sceny SVG (prototyp: autobusy w rozdz. 4)
+  tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
+  includeScript(file.path(app_dir, "modules", "scenes.js")),
+  tags$style(HTML("
+    .lc-stepper-head .lc-toolbar:has([data-sc-act]) > .lc-grp { flex: 0 0 auto; }
+    .lc-stepper-head .lc-toolbar:has([data-sc-act]) .lc-seg { flex-wrap: nowrap; }
+    .lc-seg button[data-sc-opt][aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+  ")),
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
   tags$script(HTML("
     var pieChartJS = null, barChartJS = null;

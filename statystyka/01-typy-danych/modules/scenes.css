@@ -1,0 +1,44 @@
+/* Sceny wykładu 01 (wzorzec: statystyka 00, modules/scenes.css) */
+.lc-sc-svg { display: block; width: 100%; height: auto; }
+.lc-sc-axis { stroke: var(--upwr-ink-subtle); }
+.lc-sc-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-sub { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+.lc-sc-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-n .is-hit { fill: var(--upwr-accent); font-weight: 600; }
+.lc-sc-read { font: 700 20px var(--upwr-mono); fill: var(--upwr-accent); }
+.lc-sc-read.is-plain { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-log { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-log.is-x { fill: var(--upwr-ink); font-weight: 700; }
+.lc-sc-param { stroke: var(--upwr-ink); stroke-width: 2; stroke-dasharray: 5 4; }
+.lc-sc-param-t { font: 700 13px var(--upwr-mono); fill: var(--upwr-ink); }
+.lc-sc-person { fill: var(--upwr-ink-subtle); }
+.lc-sc-bubble { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.lc-sc-bubble-t { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-bubble-t.is-late { fill: var(--upwr-accent); font-weight: 600; }
+
+/* przystanek i autobus: linia A = niebo, linia B = bursztyn (jak Ryc. 4.1) */
+.lc-sc-clock { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.lc-sc-clock-t { font: 700 28px var(--upwr-mono); fill: var(--upwr-ink); }
+.lc-sc-road { fill: var(--upwr-surface-sunken); }
+.lc-sc-road-mark { stroke: var(--upwr-ink-subtle); stroke-width: 2; stroke-dasharray: 18 14; opacity: .5; }
+.lc-sc-pole { stroke: var(--upwr-ink-soft); stroke-width: 3; }
+.lc-sc-stop { stroke: var(--upwr-ink-soft); stroke-width: 1.2; }
+.lc-sc-stop.is-a, .lc-sc-bus.is-a, .lc-sc-token.is-a { fill: var(--upwr-cat-niebo); }
+.lc-sc-stop.is-b, .lc-sc-bus.is-b, .lc-sc-token.is-b { fill: var(--upwr-cat-bursztyn); }
+.lc-sc-stop-t { font: 700 18px var(--upwr-mono); fill: var(--upwr-surface); }
+.lc-sc-bus { stroke: var(--upwr-ink-soft); stroke-width: 1.2; }
+.lc-sc-bus-win { fill: var(--upwr-surface); opacity: .85; }
+.lc-sc-bus-t { font: 700 11px var(--upwr-mono); fill: var(--upwr-surface); }
+.lc-sc-wheel { fill: var(--upwr-ink-soft); stroke: var(--upwr-surface); stroke-width: 2; }
+
+/* histogramy spóźnień */
+.lc-sc-row-t { font: 700 20px var(--upwr-mono); }
+.lc-sc-row-t.is-a { fill: var(--upwr-cat-niebo); }
+.lc-sc-row-t.is-b { fill: var(--upwr-cat-bursztyn); }
+.lc-sc-token { opacity: .85; stroke: var(--upwr-surface); stroke-width: 1; }
+.lc-sc-token.is-bar { opacity: .8; }
+.lc-sc-token.is-late { fill: var(--upwr-accent); opacity: .9; }
+.lc-sc-risk { fill: var(--upwr-accent-tint); opacity: .55; }
+.lc-sc-limit { stroke: var(--upwr-accent); stroke-width: 2; }
+.lc-sc-limit-t { font: 600 13px var(--upwr-sans); fill: var(--upwr-accent); }

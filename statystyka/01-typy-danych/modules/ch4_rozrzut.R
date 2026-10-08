@@ -2,6 +2,22 @@
 # CHAPTER 4: Statystyki rozrzutu
 # ============================================================================
 
+# Świat autobusów (Ryc. 4.1 i prototyp sceny): 1000 kursów każdej linii,
+# średnie spóźnienie 2 min. Ziarno ustawiane lokalnie, bez ruszania globalnego RNG.
+ch4_bus_world <- function() {
+  old <- if (exists(".Random.seed", envir = globalenv())) get(".Random.seed", envir = globalenv())
+  on.exit(if (!is.null(old)) assign(".Random.seed", old, envir = globalenv()))
+  set.seed(123)
+  data_a <- rgamma(1000, shape = 8, scale = 0.25) - 0.3
+  data_b <- rgamma(1000, shape = 0.4, scale = 5)  - 0.3
+  data_a <- data_a - mean(data_a) + 2
+  data_b <- data_b - mean(data_b) + 2
+  list(a = data_a, b = data_b,
+       sd_a = round(sd(data_a), 1), sd_b = round(sd(data_b), 1))
+}
+ch4_bus <- ch4_bus_world()
+ch4_bus_limit <- 5  # zapas: autobus o 7:45, jazda 10 min, zajęcia o 8:00
+
 ch4_ui <- list(
   id = "ch-rozrzut", num = "04", title = "Statystyki rozrzutu",
   content = tagList(
@@ -30,6 +46,30 @@ ch4_ui <- list(
     # WIDGET 1: Bus scenario - "Mean is not everything"
     # ====================================================================
     lc_h2("ch4-srednia", "Średnia to nie wszystko"),
+
+    lc_p("Zacznijmy od przystanku, na którym codziennie czekasz na autobus na zajęcia."),
+
+    # PROTOTYP SCENY (2026-10-08): czekanie na autobus A/B
+    figure_panel(
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch4_bus_scene",
+        title = "Czekanie na autobus — ta sama średnia, inne ryzyko",
+        steps = c("Przystanek", "Spóźnienie", "Powtarzamy", "Ryzyko"),
+        labels = c("Czekaj na autobus", "Czekaj na autobus",
+                   "Czekaj jeszcze raz", "Czekaj jeszcze raz"),
+        options = list(list(name = "line", label = "Linia",
+                            values = c("A" = "A", "B" = "B"),
+                            selected = "A", from = 1)),
+        config = list(
+          kind = "bus", height = 462,
+          a = round(ch4_bus$a, 2), b = round(ch4_bus$b, 2),
+          dep = 7 * 60 + 45, limit = ch4_bus_limit,
+          mean = round(mean(ch4_bus$a), 1), xmax = 25,
+          aria = "Student czeka na przystanku na autobus linii A albo B; każde spóźnienie trafia do histogramu swojej linii."
+        )
+      )
+    ),
 
     lc_p("Wyobraź sobie dwie linie autobusowe o tym samym średnim spóźnieniu,
       równym 2 minuty. Na linii A prawie każdy kurs przyjeżdża z niewielkim,
@@ -381,15 +421,34 @@ ch4_server <- function(input, output, session) {
   ch4_spread_step <- lc_step_server("ch4_spread", input)$step
 
   # Helper: generate bus delay data (deterministic seed)
-  ch4_bus_data <- function() {
-    set.seed(123)
-    data_a <- rgamma(1000, shape = 8, scale = 0.25) - 0.3
-    data_b <- rgamma(1000, shape = 0.4, scale = 5)  - 0.3
-    data_a <- data_a - mean(data_a) + 2
-    data_b <- data_b - mean(data_b) + 2
-    list(a = data_a, b = data_b,
-         sd_a = round(sd(data_a), 1), sd_b = round(sd(data_b), 1))
-  }
+  ch4_bus_data <- function() ch4_bus
+
+  # Prototyp sceny: teksty kroków liczone z tego samego świata autobusów.
+  local({
+    late_b <- mean(ch4_bus$b > ch4_bus_limit) * 100
+    late_a <- mean(ch4_bus$a > ch4_bus_limit) * 100
+    f1 <- function(x) formatC(x, format = "f", digits = 1)
+    scene_texts(input, output, "ch4_bus_scene", list(
+      tagList("Autobus odjeżdża wg rozkładu o 7:45, jazda trwa 10 minut, zajęcia
+        zaczynają się o 8:00. Kliknij „Czekaj na autobus” i zobacz, o której
+        naprawdę przyjedzie. Potem przełącz się na linię B i poczekaj też tam."),
+      tagList("Z każdego czekania zostaje jedna liczba: spóźnienie x w minutach,
+        liczone od godziny z rozkładu. To obserwacja zmiennej ilościowej ciągłej.
+        Na linii A kolejne x są do siebie podobne, na linii B raz wychodzi
+        pół minuty, a raz kwadrans."),
+      tagList("Każde czekanie spada żetonem na oś spóźnień: linia A na górze,
+        linia B na dole, ta sama skala. Zbierz po kilkaset kursów na obu liniach
+        (+100, +1000) i porównaj kształty: wąski kopiec przy 2 minutach
+        i wysoki słupek przy zerze z długim ogonem w prawo."),
+      sprintf(paste("Przerywana linia to średnie spóźnienie, takie samo na obu liniach:",
+        "%s min. Na prawo od %s minut leżą kursy, po których nie zdążysz na zajęcia:",
+        "na linii A %s%%, na linii B %s%%, czyli mniej więcej co %s. kurs.",
+        "Odchylenie standardowe SD (%s min wobec %s min) mierzy tę różnicę.",
+        "Średnia nie mówi, czy zdążysz. Mówi to rozrzut."),
+        f1(mean(ch4_bus$a)), ch4_bus_limit, f1(late_a), f1(late_b),
+        round(100 / late_b), f1(ch4_bus$sd_a), f1(ch4_bus$sd_b))
+    ))
+  })
 
   # Odczyty SD zastępują legendę: kolor odczytu = kolor linii.
   output$ch4_spread_reads <- renderUI({
