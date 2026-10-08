@@ -123,12 +123,13 @@ scene_commute$sigma <- sqrt(scene_commute$shape) * scene_commute$scale
 
 # Zdrapka z kiosku (rozdz. 2) i dwa losy kontrastowe o tej samej E(X) = 4 zł.
 scene_tickets <- list(
-  main  = list(name = "ZDRAPKA", prizes = c(0, 2, 10, 100), probs = c(0.65, 0.25, 0.08, 0.02),
-               foot = "do wygrania: 2, 10 lub 100 zł"),
+  main  = list(name = "ZDRAPKA", prizes = c(0, 4, 10, 100), probs = c(0.65, 0.25, 0.08, 0.02),
+               foot = "do wygrania: 4, 10 lub 100 zł"),
   sure  = list(name = "LOS PEWNY", prizes = 4, probs = 1, foot = "wygrana: zawsze 4 zł"),
   risky = list(name = "LOS RYZYKOWNY", prizes = c(0, 40), probs = c(0.9, 0.1),
                foot = "do wygrania: 40 zł")
 )
 scene_ticket_price <- 5
-scene_ticket_ev <- function(t) sum(t$prizes * t$probs)
-scene_ticket_sd <- function(t) sqrt(sum(t$prizes^2 * t$probs) - scene_ticket_ev(t)^2)
+# X = bilans losu: wygrana minus cena (brak wygranej to -5 zł)
+scene_ticket_ev <- function(t) sum((t$prizes - scene_ticket_price) * t$probs)
+scene_ticket_sd <- function(t) sqrt(sum((t$prizes - scene_ticket_price)^2 * t$probs) - scene_ticket_ev(t)^2)

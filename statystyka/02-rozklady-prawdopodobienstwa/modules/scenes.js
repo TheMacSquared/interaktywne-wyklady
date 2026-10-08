@@ -465,7 +465,7 @@
   };
 
   // =========================================================================
-  // SCRATCH: zdrapka z kiosku, X = wygrana
+  // SCRATCH: zdrapka z kiosku, X = bilans losu (wygrana minus cena)
   // =========================================================================
   KINDS.scratch = function (cfg, api) {
     var TK = cfg.tickets, K0 = cfg.ticket || "main", PRICE = cfg.price;
@@ -473,7 +473,7 @@
     var st;
     function moments(t) {
       var e = 0, e2 = 0;
-      t.prizes.forEach(function (x, i) { e += x * t.probs[i]; e2 += x * x * t.probs[i]; });
+      t.prizes.forEach(function (p, i) { var x = p - PRICE; e += x * t.probs[i]; e2 += x * x * t.probs[i]; });
       return { e: e, sd: Math.sqrt(Math.max(0, e2 - e * e)) };
     }
     function fresh(key) {
@@ -484,8 +484,9 @@
 
     function one() {
       var u = Math.random(), acc = 0, t = st.t;
-      for (var i = 0; i < t.prizes.length; i++) { acc += t.probs[i]; if (u < acc) return { i: i, x: t.prizes[i] }; }
-      return { i: t.prizes.length - 1, x: t.prizes[t.prizes.length - 1] };
+      var pick = function (i) { return { i: i, prize: t.prizes[i], x: t.prizes[i] - PRICE }; };
+      for (var i = 0; i < t.prizes.length; i++) { acc += t.probs[i]; if (u < acc) return pick(i); }
+      return pick(t.prizes.length - 1);
     }
     function add(o) { st.counts[o.i] += 1; st.n += 1; st.sum += o.x; st.means.push(st.sum / st.n); }
     function commit(o) { o.no = st.n; st.last = o; st.log.unshift(o); if (st.log.length > 6) st.log.pop(); }
@@ -508,8 +509,8 @@
       var fx = x0 + 18, fy = y0 + 30, fw = 210, fh = 48;
       svg("rect", { x: fx, y: fy, width: fw, height: fh, rx: 4, class: "lc-sc-field" }, g);
       if (o) {
-        svg("text", { x: fx + fw / 2, y: fy + 33, "text-anchor": "middle", class: "lc-sc-prize" + (o.x > 0 ? " is-hit" : "") }, g,
-          o.x > 0 ? zl(o.x) : "0 zł");
+        svg("text", { x: fx + fw / 2, y: fy + 33, "text-anchor": "middle", class: "lc-sc-prize" + (o.prize > 0 ? " is-hit" : "") }, g,
+          zl(o.prize));
       }
       var sc = o ? (u === undefined ? 1 : u) : 0;
       if (sc < 1) svg("rect", { x: fx + fw * sc, y: fy, width: fw * (1 - sc), height: fh, rx: 4, class: "lc-sc-silver" }, g);
@@ -521,10 +522,11 @@
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g, "los nr " + (st.n + 1) + "…");
       } else if (step >= 2) {
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X = " + zl(o.x));
-        svg("text", { x: RX, y: RY + 18, "text-anchor": "middle", class: "lc-sc-sub" }, g, "wygrana z tego losu");
+        svg("text", { x: RX, y: RY + 18, "text-anchor": "middle", class: "lc-sc-sub" }, g,
+          "wygrana " + zl(o.prize) + " minus cena " + zl(PRICE));
       } else {
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "los nr " + o.no + ": " + (o.x > 0 ? "wygrana " + zl(o.x) : "nic"));
+          "los nr " + o.no + ": " + (o.prize > 0 ? "wygrana " + zl(o.prize) : "nic"));
       }
     }
 
@@ -535,7 +537,8 @@
         var q = svg("g", { opacity: 1 - ri * 0.13 }, g), y = y0 + ri * 28;
         svg("text", { x: 180, y: y, class: "lc-sc-log" }, q, "los " + o.no);
         svg("text", { x: 300, y: y, class: "lc-sc-log" }, q, "→");
-        svg("text", { x: 330, y: y, class: "lc-sc-log is-x" + (o.x > 0 ? " is-hit" : "") }, q, (step >= 2 ? "X = " : "") + zl(o.x));
+        svg("text", { x: 330, y: y, class: "lc-sc-log is-x" + (o.x > 0 ? " is-hit" : "") }, q,
+          step >= 2 ? "X = " + zl(o.prize) + " - " + zl(PRICE) + " = " + zl(o.x) : "wygrana " + zl(o.prize));
       });
     }
 
@@ -549,27 +552,35 @@
       var y = yGrid(g, BL, BR, PT, PB, ax), slot = (BR - BL) / nb, bw = Math.min(46, slot * 0.6);
       vals.forEach(function (v, i) {
         var cx = BL + slot * (i + 0.5);
-        if (v > 0) svg("rect", { x: cx - bw / 2, y: y(v), width: bw, height: PB - y(v), class: "lc-sc-bar" + (t.prizes[i] > 0 ? " is-hit" : "") }, g);
+        if (v > 0) svg("rect", { x: cx - bw / 2, y: y(v), width: bw, height: PB - y(v), class: "lc-sc-bar" + (t.prizes[i] > PRICE ? " is-hit" : "") }, g);
         if (!rel && v > 0) svg("text", { x: cx, y: y(v) - 5, "text-anchor": "middle", class: "lc-sc-val" }, g, String(v));
         if (rel) {
           svg("circle", { cx: cx, cy: y(t.probs[i]), r: 5.5, class: "lc-sc-theory" }, g);
           svg("text", { x: cx, y: PB + 34, "text-anchor": "middle", class: "lc-sc-n" }, g, fmt(t.probs[i], 2));
         }
-        svg("text", { x: cx, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick is-x" }, g, zl(t.prizes[i]));
+        svg("text", { x: cx, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick is-x" }, g, zl(t.prizes[i] - PRICE));
       });
-      svg("text", { x: (BL + BR) / 2, y: PB + (rel ? 52 : 40), "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "X, wygrana z losu");
+      svg("text", { x: (BL + BR) / 2, y: PB + (rel ? 52 : 40), "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "X, bilans losu (wygrana - cena)");
       yTitle(g, 16, PT, PB, rel ? "częstość względna" : "liczba losów");
       if (rel) {
         svg("circle", { cx: BL + 6, cy: PT - 16, r: 5.5, class: "lc-sc-theory" }, g);
         svg("text", { x: BL + 16, y: PT - 12, class: "lc-sc-n" }, g, "P(X = x)");
       }
 
-      // prawy: bieżąca średnia wygranej
+      // prawy: bieżąca średnia bilansu; oś obejmuje wartości ujemne
       var means = st.means, k0 = Math.min(10, Math.max(0, n - 1));
-      var mx = Math.max(1, PRICE * 1.3, m.e * 1.5);
-      for (var j = k0; j < n; j++) if (means[j] > mx) mx = means[j];
-      var ax2 = niceAxis(mx * 1.05, 4);
-      var y2 = yGrid(g, RL, RR, PT, PB, ax2);
+      var lo = Math.min(-PRICE - 1, m.e * 1.5), hi = Math.max(PRICE, m.e + 1);
+      for (var j = k0; j < n; j++) { if (means[j] > hi) hi = means[j]; if (means[j] < lo) lo = means[j]; }
+      var ax2 = niceAxis((hi - lo) * 1.05, 4);
+      lo = ax2.step * Math.floor(lo / ax2.step - 1e-9); hi = ax2.step * Math.ceil(hi / ax2.step + 1e-9);
+      var y2 = function (v) { return PB - (PB - PT) * (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo); };
+      for (var tk = lo; tk <= hi + ax2.step * 1e-6; tk += ax2.step) {
+        svg("line", { x1: RL, x2: RR, y1: y2(tk), y2: y2(tk), class: "lc-sc-grid" }, g);
+        svg("text", { x: RL - 8, y: y2(tk) + 4, "text-anchor": "end", class: "lc-sc-tick" }, g, fmt(tk, decs(ax2.step)));
+      }
+      svg("line", { x1: RL, x2: RR, y1: PB, y2: PB, class: "lc-sc-axis" }, g);
+      svg("line", { x1: RL, x2: RR, y1: y2(0), y2: y2(0), class: "lc-sc-price" }, g);
+      svg("text", { x: RR, y: y2(0) - 5, "text-anchor": "end", class: "lc-sc-price-t" }, g, "0 zł: wychodzisz na zero");
       var xr = function (i) { return RL + (RR - RL) * (n > 1 ? i / (n - 1) : 0); };
       if (n > 0) {
         var stepN = Math.max(1, Math.floor(n / 400)), pts = [];
@@ -581,20 +592,18 @@
       if (rel) {
         svg("line", { x1: RL, x2: RR, y1: y2(m.e), y2: y2(m.e), class: "lc-sc-param" }, g);
         svg("text", { x: RL + 4, y: y2(m.e) + 15, class: "lc-sc-param-t" }, g, "E(X) = " + fmt(m.e, 2) + " zł");
-        svg("line", { x1: RL, x2: RR, y1: y2(PRICE), y2: y2(PRICE), class: "lc-sc-price" }, g);
-        svg("text", { x: RR, y: y2(PRICE) - 5, "text-anchor": "end", class: "lc-sc-price-t" }, g, "cena losu " + zl(PRICE));
       }
       svg("text", { x: RL, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick" }, g, "1");
       svg("text", { x: RR, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(Math.max(1, n)));
       svg("text", { x: (RL + RR) / 2, y: PB + (rel ? 52 : 40), "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "liczba kupionych losów");
       svg("text", { x: RR, y: PT - 12, "text-anchor": "end", class: "lc-sc-n" }, g,
-        "średnia wygrana: " + (n ? fmt(st.sum / n, 2) + " zł" : "—") + " · losów: " + n);
+        "średni bilans: " + (n ? fmt(st.sum / n, 2) + " zł" : "—") + " · losów: " + n);
       if (rel) {
         svg("text", { x: W / 2, y: PB + 76, "text-anchor": "middle", class: "lc-sc-n" }, g,
-          "E(X) = " + fmt(m.e, 2) + " zł, cena " + zl(PRICE) + ": średnio tracisz " + fmt(PRICE - m.e, 2) + " zł na losie.");
+          "E(X) = " + fmt(m.e, 2) + " zł: średnio tracisz " + fmt(-m.e, 2) + " zł na każdym losie.");
         svg("text", { x: W / 2, y: PB + 96, "text-anchor": "middle", class: "lc-sc-n is-hit" }, g,
-          m.sd > 0 ? "SD = " + fmt(m.sd, 2) + " zł: typowa odległość wygranej od E(X)."
-            : "SD = 0.00 zł: każda wygrana jest taka sama.");
+          m.sd > 0 ? "SD = " + fmt(m.sd, 2) + " zł: typowa odległość bilansu od E(X)."
+            : "SD = 0.00 zł: każdy los daje ten sam bilans.");
       }
     }
 
