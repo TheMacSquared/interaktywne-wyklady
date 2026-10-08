@@ -108,13 +108,7 @@ ch2_ui <- list(
 
     lc_p("Pewność ma swoją cenę. Przy 99% kwantyl t rośnie do 2.80, przedziały
       są wyraźnie szersze i chybia średnio jeden na sto. Przy 80% kwantyl spada
-      do 1.32, przedziały się zwężają, a chybia średnio co piąty. Metoda nie
-      zawsze też dotrzymuje obietnicy. Dla populacji jednostajnej pokrycie przy n = 30 pozostaje bliskie
-      95%. Dla wykładniczej, silnie prawoskośnej, wynosi w długim okresie około 93%
-      przy n = 30 i około 88% przy n = 5. Przedział oparty na rozkładzie t zakłada,
-      że średnia ma rozkład w przybliżeniu normalny, a przy skośnej populacji
-      to przybliżenie poprawia się wolniej. Im bardziej skośny rozkład, tym
-      większej próby potrzeba, żeby nominalny poziom ufności był rzeczywistym."),
+      do 1.32, przedziały się zwężają, a chybia średnio co piąty."),
 
     lc_h2("ch2-jak-interpretowac", "Jak (nie) interpretować przedział ufności"),
 
