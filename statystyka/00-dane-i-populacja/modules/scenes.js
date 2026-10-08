@@ -36,7 +36,7 @@
     }
     return arr;
   }
-  function fmt(x, d) { return x.toFixed(d).replace(".", ","); }
+  function fmt(x, d) { return x.toFixed(d); }
   function ease(u) { return u * u * (3 - 2 * u); }
   function niceMax(m) {
     var steps = [5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 5000];
