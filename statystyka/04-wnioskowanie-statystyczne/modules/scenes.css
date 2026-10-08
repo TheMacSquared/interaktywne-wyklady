@@ -31,7 +31,6 @@
 .lc-sc-card-t { font: 600 11px var(--upwr-mono); fill: var(--upwr-surface); pointer-events: none; }
 .lc-sc-obs { stroke: var(--upwr-accent); stroke-width: 2.5; }
 .lc-sc-obs.is-mirror { stroke-dasharray: 6 4; }
-.lc-sc-obs-t { font: 700 12px var(--upwr-mono); fill: var(--upwr-accent); }
 
 /* pracownie */
 .lc-sc-room { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }

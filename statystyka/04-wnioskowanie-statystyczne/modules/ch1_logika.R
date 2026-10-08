@@ -534,37 +534,23 @@ ch1_server <- function(input, output, session) {
 
   # PROTOTYP SCENY (2026-10-08): teksty kroków scen „Przetasuj kartki” i „Sto pracowni”
   scene_texts(input, output, "ch1d_kartki", list(
-    tagList("Asystentka ma 80 kartek z wynikami testu koncentracji: niebieskie od studentów
-      z telefonem w plecaku, bursztynowe od studentów z telefonem na biurku. Rozłóż kartki
-      na dwa stosy według tego, gdzie leżał telefon, i porównaj średnie stosów."),
-    tagList("Różnicę średnich z prawdziwego podziału oznaczamy d_obs. Gdyby telefon nie miał
-      wpływu, kolor kartki nie miałby znaczenia. Przetasuj kartki i rozdaj je na ślepo na
-      dwa stosy po 40: różnica d nowych stosów to wynik, który daje sam przypadek."),
-    tagList("Każde tasowanie spada żetonem nad swoją wartością d. Dokładaj po 10, 100 i 1000.
-      Histogram pokazuje, jakie różnice wytwarza samo rozdawanie kartek: skupiają się
-      wokół zera i rzadko odchodzą od niego daleko."),
-    tagList("Linia ciągła to d_obs, przerywana to jej lustro po drugiej stronie zera.
-      Burgundowe słupki to tasowania co najmniej tak skrajne jak nasz wynik, a ich odsetek
-      to p-wartość: ", paste0("dla różnicy 7 pkt około ", lc_fmt(phone_cards_p[["7"]], 3),
-      ", dla różnicy 4 pkt około ", lc_fmt(phone_cards_p[["4"]], 2), "."), " Przełącz zestaw
-      kartek i porównaj oba odsetki.")
+    tagList("80 kartek z wynikami testu: niebieskie z grupy „plecak”, bursztynowe z grupy
+      „biurko”. Rozłóż je na dwa stosy i porównaj średnie."),
+    tagList("Gdyby telefon nie miał wpływu, kolor kartki nie miałby znaczenia. Przetasuj
+      kartki na ślepo: d nowych stosów daje sam przypadek."),
+    tagList("Dokładaj po 10, 100 i 1000 tasowań. Patrz, jak daleko od zera sięga d."),
+    tagList("Burgundowe słupki to tasowania co najmniej tak skrajne jak d_obs. Ich odsetek
+      to p-wartość. Przełącz zestaw na 4 pkt.")
   ))
 
   scene_texts(input, output, "ch1d_pracownie", list(
-    tagList("Pracownia przeprowadza eksperyment z telefonem: dwie grupy po 40 studentów,
-      ten sam test koncentracji. Przeprowadź badanie i obejrzyj wyniki obu grup oraz lampkę
-      nad pracownią: alarm, gdy test uznał różnicę za istotną, cisza, gdy nie."),
-    tagList("Lampka zapala się, gdy p < α. Przeprowadź kilka kolejnych badań. Każda pracownia
-      losuje innych studentów, więc dostaje inną różnicę i inne p, a werdykty się różnią,
-      choć wszystkie badają to samo."),
-    tagList("Teraz setki pracowni powtarzają ten sam eksperyment. Dokładaj po 10, 100 i 1000
-      i patrz na odsetek alarmów. Zmień n albo α: ta sama procedura daje wtedy inny odsetek.
-      Czy telefon naprawdę działa, ustawia przełącznik świata, ale pracownie tego nie wiedzą."),
-    tagList("Odsłaniamy świat: obwódka oznacza pracownie, w których telefon działał. Gdy
-      telefon nie działa, każdy alarm jest fałszywy i zdarza się w około α badań. Gdy działa,
-      odsetek alarmów to moc: ", paste0("przy n = 40 i α = 0.05 około ",
-      round(100 * phone_power[["40_0.05"]]), "%."), " Przełącznik świata nie czyści
-      tabeli, więc zbierz badania z obu ustawień.")
+    tagList("Pracownia powtarza eksperyment z telefonem na dwóch grupach po 40 osób.
+      Przeprowadź badanie: lampka zapala się, gdy test uzna różnicę za istotną."),
+    tagList("Alarm, gdy p < α. Przeprowadź kilka badań: ta sama procedura daje różne werdykty."),
+    tagList("Dokładaj po 10, 100 i 1000 badań i patrz na odsetek alarmów. Zmień n albo α.
+      Przełącznik świata ustawia, czy telefon działa; pracownie tego nie wiedzą."),
+    tagList("Obwódka to pracownie, w których telefon działał. Zbierz badania z obu
+      ustawień świata: odsetek alarmów to α albo moc.")
   ))
 
   observe({

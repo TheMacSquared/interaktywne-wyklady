@@ -216,12 +216,11 @@
     function dx(d) { return PL + (PR - PL) * (d - LO) / NB; }
 
     function drawStage(g, pos) {
-      var step = api.step();
       person(g, 30, 118, "is-lady");
       svg("rect", { x: 22, y: 118, width: 18, height: 12, rx: 2, class: "lc-sc-card is-pile" }, g);
       if (st.orig) {
-        svg("text", { x: 76 + 124, y: 30, "text-anchor": "middle", class: "lc-sc-head is-a" }, g, "telefon w plecaku");
-        svg("text", { x: 352 + 124, y: 30, "text-anchor": "middle", class: "lc-sc-head is-b" }, g, "telefon na biurku");
+        svg("text", { x: 76 + 124, y: 30, "text-anchor": "middle", class: "lc-sc-head is-a" }, g, "plecak");
+        svg("text", { x: 352 + 124, y: 30, "text-anchor": "middle", class: "lc-sc-head is-b" }, g, "biurko");
       } else {
         svg("text", { x: 76 + 124, y: 30, "text-anchor": "middle", class: "lc-sc-head" }, g, "stos 1");
         svg("text", { x: 352 + 124, y: 30, "text-anchor": "middle", class: "lc-sc-head" }, g, "stos 2");
@@ -234,30 +233,17 @@
       });
       if (pos) return;
       var m1 = meanOf(st.slot, 0), m2 = meanOf(st.slot, 1), d = st.D / 40;
-      svg("text", { x: 76 + 124, y: 184, "text-anchor": "middle", class: "lc-sc-sub" }, g, "średnia " + fmt(m1, 2));
-      svg("text", { x: 352 + 124, y: 184, "text-anchor": "middle", class: "lc-sc-sub" }, g, "średnia " + fmt(m2, 2));
-      var txt;
-      if (step === 1) txt = "różnica średnich: " + fmt(d, 2) + " pkt";
-      else if (st.orig) txt = "d_obs = " + fmt(m1, 2) + " - " + fmt(m2, 2) + " = " + fmt(d, 2) + " pkt";
-      else txt = "d = " + fmt(m1, 2) + " - " + fmt(m2, 2) + " = " + fmt(d, 2) + " pkt";
-      svg("text", { x: 340, y: 212, "text-anchor": "middle", class: "lc-sc-read" + (st.orig ? "" : " is-plain") }, g, txt);
-      if (!st.orig && step >= 2) svg("text", { x: 340, y: 232, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-        "kartki rozdane na ślepo, bez patrzenia, gdzie leżał telefon (d_obs = " + fmt(st.dobs, 2) + ")");
+      svg("text", { x: 76 + 124, y: 184, "text-anchor": "middle", class: "lc-sc-sub" }, g, "x̄ = " + fmt(m1, 2));
+      svg("text", { x: 352 + 124, y: 184, "text-anchor": "middle", class: "lc-sc-sub" }, g, "x̄ = " + fmt(m2, 2));
+      svg("text", { x: 340, y: 212, "text-anchor": "middle", class: "lc-sc-read" + (st.orig ? "" : " is-plain") }, g,
+        (st.orig ? "d_obs = " : "d = ") + fmt(d, 2) + " pkt");
     }
 
     function drawLow(g, step) {
       if (step < 3) {
-        if (step === 1) {
-          svg("text", { x: W / 2, y: 280, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-            "Asystentka ma 80 kartek z wynikami testu koncentracji, po jednej na studenta.");
-          svg("text", { x: W / 2, y: 302, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-            "Kolor kartki mówi, gdzie leżał telefon tej osoby.");
-          return;
-        }
-        svg("text", { x: W / 2, y: 274, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          st.log.length ? "ostatnie tasowania:" : "Przetasuj kartki i rozdaj je na dwa stosy po 40.");
+        if (step === 1) return;
         st.log.forEach(function (d, i) {
-          svg("text", { x: 120 + (i % 3) * 200, y: 304 + Math.floor(i / 3) * 26, "text-anchor": "middle",
+          svg("text", { x: 120 + (i % 3) * 200, y: 290 + Math.floor(i / 3) * 26, "text-anchor": "middle",
             class: "lc-sc-log" + (i === 0 ? " is-x" : "") }, g, "d = " + fmt(d, 2));
         });
         return;
@@ -268,17 +254,16 @@
       for (var t = LO; t <= HI; t += 4) ticks.push({ x: dx(t), label: String(t) });
       axisX(g, PL, PR, PB, ticks);
       svg("text", { x: (PL + PR) / 2, y: PB + 36, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "d po tasowaniu (pkt)");
+        "d (pkt)");
       svg("text", { x: PR, y: PT - 36, "text-anchor": "end", class: "lc-sc-n" }, g, "tasowań: " + st.total);
       if (step >= 4) {
+        // linie bez podpisów: ciągła = d_obs, przerywana = -d_obs; wartości w odczycie nad wykresem
         [st.dobs, -st.dobs].forEach(function (v, i) {
           svg("line", { x1: dx(v), x2: dx(v), y1: PT - 8, y2: PB, class: "lc-sc-obs" + (i ? " is-mirror" : "") }, g);
-          svg("text", { x: dx(v), y: PT - 10, "text-anchor": "middle", class: "lc-sc-obs-t" }, g,
-            i ? fmt(v, 0) : "d_obs = " + fmt(v, 0));
         });
-        svg("text", { x: PL, y: PT - 36, class: "lc-sc-n is-hit" }, g,
-          st.total ? ("|d| ≥ " + fmt(st.dobs, 0) + ": " + st.hits + " z " + st.total + " → p ≈ " + fmt(st.hits / st.total, 3))
-                   : ("tasowania co najmniej tak skrajne jak d_obs = " + fmt(st.dobs, 0)));
+        svg("line", { x1: PL, x2: PL + 22, y1: PT - 41, y2: PT - 41, class: "lc-sc-obs" }, g);
+        svg("text", { x: PL + 30, y: PT - 36, class: "lc-sc-n is-hit" }, g,
+          "d_obs = " + fmt(st.dobs, 0) + " pkt" + (st.total ? "   ·   p ≈ " + fmt(st.hits / st.total, 3) : ""));
       }
     }
 
@@ -410,25 +395,17 @@
       for (var t = 30; t <= 110; t += 20) ticks.push({ x: sx(t), label: String(t) });
       axisX(g, XL, XR, 158, ticks);
       svg("text", { x: (XL + XR) / 2, y: 193, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "wynik testu koncentracji (pkt), " + st.n + " osób w grupie");
-      if (!s || shown < 2) {
-        svg("text", { x: 400, y: 222, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          s ? "liczymy test…" : "Pracownia czeka na swój eksperyment.");
-        return;
-      }
-      var txt = step === 1
-        ? "różnica średnich " + fmt(s.d, 1) + " pkt · werdykt: " + (s.alarm ? "alarm" : "cisza")
-        : "d = " + fmt(s.d, 1) + " pkt · " + fmtP(s.p) + (s.alarm ? " < " : " ≥ ") + "α = " + st.alpha + " → " + (s.alarm ? "alarm" : "cisza");
-      svg("text", { x: 400, y: 224, "text-anchor": "middle", class: "lc-sc-read" + (s.alarm ? "" : " is-plain") }, g, txt);
+        "wynik (pkt)");
+      if (!s || shown < 2) return;
+      svg("text", { x: 400, y: 224, "text-anchor": "middle", class: "lc-sc-read" + (s.alarm ? "" : " is-plain") }, g,
+        "d = " + fmt(s.d, 1) + " pkt" + (step >= 2 ? "   ·   " + fmtP(s.p) : ""));
     }
 
     function drawLow(g, step) {
       if (step < 3) {
-        svg("text", { x: W / 2, y: 274, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          step === 1 ? "Każde badanie: dwie grupy studentów, test i jedna decyzja pracowni."
-                     : "Alarm, gdy p < α. Cisza, gdy p ≥ α.");
-        (st.log || []).forEach(function (r, i) {
-          svg("text", { x: W / 2, y: 304 + i * 24, "text-anchor": "middle", class: "lc-sc-log" + (i === 0 ? " is-x" : "") }, g, r);
+        (st.log || []).forEach(function (s, i) {
+          svg("text", { x: W / 2, y: 290 + i * 24, "text-anchor": "middle", class: "lc-sc-log" + (i === 0 ? " is-x" : "") }, g,
+            "pracownia " + s.id + ": d = " + fmt(s.d, 1) + (step >= 2 ? " · " + fmtP(s.p) : "") + " · " + (s.alarm ? "alarm" : "cisza"));
         });
         return;
       }
@@ -445,10 +422,7 @@
       if (step === 3) {
         svg("text", { x: X0, y: GY + 10, class: "lc-sc-n" }, g, "badań: " + N);
         svg("text", { x: X0, y: GY + 44, class: "lc-sc-big-n is-hit" }, g, "alarmów: " + A);
-        svg("text", { x: X0, y: GY + 72, class: "lc-sc-n" }, g, "odsetek alarmów: " + pct(A, N));
-        svg("text", { x: X0, y: GY + 104, class: "lc-sc-n" }, g, "ciszy: " + (N - A));
-        svg("text", { x: X0, y: GY + 150, class: "lc-sc-sub" }, g, "Czy telefon naprawdę działa?");
-        svg("text", { x: X0, y: GY + 170, class: "lc-sc-sub" }, g, "Pracownie tego nie wiedzą.");
+        svg("text", { x: X0, y: GY + 72, class: "lc-sc-n" }, g, "odsetek: " + pct(A, N));
         return;
       }
       // krok 4: tabela świat × decyzja
@@ -457,21 +431,19 @@
       var cols = [X0 + 118, X0 + 172, X0 + 232];
       svg("text", { x: cols[0], y: GY + 4, "text-anchor": "middle", class: "lc-sc-th-t is-hit" }, g, "alarm");
       svg("text", { x: cols[1], y: GY + 4, "text-anchor": "middle", class: "lc-sc-th-t" }, g, "cisza");
+      svg("text", { x: X0, y: GY + 4, class: "lc-sc-th-t" }, g, "telefon");
       svg("text", { x: cols[2], y: GY + 4, "text-anchor": "middle", class: "lc-sc-th-t" }, g, "% alarmów");
       var key = st.n + "_" + st.alpha, pw = cfg.power[key];
-      [["telefon", "nie działa"], ["telefon działa", "(-" + cfg.effect.diff + " pkt)"]].forEach(function (lab, w) {
+      ["nie działa", "działa"].forEach(function (lab, w) {
         var y = GY + 40 + w * 74, tot = c[w][0] + c[w][1];
         svg("rect", { x: X0 - 6, y: y - 22, width: 290, height: 60, rx: 4, class: "lc-sc-cellbg" + (w ? " is-world" : "") }, g);
-        svg("text", { x: X0, y: y - 4, class: "lc-sc-th-t" }, g, lab[0]);
-        svg("text", { x: X0, y: y + 12, class: "lc-sc-th-t" }, g, lab[1]);
+        svg("text", { x: X0, y: y + 4, class: "lc-sc-th-t" }, g, lab);
         svg("text", { x: cols[0], y: y + 4, "text-anchor": "middle", class: "lc-sc-cell is-hi" }, g, String(c[w][0]));
         svg("text", { x: cols[1], y: y + 4, "text-anchor": "middle", class: "lc-sc-cell" }, g, String(c[w][1]));
         svg("text", { x: cols[2], y: y + 4, "text-anchor": "middle", class: "lc-sc-cell is-hi" }, g, pct(c[w][0], tot));
         svg("text", { x: cols[2], y: y + 26, "text-anchor": "middle", class: "lc-sc-theory-t" }, g,
           w ? "moc ≈ " + fmt(100 * pw, 0) + "%" : "α = " + fmt(100 * st.alpha, 0) + "%");
       });
-      svg("rect", { x: GX, y: GY + 10 * CH + 4, width: 16, height: 10, class: "lc-sc-lab is-world" }, g);
-      svg("text", { x: GX + 22, y: GY + 10 * CH + 13, class: "lc-sc-n" }, g, "obwódka: telefon działał");
     }
 
     function render(shown) {
@@ -482,7 +454,7 @@
     }
     function logLine(s) {
       st.log = st.log || [];
-      st.log.unshift("pracownia " + s.id + ": d = " + fmt(s.d, 1) + " pkt, " + fmtP(s.p) + ", " + (s.alarm ? "alarm" : "cisza"));
+      st.log.unshift(s);
       if (st.log.length > 5) st.log.pop();
     }
     function cellXY(k) {
@@ -569,15 +541,13 @@
       if (r.alarms > 0) st.any += 1;
     }
     function logLine(r) {
-      var who = r.pairs.filter(function (p) { return p.hit; }).slice(0, 2)
-        .map(function (p) { return cfg.names[p.i] + " - " + cfg.names[p.j]; }).join(", ");
-      st.log.unshift("seria " + r.id + ": " + (st.mode === "anova" ? ("ANOVA, " + fmtP(r.p) + (r.alarms ? ", alarm" : ", cisza"))
-        : ("alarmów " + r.alarms + (who ? " (" + who + (r.alarms > 2 ? ", …" : "") + ")" : ""))));
+      st.log.unshift("seria " + r.id + ": " + (st.mode === "anova" ? fmtP(r.p) + (r.alarms ? " · alarm" : " · cisza")
+        : "alarmów " + r.alarms));
       if (st.log.length > 4) st.log.pop();
     }
 
     function drawStage(g, r, lit) {
-      var step = api.step(), i, j;
+      var i, j;
       if (st.mode === "anova") {
         svg("circle", { cx: CX, cy: CY, r: R + 14, class: "lc-sc-ring" + (r && lit && r.alarms ? " is-hit" : "") }, g);
       } else {
@@ -597,34 +567,19 @@
       // analityk i werdykt
       var X0 = 366;
       person(g, X0, 64, "");
-      svg("text", { x: X0 + 24, y: 50, class: "lc-sc-sub" }, g, st.k + " kierunków, po " + cfg.n + " osób, ten sam test");
-      svg("text", { x: X0 + 24, y: 70, class: "lc-sc-sub" }, g,
-        st.mode === "anova" ? "jedna ANOVA dla wszystkich grup" :
-          (step >= 2 ? "m = " + m() + " par, każda testem t przy α = " + cfg.alpha : m() + " par do porównania"));
-      if (!r) return;
-      if (!lit) { svg("text", { x: X0, y: 120, class: "lc-sc-sub" }, g, "liczymy testy…"); return; }
-      if (st.mode === "anova") {
-        svg("text", { x: X0, y: 118, class: "lc-sc-n" }, g, "F = " + fmt(r.F, 2) + ", " + fmtP(r.p));
-      } else {
-        svg("text", { x: X0, y: 118, class: "lc-sc-n" + (r.alarms ? " is-hit" : "") }, g,
-          (step >= 2 ? "alarmów (p < " + cfg.alpha + "): " : "alarmów w tej serii: ") + r.alarms + " z " + m());
-        r.pairs.filter(function (p) { return p.hit; }).slice(0, 3).forEach(function (p, q) {
-          svg("text", { x: X0, y: 140 + q * 18, class: "lc-sc-n" }, g,
-            cfg.names[p.i] + " - " + cfg.names[p.j] + ": " + fmtP(p.p));
-        });
-      }
-      svg("text", { x: X0, y: 214, class: "lc-sc-read" + (r.alarms ? "" : " is-plain") }, g,
-        r.alarms ? "był co najmniej jeden alarm" : "żadnego alarmu");
+      svg("text", { x: X0 + 24, y: 60, class: "lc-sc-n" }, g,
+        "k = " + st.k + "   ·   " + (st.mode === "anova" ? "ANOVA" : "m = " + m()));
+      if (!r || !lit) return;
+      svg("text", { x: X0, y: 140, class: "lc-sc-read" + (r.alarms ? "" : " is-plain") }, g,
+        st.mode === "anova" ? fmtP(r.p) : "alarmów: " + r.alarms);
     }
 
     function binLabel(b) { return st.mode === "anova" ? (b ? "alarm" : "cisza") : (b === NB - 1 ? (NB - 1) + "+" : String(b)); }
 
     function drawLow(g, step) {
       if (step < 3) {
-        svg("text", { x: W / 2, y: 268, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "Wszystkie kierunki losujemy z tej samej populacji: średnia " + cfg.mu + " pkt, odchylenie " + cfg.sd + " pkt.");
         st.log.forEach(function (l, i) {
-          svg("text", { x: W / 2, y: 300 + i * 24, "text-anchor": "middle", class: "lc-sc-log" + (i === 0 ? " is-x" : "") }, g, l);
+          svg("text", { x: W / 2, y: 290 + i * 24, "text-anchor": "middle", class: "lc-sc-log" + (i === 0 ? " is-x" : "") }, g, l);
         });
         return;
       }
@@ -633,10 +588,10 @@
       bars(g, cnt, PL, PR, PT, PB, slotX, Math.min(70, (PR - PL) / nb * 0.6), function (b) { return b >= 1; });
       axisX(g, PL, PR, PB, cnt.map(function (_, b) { return { x: slotX(b), label: binLabel(b) }; }));
       svg("text", { x: (PL + PR) / 2, y: PB + 36, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        st.mode === "anova" ? "wynik ANOVA w serii" : "liczba alarmów w serii");
+        st.mode === "anova" ? "wynik ANOVA" : "alarmów w serii");
       svg("text", { x: PR, y: PT - 22, "text-anchor": "end", class: "lc-sc-n" }, g, "serii: " + st.series);
       svg("text", { x: PL, y: PT - 22, class: "lc-sc-n is-hit" }, g,
-        "serie z co najmniej jednym alarmem: " + st.any + (st.series ? " (" + pct(st.any, st.series) + ")" : ""));
+        "serie z alarmem: " + st.any + (st.series ? " (" + pct(st.any, st.series) + ")" : ""));
       if (step < 4) return;
       // krok 4: odsetek serii z alarmem obok wzoru
       var theo = st.mode === "anova" ? cfg.alpha : 1 - Math.pow(1 - cfg.alpha, m());
@@ -645,10 +600,13 @@
       if (st.series) svg("rect", { x: BX0, y: BY, width: (BX1 - BX0) * obs, height: 12, class: "lc-sc-pbar is-hit" }, g);
       var tx = BX0 + (BX1 - BX0) * theo;
       svg("line", { x1: tx, x2: tx, y1: BY - 6, y2: BY + 18, class: "lc-sc-param" }, g);
-      svg("text", { x: BX0, y: BY + 34, class: "lc-sc-n is-hit" }, g, "odsetek serii z alarmem: " + pct(st.any, st.series));
-      svg("text", { x: BX1, y: BY + 34, "text-anchor": "end", class: "lc-sc-param-t" }, g,
-        st.mode === "anova" ? "α = " + fmt(100 * theo, 1) + "%"
-          : "1 - 0.95^" + m() + " = " + fmt(100 * theo, 1) + "% (przybliżenie)");
+      // odczyt ze wzorcami: pełny pasek = symulacja, przerywana kreska = wzór
+      var RY = BY + 36, RX = (BX0 + BX1) / 2 - 150;
+      svg("rect", { x: RX, y: RY - 9, width: 18, height: 9, class: "lc-sc-pbar is-hit" }, g);
+      svg("text", { x: RX + 26, y: RY, class: "lc-sc-n is-hit" }, g, pct(st.any, st.series));
+      svg("line", { x1: RX + 110, x2: RX + 132, y1: RY - 4, y2: RY - 4, class: "lc-sc-param" }, g);
+      svg("text", { x: RX + 140, y: RY, class: "lc-sc-n" }, g,
+        (st.mode === "anova" ? "α = " : "1 - 0.95^" + m() + " = ") + fmt(100 * theo, 1) + "%");
     }
 
     function render(lit) {

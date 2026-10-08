@@ -376,21 +376,13 @@ ch7_server <- function(input, output, session) {
 
   # PROTOTYP SCENY (2026-10-08): teksty kroków sceny „Porównaj wszystkie pary”
   scene_texts(input, output, "ch7_pary", list(
-    tagList("Analityk ma wyniki tego samego testu koncentracji z kilku kierunków studiów,
-      po 20 osób na kierunek. Wszystkie kierunki losujemy z jednej populacji, więc prawdziwych
-      różnic nie ma. Porównaj wszystkie pary: odcinek zapala się, gdy test t dla tej pary
-      da p < 0.05."),
-    tagList("Każdy zapalony odcinek to fałszywy alarm. Liczy się werdykt całej serii: czy
-      wypadł w niej co najmniej jeden alarm. Zmień liczbę kierunków k i zobacz, jak szybko
-      przybywa par."),
-    tagList("Powtarzamy całe serie porównań. Każda seria spada żetonem nad liczbą swoich
-      alarmów, a burgundowe słupki to serie z co najmniej jednym alarmem. Dokładaj po 10,
-      100 i 1000, potem przełącz na jedną ANOVA: jeden test dla całej serii zamiast
-      wszystkich par."),
-    tagList("Odsetek serii z alarmem stoi obok wzoru 1 - 0.95^m. Wzór traktuje testy jako
-      niezależne, a pary dzielą te same grupy, więc to tylko przybliżenie: symulacja
-      wypada niżej, ale wciąż wyraźnie powyżej 5%. Jedna ANOVA trzyma odsetek
-      fałszywych alarmów przy 5% dla każdego k.")
+    tagList("Kierunki po 20 osób, wszystkie z jednej populacji: prawdziwych różnic nie ma.
+      Porównaj wszystkie pary; odcinek zapala się, gdy test t da p < 0.05."),
+    tagList("Każdy zapalony odcinek to fałszywy alarm. Liczy się, czy w serii wypadł choć
+      jeden. Zmień k i patrz na m."),
+    tagList("Dokładaj po 10, 100 i 1000 serii. Potem przełącz na jedną ANOVA."),
+    tagList("Pasek to odsetek serii z alarmem, kreska to wzór 1 - 0.95^m. Pary dzielą
+      grupy, więc symulacja wypada nieco niżej. ANOVA trzyma 5% przy każdym k.")
   ))
 
   # --- Widget: inflacja błędu I rodzaju (Ryc. 9.1) ---
