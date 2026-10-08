@@ -225,6 +225,13 @@ Jednolinijkowy opis.
 [szczegóły implementacji]
 ```
 
+## Sceny
+
+Scena to widget „od intuicji do formalizmu”: student wykonuje codzienne
+doświadczenie losowe, a kolejne kroki prowadzą do pojęcia formalnego.
+Polecenie „zrób scenę do …” realizuj według `SCENY.md` (łuk kroków, zasady
+treści, architektura, brief do akceptacji przed kodem).
+
 ## Typy aplikacji
 
 | Typ | Wzorzec | Opis |
