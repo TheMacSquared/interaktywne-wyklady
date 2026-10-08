@@ -65,6 +65,27 @@ ch2_ui <- list(
 
     lc_h2("ch2-wiele-ci", "Wiele przedziałów ufności"),
 
+    lc_p("Zanim uruchomimy symulację, zbudujmy kilka przedziałów ręcznie, na korytarzu przed salą."),
+
+    # PROTOTYP SCENY (2026-10-08): Zarzuć siatkę — co znaczy 95%
+    figure_panel(
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch2_siatka", "Zarzuć siatkę: co znaczy 95%",
+        steps = c("Grupka", "Siatka", "Powtarzamy", "Gdzie μ?"),
+        labels = c("Zmierz grupkę", "Zarzuć siatkę", "Zarzuć siatkę", "Zarzuć siatkę"),
+        options = list(
+          list(name = "n", label = "Osób w grupce (n)",
+               values = net_n, selected = 25L),
+          list(name = "mult", label = "Mnożnik",
+               values = c("t*" = "t", "1.96" = "z"), selected = "t", from = 4)
+        ),
+        config = list(kind = "net", mu = net_world$mu, sigma = net_world$sigma,
+                      n = 25L, mult = "t", tq = net_tq, z = 1.96,
+                      xmin = 140, xmax = 200, height = 550,
+                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali, zarzuca przedział x̄ ± margines na oś wzrostu; kolejne przedziały układają się pod osią, a w ostatnim kroku widać μ i odsetek trafień"))
+    ),
+
     lc_p("Definicja mówi o tym, co dzieje się w wielu próbach, a w prawdziwym
       badaniu mamy jedną. Symulacja pozwala powtórzyć badanie dowolnie wiele razy
       na ", gloss("populacja", "populacji"), ", w której znamy μ. Domyślnie jest to wzrost o rozkładzie
@@ -185,6 +206,28 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
+
+  # --- PROTOTYP SCENY (2026-10-08): Zarzuć siatkę ---
+  scene_texts(input, output, "ch2_siatka", list(
+    tagList("Student z miarką stoi przy drzwiach sali i mierzy osoby, które z niej wychodzą.
+      Każdy pomiar ląduje kropką na osi wzrostu, a pionowa kreska to średnia grupki ",
+      tags$code("x̄", .noWS = "outside"), ". Zmierz kilka grupek: każda daje inną średnią."),
+    tagList("Wokół ", tags$code("x̄", .noWS = "outside"), " student odkłada margines w obie strony
+      i zarzuca siatkę na oś wzrostu. Siatka to przedział ufności 95%: zakres, w którym
+      spodziewa się średniego wzrostu całej populacji ", tags$code("μ", .noWS = "outside"), ".
+      Każda grupka zarzuca siatkę w trochę innym miejscu."),
+    tagList("Każda siatka spada na stos pod osią, najnowsza na górze. ",
+      tags$code("μ", .noWS = "outside"), " jest niewidoczne, więc nie wiemy, które siatki
+      je złapały. Tak samo jest w prawdziwym badaniu z jedną próbą. Dorzuć +100 i +1000 siatek,
+      potem zmień n: siatki się zwężają."),
+    tagList("Linia przerywana to ", tags$code(paste0("μ = ", net_world$mu, " cm"), .noWS = "outside"),
+      ": szałwiowe siatki je złapały, terakotowe chybiły, a w długiej serii trafia około 95%.
+      95% dotyczy metody, nie jednej siatki: pojedyncza siatka albo złapała ",
+      tags$code("μ", .noWS = "outside"), ", albo nie. Przy n = 5 przełącz mnożnik na 1.96:
+      siatki są za wąskie i trafiają tylko w około ", paste0(round(100 * net_cov_z[["5"]]), "% przypadków.
+      Mała próba potrzebuje szerszej siatki, więc mnożnik t* z rozkładu t (",
+      lc_fmt(net_tq[["5"]], 2), " przy n = 5) przywraca 95%."))
+  ))
 
   # --- Widget 1: Symulacja przedziałów ufności (akumulacja) ---
   ch2_sim_data <- reactiveVal(NULL)

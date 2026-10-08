@@ -1,0 +1,44 @@
+/* Sceny wykładu 03 (scenes.js): siatka x̄ ± margines na osi wzrostu */
+.lc-sc-svg { display: block; width: 100%; height: auto; }
+.lc-sc-axis { stroke: var(--upwr-ink-subtle); }
+.lc-sc-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-sub { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+.lc-sc-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-read { font: 700 18px var(--upwr-mono); fill: var(--upwr-accent); }
+.lc-sc-read.is-plain { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-log { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-log.is-x { fill: var(--upwr-ink); font-weight: 700; }
+.lc-sc-param { stroke: var(--upwr-ink); stroke-width: 2; stroke-dasharray: 5 4; }
+.lc-sc-param-t { font: 700 13px var(--upwr-mono); fill: var(--upwr-ink); }
+
+/* sala, student z miarką, grupka */
+.lc-sc-sign { fill: var(--upwr-ink-soft); }
+.lc-sc-sign-t { font: 700 13px var(--upwr-mono); fill: var(--upwr-surface); letter-spacing: .12em; }
+.lc-sc-door { fill: #a9784a; stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.lc-sc-door-panel { fill: none; stroke: #7d5532; stroke-width: 2; }
+.lc-sc-handle { fill: var(--upwr-single-alt); stroke: var(--upwr-ink-soft); }
+.lc-sc-floor { stroke: var(--upwr-rule-soft); stroke-width: 1; }
+.lc-sc-man { fill: var(--upwr-cat-niebo); }
+.lc-sc-man.is-actor { fill: var(--upwr-accent); }
+.lc-sc-tape { fill: var(--upwr-single-alt); stroke: var(--upwr-ink-soft); stroke-width: .8; }
+.lc-sc-tape-t { stroke: var(--upwr-ink-soft); stroke-width: 1; }
+.lc-sc-hdot { fill: var(--upwr-cat-niebo); stroke: var(--upwr-surface); stroke-width: .6; }
+.lc-sc-xbar { stroke: var(--upwr-cat-bursztyn); stroke-width: 3; stroke-linecap: round; }
+
+/* siatka */
+.lc-sc-net { fill: var(--upwr-ink-subtle); opacity: .14; }
+.lc-sc-net-edge { fill: none; stroke: var(--upwr-ink-soft); stroke-width: 1.4; }
+.lc-sc-mesh { stroke: var(--upwr-ink-subtle); stroke-width: .8; }
+.lc-sc-float { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
+.lc-sc-end { font: 600 12px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-net-t { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+
+/* stos siatek: szare, dopóki μ ukryte; potem trafione / chybione */
+.lc-sc-ci { stroke: var(--upwr-ink-subtle); stroke-width: 2.6; stroke-linecap: round; opacity: .75; }
+.lc-sc-ci.is-fly { stroke: var(--upwr-ink-soft); opacity: 1; }
+.lc-sc-ci.is-hit { stroke: var(--upwr-cat-szalwia, #3f8f5f); opacity: .9; }
+.lc-sc-ci.is-miss { stroke: var(--upwr-cat-terakota); opacity: 1; stroke-width: 3; }
+.lc-sc-ci-dot { fill: var(--upwr-ink-soft); }
+.lc-sc-ci-dot.is-hit { fill: var(--upwr-cat-szalwia, #3f8f5f); }
+.lc-sc-ci-dot.is-miss { fill: var(--upwr-cat-terakota); }
