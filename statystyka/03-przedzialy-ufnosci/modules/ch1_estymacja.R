@@ -49,41 +49,28 @@ ch1_ui <- list(
 
     lc_p("Żeby ocenić, jak działa estymator, trzeba odwrócić typową sytuację:
       wybrać populację o znanym μ, losować z niej wiele prób i sprawdzać,
-      gdzie lądują kolejne estymaty. Panel poniżej robi to dla czterech
-      rozkładów populacji. Wrzosowa przerywana linia to prawdziwe μ,
-      bursztynowa — średnia ze wszystkich dotąd uzyskanych estymat ",
-      withMathJax("\\(\\bar{x}\\)"), "."),
+      gdzie lądują kolejne estymaty. W scenie poniżej kolejne grupki po 25 osób
+      wychodzą z sali, a ich średnie wzrostu spadają jedna po drugiej na stos.
+      Wzrost w populacji ma ", gloss("rozkład normalny"), " ze średnią μ = 170 cm
+      i odchyleniem standardowym σ = 10 cm, ale scena zdradza μ dopiero w ostatnim kroku."),
 
+    # PROTOTYP SCENY (2026-10-08): Zmierz grupkę — estymator się waha, μ stoi
     figure_panel(
-      label = "Ryc. 1.1", title = "Losowanie prób z populacji",
-      full_width = TRUE,
-      lc_toolbar(
-        selectInput("ch1_dist", "Rozkład populacji",
-            choices = c(
-              "Normalny (wzrost)"         = "normal",
-              "Wykładniczy (prawoskośny)" = "exponential",
-              "Jednostajny"               = "uniform",
-              "Dwumodalny"                = "bimodal"
-            ),
-            selected = "normal"
-          ),
-        lc_slider("ch1_n", "Wielkość próby (n)", 5, 200, 30, 5),
-        lc_action_group(ch1_draw_1 = "1", ch1_draw_20 = "20", label = "Pobierz próby"),
-        lc_action("ch1_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-        lc_readouts(uiOutput("ch1_estimates_stats"), uiOutput("ch1_count_info"))
-      ),
-      lc_plot("ch1_estimates_plot", max_height = "400px")
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch1_grupka", "Zmierz grupkę: x̄ się waha",
+        steps = c("Grupka", "Powtarzamy", "μ"),
+        labels = c("Zmierz grupkę", "Zmierz grupkę", "Zmierz grupkę"),
+        more_from = 2,
+        config = list(kind = "net", mode = "mean", mu = net_world$mu, sigma = net_world$sigma,
+                      n = 25L, xmin = 140, xmax = 200, height = 480,
+                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali; średnia grupki x̄ spada żetonem na stos pod osią wzrostu, a w ostatnim kroku widać μ i odchylenie standardowe średnich"))
     ),
 
-    lc_p("Populacja „wzrostu” ma ", gloss("rozkład normalny"), " ze średnią μ = 170 cm
-      i odchyleniem standardowym σ = 10 cm. Przy n = 30 średnie z prób rozkładają
-      się wokół 170 cm z ", gloss("błąd standardowy", "błędem standardowym"), " σ/√n = 10/√30 ≈ 1.83 cm, więc około
-      95% z nich wypada między 166.4 a 173.6 cm. Po kilkudziesięciu losowaniach
-      dwie rzeczy są wyraźne. Pojedyncze estymaty rozrzucają się po obu stronach μ,
-      ale ich średnia leży tuż przy μ. Wartość „SD estymat” w panelu jest bliska
-      1.83 cm, czyli błędowi standardowemu z wykładu 02. Po wyczyszczeniu panelu
-      i zwiększeniu n histogram estymat jest węższy, a zmiana rozkładu populacji na wykładniczy, jednostajny czy
-      dwumodalny nie zmienia tego obrazu: estymaty dalej skupiają się wokół μ."),
+    lc_p("Pojedyncze estymaty rozrzucają się po obu stronach μ, ale stos układa
+      się wokół μ. Przy n = 25 ", gloss("błąd standardowy"), " wynosi
+      σ/√n = 10/√25 = 2 cm, więc około 95% średnich grupek wypada między 166.1
+      a 173.9 cm, a SD(x̄) w odczycie zbliża się do 2 cm."),
 
     lc_h2("ch1-wlasnosci", "Trzy własności dobrego estymatora"),
 
@@ -112,8 +99,8 @@ ch1_ui <- list(
       Nie ma błędu systematycznego w jedną stronę."),
 
     lc_note("Przykład", tags$p("Średnia z próby jest nieobciążonym estymatorem μ.
-      To wzór E(X̄) = μ z wykładu 02 i to właśnie widać na Ryc. 1.1:
-      bursztynowa linia średniej z estymat leży tuż przy wrzosowej linii μ.")),
+      To wzór E(X̄) = μ z wykładu 02 i to właśnie widać w scenie powyżej:
+      stos średnich układa się wokół μ.")),
 
     lc_note("Kontrprzykład", tags$p(gloss("wariancja", "Wariancja"), " z próby liczona
       z dzieleniem przez n, ",
@@ -184,28 +171,10 @@ ch1_ui <- list(
     lc_p("Nawet najlepszy estymator daje w każdej próbie inną estymatę.
       Liczba ", withMathJax("\\(\\bar{x} = 171.3\\)"), " cm podana bez komentarza
       nie mówi, czy prawdziwe μ może wynosić 171 cm, czy równie dobrze 165 cm.
-      O tym decyduje rozrzut estymatora, a więc błąd standardowy. W scenie poniżej
-      kolejne grupki po 25 osób wychodzą z sali, a ich średnie wzrostu
-      (μ = 170 cm, σ = 10 cm) spadają jedna po drugiej na stos."),
-
-    # PROTOTYP SCENY (2026-10-08): Zmierz grupkę — estymator się waha, μ stoi
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch1_grupka", "Zmierz grupkę: x̄ się waha",
-        steps = c("Grupka", "Powtarzamy", "μ"),
-        labels = c("Zmierz grupkę", "Zmierz grupkę", "Zmierz grupkę"),
-        more_from = 2,
-        config = list(kind = "net", mode = "mean", mu = net_world$mu, sigma = net_world$sigma,
-                      n = 25L, xmin = 140, xmax = 200, height = 480,
-                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali; średnia grupki x̄ spada żetonem na stos pod osią wzrostu, a w ostatnim kroku widać μ i odchylenie standardowe średnich"))
-    ),
-
-    lc_p("Przy n = 25 błąd standardowy wynosi 10/√25 = 2 cm, więc około 95%
-      średnich grupek wypada między 166.1 a 173.9 cm. Kolejne średnie lądują
-      o kilka centymetrów w górę i w dół od μ, a SD(x̄) w odczycie zbliża się
-      do 2 cm. Czterokrotnie większa grupka zmniejszyłaby SE o połowę, ale skoki
-      by nie zniknęły. Dowolna pojedyncza estymata może więc leżeć kilka
+      O tym decyduje rozrzut estymatora, a więc błąd standardowy. Stos ze sceny
+      pokazał, że przy n = 25 kolejne średnie lądują o kilka centymetrów w górę
+      i w dół od μ. Czterokrotnie większa grupka zmniejszyłaby SE o połowę, ale
+      skoki by nie zniknęły. Dowolna pojedyncza estymata może więc leżeć kilka
       centymetrów od μ, a sama liczba nie zdradza, jak daleko."),
 
     lc_p("Dlatego oprócz estymaty podaje się zakres wartości, który uwzględnia
@@ -229,80 +198,6 @@ ch1_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
-
-  # --- Widget 1: Estymator w akcji ---
-  ch1_estimates <- reactiveVal(data.frame(
-    i = integer(0), xbar = numeric(0)
-  ))
-
-  draw_samples <- function(k) {
-    dist <- input$ch1_dist
-    n <- input$ch1_n
-    params <- get_population_params(dist)
-    old <- ch1_estimates()
-    new_rows <- lapply(seq_len(k), function(j) {
-      samp <- generate_population_sample(dist, n)
-      data.frame(i = nrow(old) + j, xbar = mean(samp))
-    })
-    ch1_estimates(rbind(old, do.call(rbind, new_rows)))
-  }
-
-  observeEvent(input$ch1_draw_1, draw_samples(1))
-  observeEvent(input$ch1_draw_20, draw_samples(20))
-  observeEvent(input$ch1_reset, {
-    ch1_estimates(data.frame(i = integer(0), xbar = numeric(0)))
-  })
-  # Nowy rozkład albo nowe n to nowy estymator — historia zaczyna się od zera.
-  observeEvent(list(input$ch1_dist, input$ch1_n), {
-    ch1_estimates(data.frame(i = integer(0), xbar = numeric(0)))
-  })
-
-  output$ch1_count_info <- renderUI({
-    n_est <- nrow(ch1_estimates())
-    lc_readout("Prób", n_est, color = col_ci)
-  })
-
-  zoom_plot_server("ch1_estimates_plot", reactive({
-    est <- ch1_estimates()
-    params <- get_population_params(input$ch1_dist)
-
-    if (nrow(est) == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Pobierz próbę przyciskiem powyżej",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      ggplot(est, aes(x = xbar)) +
-        geom_histogram(aes(y = after_stat(density)), bins = 30,
-                       fill = col_ci, alpha = 0.6, color = "white") +
-        geom_vline(xintercept = params$mu, color = col_true,
-                   linewidth = 1.5, linetype = "dashed") +
-        annotate("text", x = params$mu, y = Inf, vjust = 2,
-                 label = "μ",
-                 color = col_true, fontface = "bold", size = 5) +
-        geom_vline(xintercept = mean(est$xbar), color = col_estimate,
-                   linewidth = 1.5, linetype = "solid") +
-        annotate("text", x = mean(est$xbar), y = Inf, vjust = 4,
-                 label = "średnia x̄",
-                 color = col_estimate, fontface = "bold", size = 5) +
-        labs(
-             x = expression(bar(x)), y = "Gęstość") +
-        theme_upwr()
-    }
-  }))
-
-  output$ch1_estimates_stats <- renderUI({
-    est <- ch1_estimates()
-    if (nrow(est) == 0) return(NULL)
-    params <- get_population_params(input$ch1_dist)
-    tagList(
-      lc_readout("μ", round(params$mu, 2), color = col_true),
-      lc_readout("Śr. estymat", round(mean(est$xbar), 2), color = col_estimate),
-      lc_readout("SD estymat", round(sd(est$xbar), 2), color = upwr_secondary)
-    )
-  })
-
-  # --- Sekcja 2: tylko tekst, brak server logic ---
 
   # --- PROTOTYP SCENY (2026-10-08): Zmierz grupkę ---
   scene_texts(input, output, "ch1_grupka", list(
