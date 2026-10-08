@@ -219,28 +219,6 @@ ch1d_ui <- list(
       odrzucałby ją średnio w 5 przypadkach na 100. Nie znaczy, że konkretna
       decyzja jest błędna z prawdopodobieństwem 5%."),
 
-    # PROTOTYP SCENY (2026-10-08): Sto pracowni (α i moc jako częstości alarmów)
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch1d_pracownie", "Sto pracowni: jak często test podnosi alarm",
-        steps = c("Badanie", "Werdykt", "Pracownie", "Świat"),
-        labels = c("Przeprowadź badanie", "Przeprowadź badanie", "Przeprowadź badanie", "Przeprowadź badanie"),
-        options = list(
-          list(name = "world", label = "Telefon (świat ukryty)",
-               values = c("nie działa" = "0", "działa" = "1"), selected = "0"),
-          list(name = "n", label = "Osób w grupie (n)",
-               values = c("40" = "40", "100" = "100"), selected = "40", from = 3),
-          list(name = "alpha", label = "Poziom α",
-               values = c("0.05" = "0.05", "0.01" = "0.01"), selected = "0.05", from = 3)
-        ),
-        config = list(kind = "labs", height = 495, n = 40, alpha = 0.05, world = 0,
-                      mu0 = 70, sd0 = 13,
-                      effect = list(mp = 72, sp = 12, mb = 65, sb = 14, diff = 7),
-                      power = as.list(round(phone_power, 4)),
-                      aria = "Pracownia z lampką alarmu, wyniki dwóch grup studentów, siatka kolejnych pracowni i tabela świat razy decyzja"))
-    ),
-
     lc_p("Poziom istotności, tak jak poziom ufności, jest umową. Konwencja
       \\(\\alpha = 0.05\\) nie wynika z żadnego twierdzenia. Ustala się ją przed
       analizą danych i dobiera do kosztów pomyłki. Przy planowaniu badań
@@ -345,23 +323,6 @@ ch1d_ui <- list(
       próba. Rozkład tych różnic pokazuje, jakie wyniki wytwarza sam przypadek,
       a p-wartość to odsetek powtórzeń, w których różnica wyszła co najmniej tak
       daleko od zera jak nasza."),
-
-    lc_p("Ten sam pomysł da się wykonać na kartkach z naszego eksperymentu: jeśli
-      telefon nie ma wpływu, podział kartek na „plecak” i „biurko” niczego nie
-      zmienia, więc kartki można przetasować i rozdać na nowo."),
-
-    # PROTOTYP SCENY (2026-10-08): Przetasuj kartki (p-wartość jako odsetek tasowań)
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch1d_kartki", "Przetasuj kartki: ile daje sam przypadek",
-        steps = c("Kartki", "Różnica d", "Tasujemy", "Nasz wynik"),
-        labels = c("Rozłóż kartki", "Przetasuj kartki", "Przetasuj kartki", "Przetasuj kartki"),
-        options = list(list(name = "set", label = "Zestaw kartek (różnica)",
-                            values = c("7 pkt" = "7", "4 pkt" = "4"), selected = "7")),
-        config = list(kind = "perm", height = 450, set = "7", sets = phone_cards,
-                      aria = "Osiemdziesiąt kartek z wynikami testu na dwóch stosach, tasowanie kartek i histogram różnic średnich d"))
-    ),
 
     lc_p("Panel poniżej losuje takie eksperymenty: obie grupy pochodzą z tej samej
       populacji o średniej 70 pkt i odchyleniu standardowym 13 pkt. Każdy słupek
@@ -531,27 +492,6 @@ ch1d_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
-
-  # PROTOTYP SCENY (2026-10-08): teksty kroków scen „Przetasuj kartki” i „Sto pracowni”
-  scene_texts(input, output, "ch1d_kartki", list(
-    tagList("80 kartek z wynikami testu: niebieskie z grupy „plecak”, bursztynowe z grupy
-      „biurko”. Rozłóż je na dwa stosy i porównaj średnie."),
-    tagList("Gdyby telefon nie miał wpływu, kolor kartki nie miałby znaczenia. Przetasuj
-      kartki na ślepo: d nowych stosów daje sam przypadek."),
-    tagList("Dokładaj po 10, 100 i 1000 tasowań. Patrz, jak daleko od zera sięga d."),
-    tagList("Burgundowe słupki to tasowania co najmniej tak skrajne jak d_obs. Ich odsetek
-      to p-wartość. Przełącz zestaw na 4 pkt.")
-  ))
-
-  scene_texts(input, output, "ch1d_pracownie", list(
-    tagList("Pracownia powtarza eksperyment z telefonem na dwóch grupach po 40 osób.
-      Przeprowadź badanie: lampka zapala się, gdy test uzna różnicę za istotną."),
-    tagList("Alarm, gdy p < α. Przeprowadź kilka badań: ta sama procedura daje różne werdykty."),
-    tagList("Dokładaj po 10, 100 i 1000 badań i patrz na odsetek alarmów. Zmień n albo α.
-      Przełącznik świata ustawia, czy telefon działa; pracownie tego nie wiedzą."),
-    tagList("Obwódka to pracownie, w których telefon działał. Zbierz badania z obu
-      ustawień świata: odsetek alarmów to α albo moc.")
-  ))
 
   observe({
     session$sendCustomMessage("ws_pvalue_chart", list(

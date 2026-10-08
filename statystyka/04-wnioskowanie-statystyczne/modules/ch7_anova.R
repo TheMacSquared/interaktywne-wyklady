@@ -48,23 +48,6 @@ ch7_ui <- list(
       "$$m = \\frac{k(k-1)}{2}, \\qquad P(\\text{co najmniej jeden fałszywy alarm}) = 1 - (1 - \\alpha)^m$$"
     )),
 
-    # PROTOTYP SCENY (2026-10-08): Porównaj wszystkie pary (fałszywe alarmy w serii testów)
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch7_pary", "Wszystkie pary: ile serii kończy się fałszywym alarmem",
-        steps = c("Porównania", "Alarm w serii", "Serie", "Wzór"),
-        labels = c("Porównaj wszystkie pary", "Porównaj wszystkie pary", "Porównaj wszystkie pary", "Porównaj wszystkie pary"),
-        options = list(
-          list(name = "k", label = "Kierunków (k)", values = c("3" = "3", "5" = "5", "7" = "7"), selected = "5"),
-          list(name = "mode", label = "Analiza",
-               values = c("pary" = "pairs", "ANOVA" = "anova"), selected = "pairs", from = 3)
-        ),
-        config = list(kind = "pairs", height = 480, k = 5, mode = "pairs", n = 20, mu = 70, sd = 13, alpha = 0.05,
-                      names = c("Biologia", "Ekonomia", "Geodezja", "Dietetyka", "Rolnictwo", "Zootechnika", "Weterynaria"),
-                      aria = "Graf kierunków studiów, w którym zapalają się pary z istotnym testem t, i histogram liczby alarmów w serii"))
-    ),
-
     lc_p("Panel rysuje grupy jako wierzchołki, a każdą parę do porównania jako
       odcinek. Obok podaje liczbę testów i ryzyko obliczone z tego wzoru."),
 
@@ -373,17 +356,6 @@ ch7_plural_diff <- function(n) {
 }
 
 ch7_server <- function(input, output, session) {
-
-  # PROTOTYP SCENY (2026-10-08): teksty kroków sceny „Porównaj wszystkie pary”
-  scene_texts(input, output, "ch7_pary", list(
-    tagList("Kierunki po 20 osób, wszystkie z jednej populacji: prawdziwych różnic nie ma.
-      Porównaj wszystkie pary; odcinek zapala się, gdy test t da p < 0.05."),
-    tagList("Każdy zapalony odcinek to fałszywy alarm. Liczy się, czy w serii wypadł choć
-      jeden. Zmień k i patrz na m."),
-    tagList("Dokładaj po 10, 100 i 1000 serii. Potem przełącz na jedną ANOVA."),
-    tagList("Pasek to odsetek serii z alarmem, kreska to wzór 1 - 0.95^m. Pary dzielą
-      grupy, więc symulacja wypada nieco niżej. ANOVA trzyma 5% przy każdym k.")
-  ))
 
   # --- Widget: inflacja błędu I rodzaju (Ryc. 9.1) ---
 
