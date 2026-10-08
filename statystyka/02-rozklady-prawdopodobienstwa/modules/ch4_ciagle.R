@@ -105,23 +105,6 @@ ch4_ui <- list(
       na przedziale od 0 do 0.5 ma f(x) = 2 na całym przedziale, a mimo to pole
       pod nim wynosi 2 · 0.5 = 1."),
 
-    lc_p("Dlaczego pytamy o przedział, a nie o jedną wartość, widać na przystanku autobusowym."),
-
-    # PROTOTYP SCENY (2026-10-08): Przyjdź na przystanek (prawdopodobieństwo = pole, tolerancja)
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch4_przystanek", "Przyjdź na przystanek: od jednego czekania do pola nad przedziałem",
-        steps = c("Czas czekania X", "Powtarzamy", "Tolerancja"),
-        labels = c("Przyjdź na przystanek", "Przyjdź na przystanek", "Przyjdź na przystanek"),
-        more_from = 2,
-        options = list(list(name = "tol", label = "Przedział wokół 5 min",
-                            values = c("± 2" = "2", "± 0.5" = "0.5", "± 0.05" = "0.05", "= 5" = "0"),
-                            selected = "0.5", from = 3)),
-        config = list(kind = "bus", period = 10, center = 5, tol = 0.5, height = 446,
-                      aria = "Pasażer przychodzi na przystanek w losowej chwili, autobus co 10 minut; histogram czasów czekania i pole nad przedziałem wokół 5 minut"))
-    ),
-
     lc_p("Panel zacienia pole między granicami a i b dla trzech rozkładów,
       które omówimy w tym i następnym rozdziale."),
 
@@ -578,17 +561,6 @@ ch4_lnorm_defs <- list(
 # --------------------------------------------------------------------------
 
 ch4_server <- function(input, output, session) {
-
-  # --- PROTOTYP SCENY (2026-10-08): Przyjdź na przystanek ---
-  scene_texts(input, output, "ch4_przystanek", list(
-    tagList("Autobus odjeżdża co 10 minut, a pasażer przychodzi w losowej chwili. ",
-      tags$code("X", .noWS = "outside"), " to czas czekania: dowolna liczba od 0 do 10 min, więc zmienna
-      losowa ciągła. Przyjdź kilka razy."),
-    tagList("Czekania trafiają do przedziałów po 1 min, kreski pod osią to dokładne wyniki. Dołóż 100
-      i 1000: słupki się wyrównują."),
-    tagList("Jak często czekanie wypada około 5 min? Zmieniaj przedział: udział czekań w przedziale
-      zgadza się z polem prostokąta pod linią 1/10. Dla = 5 pole wynosi 0.")
-  ))
 
   # --- Ryc. 4.5: czas oczekiwania → rozkład wykładniczy (experiment.js) ---
   X <- exp_X

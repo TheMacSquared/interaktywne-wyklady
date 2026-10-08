@@ -36,23 +36,6 @@
 /* grupka: dojazdy */
 .lc-sc-popfill { fill: var(--upwr-cat-niebo); opacity: .25; stroke: var(--upwr-cat-niebo); stroke-width: 1; }
 
-/* przystanek */
-.lc-sc-pole { stroke: var(--upwr-ink-subtle); stroke-width: 3; }
-.lc-sc-stopsign { fill: var(--upwr-single-alt); stroke: var(--upwr-ink-soft); stroke-width: 1.2; }
-.lc-sc-stopsign-t { font: 700 11px var(--upwr-mono); fill: var(--upwr-ink); }
-.lc-sc-bus-body { fill: var(--upwr-cat-niebo); stroke: var(--upwr-ink-soft); stroke-width: 1.2; }
-.lc-sc-bus-win { fill: var(--upwr-surface); }
-.lc-sc-bus-wheel { fill: var(--upwr-ink); }
-.lc-sc-clock { stroke: var(--upwr-ink); stroke-width: 2.5; stroke-linecap: round; }
-.lc-sc-wait { stroke: var(--upwr-accent); stroke-width: 5; stroke-linecap: round; opacity: .75; }
-.lc-sc-brk { stroke: var(--upwr-ink-soft); stroke-width: 1.4; }
-.lc-sc-brk-t { font: 600 13px var(--upwr-mono); fill: var(--upwr-accent); }
-.lc-sc-tol { fill: var(--upwr-accent-tint); opacity: .9; }
-.lc-sc-tol-edge { fill: none; stroke: var(--upwr-accent); stroke-width: 1.5; }
-.lc-sc-tol-line { stroke: var(--upwr-accent); stroke-width: 2; }
-.lc-sc-rug { stroke: var(--upwr-ink-subtle); stroke-width: 1; opacity: .25; }
-.lc-sc-rug.is-hit { stroke: var(--upwr-accent); opacity: 1; stroke-width: 1.4; }
-
 /* kiosk i zdrapka */
 .lc-sc-awning { fill: var(--upwr-accent); opacity: .8; }
 .lc-sc-awning.is-alt { fill: var(--upwr-surface); opacity: 1; stroke: var(--upwr-rule); }
