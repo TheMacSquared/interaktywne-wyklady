@@ -411,8 +411,9 @@ ch1_ui <- list(
       label = "Prototyp sceny",
       width_mode = "text",
       scene_widget("ch1_sc_slope", "Godziny nauki i wynik: nachylenie z kolejnych grup",
-        steps = c("Grupa", "Nachylenie", "Powtarzamy", "Prawdziwe β₁"),
-        labels = c("Zbierz grupę", "Zbierz grupę", "Zbierz grupę", "Zbierz grupę"),
+        steps = c("Grupa", "Powtarzamy", "Prawdziwe β₁"),
+        labels = c("Zbierz grupę", "Zbierz grupę", "Zbierz grupę"),
+        more_from = 2,
         options = list(
           list(name = "n", label = "Studentów w grupie (n)",
                values = c("14" = "14", "70" = "70"), selected = "14"),
@@ -687,38 +688,24 @@ ch1_server <- function(input, output, session) {
 
   # PROTOTYP SCENY (2026-10-08): teksty kroków scen ch1_sc_rtm i ch1_sc_slope
   scene_texts(input, output, "ch1_sc_rtm", list(
-    tagList("Każda kropka to jeden ze 100 studentów. Jego wynik to ukryta umiejętność plus los dnia:
-      wyspanie, trafione pytania, nerwy. Napisz kolokwium kilka razy i zobacz, jak rozkładają się
-      wyniki grupy."),
-    tagList("Wyróżniamy 10 osób z najwyższym wynikiem i liczymy ich średnią. Leży wyraźnie nad
-      średnią grupy. Za chwilę ci sami studenci napiszą kolokwium jeszcze raz."),
-    tagList("Ci sami studenci piszą drugie kolokwium o tej samej trudności, a los dnia rozdaje się
-      od nowa. Strzałki prowadzą od pierwszego wyniku do drugiego, a zmiana średniej wybranych
-      spada żetonem do histogramu. Dokładaj po 10, 100 i 1000 grup, potem zmień udział losu albo
-      wybierz 10 najsłabszych, którzy dostali konsultacje bez żadnego efektu."),
-    tagList("Odsłaniamy to, czego na kolokwium nie widać: puste kółka to prawdziwa umiejętność
-      wybranych, linia przerywana to jej średnia. Najlepsi w pierwszym podejściu to osoby
-      umiejętne, którym dodatkowo dopisało szczęście, więc za drugim razem lądują bliżej swojej
-      umiejętności. Najsłabsi rosną z tego samego powodu, choć konsultacje nic nie dały. Bez losu
-      strzałek nie ma i nikt nie wraca do średniej.")
+    tagList("Każda kropka to student: wynik to ukryta umiejętność plus los dnia. Napisz kolokwium
+      kilka razy."),
+    tagList("Trójkąt to średnia 10 najlepszych. Za chwilę ci sami napiszą kolokwium jeszcze raz."),
+    tagList("Drugie kolokwium, ta sama trudność, nowy los dnia. Zmiana średniej wybranych spada
+      do histogramu. Dokładaj grupy, potem zmień udział losu albo wybierz 10 najsłabszych."),
+    tagList("Puste kółka to prawdziwa umiejętność wybranych, linia przerywana to jej średnia.
+      Najlepszym dopisało szczęście, najsłabszym go zabrakło, więc w drugim podejściu wracają
+      do swojej umiejętności. Bez losu nie ma powrotu.")
   ))
 
   scene_texts(input, output, "ch1_sc_slope", list(
-    tagList("Ankieter pyta losowych studentów, ile godzin w tygodniu się uczą i ile punktów dostali
-      na egzaminie. Każdy punkt to jedna osoba, a prosta to prosta MNK dopasowana do tej grupy.
-      Zbierz kilka grup i porównaj proste."),
-    tagList("Nachylenie prostej to ", tags$code("b₁", .noWS = "outside"), ": o ile punktów
-      średnio rośnie wynik z każdą dodatkową godziną nauki w tej grupie. Każda grupa daje inne ",
-      tags$code("b₁", .noWS = "outside"), ", choć studenci pochodzą z tego samego świata."),
-    tagList("Poprzednie proste zostają blado w tle, a każde ", tags$code("b₁", .noWS = "outside"),
-      " spada żetonem do histogramu. Dokładaj po 10, 100 i 1000 grup, a potem przełącz liczbę
-      studentów z 14 na 70 i porównaj rozrzut."),
-    tagList("Linia przerywana to prawdziwe nachylenie ", tags$code("β₁", .noWS = "outside"),
-      " w świecie, z którego losujemy grupy. Wartości ", tags$code("b₁", .noWS = "outside"),
-      " rozkładają się wokół niego, przy 70 studentach ciaśniej niż przy 14. Żetony w kolorze
-      akcentu to grupy, w których test nachylenia uznałby je za istotne (p < 0.05). Przełącz świat
-      na „nie pomaga”: mimo ", tags$code("β₁ = 0", .noWS = "outside"), " mniej więcej co
-      dwudziesta grupa pokazuje wyraźne nachylenie, czyli fałszywy alarm z wykładu 04.")
+    tagList("Każdy punkt to jeden student, prosta to MNK dla tej grupy. Zbierz kilka grup i
+      porównaj ", tags$code("b₁", .noWS = "outside"), "."),
+    tagList("Każde ", tags$code("b₁", .noWS = "outside"), " spada do histogramu. Dokładaj grupy,
+      potem przełącz n z 14 na 70 i porównaj rozrzut."),
+    tagList("Linia przerywana to prawdziwe ", tags$code("β₁", .noWS = "outside"), ". Żetony w kolorze
+      akcentu to grupy z p < 0.05. Przełącz świat na „nie pomaga”: około 5% grup i tak pokazuje
+      istotne nachylenie.")
   ))
 
   zoom_plot_server("ch1_beta_plot", reactive({

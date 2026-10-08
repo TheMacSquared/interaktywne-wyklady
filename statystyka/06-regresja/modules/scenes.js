@@ -5,6 +5,7 @@
 //   "rtm"   grupa pisze dwa kolokwia: najlepsi z pierwszego wypadają gorzej w drugim
 //           (regresja do średniej; umiejętność + los dnia)
 //   "slope" zbieramy grupę studentów (godziny nauki → wynik): b₁ zmienia się od próby do próby
+//           (3 kroki: grupa z b₁ → powtarzamy → prawdziwe β₁)
 // Numer kroku czyta z data-lc-step korzenia widgetu. Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
 //   [data-sc-opt]  "nazwa:wartość" (przełączniki opcji)
@@ -52,6 +53,25 @@
       svg("line", { x1: t.x, x2: t.x, y1: y, y2: y + 5, class: "lc-sc-axis" }, g);
       svg("text", { x: t.x, y: y + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, t.label);
     });
+  }
+
+  // Jeden krótki odczyt pod/nad wykresem: [{glyph, cls, text}], glyph: "line" | "tri" | "dot" | brak.
+  // Szerokości tekstów mierzy przeglądarka; całość wyrównana do x wg anchor (start | middle | end).
+  function readout(g, x, y, items, anchor) {
+    var GW = 20, GAP = 6, SEP = 22, box = svg("g", {}, g), cx = 0;
+    items.forEach(function (it, i) {
+      if (i > 0) { svg("text", { x: cx + SEP / 2, y: y, "text-anchor": "middle", class: "lc-sc-n" }, box, "·"); cx += SEP; }
+      if (it.glyph === "line") svg("line", { x1: cx, x2: cx + GW, y1: y - 4, y2: y - 4, class: it.cls }, box);
+      if (it.glyph === "tri") svg("path", { d: "M " + (cx + GW / 2) + " " + (y - 10) + " l -6 9 l 12 0 Z", class: it.cls }, box);
+      if (it.glyph === "dot") svg("circle", { cx: cx + GW / 2, cy: y - 4, r: 5, class: it.cls }, box);
+      if (it.glyph) cx += GW + GAP;
+      var t = svg("text", { x: cx, y: y, class: "lc-sc-n" }, box, it.text);
+      var w = 0;
+      try { w = t.getComputedTextLength(); } catch (e) { w = 0; }
+      cx += w || it.text.length * 7.8;
+    });
+    var dx = anchor === "middle" ? x - cx / 2 : anchor === "end" ? x - cx : x;
+    box.setAttribute("transform", "translate(" + dx + " 0)");
   }
 
   // Histogram żetonów: counts[i] (wszystkie), hits[i] (wyróżnione, rysowane na dole stosu).
@@ -159,13 +179,8 @@
       return g;
     }
 
-    function selName() { return st.grp === "top" ? "10 najlepszych" : "10 najsłabszych"; }
-
-    function meanMark(g, x, yTop, label, cls) {
+    function meanMark(g, x, yTop, cls) {
       svg("path", { d: "M " + x + " " + yTop + " l -6 9 l 12 0 Z", class: "lc-sc-tri " + (cls || "") }, g);
-      var anch = x > 470 ? "end" : x < 230 ? "start" : "middle";
-      var tx = anch === "end" ? x + 6 : anch === "start" ? x - 6 : x;
-      svg("text", { x: tx, y: yTop + 23, "text-anchor": anch, class: "lc-sc-mlab lc-sc-halo " + (cls || "") }, g, label);
     }
 
     function drawStage(g, step, anim) {
@@ -177,11 +192,9 @@
         svg("line", { x1: AX0, x2: AX1, y1: R2, y2: R2, class: "lc-sc-grid" }, g);
         paper(g, 16, R2 - 30);
         svg("text", { x: 36, y: R2 - 16, class: "lc-sc-row" }, g, "2. kolokwium");
-        if (st.grp === "bottom") svg("text", { x: 16, y: R2 + 2, class: "lc-sc-sub is-sm" }, g, "po konsultacjach");
       }
       if (step >= 4) {
         svg("text", { x: 16, y: RS + 4, class: "lc-sc-row is-truth" }, g, "umiejętność");
-        svg("text", { x: 16, y: RS + 20, class: "lc-sc-sub is-sm" }, g, "(ukryta)");
       }
       var ticks = [];
       for (var t = 0; t <= 100; t += 20) ticks.push({ x: X(t), label: String(t) });
@@ -199,8 +212,6 @@
       // średnia całej grupy
       if (!anim || anim.done) {
         svg("line", { x1: X(d.a1), x2: X(d.a1), y1: R1 - BAND - 6, y2: R1, class: "lc-sc-avgall" }, g);
-        svg("text", { x: X(d.a1), y: R1 - BAND - 10, "text-anchor": "middle", class: "lc-sc-sub is-sm" }, g,
-          "średnia grupy " + fmt(d.a1, 1));
       }
       // 1. kolokwium
       for (var i = 0; i < shown; i++) {
@@ -214,11 +225,6 @@
         d.sel.forEach(function (i) {
           svg("circle", { cx: X(d.skill[i]), cy: RS - 6 + d.j2[i] * 10, r: 4, class: "lc-sc-skill" }, g);
         });
-        var sk = d.sel.map(function (i) { return d.skill[i]; });
-        var right = st.grp === "bottom";
-        var lx = right ? X(Math.max.apply(null, sk)) + 16 : X(Math.min.apply(null, sk)) - 16;
-        svg("text", { x: lx, y: RS + 4, "text-anchor": right ? "start" : "end", class: "lc-sc-param-t lc-sc-halo" }, g,
-          "średnio " + fmt(d.msk, 1));
       }
       // 2. kolokwium
       if (step >= 3 && u2 > 0) {
@@ -235,15 +241,19 @@
           svg("circle", { cx: xe, cy: ye, r: 4.6, class: "lc-sc-st is-sel" }, g);
         });
         if (!anim || anim.done) {
-          meanMark(g, X(d.m2), R2 + 3, "ci sami: " + fmt(d.m2, 1) + " (" + sgn(d.d, 1) + ")", "is-acc");
+          meanMark(g, X(d.m2), R2 + 3, "is-acc");
         }
       }
       if (hl && (!anim || anim.done || anim.u2 > 0)) {
-        meanMark(g, X(d.m1), R1 + 3, selName() + ": " + fmt(d.m1, 1), "is-acc");
+        meanMark(g, X(d.m1), R1 + 3, "is-acc");
       }
-      if (st.luck === 0 && step >= 3 && (!anim || anim.done)) {
-        svg("text", { x: AX1, y: 16, "text-anchor": "end", class: "lc-sc-n is-hit" }, g,
-          "bez losu: drugi wynik = pierwszy");
+      // jeden odczyt nad wykresem: średnia grupy, średnia wybranych (1. → 2.), ich umiejętność
+      if (!anim || anim.done) {
+        var items = [{ glyph: "line", cls: "lc-sc-avgall", text: "x̄ = " + fmt(d.a1, 1) }];
+        if (step >= 2) items.push({ glyph: "tri", cls: "lc-sc-tri is-acc",
+          text: "x̄₁₀ = " + fmt(d.m1, 1) + (step >= 3 ? " → " + fmt(d.m2, 1) : "") });
+        if (step >= 4) items.push({ glyph: "line", cls: "lc-sc-param", text: "umiejętność = " + fmt(d.msk, 1) });
+        readout(g, (AX0 + AX1) / 2, 18, items, "middle");
       }
     }
 
@@ -257,12 +267,11 @@
         var y = 340 + i * 26, g2 = svg("g", { opacity: 1 - i * 0.16 }, g);
         svg("text", { x: 60, y: y, class: "lc-sc-log" }, g2, "grupa " + d.no);
         if (step >= 2) {
-          svg("text", { x: 170, y: y, class: "lc-sc-log" }, g2, "średnia grupy " + fmt(d.a1, 1));
-          svg("text", { x: 380, y: y, class: "lc-sc-log is-x" }, g2,
-            (d.grp === "top" ? "10 najlepszych: " : "10 najsłabszych: ") + fmt(d.m1, 1));
+          svg("text", { x: 170, y: y, class: "lc-sc-log" }, g2, "x̄ = " + fmt(d.a1, 1));
+          svg("text", { x: 380, y: y, class: "lc-sc-log is-x" }, g2, "x̄₁₀ = " + fmt(d.m1, 1));
         } else {
           svg("text", { x: 170, y: y, class: "lc-sc-log" }, g2,
-            "średnia " + fmt(d.a1, 1) + " · od " + d.min + " do " + d.max + " pkt");
+            "x̄ = " + fmt(d.a1, 1) + " · " + d.min + "–" + d.max + " pkt");
         }
       });
     }
@@ -270,14 +279,13 @@
     function drawHist(g, step) {
       var ticks = [-30, -20, -10, 0, 10, 20, 30].map(function (t) { return { x: hist.x(t), label: t > 0 ? "+" + t : String(t) }; });
       svg("line", { x1: hist.x(0), x2: hist.x(0), y1: hist.PT - 4, y2: hist.PB, class: "lc-sc-zero" }, g);
-      svg("text", { x: hist.x(0) + 5, y: hist.PT + 4, class: "lc-sc-sub is-sm" }, g, "bez zmian");
       hist.draw(g);
       axisX(g, hist.PL, hist.PR, hist.PB, ticks);
       svg("text", { x: (hist.PL + hist.PR) / 2, y: hist.PB + 36, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "zmiana średniej " + selName() + " na 2. kolokwium (pkt)");
+        "zmiana x̄₁₀ na 2. kolokwium (pkt)");
       var info = "grup: " + st.groups.length;
       if (step >= 4 && st.groups.length) {
-        info += " · średnia zmiana " + sgn(mean(st.groups.map(function (d) { return d.d; })), 1) + " pkt";
+        info += " · średnio " + sgn(mean(st.groups.map(function (d) { return d.d; })), 1) + " pkt";
       }
       svg("text", { x: hist.PR, y: hist.PT - 14, "text-anchor": "end", class: "lc-sc-n" }, g, info);
     }
@@ -387,21 +395,15 @@
       // ankieter z kartką
       person(g, 470, 40, 1.1, "");
       svg("rect", { x: 482, y: 50, width: 15, height: 20, rx: 2, class: "lc-sc-paper" }, g);
-      svg("text", { x: 506, y: 50, class: "lc-sc-sub is-sm" }, g, "pytam: ile godzin");
-      svg("text", { x: 506, y: 65, class: "lc-sc-sub is-sm" }, g, "się uczysz i ile masz?");
 
       // poprzednie proste w tle
-      if (step >= 3) {
+      if (step >= 2) {
         st.groups.slice(-40).forEach(function (d) {
           if (d === st.last) return;
           line(g, d.b0, d.b1, d.xl, d.xh, "lc-sc-ghost");
         });
       }
-      if (step >= 4) {
-        line(g, beta0(), beta1(), 0, XMAXA, "lc-sc-param");
-        svg("text", { x: PX(0.2), y: PY(beta0() + beta1() * 0.2) + 20, class: "lc-sc-param-t lc-sc-halo" }, g,
-          "β₁ = " + fmt(beta1(), 1));
-      }
+      if (step >= 3) line(g, beta0(), beta1(), 0, XMAXA, "lc-sc-param");
 
       var d = st.last;
       if (!d) {
@@ -421,19 +423,7 @@
       }
       var px = 430;
       if (!anim || anim.done) {
-        if (step >= 2) {
-          var lx = PX(d.xh) + 4, ly = PY(clamp(d.b0 + d.b1 * d.xh, YMIN, YMAX));
-          svg("text", { x: Math.min(lx, SX1 + 40), y: ly + 5, class: "lc-sc-lab-acc" }, g, "b₁");
-          svg("text", { x: px, y: 140, class: "lc-sc-read" }, g, "b₁ = " + fmt(d.b1, 2));
-          svg("text", { x: px, y: 162, class: "lc-sc-sub" }, g, "punktu za każdą");
-          svg("text", { x: px, y: 178, class: "lc-sc-sub" }, g, "dodatkową godzinę nauki");
-        } else {
-          svg("text", { x: px, y: 140, class: "lc-sc-read is-plain" }, g, d.n + " studentów");
-          svg("text", { x: px, y: 162, class: "lc-sc-sub" }, g, "średni wynik " + fmt(d.my, 1) + " pkt");
-        }
-        if (step >= 4) {
-          svg("text", { x: px, y: 206, class: "lc-sc-param-t" }, g, "prawda: β₁ = " + fmt(beta1(), 1));
-        }
+        svg("text", { x: px, y: 140, class: "lc-sc-read" }, g, "b₁ = " + fmt(d.b1, 2));
       }
     }
 
@@ -446,34 +436,32 @@
       st.groups.slice(-5).reverse().forEach(function (d, i) {
         var y = 340 + i * 26, g2 = svg("g", { opacity: 1 - i * 0.16 }, g);
         svg("text", { x: 60, y: y, class: "lc-sc-log" }, g2, "grupa " + d.no);
-        svg("text", { x: 170, y: y, class: "lc-sc-log" }, g2, d.n + " studentów · średnio " + fmt(d.my, 1) + " pkt");
-        if (step >= 2) svg("text", { x: 470, y: y, class: "lc-sc-log is-x" }, g2, "b₁ = " + fmt(d.b1, 2));
+        svg("text", { x: 170, y: y, class: "lc-sc-log" }, g2, "n = " + d.n + " · ȳ = " + fmt(d.my, 1));
+        svg("text", { x: 470, y: y, class: "lc-sc-log is-x" }, g2, "b₁ = " + fmt(d.b1, 2));
       });
     }
 
     function drawHist(g, step) {
       var ticks = [-2, 0, 2, 4, 6].map(function (t) { return { x: hist.x(t), label: String(t) }; });
       svg("line", { x1: hist.x(0), x2: hist.x(0), y1: hist.PT - 4, y2: hist.PB, class: "lc-sc-zero" }, g);
-      if (step >= 4) {
+      if (step >= 3) {
         hist.draw(g, [" is-hit", " is-quiet"]);
         var xb = hist.x(beta1());
         svg("line", { x1: xb, x2: xb, y1: hist.PT - 6, y2: hist.PB, class: "lc-sc-param" }, g);
-        svg("text", { x: xb + 6, y: hist.PT + 6, class: "lc-sc-param-t" }, g, "β₁ = " + fmt(beta1(), 1));
       } else hist.draw(g);
       axisX(g, hist.PL, hist.PR, hist.PB, ticks);
       svg("text", { x: (hist.PL + hist.PR) / 2, y: hist.PB + 36, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
         "nachylenie w grupie, b₁ (pkt za godzinę)");
       var N = st.groups.length, info = "grup: " + N;
-      svg("text", { x: hist.PL, y: hist.PT - 14, class: "lc-sc-n" }, g, info);
-      if (step >= 4 && N > 1) {
-        var bs = st.groups.map(function (d) { return d.b1; }).sort(function (a, b) { return a - b; });
-        var q = function (p) { return bs[Math.min(N - 1, Math.max(0, Math.round(p * (N - 1))))]; };
-        var hits = st.groups.filter(function (d) { return d.sig; }).length;
-        var txt = (beta1() === 0 ? "fałszywy alarm: " : "test widzi nachylenie: ") + hits + " z " + N +
-          " (" + fmt(100 * hits / N, 1) + "%)";
-        svg("text", { x: hist.PR, y: hist.PT - 30, "text-anchor": "end", class: "lc-sc-n is-hit" }, g, txt);
-        svg("text", { x: hist.PR, y: hist.PT - 14, "text-anchor": "end", class: "lc-sc-n" }, g,
-          "środkowe 95% b₁: od " + fmt(q(0.025), 2) + " do " + fmt(q(0.975), 2));
+      svg("text", { x: hist.PL, y: hist.PT - 22, class: "lc-sc-n" }, g, info);
+      if (step >= 3) {
+        // jeden odczyt: prawdziwe β₁ (linia przerywana) i odsetek grup z p < 0.05 (żetony w kolorze akcentu)
+        var items = [{ glyph: "line", cls: "lc-sc-param", text: "β₁ = " + fmt(beta1(), 1) }];
+        if (N > 0) {
+          var hits = st.groups.filter(function (d) { return d.sig; }).length;
+          items.push({ glyph: "dot", cls: "lc-sc-token", text: "p < 0.05: " + fmt(100 * hits / N, 1) + "%" });
+        }
+        readout(g, hist.PR, hist.PT - 22, items, "end");
       }
     }
 
@@ -481,7 +469,7 @@
       var step = api.step();
       api.stage.textContent = ""; api.low.textContent = "";
       drawStage(api.stage, step, null);
-      if (step >= 3) drawHist(api.low, step); else drawLog(api.low, step);
+      if (step >= 2) drawHist(api.low, step); else drawLog(api.low, step);
     }
 
     function commit(d) {
@@ -497,7 +485,7 @@
       tween(fast ? 120 : Math.min(1200, 300 + d.n * 25), function (u) { draw({ u1: u, u2: 0 }); }, function () {
         tween(fast ? 100 : 500, function (u) { draw({ u1: 1, u2: u }); }, function () {
           var land = function () { commit(d); render(); done(); };
-          if (step >= 3) {
+          if (step >= 2) {
             draw({ u1: 1, u2: 1, done: true });
             flyToken(api, hist, d.b1, 470, 136, fast, land);
           } else land();

@@ -30,8 +30,6 @@
 .lc-sc-arrow { stroke: var(--upwr-accent); stroke-width: 1.3; opacity: .55; }
 .lc-sc-tri { fill: var(--upwr-ink-subtle); }
 .lc-sc-tri.is-acc { fill: var(--upwr-accent); }
-.lc-sc-mlab { font: 600 12.5px var(--upwr-mono); fill: var(--upwr-ink-soft); }
-.lc-sc-mlab.is-acc { fill: var(--upwr-accent); }
 .lc-sc-avgall { stroke: var(--upwr-ink-subtle); stroke-width: 1.2; opacity: .7; }
 .lc-sc-skill { fill: var(--upwr-surface); stroke: var(--upwr-ink); stroke-width: 1.6; }
 
@@ -39,5 +37,4 @@
 .lc-sc-pt { fill: var(--upwr-cat-niebo); opacity: .85; stroke: var(--upwr-surface); stroke-width: .8; }
 .lc-sc-fit { stroke: var(--upwr-accent); stroke-width: 2.6; stroke-linecap: round; }
 .lc-sc-ghost { stroke: var(--upwr-ink-subtle); stroke-width: 1; opacity: .22; }
-.lc-sc-lab-acc { font: 700 14px var(--upwr-mono); fill: var(--upwr-accent); }
 .lc-sc-halo { paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 4px; stroke-linejoin: round; }
