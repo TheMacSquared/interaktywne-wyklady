@@ -60,9 +60,6 @@ ch2_ev_var_ui <- list(
         steps = c("Bilans X", "Powtarzamy", "E(X) i rozrzut"),
         labels = c("Kup i zdrap los", "Kup i zdrap los", "Kup i zdrap los"),
         more_from = 2,
-        options = list(list(name = "ticket", label = "Los",
-                            values = c("Zdrapka" = "main", "Pewne 4 zł" = "sure", "10% na 40 zł" = "risky"),
-                            selected = "main", from = 2)),
         config = list(kind = "scratch", ticket = "main", price = scene_ticket_price, height = 436,
                       tickets = lapply(scene_tickets, function(t) {
                         t$prizes <- I(t$prizes); t$probs <- I(t$probs); t }),
@@ -284,10 +281,9 @@ ch2_ev_var_server <- function(input, output, session) {
       ale najczęściej pod srebrną farbą nie ma nic. ", tags$code("X", .noWS = "outside"), " to bilans losu: wygrana
       minus cena. Kup i zdrap kilka losów."),
     tagList("Lewy wykres zlicza bilanse, prawy pokazuje średni bilans wszystkich kupionych losów. Dołóż 100
-      i 1000 losów, potem zmień los na pewne 4 zł albo 10% na 40 zł."),
-    tagList("Średni bilans na dłuższą metę to E(X) = ", sprintf("%.2f", scene_ticket_ev(tk)), " zł. Los pewny i los
-      10% na 40 zł mają tę samą E(X) = ", sprintf("%.2f", scene_ticket_ev(scene_tickets$sure)), " zł, ale Var(X) = 0
-      i Var(X) = ", lc_fmt(scene_ticket_sd(scene_tickets$risky)^2, 0), " zł²: to jest ryzyko.")
+      i 1000 losów."),
+    tagList("Średni bilans na dłuższą metę to E(X) = ", sprintf("%.2f", scene_ticket_ev(tk)), " zł,
+      a Var(X) mówi, jak bardzo pojedyncze losy od niego odbiegają.")
   ))
 
   # --- Definicje loterii ---
