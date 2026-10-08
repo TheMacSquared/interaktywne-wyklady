@@ -86,7 +86,7 @@
       var x0 = 196, x1 = 620;
       if (n <= 5) {
         var sp = 64, start = (x0 + x1) / 2 - sp * (n - 1) / 2;
-        return { w: 20, sc: 0.46, pos: function (i) { return [start + i * sp, BASE]; }, labels: true };
+        return { w: 20, sc: 0.46, pos: function (i) { return [start + i * sp, BASE]; } };
       }
       if (n <= 25) {
         var sp2 = (x1 - x0) / n;
@@ -134,39 +134,25 @@
       svg("rect", { x: xl, y: NETY - 8, width: Math.max(0.5, xr - xl), height: 16, class: "lc-sc-net-edge" }, q);
       svg("circle", { cx: xl, cy: NETY, r: 4, class: "lc-sc-float" }, q);
       svg("circle", { cx: xr, cy: NETY, r: 4, class: "lc-sc-float" }, q);
-      if (half >= 1) {
-        svg("text", { x: xl - 8, y: NETY + 4, "text-anchor": "end", class: "lc-sc-end" }, q, fmt(d.lo, 1));
-        svg("text", { x: xr + 8, y: NETY + 4, class: "lc-sc-end" }, q, fmt(d.hi, 1));
-        if (step <= 3) {
-          svg("text", { x: cx, y: NETY - 14, "text-anchor": "middle", class: "lc-sc-net-t" }, q,
-            "przedział ufności 95%");
-        }
-      }
     }
 
     function drawXbar(g, d, step) {
       svg("line", { x1: X(d.xbar), x2: X(d.xbar), y1: DOTY - 10, y2: AXY, class: "lc-sc-xbar" }, g);
       svg("text", { x: 620, y: 20, "text-anchor": "end", class: "lc-sc-read" }, g,
         "x̄ = " + fmt(d.xbar, 1) + " cm");
-      svg("text", { x: 466, y: 19, "text-anchor": "end", class: "lc-sc-sub" }, g,
-        "średni wzrost " + d.n + " zmierzonych osób:");
     }
 
     function drawStage(g, step, anim) {
       drawRoom(g);
       drawAxis(g);
       var d = st.last;
-      if (!d) {
-        svg("text", { x: 408, y: 90, "text-anchor": "middle", class: "lc-sc-sub" }, g, "tu wyjdzie grupka");
-        return;
-      }
+      if (!d) return;
       var C = crowd(d.n), upto = anim ? anim.upto : d.n;
       for (var i = 0; i < upto; i++) {
         var p = C.pos(i), hp = d.h[i] * C.sc;
         var op = anim && i === upto - 1 && anim.fresh < 1 ? anim.fresh : 1;
         var gg = svg("g", { opacity: op }, g);
         person(gg, p[0], p[1], hp, C.w, "is-crowd");
-        if (C.labels) svg("text", { x: p[0], y: BASE + 15, "text-anchor": "middle", class: "lc-sc-tick" }, gg, fmt(d.h[i], 0));
         svg("circle", { cx: X(d.h[i]), cy: DOTY, r: d.n > 25 ? 2.6 : 3.6, class: "lc-sc-hdot", opacity: op }, g);
       }
       if (anim && !anim.done) return;
@@ -178,47 +164,32 @@
     function rowY(i) { return STK + i * ROWH; }
     function drawStack(g, step) {
       var N = st.draws.length, show = st.draws.slice(-ROWS).reverse();
-      svg("text", { x: PL, y: STK - 12, class: "lc-sc-n" }, g,
-        "siatek: " + N + (N > ROWS ? " · widać ostatnie " + ROWS : ""));
-      svg("text", { x: PR, y: STK - 12, "text-anchor": "end", class: "lc-sc-n" }, g,
-        "margines = " + fmt(k(), 2) + " · s/√n");
       show.forEach(function (d, i) {
         var cls = step >= 4 ? (d.hit ? " is-hit" : " is-miss") : "";
         svg("line", { x1: X(d.lo), x2: X(d.hi), y1: rowY(i), y2: rowY(i), class: "lc-sc-ci" + cls }, g);
         svg("circle", { cx: X(d.xbar), cy: rowY(i), r: 1.8, class: "lc-sc-ci-dot" + cls }, g);
       });
+      // jeden odczyt pod stosem; linia przerywana to μ (wzorzec przy odczycie zamiast podpisu na wykresie)
       var yb = rowY(ROWS) + 22;
       if (step >= 4) {
         svg("line", { x1: X(MU), x2: X(MU), y1: NETY - 16, y2: rowY(ROWS - 1) + 6, class: "lc-sc-param" }, g);
-        svg("text", { x: X(MU) + 6, y: STK - 12, class: "lc-sc-param-t" }, g, "μ = " + fmt(MU, 0) + " cm");
-        if (N) {
-          svg("text", { x: W / 2, y: yb, "text-anchor": "middle", class: "lc-sc-read" }, g,
-            "trafiło " + st.hits + " z " + N + " = " + fmt(100 * st.hits / N, 1) + "%");
-        } else {
-          svg("text", { x: W / 2, y: yb, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-            "Zarzuć siatki, żeby policzyć, ile trafiło.");
-        }
+        var cov = N ? fmt(100 * st.hits / N, 1) + "% (" + st.hits + "/" + N + ")" : "—";
+        svg("line", { x1: W / 2 - 160, x2: W / 2 - 138, y1: yb - 5, y2: yb - 5, class: "lc-sc-param" }, g);
+        svg("text", { x: W / 2 - 130, y: yb, class: "lc-sc-n" }, g,
+          "μ = " + fmt(MU, 0) + " cm   ·   pokrycie = " + cov);
       } else if (N) {
-        svg("text", { x: W / 2, y: yb, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "które siatki złapały μ? tego nie widać");
-      } else {
-        svg("text", { x: W / 2, y: STK + 40, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "Zarzuć siatkę: spadnie na stos pod osią.");
+        svg("text", { x: W / 2, y: yb, "text-anchor": "middle", class: "lc-sc-n" }, g, "siatek: " + N);
       }
     }
 
     function drawLog(g, step) {
-      if (!st.draws.length) {
-        svg("text", { x: W / 2, y: STK + 30, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "Zmierz grupkę, żeby zobaczyć, kto wyszedł z sali.");
-        return;
-      }
+      if (!st.draws.length) return;
       st.draws.slice(-6).reverse().forEach(function (d, i) {
         var y = STK + 10 + i * 26, g2 = svg("g", { opacity: 1 - i * 0.14 }, g);
         svg("text", { x: 90, y: y, class: "lc-sc-log" }, g2, "grupka " + d.no);
         svg("text", { x: 210, y: y, class: "lc-sc-log is-x" }, g2, "x̄ = " + fmt(d.xbar, 1) + " cm");
         if (step >= 2) svg("text", { x: 390, y: y, class: "lc-sc-log" }, g2,
-          "siatka " + fmt(d.lo, 1) + " – " + fmt(d.hi, 1));
+          fmt(d.lo, 1) + " – " + fmt(d.hi, 1) + " cm");
       });
     }
 

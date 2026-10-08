@@ -31,8 +31,6 @@
 .lc-sc-net-edge { fill: none; stroke: var(--upwr-ink-soft); stroke-width: 1.4; }
 .lc-sc-mesh { stroke: var(--upwr-ink-subtle); stroke-width: .8; }
 .lc-sc-float { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
-.lc-sc-end { font: 600 12px var(--upwr-mono); fill: var(--upwr-ink-soft); }
-.lc-sc-net-t { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
 
 /* stos siatek: szare, dopóki μ ukryte; potem trafione / chybione */
 .lc-sc-ci { stroke: var(--upwr-ink-subtle); stroke-width: 2.6; stroke-linecap: round; opacity: .75; }

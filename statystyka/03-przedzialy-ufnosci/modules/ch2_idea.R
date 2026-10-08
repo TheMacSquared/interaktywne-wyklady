@@ -209,24 +209,17 @@ ch2_server <- function(input, output, session) {
 
   # --- PROTOTYP SCENY (2026-10-08): Zarzuć siatkę ---
   scene_texts(input, output, "ch2_siatka", list(
-    tagList("Student z miarką stoi przy drzwiach sali i mierzy osoby, które z niej wychodzą.
-      Każdy pomiar ląduje kropką na osi wzrostu, a pionowa kreska to średnia grupki ",
-      tags$code("x̄", .noWS = "outside"), ". Zmierz kilka grupek: każda daje inną średnią."),
-    tagList("Wokół ", tags$code("x̄", .noWS = "outside"), " student odkłada margines w obie strony
-      i zarzuca siatkę na oś wzrostu. Siatka to przedział ufności 95%: zakres, w którym
-      spodziewa się średniego wzrostu całej populacji ", tags$code("μ", .noWS = "outside"), ".
-      Każda grupka zarzuca siatkę w trochę innym miejscu."),
-    tagList("Każda siatka spada na stos pod osią, najnowsza na górze. ",
-      tags$code("μ", .noWS = "outside"), " jest niewidoczne, więc nie wiemy, które siatki
-      je złapały. Tak samo jest w prawdziwym badaniu z jedną próbą. Dorzuć +100 i +1000 siatek,
-      potem zmień n: siatki się zwężają."),
-    tagList("Linia przerywana to ", tags$code(paste0("μ = ", net_world$mu, " cm"), .noWS = "outside"),
-      ": szałwiowe siatki je złapały, terakotowe chybiły, a w długiej serii trafia około 95%.
-      95% dotyczy metody, nie jednej siatki: pojedyncza siatka albo złapała ",
-      tags$code("μ", .noWS = "outside"), ", albo nie. Przy n = 5 przełącz mnożnik na 1.96:
-      siatki są za wąskie i trafiają tylko w około ", paste0(round(100 * net_cov_z[["5"]]), "% przypadków.
-      Mała próba potrzebuje szerszej siatki, więc mnożnik t* z rozkładu t (",
-      lc_fmt(net_tq[["5"]], 2), " przy n = 5) przywraca 95%."))
+    tagList("Zmierz kilka grupek wychodzących z sali. Pionowa kreska to średnia grupki ",
+      tags$code("x̄", .noWS = "outside"), ": każda grupka daje inną."),
+    tagList("Siatka to ", tags$code("x̄", .noWS = "outside"), " ± margines, czyli przedział ufności 95%
+      dla średniego wzrostu populacji ", tags$code("μ", .noWS = "outside"), ". Każda grupka zarzuca ją
+      w innym miejscu."),
+    tagList("Siatki spadają na stos, najnowsza na górze. ", tags$code("μ", .noWS = "outside"),
+      " jest niewidoczne, jak w prawdziwym badaniu. Dorzuć +100 i +1000 siatek, potem zmień n."),
+    tagList("Przerywana linia to ", tags$code("μ", .noWS = "outside"), ". W długiej serii łapie je około 95% siatek,
+      a pojedyncza siatka albo złapała, albo nie. Przy n = 5 przełącz mnożnik na 1.96: pokrycie spada
+      do około ", paste0(round(100 * net_cov_z[["5"]]), "%, a t* = ", lc_fmt(net_tq[["5"]], 2),
+      " przywraca 95%."))
   ))
 
   # --- Widget 1: Symulacja przedziałów ufności (akumulacja) ---
