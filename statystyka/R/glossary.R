@@ -99,7 +99,7 @@
     "Miara asymetrii rozkładu: dodatnia oznacza dłuższy ogon w prawo, ujemna — w lewo, zero — symetrię.",
   "kurtoza" =
     "Miara „ciężkości” ogonów rozkładu, czyli skłonności do wartości skrajnych — nie spłaszczenia szczytu.",
-  "średnia ucinana" =
+  "średnia ucięta" =
     "Średnia obliczona po odrzuceniu ustalonego procentu najmniejszych i największych obserwacji.",
   "odporność" =
     "Cecha miary lub metody, której wynik niewiele się zmienia pod wpływem wartości odstających lub naruszeń założeń.",

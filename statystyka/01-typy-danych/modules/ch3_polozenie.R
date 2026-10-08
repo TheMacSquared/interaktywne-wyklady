@@ -196,14 +196,14 @@ ch3_ui <- list(
       obserwacje nie zmieniają jej znacząco. Średnia nie jest odporna,
       mediana jest."),
 
-    lc_p("Między nimi leży ", gloss("średnia ucinana"), ". Odrzucamy ustalony
+    lc_p("Między nimi leży ", gloss("średnia ucięta"), ". Odrzucamy ustalony
       odsetek najmniejszych i największych wartości, a ze środka liczymy zwykłą
       średnią. W panelu poniżej ucinamy po 10% z każdej strony: przy 40 pensjach
       odpadają cztery najniższe i cztery najwyższe."),
 
     figure_panel(
       label = "Ryc. 3.5",
-      title = "Odporność: średnia vs mediana vs średnia ucinana",
+      title = "Odporność: średnia vs mediana vs średnia ucięta",
 
       lc_toolbar(
         lc_action("ch3_rob_add1", "Dodaj wartość odstającą (ok. 50 000 zł)", variant = "solid"),
@@ -217,8 +217,8 @@ ch3_ui <- list(
       uiOutput("ch3_rob_table")
     ),
 
-    lc_p("Pierwsza wartość odstająca wyraźnie podnosi średnią, a średnia ucinana
-      i mediana prawie stoją w miejscu. Średnia ucinana chroni jednak tylko
+    lc_p("Pierwsza wartość odstająca wyraźnie podnosi średnią, a średnia ucięta
+      i mediana prawie stoją w miejscu. Średnia ucięta chroni jednak tylko
       do pewnej granicy. Gdy wartości odstających jest więcej, niż wynosi
       obcięty odsetek, część z nich trafia do obliczeń. Przy pięciu dodanych
       pensjach obcinamy cztery największe, więc piąta już podnosi wynik.
@@ -900,8 +900,8 @@ ch3_server <- function(input, output, session) {
     line_data <- data.frame(
       xval = c(m, med, tr),
       Statystyka = factor(
-        c("Średnia", "Mediana", "Śr. ucinana (10%)"),
-        levels = c("Średnia", "Mediana", "Śr. ucinana (10%)")
+        c("Średnia", "Mediana", "Śr. ucięta (10%)"),
+        levels = c("Średnia", "Mediana", "Śr. ucięta (10%)")
       ),
       ltype = c("solid", "dashed", "dotted")
     )
@@ -919,10 +919,10 @@ ch3_server <- function(input, output, session) {
       ) +
       scale_linetype_manual(
         name = NULL,
-        breaks = c("Średnia", "Mediana", "Śr. ucinana (10%)"),
+        breaks = c("Średnia", "Mediana", "Śr. ucięta (10%)"),
         values = c("Średnia" = "solid",
                    "Mediana" = "dashed",
-                   "Śr. ucinana (10%)" = "dotted")
+                   "Śr. ucięta (10%)" = "dotted")
       ) +
       scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
       # Jedna legenda: style linii przeniesione do legendy koloru
@@ -951,7 +951,7 @@ ch3_server <- function(input, output, session) {
 
     lc_table(
       data.frame(
-        stat = c("Średnia", "Mediana", "Średnia ucinana (10%)"),
+        stat = c("Średnia", "Mediana", "Średnia ucięta (10%)"),
         value = c(current_mean, current_med, current_tr),
         change = c(current_mean - base$mean, current_med - base$median,
                    current_tr - base$trimmed)

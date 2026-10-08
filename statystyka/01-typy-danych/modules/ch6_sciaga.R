@@ -40,7 +40,7 @@
 .ch6_location_table <- .ch6_cheat_table(
   data.frame(
     a = c("Średnia arytmetyczna", "Mediana",
-          "Średnia ucinana", "Dominanta (moda)"),
+          "Średnia ucięta", "Dominanta (moda)"),
     b = c("Dane symetryczne, bez outlierów",
           "Dane skośne lub z outlierami",
           "Kompromis między średnią a medianą",

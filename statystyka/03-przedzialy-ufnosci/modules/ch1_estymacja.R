@@ -89,7 +89,7 @@ ch1_ui <- list(
 
     lc_p("Średnia z próby nie jest jedynym możliwym estymatorem środka populacji.
       Równie dobrze można by użyć mediany z próby, średniej z najmniejszej
-      i największej obserwacji albo ", gloss("średnia ucinana", "średniej ucinanej"), ". Żeby wybrać między nimi,
+      i największej obserwacji albo ", gloss("średnia ucięta", "średniej uciętej"), ". Żeby wybrać między nimi,
       potrzebujemy kryteriów. Statystyka ocenia estymatory według trzech
       podstawowych własności: ",
       gloss("nieobciążoność", "nieobciążoności"), ", ",

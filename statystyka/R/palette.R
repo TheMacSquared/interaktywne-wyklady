@@ -51,7 +51,7 @@ upwr_cat <- c(
 stat_colors <- c(
   "Średnia"           = upwr_accent,
   "Mediana"           = unname(upwr_cat["niebo"]),
-  "Śr. ucinana (10%)" = unname(upwr_cat["szalwia"])
+  "Śr. ucięta (10%)" = unname(upwr_cat["szalwia"])
 )
 
 # Kolor z palety kategorycznej bez nazwy. Indeksowanie upwr_cat["niebo"] zostawia

@@ -481,7 +481,7 @@ ch5_server <- function(input, output, session) {
     stats_df <- data.frame(
       Statystyka = c(
         "n", "Średnia", "Mediana", "Dominanta (środek przedziałowy)",
-        "Śr. ucinana 10%",
+        "Śr. ucięta 10%",
         "Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
         "Minimum", "Q1", "Q3", "Maksimum",
         "Skośność", "Kurtoza (nadwyżkowa)"
