@@ -1,0 +1,43 @@
+.lc-sc-svg { display: block; width: 100%; height: auto; }
+.lc-sc-axis { stroke: var(--upwr-ink-subtle); }
+.lc-sc-grid { stroke: var(--upwr-rule-soft); }
+.lc-sc-zero { stroke: var(--upwr-ink-subtle); stroke-width: 1; opacity: .6; }
+.lc-sc-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-sub { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+.lc-sc-sub.is-sm { font-size: 11.5px; }
+.lc-sc-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-n.is-hit { fill: var(--upwr-accent); font-weight: 600; }
+.lc-sc-read { font: 700 22px var(--upwr-mono); fill: var(--upwr-accent); }
+.lc-sc-read.is-plain { font: 500 17px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-log { font: 500 14px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-log.is-x { fill: var(--upwr-ink); font-weight: 700; }
+.lc-sc-row { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-row.is-truth { fill: var(--upwr-ink); }
+.lc-sc-token { fill: var(--upwr-accent); opacity: .85; stroke: var(--upwr-surface); stroke-width: 1; }
+.lc-sc-token.is-bar { opacity: .8; stroke-width: .5; }
+.lc-sc-token.is-quiet { fill: var(--upwr-ink-subtle); opacity: .5; }
+.lc-sc-param { stroke: var(--upwr-ink); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+.lc-sc-param-t { font: 700 13px var(--upwr-mono); fill: var(--upwr-ink); }
+.lc-sc-person { fill: var(--upwr-ink-subtle); }
+.lc-sc-paper { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.lc-sc-paper-l { stroke: var(--upwr-ink-subtle); stroke-width: 1; opacity: .7; }
+
+/* kolokwia: studenci, strzałki, średnie */
+.lc-sc-st { fill: var(--upwr-cat-niebo); opacity: .75; }
+.lc-sc-st.is-dim { opacity: .3; }
+.lc-sc-st.is-sel { fill: var(--upwr-accent); opacity: 1; stroke: var(--upwr-surface); stroke-width: 1; }
+.lc-sc-arrow { stroke: var(--upwr-accent); stroke-width: 1.3; opacity: .55; }
+.lc-sc-tri { fill: var(--upwr-ink-subtle); }
+.lc-sc-tri.is-acc { fill: var(--upwr-accent); }
+.lc-sc-mlab { font: 600 12.5px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-mlab.is-acc { fill: var(--upwr-accent); }
+.lc-sc-avgall { stroke: var(--upwr-ink-subtle); stroke-width: 1.2; opacity: .7; }
+.lc-sc-skill { fill: var(--upwr-surface); stroke: var(--upwr-ink); stroke-width: 1.6; }
+
+/* nachylenie: punkty, prosta, ślady */
+.lc-sc-pt { fill: var(--upwr-cat-niebo); opacity: .85; stroke: var(--upwr-surface); stroke-width: .8; }
+.lc-sc-fit { stroke: var(--upwr-accent); stroke-width: 2.6; stroke-linecap: round; }
+.lc-sc-ghost { stroke: var(--upwr-ink-subtle); stroke-width: 1; opacity: .22; }
+.lc-sc-lab-acc { font: 700 14px var(--upwr-mono); fill: var(--upwr-accent); }
+.lc-sc-halo { paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 4px; stroke-linejoin: round; }

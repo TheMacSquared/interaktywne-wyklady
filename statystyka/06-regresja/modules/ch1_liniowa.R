@@ -174,6 +174,26 @@ ch1_ui <- list(
       wartość \\(Y\\) bliższą średniej niż samo \\(X\\). To zjawisko nazywa
       się regresją do średniej i od niego pochodzi nazwa całej metody."),
 
+    lc_p("Zanim zobaczymy to na danych, zróbmy doświadczenie: ta sama grupa
+      studentów pisze dwa kolokwia."),
+
+    # PROTOTYP SCENY (2026-10-08): napisz kolokwium — regresja do średniej
+    figure_panel(
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch1_sc_rtm", "Dwa kolokwia: co się dzieje z najlepszymi?",
+        steps = c("Kolokwium", "Najlepsi", "Drugie podejście", "Umiejętność"),
+        labels = c("Napisz kolokwium", "Napisz kolokwium", "Napisz oba kolokwia", "Napisz oba kolokwia"),
+        options = list(
+          list(name = "luck", label = "Udział losu",
+               values = c("brak" = "0", "mały" = "3", "średni" = "7", "duży" = "12"), selected = "7"),
+          list(name = "grp", label = "Wybieramy", from = 2,
+               values = c("10 najlepszych" = "top", "10 najsłabszych" = "bottom"), selected = "top")
+        ),
+        config = list(kind = "rtm", n = 100L, k = 10L, mu = 60, sd_skill = 9, luck = 7, grp = "top",
+                      aria = "Wyniki stu studentów z dwóch kolokwiów, strzałki od pierwszego do drugiego wyniku dziesięciu wybranych i histogram zmian ich średniej"))
+    ),
+
     lc_p("Panel pokazuje 100 studentów i ich wyniki z dwóch kolokwiów o tej
       samej skali. Średnia wynosi około 61 punktów na obu, a korelacja wyników
       \\(r = 0.59\\). Linia przerywana to przekątna „bez zmian”: student na
@@ -382,6 +402,28 @@ ch1_ui <- list(
       teście t. Tabela wyników ma też wiersz dla wyrazu wolnego z własnym
       \\(t\\) i p-wartością. Testuje on hipotezę \\(\\beta_0 = 0\\), czyli pyta
       o przewidywanie przy \\(X = 0\\), co rzadko jest interesujące."),
+
+    lc_p("Zanim przejdziemy do tabeli, zobaczmy, jak bardzo \\(b_1\\) skacze
+      między próbami."),
+
+    # PROTOTYP SCENY (2026-10-08): zbierz grupę — b₁ od próby do próby
+    figure_panel(
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch1_sc_slope", "Godziny nauki i wynik: nachylenie z kolejnych grup",
+        steps = c("Grupa", "Nachylenie", "Powtarzamy", "Prawdziwe β₁"),
+        labels = c("Zbierz grupę", "Zbierz grupę", "Zbierz grupę", "Zbierz grupę"),
+        options = list(
+          list(name = "n", label = "Studentów w grupie (n)",
+               values = c("14" = "14", "70" = "70"), selected = "14"),
+          list(name = "world", label = "Świat",
+               values = c("nauka pomaga" = "yes", "nie pomaga (β₁ = 0)" = "no"), selected = "yes")
+        ),
+        config = list(kind = "slope", beta0 = 35, beta1 = 2.5, sigma = 8, xmin = 1, xmax = 12,
+                      n = 14L, world = "yes",
+                      crit = list(`14` = round(qt(0.975, 12), 4), `70` = round(qt(0.975, 68), 4)),
+                      aria = "Wykres rozrzutu godzin nauki i wyniku egzaminu dla losowej grupy studentów z prostą MNK i histogram nachyleń z kolejnych grup"))
+    ),
 
     lc_p("Panel pokazuje cztery symulowane scenariusze o znanym prawdziwym
       nachyleniu."),
@@ -642,6 +684,42 @@ ch1_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
+
+  # PROTOTYP SCENY (2026-10-08): teksty kroków scen ch1_sc_rtm i ch1_sc_slope
+  scene_texts(input, output, "ch1_sc_rtm", list(
+    tagList("Każda kropka to jeden ze 100 studentów. Jego wynik to ukryta umiejętność plus los dnia:
+      wyspanie, trafione pytania, nerwy. Napisz kolokwium kilka razy i zobacz, jak rozkładają się
+      wyniki grupy."),
+    tagList("Wyróżniamy 10 osób z najwyższym wynikiem i liczymy ich średnią. Leży wyraźnie nad
+      średnią grupy. Za chwilę ci sami studenci napiszą kolokwium jeszcze raz."),
+    tagList("Ci sami studenci piszą drugie kolokwium o tej samej trudności, a los dnia rozdaje się
+      od nowa. Strzałki prowadzą od pierwszego wyniku do drugiego, a zmiana średniej wybranych
+      spada żetonem do histogramu. Dokładaj po 10, 100 i 1000 grup, potem zmień udział losu albo
+      wybierz 10 najsłabszych, którzy dostali konsultacje bez żadnego efektu."),
+    tagList("Odsłaniamy to, czego na kolokwium nie widać: puste kółka to prawdziwa umiejętność
+      wybranych, linia przerywana to jej średnia. Najlepsi w pierwszym podejściu to osoby
+      umiejętne, którym dodatkowo dopisało szczęście, więc za drugim razem lądują bliżej swojej
+      umiejętności. Najsłabsi rosną z tego samego powodu, choć konsultacje nic nie dały. Bez losu
+      strzałek nie ma i nikt nie wraca do średniej.")
+  ))
+
+  scene_texts(input, output, "ch1_sc_slope", list(
+    tagList("Ankieter pyta losowych studentów, ile godzin w tygodniu się uczą i ile punktów dostali
+      na egzaminie. Każdy punkt to jedna osoba, a prosta to prosta MNK dopasowana do tej grupy.
+      Zbierz kilka grup i porównaj proste."),
+    tagList("Nachylenie prostej to ", tags$code("b₁", .noWS = "outside"), ": o ile punktów
+      średnio rośnie wynik z każdą dodatkową godziną nauki w tej grupie. Każda grupa daje inne ",
+      tags$code("b₁", .noWS = "outside"), ", choć studenci pochodzą z tego samego świata."),
+    tagList("Poprzednie proste zostają blado w tle, a każde ", tags$code("b₁", .noWS = "outside"),
+      " spada żetonem do histogramu. Dokładaj po 10, 100 i 1000 grup, a potem przełącz liczbę
+      studentów z 14 na 70 i porównaj rozrzut."),
+    tagList("Linia przerywana to prawdziwe nachylenie ", tags$code("β₁", .noWS = "outside"),
+      " w świecie, z którego losujemy grupy. Wartości ", tags$code("b₁", .noWS = "outside"),
+      " rozkładają się wokół niego, przy 70 studentach ciaśniej niż przy 14. Żetony w kolorze
+      akcentu to grupy, w których test nachylenia uznałby je za istotne (p < 0.05). Przełącz świat
+      na „nie pomaga”: mimo ", tags$code("β₁ = 0", .noWS = "outside"), " mniej więcej co
+      dwudziesta grupa pokazuje wyraźne nachylenie, czyli fałszywy alarm z wykładu 04.")
+  ))
 
   zoom_plot_server("ch1_beta_plot", reactive({
     set.seed(101)

@@ -70,7 +70,11 @@ ui <- lecture_page(
   lecture_num   = "06",
   lecture_title = "Regresja",
   module_label  = "Statystyka",
-  chapters      = .chapters
+  chapters      = .chapters,
+  header_extras = tagList(
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
+    includeScript(file.path(app_dir, "modules", "scenes.js"))
+  )
 )
 
 # ============================================================================
