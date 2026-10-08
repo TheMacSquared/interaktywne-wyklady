@@ -168,7 +168,6 @@
       svg("rect", { x: x + 12, y: y - 8, width: 20, height: 26, rx: 2, class: "lc-sc-clip" }, g);
       svg("line", { x1: x + 16, x2: x + 28, y1: y, y2: y, class: "lc-sc-axis" }, g);
       svg("line", { x1: x + 16, x2: x + 28, y1: y + 6, y2: y + 6, class: "lc-sc-axis" }, g);
-      svg("text", { x: x, y: y + 64, "text-anchor": "middle", class: "lc-sc-sub" }, g, "brygadzista");
     }
 
     function lamp(g, d, step) {
@@ -185,10 +184,10 @@
     }
 
     function strips(g, step, d, upto) {
-      [["zmiana chaotyczna", nA(), ROWA, "is-chaos", d && d.a, d && d.ja, d && d.ma],
-       ["zmiana spokojna", nB(), ROWB, "is-calm", d && d.b, d && d.jb, d && d.mb]].forEach(function (r, k) {
+      [["chaotyczna", nA(), ROWA, "is-chaos", d && d.a, d && d.ja, d && d.ma],
+       ["spokojna", nB(), ROWB, "is-calm", d && d.b, d && d.jb, d && d.mb]].forEach(function (r, k) {
         svg("rect", { x: SX0, y: r[2] - BAND - 4, width: SX1 - SX0, height: 2 * BAND + 8, rx: 4, class: "lc-sc-band" }, g);
-        svg("text", { x: SX0, y: r[2] - BAND - 12, class: "lc-sc-rowlab" }, g, r[0] + " · " + r[1] + " osób");
+        svg("text", { x: SX0, y: r[2] - BAND - 12, class: "lc-sc-rowlab" }, g, r[0] + " · n = " + r[1]);
         if (!r[4]) return;
         var lim = upto === undefined ? r[4].length : Math.min(r[4].length, Math.round(upto * r[4].length));
         for (var i = 0; i < lim; i++) {
@@ -197,8 +196,6 @@
         if (upto === undefined || upto >= 1) {
           var mx = xOf(r[6]);
           svg("line", { x1: mx, x2: mx, y1: r[2] - BAND - 3, y2: r[2] + BAND + 3, class: "lc-sc-mean" }, g);
-          svg("text", { x: SX1, y: r[2] - BAND - 12, "text-anchor": "end", class: "lc-sc-meanlab" }, g,
-            "średnio " + fmt(r[6], 1) + " min");
         }
       });
       var ticks = [];
@@ -208,8 +205,6 @@
       if (step >= 4) {
         var x = xOf(MU);
         svg("line", { x1: x, x2: x, y1: ROWA - BAND - 6, y2: AXY, class: "lc-sc-param" }, g);
-        svg("text", { x: x, y: 40, "text-anchor": "middle", class: "lc-sc-param-t is-small is-halo" }, g,
-          "prawdziwa średnia obu zmian: " + MU + " min");
       }
     }
 
@@ -218,35 +213,27 @@
       var d = st.last;
       lamp(g, anim && !anim.done ? null : d, step);
       strips(g, step, d, anim ? anim.u : undefined);
-      if (!d) {
-        svg("text", { x: (SX0 + SX1) / 2, y: ROWA + 4, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "Zmierz obie zmiany, żeby zobaczyć czasy montażu.");
-      }
     }
 
-    function fmtP(p) { return p < 0.001 ? "p < 0.001" : "p = " + fmt(p, 3); }
 
     function drawLog(g, step) {
       if (!st.runs.length) return;
-      var X = [30, 95, 195, 295, 395, 505];
+      var X = [30, 110, 240, 370, 490];
       svg("text", { x: X[0], y: 268, class: "lc-sc-th-t" }, g, "pomiar");
-      svg("text", { x: X[1], y: 268, class: "lc-sc-th-t" }, g, "chaotyczna");
-      svg("text", { x: X[2], y: 268, class: "lc-sc-th-t" }, g, "spokojna");
-      svg("text", { x: X[3], y: 268, class: "lc-sc-th-t" }, g, "różnica");
+      svg("text", { x: X[1], y: 268, class: "lc-sc-th-t" }, g, "x̄ chaotyczna (min)");
+      svg("text", { x: X[2], y: 268, class: "lc-sc-th-t" }, g, "x̄ spokojna (min)");
       if (step >= 2) {
-        svg("text", { x: X[4], y: 268, class: "lc-sc-th-t" }, g, "test " + testName());
-        svg("text", { x: X[5], y: 268, class: "lc-sc-th-t" }, g, "lampka");
+        svg("text", { x: X[3], y: 268, class: "lc-sc-th-t" }, g, "p (" + testName() + ")");
+        svg("text", { x: X[4], y: 268, class: "lc-sc-th-t" }, g, "lampka");
       }
       st.runs.slice(-6).reverse().forEach(function (d, i) {
         var y = 296 + i * 26, g2 = svg("g", { opacity: 1 - i * 0.13 }, g);
-        svg("text", { x: X[0], y: y, class: "lc-sc-log" }, g2, "nr " + d.no);
-        svg("text", { x: X[1], y: y, class: "lc-sc-log" }, g2, fmt(d.ma, 1) + " min");
-        svg("text", { x: X[2], y: y, class: "lc-sc-log" }, g2, fmt(d.mb, 1) + " min");
-        svg("text", { x: X[3], y: y, class: "lc-sc-log" }, g2, (d.ma - d.mb >= 0 ? "+" : "") + fmt(d.ma - d.mb, 1) + " min");
+        svg("text", { x: X[0], y: y, class: "lc-sc-log" }, g2, String(d.no));
+        svg("text", { x: X[1], y: y, class: "lc-sc-log" }, g2, fmt(d.ma, 1));
+        svg("text", { x: X[2], y: y, class: "lc-sc-log" }, g2, fmt(d.mb, 1));
         if (step >= 2) {
-          svg("text", { x: X[4], y: y, class: "lc-sc-log" }, g2, fmtP(d.p));
-          svg("text", { x: X[5], y: y, class: d.alarm ? "lc-sc-log is-alarm" : "lc-sc-log is-ok" }, g2,
-            d.alarm ? "różnica!" : "brak różnicy");
+          svg("text", { x: X[3], y: y, class: "lc-sc-log" }, g2, d.p < 0.001 ? "< 0.001" : fmt(d.p, 3));
+          svg("circle", { cx: X[4] + 7, cy: y - 5, r: 6, class: d.alarm ? "lc-sc-lamp is-alarm" : "lc-sc-lamp is-ok" }, g2);
         }
       });
     }
@@ -261,10 +248,15 @@
 
     function drawLow(g, step) {
       var N = st.runs.length, rate = N ? st.alarms / N : 0;
-      // licznik alarmów
-      svg("text", { x: PL, y: GY - 10, class: "lc-sc-n" }, g,
-        "test " + testName() + " · pomiarów: " + N + " · alarmów: " + st.alarms +
-        (N ? " (" + fmt(100 * rate, 1) + "%)" : ""));
+      // licznik alarmów; w kroku 4 kolor mówi, czy odsetek zgadza się z α
+      // (dopiero od 300 pomiarów, margines 3 błędów standardowych odsetka, min. 1 punkt procentowy)
+      var cls = "lc-sc-n";
+      if (step >= 4 && N >= 300) {
+        var tol = Math.max(0.01, 3 * Math.sqrt(ALPHA * (1 - ALPHA) / N));
+        cls += Math.abs(rate - ALPHA) > tol ? " is-hit" : " is-good";
+      }
+      svg("text", { x: PL, y: GY - 10, class: cls }, g,
+        "pomiarów: " + N + " · alarmów: " + (N ? fmt(100 * rate, 1) + "%" : "—"));
       var gx = function (r) { return PL + (PR - PL) * Math.min(r, GMAX) / GMAX; };
       svg("rect", { x: PL, y: GY, width: PR - PL, height: 12, rx: 3, class: "lc-sc-track" }, g);
       if (N) svg("rect", { x: PL, y: GY, width: Math.max(2, gx(rate) - PL), height: 12, rx: 3, class: "lc-sc-gauge" }, g);
@@ -275,17 +267,10 @@
       if (step >= 4) {
         var ax = gx(ALPHA);
         svg("line", { x1: ax, x2: ax, y1: GY - 4, y2: GY + 16, class: "lc-sc-param" }, g);
-        svg("text", { x: ax, y: GY + 28, "text-anchor": "middle", class: "lc-sc-param-t is-small" }, g, "α = 5%");
-        var msg = "", cls = "lc-sc-n";
-        if (N < 300) msg = "dołóż pomiarów (co najmniej 300), by porównać z α";
-        else {
-          // margines na przypadek: 3 błędy standardowe odsetka, nie mniej niż 1 punkt procentowy
-          var tol = Math.max(0.01, 3 * Math.sqrt(ALPHA * (1 - ALPHA) / N));
-          if (rate > ALPHA + tol) { msg = "za dużo fałszywych alarmów: " + fmt(rate / ALPHA, 1) + " × α"; cls += " is-hit"; }
-          else if (rate < ALPHA - tol) { msg = "prawie nigdy nie alarmuje: test za ostrożny"; cls += " is-hit"; }
-          else { msg = "zgodnie z α = 5%"; cls += " is-good"; }
-        }
-        svg("text", { x: PL, y: GY + 50, class: cls }, g, msg);
+        // odczyt: wzorzec linii przerywanej (μ na pasach, α na pasku i histogramie)
+        svg("line", { x1: PL, x2: PL + 22, y1: GY + 45, y2: GY + 45, class: "lc-sc-param" }, g);
+        svg("text", { x: PL + 30, y: GY + 50, class: "lc-sc-n" }, g,
+          "μ = " + MU + " min · α = " + fmt(100 * ALPHA, 0) + "%");
       }
       // histogram p-wartości
       var ticks = [0, 0.2, 0.4, 0.6, 0.8, 1].map(function (t) {
@@ -293,7 +278,7 @@
       });
       axisX(g, PL, PR, PB, ticks);
       svg("text", { x: (PL + PR) / 2, y: PB + 32, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "p-wartość z kolejnych pomiarów (czerwone: p < 0.05, alarm)");
+        "p-wartość");
       var h = histInfo();
       for (var i = 0; i < NB; i++) {
         var cls2 = "lc-sc-ptok " + (i === 0 ? "is-alarm" : "is-ok");
@@ -310,8 +295,6 @@
       if (step >= 4 && N) {
         var y = PB - h.u * N / NB;
         svg("line", { x1: PL, x2: PR, y1: y, y2: y, class: "lc-sc-param" }, g);
-        svg("text", { x: PR, y: y - 6, "text-anchor": "end", class: "lc-sc-param-t is-small is-halo" }, g,
-          "test trzymający α: każdy słupek po 5%");
       }
     }
 

@@ -271,21 +271,15 @@ ch2_ui <- lecture_chapter(
 ch2_server <- function(input, output, session) {
 
   scene_texts(input, output, "ch2_hala", list(
-    tagList("W hali montażowej pracują dwie zmiany. Na chaotycznej czasy montażu bardzo się różnią,
-      na spokojnej prawie wszyscy kończą w podobnym czasie. Brygadzista mierzy pracowników obu
-      zmian: każda kropka to jeden czas montażu, pionowa kreska to średnia zmiany. Zmierz kilka razy
-      i zobacz, jak skaczą średnie."),
-    tagList("Brygadzista nie ocenia na oko, tylko liczy test t i zapala lampkę: „różnica!”, gdy
-      p < 0.05, albo „brak różnicy”. W tej hali obie zmiany mają naprawdę tę samą średnią, więc
-      każda czerwona lampka to fałszywy alarm. Zmierz kilka razy i sprawdź, jak często się zapala."),
-    tagList("Każdy pomiar spada żetonem do histogramu p-wartości, a licznik zbiera odsetek alarmów.
-      Dokładaj po 10, 100 i 1000 pomiarów, potem zmień liczebności zmian i przełącz test
-      ze Studenta na Welcha. Przełącznik czyści licznik."),
-    tagList("Kreska α = 5% to obietnica testu: przy równych średnich alarm ma się zapalać w 5% pomiarów,
-      a każdy słupek histogramu ma mieć podobną wysokość. Student dotrzymuje jej tylko
-      przy równych zmianach. Przy 20 chaotycznych i 80 spokojnych alarmuje w około 29%
-      pomiarów, przy odwrotnym układzie prawie nigdy. Welch trzyma 5% we wszystkich
-      układach, dlatego ten kurs używa go domyślnie.")
+    tagList("Na chaotycznej zmianie czasy montażu mają duży rozrzut, na spokojnej mały.
+      Zmierz kilka razy i patrz, jak skaczą kreski średnich."),
+    tagList("Lampka to werdykt testu t przy α = 0.05. Obie zmiany mają tę samą prawdziwą średnią,
+      więc każda czerwona lampka to fałszywy alarm."),
+    tagList("Każdy pomiar trafia do histogramu p-wartości, a pasek zbiera odsetek alarmów.
+      Dokładaj pomiarów, potem zmień liczebności i test. Przełącznik czyści licznik."),
+    tagList("Przerywana kreska to α = 5%: tyle alarmów obiecuje test, a słupki histogramu mają być
+      równe. Student dotrzymuje tego tylko przy równych zmianach: przy 20–80 alarmuje w około 29%
+      pomiarów, przy 80–20 prawie nigdy. Welch trzyma 5% w każdym układzie.")
   ))
 
   ch2_data <- reactiveVal(NULL)

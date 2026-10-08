@@ -3,7 +3,6 @@
 .lc-sc-axis { stroke: var(--upwr-ink-subtle); }
 .lc-sc-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
 .lc-sc-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
-.lc-sc-sub { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
 .lc-sc-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
 .lc-sc-n.is-hit { fill: var(--upwr-accent); font-weight: 600; }
 .lc-sc-n.is-good { fill: var(--upwr-cat-szalwia, #3f8f5f); font-weight: 600; }
@@ -12,8 +11,6 @@
 .lc-sc-log.is-ok { fill: var(--upwr-cat-szalwia, #3f8f5f); }
 .lc-sc-th-t { font: 600 12px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
 .lc-sc-param { stroke: var(--upwr-ink); stroke-width: 2; stroke-dasharray: 5 4; }
-.lc-sc-param-t { font: 700 14px var(--upwr-mono); fill: var(--upwr-ink); }
-.lc-sc-param-t.is-small { font-size: 12px; }
 
 /* hala montażu */
 .lc-sc-sign { fill: var(--upwr-ink-soft); }
@@ -24,7 +21,6 @@
 .lc-sc-clip { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1; }
 .lc-sc-band { fill: var(--upwr-surface-sunken); opacity: .6; }
 .lc-sc-rowlab { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
-.lc-sc-meanlab { font: 600 13px var(--upwr-mono); fill: var(--upwr-ink); }
 .lc-sc-wdot { opacity: .75; }
 .lc-sc-wdot.is-chaos { fill: var(--upwr-single-alt); }
 .lc-sc-wdot.is-calm { fill: var(--upwr-cat-niebo); }
@@ -47,4 +43,3 @@
 .lc-sc-ptok.is-alarm { fill: var(--upwr-accent); }
 .lc-sc-ptok.is-ok { fill: var(--upwr-cat-szalwia, #3f8f5f); }
 .lc-sc-ptok.is-bar { stroke: none; opacity: .8; }
-.lc-sc-param-t.is-halo { paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 4px; stroke-linejoin: round; }
