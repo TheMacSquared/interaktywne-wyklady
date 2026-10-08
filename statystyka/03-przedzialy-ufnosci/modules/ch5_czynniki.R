@@ -101,10 +101,8 @@ ch5_ui <- list(
       "$$n = \\left(\\frac{z^* \\cdot s}{ME_{\\text{max}}}\\right)^2$$"
     )),
 
-    lc_p("Wynik zaokrąglamy zawsze w górę. Zamiast t* używamy tu z* z ", gloss("rozkład normalny", "rozkładu
-      normalnego"), ", bo t* zależy od n, którego jeszcze nie znamy. Przy próbach,
-      jakie zwykle wychodzą z tego wzoru, różnica między t* a z* jest niewielka.
-      Najtrudniejsze jest s: przed badaniem nie mamy danych, więc odchylenie
+    lc_p("Wynik zaokrąglamy zawsze w górę. Do planowania bierzemy z* = 1.96, bo n
+      dopiero wyznaczamy. Najtrudniejsze jest s: przed badaniem nie mamy danych, więc odchylenie
       standardowe trzeba założyć na podstawie badania pilotażowego, wcześniejszych
       publikacji albo rozsądnego szacunku zakresu wartości."),
 

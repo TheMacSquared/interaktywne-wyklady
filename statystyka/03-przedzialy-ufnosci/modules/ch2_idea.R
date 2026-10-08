@@ -55,13 +55,10 @@ ch2_ui <- list(
       opisuje więc metodę: zanim wylosujemy próbę, wiemy, że przedział zbudowany
       w ten sposób obejmie μ z prawdopodobieństwem 0.95."),
 
-    lc_p("Ten wzór wymaga dwóch uzupełnień. Po pierwsze, liczba 1.96 odpowiada
-      poziomowi 95%. Dla 90% w jej miejsce wchodzi 1.645, a dla 99% — 2.576,
-      czyli ", gloss("kwantyl", "kwantyle"), " rozkładu N(0, 1), które odcinają odpowiednio po 5% i po 0.5%
-      w każdym ogonie. Po drugie, SE zawiera σ, którego zwykle nie znamy. W praktyce
-      zastępujemy je odchyleniem standardowym z próby s, a 1.96 — kwantylem
-      ", gloss("rozkład t-Studenta", "rozkładu t-Studenta"), " z wykładu 02 (dla n = 30 jest to 2.05). Szczegółami tej
-      wersji zajmiemy się w rozdziale 3, ale scena poniżej już jej używa."),
+    lc_p("W praktyce σ nie znamy, więc SE liczymy z odchylenia standardowego
+      próby s, a zamiast 1.96 bierzemy nieco większy mnożnik t* z ",
+      gloss("rozkład t-Studenta", "rozkładu t-Studenta"), " (przy 25 osobach 2.06).
+      Tak liczy też scena poniżej."),
 
     lc_h2("ch2-wiele-ci", "Wiele przedziałów ufności"),
 

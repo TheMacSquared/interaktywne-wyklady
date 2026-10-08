@@ -34,9 +34,7 @@ ch6_ui <- list(
           tags$li("Odczytaj w tabeli wyników kolumny ",
                   tags$code("Mean"), ", ", tags$code("Lower"), ", ",
                   tags$code("Upper"))
-        ),
-        p(tags$em("jamovi zawsze używa rozkładu t — nie trzeba wybierać
-                   między z a t."))
+        )
       ),
 
       lc_note("Jamovi", title = "Przedział dla różnicy średnich (dwie grupy)",
@@ -311,13 +309,13 @@ ch6_ui <- list(
                      alpha = c(0.10, 0.05, 0.01)),
           cols = list(
             lc_col("level", "Poziom ufności", "row"),
-            lc_col("z", "z*", digits = 3),
+            lc_col("z", "Mnożnik", digits = 3),
             lc_col("alpha", "α", digits = 2)
           )
         ),
         lc_caption(
-          "Dla ", gloss("rozkład t-Studenta", "rozkładu t"), " wartości zależą od df = n-1; dla dużych
-           n są bardzo bliskie z.")
+          "Dla średniej program bierze nieco większy mnożnik t* z ", gloss("rozkład t-Studenta", "rozkładu t"),
+          "; przy dużych próbach różnica znika.")
       ),
 
       lc_more("Planowanie wielkości próby",

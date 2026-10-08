@@ -3,10 +3,10 @@
 // config.kind:
 //   "net"  student z miarką mierzy grupkę wychodzącą z sali; config.mode wybiera scenę:
 //          "mean" (x̄ na stos żetonów, μ i SD(x̄)), "net" (siatka x̄ ± margines, stos siatek,
-//          μ i pokrycie), "mult" (stos siatek od kroku 1, μ i pokrycie, mnożnik 1.96 / t*)
+//          μ i pokrycie)
 // Numer kroku czyta z data-lc-step korzenia widgetu. Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
-//   [data-sc-opt]  "nazwa:wartość" (przełączniki opcji, np. n:25, mult:t)
+//   [data-sc-opt]  "nazwa:wartość" (przełączniki opcji, np. n:25)
 // Rysuje SVG; serwer R nie bierze udziału (tekst kroków renderuje R).
 // Silnik (init, tween, svg) skopiowany ze statystyki 00 (modules/scenes.js).
 (function () {
@@ -51,12 +51,10 @@
   // siatkę (net), stos (stack) i μ (reveal):
   //   "mean"  Zmierz grupkę (rozdz. 1): bez siatki, x̄ spadają żetonami na stos; μ i SD(x̄)
   //   "net"   Zarzuć siatkę (rozdz. 2): siatka od kroku 1, potem stos siatek; μ i pokrycie
-  //   "mult"  Za mała siatka (rozdz. 3): stos siatek od kroku 1; μ i pokrycie; mnożnik 1.96 / t*
   // =========================================================================
   var MODES = {
     mean: { net: 99, stack: 2, reveal: 3 },
-    net:  { net: 1,  stack: 2, reveal: 3 },
-    mult: { net: 1,  stack: 1, reveal: 2 }
+    net:  { net: 1,  stack: 2, reveal: 3 }
   };
 
   KINDS.net = function (cfg, api) {

@@ -98,6 +98,5 @@ scene_texts <- function(input, output, id, texts) {
 # Sceny z grupką spod sali (rozdz. 1–3): świat wykładu — wzrost, populacja normalna.
 # n = 25 w scenach „Zmierz grupkę” i „Zarzuć siatkę”, n = 5 w „Za mała siatka”.
 net_world <- get_population_params("normal")          # μ = 170, σ = 10
-net_n     <- c(5L, 25L)
+net_n     <- 25L
 net_tq    <- setNames(as.list(round(qt(0.975, net_n - 1), 3)), net_n)   # t* dla 95%
-net_cov_z <- setNames(2 * pt(1.96, net_n - 1) - 1, net_n)               # pokrycie z mnożnikiem 1.96

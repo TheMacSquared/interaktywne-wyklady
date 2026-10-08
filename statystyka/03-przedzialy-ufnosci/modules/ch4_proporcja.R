@@ -62,14 +62,6 @@ ch4_ui <- list(
       withMathJax("$$CI = \\hat{p} \\pm z^*_{\\alpha/2} \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$")
     ),
 
-    lc_p("W odróżnieniu od rozdziału 3 nie sięgamy po ", gloss("rozkład t-Studenta"), ".
-      Rozkład t opisuje średnią z danych o rozkładzie normalnym, gdy \\(\\sigma\\)
-      szacujemy z próby niezależnie od średniej. Dane zero-jedynkowe nie mają
-      rozkładu normalnego, a ich ", gloss("odchylenie standardowe"), " \\(\\sqrt{p(1-p)}\\)
-      wynika wprost z \\(p\\). Uzasadnieniem przedziału jest tu przybliżenie
-      normalne rozkładu \\(\\hat{p}\\), więc i wartość krytyczna pochodzi
-      z rozkładu normalnego."),
-
     lc_p("To przybliżenie zawodzi, gdy próba jest mała albo \\(\\hat{p}\\) leży
       blisko 0 lub 1. Rozkład dwumianowy jest wtedy wyraźnie skośny, jak
       B(50, 0.1) w wykładzie 02, a 95-procentowy przedział Walda obejmuje

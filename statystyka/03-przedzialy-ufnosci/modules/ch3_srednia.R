@@ -34,17 +34,14 @@ ch3_ui <- list(
       obejmuje μ w 95% prób. Przeszkoda jest jedna: σ populacji zwykle nie znamy."),
 
     lc_p("Zastępujemy je więc ", gloss("odchylenie standardowe", "odchyleniem
-      standardowym"), " z próby \\(s\\). Wynik \\(s/\\sqrt{n}\\) to ",
-      gloss("błąd standardowy"), " średniej (SE) oszacowany z danych. Ponieważ
-      \\(s\\) też zmienia się z próby na próbę, do niepewności średniej
-      dochodzi niepewność samego SE. Z tego powodu mnożnik 1.96 z ", gloss("rozkład normalny", "rozkładu
-      normalnego"), " zastępujemy ", gloss("kwantyl", "kwantylem"), " ", gloss("rozkład t-Studenta",
-      "rozkładu t-Studenta"), " z \\(n - 1\\) ", gloss("stopnie swobody",
-      "stopniami swobody"), ", który poznaliśmy w wykładzie 02. Tak powstaje ",
-      gloss("przedział ufności"), " dla średniej populacji:"),
+      standardowym"), " z próby \\(s\\), a mnożnik 1.96 wartością \\(t^*\\) z ",
+      gloss("rozkład t-Studenta", "rozkładu t-Studenta"), ". Ten rozkład jest podobny
+      do normalnego, ale ma cięższe ogony, więc lepiej oddaje niepewność, zwłaszcza
+      przy małej liczbie obserwacji. Tak powstaje ", gloss("przedział ufności"),
+      " dla średniej populacji:"),
 
     lc_formula_box(
-      withMathJax("$$CI = \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
+      withMathJax("$$CI = \\bar{x} \\pm t^* \\cdot \\frac{s}{\\sqrt{n}}$$")
     ),
 
     lc_p("Środkiem przedziału jest średnia z próby \\(\\bar{x}\\). Jego połowę
@@ -53,38 +50,8 @@ ch3_ui <- list(
       waha się z próby na próbę. ", gloss("wartość krytyczna", "Wartość krytyczna"),
       " \\(t^*\\) mówi, ile błędów standardowych trzeba odłożyć w każdą stronę,
       żeby osiągnąć wybrany ", gloss("poziom ufności"), ". Dla 95% jest to
-      kwantyl 0.975 rozkładu t."),
-
-    lc_p("Rozkład t ma cięższe ogony niż rozkład normalny, więc jego kwantyle
-      są większe, a przedział szerszy. Różnica szybko maleje wraz z liczebnością
-      próby. W wykładzie 02 kwantyl 0.975 wynosił 3.18 dla df = 3 i 2.04 dla
-      df = 30. Dla próby 25 osób (df = 24) jest to 2.06, a przy bardzo dużych
-      próbach wartość zbliża się do 1.96 z rozkładu normalnego."),
-
-    lc_p("Przy grupce 5 osób różnica między 1.96 a t* decyduje o tym, jak często siatka łapie μ."),
-
-    # PROTOTYP SCENY (2026-10-08): Za mała siatka — 1.96 zamiast t* przy n = 5
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch3_siatka", "Za mała siatka: 1.96 czy t*",
-        steps = c("Powtarzamy", "Pokrycie"),
-        labels = c("Zarzuć siatkę", "Zarzuć siatkę"),
-        more_from = 1,
-        options = list(
-          list(name = "mult", label = "Mnożnik",
-               values = c("1.96" = "z", "t*" = "t"), selected = "z", from = 1)
-        ),
-        config = list(kind = "net", mode = "mult", mu = net_world$mu, sigma = net_world$sigma,
-                      n = 5L, mult = "z", tq = net_tq, z = 1.96,
-                      xmin = 140, xmax = 200, height = 550,
-                      aria = "Grupki 5 osób zarzucają siatki x̄ ± mnożnik · s/√n na oś wzrostu; siatki układają się pod osią, a w drugim kroku widać μ i odsetek trafień przy mnożniku 1.96 albo t*"))
-    ),
-
-    lc_p("Programy statystyczne liczą przedział dla średniej zawsze z rozkładu t,
-      więc nie trzeba wybierać między wersją z a t. Średnią i granice
-      przedziału program poda za nas, ale żeby przedział dobrze odczytać,
-      warto raz zobaczyć, jak powstaje."),
+      około 2, a dokładną wartość podaje program. Warto jednak raz zobaczyć,
+      jak powstaje przedział."),
 
     lc_h2("ch3-budowa", "Budowa przedziału — krok po kroku"),
 
@@ -118,8 +85,7 @@ ch3_ui <- list(
       równym około 2 cm margines błędu wynosi około 4.1 cm, a cały przedział
       ma około 8 cm szerokości. Większa część tego poszerzenia wynika
       z wyboru poziomu ufności: dla 95% potrzeba około dwóch błędów
-      standardowych, a nie jednego. Za oszacowanie σ z próby płacimy tylko
-      różnicą między 1.96 a 2.06. Każda nowa próba daje inną średnią, inne
+      standardowych, a nie jednego. Każda nowa próba daje inną średnią, inne
       \\(s\\) i inny przedział. Tak jak w scenie z siatkami z poprzedniego rozdziału,
       mniej więcej co dwudziesty z nich ominie μ = 170 cm."),
 
@@ -138,13 +104,7 @@ ch3_ui <- list(
     ),
 
     lc_p("Każda grupa ma tu własne odchylenie standardowe, nie zakładamy
-      równych wariancji. To wersja Welcha. Liczbę stopni swobody dla \\(t^*\\)
-      wyznacza wtedy osobny wzór (Welcha–Satterthwaite'a). Wynik zwykle
-      nie jest liczbą całkowitą i leży między \\(\\min(n_1, n_2) - 1\\)
-      a \\(n_1 + n_2 - 2\\). Panele w tym wykładzie liczą wersję Welcha.
-      Klasyczna wersja Studenta, w wielu programach domyślna, zakłada równe
-      wariancje i łączy je w jedną. Przy równych licznościach obie wersje
-      mają ten sam błąd standardowy, a różnią się tylko liczbą stopni swobody."),
+      równych wariancji. To wersja Welcha i tak liczą ją panele w tym wykładzie."),
 
     lc_p("Panel porównuje wzrost 25 mężczyzn i 25 kobiet. Próby losowane są
       z populacji o średnich 178 cm (σ = 7 cm) i 165 cm (σ = 6 cm), więc
@@ -393,13 +353,6 @@ ch3_ui <- list(
 
 ch3_server <- function(input, output, session) {
 
-  # --- PROTOTYP SCENY (2026-10-08): Za mała siatka ---
-  scene_texts(input, output, "ch3_siatka", list(
-    tagList("Grupki po 5 osób. Dorzuć +100 i +1000 siatek z mnożnikiem 1.96."),
-    tagList("Przerywana linia to ", tags$code("μ", .noWS = "outside"), ". Przy 1.96 pokrycie wynosi około ",
-      paste0(round(100 * net_cov_z[["5"]]), "%. Przełącz mnożnik na "),
-      tags$code("t*", .noWS = "outside"), " = ", lc_fmt(net_tq[["5"]], 2), " i dorzuć +1000.")
-  ))
 
   # --- Widget 1: Budowa przedziału krok po kroku ---
   # Krok widgetu (1..4) żyje w przeglądarce; nowa próba nie zmienia kroku.
