@@ -70,6 +70,14 @@ source(file.path(app_dir, "modules", "ch9_cwiczenia.R"),        local = TRUE)
 # ============================================================================
 
 header_extras <- tagList(
+  # PROTOTYP SCENY (2026-10-08): sceny SVG (kartki, pracownie, pary) — rozdz. 03 i 09
+  tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
+  includeScript(file.path(app_dir, "modules", "scenes.js")),
+  tags$style(HTML("
+    .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
+    .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
+    .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+  ")),
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
   tags$style(HTML("
     .ws-chart-wrap {

@@ -48,6 +48,23 @@ ch7_ui <- list(
       "$$m = \\frac{k(k-1)}{2}, \\qquad P(\\text{co najmniej jeden fałszywy alarm}) = 1 - (1 - \\alpha)^m$$"
     )),
 
+    # PROTOTYP SCENY (2026-10-08): Porównaj wszystkie pary (fałszywe alarmy w serii testów)
+    figure_panel(
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch7_pary", "Wszystkie pary: ile serii kończy się fałszywym alarmem",
+        steps = c("Porównania", "Alarm w serii", "Serie", "Wzór"),
+        labels = c("Porównaj wszystkie pary", "Porównaj wszystkie pary", "Porównaj wszystkie pary", "Porównaj wszystkie pary"),
+        options = list(
+          list(name = "k", label = "Kierunków (k)", values = c("3" = "3", "5" = "5", "7" = "7"), selected = "5"),
+          list(name = "mode", label = "Analiza",
+               values = c("pary" = "pairs", "ANOVA" = "anova"), selected = "pairs", from = 3)
+        ),
+        config = list(kind = "pairs", height = 480, k = 5, mode = "pairs", n = 20, mu = 70, sd = 13, alpha = 0.05,
+                      names = c("Biologia", "Ekonomia", "Geodezja", "Dietetyka", "Rolnictwo", "Zootechnika", "Weterynaria"),
+                      aria = "Graf kierunków studiów, w którym zapalają się pary z istotnym testem t, i histogram liczby alarmów w serii"))
+    ),
+
     lc_p("Panel rysuje grupy jako wierzchołki, a każdą parę do porównania jako
       odcinek. Obok podaje liczbę testów i ryzyko obliczone z tego wzoru."),
 
@@ -356,6 +373,25 @@ ch7_plural_diff <- function(n) {
 }
 
 ch7_server <- function(input, output, session) {
+
+  # PROTOTYP SCENY (2026-10-08): teksty kroków sceny „Porównaj wszystkie pary”
+  scene_texts(input, output, "ch7_pary", list(
+    tagList("Analityk ma wyniki tego samego testu koncentracji z kilku kierunków studiów,
+      po 20 osób na kierunek. Wszystkie kierunki losujemy z jednej populacji, więc prawdziwych
+      różnic nie ma. Porównaj wszystkie pary: odcinek zapala się, gdy test t dla tej pary
+      da p < 0.05."),
+    tagList("Każdy zapalony odcinek to fałszywy alarm. Liczy się werdykt całej serii: czy
+      wypadł w niej co najmniej jeden alarm. Zmień liczbę kierunków k i zobacz, jak szybko
+      przybywa par."),
+    tagList("Powtarzamy całe serie porównań. Każda seria spada żetonem nad liczbą swoich
+      alarmów, a burgundowe słupki to serie z co najmniej jednym alarmem. Dokładaj po 10,
+      100 i 1000, potem przełącz na jedną ANOVA: jeden test dla całej serii zamiast
+      wszystkich par."),
+    tagList("Odsetek serii z alarmem stoi obok wzoru 1 - 0.95^m. Wzór traktuje testy jako
+      niezależne, a pary dzielą te same grupy, więc to tylko przybliżenie: symulacja
+      wypada niżej, ale wciąż wyraźnie powyżej 5%. Jedna ANOVA trzyma odsetek
+      fałszywych alarmów przy 5% dla każdego k.")
+  ))
 
   # --- Widget: inflacja błędu I rodzaju (Ryc. 9.1) ---
 
