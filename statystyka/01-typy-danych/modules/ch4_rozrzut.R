@@ -49,7 +49,7 @@ ch4_ui <- list(
 
     lc_p("Zacznijmy od przystanku, na którym codziennie czekasz na autobus na zajęcia."),
 
-    # PROTOTYP SCENY (2026-10-08): czekanie na autobus A/B
+    # PROTOTYP SCENY (2026-10-08): czekanie na autobus A/K
     figure_panel(
       label = "Prototyp sceny",
       width_mode = "text",
@@ -59,21 +59,21 @@ ch4_ui <- list(
         labels = c("Czekaj na autobus", "Czekaj na autobus",
                    "Czekaj jeszcze raz", "Czekaj jeszcze raz"),
         options = list(list(name = "line", label = "Linia",
-                            values = c("A" = "A", "B" = "B"),
+                            values = c("A" = "A", "K" = "B"),
                             selected = "A", from = 1)),
         config = list(
           kind = "bus", height = 462,
           a = round(ch4_bus$a, 2), b = round(ch4_bus$b, 2),
           dep = 7 * 60 + 45, limit = ch4_bus_limit,
           mean = round(mean(ch4_bus$a), 1), xmax = 25,
-          aria = "Student czeka na przystanku na autobus linii A albo B; każde spóźnienie trafia do histogramu swojej linii."
+          aria = "Student czeka na przystanku na autobus linii A albo K; każde spóźnienie trafia do histogramu swojej linii."
         )
       )
     ),
 
     lc_p("Wyobraź sobie dwie linie autobusowe o tym samym średnim spóźnieniu,
       równym 2 minuty. Na linii A prawie każdy kurs przyjeżdża z niewielkim,
-      podobnym opóźnieniem. Na linii B większość kursów jest niemal punktualna,
+      podobnym opóźnieniem. Na linii K większość kursów jest niemal punktualna,
       ale co jakiś czas autobus spóźnia się bardzo. Panel pokazuje rozkłady
       spóźnień z 1000 symulowanych kursów każdej linii. Odczyty nad wykresem
       podają odchylenie standardowe, miarę rozrzutu, którą zdefiniujemy
@@ -98,17 +98,17 @@ ch4_ui <- list(
 
     lc_p("Krzywa linii A jest wąska i wysoka: prawie wszystkie spóźnienia
       mieszczą się między 0 a 4 minutami, a odchylenie standardowe wynosi
-      0.7 min. Krzywa linii B ma ostry szczyt tuż przy zerze i długi prawy ogon,
-      a jej odchylenie standardowe to 3.0 min. Na linii B 3.4% kursów spóźnia
+      0.7 min. Krzywa linii K ma ostry szczyt tuż przy zerze i długi prawy ogon,
+      a jej odchylenie standardowe to 3.0 min. Na linii K 3.4% kursów spóźnia
       się o ponad 10 minut, średnio o 13.1 min. Na linii A takie spóźnienie
       się nie zdarza."),
 
     lc_p("Dla pasażera to różnica zasadnicza. Linia A jest przewidywalna: wiadomo,
-      kiedy autobus przyjedzie. Na linii B zwykle czeka się krócej, ale trzeba
+      kiedy autobus przyjedzie. Na linii K zwykle czeka się krócej, ale trzeba
       liczyć się z tym, że raz na kilkadziesiąt kursów pasażer spóźni się na zajęcia.
       Widać to po zapasie czasu: przy wyjściu 3 minuty wcześniej linią A
-      dojeżdża się na czas w 92% kursów, linią B w 77%. Żeby dojechać na czas
-      w 99% kursów, na linii A wystarczą 4 minuty zapasu, na linii B potrzeba
+      dojeżdża się na czas w 92% kursów, linią K w 77%. Żeby dojechać na czas
+      w 99% kursów, na linii A wystarczą 4 minuty zapasu, na linii K potrzeba
       około 14. Średnia tej różnicy nie widzi. Potrzebujemy liczby, która ją zmierzy."),
 
     # ====================================================================
@@ -431,18 +431,18 @@ ch4_server <- function(input, output, session) {
     scene_texts(input, output, "ch4_bus_scene", list(
       tagList("Autobus odjeżdża wg rozkładu o 7:45, jazda trwa 10 minut, zajęcia
         zaczynają się o 8:00. Kliknij „Czekaj na autobus” i zobacz, o której
-        naprawdę przyjedzie. Potem przełącz się na linię B i poczekaj też tam."),
+        naprawdę przyjedzie. Potem przełącz się na linię K i poczekaj też tam."),
       tagList("Z każdego czekania zostaje jedna liczba: spóźnienie x w minutach,
         liczone od godziny z rozkładu. To obserwacja zmiennej ilościowej ciągłej.
-        Na linii A kolejne x są do siebie podobne, na linii B raz wychodzi
+        Na linii A kolejne x są do siebie podobne, na linii K raz wychodzi
         pół minuty, a raz kwadrans."),
       tagList("Każde czekanie spada żetonem na oś spóźnień: linia A na górze,
-        linia B na dole, ta sama skala. Zbierz po kilkaset kursów na obu liniach
+        linia K na dole, każda w swojej skali wysokości. Zbierz po kilkaset kursów na obu liniach
         (+100, +1000) i porównaj kształty: wąski kopiec przy 2 minutach
         i wysoki słupek przy zerze z długim ogonem w prawo."),
       sprintf(paste("Przerywana linia to średnie spóźnienie, takie samo na obu liniach:",
         "%s min. Na prawo od %s minut leżą kursy, po których nie zdążysz na zajęcia:",
-        "na linii A %s%%, na linii B %s%%, czyli mniej więcej co %s. kurs.",
+        "na linii A %s%%, na linii K %s%%, czyli mniej więcej co %s. kurs.",
         "Odchylenie standardowe SD (%s min wobec %s min) mierzy tę różnicę.",
         "Średnia nie mówi, czy zdążysz. Mówi to rozrzut."),
         f1(mean(ch4_bus$a)), ch4_bus_limit, f1(late_a), f1(late_b),
@@ -456,7 +456,7 @@ ch4_server <- function(input, output, session) {
     tagList(
       lc_readout("Linia A", paste0("SD = ", lc_fmt(bus$sd_a, 1), " min"),
                  color = STEP_ROLES$data$colour, swatch = TRUE),
-      lc_readout("Linia B", paste0("SD = ", lc_fmt(bus$sd_b, 1), " min"),
+      lc_readout("Linia K", paste0("SD = ", lc_fmt(bus$sd_b, 1), " min"),
                  color = STEP_ROLES$group$colour, swatch = TRUE)
     )
   })
@@ -512,7 +512,7 @@ ch4_server <- function(input, output, session) {
       mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
       tagList(
         tags$strong("Spóźnienia ponad 10 min:"),
-        paste0(" linia A — ", lc_fmt(pct_10_a, 1), "% kursów; linia B — ",
+        paste0(" linia A — ", lc_fmt(pct_10_a, 1), "% kursów; linia K — ",
                lc_fmt(pct_10_b, 1), "% kursów",
                if (pct_10_b > 0) paste0(" (średnio ", lc_fmt(mean_late_b, 1), " min)") else "",
                ".")
@@ -530,11 +530,11 @@ ch4_server <- function(input, output, session) {
       lbl <- if (buffer == 0) "bez zapasu" else paste0(buffer, " min wcześniej")
       tagList(
         paste0("Wyjście ", lbl, ". Na czas dojedzie się linią A w ",
-               lc_fmt(prob_a * 100, 1), "% kursów, linią B w ",
+               lc_fmt(prob_a * 100, 1), "% kursów, linią K w ",
                lc_fmt(prob_b * 100, 1), "%."),
         if (pct_10_b > 0) tagList(
           tags$br(),
-          paste0("Gdy linia B spóźnia się ponad 10 min (", lc_fmt(pct_10_b, 1),
+          paste0("Gdy linia K spóźnia się ponad 10 min (", lc_fmt(pct_10_b, 1),
                  "% kursów), czeka się średnio ", lc_fmt(mean_late_b, 1), " min.")
         )
       )

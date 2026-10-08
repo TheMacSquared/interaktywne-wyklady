@@ -1,7 +1,7 @@
 // Sceny wykładu 01: konkretne doświadczenie → liczba → rozkład wyników.
 // Kontener: .lc-sc[data-config] wewnątrz widgetu krokowego (.lc-stepper).
 // config.kind:
-//   "bus"  czekanie na autobus linii A albo B: spóźnienie x, rozrzut i ryzyko spóźnienia
+//   "bus"  czekanie na autobus linii A albo K: spóźnienie x, rozrzut i ryzyko spóźnienia
 // Numer kroku czyta z data-lc-step korzenia widgetu. Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
 //   [data-sc-opt]  "nazwa:wartość" (przełączniki opcji, np. line:B)
@@ -38,7 +38,7 @@
   var KINDS = {};
 
   // =========================================================================
-  // BUS: czekanie na autobus linii A albo B
+  // BUS: czekanie na autobus linii A albo K
   // cfg.a, cfg.b: spóźnienia kursów (min) ze świata wykładu; losujemy z nich.
   // cfg.dep: odjazd wg rozkładu w minutach od północy; cfg.limit: zapas (min).
   // =========================================================================
@@ -61,6 +61,8 @@
     function xOf(v) { return PL + (PR - PL) * v / XMAX; }
     function slotX(i) { return xOf((i + 0.5) * BW); }
     function lineCls(l) { return l === "A" ? "is-a" : "is-b"; }
+    // klucz B w kodzie, na ekranie linia K (jak we Wrocławiu)
+    function lineName(l) { return l === "A" ? "A" : "K"; }
 
     // --- scena: zegar, droga, przystanek, student, autobus ------------------
     function drawBus(g, x, line) {
@@ -70,7 +72,7 @@
         svg("rect", { x: wx, y: 126, width: 20, height: 16, rx: 2, class: "lc-sc-bus-win" }, q);
       });
       svg("rect", { x: -12, y: 126, width: 10, height: 26, rx: 2, class: "lc-sc-bus-win" }, q);
-      svg("text", { x: -62, y: 162, "text-anchor": "middle", class: "lc-sc-bus-t" }, q, "linia " + line);
+      svg("text", { x: -62, y: 162, "text-anchor": "middle", class: "lc-sc-bus-t" }, q, "linia " + lineName(line));
       svg("circle", { cx: -98, cy: 170, r: 9, class: "lc-sc-wheel" }, q);
       svg("circle", { cx: -26, cy: 170, r: 9, class: "lc-sc-wheel" }, q);
     }
@@ -91,7 +93,7 @@
       // przystanek
       svg("line", { x1: 470, x2: 470, y1: 74, y2: 180, class: "lc-sc-pole" }, g);
       svg("rect", { x: 452, y: 60, width: 36, height: 30, rx: 4, class: "lc-sc-stop " + lineCls(line) }, g);
-      svg("text", { x: 470, y: 82, "text-anchor": "middle", class: "lc-sc-stop-t" }, g, line);
+      svg("text", { x: 470, y: 82, "text-anchor": "middle", class: "lc-sc-stop-t" }, g, lineName(line));
       // student
       var px = 540;
       svg("circle", { cx: px, cy: 128, r: 10, class: "lc-sc-person" }, g);
@@ -134,7 +136,7 @@
       st.waits.slice(-6).reverse().forEach(function (d, i) {
         var y = 250 + i * 25, g2 = svg("g", { opacity: 1 - i * 0.14 }, g);
         svg("text", { x: 70, y: y, class: "lc-sc-log" }, g2, "czekanie " + d.no);
-        svg("text", { x: 210, y: y, class: "lc-sc-log" }, g2, "linia " + d.line);
+        svg("text", { x: 210, y: y, class: "lc-sc-log" }, g2, "linia " + lineName(d.line));
         svg("text", { x: 310, y: y, class: "lc-sc-log" }, g2, "przyjazd " + clock(DEP + d.x));
         if (step >= 2) svg("text", { x: 490, y: y, class: "lc-sc-log is-x" }, g2, "x = " + fmt(d.x, 1) + " min");
       });
@@ -164,7 +166,7 @@
       ["A", "B"].forEach(function (l) {
         var R = ROWS[l], h = histInfo(l);
         svg("line", { x1: PL, x2: PR, y1: R.base, y2: R.base, class: "lc-sc-axis" }, g);
-        svg("text", { x: 40, y: R.base - 34, "text-anchor": "middle", class: "lc-sc-row-t " + lineCls(l) }, g, l);
+        svg("text", { x: 40, y: R.base - 34, "text-anchor": "middle", class: "lc-sc-row-t " + lineCls(l) }, g, lineName(l));
         svg("text", { x: 40, y: R.base - 14, "text-anchor": "middle", class: "lc-sc-n" }, g, "n = " + st.vals[l].length);
         var c = st.counts[l];
         for (var i = 0; i < NB; i++) {
@@ -187,7 +189,7 @@
             svg("tspan", {}, t, "x̄ = " + fmt(S.mean, 1) + " min · SD = " + fmt(S.sd, 1) + " min · ");
             svg("tspan", { class: "is-hit" }, t, "> " + LIM + " min: " + fmt(S.late * 100, 1) + "%");
           } else {
-            svg("tspan", {}, t, "poczekaj też na linii " + l);
+            svg("tspan", {}, t, "poczekaj też na linii " + lineName(l));
           }
         }
       });

@@ -17,7 +17,7 @@
 .lc-sc-bubble-t { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
 .lc-sc-bubble-t.is-late { fill: var(--upwr-accent); font-weight: 600; }
 
-/* przystanek i autobus: linia A = niebo, linia B = bursztyn (jak Ryc. 4.1) */
+/* przystanek i autobus: linia A = niebo, linia K = bursztyn (jak Ryc. 4.1) */
 .lc-sc-clock { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
 .lc-sc-clock-t { font: 700 28px var(--upwr-mono); fill: var(--upwr-ink); }
 .lc-sc-road { fill: var(--upwr-surface-sunken); }
