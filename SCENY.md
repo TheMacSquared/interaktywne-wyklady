@@ -100,6 +100,16 @@ telefon i biblioteka, deska Galtona → ważenie ludzi, lineup → herbata):
    "Zasada", rule = TRUE)` nazywa to, co było na scenie („Wszystko, co widać na
    placu, ma w rachunku prawdopodobieństwa stałe nazwy”).
 10. **Liczby z kropką dziesiętną**, także w SVG (zob. decyzję w TODO.md).
+11. **Wykres bez tekstu.** Na wykresach w scenie nie ma podpisów linii, objaśnień
+    ani zdań. Linie parametru i modelu rozróżnia styl (przerywana, kropkowana),
+    a ich wartości stoją w jednym krótkim odczycie pod wykresem, np.
+    „E(X) = -1.20 zł · Var(X) = 197.56 zł²”. Na scenie najwyżej jedna liczba
+    przy obiekcie (X = -1 zł), bez rozpisanego rachunku. Elementarnych rzeczy
+    nie tłumaczymy.
+12. **Scena dla inżyniera, nie matematyka.** Buduje intuicję zastosowania
+    i interpretacji (co znaczy wynik, jaką decyzję podjąć), a nie uzasadnia
+    wzoru (bez n − 1, momentów, wyprowadzeń). Kroków tyle, ile trzeba: jeśli
+    nazwa liczby jest oczywista, krok „Doświadczenie” i „Nazwa” łączymy w jeden.
 
 ## Architektura techniczna
 

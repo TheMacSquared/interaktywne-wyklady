@@ -522,8 +522,6 @@
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g, "los nr " + (st.n + 1) + "…");
       } else {
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X = " + zl(o.x));
-        svg("text", { x: RX, y: RY + 18, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "wygrana " + zl(o.prize) + " minus cena " + zl(PRICE));
       }
     }
 
@@ -577,7 +575,6 @@
       }
       svg("line", { x1: RL, x2: RR, y1: PB, y2: PB, class: "lc-sc-axis" }, g);
       svg("line", { x1: RL, x2: RR, y1: y2(0), y2: y2(0), class: "lc-sc-price" }, g);
-      svg("text", { x: RR, y: y2(0) - 5, "text-anchor": "end", class: "lc-sc-price-t" }, g, "0 zł: wychodzisz na zero");
       var xr = function (i) { return RL + (RR - RL) * (n > 1 ? i / (n - 1) : 0); };
       if (n > 0) {
         var stepN = Math.max(1, Math.floor(n / 400)), pts = [];
@@ -588,7 +585,6 @@
       }
       if (rel) {
         svg("line", { x1: RL, x2: RR, y1: y2(m.e), y2: y2(m.e), class: "lc-sc-param" }, g);
-        svg("text", { x: RL + 4, y: y2(m.e) + 15, class: "lc-sc-param-t" }, g, "E(X) = " + fmt(m.e, 2) + " zł");
       }
       svg("text", { x: RL, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick" }, g, "1");
       svg("text", { x: RR, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(Math.max(1, n)));
@@ -596,11 +592,10 @@
       svg("text", { x: RR, y: PT - 12, "text-anchor": "end", class: "lc-sc-n" }, g,
         "średni bilans: " + (n ? fmt(st.sum / n, 2) + " zł" : "—") + " · losów: " + n);
       if (rel) {
-        svg("text", { x: W / 2, y: PB + 76, "text-anchor": "middle", class: "lc-sc-n" }, g,
-          "E(X) = " + fmt(m.e, 2) + " zł: średnio tracisz " + fmt(-m.e, 2) + " zł na każdym losie.");
-        svg("text", { x: W / 2, y: PB + 96, "text-anchor": "middle", class: "lc-sc-n is-hit" }, g,
-          m.sd > 0 ? "SD = " + fmt(m.sd, 2) + " zł: typowa odległość bilansu od E(X)."
-            : "SD = 0.00 zł: każdy los daje ten sam bilans.");
+        // linia przerywana na prawym wykresie to E(X): mały wzorzec przy odczycie zamiast podpisu na wykresie
+        svg("line", { x1: W / 2 - 150, x2: W / 2 - 128, y1: PB + 80, y2: PB + 80, class: "lc-sc-param" }, g);
+        svg("text", { x: W / 2 - 120, y: PB + 85, class: "lc-sc-n" }, g,
+          "E(X) = " + fmt(m.e, 2) + " zł   ·   Var(X) = " + fmt(m.sd * m.sd, 2) + " zł²");
       }
     }
 

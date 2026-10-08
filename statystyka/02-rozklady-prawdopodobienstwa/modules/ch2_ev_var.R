@@ -286,8 +286,8 @@ ch2_ev_var_server <- function(input, output, session) {
     tagList("Lewy wykres zlicza bilanse, prawy pokazuje średni bilans wszystkich kupionych losów. Dołóż 100
       i 1000 losów, potem zmień los na pewne 4 zł albo 10% na 40 zł."),
     tagList("Średni bilans na dłuższą metę to E(X) = ", sprintf("%.2f", scene_ticket_ev(tk)), " zł. Los pewny i los
-      10% na 40 zł mają tę samą E(X) = ", sprintf("%.2f", scene_ticket_ev(scene_tickets$sure)), " zł, ale SD = 0
-      i SD = ", lc_fmt(scene_ticket_sd(scene_tickets$risky), 0), " zł: to jest ryzyko.")
+      10% na 40 zł mają tę samą E(X) = ", sprintf("%.2f", scene_ticket_ev(scene_tickets$sure)), " zł, ale Var(X) = 0
+      i Var(X) = ", lc_fmt(scene_ticket_sd(scene_tickets$risky)^2, 0), " zł²: to jest ryzyko.")
   ))
 
   # --- Definicje loterii ---
