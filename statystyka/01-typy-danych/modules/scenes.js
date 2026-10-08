@@ -140,9 +140,9 @@
       });
     }
 
-    // --- dwa histogramy na wspólnej osi (kroki 3–4) ------------------------
-    function histInfo() {
-      var mx = Math.max.apply(null, st.counts.A.concat(st.counts.B, [1]));
+    // --- dwa histogramy na wspólnej osi X, każdy z własną skalą Y (kroki 3–4) ---
+    function histInfo(line) {
+      var mx = Math.max.apply(null, st.counts[line].concat([1]));
       var u = Math.min(13, 72 / Math.max(mx, 5));
       return { u: u, tokR: Math.min(5, u * 0.46) };
     }
@@ -157,12 +157,12 @@
     }
 
     function drawHist(g, step) {
-      var h = histInfo(), y0 = ROWS.A.top - 8, y1 = ROWS.B.base;
+      var y0 = ROWS.A.top - 8, y1 = ROWS.B.base;
       if (step >= 4) {
         svg("rect", { x: xOf(LIM), y: y0, width: PR - xOf(LIM), height: y1 - y0, class: "lc-sc-risk" }, g);
       }
       ["A", "B"].forEach(function (l) {
-        var R = ROWS[l];
+        var R = ROWS[l], h = histInfo(l);
         svg("line", { x1: PL, x2: PR, y1: R.base, y2: R.base, class: "lc-sc-axis" }, g);
         svg("text", { x: 40, y: R.base - 34, "text-anchor": "middle", class: "lc-sc-row-t " + lineCls(l) }, g, l);
         svg("text", { x: 40, y: R.base - 14, "text-anchor": "middle", class: "lc-sc-n" }, g, "n = " + st.vals[l].length);
@@ -184,7 +184,7 @@
           var t = svg("text", { x: PR, y: R.top + 6, "text-anchor": "end", class: "lc-sc-n" }, g);
           if (st.vals[l].length) {
             var S = stats(st.vals[l]);
-            svg("tspan", {}, t, "x̄ = " + fmt(S.mean, 1) + " min   SD = " + fmt(S.sd, 1) + " min   ");
+            svg("tspan", {}, t, "x̄ = " + fmt(S.mean, 1) + " min · SD = " + fmt(S.sd, 1) + " min · ");
             svg("tspan", { class: "is-hit" }, t, "> " + LIM + " min: " + fmt(S.late * 100, 1) + "%");
           } else {
             svg("tspan", {}, t, "poczekaj też na linii " + l);
@@ -236,7 +236,7 @@
       }, function () {
         var land = function () { st.counts[w.line][binOf(w.x)] += 1; render(); done(); };
         if (step >= 3) {
-          var h = histInfo(), i = binOf(w.x);
+          var h = histInfo(w.line), i = binOf(w.x);
           var x0 = STOP_X - 80, yy0 = 100, x1 = slotX(i), yy1 = tokenY(w.line, st.counts[w.line][i] + 1, h);
           commit(w); render();
           var tok = svg("circle", { r: 7, cx: x0, cy: yy0, class: "lc-sc-token " + lineCls(w.line) }, api.fly);
