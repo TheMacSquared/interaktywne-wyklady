@@ -1104,14 +1104,15 @@ lc_caption <- function(..., tone = NULL) {
 # Wykres z wysokością z proporcji kontenera zamiast stałej wysokości w px.
 # Serwer bez zmian: zoom_plot_server() rysuje w rozmiarze kontenera.
 # max_height (np. "560px") tylko dla wykresów, które potrzebują więcej niż 440 px.
-lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL, max_height = NULL) {
+lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL, max_height = NULL,
+                    click = NULL) {
   style <- paste0(c(
     if (!is.null(ratio)) paste0("--lc-plot-ratio:", ratio, ";"),
     if (!is.null(ratio_narrow)) paste0("--lc-plot-ratio-narrow:", ratio_narrow, ";"),
     if (!is.null(max_height)) paste0("--lc-plot-max:", max_height, ";")
   ), collapse = "")
   tags$div(class = "lc-plot", style = if (nzchar(style)) style,
-    zoom_plot_ui(plot_id, height = "100%")
+    zoom_plot_ui(plot_id, height = "100%", click = click)
   )
 }
 

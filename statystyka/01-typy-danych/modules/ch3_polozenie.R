@@ -367,7 +367,8 @@ ch3_ui <- list(
         lc_action("ch3_game_reveal", "Pokaż odpowiedź", variant = "outline")
       ),
       uiOutput("ch3_game_status_banner"),
-      lc_plot("ch3_game_plot", ratio = "1.8/1", max_height = "350px"),
+      lc_plot("ch3_game_plot", ratio = "1.8/1", max_height = "350px",
+              click = "ch3_game_click"),
       uiOutput("ch3_game_feedback")
     ),
     lc_chapter_next(
