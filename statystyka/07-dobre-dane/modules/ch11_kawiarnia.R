@@ -194,20 +194,15 @@ cafe_lag_pairs <- function(x, lag = 1) {
 ch11_server <- function(input, output, session) {
 
   scene_texts(input, output, "ch11_sezon", list(
-    tagList("Barista przez 60 dni notuje dwie liczby: ile kaw sprzedał i jaka była
-      temperatura na zewnątrz. Zbierz sezon i popatrz na obie linie. Każda z nich
-      pływa: kilka chłodnych dni z rzędu, potem kilka cieplejszych."),
-    tagList("Właściciel pyta, czy temperatura wiąże się ze sprzedażą. Liczymy korelację
-      Pearsona r z 60 punktów i wartość p z testu korelacji. Lampka zapala się, gdy
-      p < 0.05. Zbierz kilka sezonów: jak często lampka mówi „istotne!”?"),
-    tagList("Zbieramy sezon za sezonem. Każde r spada do histogramu, a słupki w kolorze
-      lampki to sezony z alarmem. Dokładaj po 10, 100 i 1000 i patrz na licznik nad wykresem.
-      Test obiecuje, że bez żadnego związku alarm zdarzy się w 5 sezonach na 100."),
-    tagList("Kawy i temperatura były losowane osobno: prawdziwa korelacja wynosi 0.
-      Przy podobnych kolejnych dniach alarm pada mniej więcej w co drugim sezonie,
-      a nie w co dwudziestym. Przełącz podobieństwo dni na „brak”: odsetek wraca do około 5%.
-      Dane zbierane dzień po dniu nie są niezależnymi obserwacjami, a 60 dni to nie
-      60 niezależnych pomiarów.")
+    tagList("Barista przez 60 dni notuje sprzedaż kaw i temperaturę. Zbierz sezon:
+      obie linie pływają, kilka chłodnych dni z rzędu, potem kilka cieplejszych."),
+    tagList("Czy temperatura wiąże się ze sprzedażą? Lampka zapala się, gdy test
+      korelacji daje p < 0.05. Zbierz kilka sezonów i licz zapalenia."),
+    tagList("Każde r trafia do histogramu, sezony z zapaloną lampką mają jej kolor.
+      Dołóż 100 i 1000 sezonów. Bez związku test obiecuje 5 istotnych na 100."),
+    tagList("Kawy i temperatura były losowane osobno, więc prawdziwe r = 0. Przy silnym
+      podobieństwie dni istotny jest mniej więcej co drugi sezon. Przełącz je na „brak”:
+      odsetek wraca do około 5%. 60 kolejnych dni to nie 60 niezależnych pomiarów.")
   ))
 
   output$tab10_table <- renderUI({

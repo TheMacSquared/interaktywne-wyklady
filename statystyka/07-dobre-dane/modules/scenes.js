@@ -167,7 +167,6 @@
       svg("rect", { x: 62, y: 112, width: 20, height: 26, rx: 2, class: "lc-sc-note",
         transform: "rotate(-12 72 125)" }, g);
       if (writing) svg("line", { x1: 66, x2: 78, y1: 120, y2: 117, class: "lc-sc-pen" }, g);
-      svg("text", { x: 70, y: 208, "text-anchor": "middle", class: "lc-sc-sub" }, g, "barista notuje");
     }
 
     // --- dwie serie w czasie ----------------------------------------------
@@ -196,21 +195,16 @@
     function drawStage(g, step, upto) {
       var d = st.last;
       barista(g, upto !== null && upto < N);
-      seriesChart(g, C1, d ? d.k : null, upto === null ? N : upto, "", "kawy sprzedane danego dnia", KLO, KHI);
-      seriesChart(g, C2, d ? d.t : null, upto === null ? N : upto, "", "temperatura na zewnątrz (°C)", TLO, THI);
+      seriesChart(g, C1, d ? d.k : null, upto === null ? N : upto, "", "kawy", KLO, KHI);
+      seriesChart(g, C2, d ? d.t : null, upto === null ? N : upto, "", "temperatura (°C)", TLO, THI);
       svg("text", { x: CX0, y: C2[1] + 16, class: "lc-sc-tick" }, g, "dzień 1");
       svg("text", { x: CX1, y: C2[1] + 16, "text-anchor": "end", class: "lc-sc-tick" }, g, "dzień " + N);
       var RX = 540;
-      if (!d) {
-        svg("text", { x: RX, y: 100, "text-anchor": "middle", class: "lc-sc-sub" }, g, "zeszyt jeszcze pusty");
-        return;
-      }
+      if (!d) return;
       var done = upto === null || upto >= N;
       if (step === 1 || !done) {
         svg("text", { x: RX, y: 90, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
           "sezon " + (done ? d.no || st.seasons.length : st.seasons.length + 1));
-        svg("text", { x: RX, y: 116, "text-anchor": "middle", class: "lc-sc-n" }, g,
-          "dzień " + Math.min(N, upto === null ? N : upto) + " z " + N);
         return;
       }
       // odczyt korelacji + lampka
@@ -219,25 +213,19 @@
         (d.p < 0.001 ? "p < 0.001" : "p = " + fmt(d.p, 3)));
       svg("circle", { cx: RX - 46, cy: 122, r: 11, class: "lc-sc-lamp" + (d.hit ? " is-on" : "") }, g);
       svg("text", { x: RX - 28, y: 127, class: "lc-sc-lamp-t" + (d.hit ? " is-on" : "") }, g,
-        d.hit ? "istotne!" : "nieistotne");
-      svg("text", { x: RX, y: 156, "text-anchor": "middle", class: "lc-sc-n" }, g,
-        "alarm, gdy p < " + fmt(ALPHA, 2));
+        d.hit ? "istotne" : "nieistotne");
     }
 
     // --- krok 1: dziennik sezonów ------------------------------------------
     function drawLog(g) {
-      if (!st.seasons.length) {
-        svg("text", { x: W / 2, y: 300, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "Zbierz sezon: barista przez " + N + " dni zapisuje dwie liczby.");
-        return;
-      }
+      if (!st.seasons.length) return;
       st.seasons.slice(-6).reverse().forEach(function (d, i) {
         var y = 262 + i * 26, g2 = svg("g", { opacity: 1 - i * 0.14 }, g);
         var kmin = Math.min.apply(null, d.k), kmax = Math.max.apply(null, d.k);
         var tmin = Math.min.apply(null, d.t), tmax = Math.max.apply(null, d.t);
         svg("text", { x: 60, y: y, class: "lc-sc-log" }, g2, "sezon " + d.no);
-        svg("text", { x: 180, y: y, class: "lc-sc-log" }, g2, "kawy od " + kmin + " do " + kmax);
-        svg("text", { x: 400, y: y, class: "lc-sc-log" }, g2, "temp. od " + fmt(tmin, 1) + " do " + fmt(tmax, 1) + " °C");
+        svg("text", { x: 180, y: y, class: "lc-sc-log" }, g2, "kawy " + kmin + "…" + kmax);
+        svg("text", { x: 400, y: y, class: "lc-sc-log" }, g2, fmt(tmin, 1) + "…" + fmt(tmax, 1) + " °C");
       });
     }
 
@@ -260,20 +248,12 @@
         "temperatura (°C)");
       svg("text", { x: SL - 44, y: (ST0 + SB) / 2, "text-anchor": "middle", class: "lc-sc-axtitle",
         transform: "rotate(-90 " + (SL - 44) + " " + ((ST0 + SB) / 2) + ")" }, g, "kawy");
-      if (!d) {
-        svg("text", { x: (SL + SR) / 2, y: (ST0 + SB) / 2, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "tu staną dni sezonu");
-        return;
-      }
+      if (!d) return;
       for (var i = 0; i < N; i++) {
         var x = SL + (SR - SL) * (Math.max(TLO, Math.min(THI, d.t[i])) - TLO) / (THI - TLO);
         var y = SB - (SB - ST0) * (Math.max(KLO, Math.min(KHI, d.k[i])) - KLO) / (KHI - KLO);
         svg("circle", { cx: x, cy: y, r: 3.6, class: "lc-sc-sdot" + (d.hit ? " is-hit" : "") }, g);
       }
-      svg("text", { x: SR + 24, y: ST0 + 30, class: "lc-sc-n" }, g, "punkt = jeden dzień");
-      svg("text", { x: SR + 24, y: ST0 + 52, class: "lc-sc-n" }, g, N + " dni, r = " + fmt(d.r, 2));
-      svg("text", { x: SR + 24, y: ST0 + 74, class: "lc-sc-n" + (d.hit ? " is-hit" : "") }, g,
-        d.hit ? "test: związek „istotny”" : "test: brak alarmu");
     }
 
     // --- krok 3–4: histogram r ---------------------------------------------
@@ -300,8 +280,6 @@
         svg("rect", { x: rX(z[0], hr), y: HT - 6, width: rX(z[1], hr) - rX(z[0], hr), height: HB - HT + 6,
           class: "lc-sc-zone" }, g);
       });
-      svg("text", { x: rX(-0.75, hr), y: HT + 28, "text-anchor": "middle", class: "lc-sc-zone-t" }, g, "„istotne”");
-      svg("text", { x: rX(0.75, hr), y: HT + 28, "text-anchor": "middle", class: "lc-sc-zone-t" }, g, "„istotne”");
       for (var i = 0; i < NB; i++) {
         var a = st.non[i], b = st.sig[i];
         if (a) svg("rect", { x: slotX(i, hr) - bw * 0.42, y: HB - h.u * a, width: bw * 0.84, height: h.u * a,
@@ -310,14 +288,13 @@
           class: "lc-sc-bar is-hit" }, g);
       }
       var n = st.seasons.length;
-      svg("text", { x: hr, y: HT - 16, "text-anchor": "end", class: "lc-sc-n" }, g,
-        "sezonów: " + n);
-      svg("text", { x: HL, y: HT - 16, class: "lc-sc-n is-hit" }, g,
-        "„istotnych”: " + st.nsig + (n ? " (" + fmt(100 * st.nsig / n, 1) + "%)" : ""));
+      // jeden krótki odczyt nad histogramem (w kroku 4 odsetek stoi na słupku obok)
+      svg("text", { x: HL, y: HT - 16, class: "lc-sc-n" }, g,
+        "sezony: " + n + "   ·   istotne: " + st.nsig +
+        (n && step < 4 ? " (" + fmt(100 * st.nsig / n, 1) + "%)" : ""));
       if (step >= 4) {
         var x0 = rX(0, hr);
         svg("line", { x1: x0, x2: x0, y1: HT - 6, y2: HB, class: "lc-sc-param" }, g);
-        svg("text", { x: x0 + 5, y: HT + 10, class: "lc-sc-param-t" }, g, "prawda: r = 0");
         drawAlarm(g);
       }
     }
@@ -334,10 +311,10 @@
         n ? fmt(100 * rate, 1) + "%" : "–");
       var ya = sc(ALPHA);
       svg("line", { x1: X0 + 6, x2: X1, y1: ya, y2: ya, class: "lc-sc-param" }, g);
-      svg("text", { x: X1, y: ya - 6, "text-anchor": "end", class: "lc-sc-param-t" }, g, "α = " + fmt(100 * ALPHA, 0) + "%");
-      svg("text", { x: (X0 + X1) / 2, y: HB + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, "alarmy");
-      svg("text", { x: (X0 + X1) / 2, y: HB + 38, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "kawy i temp. losowane osobno");
+      svg("text", { x: X0 + 53, y: HB + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, "istotne");
+      // linia przerywana to α: wzorzec przy odczycie zamiast podpisu na wykresie
+      svg("line", { x1: X0 + 6, x2: X0 + 28, y1: HB + 34, y2: HB + 34, class: "lc-sc-param" }, g);
+      svg("text", { x: X0 + 36, y: HB + 39, class: "lc-sc-n" }, g, "α = " + fmt(100 * ALPHA, 0) + "%");
     }
 
     function render(upto) {
