@@ -19,8 +19,8 @@ ch3_ui <- list(
     ),
 
     lc_p("W poprzednim rozdziale przedziały ufności pojawiały się jako gotowe
-      odcinki: symulacja losowała próbę, rysowała przedział i sprawdzała, czy
-      trafił w μ. Teraz zajrzymy do środka. Zobaczymy, z czego składa się
+      siatki: scena mierzyła grupkę, zarzucała przedział i sprawdzała, czy
+      złapał μ. Teraz zajrzymy do środka. Zobaczymy, z czego składa się
       przedział dla średniej, zbudujemy go krok po kroku, a potem rozszerzymy
       tę samą konstrukcję na różnicę dwóch średnich."),
 
@@ -61,6 +61,26 @@ ch3_ui <- list(
       df = 30. Dla próby 25 osób (df = 24) jest to 2.06, a przy bardzo dużych
       próbach wartość zbliża się do 1.96 z rozkładu normalnego."),
 
+    lc_p("Przy grupce 5 osób różnica między 1.96 a t* decyduje o tym, jak często siatka łapie μ."),
+
+    # PROTOTYP SCENY (2026-10-08): Za mała siatka — 1.96 zamiast t* przy n = 5
+    figure_panel(
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch3_siatka", "Za mała siatka: 1.96 czy t*",
+        steps = c("Powtarzamy", "Pokrycie"),
+        labels = c("Zarzuć siatkę", "Zarzuć siatkę"),
+        more_from = 1,
+        options = list(
+          list(name = "mult", label = "Mnożnik",
+               values = c("1.96" = "z", "t*" = "t"), selected = "z", from = 1)
+        ),
+        config = list(kind = "net", mode = "mult", mu = net_world$mu, sigma = net_world$sigma,
+                      n = 5L, mult = "z", tq = net_tq, z = 1.96,
+                      xmin = 140, xmax = 200, height = 550,
+                      aria = "Grupki 5 osób zarzucają siatki x̄ ± mnożnik · s/√n na oś wzrostu; siatki układają się pod osią, a w drugim kroku widać μ i odsetek trafień przy mnożniku 1.96 albo t*"))
+    ),
+
     lc_p("Programy statystyczne liczą przedział dla średniej zawsze z rozkładu t,
       więc nie trzeba wybierać między wersją z a t. Średnią i granice
       przedziału program poda za nas, ale żeby przedział dobrze odczytać,
@@ -100,7 +120,7 @@ ch3_ui <- list(
       z wyboru poziomu ufności: dla 95% potrzeba około dwóch błędów
       standardowych, a nie jednego. Za oszacowanie σ z próby płacimy tylko
       różnicą między 1.96 a 2.06. Każda nowa próba daje inną średnią, inne
-      \\(s\\) i inny przedział. Tak jak w symulacji z poprzedniego rozdziału,
+      \\(s\\) i inny przedział. Tak jak w scenie z siatkami z poprzedniego rozdziału,
       mniej więcej co dwudziesty z nich ominie μ = 170 cm."),
 
     lc_h2("ch3-roznica", "Budowa przedziału dla różnicy średnich"),
@@ -372,6 +392,14 @@ ch3_ui <- list(
 # ============================================================================
 
 ch3_server <- function(input, output, session) {
+
+  # --- PROTOTYP SCENY (2026-10-08): Za mała siatka ---
+  scene_texts(input, output, "ch3_siatka", list(
+    tagList("Grupki po 5 osób. Dorzuć +100 i +1000 siatek z mnożnikiem 1.96."),
+    tagList("Przerywana linia to ", tags$code("μ", .noWS = "outside"), ". Przy 1.96 pokrycie wynosi około ",
+      paste0(round(100 * net_cov_z[["5"]]), "%. Przełącz mnożnik na "),
+      tags$code("t*", .noWS = "outside"), " = ", lc_fmt(net_tq[["5"]], 2), " i dorzuć +1000.")
+  ))
 
   # --- Widget 1: Budowa przedziału krok po kroku ---
   # Krok widgetu (1..4) żyje w przeglądarce; nowa próba nie zmienia kroku.

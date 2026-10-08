@@ -61,67 +61,37 @@ ch2_ui <- list(
       w każdym ogonie. Po drugie, SE zawiera σ, którego zwykle nie znamy. W praktyce
       zastępujemy je odchyleniem standardowym z próby s, a 1.96 — kwantylem
       ", gloss("rozkład t-Studenta", "rozkładu t-Studenta"), " z wykładu 02 (dla n = 30 jest to 2.05). Szczegółami tej
-      wersji zajmiemy się w rozdziale 3, ale symulacja poniżej już jej używa."),
+      wersji zajmiemy się w rozdziale 3, ale scena poniżej już jej używa."),
 
     lc_h2("ch2-wiele-ci", "Wiele przedziałów ufności"),
 
-    lc_p("Zanim uruchomimy symulację, zbudujmy kilka przedziałów ręcznie, na korytarzu przed salą."),
+    lc_p("Definicja mówi o tym, co dzieje się w wielu próbach, a w prawdziwym
+      badaniu mamy jedną. Scena pozwala powtórzyć badanie dowolnie wiele razy
+      na ", gloss("populacja", "populacji"), ", w której znamy μ: wzrost o rozkładzie
+      normalnym z μ = 170 cm i σ = 10 cm. Każda grupka 25 osób daje jeden
+      przedział x̄ ± t·s/√n, czyli siatkę zarzuconą na oś wzrostu. W ostatnim
+      kroku odczyt pod stosem podaje ", gloss("pokrycie"), ", czyli odsetek
+      siatek, które złapały μ."),
 
     # PROTOTYP SCENY (2026-10-08): Zarzuć siatkę — co znaczy 95%
     figure_panel(
       label = "Prototyp sceny",
       width_mode = "text",
       scene_widget("ch2_siatka", "Zarzuć siatkę: co znaczy 95%",
-        steps = c("Grupka", "Siatka", "Powtarzamy", "Gdzie μ?"),
-        labels = c("Zmierz grupkę", "Zarzuć siatkę", "Zarzuć siatkę", "Zarzuć siatkę"),
-        options = list(
-          list(name = "n", label = "Osób w grupce (n)",
-               values = net_n, selected = 25L),
-          list(name = "mult", label = "Mnożnik",
-               values = c("t*" = "t", "1.96" = "z"), selected = "t", from = 4)
-        ),
-        config = list(kind = "net", mu = net_world$mu, sigma = net_world$sigma,
+        steps = c("Siatka", "Powtarzamy", "Gdzie μ?"),
+        labels = c("Zarzuć siatkę", "Zarzuć siatkę", "Zarzuć siatkę"),
+        more_from = 2,
+        config = list(kind = "net", mode = "net", mu = net_world$mu, sigma = net_world$sigma,
                       n = 25L, mult = "t", tq = net_tq, z = 1.96,
                       xmin = 140, xmax = 200, height = 550,
                       aria = "Student z miarką mierzy grupkę osób wychodzących z sali, zarzuca przedział x̄ ± margines na oś wzrostu; kolejne przedziały układają się pod osią, a w ostatnim kroku widać μ i odsetek trafień"))
     ),
 
-    lc_p("Definicja mówi o tym, co dzieje się w wielu próbach, a w prawdziwym
-      badaniu mamy jedną. Symulacja pozwala powtórzyć badanie dowolnie wiele razy
-      na ", gloss("populacja", "populacji"), ", w której znamy μ. Domyślnie jest to wzrost o rozkładzie
-      normalnym z μ = 170 cm i σ = 10 cm. Każda wylosowana próba daje jeden
-      przedział x̄ ± t·s/√n, narysowany jako poziomy odcinek z kropką w miejscu
-      średniej. Przerywana linia pionowa to μ. Przedziały, które ją obejmują, są
-      szałwiowe, a te, które ją omijają — terakotowe. Licznik obok wykresu podaje ",
-      gloss("pokrycie"), ", czyli odsetek przedziałów, które trafiły."),
-
-    figure_panel(
-      label = "Ryc. 2.1", title = "Symulacja przedziałów ufności",
-      full_width = TRUE,
-      lc_toolbar(
-        selectInput("ch2_dist", "Rozkład populacji",
-            choices = c(
-              "Normalny (wzrost)"         = "normal",
-              "Wykładniczy (prawoskośny)" = "exponential",
-              "Jednostajny"               = "uniform"
-            ),
-            selected = "normal"
-          ),
-        lc_slider("ch2_n", "Wielkość próby (n)", 5, 100, 30, 5),
-        lc_slider("ch2_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
-        lc_action_group(ch2_sim_10 = "+10", ch2_sim_50 = "+50",
-                        label = "Dolosuj przedziały"),
-        lc_action("ch2_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-        lc_readouts(uiOutput("ch2_coverage_info"))
-      ),
-      lc_plot("ch2_ci_plot", max_height = "500px")
-    ),
-
-    lc_p("Przy domyślnych ustawieniach (n = 30, poziom 95%) każdy przedział sięga
-      około 3.7 cm w każdą stronę od swojej średniej (t = 2.05, σ/√n = 1.83 cm),
-      a średnie rozrzucają się wokół 170 cm. Przedziały różnią się położeniem
-      i nieco szerokością, bo s też zmienia się z próby na próbę. Większość z nich
-      obejmuje μ, ale co jakiś czas trafia się chybiony."),
+    lc_p("Przy n = 25 i poziomie 95% każda siatka sięga około 4.1 cm w każdą
+      stronę od swojej średniej (t = 2.06, σ/√n = 2 cm), a średnie rozrzucają
+      się wokół 170 cm. Siatki różnią się położeniem i nieco szerokością, bo s
+      też zmienia się z próby na próbę. Większość z nich łapie μ, ale co jakiś
+      czas trafia się chybiona."),
 
     lc_p("Przy małej liczbie przedziałów pokrycie mocno skacze. Wszystkie 10
       przedziałów trafia w około 60% serii (0.95¹⁰ ≈ 0.60), a w około 9% serii
@@ -136,11 +106,10 @@ ch2_ui <- list(
       W prawdziwym badaniu nie wiemy, gdzie leży μ, więc nie da się też
       rozpoznać, czy nasz jedyny przedział jest jednym z trafionych."),
 
-    lc_p("Suwak poziomu ufności pokazuje cenę pewności. Przy 99% kwantyl t rośnie
-      do 2.76, przedziały są wyraźniej szersze i chybia średnio jeden na sto.
-      Przy 80% kwantyl spada do 1.31, przedziały się zwężają, a chybia średnio co
-      piąty. Zmiana rozkładu pokazuje z kolei, kiedy metoda przestaje dotrzymywać
-      obietnicy. Dla populacji jednostajnej pokrycie przy n = 30 pozostaje bliskie
+    lc_p("Pewność ma swoją cenę. Przy 99% kwantyl t rośnie do 2.80, przedziały
+      są wyraźnie szersze i chybia średnio jeden na sto. Przy 80% kwantyl spada
+      do 1.32, przedziały się zwężają, a chybia średnio co piąty. Metoda nie
+      zawsze też dotrzymuje obietnicy. Dla populacji jednostajnej pokrycie przy n = 30 pozostaje bliskie
       95%. Dla wykładniczej, silnie prawoskośnej, wynosi w długim okresie około 93%
       przy n = 30 i około 88% przy n = 5. Przedział oparty na rozkładzie t zakłada,
       że średnia ma rozkład w przybliżeniu normalny, a przy skośnej populacji
@@ -149,14 +118,14 @@ ch2_ui <- list(
 
     lc_h2("ch2-jak-interpretowac", "Jak (nie) interpretować przedział ufności"),
 
-    lc_p("Symulacja pokazuje, co znaczy 95%, gdy przedziałów jest wiele.
+    lc_p("Scena pokazuje, co znaczy 95%, gdy przedziałów jest wiele.
       W raporcie mamy jednak jeden przedział i trzeba o nim powiedzieć coś
       prawdziwego. Załóżmy, że z jednej próby otrzymaliśmy 95% przedział ufności
       [165, 175] dla średniego wzrostu w populacji. Z czterech zdań poniżej tylko
       jedno poprawnie opisuje ten wynik."),
 
     figure_panel(
-      label = "Ryc. 2.2", title = "Quiz: interpretacja CI",
+      label = "Ryc. 2.1", title = "Quiz: interpretacja CI",
       full_width = TRUE,
       p("Wybierz poprawną interpretację:"),
       uiOutput("ch2_quiz_options"),
@@ -209,98 +178,15 @@ ch2_server <- function(input, output, session) {
 
   # --- PROTOTYP SCENY (2026-10-08): Zarzuć siatkę ---
   scene_texts(input, output, "ch2_siatka", list(
-    tagList("Zmierz kilka grupek wychodzących z sali. Pionowa kreska to średnia grupki ",
-      tags$code("x̄", .noWS = "outside"), ": każda grupka daje inną."),
-    tagList("Siatka to ", tags$code("x̄", .noWS = "outside"), " ± margines, czyli przedział ufności 95%
-      dla średniego wzrostu populacji ", tags$code("μ", .noWS = "outside"), ". Każda grupka zarzuca ją
-      w innym miejscu."),
+    tagList("Zmierz grupkę. Siatka to ", tags$code("x̄", .noWS = "outside"),
+      " ± margines, czyli 95% przedział ufności dla ", tags$code("μ", .noWS = "outside"), "."),
     tagList("Siatki spadają na stos, najnowsza na górze. ", tags$code("μ", .noWS = "outside"),
-      " jest niewidoczne, jak w prawdziwym badaniu. Dorzuć +100 i +1000 siatek, potem zmień n."),
+      " jest niewidoczne, jak w prawdziwym badaniu. Dorzuć +100 i +1000 siatek."),
     tagList("Przerywana linia to ", tags$code("μ", .noWS = "outside"), ". W długiej serii łapie je około 95% siatek,
-      a pojedyncza siatka albo złapała, albo nie. Przy n = 5 przełącz mnożnik na 1.96: pokrycie spada
-      do około ", paste0(round(100 * net_cov_z[["5"]]), "%, a t* = ", lc_fmt(net_tq[["5"]], 2),
-      " przywraca 95%."))
+      a pojedyncza siatka albo złapała, albo nie.")
   ))
 
-  # --- Widget 1: Symulacja przedziałów ufności (akumulacja) ---
-  ch2_sim_data <- reactiveVal(NULL)
-
-  # Helper: dolosuj k przedziałów i dodaj do akumulatora
-  ch2_add_intervals <- function(k) {
-    new_result <- simulate_coverage(
-      dist_type = input$ch2_dist,
-      n = input$ch2_n,
-      conf_level = input$ch2_conf,
-      n_sims = k,
-      method = "t"
-    )
-    old <- ch2_sim_data()
-    if (is.null(old)) {
-      new_result$sim <- seq_len(nrow(new_result))
-      ch2_sim_data(new_result)
-    } else {
-      new_result$sim <- nrow(old) + seq_len(nrow(new_result))
-      ch2_sim_data(rbind(old, new_result))
-    }
-  }
-
-  observeEvent(input$ch2_sim_10, { ch2_add_intervals(10) })
-  observeEvent(input$ch2_sim_50, { ch2_add_intervals(50) })
-  observeEvent(input$ch2_sim_reset, { ch2_sim_data(NULL) })
-
-  # Reset przy zmianie parametrów (inaczej akumulujemy przedziały z różnymi parametrami)
-  observeEvent(input$ch2_dist, { ch2_sim_data(NULL) })
-  observeEvent(input$ch2_n,    { ch2_sim_data(NULL) })
-  observeEvent(input$ch2_conf, { ch2_sim_data(NULL) })
-
-  zoom_plot_server("ch2_ci_plot", reactive({
-    df <- ch2_sim_data()
-    if (is.null(df) || nrow(df) == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Dolosuj przedziały przyciskiem powyżej",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      params <- get_population_params(input$ch2_dist)
-      n_total <- nrow(df)
-      # Skaluj grubość linii i punktów do liczby przedziałów
-      seg_lw <- if (n_total <= 50) 1.0 else if (n_total <= 150) 0.7 else 0.5
-      pt_size <- if (n_total <= 50) 2.0 else if (n_total <= 150) 1.3 else 0.8
-
-      ggplot(df, aes(y = sim)) +
-        geom_vline(xintercept = params$mu, color = col_true,
-                   linewidth = 1.2, linetype = "dashed") +
-        geom_segment(aes(x = lower, xend = upper, yend = sim, color = covers),
-                     linewidth = seg_lw) +
-        geom_point(aes(x = xbar, color = covers), size = pt_size) +
-        scale_color_manual(values = c("TRUE" = col_hit, "FALSE" = col_miss),
-                           labels = c("TRUE" = "Trafiony", "FALSE" = "Chybiony"),
-                           name = NULL) +
-        labs(
-             x = "Wartość parametru",
-             y = "Numer próby") +
-        theme_upwr() +
-        theme(legend.position = "top")
-    }
-  }))
-
-  output$ch2_coverage_info <- renderUI({
-    df <- ch2_sim_data()
-    if (is.null(df) || nrow(df) == 0) return(NULL)
-    n_total <- nrow(df)
-    n_hits <- sum(df$covers)
-    coverage <- round(n_hits / n_total * 100, 1)
-    nominal <- round(input$ch2_conf * 100)
-    # Kolor pokrycia: zielony, jeśli w ±5 pp od nominalnego, czerwony w przeciwnym razie
-    color <- if (abs(coverage - nominal) <= 5) col_hit else col_miss
-    tagList(
-      lc_readout("Prób", n_total, color = upwr_secondary),
-      lc_readout("Pokrycie", paste0(coverage, "%"), color = color),
-      lc_readout("Oczekiwane", paste0(nominal, "%"), color = col_ci)
-    )
-  })
-
-  # --- Widget 2: Quiz (tiles) ---
+  # --- Widget 1: Quiz (tiles) ---
   ch2_quiz_answered <- reactiveVal(FALSE)
   ch2_quiz_selected <- reactiveVal(NULL)
 

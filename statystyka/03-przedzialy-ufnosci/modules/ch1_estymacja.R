@@ -184,27 +184,29 @@ ch1_ui <- list(
     lc_p("Nawet najlepszy estymator daje w każdej próbie inną estymatę.
       Liczba ", withMathJax("\\(\\bar{x} = 171.3\\)"), " cm podana bez komentarza
       nie mówi, czy prawdziwe μ może wynosić 171 cm, czy równie dobrze 165 cm.
-      O tym decyduje rozrzut estymatora, a więc błąd standardowy. Poniższy panel
-      losuje kolejne próby z populacji wzrostu (μ = 170 cm, σ = 10 cm) i zapisuje
-      ich średnie jedna po drugiej."),
+      O tym decyduje rozrzut estymatora, a więc błąd standardowy. W scenie poniżej
+      kolejne grupki po 25 osób wychodzą z sali, a ich średnie wzrostu
+      (μ = 170 cm, σ = 10 cm) spadają jedna po drugiej na stos."),
 
+    # PROTOTYP SCENY (2026-10-08): Zmierz grupkę — estymator się waha, μ stoi
     figure_panel(
-      label = "Ryc. 1.2", title = "Wahania estymatora",
-      full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch1_fluct_n", "Wielkość próby (n)", 5, 200, 10, 5),
-        lc_action("ch1_fluct_draw", "Losuj próbę", icon = "shuffle", variant = "solid")
-      ),
-      lc_plot("ch1_fluct_plot", max_height = "300px"),
-      lc_caption("Każde kliknięcie losuje nową próbę.")
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch1_grupka", "Zmierz grupkę: x̄ się waha",
+        steps = c("Grupka", "Powtarzamy", "μ"),
+        labels = c("Zmierz grupkę", "Zmierz grupkę", "Zmierz grupkę"),
+        more_from = 2,
+        config = list(kind = "net", mode = "mean", mu = net_world$mu, sigma = net_world$sigma,
+                      n = 25L, xmin = 140, xmax = 200, height = 480,
+                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali; średnia grupki x̄ spada żetonem na stos pod osią wzrostu, a w ostatnim kroku widać μ i odchylenie standardowe średnich"))
     ),
 
-    lc_p("Przy n = 10 błąd standardowy wynosi 10/√10 ≈ 3.16 cm, więc około 95%
-      średnich z prób wypada między 163.8 a 176.2 cm. Kolejne punkty skaczą
-      o kilka centymetrów w górę i w dół od linii μ. Przy n = 40 SE spada
-      do 1.58 cm i skoki są o połowę mniejsze, ale nie znikają. Dowolna
-      pojedyncza estymata może więc leżeć kilka centymetrów od μ, a sama
-      liczba nie zdradza, jak daleko."),
+    lc_p("Przy n = 25 błąd standardowy wynosi 10/√25 = 2 cm, więc około 95%
+      średnich grupek wypada między 166.1 a 173.9 cm. Kolejne średnie lądują
+      o kilka centymetrów w górę i w dół od μ, a SD(x̄) w odczycie zbliża się
+      do 2 cm. Czterokrotnie większa grupka zmniejszyłaby SE o połowę, ale skoki
+      by nie zniknęły. Dowolna pojedyncza estymata może więc leżeć kilka
+      centymetrów od μ, a sama liczba nie zdradza, jak daleko."),
 
     lc_p("Dlatego oprócz estymaty podaje się zakres wartości, który uwzględnia
       tę niepewność: ", gloss("przedział ufności"), ". Punktem wyjścia jest
@@ -302,44 +304,12 @@ ch1_server <- function(input, output, session) {
 
   # --- Sekcja 2: tylko tekst, brak server logic ---
 
-  # --- Widget 3: Wahania estymatora ---
-  ch1_fluct_history <- reactiveVal(data.frame(
-    draw = integer(0), xbar = numeric(0)
+  # --- PROTOTYP SCENY (2026-10-08): Zmierz grupkę ---
+  scene_texts(input, output, "ch1_grupka", list(
+    tagList("Zmierz kilka grupek. Pionowa kreska na osi to średnia grupki ",
+      tags$code("x̄", .noWS = "outside"), "."),
+    tagList("Każda średnia spada na stos. Dorzuć +100 i +1000 grupek."),
+    tagList("Przerywana linia to ", tags$code("μ", .noWS = "outside"),
+      ". Estymator się waha, μ stoi w miejscu.")
   ))
-
-  observeEvent(input$ch1_fluct_draw, {
-    samp <- generate_population_sample("normal", input$ch1_fluct_n)
-    old <- ch1_fluct_history()
-    ch1_fluct_history(rbind(old, data.frame(
-      draw = nrow(old) + 1, xbar = mean(samp)
-    )))
-  })
-
-  observeEvent(input$ch1_fluct_n, {
-    ch1_fluct_history(data.frame(draw = integer(0), xbar = numeric(0)))
-  })
-
-  zoom_plot_server("ch1_fluct_plot", reactive({
-    df <- ch1_fluct_history()
-    params <- get_population_params("normal")
-
-    if (nrow(df) == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Losuj próbę”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      ggplot(df, aes(x = draw, y = xbar)) +
-        geom_hline(yintercept = params$mu, color = col_true,
-                   linewidth = 1.2, linetype = "dashed") +
-        geom_point(color = col_estimate, size = 3) +
-        geom_line(color = col_estimate, alpha = 0.5) +
-        annotate("text", x = max(df$draw), y = params$mu,
-                 label = "μ",
-                 vjust = -1, color = col_true, fontface = "bold") +
-        labs(
-             x = "Numer losowania", y = expression(bar(x))) +
-        theme_upwr()
-    }
-  }))
 }

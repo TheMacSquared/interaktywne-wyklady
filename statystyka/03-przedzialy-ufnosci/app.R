@@ -69,7 +69,7 @@ ui <- lecture_page(
   lecture_title = "Przedziały ufności",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  # Scena SVG „Zarzuć siatkę”: rozdz. 2
+  # Sceny SVG z grupką spod sali (scenes.js): rozdz. 1–3
   header_extras = tagList(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),

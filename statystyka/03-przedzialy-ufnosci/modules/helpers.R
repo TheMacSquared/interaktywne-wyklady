@@ -11,38 +11,6 @@ col_hit      <- unname(upwr_cat["szalwia"])    # przedział trafił
 col_estimate <- unname(upwr_cat["bursztyn"])   # estymata punktowa
 col_true     <- unname(upwr_cat["wrzos"])      # prawdziwy parametr
 
-# Symulacja pokrycia przedzialow ufnosci
-simulate_coverage <- function(dist_type, n, conf_level, n_sims = 100,
-                              method = "t") {
-  params <- get_population_params(dist_type)
-  mu <- params$mu
-
-  results <- lapply(seq_len(n_sims), function(i) {
-    samp <- generate_population_sample(dist_type, n)
-    xbar <- mean(samp)
-    s <- sd(samp)
-
-    if (method == "z") {
-      sigma <- params$sigma
-      z_star <- qnorm(1 - (1 - conf_level) / 2)
-      me <- z_star * sigma / sqrt(n)
-    } else {
-      t_star <- qt(1 - (1 - conf_level) / 2, df = n - 1)
-      me <- t_star * s / sqrt(n)
-    }
-
-    data.frame(
-      sim = i,
-      xbar = xbar,
-      lower = xbar - me,
-      upper = xbar + me,
-      covers = (xbar - me <= mu) & (mu <= xbar + me)
-    )
-  })
-
-  do.call(rbind, results)
-}
-
 # Symulacja pokrycia dla proporcji
 simulate_coverage_prop <- function(true_p, n, conf_level, n_sims = 100,
                                     method = "wald") {
@@ -127,8 +95,9 @@ scene_texts <- function(input, output, id, texts) {
   output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
 }
 
-# Scena „Zarzuć siatkę” (rozdz. 2): świat wykładu — wzrost, populacja normalna.
+# Sceny z grupką spod sali (rozdz. 1–3): świat wykładu — wzrost, populacja normalna.
+# n = 25 w scenach „Zmierz grupkę” i „Zarzuć siatkę”, n = 5 w „Za mała siatka”.
 net_world <- get_population_params("normal")          # μ = 170, σ = 10
-net_n     <- c(5L, 25L, 100L)
+net_n     <- c(5L, 25L)
 net_tq    <- setNames(as.list(round(qt(0.975, net_n - 1), 3)), net_n)   # t* dla 95%
 net_cov_z <- setNames(2 * pt(1.96, net_n - 1) - 1, net_n)               # pokrycie z mnożnikiem 1.96

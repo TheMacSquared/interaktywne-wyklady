@@ -1,8 +1,9 @@
 // Sceny wykładu 03: konkretne doświadczenie → przedział → częstość trafień metody.
 // Kontener: .lc-sc[data-config] wewnątrz widgetu krokowego (.lc-stepper).
 // config.kind:
-//   "net"  student z miarką mierzy grupkę wychodzącą z sali i „zarzuca siatkę”
-//          x̄ ± margines na oś wzrostu; kolejne siatki; odsłonięcie μ i pokrycie
+//   "net"  student z miarką mierzy grupkę wychodzącą z sali; config.mode wybiera scenę:
+//          "mean" (x̄ na stos żetonów, μ i SD(x̄)), "net" (siatka x̄ ± margines, stos siatek,
+//          μ i pokrycie), "mult" (stos siatek od kroku 1, μ i pokrycie, mnożnik 1.96 / t*)
 // Numer kroku czyta z data-lc-step korzenia widgetu. Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
 //   [data-sc-opt]  "nazwa:wartość" (przełączniki opcji, np. n:25, mult:t)
@@ -45,9 +46,21 @@
   var KINDS = {};
 
   // =========================================================================
-  // NET: grupka z sali, siatka x̄ ± margines, kolejne siatki, odsłonięcie μ
+  // NET: grupka z sali, x̄ na osi wzrostu, siatka x̄ ± margines, stos, odsłonięcie μ.
+  // Jedna historia w trzech scenach; cfg.mode mówi, od którego kroku widać
+  // siatkę (net), stos (stack) i μ (reveal):
+  //   "mean"  Zmierz grupkę (rozdz. 1): bez siatki, x̄ spadają żetonami na stos; μ i SD(x̄)
+  //   "net"   Zarzuć siatkę (rozdz. 2): siatka od kroku 1, potem stos siatek; μ i pokrycie
+  //   "mult"  Za mała siatka (rozdz. 3): stos siatek od kroku 1; μ i pokrycie; mnożnik 1.96 / t*
   // =========================================================================
+  var MODES = {
+    mean: { net: 99, stack: 2, reveal: 3 },
+    net:  { net: 1,  stack: 2, reveal: 3 },
+    mult: { net: 1,  stack: 1, reveal: 2 }
+  };
+
   KINDS.net = function (cfg, api) {
+    var M = MODES[cfg.mode || "net"];
     var MU = cfg.mu, SIGMA = cfg.sigma, TQ = cfg.tq || {}, ZQ = cfg.z || 1.96;
     var XMIN = cfg.xmin || 140, XMAX = cfg.xmax || 200;
     var PL = 50, PR = 610;                 // oś wzrostu
@@ -55,7 +68,10 @@
     var NETY = 174;                        // środek siatki nad osią
     var DOTY = 206, AXY = 216;             // pomiary i oś
     var STK = 284, ROWH = 6.4, ROWS = 36;  // stos siatek pod osią
-    var st = { n: cfg.n || 25, mult: cfg.mult || "t", draws: [], hits: 0, last: null };
+    var SBASE = (cfg.height || H) - 46, STOP = AXY + 40;   // stos żetonów x̄ (tryb mean)
+    var BIN = 0.5, TOK = 4.6;                              // szerokość przegródki (cm), żeton (px)
+    var st = { n: cfg.n || 25, mult: cfg.mult || "t", draws: [], hits: 0, last: null,
+               bins: {}, sum: 0, sq: 0 };
 
     function X(v) { return PL + (PR - PL) * (Math.max(XMIN, Math.min(XMAX, v)) - XMIN) / (XMAX - XMIN); }
     function k() { return st.mult === "z" ? ZQ : Number(TQ[String(st.n)] || ZQ); }
@@ -123,7 +139,7 @@
     }
 
     // siatka: oczka nad osią, pływaki na końcach
-    function drawNet(g, d, half, step) {
+    function drawNet(g, d, half) {
       var cx = X(d.xbar), xl = cx - (cx - X(d.lo)) * half, xr = cx + (X(d.hi) - cx) * half;
       var q = svg("g", {}, g);
       svg("rect", { x: xl, y: NETY - 8, width: Math.max(0.5, xr - xl), height: 16, class: "lc-sc-net" }, q);
@@ -136,7 +152,7 @@
       svg("circle", { cx: xr, cy: NETY, r: 4, class: "lc-sc-float" }, q);
     }
 
-    function drawXbar(g, d, step) {
+    function drawXbar(g, d) {
       svg("line", { x1: X(d.xbar), x2: X(d.xbar), y1: DOTY - 10, y2: AXY, class: "lc-sc-xbar" }, g);
       svg("text", { x: 620, y: 20, "text-anchor": "end", class: "lc-sc-read" }, g,
         "x̄ = " + fmt(d.xbar, 1) + " cm");
@@ -156,8 +172,18 @@
         svg("circle", { cx: X(d.h[i]), cy: DOTY, r: d.n > 25 ? 2.6 : 3.6, class: "lc-sc-hdot", opacity: op }, g);
       }
       if (anim && !anim.done) return;
-      drawXbar(g, d, step);
-      if (step >= 2 && !(anim && anim.noNet)) drawNet(g, d, anim && anim.half !== undefined ? anim.half : 1, step);
+      drawXbar(g, d);
+      if (step >= M.net && !(anim && anim.noNet)) drawNet(g, d, anim && anim.half !== undefined ? anim.half : 1);
+    }
+
+    // jeden odczyt pod wykresem: po odsłonięciu wzorzec linii μ + wartości, wcześniej sam licznik
+    function readout(g, y, step, rest, count) {
+      if (step >= M.reveal) {
+        svg("line", { x1: W / 2 - 190, x2: W / 2 - 168, y1: y - 5, y2: y - 5, class: "lc-sc-param" }, g);
+        svg("text", { x: W / 2 - 160, y: y, class: "lc-sc-n" }, g, "μ = " + fmt(MU, 0) + " cm   ·   " + rest);
+      } else if (st.draws.length) {
+        svg("text", { x: W / 2, y: y, "text-anchor": "middle", class: "lc-sc-n" }, g, count);
+      }
     }
 
     // stos siatek pod osią: najnowsza na górze
@@ -165,21 +191,49 @@
     function drawStack(g, step) {
       var N = st.draws.length, show = st.draws.slice(-ROWS).reverse();
       show.forEach(function (d, i) {
-        var cls = step >= 4 ? (d.hit ? " is-hit" : " is-miss") : "";
+        var cls = step >= M.reveal ? (d.hit ? " is-hit" : " is-miss") : "";
         svg("line", { x1: X(d.lo), x2: X(d.hi), y1: rowY(i), y2: rowY(i), class: "lc-sc-ci" + cls }, g);
         svg("circle", { cx: X(d.xbar), cy: rowY(i), r: 1.8, class: "lc-sc-ci-dot" + cls }, g);
       });
-      // jeden odczyt pod stosem; linia przerywana to μ (wzorzec przy odczycie zamiast podpisu na wykresie)
-      var yb = rowY(ROWS) + 22;
-      if (step >= 4) {
+      if (step >= M.reveal) {
         svg("line", { x1: X(MU), x2: X(MU), y1: NETY - 16, y2: rowY(ROWS - 1) + 6, class: "lc-sc-param" }, g);
-        var cov = N ? fmt(100 * st.hits / N, 1) + "% (" + st.hits + "/" + N + ")" : "—";
-        svg("line", { x1: W / 2 - 160, x2: W / 2 - 138, y1: yb - 5, y2: yb - 5, class: "lc-sc-param" }, g);
-        svg("text", { x: W / 2 - 130, y: yb, class: "lc-sc-n" }, g,
-          "μ = " + fmt(MU, 0) + " cm   ·   pokrycie = " + cov);
-      } else if (N) {
-        svg("text", { x: W / 2, y: yb, "text-anchor": "middle", class: "lc-sc-n" }, g, "siatek: " + N);
       }
+      var cov = N ? fmt(100 * st.hits / N, 1) + "% (" + st.hits + "/" + N + ")" : "—";
+      readout(g, rowY(ROWS) + 22, step, "pokrycie = " + cov, "siatek: " + N);
+    }
+
+    // stos żetonów x̄ (tryb mean): przegródki po BIN cm; gdy żetony nie mieszczą się, słupki
+    function binOf(v) { return Math.floor((Math.max(XMIN, Math.min(XMAX - 1e-9, v)) - XMIN) / BIN); }
+    function binX(b) { return X(XMIN + (b + 0.5) * BIN); }
+    function maxBin() { var m = 0; for (var b in st.bins) m = Math.max(m, st.bins[b]); return m; }
+    function tokenY(b) {
+      var c = st.bins[b] || 0, m = maxBin();
+      if (m * TOK <= SBASE - STOP) return SBASE - TOK * (c - 0.5);
+      return SBASE - (SBASE - STOP) * c / m;
+    }
+    function drawTokens(g, step) {
+      var m = maxBin(), N = st.draws.length, dots = m * TOK <= SBASE - STOP;
+      svg("line", { x1: PL, x2: PR, y1: SBASE + 0.5, y2: SBASE + 0.5, class: "lc-sc-axis" }, g);
+      Object.keys(st.bins).forEach(function (b) {
+        var c = st.bins[b];
+        b = Number(b);
+        if (dots) {
+          for (var j = 0; j < c; j++) svg("circle", { cx: binX(b), cy: SBASE - TOK * (j + 0.5), r: TOK / 2 - 0.3, class: "lc-sc-tok" }, g);
+        } else {
+          var h = (SBASE - STOP) * c / m, x0 = X(XMIN + b * BIN);
+          svg("rect", { x: x0 + 0.4, y: SBASE - h, width: Math.max(0.5, X(XMIN + (b + 1) * BIN) - x0 - 0.8), height: h, class: "lc-sc-tok" }, g);
+        }
+      });
+      if (step >= M.reveal) {
+        svg("line", { x1: X(MU), x2: X(MU), y1: DOTY - 14, y2: SBASE, class: "lc-sc-param" }, g);
+      }
+      var sd = N > 1 ? fmt(Math.sqrt(Math.max(0, (st.sq - N * Math.pow(st.sum / N, 2)) / (N - 1))), 2) + " cm" : "—";
+      readout(g, SBASE + 30, step, "SD(x̄) = " + sd + "   ·   grup: " + N, "grup: " + N);
+    }
+
+    function drawLow(g, step) {
+      if (step >= M.stack) { if (cfg.mode === "mean") drawTokens(g, step); else drawStack(g, step); }
+      else drawLog(g, step);
     }
 
     function drawLog(g, step) {
@@ -188,7 +242,7 @@
         var y = STK + 10 + i * 26, g2 = svg("g", { opacity: 1 - i * 0.14 }, g);
         svg("text", { x: 90, y: y, class: "lc-sc-log" }, g2, "grupka " + d.no);
         svg("text", { x: 210, y: y, class: "lc-sc-log is-x" }, g2, "x̄ = " + fmt(d.xbar, 1) + " cm");
-        if (step >= 2) svg("text", { x: 390, y: y, class: "lc-sc-log" }, g2,
+        if (step >= M.net) svg("text", { x: 390, y: y, class: "lc-sc-log" }, g2,
           fmt(d.lo, 1) + " – " + fmt(d.hi, 1) + " cm");
       });
     }
@@ -197,46 +251,57 @@
       var step = api.step();
       api.stage.textContent = ""; api.low.textContent = "";
       drawStage(api.stage, step, null);
-      if (step >= 3) drawStack(api.low, step); else drawLog(api.low, step);
+      drawLow(api.low, step);
     }
 
     function commit(d) {
       d.no = st.draws.length + 1;
       st.draws.push(d);
       if (d.hit) st.hits += 1;
+      var b = binOf(d.xbar);
+      st.bins[b] = (st.bins[b] || 0) + 1;
+      st.sum += d.xbar; st.sq += d.xbar * d.xbar;
+    }
+
+    // żeton x̄ albo siatka spada z osi na stos
+    function fall(d, fast, done) {
+      var g = api.fly, mean = cfg.mode === "mean", b = binOf(d.xbar);
+      var y0 = mean ? AXY : NETY, y1;
+      if (mean) { st.bins[b] = (st.bins[b] || 0) + 1; y1 = tokenY(b); st.bins[b] -= 1; }
+      else y1 = rowY(0);
+      tween(fast ? 140 : 450, function (u) {
+        var y = y0 + (y1 - y0) * ease(u);
+        g.textContent = "";
+        if (mean) svg("circle", { cx: X(d.xbar), cy: y, r: TOK / 2 + 0.6, class: "lc-sc-tok is-fly" }, g);
+        else svg("line", { x1: X(d.lo), x2: X(d.hi), y1: y, y2: y, class: "lc-sc-ci is-fly" }, g);
+      }, function () { g.textContent = ""; done(); });
     }
 
     function runOne(fast, done) {
       var d = draw(true), step = api.step();
       var total = fast ? 160 : Math.min(1400, 350 + d.n * 40);
+      var finish = function () { commit(d); render(); done(); };
       st.last = d;
       api.low.textContent = "";
-      if (step >= 3) drawStack(api.low, step); else drawLog(api.low, step);
+      drawLow(api.low, step);
       tween(total, function (u) {
         var x = u * d.n, upto = Math.max(1, Math.ceil(x));
         api.stage.textContent = "";
         drawStage(api.stage, step, { upto: upto, fresh: u >= 1 ? 1 : (x % 1 || 1), done: u >= 1, noNet: true });
       }, function () {
         var after = function () {
-          if (step < 3) { commit(d); render(); done(); return; }
-          // siatka spada na wierzch stosu
-          var g = api.fly, y0 = NETY, y1 = rowY(0);
+          if (step < M.stack) { finish(); return; }
           api.stage.textContent = "";
           drawStage(api.stage, step, { upto: d.n, fresh: 1, done: true, noNet: true });
-          tween(fast ? 140 : 450, function (u) {
-            var e = ease(u), y = y0 + (y1 - y0) * e;
-            g.textContent = "";
-            svg("line", { x1: X(d.lo), x2: X(d.hi), y1: y, y2: y, class: "lc-sc-ci is-fly" }, g);
-          }, function () { g.textContent = ""; commit(d); render(); done(); });
+          fall(d, fast, finish);
         };
-        if (step < 2) { after(); return; }
+        var pause = function () { if (step >= M.stack && !fast) setTimeout(after, REDUCE ? 0 : 350); else after(); };
+        if (step < M.net) { pause(); return; }
         // siatka rozwija się od x̄ na boki
         tween(fast ? 120 : 520, function (u) {
           api.stage.textContent = "";
           drawStage(api.stage, step, { upto: d.n, fresh: 1, done: true, half: ease(u) });
-        }, function () {
-          if (step >= 3 && !fast) setTimeout(after, REDUCE ? 0 : 350); else after();
-        });
+        }, pause);
       });
     }
 
@@ -249,7 +314,10 @@
 
     return {
       render: render,
-      reset: function () { st.draws = []; st.hits = 0; st.last = null; render(); },
+      reset: function () {
+        st.draws = []; st.hits = 0; st.last = null; st.bins = {}; st.sum = 0; st.sq = 0;
+        render();
+      },
       opt: function (name, v) {
         if (name === "n") st.n = Number(v);
         if (name === "mult") st.mult = v;

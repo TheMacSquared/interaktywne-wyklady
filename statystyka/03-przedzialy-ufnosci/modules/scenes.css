@@ -40,3 +40,7 @@
 .lc-sc-ci-dot { fill: var(--upwr-ink-soft); }
 .lc-sc-ci-dot.is-hit { fill: var(--upwr-cat-szalwia, #3f8f5f); }
 .lc-sc-ci-dot.is-miss { fill: var(--upwr-cat-terakota); }
+
+/* stos żetonów x̄ (tryb mean) */
+.lc-sc-tok { fill: var(--upwr-cat-bursztyn); opacity: .85; }
+.lc-sc-tok.is-fly { opacity: 1; }
