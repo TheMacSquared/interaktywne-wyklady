@@ -1,0 +1,43 @@
+/* Sceny wykładu 07 (scenes.js). Wzorzec klas z wykładu 00. */
+.lc-sc-svg { display: block; width: 100%; height: auto; }
+.lc-sc-axis { stroke: var(--upwr-ink-subtle); }
+.lc-sc-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-sub { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+.lc-sc-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-n.is-hit { fill: var(--upwr-accent); font-weight: 600; }
+.lc-sc-read { font: 700 20px var(--upwr-mono); fill: var(--upwr-ink); }
+.lc-sc-read.is-plain { font: 500 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-read.is-small { font: 700 15px var(--upwr-mono); fill: var(--upwr-accent); }
+.lc-sc-log { font: 500 14px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-param { stroke: var(--upwr-ink); stroke-width: 2; stroke-dasharray: 5 4; }
+.lc-sc-param-t { font: 700 13px var(--upwr-mono); fill: var(--upwr-ink); }
+
+/* barista */
+.lc-sc-person { fill: var(--upwr-ink-subtle); }
+.lc-sc-apron { fill: var(--upwr-surface); opacity: .85; }
+.lc-sc-counter { fill: #a9784a; stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.lc-sc-cup { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
+.lc-sc-cup-handle { stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
+.lc-sc-note { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.2; }
+.lc-sc-pen { stroke: var(--upwr-ink); stroke-width: 2; stroke-linecap: round; }
+
+/* serie w czasie i rozrzut */
+.lc-sc-line { fill: none; stroke: var(--upwr-cat-niebo); stroke-width: 1.8; stroke-linejoin: round; }
+.lc-sc-line-dot { fill: var(--upwr-cat-niebo); }
+.lc-sc-sdot { fill: var(--upwr-cat-niebo); opacity: .75; }
+.lc-sc-sdot.is-hit { fill: var(--upwr-accent); opacity: .7; }
+
+/* lampka alarmu */
+.lc-sc-lamp { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.lc-sc-lamp.is-on { fill: var(--upwr-accent); stroke: var(--upwr-accent); }
+.lc-sc-lamp-t { font: 600 15px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+.lc-sc-lamp-t.is-on { fill: var(--upwr-accent); font-weight: 700; }
+
+/* histogram r */
+.lc-sc-zone { fill: var(--upwr-accent-tint); opacity: .45; }
+.lc-sc-zone-t { font: 12px var(--upwr-sans); fill: var(--upwr-accent); }
+.lc-sc-bar { fill: var(--upwr-ink-subtle); opacity: .55; }
+.lc-sc-bar.is-hit { fill: var(--upwr-accent); opacity: .85; }
+.lc-sc-token { fill: var(--upwr-ink-subtle); stroke: var(--upwr-surface); stroke-width: 1; }
+.lc-sc-token.is-hit { fill: var(--upwr-accent); }

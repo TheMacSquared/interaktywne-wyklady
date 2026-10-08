@@ -51,6 +51,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),            local = TRUE)
+source(file.path(app_dir, "modules", "scene_helpers.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch0_wprowadzenie.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch1_katalog.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "ch2_szkoly.R"),         local = TRUE)
@@ -77,7 +78,17 @@ ui <- lecture_page(
   lecture_num   = "07",
   lecture_title = "Co czyni dobry zbiór danych?",
   module_label  = "Statystyka",
-  chapters      = .chapters
+  chapters      = .chapters,
+  # PROTOTYP SCENY (2026-10-08): sceny SVG (rozdz. 11, „Zbierz sezon”)
+  header_extras = tagList(
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
+    includeScript(file.path(app_dir, "modules", "scenes.js")),
+    tags$style(HTML("
+      .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
+      .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
+      .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+    "))
+  )
 )
 
 # ============================================================================
