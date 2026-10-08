@@ -57,11 +57,12 @@ ch2_ev_var_ui <- list(
       label = "Prototyp sceny",
       width_mode = "text",
       scene_widget("ch2_zdrapka", "Zdrap los: od jednego losu do wartości oczekiwanej",
-        steps = c("Zdrapka", "Bilans X", "Powtarzamy", "E(X) i rozrzut"),
-        labels = c("Kup i zdrap los", "Kup i zdrap los", "Kup i zdrap los", "Kup i zdrap los"),
+        steps = c("Bilans X", "Powtarzamy", "E(X) i rozrzut"),
+        labels = c("Kup i zdrap los", "Kup i zdrap los", "Kup i zdrap los"),
+        more_from = 2,
         options = list(list(name = "ticket", label = "Los",
                             values = c("Zdrapka" = "main", "Pewne 4 zł" = "sure", "10% na 40 zł" = "risky"),
-                            selected = "main", from = 3)),
+                            selected = "main", from = 2)),
         config = list(kind = "scratch", ticket = "main", price = scene_ticket_price, height = 436,
                       tickets = lapply(scene_tickets, function(t) {
                         t$prizes <- I(t$prizes); t$probs <- I(t$probs); t }),
@@ -280,18 +281,13 @@ ch2_ev_var_server <- function(input, output, session) {
   tk <- scene_tickets$main
   scene_texts(input, output, "ch2_zdrapka", list(
     tagList("W kiosku los kosztuje ", lc_fmt(scene_ticket_price), " zł. Na zdrapce można wygrać 4, 10 albo 100 zł,
-      ale najczęściej pod srebrną farbą nie ma nic. Kup i zdrap kilka losów."),
-    tagList("Liczymy, ile naprawdę zyskaliśmy na jednym losie: wygraną minus cenę. Ten bilans oznaczamy ",
-      tags$code("X", .noWS = "outside"), ". Przed zdrapaniem go nie znamy, więc to zmienna losowa o czterech
-      możliwych wartościach: -5, -1, 5 i 95 zł. Pusty los to nie 0, tylko -5 zł."),
-    tagList("Lewy wykres zlicza bilanse, prawy pokazuje średni bilans ze wszystkich dotąd kupionych losów.
-      Na początku średnia skacze, zwłaszcza po trafieniu 100 zł. Dołóż 100 i 1000 losów: linia się uspokaja,
-      i to poniżej zera. Potem zmień los na pewne 4 zł albo 10% na 40 zł."),
-    tagList("Średnia na dłuższą metę to wartość oczekiwana: dla zdrapki E(X) = ", sprintf("%.2f", scene_ticket_ev(tk)),
-      " zł, czyli na każdym losie średnio tracisz ", sprintf("%.2f", -scene_ticket_ev(tk)), " zł.
-      Odchylenie standardowe mówi, jak daleko od E(X) wypadają pojedyncze bilanse. Los pewny i los 10% na 40 zł
-      mają tę samą E(X) = ", sprintf("%.2f", scene_ticket_ev(scene_tickets$sure)), " zł, ale pierwszy ma SD = 0,
-      a drugi SD = ", lc_fmt(scene_ticket_sd(scene_tickets$risky), 0), " zł: to jest ryzyko.")
+      ale najczęściej pod srebrną farbą nie ma nic. ", tags$code("X", .noWS = "outside"), " to bilans losu: wygrana
+      minus cena. Kup i zdrap kilka losów."),
+    tagList("Lewy wykres zlicza bilanse, prawy pokazuje średni bilans wszystkich kupionych losów. Dołóż 100
+      i 1000 losów, potem zmień los na pewne 4 zł albo 10% na 40 zł."),
+    tagList("Średni bilans na dłuższą metę to E(X) = ", sprintf("%.2f", scene_ticket_ev(tk)), " zł. Los pewny i los
+      10% na 40 zł mają tę samą E(X) = ", sprintf("%.2f", scene_ticket_ev(scene_tickets$sure)), " zł, ale SD = 0
+      i SD = ", lc_fmt(scene_ticket_sd(scene_tickets$risky), 0), " zł: to jest ryzyko.")
   ))
 
   # --- Definicje loterii ---

@@ -493,7 +493,7 @@
     function zl(x) { return (Math.round(x) === x ? String(x) : fmt(x, 2)) + " zł"; }
 
     function drawStage(o, u) {
-      var g = api.stage, step = api.step(), t = st.t;
+      var g = api.stage, t = st.t;
       g.textContent = "";
       // kiosk
       for (var k = 0; k < 6; k++) svg("rect", { x: 12 + k * 22, y: 14, width: 22, height: 18, class: "lc-sc-awning" + (k % 2 ? " is-alt" : "") }, g);
@@ -520,30 +520,27 @@
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g, "Los czeka na zdrapanie");
       } else if (u !== undefined && u < 1) {
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g, "los nr " + (st.n + 1) + "…");
-      } else if (step >= 2) {
+      } else {
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X = " + zl(o.x));
         svg("text", { x: RX, y: RY + 18, "text-anchor": "middle", class: "lc-sc-sub" }, g,
           "wygrana " + zl(o.prize) + " minus cena " + zl(PRICE));
-      } else {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "los nr " + o.no + ": " + (o.prize > 0 ? "wygrana " + zl(o.prize) : "nic"));
       }
     }
 
     function drawLog() {
-      var g = api.low, step = api.step(), y0 = 206;
+      var g = api.low, y0 = 206;
       if (!st.log.length) { emptyNote(g, y0 + 60, "Kup los i zdrap go."); return; }
       st.log.forEach(function (o, ri) {
         var q = svg("g", { opacity: 1 - ri * 0.13 }, g), y = y0 + ri * 28;
         svg("text", { x: 180, y: y, class: "lc-sc-log" }, q, "los " + o.no);
         svg("text", { x: 300, y: y, class: "lc-sc-log" }, q, "→");
         svg("text", { x: 330, y: y, class: "lc-sc-log is-x" + (o.x > 0 ? " is-hit" : "") }, q,
-          step >= 2 ? "X = " + zl(o.prize) + " - " + zl(PRICE) + " = " + zl(o.x) : "wygrana " + zl(o.prize));
+          "X = " + zl(o.prize) + " - " + zl(PRICE) + " = " + zl(o.x));
       });
     }
 
     function drawLow() {
-      var g = api.low, rel = api.step() >= 4, t = st.t, nb = t.prizes.length, n = st.n, m = st.m;
+      var g = api.low, rel = api.step() >= 3, t = st.t, nb = t.prizes.length, n = st.n, m = st.m;
       // lewy: wygrane
       var vals = st.counts.map(function (c) { return rel ? (n ? c / n : 0) : c; });
       var top = Math.max.apply(null, vals);
@@ -610,7 +607,7 @@
     function render() {
       api.low.textContent = "";
       drawStage(st.last);
-      if (api.step() >= 3) drawLow(); else drawLog();
+      if (api.step() >= 2) drawLow(); else drawLog();
     }
 
     return {
@@ -621,7 +618,7 @@
         var o = one();
         tween(900, function (u) { drawStage(o, u); }, function () {
           var land = function () { add(o); commit(o); render(); done(); };
-          if (api.step() >= 3) {
+          if (api.step() >= 2) {
             o.no = st.n + 1; drawStage(o);
             var slot = (BR - BL) / st.t.prizes.length;
             fly(api, RX, RY + 6, BL + slot * (o.i + 0.5), PB - 10, 380, land);
