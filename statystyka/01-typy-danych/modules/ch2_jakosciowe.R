@@ -165,7 +165,6 @@ ch2_ui <- list(
       tags$div(style = "margin-top: 1.6em; font-size: 1.15em;",
         lc_readouts(uiOutput("ch2_scenario_legend"))
       ),
-      tags$h4("Ułóżcie produkty od najmniejszego udziału do największego"),
       uiOutput("ch2_order_widget"),
       uiOutput("ch2_order_result")
     ),
