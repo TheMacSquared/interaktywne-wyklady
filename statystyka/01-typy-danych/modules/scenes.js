@@ -82,11 +82,9 @@
       // zegar
       svg("rect", { x: 24, y: 16, width: 176, height: 74, rx: 8, class: "lc-sc-clock" }, g);
       svg("text", { x: 112, y: 36, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-        "w rozkładzie " + clockHM(DEP));
+        "rozkład " + clockHM(DEP));
       var now = w ? (anim ? DEP + w.x * anim.u : DEP + w.x) : DEP;
       svg("text", { x: 112, y: 72, "text-anchor": "middle", class: "lc-sc-clock-t" }, g, clock(now));
-      svg("text", { x: 112, y: 112, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-        "zajęcia o " + clockHM(DEP + 15) + ", jazda 10 min");
       // droga
       svg("rect", { x: 0, y: 180, width: W, height: 26, class: "lc-sc-road" }, g);
       svg("line", { x1: 0, x2: W, y1: 193, y2: 193, class: "lc-sc-road-mark" }, g);
@@ -98,51 +96,35 @@
       var px = 540;
       svg("circle", { cx: px, cy: 128, r: 10, class: "lc-sc-person" }, g);
       svg("rect", { x: px - 12, y: 140, width: 24, height: 38, rx: 9, class: "lc-sc-person" }, g);
-      // dymek
-      var say, late = false;
-      if (!w) say = "Zdążę na " + clockHM(DEP + 15) + "?";
-      else if (anim && anim.u < 1) say = "Czekam…";
-      else if (w.x <= 1) say = "Prawie punktualnie.";
-      else if (w.x <= LIM) say = "Spóźniony, ale zdążę.";
-      else { say = "Nie zdążę na zajęcia!"; late = true; }
-      svg("rect", { x: 488, y: 18, width: 146, height: 34, rx: 9, class: "lc-sc-bubble" }, g);
-      svg("path", { d: "M 528 52 L 536 64 L 544 52 Z", class: "lc-sc-bubble" }, g);
-      svg("text", { x: 561, y: 40, "text-anchor": "middle", class: "lc-sc-bubble-t" + (late && step >= 2 ? " is-late" : "") }, g, say);
+      // dymek tylko przy spóźnieniu ponad zapas
+      if (w && (!anim || anim.u >= 1) && w.x > LIM) {
+        svg("rect", { x: 488, y: 18, width: 146, height: 34, rx: 9, class: "lc-sc-bubble" }, g);
+        svg("path", { d: "M 528 52 L 536 64 L 544 52 Z", class: "lc-sc-bubble" }, g);
+        svg("text", { x: 561, y: 40, "text-anchor": "middle", class: "lc-sc-bubble-t is-late" }, g, "Nie zdążę!");
+      }
       // autobus
       if (w) {
         var bx = anim ? -10 + (STOP_X + 10) * ease(Math.min(1, anim.u * 1.02)) : STOP_X;
         drawBus(g, bx, w.line);
         if (!anim || anim.u >= 1) {
-          if (step >= 2) {
-            svg("text", { x: STOP_X - 80, y: 106, "text-anchor": "middle", class: "lc-sc-read" }, g,
-              "x = " + fmt(w.x, 1) + " min");
-          } else {
-            svg("text", { x: STOP_X - 80, y: 106, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-              "przyjechał o " + clock(DEP + w.x));
-          }
+          svg("text", { x: STOP_X - 80, y: 106, "text-anchor": "middle", class: "lc-sc-read" }, g,
+            "x = " + fmt(w.x, 1) + " min");
         }
-      } else {
-        svg("text", { x: 300, y: 150, "text-anchor": "middle", class: "lc-sc-sub" }, g, "autobusu jeszcze nie ma");
       }
     }
 
-    // --- dziennik (kroki 1–2) ----------------------------------------------
-    function drawLog(g, step) {
-      if (!st.waits.length) {
-        svg("text", { x: W / 2, y: 300, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "Kliknij „Czekaj na autobus”, żeby zobaczyć, kiedy przyjedzie.");
-        return;
-      }
+    // --- dziennik (krok 1) -------------------------------------------------
+    function drawLog(g) {
       st.waits.slice(-6).reverse().forEach(function (d, i) {
         var y = 250 + i * 25, g2 = svg("g", { opacity: 1 - i * 0.14 }, g);
-        svg("text", { x: 70, y: y, class: "lc-sc-log" }, g2, "czekanie " + d.no);
-        svg("text", { x: 210, y: y, class: "lc-sc-log" }, g2, "linia " + lineName(d.line));
-        svg("text", { x: 310, y: y, class: "lc-sc-log" }, g2, "przyjazd " + clock(DEP + d.x));
-        if (step >= 2) svg("text", { x: 490, y: y, class: "lc-sc-log is-x" }, g2, "x = " + fmt(d.x, 1) + " min");
+        svg("text", { x: 130, y: y, "text-anchor": "end", class: "lc-sc-log" }, g2, d.no + ".");
+        svg("text", { x: 170, y: y, class: "lc-sc-log" }, g2, lineName(d.line));
+        svg("text", { x: 230, y: y, class: "lc-sc-log" }, g2, clock(DEP + d.x));
+        svg("text", { x: 380, y: y, class: "lc-sc-log is-x" }, g2, "x = " + fmt(d.x, 1) + " min");
       });
     }
 
-    // --- dwa histogramy na wspólnej osi X, każdy z własną skalą Y (kroki 3–4) ---
+    // --- dwa histogramy na wspólnej osi X, każdy z własną skalą Y (kroki 2–3) ---
     function histInfo(line) {
       var mx = Math.max.apply(null, st.counts[line].concat([1]));
       var u = Math.min(13, 72 / Math.max(mx, 5));
@@ -160,7 +142,7 @@
 
     function drawHist(g, step) {
       var y0 = ROWS.A.top - 8, y1 = ROWS.B.base;
-      if (step >= 4) {
+      if (step >= 3) {
         svg("rect", { x: xOf(LIM), y: y0, width: PR - xOf(LIM), height: y1 - y0, class: "lc-sc-risk" }, g);
       }
       ["A", "B"].forEach(function (l) {
@@ -170,7 +152,7 @@
         svg("text", { x: 40, y: R.base - 14, "text-anchor": "middle", class: "lc-sc-n" }, g, "n = " + st.vals[l].length);
         var c = st.counts[l];
         for (var i = 0; i < NB; i++) {
-          var hot = step >= 4 && i * BW >= LIM ? " is-late" : "";
+          var hot = step >= 3 && i * BW >= LIM ? " is-late" : "";
           if (h.u >= 5) {
             for (var k = 1; k <= c[i]; k++) {
               svg("circle", { cx: slotX(i), cy: tokenY(l, k, h), r: h.tokR, class: "lc-sc-token " + lineCls(l) + hot }, g);
@@ -182,16 +164,6 @@
               class: "lc-sc-token is-bar " + lineCls(l) + hot }, g);
           }
         }
-        if (step >= 4) {
-          var t = svg("text", { x: PR, y: R.top + 6, "text-anchor": "end", class: "lc-sc-n" }, g);
-          if (st.vals[l].length) {
-            var S = stats(st.vals[l]);
-            svg("tspan", {}, t, "x̄ = " + fmt(S.mean, 1) + " min · SD = " + fmt(S.sd, 1) + " min · ");
-            svg("tspan", { class: "is-hit" }, t, "> " + LIM + " min: " + fmt(S.late * 100, 1) + "%");
-          } else {
-            svg("tspan", {}, t, "poczekaj też na linii " + lineName(l));
-          }
-        }
       });
       // oś wspólna pod B
       for (var v = 0; v <= XMAX; v += 5) {
@@ -200,13 +172,25 @@
       }
       svg("text", { x: (PL + PR) / 2, y: y1 + 40, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
         "spóźnienie autobusu x (minuty)");
-      if (step >= 4) {
+      if (step >= 3) {
         svg("line", { x1: xOf(MEAN), x2: xOf(MEAN), y1: y0, y2: y1, class: "lc-sc-param" }, g);
-        svg("text", { x: xOf(MEAN), y: y0 - 18, "text-anchor": "middle", class: "lc-sc-param-t" }, g,
-          "średnia " + fmt(MEAN, 1) + " min");
         svg("line", { x1: xOf(LIM), x2: xOf(LIM), y1: y0, y2: y1, class: "lc-sc-limit" }, g);
-        svg("text", { x: xOf(LIM) + 5, y: y0 - 2, class: "lc-sc-limit-t" }, g,
-          "ponad " + LIM + " min: spóźnisz się na zajęcia");
+        // odczyt pod wykresem: wzorce linii zamiast podpisów na wykresie
+        var ry = y1 + 66, rx = PL;
+        svg("line", { x1: rx, x2: rx + 22, y1: ry - 5, y2: ry - 5, class: "lc-sc-param" }, g);
+        svg("text", { x: rx + 30, y: ry, class: "lc-sc-n" }, g, "x̄ = " + fmt(MEAN, 1) + " min");
+        svg("line", { x1: rx + 170, x2: rx + 192, y1: ry - 5, y2: ry - 5, class: "lc-sc-limit" }, g);
+        svg("text", { x: rx + 200, y: ry, class: "lc-sc-n" }, g, LIM + " min");
+        var ry2 = ry + 22;
+        ["A", "B"].forEach(function (l, j) {
+          var t = svg("text", { x: rx + j * 270, y: ry2, class: "lc-sc-n" }, g);
+          svg("tspan", { class: "lc-sc-row-t " + lineCls(l) }, t, lineName(l) + ": ");
+          if (st.vals[l].length) {
+            var S = stats(st.vals[l]);
+            svg("tspan", {}, t, "SD = " + fmt(S.sd, 1) + " min · ");
+            svg("tspan", { class: "is-hit" }, t, "> " + LIM + " min: " + fmt(S.late * 100, 1) + "%");
+          } else svg("tspan", {}, t, "—");
+        });
       }
     }
 
@@ -214,7 +198,7 @@
       var step = api.step();
       api.stage.textContent = ""; api.low.textContent = "";
       drawStage(api.stage, step, null);
-      if (step >= 3) drawHist(api.low, step); else drawLog(api.low, step);
+      if (step >= 2) drawHist(api.low, step); else drawLog(api.low);
     }
 
     function draw() {
@@ -237,7 +221,7 @@
         drawStage(api.stage, step, { w: w, u: u });
       }, function () {
         var land = function () { st.counts[w.line][binOf(w.x)] += 1; render(); done(); };
-        if (step >= 3) {
+        if (step >= 2) {
           var h = histInfo(w.line), i = binOf(w.x);
           var x0 = STOP_X - 80, yy0 = 100, x1 = slotX(i), yy1 = tokenY(w.line, st.counts[w.line][i] + 1, h);
           commit(w); render();
@@ -267,7 +251,7 @@
         render();
       },
       // Przełącznik wybiera przystanek; zebrane czekania obu linii zostają,
-      // bo krok 3–4 porównuje dwa histogramy.
+      // bo kroki 2–3 porównują dwa histogramy.
       opt: function (name, v) { if (name === "line") { st.line = v; st.last = null; render(); } },
       go: function (done) { runOne(false, done); },
       many: function (m, done) {

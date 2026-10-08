@@ -42,3 +42,4 @@
 .lc-sc-risk { fill: var(--upwr-accent-tint); opacity: .55; }
 .lc-sc-limit { stroke: var(--upwr-accent); stroke-width: 2; }
 .lc-sc-limit-t { font: 600 13px var(--upwr-sans); fill: var(--upwr-accent); }
+.lc-sc-n .lc-sc-row-t { font-size: 13px; }

@@ -55,14 +55,14 @@ ch4_ui <- list(
       width_mode = "text",
       scene_widget("ch4_bus_scene",
         title = "Czekanie na autobus — ta sama średnia, inne ryzyko",
-        steps = c("Przystanek", "Spóźnienie", "Powtarzamy", "Ryzyko"),
-        labels = c("Czekaj na autobus", "Czekaj na autobus",
-                   "Czekaj jeszcze raz", "Czekaj jeszcze raz"),
+        steps = c("Przystanek", "Powtarzamy", "Ryzyko"),
+        labels = c("Czekaj na autobus", "Czekaj jeszcze raz", "Czekaj jeszcze raz"),
+        more_from = 2,
         options = list(list(name = "line", label = "Linia",
                             values = c("A" = "A", "K" = "B"),
                             selected = "A", from = 1)),
         config = list(
-          kind = "bus", height = 462,
+          kind = "bus", height = 512,
           a = round(ch4_bus$a, 2), b = round(ch4_bus$b, 2),
           dep = 7 * 60 + 45, limit = ch4_bus_limit,
           mean = round(mean(ch4_bus$a), 1), xmax = 25,
@@ -425,28 +425,14 @@ ch4_server <- function(input, output, session) {
 
   # Prototyp sceny: teksty kroków liczone z tego samego świata autobusów.
   local({
-    late_b <- mean(ch4_bus$b > ch4_bus_limit) * 100
-    late_a <- mean(ch4_bus$a > ch4_bus_limit) * 100
-    f1 <- function(x) formatC(x, format = "f", digits = 1)
     scene_texts(input, output, "ch4_bus_scene", list(
-      tagList("Autobus odjeżdża wg rozkładu o 7:45, jazda trwa 10 minut, zajęcia
-        zaczynają się o 8:00. Kliknij „Czekaj na autobus” i zobacz, o której
-        naprawdę przyjedzie. Potem przełącz się na linię K i poczekaj też tam."),
-      tagList("Z każdego czekania zostaje jedna liczba: spóźnienie x w minutach,
-        liczone od godziny z rozkładu. To obserwacja zmiennej ilościowej ciągłej.
-        Na linii A kolejne x są do siebie podobne, na linii K raz wychodzi
-        pół minuty, a raz kwadrans."),
-      tagList("Każde czekanie spada żetonem na oś spóźnień: linia A na górze,
-        linia K na dole, każda w swojej skali wysokości. Zbierz po kilkaset kursów na obu liniach
-        (+100, +1000) i porównaj kształty: wąski kopiec przy 2 minutach
-        i wysoki słupek przy zerze z długim ogonem w prawo."),
-      sprintf(paste("Przerywana linia to średnie spóźnienie, takie samo na obu liniach:",
-        "%s min. Na prawo od %s minut leżą kursy, po których nie zdążysz na zajęcia:",
-        "na linii A %s%%, na linii K %s%%, czyli mniej więcej co %s. kurs.",
-        "Odchylenie standardowe SD (%s min wobec %s min) mierzy tę różnicę.",
-        "Średnia nie mówi, czy zdążysz. Mówi to rozrzut."),
-        f1(mean(ch4_bus$a)), ch4_bus_limit, f1(late_a), f1(late_b),
-        round(100 / late_b), f1(ch4_bus$sd_a), f1(ch4_bus$sd_b))
+      tagList("Odjazd wg rozkładu 7:45, jazda 10 minut, zajęcia o 8:00. Poczekaj kilka
+        razy na linii A, potem na K. Spóźnienie x liczymy od godziny z rozkładu."),
+      tagList("Każde czekanie trafia do histogramu swojej linii (każdy ma własną skalę
+        wysokości). Zbierz po kilkaset kursów na obu liniach i porównaj kształty."),
+      tagList("Przerywana linia to średnia, wspólna dla obu linii. Na prawo od ",
+        ch4_bus_limit, " minut nie zdążysz na zajęcia. Porównaj SD i odsetek takich
+        kursów pod wykresem: średnia nie mówi, czy zdążysz.")
     ))
   })
 
