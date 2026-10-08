@@ -102,14 +102,6 @@ ch1_ui <- list(
       To wzór E(X̄) = μ z wykładu 02 i to właśnie widać w scenie powyżej:
       stos średnich układa się wokół μ.")),
 
-    lc_note("Kontrprzykład", tags$p(gloss("wariancja", "Wariancja"), " z próby liczona
-      z dzieleniem przez n, ",
-      withMathJax("\\(\\frac{1}{n}\\sum(x_i - \\bar{x})^2\\)"), ", jest ", gloss("obciążenie", "obciążona"), ".
-      Jej wartość oczekiwana wynosi (n - 1)/n · σ², więc średnio zaniża wariancję
-      populacji. Dla n = 10 i σ² = 100 daje średnio 90 zamiast 100. Dlatego
-      wariancję z próby liczy się z dzieleniem przez n - 1: ta poprawka usuwa
-      obciążenie.")),
-
     lc_h3("Efektywność", num = "2"),
 
     lc_p("Nieobciążoność mówi tylko, że estymator trafia średnio. Dwa estymatory
@@ -151,8 +143,7 @@ ch1_ui <- list(
       Wynika to z ", gloss("prawo wielkich liczb", "prawa wielkich liczb"),
       ", a widać to też we wzorze na błąd standardowy: ",
       gloss("odchylenie standardowe"), " średniej, SE = σ/√n, maleje do zera
-      wraz ze wzrostem n. Wariancja z próby jest zgodna zarówno w wersji
-      z n - 1, jak i z n: obciążenie (n - 1)/n znika, gdy n rośnie.")),
+      wraz ze wzrostem n.")),
 
     lc_p("Z trzech własności wynika praktyczna kolejność wyboru. Najpierw szukamy
       estymatorów nieobciążonych, spośród nich wybieramy najefektywniejszy,
