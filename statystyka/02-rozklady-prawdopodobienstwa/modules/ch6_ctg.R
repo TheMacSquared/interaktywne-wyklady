@@ -33,21 +33,19 @@ ch6_ui <- list(
       układają się średnie z wielu prób tej samej wielkości n, nazywamy ",
       gloss("rozkład próbkowy", "rozkładem próbkowym"), " średniej."),
 
-    lc_p("Zobaczmy to na czasie dojazdu na uczelnię."),
+    lc_p("Zobaczmy to na ocenach prowadzącego."),
 
     # PROTOTYP SCENY (2026-10-08): Zapytaj grupkę (średnia z grupy, CTG)
     figure_panel(
       label = "Prototyp sceny",
       width_mode = "text",
-      scene_widget("ch6_grupka", "Zapytaj grupkę: od jednego dojazdu do rozkładu średniej",
+      scene_widget("ch6_grupka", "Zapytaj grupkę: od jednej oceny do rozkładu średniej",
         steps = c("Średnia X̄", "Powtarzamy", "Kształt"),
-        labels = c("Zadzwoń do grupki", "Zadzwoń do grupki", "Zadzwoń do grupki"),
+        labels = c("Zapytaj grupkę", "Zapytaj grupkę", "Zapytaj grupkę"),
         more_from = 2,
-        options = list(list(name = "n", label = "Osób w grupce (n)",
-                            values = c(1, 5, 30), selected = 5, from = 2)),
-        config = c(list(kind = "group", n = 5, ns = c(1, 5, 30), xmax = 90, binw = 3, height = 428,
-                        aria = "Student dzwoni do grupki losowych osób i pyta o czas dojazdu; histogram średnich z kolejnych grupek"),
-                   scene_commute))
+        config = list(kind = "group", n = 5, vals = I(scene_rating$vals), probs = I(scene_rating$probs),
+                      mu = scene_rating$mu, sigma = scene_rating$sigma, height = 428,
+                      aria = "Pięć losowych osób ocenia prowadzącego w skali 1–10; histogram średnich ocen z kolejnych grupek"))
     ),
 
     lc_p("Dwie własności tego rozkładu wynikają wprost z rachunku wartości oczekiwanej
@@ -286,16 +284,13 @@ ch6_server <- function(input, output, session) {
   ))
 
   # --- PROTOTYP SCENY (2026-10-08): Zapytaj grupkę ---
-  mu_c <- scene_commute$mu
   scene_texts(input, output, "ch6_grupka", list(
-    tagList("Dzwonisz do kilku losowych osób z roku i pytasz, ile minut jadą na uczelnię. ",
-      tags$code("X̄", .noWS = "outside"), " to średnia jednej grupki: zależy od tego, kto odbierze,
-      więc jest zmienną losową. Zadzwoń do kilku grupek."),
-    tagList("Każda grupka spada żetonem nad swoją średnią. Dołóż 100 i 1000, potem zmieniaj n
-      i patrz na SD(X̄) pod wykresem."),
-    tagList("Tło to rozkład pojedynczych dojazdów, krzywa to rozkład normalny dla X̄. Średnie skupiają się
-      wokół μ = ", lc_fmt(mu_c, 0), " min. Przy n = 30 histogram pasuje do krzywej, choć pojedyncze dojazdy
-      są skośne, przy n = 1 nie pasuje.")
+    tagList("Pytasz 5 losowych osób z roku: jak oceniasz prowadzącego w skali od 1 do 10? ",
+      tags$code("X̄", .noWS = "outside"), " to średnia ocena grupki. Zapytaj kilka grupek."),
+    tagList("Każda grupka spada żetonem nad swoją średnią. Dołóż 100 i 1000."),
+    tagList("Tło to rozkład pojedynczych ocen: skośny, większość wysokich. Krzywa to rozkład normalny dla ",
+      tags$code("X̄", .noWS = "outside"), ". Średnie z pięciu ocen układają się już prawie jak dzwon wokół μ = ",
+      lc_fmt(scene_rating$mu, 1), ".")
   ))
 
   # --- Widget 1: Eksperyment CTG ---

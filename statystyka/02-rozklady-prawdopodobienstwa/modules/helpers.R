@@ -116,10 +116,12 @@ scene_texts <- function(input, output, id, texts) {
 }
 
 # Światy scen: te same liczby w JS (config) i w tekstach kroków.
-# Czas dojazdu na uczelnię (min): 5 + Gamma(kształt 2, skala 10), prawoskośny.
-scene_commute <- list(shape = 2, scale = 10, shift = 5)
-scene_commute$mu    <- scene_commute$shift + scene_commute$shape * scene_commute$scale
-scene_commute$sigma <- sqrt(scene_commute$shape) * scene_commute$scale
+# Ocena prowadzącego w skali 1–10 (rozdz. 6, scena CTG): rozkład lewoskośny,
+# większość ocen wysokich, niskie rzadko.
+scene_rating <- list(vals = 1:10,
+                     probs = c(0.03, 0.03, 0.04, 0.05, 0.07, 0.09, 0.14, 0.20, 0.20, 0.15))
+scene_rating$mu    <- sum(scene_rating$vals * scene_rating$probs)
+scene_rating$sigma <- sqrt(sum((scene_rating$vals - scene_rating$mu)^2 * scene_rating$probs))
 
 # Zdrapka z kiosku (rozdz. 2).
 scene_tickets <- list(

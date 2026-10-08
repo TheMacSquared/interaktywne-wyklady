@@ -2,7 +2,7 @@
 // Kontener: .lc-sc[data-config] wewnątrz widgetu krokowego (.lc-stepper). Wzorzec init/KINDS
 // jak w statystyce 00 (scenes.js), obok istniejącego experiment.js (.lc-exp), z którym nie koliduje.
 // config.kind:
-//   "group"   telefon do n losowych osób o czas dojazdu, X̄ grupki (rozkład średniej, CTG)
+//   "group"   ocena prowadzącego (1–10) od 5 losowych osób, X̄ grupki (rozkład średniej, CTG)
 //   "scratch" zdrapka z kiosku, X = wygrana (E(X) jako średnia na dłuższą metę, SD jako rozrzut)
 // Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
@@ -55,29 +55,6 @@
     }, function () { api.fly.removeChild(c); done(); });
   }
 
-  function rnorm() {
-    var u = 1 - Math.random(), v = Math.random();
-    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-  }
-  // Marsaglia–Tsang, shape >= 1
-  function rgamma(shape) {
-    var d = shape - 1 / 3, c = 1 / Math.sqrt(9 * d);
-    for (;;) {
-      var x = rnorm(), v = Math.pow(1 + c * x, 3);
-      if (v <= 0) continue;
-      if (Math.log(Math.random()) < 0.5 * x * x + d - d * v + d * Math.log(v)) return d * v;
-    }
-  }
-  function lgamma(z) {
-    var c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313,
-      -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
-    if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - lgamma(1 - z);
-    z -= 1;
-    var x = c[0];
-    for (var i = 1; i < 9; i++) x += c[i] / (z + i);
-    var t = z + 7.5;
-    return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
-  }
   function normPdf(x, m, s) { var z = (x - m) / s; return Math.exp(-z * z / 2) / (s * Math.sqrt(2 * Math.PI)); }
 
   // Postać: głowa w (cx, cy), skala s.
@@ -130,28 +107,32 @@
   var KINDS = {};
 
   // =========================================================================
-  // GROUP: telefon do n losowych osób, X̄ = średni czas dojazdu grupki
+  // GROUP: pytamy 5 losowych osób o ocenę prowadzącego (1–10), X̄ = średnia ocena grupki
   // =========================================================================
   KINDS.group = function (cfg, api) {
-    var SH = cfg.shape, SC = cfg.scale, SHIFT = cfg.shift, MU = cfg.mu, SIG = cfg.sigma;
-    var XMAX = cfg.xmax || 90, BW = cfg.binw || 3, NB = Math.round(XMAX / BW);
-    var N0 = cfg.n || 5;
+    var VALS = cfg.vals, PROBS = cfg.probs, MU = cfg.mu, SIG = cfg.sigma, N = cfg.n || 5;
+    var BW = 1 / N, LO = 0.5, HI = 10.5, X0 = VALS[0], NB = Math.round((VALS[VALS.length - 1] - X0) / BW) + 1;
     var PL = 74, PR = 616, PT = 214, PB = 350, RX = 375, RY = 146;
-    var LG = lgamma(SH);
+    var CUM = [], acc = 0;
+    PROBS.forEach(function (p) { acc += p; CUM.push(acc); });
     var st, yfun = null;
 
-    function fresh(n) {
-      st = { n: n, counts: new Array(NB).fill(0), k: 0, s1: 0, s2: 0, last: null, log: [] };
-    }
-    fresh(N0);
+    function fresh() { st = { counts: new Array(NB).fill(0), k: 0, s1: 0, s2: 0, last: null, log: [] }; }
+    fresh();
 
-    function one(n) {
-      var v = [], s = 0;
-      for (var i = 0; i < n; i++) { var x = Math.round(SHIFT + rgamma(SH) * SC); v.push(x); s += x; }
-      return { vals: v, mean: s / n };
+    function rate() {
+      var u = Math.random() * acc;
+      for (var i = 0; i < CUM.length; i++) if (u < CUM[i]) return VALS[i];
+      return VALS[VALS.length - 1];
     }
-    function binOf(x) { return Math.max(0, Math.min(NB - 1, Math.floor(x / BW))); }
-    function px(x) { return PL + (PR - PL) * Math.min(x, XMAX) / XMAX; }
+    function one() {
+      var v = [], s = 0;
+      for (var i = 0; i < N; i++) { var x = rate(); v.push(x); s += x; }
+      return { vals: v, mean: s / N };
+    }
+    function binOf(x) { return Math.max(0, Math.min(NB - 1, Math.round((x - X0) / BW))); }
+    function binX(j) { return X0 + j * BW; }
+    function px(x) { return PL + (PR - PL) * (x - LO) / (HI - LO); }
     function sd() {
       if (st.k < 2) return null;
       var m = st.s1 / st.k;
@@ -164,128 +145,97 @@
       o.no = st.k; st.last = o;
       st.log.unshift(o); if (st.log.length > 6) st.log.pop();
     }
-    function popPdf(x) {
-      var z = x - SHIFT;
-      if (z <= 0) return 0;
-      return Math.exp((SH - 1) * Math.log(z) - z / SC - LG - SH * Math.log(SC));
-    }
-
-    function layout(n) {
-      var per = n <= 5 ? n : Math.ceil(n / 2), rows = Math.ceil(n / per), s = n <= 5 ? 1 : 0.62;
-      var x0 = 132, x1 = 624, dx = (x1 - x0) / per, pos = [];
-      for (var i = 0; i < n; i++) {
-        var r = Math.floor(i / per), c = i % per;
-        pos.push({ x: x0 + dx * (c + 0.5), y: rows === 1 ? 52 : 28 + r * 56, s: s });
-      }
-      return pos;
-    }
 
     function drawStage(o, shown) {
       var g = api.stage;
       g.textContent = "";
-      bubble(g, 6, 2, 118, "Ile dojeżdżasz?");
+      bubble(g, 6, 2, 206, "Jak oceniasz prowadzącego?");
       person(g, 46, 52, 1.2, "is-caller");
-      svg("rect", { x: 54, y: 40, width: 7, height: 15, rx: 2, class: "lc-sc-phone" }, g);
-      var n = o ? o.vals.length : st.n, pos = layout(n);
-      pos.forEach(function (p, i) {
-        var known = o && i < shown;
-        person(g, p.x, p.y, p.s, known ? "" : "is-wait");
-        if (!known) return;
-        if (n <= 5) {
-          svg("text", { x: p.x, y: p.y - 16, "text-anchor": "middle", class: "lc-sc-ans" }, g, o.vals[i] + " min");
-        } else {
-          svg("text", { x: p.x, y: p.y + 30, "text-anchor": "middle", class: "lc-sc-ans is-small" }, g, String(o.vals[i]));
-        }
-      });
-      if (!o) {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "Grupka czeka na telefon");
-        return;
+      var x0 = 240, x1 = 624, dx = (x1 - x0) / N;
+      for (var i = 0; i < N; i++) {
+        var cx = x0 + dx * (i + 0.5), known = o && i < shown;
+        person(g, cx, 52, 1, known ? "" : "is-wait");
+        if (known) svg("text", { x: cx, y: 36, "text-anchor": "middle", class: "lc-sc-ans" }, g, String(o.vals[i]));
       }
-      if (shown < n) {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "grupka nr " + (st.k + 1) + "…");
-        return;
+      if (o && shown >= N) {
+        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X̄ = " + fmt(o.mean, 1));
       }
-      svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X̄ = " + fmt(o.mean, 1) + " min");
     }
 
     function drawLog() {
       var g = api.low, y0 = 206;
-      if (!st.log.length) { emptyNote(g, y0 + 60, "Zadzwoń do grupki, żeby usłyszeć jej czasy dojazdu."); return; }
       st.log.forEach(function (o, ri) {
-        var q = svg("g", { opacity: 1 - ri * 0.13 }, g), y = y0 + ri * 28, x = 196;
-        svg("text", { x: 92, y: y, class: "lc-sc-log" }, q, "grupka " + o.no);
-        var vs = o.vals.slice(0, 10);
-        vs.forEach(function (v) { svg("text", { x: x, y: y, "text-anchor": "end", class: "lc-sc-log" }, q, String(v)); x += 30; });
-        if (o.vals.length > 10) { svg("text", { x: x - 18, y: y, class: "lc-sc-log" }, q, "…"); x += 14; }
+        var q = svg("g", { opacity: 1 - ri * 0.13 }, g), y = y0 + ri * 28, x = 220;
+        svg("text", { x: 110, y: y, class: "lc-sc-log" }, q, "grupka " + o.no);
+        o.vals.forEach(function (v) { svg("text", { x: x, y: y, "text-anchor": "end", class: "lc-sc-log" }, q, String(v)); x += 30; });
         svg("text", { x: x - 6, y: y, class: "lc-sc-log" }, q, "→");
         svg("text", { x: x + 18, y: y, class: "lc-sc-log is-x" }, q, "X̄ = " + fmt(o.mean, 1));
       });
     }
 
     function drawHist() {
-      var g = api.low, rel = api.step() >= 3, tot = st.k, sdN = SIG / Math.sqrt(st.n);
+      var g = api.low, rel = api.step() >= 3, tot = st.k, sdN = SIG / Math.sqrt(N);
       var vals = st.counts.map(function (c) { return rel ? (tot ? c / (tot * BW) : 0) : c; });
       var top = Math.max.apply(null, vals);
-      if (rel) top = Math.max(top, normPdf(MU, MU, sdN), popPdf(SHIFT + (SH - 1) * SC));
+      if (rel) top = Math.max(top, normPdf(MU, MU, sdN), Math.max.apply(null, PROBS));
       var ax = rel ? niceAxis(top * 1.08, 4) : niceAxis(Math.max(top * 1.12, 5), 4);
       var y = yfun = yGrid(g, PL, PR, PT, PB, ax), i, x;
+      var u = (PR - PL) / (HI - LO);
       if (rel) {
-        var d = "M " + px(0) + " " + PB;
-        for (i = 0; i <= 180; i++) { x = XMAX * i / 180; d += " L " + px(x) + " " + y(popPdf(x)); }
-        svg("path", { d: d + " L " + px(XMAX) + " " + PB + " Z", class: "lc-sc-popfill" }, g);
+        // tło: rozkład pojedynczych ocen (słupki szerokości 1, wysokość = P)
+        VALS.forEach(function (v, j) {
+          svg("rect", { x: px(v - 0.5) + 1, y: y(PROBS[j]), width: u - 2, height: PB - y(PROBS[j]), class: "lc-sc-popfill" }, g);
+        });
       }
-      var bw = (PR - PL) / NB;
+      var bw = u * BW;
       vals.forEach(function (v, j) {
-        if (v > 0) svg("rect", { x: PL + j * bw + 0.5, y: y(v), width: bw - 1, height: PB - y(v), class: "lc-sc-bar is-hit" }, g);
+        if (v > 0) svg("rect", { x: px(binX(j)) - bw / 2 + 0.5, y: y(v), width: bw - 1, height: PB - y(v), class: "lc-sc-bar is-hit" }, g);
       });
       if (rel) {
         var pts = [];
-        for (i = 0; i <= 300; i++) { x = XMAX * i / 300; pts.push(px(x) + "," + y(normPdf(x, MU, sdN))); }
+        for (i = 0; i <= 300; i++) { x = LO + (HI - LO) * i / 300; pts.push(px(x) + "," + y(normPdf(x, MU, sdN))); }
         svg("polyline", { points: pts.join(" "), class: "lc-sc-curve", fill: "none" }, g);
         svg("line", { x1: px(MU), x2: px(MU), y1: PT, y2: PB, class: "lc-sc-param" }, g);
       }
-      for (x = 0; x <= XMAX; x += 10) {
-        svg("line", { x1: px(x), x2: px(x), y1: PB, y2: PB + 5, class: "lc-sc-axis" }, g);
-        svg("text", { x: px(x), y: PB + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(x));
-      }
+      VALS.forEach(function (v) {
+        svg("line", { x1: px(v), x2: px(v), y1: PB, y2: PB + 5, class: "lc-sc-axis" }, g);
+        svg("text", { x: px(v), y: PB + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(v));
+      });
       svg("text", { x: (PL + PR) / 2, y: PB + 38, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
-        "X̄, średni czas dojazdu w grupce (min)");
+        "X̄, średnia ocena w grupce");
       yTitle(g, 16, PT, PB, rel ? "skala gęstości" : "liczba grupek");
-      // jeden odczyt pod wykresem; linia przerywana na wykresie to μ
       var s = sd(), items = [];
-      if (rel) items.push({ mark: markDash(g), text: "μ = " + fmt(MU, 0) + " min" });
-      items.push({ text: "SD(X̄) = " + (s === null ? "—" : fmt(s, 1) + " min") });
+      if (rel) items.push({ mark: markDash(g), text: "μ = " + fmt(MU, 1) });
+      items.push({ text: "SD(X̄) = " + (s === null ? "—" : fmt(s, 2)) });
       items.push({ text: "grupek: " + tot });
       readout(g, PB + 62, items);
     }
 
     function render() {
       api.low.textContent = "";
-      drawStage(st.last, st.last ? st.last.vals.length : 0);
+      drawStage(st.last, st.last ? N : 0);
       if (api.step() >= 2) drawHist(); else drawLog();
     }
 
     return {
       render: render,
-      reset: function () { fresh(N0); render(); },
-      opt: function (name, v) { if (name === "n") { fresh(Number(v)); render(); } },
+      reset: function () { fresh(); render(); },
+      opt: function () {},
       go: function (done) {
-        var o = one(st.n), n = st.n;
-        tween(n <= 5 ? 900 : 1200, function (u) { drawStage(o, Math.floor(n * u)); }, function () {
+        var o = one();
+        tween(900, function (uu) { drawStage(o, Math.floor(N * uu)); }, function () {
           var j = binOf(o.mean);
           var land = function () { add(o); commit(o); render(); done(); };
           if (api.step() >= 2 && yfun) {
-            o.no = st.k + 1; drawStage(o, n);
+            o.no = st.k + 1; drawStage(o, N);
             var h = api.step() >= 3 ? (st.counts[j] + 1) / ((st.k + 1) * BW) : st.counts[j] + 1;
-            fly(api, RX, RY + 6, PL + (j + 0.5) * (PR - PL) / NB, Math.max(PT, yfun(h)) - 8, 420, land);
+            fly(api, RX, RY + 6, px(binX(j)), Math.max(PT, yfun(h)) - 8, 420, land);
           } else land();
         });
       },
       many: function (m, done) {
         var o;
-        for (var i = 0; i < m; i++) { o = one(st.n); add(o); }
+        for (var i = 0; i < m; i++) { o = one(); add(o); }
         commit(o); render(); done();
       }
     };
