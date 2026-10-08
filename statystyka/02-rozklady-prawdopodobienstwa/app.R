@@ -71,11 +71,14 @@ ui <- lecture_page(
   lecture_title = "Rozkłady prawdopodobieństwa",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  # Chart.js do wykresu dystrybuanty (rozdz. 4, Ryc. 4.3)
+  # Chart.js do wykresu dystrybuanty (rozdz. 4, Ryc. 4.3); sceny w scenes.js / scenes.css
   header_extras = tagList(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
     includeScript(file.path(app_dir, "modules", "experiment.js")),
+    # Sceny „od intuicji do formalizmu” (PROTOTYPY 2026-10-08)
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
+    includeScript(file.path(app_dir, "modules", "scenes.js")),
     tags$style(HTML("
       .lc-exp-svg { display: block; width: 100%; height: auto; }
       .lc-exp-die { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }

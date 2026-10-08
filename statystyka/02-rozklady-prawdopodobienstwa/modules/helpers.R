@@ -64,3 +64,71 @@ plot_pdf <- function(density_fn, xlim, fill_color = unname(upwr_cat["szalwia"]),
   }
   p
 }
+
+
+# ============================================================================
+# Sceny (scenes.js, PROTOTYPY 2026-10-08): doświadczenie z życia → zmienna → rozkład
+# Wzorzec jak scene_widget() w statystyce 00; obok exp_widget() (experiment.js).
+# ============================================================================
+
+# Widget krokowy ze sceną SVG rysowaną w scenes.js. Konfiguracja trafia do JS jako JSON.
+# labels: podpisy głównego przycisku w kolejnych krokach.
+# options: lista list(name, label, values, selected, from = 1), przełączniki opcji.
+# more_from: od którego kroku aktywne są przyciski +10, +100, +1000.
+scene_widget <- function(id, title, steps, config, labels, options = NULL,
+                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000")) {
+  lc_step_widget(id,
+    title = title,
+    steps = steps,
+    toolbar = lc_toolbar(
+      lapply(options, function(o) {
+        lc_step_from(o$from %||% 1, lc_group(o$label,
+          tags$div(class = "lc-seg", role = "group", `aria-label` = o$label,
+            lapply(seq_along(o$values), function(i) {
+              v <- unname(o$values[[i]])
+              lab <- names(o$values)[[i]] %||% v
+              if (is.null(lab) || !nzchar(lab)) lab <- v
+              tags$button(type = "button", `data-sc-opt` = paste0(o$name, ":", v),
+                `aria-pressed` = if (v == o$selected) "true" else "false", lab)
+            })
+          )
+        ))
+      }),
+      tags$button(type = "button", class = "lc-action is-solid", `data-sc-act` = "go",
+        `data-labels` = jsonlite::toJSON(labels),
+        lc_icon("shuffle"), tags$span(labels[[1]])),
+      if (!is.null(more)) lc_step_from(more_from,
+        tags$div(class = "lc-seg", role = "group", `aria-label` = "Więcej powtórzeń",
+          lapply(seq_along(more), function(i) tags$button(type = "button",
+            `data-sc-act` = unname(more[[i]]), names(more)[[i]]))
+        )
+      )
+    ),
+    body = tags$div(class = "lc-sc",
+      `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA))
+  )
+}
+
+# Teksty kroków: lista fragmentów HTML, po jednym na krok.
+scene_texts <- function(input, output, id, texts) {
+  step <- lc_step_server(id, input)$step
+  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
+}
+
+# Światy scen: te same liczby w JS (config) i w tekstach kroków.
+# Czas dojazdu na uczelnię (min): 5 + Gamma(kształt 2, skala 10), prawoskośny.
+scene_commute <- list(shape = 2, scale = 10, shift = 5)
+scene_commute$mu    <- scene_commute$shift + scene_commute$shape * scene_commute$scale
+scene_commute$sigma <- sqrt(scene_commute$shape) * scene_commute$scale
+
+# Zdrapka z kiosku (rozdz. 2) i dwa losy kontrastowe o tej samej E(X) = 4 zł.
+scene_tickets <- list(
+  main  = list(name = "ZDRAPKA", prizes = c(0, 2, 10, 100), probs = c(0.65, 0.25, 0.08, 0.02),
+               foot = "do wygrania: 2, 10 lub 100 zł"),
+  sure  = list(name = "LOS PEWNY", prizes = 4, probs = 1, foot = "wygrana: zawsze 4 zł"),
+  risky = list(name = "LOS RYZYKOWNY", prizes = c(0, 40), probs = c(0.9, 0.1),
+               foot = "do wygrania: 40 zł")
+)
+scene_ticket_price <- 5
+scene_ticket_ev <- function(t) sum(t$prizes * t$probs)
+scene_ticket_sd <- function(t) sqrt(sum(t$prizes^2 * t$probs) - scene_ticket_ev(t)^2)
