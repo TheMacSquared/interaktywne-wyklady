@@ -112,11 +112,12 @@ ch4_ui <- list(
       label = "Prototyp sceny",
       width_mode = "text",
       scene_widget("ch4_przystanek", "Przyjdź na przystanek: od jednego czekania do pola nad przedziałem",
-        steps = c("Przystanek", "Czas czekania", "Powtarzamy", "Tolerancja"),
-        labels = c("Przyjdź na przystanek", "Przyjdź na przystanek", "Przyjdź na przystanek", "Przyjdź na przystanek"),
+        steps = c("Czas czekania X", "Powtarzamy", "Tolerancja"),
+        labels = c("Przyjdź na przystanek", "Przyjdź na przystanek", "Przyjdź na przystanek"),
+        more_from = 2,
         options = list(list(name = "tol", label = "Przedział wokół 5 min",
                             values = c("± 2" = "2", "± 0.5" = "0.5", "± 0.05" = "0.05", "= 5" = "0"),
-                            selected = "0.5", from = 4)),
+                            selected = "0.5", from = 3)),
         config = list(kind = "bus", period = 10, center = 5, tol = 0.5, height = 446,
                       aria = "Pasażer przychodzi na przystanek w losowej chwili, autobus co 10 minut; histogram czasów czekania i pole nad przedziałem wokół 5 minut"))
     ),
@@ -580,18 +581,13 @@ ch4_server <- function(input, output, session) {
 
   # --- PROTOTYP SCENY (2026-10-08): Przyjdź na przystanek ---
   scene_texts(input, output, "ch4_przystanek", list(
-    tagList("Autobus odjeżdża co 10 minut, a pasażer przychodzi na przystanek, nie patrząc na rozkład.
-      Przyjdź kilka razy i zobacz, ile trzeba czekać: raz autobus podjeżdża od razu, raz właśnie odjechał."),
-    tagList("Czas czekania oznaczamy ", tags$code("X", .noWS = "outside"), ". To zmienna losowa ciągła:
-      może wynieść 3.72 min, 3.7215 min, dowolną liczbę od 0 do 10. Dziennik pokazuje ją z dokładnością
-      do setnych, ale prawdziwy czas ma nieskończenie wiele cyfr."),
-    tagList("Każde czekanie spada do histogramu w przedziale o szerokości 1 minuty, a pod osią zostaje
-      kreska w miejscu dokładnego wyniku. Dołóż 100 i 1000 czekań: słupki wyrównują się, żadna minuta
-      nie jest wyróżniona."),
-    tagList("Pytamy, jak często czekanie wypada około 5 minut, z zadaną tolerancją. Przy ± 2 min trafia
-      mniej więcej 4 na 10 czekań, przy ± 0.5 min 1 na 10, przy ± 0.05 min 1 na 100. Udział trafień
-      zgadza się z polem prostokąta nad przedziałem: wysokość 1/10 razy szerokość. Bez tolerancji,
-      dokładnie 5 min (= 5), nie trafia nikt: pole nad jednym punktem wynosi 0.")
+    tagList("Autobus odjeżdża co 10 minut, a pasażer przychodzi w losowej chwili. ",
+      tags$code("X", .noWS = "outside"), " to czas czekania: dowolna liczba od 0 do 10 min, więc zmienna
+      losowa ciągła. Przyjdź kilka razy."),
+    tagList("Czekania trafiają do przedziałów po 1 min, kreski pod osią to dokładne wyniki. Dołóż 100
+      i 1000: słupki się wyrównują."),
+    tagList("Jak często czekanie wypada około 5 min? Zmieniaj przedział: udział czekań w przedziale
+      zgadza się z polem prostokąta pod linią 1/10. Dla = 5 pole wynosi 0.")
   ))
 
   # --- Ryc. 4.5: czas oczekiwania → rozkład wykładniczy (experiment.js) ---

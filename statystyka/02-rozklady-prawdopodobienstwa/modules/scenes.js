@@ -108,6 +108,22 @@
     svg("text", { x: x, y: cy, "text-anchor": "middle", class: "lc-sc-axtitle",
       transform: "rotate(-90 " + x + " " + cy + ")" }, g, text);
   }
+  // Jeden wiersz odczytu pod wykresem, wyśrodkowany; items: [{mark: f(x, y) rysująca wzorzec 22 px, text}].
+  // Szerokość tekstu z czcionki mono 13 px (≈ 7.8 px na znak), bez pomiaru DOM.
+  function readout(g, y, items) {
+    var CH = 7.8, MW = 22, GAP = 8, SEP = 26, tot = 0;
+    items.forEach(function (it, i) { tot += (it.mark ? MW + GAP : 0) + it.text.length * CH + (i ? SEP : 0); });
+    var x = W / 2 - tot / 2;
+    items.forEach(function (it, i) {
+      if (i) x += SEP;
+      if (it.mark) { it.mark(x, y); x += MW + GAP; }
+      svg("text", { x: x, y: y + 4.5, class: "lc-sc-n" }, g, it.text);
+      x += it.text.length * CH;
+    });
+  }
+  function markDash(g) {
+    return function (x, y) { svg("line", { x1: x, x2: x + 22, y1: y, y2: y, class: "lc-sc-param" }, g); };
+  }
   function emptyNote(g, y, text) {
     svg("text", { x: W / 2, y: y, "text-anchor": "middle", class: "lc-sc-sub" }, g, text);
   }
@@ -120,10 +136,10 @@
   KINDS.group = function (cfg, api) {
     var SH = cfg.shape, SC = cfg.scale, SHIFT = cfg.shift, MU = cfg.mu, SIG = cfg.sigma;
     var XMAX = cfg.xmax || 90, BW = cfg.binw || 3, NB = Math.round(XMAX / BW);
-    var N0 = cfg.n || 5, NS_ = cfg.ns || [1, 5, 30];
+    var N0 = cfg.n || 5;
     var PL = 74, PR = 616, PT = 214, PB = 350, RX = 375, RY = 146;
     var LG = lgamma(SH);
-    var st, memo = {}, yfun = null;
+    var st, yfun = null;
 
     function fresh(n) {
       st = { n: n, counts: new Array(NB).fill(0), k: 0, s1: 0, s2: 0, last: null, log: [] };
@@ -148,7 +164,6 @@
     function commit(o) {
       o.no = st.k; st.last = o;
       st.log.unshift(o); if (st.log.length > 6) st.log.pop();
-      if (st.k >= 20) memo[st.n] = sd();
     }
     function popPdf(x) {
       var z = x - SHIFT;
@@ -167,7 +182,7 @@
     }
 
     function drawStage(o, shown) {
-      var g = api.stage, step = api.step();
+      var g = api.stage;
       g.textContent = "";
       bubble(g, 6, 2, 118, "Ile dojeżdżasz?");
       person(g, 46, 52, 1.2, "is-caller");
@@ -185,26 +200,19 @@
       });
       if (!o) {
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "Grupka n = " + st.n + " czeka na telefon");
+          "Grupka czeka na telefon");
         return;
       }
       if (shown < n) {
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "grupka nr " + (st.k + 1) + ": dzwonię…");
+          "grupka nr " + (st.k + 1) + "…");
         return;
       }
-      if (step >= 2) {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X̄ = " + fmt(o.mean, 1) + " min");
-        svg("text", { x: RX, y: RY + 18, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          "średni czas dojazdu w tej grupce, n = " + n);
-      } else {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "grupka nr " + o.no + ": średnio " + fmt(o.mean, 1) + " min");
-      }
+      svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X̄ = " + fmt(o.mean, 1) + " min");
     }
 
     function drawLog() {
-      var g = api.low, step = api.step(), y0 = 206;
+      var g = api.low, y0 = 206;
       if (!st.log.length) { emptyNote(g, y0 + 60, "Zadzwoń do grupki, żeby usłyszeć jej czasy dojazdu."); return; }
       st.log.forEach(function (o, ri) {
         var q = svg("g", { opacity: 1 - ri * 0.13 }, g), y = y0 + ri * 28, x = 196;
@@ -213,13 +221,12 @@
         vs.forEach(function (v) { svg("text", { x: x, y: y, "text-anchor": "end", class: "lc-sc-log" }, q, String(v)); x += 30; });
         if (o.vals.length > 10) { svg("text", { x: x - 18, y: y, class: "lc-sc-log" }, q, "…"); x += 14; }
         svg("text", { x: x - 6, y: y, class: "lc-sc-log" }, q, "→");
-        svg("text", { x: x + 18, y: y, class: "lc-sc-log is-x" }, q,
-          (step >= 2 ? "X̄ = " : "średnio ") + fmt(o.mean, 1));
+        svg("text", { x: x + 18, y: y, class: "lc-sc-log is-x" }, q, "X̄ = " + fmt(o.mean, 1));
       });
     }
 
     function drawHist() {
-      var g = api.low, rel = api.step() >= 4, tot = st.k, sdN = SIG / Math.sqrt(st.n);
+      var g = api.low, rel = api.step() >= 3, tot = st.k, sdN = SIG / Math.sqrt(st.n);
       var vals = st.counts.map(function (c) { return rel ? (tot ? c / (tot * BW) : 0) : c; });
       var top = Math.max.apply(null, vals);
       if (rel) top = Math.max(top, normPdf(MU, MU, sdN), popPdf(SHIFT + (SH - 1) * SC));
@@ -239,11 +246,6 @@
         for (i = 0; i <= 300; i++) { x = XMAX * i / 300; pts.push(px(x) + "," + y(normPdf(x, MU, sdN))); }
         svg("polyline", { points: pts.join(" "), class: "lc-sc-curve", fill: "none" }, g);
         svg("line", { x1: px(MU), x2: px(MU), y1: PT, y2: PB, class: "lc-sc-param" }, g);
-        svg("text", { x: px(MU) + 6, y: PT + 12, class: "lc-sc-param-t" }, g, "μ = " + fmt(MU, 0) + " min");
-        svg("line", { x1: 446, x2: 468, y1: PT + 10, y2: PT + 10, class: "lc-sc-curve" }, g);
-        svg("text", { x: 474, y: PT + 14, class: "lc-sc-n" }, g, "krzywa normalna X̄");
-        svg("rect", { x: 446, y: PT + 22, width: 22, height: 10, class: "lc-sc-popfill" }, g);
-        svg("text", { x: 474, y: PT + 32, class: "lc-sc-n" }, g, "pojedyncze dojazdy");
       }
       for (x = 0; x <= XMAX; x += 10) {
         svg("line", { x1: px(x), x2: px(x), y1: PB, y2: PB + 5, class: "lc-sc-axis" }, g);
@@ -252,33 +254,32 @@
       svg("text", { x: (PL + PR) / 2, y: PB + 38, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
         "X̄, średni czas dojazdu w grupce (min)");
       yTitle(g, 16, PT, PB, rel ? "skala gęstości" : "liczba grupek");
-      var s = sd();
-      svg("text", { x: PR, y: PT - 12, "text-anchor": "end", class: "lc-sc-n" }, g,
-        "n = " + st.n + " · grupek: " + tot + " · rozrzut średnich (SD): " + (s === null ? "—" : fmt(s, 1) + " min"));
-      svg("text", { x: W / 2, y: PB + 64, "text-anchor": "middle", class: "lc-sc-n" }, g,
-        "SD średnich: " + NS_.map(function (k) {
-          return "n = " + k + ": " + (memo[k] === undefined ? "—" : fmt(memo[k], 1));
-        }).join(" · ") + " min");
+      // jeden odczyt pod wykresem; linia przerywana na wykresie to μ
+      var s = sd(), items = [];
+      if (rel) items.push({ mark: markDash(g), text: "μ = " + fmt(MU, 0) + " min" });
+      items.push({ text: "SD(X̄) = " + (s === null ? "—" : fmt(s, 1) + " min") });
+      items.push({ text: "grupek: " + tot });
+      readout(g, PB + 62, items);
     }
 
     function render() {
       api.low.textContent = "";
       drawStage(st.last, st.last ? st.last.vals.length : 0);
-      if (api.step() >= 3) drawHist(); else drawLog();
+      if (api.step() >= 2) drawHist(); else drawLog();
     }
 
     return {
       render: render,
-      reset: function () { memo = {}; fresh(N0); render(); },
+      reset: function () { fresh(N0); render(); },
       opt: function (name, v) { if (name === "n") { fresh(Number(v)); render(); } },
       go: function (done) {
         var o = one(st.n), n = st.n;
         tween(n <= 5 ? 900 : 1200, function (u) { drawStage(o, Math.floor(n * u)); }, function () {
           var j = binOf(o.mean);
           var land = function () { add(o); commit(o); render(); done(); };
-          if (api.step() >= 3 && yfun) {
+          if (api.step() >= 2 && yfun) {
             o.no = st.k + 1; drawStage(o, n);
-            var h = api.step() >= 4 ? (st.counts[j] + 1) / ((st.k + 1) * BW) : st.counts[j] + 1;
+            var h = api.step() >= 3 ? (st.counts[j] + 1) / ((st.k + 1) * BW) : st.counts[j] + 1;
             fly(api, RX, RY + 6, PL + (j + 0.5) * (PR - PL) / NB, Math.max(PT, yfun(h)) - 8, 420, land);
           } else land();
         });
@@ -315,7 +316,7 @@
 
     // o: {t: chwila przyjścia, x: czekanie}; u: postęp animacji (undefined = koniec)
     function drawStage(o, u) {
-      var g = api.stage, step = api.step();
+      var g = api.stage;
       g.textContent = "";
       svg("line", { x1: 40, x2: 40, y1: 26, y2: AY + 10, class: "lc-sc-pole" }, g);
       svg("rect", { x: 22, y: 8, width: 36, height: 22, rx: 3, class: "lc-sc-stopsign" }, g);
@@ -326,7 +327,7 @@
         svg("text", { x: ax(m), y: AY + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(m));
       }
       svg("text", { x: (AX0 + AX1) / 2, y: AY + 36, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-        "minuty od odjazdu poprzedniego autobusu");
+        "min");
       bus(g, AX0 - 62, AY - 32, 0.3);
       var p = u === undefined ? 1 : u, arrived = p >= 1;
       bus(g, AX1 + 6, AY - 32, arrived ? 1 : 0.3, arrived && o ? "is-here" : "");
@@ -346,31 +347,24 @@
           svg("line", { x1: ax(o.t), x2: ax(o.t), y1: AY - 60, y2: AY - 50, class: "lc-sc-brk" }, g);
           svg("line", { x1: ax(T), x2: ax(T), y1: AY - 60, y2: AY - 50, class: "lc-sc-brk" }, g);
           svg("line", { x1: ax(o.t), x2: ax(T), y1: AY - 55, y2: AY - 55, class: "lc-sc-brk" }, g);
-          svg("text", { x: (ax(o.t) + ax(T)) / 2, y: AY - 62, "text-anchor": "middle", class: "lc-sc-brk-t" }, g,
-            "czeka " + f2(o.x) + " min");
         }
       }
       if (!arrived) {
         svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "pasażer nr " + (st.waits.length + 1) + " czeka…");
-      } else if (step >= 2) {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X = " + f2(o.x) + " min");
-        svg("text", { x: RX, y: RY + 18, "text-anchor": "middle", class: "lc-sc-sub" }, g, "czas czekania tego pasażera");
+          "pasażer nr " + (st.waits.length + 1) + "…");
       } else {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          "pasażer nr " + o.no + " czekał " + f2(o.x) + " min");
+        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" }, g, "X = " + f2(o.x) + " min");
       }
     }
 
     function drawLog() {
-      var g = api.low, step = api.step(), y0 = 222;
+      var g = api.low, y0 = 222;
       if (!st.log.length) { emptyNote(g, y0 + 60, "Przyjdź na przystanek, żeby zobaczyć, ile trzeba czekać."); return; }
       st.log.forEach(function (o, ri) {
         var q = svg("g", { opacity: 1 - ri * 0.13 }, g), y = y0 + ri * 28;
-        svg("text", { x: 92, y: y, class: "lc-sc-log" }, q, "pasażer " + o.no);
-        svg("text", { x: 236, y: y, class: "lc-sc-log" }, q, "przyszedł w " + f2(o.t) + " min");
-        svg("text", { x: 440, y: y, class: "lc-sc-log" }, q, "→");
-        svg("text", { x: 464, y: y, class: "lc-sc-log is-x" }, q, (step >= 2 ? "X = " : "czekał ") + f2(o.x) + " min");
+        svg("text", { x: 180, y: y, class: "lc-sc-log" }, q, "pasażer " + o.no);
+        svg("text", { x: 300, y: y, class: "lc-sc-log" }, q, "→");
+        svg("text", { x: 330, y: y, class: "lc-sc-log is-x" }, q, "X = " + f2(o.x) + " min");
       });
     }
 
@@ -381,7 +375,7 @@
     }
 
     function drawHist() {
-      var g = api.low, rel = api.step() >= 4, tot = st.waits.length;
+      var g = api.low, rel = api.step() >= 3, tot = st.waits.length;
       var vals = st.counts.map(function (c) { return rel ? (tot ? c / tot : 0) : c; });
       var top = Math.max.apply(null, vals);
       var ax2 = rel ? niceAxis(Math.max(top * 1.1, 0.15), 3) : niceAxis(Math.max(top * 1.12, 5), 4);
@@ -407,9 +401,6 @@
           svg("line", { x1: hx(C), x2: hx(C), y1: y(1 / T), y2: PB + 14, class: "lc-sc-tol-line" }, g);
         }
         svg("line", { x1: PL, x2: PR, y1: y(1 / T), y2: y(1 / T), class: "lc-sc-param" }, g);
-        svg("text", { x: PR, y: y(1 / T) - 6, "text-anchor": "end", class: "lc-sc-param-t" }, g, "model: 1/10 na każdą minutę");
-        svg("text", { x: hx(C), y: PT - 2, "text-anchor": "middle", class: "lc-sc-n is-hit" }, g,
-          h > 0 ? f2(C - h) + "–" + f2(C + h) + " min" : "dokładnie " + f2(C) + " min");
       }
       for (var m = 0; m <= T; m++) {
         svg("text", { x: hx(m), y: PB + 29, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(m));
@@ -417,23 +408,25 @@
       svg("text", { x: (PL + PR) / 2, y: PB + 47, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
         "X, czas czekania (min)");
       yTitle(g, 16, PT, PB, rel ? "częstość (przedział 1 min)" : "liczba pasażerów");
-      svg("text", { x: PL, y: PT - 14, class: "lc-sc-n" }, g, "n = " + tot);
+      // jeden odczyt pod wykresem: pole zacienionego prostokąta i udział czekań w przedziale
+      var items = [];
       if (rel) {
-        var k = hits(), wd = 2 * h;
-        svg("text", { x: W / 2, y: PB + 74, "text-anchor": "middle", class: "lc-sc-n" }, g,
-          tot ? (h > 0 ? "W przedział " + f2(C - h) + "–" + f2(C + h) + " min wpadło " : "Dokładnie " + f2(C) + " min: ")
-            + k + " z " + tot + " czekań = " + fmt(k / tot, 3)
-            : "Jeszcze nikt nie czekał.");
-        svg("text", { x: W / 2, y: PB + 94, "text-anchor": "middle", class: "lc-sc-n is-hit" }, g,
-          h > 0 ? "Pole prostokąta nad przedziałem: 1/10 × " + f2(wd) + " = " + fmt(wd / T, 3)
-            : "Pole nad jednym punktem: 1/10 × 0 = 0");
+        var mark = function (x, yy) {
+          if (h > 0) svg("rect", { x: x, y: yy - 6, width: 22, height: 12, class: "lc-sc-tol" }, g);
+          if (h > 0) svg("rect", { x: x, y: yy - 6, width: 22, height: 12, class: "lc-sc-tol-edge" }, g);
+          else svg("line", { x1: x + 11, x2: x + 11, y1: yy - 7, y2: yy + 7, class: "lc-sc-tol-line" }, g);
+        };
+        items.push({ mark: mark, text: "pole = " + fmt(2 * h / T, 3) });
+        items.push({ text: "udział = " + (tot ? fmt(hits() / tot, 3) : "—") });
       }
+      items.push({ text: "n = " + tot });
+      readout(g, PB + 72, items);
     }
 
     function render() {
       api.low.textContent = "";
       drawStage(st.last);
-      if (api.step() >= 3) drawHist(); else drawLog();
+      if (api.step() >= 2) drawHist(); else drawLog();
     }
     function one() { var t = Math.random() * T; return { t: t, x: T - t }; }
     function add(o) { st.waits.push(o.x); st.counts[Math.min(T - 1, Math.floor(o.x))] += 1; }
@@ -448,10 +441,10 @@
         var o = one();
         tween(1300, function (u) { drawStage(o, u); }, function () {
           var land = function () { add(o); commit(o); render(); done(); };
-          if (api.step() >= 3 && yfun) {
+          if (api.step() >= 2 && yfun) {
             o.no = st.waits.length + 1; drawStage(o);
             var j = Math.min(T - 1, Math.floor(o.x));
-            var h = api.step() >= 4 ? (st.counts[j] + 1) / (st.waits.length + 1) : st.counts[j] + 1;
+            var h = api.step() >= 3 ? (st.counts[j] + 1) / (st.waits.length + 1) : st.counts[j] + 1;
             fly(api, RX, RY + 6, hx(j + 0.5), Math.max(PT, yfun(h)) - 8, 420, land);
           } else land();
         });
@@ -549,18 +542,11 @@
         var cx = BL + slot * (i + 0.5);
         if (v > 0) svg("rect", { x: cx - bw / 2, y: y(v), width: bw, height: PB - y(v), class: "lc-sc-bar" + (t.prizes[i] > PRICE ? " is-hit" : "") }, g);
         if (!rel && v > 0) svg("text", { x: cx, y: y(v) - 5, "text-anchor": "middle", class: "lc-sc-val" }, g, String(v));
-        if (rel) {
-          svg("circle", { cx: cx, cy: y(t.probs[i]), r: 5.5, class: "lc-sc-theory" }, g);
-          svg("text", { x: cx, y: PB + 34, "text-anchor": "middle", class: "lc-sc-n" }, g, fmt(t.probs[i], 2));
-        }
+        if (rel) svg("circle", { cx: cx, cy: y(t.probs[i]), r: 5.5, class: "lc-sc-theory" }, g);
         svg("text", { x: cx, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick is-x" }, g, zl(t.prizes[i] - PRICE));
       });
-      svg("text", { x: (BL + BR) / 2, y: PB + (rel ? 52 : 40), "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "X, bilans losu (wygrana - cena)");
+      svg("text", { x: (BL + BR) / 2, y: PB + 40, "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "X, bilans losu (wygrana - cena)");
       yTitle(g, 16, PT, PB, rel ? "częstość względna" : "liczba losów");
-      if (rel) {
-        svg("circle", { cx: BL + 6, cy: PT - 16, r: 5.5, class: "lc-sc-theory" }, g);
-        svg("text", { x: BL + 16, y: PT - 12, class: "lc-sc-n" }, g, "P(X = x)");
-      }
 
       // prawy: bieżąca średnia bilansu; oś obejmuje wartości ujemne
       var means = st.means, k0 = Math.min(10, Math.max(0, n - 1));
@@ -588,14 +574,17 @@
       }
       svg("text", { x: RL, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick" }, g, "1");
       svg("text", { x: RR, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(Math.max(1, n)));
-      svg("text", { x: (RL + RR) / 2, y: PB + (rel ? 52 : 40), "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "liczba kupionych losów");
+      svg("text", { x: (RL + RR) / 2, y: PB + 40, "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "liczba kupionych losów");
       svg("text", { x: RR, y: PT - 12, "text-anchor": "end", class: "lc-sc-n" }, g,
         "średni bilans: " + (n ? fmt(st.sum / n, 2) + " zł" : "—") + " · losów: " + n);
       if (rel) {
-        // linia przerywana na prawym wykresie to E(X): mały wzorzec przy odczycie zamiast podpisu na wykresie
-        svg("line", { x1: W / 2 - 150, x2: W / 2 - 128, y1: PB + 80, y2: PB + 80, class: "lc-sc-param" }, g);
-        svg("text", { x: W / 2 - 120, y: PB + 85, class: "lc-sc-n" }, g,
-          "E(X) = " + fmt(m.e, 2) + " zł   ·   Var(X) = " + fmt(m.sd * m.sd, 2) + " zł²");
+        // kółka na lewym wykresie to P(X = x), linia przerywana na prawym to E(X):
+        // małe wzorce przy odczycie zamiast podpisów na wykresach
+        readout(g, PB + 72, [
+          { mark: function (x, yy) { svg("circle", { cx: x + 11, cy: yy, r: 5.5, class: "lc-sc-theory" }, g); }, text: "P(X = x)" },
+          { mark: markDash(g), text: "E(X) = " + fmt(m.e, 2) + " zł" },
+          { text: "Var(X) = " + fmt(m.sd * m.sd, 2) + " zł²" }
+        ]);
       }
     }
 

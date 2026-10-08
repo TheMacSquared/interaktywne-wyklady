@@ -40,10 +40,11 @@ ch6_ui <- list(
       label = "Prototyp sceny",
       width_mode = "text",
       scene_widget("ch6_grupka", "Zapytaj grupkę: od jednego dojazdu do rozkładu średniej",
-        steps = c("Telefon", "Średnia X̄", "Powtarzamy", "Kształt"),
-        labels = c("Zadzwoń do grupki", "Zadzwoń do grupki", "Zadzwoń do grupki", "Zadzwoń do grupki"),
+        steps = c("Średnia X̄", "Powtarzamy", "Kształt"),
+        labels = c("Zadzwoń do grupki", "Zadzwoń do grupki", "Zadzwoń do grupki"),
+        more_from = 2,
         options = list(list(name = "n", label = "Osób w grupce (n)",
-                            values = c(1, 5, 30), selected = 5, from = 3)),
+                            values = c(1, 5, 30), selected = 5, from = 2)),
         config = c(list(kind = "group", n = 5, ns = c(1, 5, 30), xmax = 90, binw = 3, height = 428,
                         aria = "Student dzwoni do grupki losowych osób i pyta o czas dojazdu; histogram średnich z kolejnych grupek"),
                    scene_commute))
@@ -287,18 +288,14 @@ ch6_server <- function(input, output, session) {
   # --- PROTOTYP SCENY (2026-10-08): Zapytaj grupkę ---
   mu_c <- scene_commute$mu
   scene_texts(input, output, "ch6_grupka", list(
-    tagList("Dzwonisz do kilku losowych osób z roku i pytasz, ile minut jadą na uczelnię. Każdy podaje inny
-      czas: ktoś mieszka obok, ktoś dojeżdża spoza miasta. Zadzwoń do kilku grupek i porównaj, co słyszysz."),
-    tagList("Z odpowiedzi jednej grupki liczymy średnią i oznaczamy ją ", tags$code("X̄", .noWS = "outside"),
-      ". Przed telefonem nie wiemy, ile wyjdzie, bo zależy to od tego, kto odbierze. Średnia z grupki jest więc
-      zmienną losową, tak jak pojedynczy czas dojazdu."),
-    tagList("Każda grupka spada żetonem nad swoją średnią. Dokładaj po 100 i 1000, a potem zmieniaj n.
-      Przy n = 1 widać rozrzut pojedynczych dojazdów, z długim ogonem w prawo. Przy n = 5 i n = 30 średnie
-      zbijają się w coraz węższą górkę, a liczba pod wykresem pokazuje, o ile mniejszy jest ich rozrzut."),
-    tagList("Wyblakłe tło to rozkład pojedynczych dojazdów, krzywa to rozkład normalny dla średnich.
-      Średnie skupiają się wokół μ = ", lc_fmt(mu_c, 0), " min, tej samej wartości co pojedyncze dojazdy.
-      Przy n = 30 histogram średnich jest symetryczny i pasuje do krzywej, choć pojedyncze dojazdy wcale
-      nie są symetryczne. Przy n = 1 krzywa nie pasuje.")
+    tagList("Dzwonisz do kilku losowych osób z roku i pytasz, ile minut jadą na uczelnię. ",
+      tags$code("X̄", .noWS = "outside"), " to średnia jednej grupki: zależy od tego, kto odbierze,
+      więc jest zmienną losową. Zadzwoń do kilku grupek."),
+    tagList("Każda grupka spada żetonem nad swoją średnią. Dołóż 100 i 1000, potem zmieniaj n
+      i patrz na SD(X̄) pod wykresem."),
+    tagList("Tło to rozkład pojedynczych dojazdów, krzywa to rozkład normalny dla X̄. Średnie skupiają się
+      wokół μ = ", lc_fmt(mu_c, 0), " min. Przy n = 30 histogram pasuje do krzywej, choć pojedyncze dojazdy
+      są skośne, przy n = 1 nie pasuje.")
   ))
 
   # --- Widget 1: Eksperyment CTG ---
