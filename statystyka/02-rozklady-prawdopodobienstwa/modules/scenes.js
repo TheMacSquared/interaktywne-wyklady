@@ -4,7 +4,6 @@
 // config.kind:
 //   "group"   telefon do n losowych osób o czas dojazdu, X̄ grupki (rozkład średniej, CTG)
 //   "bus"     pasażer przychodzi na przystanek, X = czas czekania (pole nad przedziałem, tolerancja)
-//   "streak"  rzut po passie bez szóstki (kostka nie pamięta), kontrast: talia kart bez zwracania
 //   "scratch" zdrapka z kiosku, X = wygrana (E(X) jako średnia na dłuższą metę, SD jako rozrzut)
 // Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
@@ -14,12 +13,6 @@
   var NS = "http://www.w3.org/2000/svg";
   var W = 640;
   var REDUCE = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  var PIPS = {
-    1: [[1, 1]], 2: [[0, 0], [2, 2]], 3: [[0, 0], [1, 1], [2, 2]],
-    4: [[0, 0], [2, 0], [0, 2], [2, 2]], 5: [[0, 0], [2, 0], [1, 1], [0, 2], [2, 2]],
-    6: [[0, 0], [2, 0], [0, 1], [2, 1], [0, 2], [2, 2]]
-  };
 
   function svg(name, attrs, parent, text) {
     var e = document.createElementNS(NS, name);
@@ -98,18 +91,6 @@
   function bubble(g, x, y, w, text) {
     svg("rect", { x: x, y: y, width: w, height: 24, rx: 10, class: "lc-sc-bubble" }, g);
     svg("text", { x: x + w / 2, y: y + 16, "text-anchor": "middle", class: "lc-sc-bubble-t" }, g, text);
-  }
-  function drawDie(g, x, y, d, v, on) {
-    var q = svg("g", { transform: "translate(" + x + "," + y + ")" }, g);
-    svg("rect", { width: d, height: d, rx: d * 0.17, class: "lc-sc-die" + (on ? " is-hit" : "") }, q);
-    if (v === null) {
-      svg("text", { x: d / 2, y: d / 2 + d * 0.17, "text-anchor": "middle", class: "lc-sc-q" }, q, "?");
-    } else {
-      PIPS[v].forEach(function (c) {
-        svg("circle", { cx: d * 0.21 + c[0] * d * 0.29, cy: d * 0.21 + c[1] * d * 0.29, r: d * 0.08,
-          class: "lc-sc-pip" + (on ? " is-hit" : "") }, q);
-      });
-    }
   }
   // Siatka i podziałka osi y; zwraca funkcję y(v).
   function yGrid(g, PL, PR, PT, PB, ax) {
@@ -478,195 +459,6 @@
       many: function (m, done) {
         var o;
         for (var i = 0; i < m; i++) { o = one(); add(o); }
-        commit(o); render(); done();
-      }
-    };
-  };
-
-  // =========================================================================
-  // STREAK: rzut po passie bez szóstki; kontrast: talia kart bez zwracania
-  // =========================================================================
-  KINDS.streak = function (cfg, api) {
-    var L = cfg.run || 5, LD = cfg.deckRun || 26, MODE0 = cfg.mode || "dice";
-    var PL = 90, PR = 600, PT = 206, PB = 330, RX = 375, RY = 138;
-    var RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"], SUITS = ["♠", "♥", "♦", "♣"];
-    var st;
-    function fresh(mode) { st = { mode: mode, n: 0, hit: 0, all: 0, allHit: 0, last: null, log: [] }; }
-    fresh(MODE0);
-
-    function roll() { return 1 + Math.floor(Math.random() * 6); }
-    function runDice() {
-      var r = [], s = 0;
-      while (s < L) { var v = roll(); r.push(v); s = v === 6 ? 0 : s + 1; }
-      var d = roll();
-      return { items: r, d: d, hit: d === 6 };
-    }
-    function runDeck() {
-      var sh = 0, deck = [];
-      for (var c = 0; c < 52; c++) deck.push(c);
-      for (;;) {
-        sh++;
-        for (var i = 51; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = deck[i]; deck[i] = deck[j]; deck[j] = t; }
-        var ok = true;
-        for (var k = 0; k < LD; k++) if (deck[k] % 13 === 0) { ok = false; break; }
-        if (ok) return { items: deck.slice(0, LD), d: deck[LD], hit: deck[LD] % 13 === 0, shuffles: sh };
-      }
-    }
-    function run() { return st.mode === "deck" ? runDeck() : runDice(); }
-    function add(o) {
-      st.n += 1; if (o.hit) st.hit += 1;
-      if (st.mode === "deck") { st.all += 52 * o.shuffles; st.allHit += 4 * o.shuffles; }
-      else { st.all += o.items.length + 1; st.allHit += o.items.filter(function (v) { return v === 6; }).length + (o.hit ? 1 : 0); }
-    }
-    function commit(o) { o.no = st.n; st.last = o; st.log.unshift(o); if (st.log.length > 6) st.log.pop(); }
-    function cardTxt(c) { return RANKS[c % 13] + SUITS[Math.floor(c / 13)]; }
-    function isRed(c) { var s = Math.floor(c / 13); return s === 1 || s === 2; }
-
-    function card(g, x, y, w, h, c, big, on) {
-      svg("rect", { x: x, y: y, width: w, height: h, rx: 3, class: "lc-sc-card" + (on ? " is-hit" : "") }, g);
-      if (c === null) {
-        svg("text", { x: x + w / 2, y: y + h / 2 + 8, "text-anchor": "middle", class: "lc-sc-q" }, g, "?");
-        return;
-      }
-      svg("text", { x: x + (big ? w / 2 : 2), y: y + (big ? h / 2 + 6 : 11), "text-anchor": big ? "middle" : "start",
-        class: "lc-sc-card-t" + (big ? " is-big" : "") + (isRed(c) ? " is-red" : "") + (on ? " is-hit" : "") }, g, cardTxt(c));
-    }
-
-    // shown: ile elementów serii odsłonięto; dShown: czy odsłonięto rzut decydujący
-    function drawStage(o, shown, dShown) {
-      var g = api.stage, step = api.step(), deck = st.mode === "deck";
-      g.textContent = "";
-      bubble(g, 6, 4, 152, deck ? "As się należy!" : "Szóstka się należy!");
-      person(g, 44, 54, 1.2, "is-caller");
-      var X0 = 180, XD = 562;
-      svg("text", { x: 624, y: 26, "text-anchor": "end", class: "lc-sc-sub" }, g, deck ? "karta po passie" : "rzut po passie");
-      if (!o) {
-        if (deck) card(g, XD, 34, 46, 60, null, true, false); else drawDie(g, XD, 36, 46, null, false);
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          deck ? "Talia czeka na tasowanie" : "Kostka czeka na rzut");
-        return;
-      }
-      var items = o.items.slice(0, shown);
-      if (deck) {
-        items.forEach(function (c, i) { card(g, X0 + i * 13.8, 42, 22, 32, c, false, false); });
-        if (shown >= o.items.length) {
-          svg("path", { d: "M " + X0 + " 82 v 6 H " + (X0 + 25 * 13.8 + 22) + " v -6", class: "lc-sc-brk", fill: "none" }, g);
-          svg("text", { x: (X0 + X0 + 25 * 13.8 + 22) / 2, y: 104, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-            LD + " kart bez asa (tasowanie nr " + o.shuffles + ")");
-        }
-        card(g, XD, 34, 46, 60, dShown ? o.d : null, true, dShown && o.hit);
-      } else {
-        var SHOW = 8, D = 36, GAP = 8, from = Math.max(0, items.length - SHOW), vis = items.slice(from);
-        if (from > 0) svg("text", { x: X0 - 8, y: 64, "text-anchor": "end", class: "lc-sc-read is-plain" }, g, "…");
-        vis.forEach(function (v, i) { drawDie(g, X0 + i * (D + GAP), 40, D, v, v === 6); });
-        if (shown >= o.items.length) {
-          var n = vis.length, a = X0 + (n - L) * (D + GAP), b = X0 + (n - 1) * (D + GAP) + D;
-          svg("path", { d: "M " + a + " 82 v 6 H " + b + " v -6", class: "lc-sc-brk", fill: "none" }, g);
-          svg("text", { x: (a + b) / 2, y: 104, "text-anchor": "middle", class: "lc-sc-sub" }, g, L + " rzutów bez szóstki");
-        }
-        drawDie(g, XD, 36, 46, dShown ? o.d : null, dShown && o.hit);
-      }
-      var unit = deck ? "talia" : "seria", what = deck ? "as" : "szóstka";
-      if (!dShown) {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g, unit + " nr " + (st.n + 1) + "…");
-      } else if (step >= 2) {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" + (o.hit ? "" : " is-plain") }, g,
-          o.hit ? "A zaszło: " + (deck ? cardTxt(o.d) : "6") : "A nie zaszło: " + (deck ? cardTxt(o.d) : String(o.d)));
-        svg("text", { x: RX, y: RY + 18, "text-anchor": "middle", class: "lc-sc-sub" }, g,
-          deck ? "A = as zaraz po " + LD + " kartach bez asa" : "A = szóstka zaraz po " + L + " rzutach bez szóstki");
-      } else {
-        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read is-plain" }, g,
-          unit + " nr " + o.no + ": po passie " + (o.hit ? what + "!" : (deck ? cardTxt(o.d) : String(o.d)) + ", nie " + what));
-      }
-    }
-
-    function drawLog() {
-      var g = api.low, step = api.step(), y0 = 200, deck = st.mode === "deck";
-      if (!st.log.length) { emptyNote(g, y0 + 60, deck ? "Potasuj talię i wykładaj karty." : "Rzucaj, aż przyjdzie passa bez szóstki."); return; }
-      st.log.forEach(function (o, ri) {
-        var q = svg("g", { opacity: 1 - ri * 0.13 }, g), y = y0 + ri * 28, x = 186;
-        svg("text", { x: 80, y: y, class: "lc-sc-log" }, q, (deck ? "talia " : "seria ") + o.no);
-        if (deck) {
-          svg("text", { x: x, y: y, class: "lc-sc-log" }, q, LD + " kart bez asa  |");
-          x += 186;
-          svg("text", { x: x, y: y, class: "lc-sc-log" + (o.hit ? " is-hit" : "") }, q, cardTxt(o.d));
-          x += 40;
-        } else {
-          var v = o.items, sh = v.length > 9 ? v.slice(-9) : v;
-          if (v.length > 9) { svg("text", { x: x - 16, y: y, class: "lc-sc-log" }, q, "…"); }
-          sh.forEach(function (d) { svg("text", { x: x, y: y, class: "lc-sc-log" + (d === 6 ? " is-hit" : "") }, q, String(d)); x += 20; });
-          svg("text", { x: x, y: y, class: "lc-sc-log" }, q, "|");
-          x += 16;
-          svg("text", { x: x, y: y, class: "lc-sc-log" + (o.hit ? " is-hit" : "") }, q, String(o.d));
-          x += 28;
-        }
-        svg("text", { x: x, y: y, class: "lc-sc-log" }, q, "→");
-        svg("text", { x: x + 24, y: y, class: "lc-sc-log is-x" }, q,
-          step >= 2 ? (o.hit ? "A zaszło" : "A nie zaszło") : (o.hit ? (deck ? "as" : "szóstka") : (deck ? "nie as" : "nie szóstka")));
-      });
-    }
-
-    function drawHist() {
-      var g = api.low, rel4 = api.step() >= 4, deck = st.mode === "deck";
-      var f1 = st.n ? st.hit / st.n : 0, f2 = st.all ? st.allHit / st.all : 0;
-      var p1 = deck ? 4 / (52 - LD) : 1 / 6, p2 = deck ? 4 / 52 : 1 / 6;
-      var ax = niceAxis(Math.min(1, Math.max(0.3, f1 * 1.1, f2 * 1.1)), 4);
-      var y = yGrid(g, PL, PR, PT, PB, ax);
-      var bars = [
-        { x: 245, f: f1, k: st.hit, n: st.n, p: p1, cls: "lc-sc-bar is-hit",
-          lab: deck ? "as po " + LD + " kartach bez asa" : "szóstka po passie" },
-        { x: 455, f: f2, k: st.allHit, n: st.all, p: p2, cls: "lc-sc-bar",
-          lab: deck ? "asy we wszystkich kartach" : "szóstki we wszystkich rzutach" }
-      ];
-      bars.forEach(function (b) {
-        if (b.n) svg("rect", { x: b.x - 60, y: y(b.f), width: 120, height: PB - y(b.f), class: b.cls }, g);
-        if (b.n) {
-          var inside = PB - y(b.f) > 24;
-          svg("text", { x: b.x, y: inside ? y(b.f) + 17 : y(b.f) - 6, "text-anchor": "middle",
-            class: "lc-sc-val" + (inside ? " is-in" : "") }, g, fmt(b.f, 3));
-        }
-        svg("text", { x: b.x, y: PB + 20, "text-anchor": "middle", class: "lc-sc-tick is-x" }, g, b.lab);
-        svg("text", { x: b.x, y: PB + 38, "text-anchor": "middle", class: "lc-sc-n" }, g, b.k + " z " + b.n);
-        if (rel4 && deck) {
-          svg("line", { x1: b.x - 84, x2: b.x + 84, y1: y(b.p), y2: y(b.p), class: "lc-sc-param" }, g);
-          svg("text", { x: b.x + 84, y: y(b.p) - 6, "text-anchor": "end", class: "lc-sc-param-t" }, g,
-            (b === bars[0] ? "4/" + (52 - LD) : "4/52") + " ≈ " + fmt(b.p, 3));
-        }
-      });
-      if (rel4 && !deck) {
-        svg("line", { x1: PL, x2: PR, y1: y(1 / 6), y2: y(1 / 6), class: "lc-sc-param" }, g);
-        svg("text", { x: PR, y: y(1 / 6) - 6, "text-anchor": "end", class: "lc-sc-param-t" }, g, "P(szóstka) = 1/6 ≈ 0.167");
-      }
-      yTitle(g, 30, PT, PB, "częstość względna");
-      svg("text", { x: PR, y: PT - 12, "text-anchor": "end", class: "lc-sc-n" }, g,
-        (deck ? "talii z passą: " : "serii: ") + st.n + (deck ? " · kart wyłożonych: " : " · rzutów: ") + st.all);
-    }
-
-    function render() {
-      api.low.textContent = "";
-      var o = st.last;
-      drawStage(o, o ? o.items.length : 0, !!o);
-      if (api.step() >= 3) drawHist(); else drawLog();
-    }
-
-    return {
-      render: render,
-      label: function () { return st.mode === "deck" ? "Tasuj i wykładaj" : null; },
-      reset: function () { fresh(MODE0); render(); },
-      opt: function (name, v) { if (name === "mode") { fresh(v); render(); } },
-      go: function (done) {
-        var o = run(), len = o.items.length, deck = st.mode === "deck";
-        var per = deck ? 45 : 150, ms = len * per;
-        tween(ms, function (u) { drawStage(o, Math.min(len, Math.floor(len * u) + 1), false); }, function () {
-          drawStage(o, len, false);
-          setTimeout(function () {
-            add(o); commit(o); render(); done();
-          }, REDUCE ? 0 : 450);
-        });
-      },
-      many: function (m, done) {
-        var o;
-        for (var i = 0; i < m; i++) { o = run(); add(o); }
         commit(o); render(); done();
       }
     };

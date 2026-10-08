@@ -53,19 +53,6 @@
 .lc-sc-rug { stroke: var(--upwr-ink-subtle); stroke-width: 1; opacity: .25; }
 .lc-sc-rug.is-hit { stroke: var(--upwr-accent); opacity: 1; stroke-width: 1.4; }
 
-/* kostki i karty */
-.lc-sc-die { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
-.lc-sc-die.is-hit { fill: var(--upwr-accent-tint); stroke: var(--upwr-accent); stroke-width: 3; }
-.lc-sc-pip { fill: var(--upwr-ink); }
-.lc-sc-pip.is-hit { fill: var(--upwr-accent); }
-.lc-sc-q { font: 700 24px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
-.lc-sc-card { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
-.lc-sc-card.is-hit { fill: var(--upwr-accent-tint); stroke: var(--upwr-accent); stroke-width: 3; }
-.lc-sc-card-t { font: 600 9px var(--upwr-mono); fill: var(--upwr-ink); }
-.lc-sc-card-t.is-big { font: 700 18px var(--upwr-mono); }
-.lc-sc-card-t.is-red { fill: var(--upwr-cat-terakota, #b5523b); }
-.lc-sc-card-t.is-hit { fill: var(--upwr-accent); }
-
 /* kiosk i zdrapka */
 .lc-sc-awning { fill: var(--upwr-accent); opacity: .8; }
 .lc-sc-awning.is-alt { fill: var(--upwr-surface); opacity: 1; stroke: var(--upwr-rule); }

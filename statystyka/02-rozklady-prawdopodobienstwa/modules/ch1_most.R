@@ -87,20 +87,6 @@ ch1_ui <- list(
       nadwyżki i niedobory toną w coraz większej liczbie rzutów, a nie
       dlatego, że ktoś je odrabia."),
 
-    # PROTOTYP SCENY (2026-10-08): Rzuć po passie (kostka nie pamięta)
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch1_passa", "Rzut po passie: czy szóstka się należy?",
-        steps = c("Passa", "Zdarzenie A", "Powtarzamy", "Bez pamięci"),
-        labels = c("Rzucaj do passy", "Rzucaj do passy", "Rzucaj do passy", "Rzucaj do passy"),
-        options = list(list(name = "mode", label = "Losowanie",
-                            values = c("Kostka" = "dice", "Talia kart" = "deck"),
-                            selected = "dice", from = 4)),
-        config = list(kind = "streak", run = 5, deckRun = 26, mode = "dice", height = 400,
-                      aria = "Gracz rzuca kostką aż do passy pięciu rzutów bez szóstki i sprawdza następny rzut; częstość szóstek po passie obok częstości wszystkich szóstek"))
-    ),
-
     # ========================================================================
     # WIDGET 0: Rozkład empiryczny vs teoretyczny
     # ========================================================================
@@ -283,20 +269,6 @@ ch1_ui <- list(
 # --------------------------------------------------------------------------
 
 ch1_server <- function(input, output, session) {
-
-  # --- PROTOTYP SCENY (2026-10-08): Rzuć po passie ---
-  scene_texts(input, output, "ch1_passa", list(
-    tagList("Gracz rzuca kostką i czeka, aż szóstka „się należy”: po pięciu rzutach z rzędu bez szóstki
-      stawia na to, że teraz wypadnie. Rzucaj do passy i patrz na rzut po passie."),
-    tagList("Rzut po passie albo daje szóstkę, albo nie. Nazwijmy to zdarzenie ", tags$code("A", .noWS = "outside"),
-      ": szóstka zaraz po pięciu rzutach bez szóstki. Gracz uważa, że ", tags$code("A", .noWS = "outside"),
-      " zdarza się częściej niż zwykła szóstka."),
-    tagList("Lewy słupek to częstość szóstek w rzutach po passie, prawy to częstość szóstek we wszystkich
-      rzutach. Dołóż 100 i 1000 serii: oba słupki stają na tej samej wysokości."),
-    tagList("Oba słupki są przy 1/6. Kostka nie pamięta poprzednich rzutów, więc passa niczego nie zmienia.
-      Przełącz na talię kart: wykładamy karty bez zwracania i patrzymy na kartę po 26 kartach bez asa.
-      Tu asy czekają w mniejszej, pozostałej części talii, więc szansa naprawdę rośnie z 4/52 do 4/26.")
-  ))
 
   # --- Widget 0: Rozkład empiryczny vs teoretyczny ---
   emp_resample_trigger <- reactiveVal(0)
