@@ -170,7 +170,7 @@ source(file.path(app_dir, "modules", "ch8_cwiczenia.R"),  local = TRUE)
 # App-specyficzne extras — przekazywane do lecture_page() jako header_extras
 # (CSS i JS layoutu są już inkludowane przez lecture_page)
 app_extras <- tagList(
-  # Sceny SVG (prototyp: autobusy w rozdz. 4)
+  # Sceny SVG (autobusy w rozdz. 4, Ryc. 4.1)
   tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
   includeScript(file.path(app_dir, "modules", "scenes.js")),
   tags$style(HTML("

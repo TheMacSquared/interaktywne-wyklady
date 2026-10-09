@@ -2,7 +2,7 @@
 # CHAPTER 4: Statystyki rozrzutu
 # ============================================================================
 
-# Świat autobusów (prototyp sceny): 1000 kursów każdej linii,
+# Świat autobusów (scena, Ryc. 4.1): 1000 kursów każdej linii,
 # średnie spóźnienie 2 min. Ziarno ustawiane lokalnie, bez ruszania globalnego RNG.
 ch4_bus_world <- function() {
   old <- if (exists(".Random.seed", envir = globalenv())) get(".Random.seed", envir = globalenv())
@@ -55,9 +55,9 @@ ch4_ui <- list(
       średnim spóźnieniu, równym 2 minuty. Scena losuje kursy z 1000
       symulowanych przyjazdów każdej linii."),
 
-    # PROTOTYP SCENY (2026-10-08): czekanie na autobus A/K
+    # Scena: czekanie na autobus A/K
     figure_panel(
-      label = "Prototyp sceny",
+      label = "Ryc. 4.1",
       width_mode = "text",
       scene_widget("ch4_bus_scene",
         title = "Czekanie na autobus — ta sama średnia, inne ryzyko",
@@ -128,7 +128,7 @@ ch4_ui <- list(
       i odchylenie standardowe."),
 
     figure_panel(
-      label = "Ryc. 4.1",
+      label = "Ryc. 4.2",
       lc_step_widget("ch4_sd",
         title = "Obliczanie odchylenia standardowego",
         steps = c("Dane", "Odchylenia od średniej", "Wariancja i SD"),
@@ -164,7 +164,7 @@ ch4_ui <- list(
       i podaje, jaki odsetek danych naprawdę w nich leży."),
 
     figure_panel(
-      label = "Ryc. 4.2",
+      label = "Ryc. 4.3",
       title = "Reguła 68–95–99.7 — czy zawsze działa?",
       selectInput("ch4_emp_var", "Wybierz zmienną:",
         choices = c("Wzrost (cm)" = "wzrost",
@@ -220,7 +220,7 @@ ch4_ui <- list(
       i 200 cm."),
 
     figure_panel(
-      label = "Ryc. 4.3",
+      label = "Ryc. 4.4",
       lc_step_widget("ch4_bp",
         title = "Wykres pudełkowy — budowa krok po kroku",
         steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
@@ -258,7 +258,7 @@ ch4_ui <- list(
       na płeć albo kierunek studiów; pod wykresem są statystyki każdej grupy."),
 
     figure_panel(
-      label = "Ryc. 4.4",
+      label = "Ryc. 4.5",
       title = "Wykresy pudełkowe w grupach",
       lc_toolbar(
         selectInput("ch4_grp_var", "Zmienna ilościowa",
@@ -306,7 +306,7 @@ ch4_ui <- list(
       maksimum."),
 
     figure_panel(
-      label = "Ryc. 4.5",
+      label = "Ryc. 4.6",
       title = "Porównanie miar rozrzutu i ich odporności",
       lc_toolbar(
         lc_action("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
@@ -358,7 +358,7 @@ ch4_ui <- list(
       z ankiety (po lewej) z ich współczynnikami zmienności (po prawej)."),
 
     figure_panel(
-      label = "Ryc. 4.6",
+      label = "Ryc. 4.7",
       title = "Porównanie zmienności między zmiennymi",
       lc_plots(
         tags$div(
@@ -403,7 +403,7 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 1: Bus scene ---
 
-  # Prototyp sceny: teksty kroków liczone z tego samego świata autobusów.
+  # Scena: teksty kroków liczone z tego samego świata autobusów.
   local({
     scene_texts(input, output, "ch4_bus_scene", list(
       tagList("Odjazd wg rozkładu 7:45, jazda 10 minut, zajęcia o 8:00. Poczekaj kilka
