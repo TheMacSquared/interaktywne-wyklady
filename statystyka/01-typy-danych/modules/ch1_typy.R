@@ -178,7 +178,8 @@ ch1_ui <- list(
     ),
 
     lc_p("Dla obu zmiennych jakościowych właściwy jest wykres słupkowy z liczebnością
-      każdej kategorii. W ankiecie jest 109 kobiet i 91 mężczyzn; najczęstsza
+      każdej kategorii. W ankiecie jest 99 kobiet, 82 mężczyzn i 13 osób
+      niebinarnych, a 6 osób nie chciało podać płci; najczęstsza
       odpowiedź o zadowolenie to „Neutralny” (70 osób), a skrajne
       „Bardzo niezadowolony” wybrało tylko 7. Przy zmiennej porządkowej słupki
       stoją w kolejności kategorii, przy nominalnej kolejność jest umowna.

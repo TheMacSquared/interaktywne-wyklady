@@ -291,12 +291,14 @@ ch4_ui <- list(
       uiOutput("ch4_grp_table")
     ),
 
-    lc_p("Przy podziale wzrostu według płci pudełka się nie nakładają: Q3 kobiet
-      wynosi 170.5 cm, a Q1 mężczyzn 172.2 cm. Mediany to 166.4 i 177.1 cm.
-      Zwróć uwagę na rozrzut. Odchylenie standardowe w grupach wynosi 6.0 cm
-      u kobiet i 6.5 cm u mężczyzn, a w całej próbie 8.1 cm. Część rozrzutu
-      całej próby bierze się z różnicy między grupami, a nie ze zmienności
-      wewnątrz nich."),
+    lc_p("Przy podziale wzrostu według płci pudełka kobiet i mężczyzn się
+      nie nakładają: Q3 kobiet wynosi 170.1 cm, a Q1 mężczyzn 172.1 cm.
+      Mediany to 166.0 i 177.1 cm. Zwróć uwagę na rozrzut. Odchylenie
+      standardowe w grupach wynosi 6.1 cm u kobiet i 6.4 cm u mężczyzn,
+      a w całej próbie 8.1 cm. Część rozrzutu całej próby bierze się z różnicy
+      między grupami, a nie ze zmienności wewnątrz nich. Pudełka osób
+      niebinarnych (13) i osób, które nie podały płci (6), powstały z kilku
+      pomiarów, więc ich kwartyle są mało pewne."),
 
     lc_p("Podział według kierunku daje inny obraz. Mediany wzrostu na czterech
       kierunkach mieszczą się między 169.3 a 171.3 cm, a pudełka w dużej
@@ -945,6 +947,7 @@ ch4_server <- function(input, output, session) {
     }
 
     p + scale_fill_upwr() +
+      scale_x_discrete(labels = scales::label_wrap(12)) +
       labs(x = grp_label, y = var_label) +
             theme(legend.position = "none")
   }))

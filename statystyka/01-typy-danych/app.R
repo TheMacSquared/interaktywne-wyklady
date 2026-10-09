@@ -76,6 +76,19 @@ student_data <- data.frame(
   stringsAsFactors = FALSE
 )
 
+# Ankietowa płeć ma cztery odpowiedzi. Część osób przeetykietowujemy dopiero
+# tutaj, żeby nie zmieniać losowań wcześniejszych kolumn (wzrost i waga
+# zależą od pierwotnego losowania płci).
+plec_u <- runif(n)
+plec_ankieta <- as.character(student_data$plec)
+plec_ankieta[plec_u < 0.04] <- "Niebinarna"
+plec_ankieta[plec_u >= 0.04 & plec_u < 0.08] <- "Odmowa odpowiedzi"
+student_data$plec <- factor(
+  plec_ankieta,
+  levels = c("Kobieta", "Mężczyzna", "Niebinarna", "Odmowa odpowiedzi")
+)
+rm(plec_u, plec_ankieta)
+
 # ============================================================================
 # METADANE ZMIENNYCH
 # ============================================================================

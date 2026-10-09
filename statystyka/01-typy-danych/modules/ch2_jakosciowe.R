@@ -270,8 +270,8 @@ ch2_ui <- list(
     lc_h2("ch2-krzyzowa", "Tabela krzyżowa — dwie zmienne jednocześnie"),
 
     lc_p("Dotąd każdą zmienną opisywaliśmy osobno. Często jednak pytamy
-      o związek dwóch zmiennych jakościowych, na przykład o to, czy kobiety
-      i mężczyźni wybierają te same kierunki. Do tego służy tabela krzyżowa,
+      o związek dwóch zmiennych jakościowych, na przykład o to, czy osoby
+      różnej płci wybierają te same kierunki. Do tego służy tabela krzyżowa,
       zwana też ", gloss("tabela kontyngencji", "tabelą kontyngencji"), ".
       Jej wiersze to kategorie jednej zmiennej, kolumny to kategorie drugiej,
       a w każdej komórce stoi liczba osób, które mają obie cechy jednocześnie.
@@ -315,19 +315,22 @@ ch2_ui <- list(
       lc_plot("ch2_cross_plot")
     ),
 
-    lc_p("Same liczebności łatwo źle odczytać. W ankiecie jest 109 kobiet
-      i 91 mężczyzn, więc kobiet jest więcej na prawie każdym kierunku
-      (na Informatyce 33 wobec 27) przede wszystkim dlatego, że jest ich więcej
-      w całej próbie. Żeby porównać grupy różnej wielkości, przechodzimy
-      na procenty."),
+    lc_p("Same liczebności łatwo źle odczytać. W ankiecie jest 99 kobiet
+      i 82 mężczyzn, więc kobiet jest więcej na każdym kierunku
+      (na Informatyce 31 wobec 26) przede wszystkim dlatego, że jest ich więcej
+      w całej próbie. Osób niebinarnych jest 13, a 6 osób nie chciało podać
+      płci, więc w ich wierszach stoją pojedyncze liczby. Żeby porównać grupy
+      różnej wielkości, przechodzimy na procenty."),
 
     lc_p("Procenty wierszowe pokazują, jak rozkładają się kierunki w obrębie
-      każdej płci: Informatykę studiuje 30.3% kobiet i 29.7% mężczyzn,
-      Psychologię 18.3% kobiet i 22.0% mężczyzn. Procenty kolumnowe pokazują
-      skład płci na każdym kierunku: kobiety stanowią od 50.0% studentów
-      Psychologii do 57.1% studentów Ekonomii. Rozkłady kierunków u kobiet
+      każdej płci: Informatykę studiuje 31.3% kobiet i 31.7% mężczyzn,
+      Psychologię 19.2% kobiet i 20.7% mężczyzn. Procenty kolumnowe pokazują
+      skład płci na każdym kierunku: kobiety stanowią od 47.1% osób
+      na Biologii do 51.7% na Informatyce. Rozkłady kierunków u kobiet
       i mężczyzn są do siebie podobne, więc w tej próbie wybór kierunku
-      niewiele zależy od płci. To, które procenty policzyć, zależy od pytania:
+      niewiele zależy od płci. W małych grupach procenty skaczą: Biologię
+      studiuje 38.5% osób niebinarnych, ale to 5 osób na 13, a każda osoba
+      więcej lub mniej przesuwa wynik o prawie 8 punktów procentowych. To, które procenty policzyć, zależy od pytania:
       zmienna, której grupy porównujemy, wyznacza kierunek procentowania."),
 
     # ========================================================================
@@ -914,6 +917,8 @@ ch2_server <- function(input, output, session) {
       ggplot(heat_df, aes(x = Kolumna, y = Wiersz, fill = Wartosc)) +
         geom_tile(color = "white", linewidth = 1.5) +
         scale_fill_upwr_seq(variant = "burgundy", name = fill_label) +
+        scale_x_discrete(labels = scales::label_wrap(12)) +
+        scale_y_discrete(labels = scales::label_wrap(12)) +
         labs(x = col_label[col_var], y = row_label[row_var]) +
                 theme(
           panel.grid = element_blank(),
@@ -924,6 +929,7 @@ ch2_server <- function(input, output, session) {
       ggplot(df, aes(x = row, fill = col)) +
         geom_bar(position = "dodge", alpha = 0.85, color = "white") +
         scale_fill_upwr() +
+        scale_x_discrete(labels = scales::label_wrap(12)) +
         labs(x = row_label[row_var], y = "Liczebność", fill = col_label[col_var]) +
         theme(legend.position = "none")
     }

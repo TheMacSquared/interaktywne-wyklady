@@ -62,12 +62,16 @@ render_good_plot <- function(x, label, type) {
   df <- data.frame(x = x)
 
   if (type %in% c("nominalna", "porzadkowa")) {
+    # Przy kilku kategoriach długie etykiety łamiemy, przy wielu obracamy.
+    rotate <- nlevels(factor(x)) > 4
     ggplot(df, aes(x = x)) +
       geom_bar(fill = col, color = NA) +
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
+      scale_x_discrete(labels = if (rotate) waiver() else scales::label_wrap(12)) +
       scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
       labs(x = label, y = "Liczebność") +
-      theme(axis.text.x = element_text(angle = if (nlevels(factor(x)) > 4) 30 else 0, hjust = 1))
+      theme(axis.text.x = element_text(angle = if (rotate) 30 else 0,
+                                       hjust = if (rotate) 1 else 0.5))
   } else if (type == "ilosciowa_dyskretna") {
     ggplot(df, aes(x = factor(x))) +
       geom_bar(fill = col, color = NA) +
