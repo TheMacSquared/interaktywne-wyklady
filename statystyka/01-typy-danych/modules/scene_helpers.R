@@ -2,7 +2,9 @@
 # Skopiowane ze statystyki 00 (modules/helpers.R): scene_widget(), scene_texts().
 
 # options: lista list(name, label, values = c(etykieta = "wartość"), selected, from)
-scene_widget <- function(id, title, steps, config, labels, options = NULL,
+# extra: dodatkowe kontrolki na końcu paska (np. lc_step_from(3, lc_slider(...)));
+#   scena czyta je sama przez shiny:inputchanged, serwer R ich nie potrzebuje.
+scene_widget <- function(id, title, steps, config, labels, options = NULL, extra = NULL,
                          more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000")) {
   lc_step_widget(id,
     title = title,
@@ -29,7 +31,8 @@ scene_widget <- function(id, title, steps, config, labels, options = NULL,
           lapply(seq_along(more), function(i) tags$button(type = "button",
             `data-sc-act` = unname(more[[i]]), names(more)[[i]]))
         )
-      )
+      ),
+      extra
     ),
     body = tags$div(class = "lc-sc",
       `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA))

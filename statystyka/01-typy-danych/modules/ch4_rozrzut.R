@@ -2,7 +2,7 @@
 # CHAPTER 4: Statystyki rozrzutu
 # ============================================================================
 
-# Świat autobusów (Ryc. 4.1 i prototyp sceny): 1000 kursów każdej linii,
+# Świat autobusów (prototyp sceny): 1000 kursów każdej linii,
 # średnie spóźnienie 2 min. Ziarno ustawiane lokalnie, bez ruszania globalnego RNG.
 ch4_bus_world <- function() {
   old <- if (exists(".Random.seed", envir = globalenv())) get(".Random.seed", envir = globalenv())
@@ -47,7 +47,13 @@ ch4_ui <- list(
     # ====================================================================
     lc_h2("ch4-srednia", "Średnia to nie wszystko"),
 
-    lc_p("Zacznijmy od przystanku, na którym codziennie czekasz na autobus na zajęcia."),
+    lc_p("Zacznijmy od przystanku, na którym codziennie czekasz na autobus na zajęcia.
+      Autobus odjeżdża według rozkładu o 7:45, jazda trwa 10 minut, a zajęcia
+      zaczynają się o 8:00. Pasażer ma więc 5 minut zapasu: spóźnienie autobusu
+      x do 5 minut nic nie zmienia, każda minuta ponad to jest minutą spóźnienia
+      na zajęcia. Do przystanku dojeżdżają dwie linie, A i K, o tym samym
+      średnim spóźnieniu, równym 2 minuty. Scena losuje kursy z 1000
+      symulowanych przyjazdów każdej linii."),
 
     # PROTOTYP SCENY (2026-10-08): czekanie na autobus A/K
     figure_panel(
@@ -61,55 +67,35 @@ ch4_ui <- list(
         options = list(list(name = "line", label = "Linia",
                             values = c("A" = "A", "K" = "B"),
                             selected = "A", from = 1)),
+        extra = lc_step_from(3,
+          lc_slider("ch4_bus_buffer", "Zapas (minuty)", 0, 15, ch4_bus_limit, 1)
+        ),
         config = list(
           kind = "bus", height = 512,
           a = round(ch4_bus$a, 2), b = round(ch4_bus$b, 2),
-          dep = 7 * 60 + 45, limit = ch4_bus_limit,
+          dep = 7 * 60 + 45, limit = ch4_bus_limit, limit_input = "ch4_bus_buffer",
           mean = round(mean(ch4_bus$a), 1), xmax = 25,
           aria = "Student czeka na przystanku na autobus linii A albo K; każde spóźnienie trafia do histogramu swojej linii."
         )
       )
     ),
 
-    lc_p("Wyobraź sobie dwie linie autobusowe o tym samym średnim spóźnieniu,
-      równym 2 minuty. Na linii A prawie każdy kurs przyjeżdża z niewielkim,
-      podobnym opóźnieniem. Na linii K większość kursów jest niemal punktualna,
-      ale co jakiś czas autobus spóźnia się bardzo. Panel pokazuje rozkłady
-      spóźnień z 1000 symulowanych kursów każdej linii. Odczyty nad wykresem
-      podają odchylenie standardowe, miarę rozrzutu, którą zdefiniujemy
-      w następnej sekcji."),
+    lc_p("Odczyty pod histogramami podają odchylenie standardowe, miarę rozrzutu,
+      którą zdefiniujemy w następnej sekcji. Na linii A prawie każdy kurs
+      przyjeżdża z podobnym, niewielkim opóźnieniem: odchylenie standardowe wynosi 0.7 min, a najgorszy z 1000
+      kursów spóźnia się o 4.9 min. Pasażer linii A zawsze zdąży. Linia K
+      zwykle przyjeżdża szybciej: połowa kursów spóźnia się najwyżej o 0.7 min.
+      Ma jednak długi prawy ogon i odchylenie standardowe 3.0 min. Spóźnienie
+      ponad 5 minut zdarza się w 12.3% kursów, czyli mniej więcej raz na osiem
+      dni, a pasażer dociera wtedy na zajęcia średnio 3.7 min po czasie."),
 
-    figure_panel(
-      label = "Ryc. 4.1",
-      lc_step_widget("ch4_spread",
-        title = "Dwie linie autobusowe — ta sama średnia, inny rozrzut",
-        steps = c("Dwie linie", "Inny rozrzut", "Wcześniejsze wyjście",
-                  "Konsekwencje"),
-        toolbar = lc_toolbar(
-          lc_step_from(3,
-            lc_slider("ch4_spread_buffer", "Wyjście wcześniej o (minuty)", 0, 15, 3, 1)
-          ),
-          lc_readouts(uiOutput("ch4_spread_reads"))
-        ),
-        plot_id = "ch4_spread_plot",
-        ratio = "2/1"
-      )
-    ),
-
-    lc_p("Krzywa linii A jest wąska i wysoka: prawie wszystkie spóźnienia
-      mieszczą się między 0 a 4 minutami, a odchylenie standardowe wynosi
-      0.7 min. Krzywa linii K ma ostry szczyt tuż przy zerze i długi prawy ogon,
-      a jej odchylenie standardowe to 3.0 min. Na linii K 3.4% kursów spóźnia
-      się o ponad 10 minut, średnio o 13.1 min. Na linii A takie spóźnienie
-      się nie zdarza."),
-
-    lc_p("Dla pasażera to różnica zasadnicza. Linia A jest przewidywalna: wiadomo,
-      kiedy autobus przyjedzie. Na linii K zwykle czeka się krócej, ale trzeba
-      liczyć się z tym, że raz na kilkadziesiąt kursów pasażer spóźni się na zajęcia.
-      Widać to po zapasie czasu: przy wyjściu 3 minuty wcześniej linią A
-      dojeżdża się na czas w 92% kursów, linią K w 77%. Żeby dojechać na czas
-      w 99% kursów, na linii A wystarczą 4 minuty zapasu, na linii K potrzeba
-      około 14. Średnia tej różnicy nie widzi. Potrzebujemy liczby, która ją zmierzy."),
+    lc_p("Ryzyko zależy też od zapasu, który w ostatnim kroku sceny zmienia
+      suwak. Gdyby pasażer jeździł kursem o 7:40, z 10 minutami zapasu, linia K
+      spóźniałaby go w 3.4% dni, a kursem o 7:35 w 0.7%. Na linii A zapas
+      można za to skrócić: przy 3 minutach student zdąży w 92% dni, a linią K
+      w 77%. Żeby dojechać na czas w 99% dni, na linii A wystarczą 4 minuty
+      zapasu, na linii K potrzeba około 14. Średnia tej różnicy nie widzi.
+      Potrzebujemy liczby, która ją zmierzy."),
 
     # ====================================================================
     # WIDGET 2: SD step-by-step
@@ -142,7 +128,7 @@ ch4_ui <- list(
       i odchylenie standardowe."),
 
     figure_panel(
-      label = "Ryc. 4.2",
+      label = "Ryc. 4.1",
       lc_step_widget("ch4_sd",
         title = "Obliczanie odchylenia standardowego",
         steps = c("Dane", "Odchylenia od średniej", "Wariancja i SD"),
@@ -178,7 +164,7 @@ ch4_ui <- list(
       i podaje, jaki odsetek danych naprawdę w nich leży."),
 
     figure_panel(
-      label = "Ryc. 4.3",
+      label = "Ryc. 4.2",
       title = "Reguła 68–95–99.7 — czy zawsze działa?",
       selectInput("ch4_emp_var", "Wybierz zmienną:",
         choices = c("Wzrost (cm)" = "wzrost",
@@ -234,7 +220,7 @@ ch4_ui <- list(
       i 200 cm."),
 
     figure_panel(
-      label = "Ryc. 4.4",
+      label = "Ryc. 4.3",
       lc_step_widget("ch4_bp",
         title = "Wykres pudełkowy — budowa krok po kroku",
         steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
@@ -272,7 +258,7 @@ ch4_ui <- list(
       na płeć albo kierunek studiów; pod wykresem są statystyki każdej grupy."),
 
     figure_panel(
-      label = "Ryc. 4.5",
+      label = "Ryc. 4.4",
       title = "Wykresy pudełkowe w grupach",
       lc_toolbar(
         selectInput("ch4_grp_var", "Zmienna ilościowa",
@@ -320,7 +306,7 @@ ch4_ui <- list(
       maksimum."),
 
     figure_panel(
-      label = "Ryc. 4.6",
+      label = "Ryc. 4.5",
       title = "Porównanie miar rozrzutu i ich odporności",
       lc_toolbar(
         lc_action("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
@@ -372,7 +358,7 @@ ch4_ui <- list(
       z ankiety (po lewej) z ich współczynnikami zmienności (po prawej)."),
 
     figure_panel(
-      label = "Ryc. 4.7",
+      label = "Ryc. 4.6",
       title = "Porównanie zmienności między zmiennymi",
       lc_plots(
         tags$div(
@@ -415,15 +401,7 @@ ch4_ui <- list(
 
 ch4_server <- function(input, output, session) {
 
-  # --- Widget 1: Bus scenario ---
-
-  # Krok widgetu (1..4) żyje w przeglądarce; suwak działa od kroku 3.
-  # Zapas = o ile minut wcześniej pasażer wychodzi; dojedzie na czas,
-  # gdy spóźnienie autobusu nie przekracza zapasu.
-  ch4_spread_step <- lc_step_server("ch4_spread", input)$step
-
-  # Helper: generate bus delay data (deterministic seed)
-  ch4_bus_data <- function() ch4_bus
+  # --- Widget 1: Bus scene ---
 
   # Prototyp sceny: teksty kroków liczone z tego samego świata autobusów.
   local({
@@ -432,101 +410,11 @@ ch4_server <- function(input, output, session) {
         razy na linii A, potem na K. Spóźnienie x liczymy od godziny z rozkładu."),
       tagList("Każde czekanie trafia do histogramu swojej linii (każdy ma własną skalę
         wysokości). Zbierz po kilkaset kursów na obu liniach i porównaj kształty."),
-      tagList("Przerywana linia to średnia, wspólna dla obu linii. Na prawo od ",
-        ch4_bus_limit, " minut nie zdążysz na zajęcia. Porównaj SD i odsetek takich
-        kursów pod wykresem: średnia nie mówi, czy zdążysz.")
+      tagList("Przerywana linia to średnia, wspólna dla obu linii. Na prawo od
+        granicy zapasu nie zdążysz na zajęcia. Suwak zmienia zapas: większy zapas
+        to wcześniejszy kurs. Porównaj odsetek spóźnień pod wykresem: średnia
+        nie mówi, czy zdążysz.")
     ))
-  })
-
-  # Odczyty SD zastępują legendę: kolor odczytu = kolor linii.
-  output$ch4_spread_reads <- renderUI({
-    bus <- ch4_bus_data()
-    tagList(
-      lc_readout("Linia A", paste0("SD = ", lc_fmt(bus$sd_a, 1), " min"),
-                 color = STEP_ROLES$data$colour, swatch = TRUE),
-      lc_readout("Linia K", paste0("SD = ", lc_fmt(bus$sd_b, 1), " min"),
-                 color = STEP_ROLES$group$colour, swatch = TRUE)
-    )
-  })
-
-  zoom_plot_server("ch4_spread_plot", reactive({
-    step <- ch4_spread_step()
-
-    buffer <- input$ch4_spread_buffer
-    req(!is.null(buffer))
-    bus <- ch4_bus_data()
-
-    dens_a <- density(bus$a, from = -3, to = 30, n = 500)
-    dens_b <- density(bus$b, from = -3, to = 30, n = 500)
-    df_a <- data.frame(x = dens_a$x, y = dens_a$y)
-    df_b <- data.frame(x = dens_b$x, y = dens_b$y)
-    # Stała rama: oś Y z obu krzywych, wspólna dla kroków.
-    y_hi <- max(df_a$y, df_b$y) * 1.08
-
-    p <- ggplot(mapping = aes(x = x, y = y)) +
-      step_line("known", xintercept = 2) +
-      step_layer(geom_vline, "known", xintercept = 0, linewidth = 0.5, alpha = 0.5)
-
-    if (step >= 3) {
-      cutoff <- buffer
-      shade_a <- df_a[df_a$x <= cutoff, ]
-      shade_b <- df_b[df_b$x <= cutoff, ]
-
-      p <- p +
-        geom_area(data = shade_a, fill = STEP_ROLES$data$colour, alpha = 0.25) +
-        geom_area(data = shade_b, fill = STEP_ROLES$group$colour, alpha = 0.15) +
-        step_line(step_role(step, 3), xintercept = cutoff)
-    }
-
-    p +
-      step_layer(geom_line, "data", data = df_a, linewidth = 1.2, alpha = 1) +
-      step_layer(geom_line, "group", data = df_b, linewidth = 1.2, alpha = 1) +
-      labs(x = "Spóźnienie (minuty)    ← za wcześnie | za późno →",
-           y = "Gęstość") +
-      step_frame(xlim = c(-3, 25), ylim = c(0, y_hi))
-  }))
-
-  output$ch4_spread_text <- renderUI({
-    step <- ch4_spread_step()
-    buffer <- input$ch4_spread_buffer
-    bus <- ch4_bus_data()
-
-    if (step == 1) {
-      "Obie linie mają średnie spóźnienie 2 minuty. Patrząc tylko na średnią,
-       są identyczne."
-    } else if (step == 2) {
-      pct_10_a <- round(mean(bus$a > 10) * 100, 1)
-      pct_10_b <- round(mean(bus$b > 10) * 100, 1)
-      mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
-      tagList(
-        tags$strong("Spóźnienia ponad 10 min:"),
-        paste0(" linia A — ", lc_fmt(pct_10_a, 1), "% kursów; linia K — ",
-               lc_fmt(pct_10_b, 1), "% kursów",
-               if (pct_10_b > 0) paste0(" (średnio ", lc_fmt(mean_late_b, 1), " min)") else "",
-               ".")
-      )
-    } else if (step == 3) {
-      lbl <- if (buffer == 0) "bez zapasu" else paste0(buffer, " min wcześniej")
-      paste0("Wyjście ", lbl,
-             ". Zacieniowany obszar to kursy spóźnione najwyżej o tyle, ",
-             "ile wynosi zapas — z nimi pasażer dojedzie na czas.")
-    } else if (step == 4) {
-      prob_a <- mean(bus$a <= buffer)
-      prob_b <- mean(bus$b <= buffer)
-      pct_10_b <- round(mean(bus$b > 10) * 100, 1)
-      mean_late_b <- if (any(bus$b > 10)) round(mean(bus$b[bus$b > 10]), 1) else 0
-      lbl <- if (buffer == 0) "bez zapasu" else paste0(buffer, " min wcześniej")
-      tagList(
-        paste0("Wyjście ", lbl, ". Na czas dojedzie się linią A w ",
-               lc_fmt(prob_a * 100, 1), "% kursów, linią K w ",
-               lc_fmt(prob_b * 100, 1), "%."),
-        if (pct_10_b > 0) tagList(
-          tags$br(),
-          paste0("Gdy linia K spóźnia się ponad 10 min (", lc_fmt(pct_10_b, 1),
-                 "% kursów), czeka się średnio ", lc_fmt(mean_late_b, 1), " min.")
-        )
-      )
-    }
   })
 
   # --- Widget 2: SD step-by-step ---

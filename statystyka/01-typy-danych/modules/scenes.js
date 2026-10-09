@@ -41,9 +41,17 @@
   // BUS: czekanie na autobus linii A albo K
   // cfg.a, cfg.b: spóźnienia kursów (min) ze świata wykładu; losujemy z nich.
   // cfg.dep: odjazd wg rozkładu w minutach od północy; cfg.limit: zapas (min).
+  // cfg.limit_input: id suwaka zapasu (od kroku 3); większy zapas = wcześniejszy
+  // kurs, bo przyjazd na uczelnię zostaje ten sam (dep + limit).
   // =========================================================================
   KINDS.bus = function (cfg, api) {
-    var DEP = cfg.dep || 465, LIM = cfg.limit || 5, MEAN = cfg.mean || 2, XMAX = cfg.xmax || 25;
+    var DEP0 = cfg.dep || 465, LIM0 = cfg.limit || 5, MEAN = cfg.mean || 2, XMAX = cfg.xmax || 25;
+    var DEP = DEP0, LIM = LIM0, limSel = LIM0;
+    // Suwak działa tylko w kroku 3; wcześniejsze kroki pokazują kurs z rozkładu.
+    function syncLimit() {
+      LIM = api.step() >= 3 ? limSel : LIM0;
+      DEP = DEP0 + LIM0 - LIM;
+    }
     var BW = 0.5, NB = Math.round(XMAX / BW);   // przedziały co pół minuty
     var PL = 82, PR = 614;
     var ROWS = { A: { top: 252, base: 326 }, B: { top: 336, base: 412 } };
@@ -195,6 +203,7 @@
     }
 
     function render() {
+      syncLimit();
       var step = api.step();
       api.stage.textContent = ""; api.low.textContent = "";
       drawStage(api.stage, step, null);
@@ -214,6 +223,7 @@
     }
 
     function runOne(fast, done) {
+      syncLimit();
       var w = draw(), step = api.step();
       var total = fast ? 160 : Math.min(2600, 600 + 90 * w.x);
       tween(total, function (u) {
@@ -242,9 +252,20 @@
       render();
     }
 
+    if (cfg.limit_input && window.jQuery) {
+      window.jQuery(document).on("shiny:inputchanged", function (e) {
+        if (e.name !== cfg.limit_input || e.value === null) return;
+        limSel = Number(e.value);
+        if (!api.busy()) render();
+      });
+    }
+
     return {
       render: render,
       reset: function () {
+        var sl = cfg.limit_input && window.jQuery && window.jQuery("#" + cfg.limit_input).data("ionRangeSlider");
+        if (sl) sl.update({ from: LIM0 });
+        limSel = LIM0;
         st.waits = []; st.last = null;
         st.counts = { A: new Array(NB).fill(0), B: new Array(NB).fill(0) };
         st.vals = { A: [], B: [] };
@@ -275,9 +296,10 @@
       "aria-label": cfg.aria || "Scena doświadczenia i wykres wyników" }, root);
     var api = {
       stage: svg("g", {}, s), low: svg("g", {}, s), fly: svg("g", {}, s),
-      step: function () { return Number(stepper.getAttribute("data-lc-step")) || 1; }
+      step: function () { return Number(stepper.getAttribute("data-lc-step")) || 1; },
+      busy: function () { return busy; }
     };
-    var scene = KINDS[cfg.kind](cfg, api), busy = false;
+    var busy = false, scene = KINDS[cfg.kind](cfg, api);
     var labelBtn = stepper.querySelector("[data-sc-act='go']");
     var labels = labelBtn && labelBtn.getAttribute("data-labels")
       ? JSON.parse(labelBtn.getAttribute("data-labels")) : null;
