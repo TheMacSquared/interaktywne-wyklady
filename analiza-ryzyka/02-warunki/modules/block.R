@@ -59,16 +59,49 @@ warunki_exercises <- list(
   )
 )
 
-warunki_filter_widget <- risk_widget_panel(
-  title = "Filtrujemy 500 zmian Bananpolu",
-  controls = tagList(
-    lc_slider("w2_share", "Udział zmian z przegrzaniem", 0.02, 0.40, 0.10, 0.01),
-    lc_slider("w2_risk_hot", "P(incydent | przegrzanie)", 0.01, 0.30, 0.12, 0.01),
-    lc_slider("w2_risk_normal", "P(incydent | brak przegrzania)", 0, 0.05, 0.005, 0.001)
-  ),
-  plot_id = "w2_filter_plot", stats_id = "w2_filter_stats",
-  note = "Każdy znak oznacza jedną porównywalną zmianę. Trójkąty to zmiany z przegrzaniem, kółka bez; wypełniony znak to incydent.",
-  ratio = "1.6/1", max_height = "560px"
+# Kalendarz roku pracy: 500 zmian, przegrzania latem; sortowanie układa zmiany
+# w dwie grupy obok siebie (z przegrzaniem i bez). Rysunek i odczyt działają w przeglądarce (modules/filtr.js).
+warunki_calendar_widget <- figure_panel(
+  label = "Kalendarz hali",
+  title = "Rok pracy Bananpolu: 500 zmian",
+  full_width = TRUE,
+  tags$div(class = "lc-cal", `data-config` = '{"hot":50,"inc_hot":6,"inc_cold":2}',
+    lc_toolbar(
+      tags$button(type = "button", class = "lc-action is-solid", `data-cal` = "sort",
+        `aria-pressed` = "false", tags$span("Posortuj według przegrzania")),
+      lc_readouts(
+        lc_readout(tags$span(`data-cal-out` = "label", "Wszystkie zmiany"),
+          tags$span(`data-cal-out` = "value", "8 / 500 = 0.016"), color = upwr_accent),
+        tagAppendAttributes(
+          lc_readout(tags$span(`data-cal-out` = "label2", "Bez przegrzania"),
+            tags$span(`data-cal-out` = "value2", "2 / 450 = 0.004"), color = upwr_cat[["szalwia"]]),
+          hidden = NA)
+      )
+    ),
+    tags$div(class = "lc-cal-board", role = "img",
+      `aria-label` = "Kalendarz 500 zmian w roku: 50 zmian z przegrzaniem, głównie latem, i 8 incydentów, z czego 6 przy przegrzaniu."),
+    tags$p(class = "lc-cal-status", `aria-live` = "polite")
+  )
+)
+
+# Mozaika: szerokość pasa to udział przegrzania, wysokość zamalowanej części
+# to P(incydent | pas), linia przerywana to P(incydent). Suwak czyta modules/filtr.js.
+warunki_mosaic_widget <- figure_panel(
+  label = "Eksperyment",
+  title = "Te same zmiany jako pola",
+  full_width = TRUE,
+  tags$div(class = "lc-mz",
+    `data-config` = '{"share":0.10,"p_hot":0.12,"p_cold":0.005,"slider":"w2_mz_share"}',
+    lc_toolbar(
+      lc_slider("w2_mz_share", "Udział zmian z przegrzaniem", 0.02, 0.40, 0.10, 0.01),
+      lc_readouts(
+        lc_readout("P(incydent | przegrzanie)", tags$span(`data-mz-out` = "hot", "0.12"), color = upwr_accent),
+        lc_readout("P(incydent | brak przegrzania)", tags$span(`data-mz-out` = "cold", "0.005"), color = upwr_cat[["szalwia"]]),
+        lc_readout("P(incydent)", tags$span(`data-mz-out` = "all", "0.0165"), color = upwr_secondary)
+      )
+    ),
+    tags$div(class = "lc-mz-stage")
+  )
 )
 
 warunki_monty_widget <- figure_panel(
@@ -473,24 +506,28 @@ warunki_block <- list(
           id = "mianownik", title = "Naturalne częstości w Bananpolu",
           body = list(
             c(
-              "Wracamy do hali. Wykryte przegrzanie robi z tysiącem zmian dokładnie to, co prowadzący z bramkami: filtruje świat. Najpierw dzielimy 1000 zmian na te z przegrzaniem i bez niego, a dopiero potem zliczamy incydenty. Jeśli 100 zmian spełnia B, to mianownikiem P(A | B) jest 100, a nie 1000.",
-              "Ten sposób liczenia — na konkretnych zmianach zamiast na ułamkach — nazywamy naturalnymi częstościami. Wróci on w następnym wykładzie jako główne narzędzie do rozbrajania pozornie paradoksalnych wyników. Przy każdym prawdopodobieństwie warunkowym zadawaj dwa pytania kontrolne: ile przypadków spełnia warunek B i w ilu spośród nich zaszło także A?",
-              "Suwaki poniżej sterują trzema parametrami naraz: jak częsty jest warunek oraz jak ryzykowna jest praca z warunkiem i bez niego. Zwróć uwagę, że P(incydent) w całym zakładzie zawsze leży pomiędzy dwiema wartościami warunkowymi — bliżej tej grupy, która jest liczniejsza."
+              "Wracamy do hali. Wykryte przegrzanie robi ze zmianami dokładnie to, co prowadzący z bramkami: filtruje świat. Poniżej jest rok pracy Bananpolu — 50 tygodni po pięć dni roboczych, dzienna i nocna zmiana, razem 500 zmian. Czujnik zgłaszał przegrzanie głównie latem; kilka zmian skończyło się incydentem.",
+              "Zanim cokolwiek policzysz, znajdź w kalendarzu incydenty i zobacz, ile z nich wypadło na bursztynowych zmianach. Potem posortuj zmiany."
             ),
-            risk_try("zostaw ustawienia startowe i policz na siatce trójkąty oraz wypełnione trójkąty. Potem zwiększ udział zmian z przegrzaniem do 0.40 i obserwuj, jak P(incydent) w modelu przesuwa się w stronę P(incydent | przegrzanie)."),
-            warunki_filter_widget,
-            "Przy ustawieniach startowych siatka ma 50 trójkątów, z których 6 jest wypełnionych, i 450 kółek, z których wypełnione są 2. Udział incydentów wśród trójkątów to 6/50 = 0.12 — dokładnie P(A | B). Udział incydentów na całej siatce to 8/500 = 0.016, a model podaje 0.0165. Różnica bierze się z zaokrąglenia: 0.005 · 450 = 2.25 incydentu, a na siatce można narysować tylko całe zmiany. Właśnie dlatego panel pokazuje obok siebie ilustrację i wynik modelu.",
+            risk_try("policz kropki w całym kalendarzu, a potem posortuj zmiany według przegrzania i policz kropki w każdej grupie. Który ułamek odpowiada na pytanie „jak ryzykowna jest zmiana z przegrzaniem?”"),
+            warunki_calendar_widget,
+            "Sortowanie niczego w kalendarzu nie zmieniło: te same zmiany, te same incydenty. Zmienił się tylko zbiór, w którym liczymy. Wśród wszystkich 500 zmian incydentów było 8, czyli 0.016. Wśród 50 zmian z przegrzaniem — 6, czyli 6/50 = 0.12, a wśród 450 pozostałych — 2, czyli około 0.004. Ułamek 6/50 to P(A | B): mianownikiem jest liczba zmian spełniających warunek, a nie liczba wszystkich zmian.",
+            "Ten sposób liczenia — na konkretnych zmianach zamiast na ułamkach — nazywamy naturalnymi częstościami. Wróci on w następnym wykładzie jako główne narzędzie do rozbrajania pozornie paradoksalnych wyników. Przy każdym prawdopodobieństwie warunkowym zadawaj dwa pytania kontrolne: ile przypadków spełnia warunek B i w ilu spośród nich zaszło także A?",
+            "Posortowany kalendarz to już prawie mozaika: zmiany z przegrzaniem po lewej, pozostałe po prawej, w każdej grupie incydenty na dole. Zamieńmy zmiany na pola. Szerokość pasa mówi wtedy, jak częsty jest warunek, a wysokość zamalowanej części — jak często w tej grupie dochodzi do incydentu. Oś pionowa sięga tylko do 0.20, inaczej incydentów nie byłoby widać.",
+            risk_try("przesuń udział zmian z przegrzaniem od 0.02 do 0.40 i obserwuj linię przerywaną. Czy kiedykolwiek wychodzi poza wysokości obu pasów?"),
+            warunki_mosaic_widget,
+            "Wysokości pasów się nie ruszają: suwak zmienia tylko to, jak często warunek występuje, a nie ryzyko w każdej grupie. Rusza się za to linia P(incydent) w całym zakładzie. Zawsze leży między 0.005 a 0.12 — bliżej tego pasa, który jest szerszy. Przy udziale 0.10 model daje 0.0165; kalendarz pokazał 8/500 = 0.016, bo 0.005 · 450 = 2.25 incydentu, a w kalendarzu można zaznaczyć tylko całe zmiany.",
             risk_example("2.3", "Ile zmian zostaje po filtrze?",
-              problem = "Na siatce 500 zmian ustawiono udział przegrzania 0.40, P(incydent | przegrzanie) = 0.12 i P(incydent | brak przegrzania) = 0.005. Ile zmian spełnia warunek, ile incydentów wypada w każdej grupie i ile wynosi P(incydent) w modelu?",
+              problem = "W roku pracy z 500 zmianami udział przegrzania wynosi 0.40, P(incydent | przegrzanie) = 0.12 i P(incydent | brak przegrzania) = 0.005. Ile zmian spełnia warunek, ile incydentów wypada w każdej grupie i ile wynosi P(incydent) w modelu?",
               steps = c(
                 "Warunek spełnia 0.40 · 500 = 200 zmian; bez przegrzania zostaje 300.",
-                "Incydenty wśród zmian z przegrzaniem: 0.12 · 200 = 24. Wśród pozostałych: 0.005 · 300 = 1.5, czyli na siatce 2 zmiany po zaokrągleniu.",
+                "Incydenty wśród zmian z przegrzaniem: 0.12 · 200 = 24. Wśród pozostałych: 0.005 · 300 = 1.5, czyli w kalendarzu 2 zmiany po zaokrągleniu.",
                 "Model: P(incydent) = 0.40 · 0.12 + 0.60 · 0.005 = 0.048 + 0.003 = 0.051."
               ),
               answer = "Po filtrze zostaje 200 zmian i 24 incydenty, więc P(A | B) nadal wynosi 0.12. Zmienił się natomiast wynik ogólny: 0.051 zamiast 0.0165, bo liczniejsza grupa z przegrzaniem ciągnie średnią w swoją stronę."
             ),
             risk_check("w2_chk_mianownik",
-              "Na siatce 500 zmian jest 50 zmian z przegrzaniem, w tym 6 z incydentem, oraz 2 incydenty na pozostałych zmianach. Ile wynosi udział incydentów wśród zmian z przegrzaniem?",
+              "W kalendarzu 500 zmian jest 50 zmian z przegrzaniem, w tym 6 z incydentem, oraz 2 incydenty na pozostałych zmianach. Ile wynosi udział incydentów wśród zmian z przegrzaniem?",
               c("6/500 = 0.012" = "all", "6/50 = 0.12" = "cond", "6/8 = 0.75" = "inverse"),
               correct = "cond",
               explanation = "Warunek „przegrzanie” zawęża mianownik do 50 zmian. 6/500 to P(A ∩ B), a 6/8 to P(B | A) — udział przegrzań wśród zmian z incydentem.",
@@ -832,54 +869,6 @@ warunki_chapters <- risk_block_chapters(warunki_block)
 warunki_server <- function(input, output, session) {
   warunki_monty_server(input, output, session)
 
-  # Siatka ilustracyjna: 500 zmian w 20 kolumnach, żeby wykres był pionowy i czytelny.
-  dot_counts <- reactive(risk_conditional_counts(
-    500L, input$w2_share, input$w2_risk_hot, input$w2_risk_normal
-  ))
-  filter_plot <- reactive({
-    d <- dot_counts()
-    n_cols <- 20L
-    # Kolejność: najpierw blok zmian z przegrzaniem (filtr), w każdym bloku incydenty na początku.
-    groups <- c(
-      rep("Przegrzanie", d$event[1] + d$no_event[1]),
-      rep("Brak przegrzania", d$event[2] + d$no_event[2])
-    )
-    statuses <- c(
-      rep("Incydent", d$event[1]), rep("Brak incydentu", d$no_event[1]),
-      rep("Incydent", d$event[2]), rep("Brak incydentu", d$no_event[2])
-    )
-    grid <- data.frame(id = seq_along(groups), status = statuses, group = groups)
-    grid$x <- (grid$id - 1L) %% n_cols + 1L
-    grid$y <- (grid$id - 1L) %/% n_cols + 1L
-    ggplot(grid, aes(x, y, shape = group, fill = status)) +
-      geom_point(size = 2.6, colour = upwr_secondary, stroke = 0.6) +
-      scale_y_reverse() +
-      coord_equal() +
-      scale_shape_manual(values = c("Przegrzanie" = 24, "Brak przegrzania" = 21)) +
-      scale_fill_manual(values = c("Incydent" = upwr_secondary, "Brak incydentu" = "white")) +
-      guides(
-        shape = guide_legend(order = 1, override.aes = list(fill = "white")),
-        fill = guide_legend(order = 2, override.aes = list(shape = 21))
-      ) +
-      labs(x = NULL, y = NULL, shape = "Warunek", fill = "Wynik") +
-      theme_upwr() +
-      theme(
-        axis.text = element_blank(), axis.ticks = element_blank(),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank()
-      )
-  })
-  zoom_plot_server("w2_filter_plot", filter_plot,
-    alt = "Siatka 500 zmian: trójkąty to zmiany z przegrzaniem, kółka bez; wypełnione znaki to incydenty."
-  )
-  output$w2_filter_stats <- renderUI({
-    d <- dot_counts()
-    p_all <- sum(d$event) / sum(d$total)
-    tagList(
-      lc_readout("Incydenty na siatce", risk_fmt_p(p_all), color = upwr_secondary),
-      lc_readout("Przy przegrzaniu na siatce", risk_fmt_p(d$event[1] / d$total[1]), color = upwr_accent),
-      lc_readout("P(incydent) w modelu", risk_fmt_p(risk_total_probability(input$w2_share, input$w2_risk_hot, input$w2_risk_normal)))
-    )
-  })
   output$w2_table <- renderUI({
     d <- warunki_views_counts
     lc_table(

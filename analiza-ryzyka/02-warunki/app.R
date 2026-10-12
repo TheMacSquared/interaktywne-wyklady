@@ -53,7 +53,47 @@ ui <- lecture_page(
   lecture_num = "02",
   lecture_title = "Warunki zmieniają ocenę",
   module_label = "Analiza ryzyka · Bananpol",
-  chapters = .chapters
+  chapters = .chapters,
+  header_extras = tagList(
+    includeScript(file.path(app_dir, "modules", "filtr.js")),
+    tags$style(HTML("
+      .lc-cal-board { position: relative; width: 100%; margin: .4em 0 .2em; }
+      .lc-cal-cell { position: absolute; left: 0; top: 0; border-radius: 2px;
+        background: color-mix(in srgb, var(--upwr-cat-szalwia) 22%, var(--upwr-surface));
+        transition: transform .7s cubic-bezier(.2, .7, .2, 1), opacity .45s ease; }
+      .lc-cal-cell.is-hot { background: var(--upwr-cat-bursztyn); }
+      .lc-cal-cell.is-inc::after { content: ''; position: absolute; inset: 22%; border-radius: 50%;
+        background: var(--upwr-accent); }
+      .lc-cal-board.is-instant .lc-cal-cell { transition: none !important; }
+      .lc-cal-month, .lc-cal-day, .lc-cal-group { position: absolute; white-space: nowrap;
+        font-family: var(--upwr-mono); color: var(--upwr-ink-subtle); line-height: 1; }
+      .lc-cal-month { top: 0; }
+      .lc-cal-day { left: 0; display: flex; align-items: center; }
+      .lc-cal-month, .lc-cal-day { transition: opacity .4s ease; }
+      .lc-cal-board.is-sorted .lc-cal-month, .lc-cal-board.is-sorted .lc-cal-day { opacity: 0; }
+      .lc-cal-group { font-weight: 600; opacity: 0; transition: opacity .4s ease .3s; }
+      .lc-cal-group.is-hot { color: var(--upwr-cat-bursztyn); }
+      .lc-cal-group.is-cold { transform: translateX(-100%); }
+      .lc-cal-board.is-sorted .lc-cal-group { opacity: 1; }
+      .lc-cal .lc-action[aria-pressed='true'] { background: var(--upwr-surface); color: var(--upwr-accent); }
+      .lc-cal .lc-read[hidden] { display: none; }
+      .lc-cal-status { margin: .3em 0 0; min-height: 1.5em; color: var(--upwr-ink-soft); }
+      .lc-mz-svg { display: block; width: 100%; max-width: 680px; height: auto; margin: .4em auto 0; }
+      .lc-mz-grid { stroke: var(--upwr-rule); stroke-width: 1; }
+      .lc-mz-tick { font: 11px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-mz-axis { font: 12px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-mz-hot { fill: color-mix(in srgb, var(--upwr-cat-bursztyn) 45%, var(--upwr-surface)); }
+      .lc-mz-cold { fill: color-mix(in srgb, var(--upwr-cat-szalwia) 22%, var(--upwr-surface)); }
+      .lc-mz-inc { fill: var(--upwr-accent); }
+      .lc-mz-sep { stroke: var(--upwr-surface); stroke-width: 2; }
+      .lc-mz-ref { stroke: var(--upwr-ink); stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .lc-mz-lab { font: 600 12px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-mz-lab.is-hot { fill: var(--upwr-cat-bursztyn); }
+      @media (prefers-reduced-motion: reduce) {
+        .lc-cal-cell, .lc-cal-month, .lc-cal-day, .lc-cal-group { transition: none !important; }
+      }
+    "))
+  )
 )
 
 server <- function(input, output, session) {
