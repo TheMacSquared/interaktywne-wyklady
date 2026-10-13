@@ -56,6 +56,7 @@ ui <- lecture_page(
   chapters = .chapters,
   header_extras = tagList(
     includeScript(file.path(app_dir, "modules", "filtr.js")),
+    includeScript(file.path(app_dir, "modules", "iloczyn.js")),
     tags$style(HTML("
       .lc-cal-board { position: relative; width: 100%; margin: .4em 0 .2em; }
       .lc-cal-cell { position: absolute; left: 0; top: 0; border-radius: 2px;
@@ -89,6 +90,38 @@ ui <- lecture_page(
       .lc-mz-ref { stroke: var(--upwr-ink); stroke-width: 1.5; stroke-dasharray: 6 4; }
       .lc-mz-lab { font: 600 12px var(--upwr-mono); fill: var(--upwr-ink-soft); }
       .lc-mz-lab.is-hot { fill: var(--upwr-cat-bursztyn); }
+      .lc-il .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+      .lc-il-svg { display: block; width: 100%; max-width: 720px; height: auto; margin: .4em auto .6em; }
+      .lc-il-svg text { font-family: var(--upwr-sans); fill: var(--upwr-ink); }
+      .lc-il-svg .lc-il-num { font-family: var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-il-edge { stroke: var(--upwr-reference); stroke-width: 2; stroke-linecap: round; }
+      .lc-il-edge.is-off { opacity: .35; }
+      .lc-il-edge.is-first { stroke: var(--upwr-cat-bursztyn); stroke-width: 5; }
+      .lc-il-edge.is-second { stroke: var(--upwr-cat-niebo); stroke-width: 5; }
+      .lc-il-pill rect { fill: var(--upwr-surface); stroke: var(--upwr-rule); stroke-width: 1.5; }
+      .lc-il-pill text { font-family: var(--upwr-mono) !important; font-weight: 600; }
+      .lc-il-pill.is-off { opacity: .45; }
+      .lc-il-pill.is-first rect { stroke: var(--upwr-cat-bursztyn); stroke-width: 2.5; }
+      .lc-il-pill.is-first text { fill: var(--upwr-cat-bursztyn); }
+      .lc-il-pill.is-second rect { stroke: var(--upwr-cat-niebo); stroke-width: 2.5; }
+      .lc-il-pill.is-second text { fill: var(--upwr-cat-niebo); }
+      .lc-il-node rect { fill: var(--upwr-surface); stroke: var(--upwr-secondary); stroke-width: 1.5; }
+      .lc-il-node.is-on rect { stroke: var(--upwr-cat-bursztyn); stroke-width: 2.5; }
+      .lc-il-node.is-dim { opacity: .45; }
+      .lc-il-node.is-leaf { cursor: pointer; outline: none; }
+      .lc-il-node.is-leaf:hover rect { stroke: var(--upwr-accent); }
+      .lc-il-node.is-leaf:focus-visible rect { stroke: var(--upwr-cat-niebo); stroke-width: 3; }
+      .lc-il-node.is-sel rect { fill: var(--upwr-accent); stroke: var(--upwr-accent); }
+      .lc-il-node.is-sel text { fill: var(--upwr-surface); }
+      .lc-il .lc-formula-box { margin-left: auto; margin-right: auto; }
+      @media (max-width: 600px) {
+        .lc-il .lc-formula-box.lc-annot { padding: 14px 8px; column-gap: 6px; }
+        .lc-il .lc-annot-symbol { font-size: 15px; white-space: nowrap; }
+        .lc-il .lc-annot-value { font-size: 21px; }
+        .lc-il .lc-annot-op { font-size: 17px; }
+        .lc-il .lc-annot-note { font-size: 12.5px; hyphens: auto; }
+      }
+      .lc-il-status { margin: .3em 0 0; min-height: 1.5em; color: var(--upwr-ink-soft); font-size: .92em; }
       @media (prefers-reduced-motion: reduce) {
         .lc-cal-cell, .lc-cal-month, .lc-cal-day, .lc-cal-group { transition: none !important; }
       }

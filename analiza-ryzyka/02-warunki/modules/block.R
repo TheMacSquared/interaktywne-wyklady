@@ -258,7 +258,7 @@ warunki_views_targets <- list(
 
 warunki_views_widget <- figure_panel(
   label = "Trzy widoki", title = "Te same liczby: tabela, drzewo i udziały",
-  lc_plot("w2_views_tree", ratio = "1.6/1", max_height = "380px"),
+  lc_plot("w2_views_tree", ratio = "1.5/1", ratio_narrow = "1.1/1", max_height = "420px"),
   lc_plots(
     uiOutput("w2_table"),
     lc_plot("w2_views_shares", max_height = "320px")
@@ -279,7 +279,7 @@ warunki_tree_read_widget <- figure_panel(
       selected = "a"
     )
   ),
-  lc_plot("w2_target_plot", ratio = "1.4/1"),
+  lc_plot("w2_target_plot", ratio = "1.5/1", ratio_narrow = "1.1/1", max_height = "420px"),
   uiOutput("w2_target_result"),
   full_width = TRUE
 )
@@ -305,28 +305,73 @@ warunki_common_widget <- risk_widget_panel(
   note = "Wspólna przyczyna jest osobnym zdarzeniem, a nie nieobjaśnioną korelacją."
 )
 
-warunki_path_widget <- figure_panel(
-  label = "Przykład liczbowy",
-  title = "Od warunku do wspólnej drogi",
-  full_width = TRUE,
+# Drzewo dróg z regułą iloczynu: wybór drogi podświetla gałęzie i podstawia jej
+# liczby do wzoru. Rysunek i wzór działają w przeglądarce (modules/iloczyn.js).
+warunki_tree_cases <- list(
+  bananpol = list(root = "Wszystkie zmiany", unit = "zmian", b = "Przegrzanie", nb = "Brak przegrzania",
+    a = "Incydent", na = "Brak", in_b = "z przegrzaniem", in_nb = "bez przegrzania",
+    n = list(pi = 12, pn = 88, ni = 5, nn = 895)),
+  noc = list(root = "Wszystkie zmiany", unit = "zmian", b = "Zmiana nocna", nb = "Zmiana dzienna",
+    a = "Wypadek", na = "Brak", in_b = "nocnych", in_nb = "dziennych", note_b = "zmiany nocne", note_nb = "zmiany dzienne",
+    a_def = "wypadek przy pracy", b_def = "zmiana nocna",
+    n = list(pi = 10, pn = 390, ni = 6, nn = 594)),
+  rower = list(root = "Wszystkie przejazdy", unit = "przejazdów", b = "Jezdnią", nb = "Ścieżką",
+    a = "Kolizja", na = "Brak", in_b = "jezdnią", in_nb = "ścieżką rowerową", note_b = "przejazdy jezdnią", note_nb = "przejazdy ścieżką",
+    a_def = "kolizja", b_def = "przejazd jezdnią",
+    n = list(pi = 6, pn = 294, ni = 2, nn = 698)),
+  dostawca = list(root = "Wszystkie partie", unit = "partii", b = "Nowy dostawca", nb = "Stały dostawca",
+    a = "Wada", na = "Brak", in_b = "od nowego dostawcy", in_nb = "od stałego dostawcy", note_b = "partie od nowego dostawcy", note_nb = "partie od stałego dostawcy",
+    a_def = "wadliwa partia", b_def = "partia od nowego dostawcy",
+    n = list(pi = 10, pn = 190, ni = 8, nn = 792))
+)
+
+warunki_tree_formula <- function() {
+  item <- function(i, color) list(
+    symbol = tags$span(`data-il` = paste0("s", i)),
+    value = tags$span(`data-il` = paste0("v", i)),
+    note = tags$span(`data-il` = paste0("n", i)),
+    color = color
+  )
   risk_annotated_formula(
-    items = list(
-      list(
-        symbol = "P(A ∩ B)", value = "0.012", color = upwr_accent,
-        note = "12 na 1000 zmian. Mianownik wraca do wszystkich zmian."
-      ),
-      list(
-        symbol = "P(B)", value = "0.10", color = upwr_cat[["bursztyn"]],
-        note = "100 na 1000 zmian: przegrzanie."
-      ),
-      list(
-        symbol = "P(A | B)", value = "0.12", color = upwr_cat[["niebo"]],
-        note = "12 na 100 zmian z przegrzaniem. Mianownik to 100."
-      )
-    ),
+    items = list(item(0, upwr_accent), item(1, upwr_cat[["bursztyn"]]), item(2, upwr_cat[["niebo"]])),
     ops = c("=", "×")
   )
-)
+}
+
+warunki_tree_widget <- function(cases, label, title, paths = FALSE) {
+  config <- jsonlite::toJSON(list(cases = unname(cases)), auto_unbox = TRUE)
+  path_labels <- c(pi = "Przegrzanie i incydent", pn = "Przegrzanie, bez incydentu",
+                   ni = "Bez przegrzania, incydent", nn = "Bez przegrzania i bez incydentu")
+  case_labels <- c(bananpol = "Przegrzanie", noc = "Zmiana nocna", rower = "Rower",
+                   dostawca = "Nowy dostawca")
+  figure_panel(label = label, title = title, full_width = TRUE,
+    tags$div(class = "lc-il", `data-config` = config,
+      if (length(cases) > 1) lc_toolbar(lc_group("Sytuacja",
+        tags$div(class = "lc-seg", role = "group", `aria-label` = "Sytuacja",
+          lapply(seq_along(cases), function(i) tags$button(type = "button",
+            `data-il-case` = i - 1L, `aria-pressed` = if (i == 1) "true" else "false",
+            case_labels[[names(cases)[i]]]))
+        )
+      )),
+      if (paths) lc_toolbar(lc_group("Droga",
+        tags$div(class = "lc-seg", role = "group", `aria-label` = "Droga przez drzewo",
+          lapply(names(path_labels), function(id) tags$button(type = "button",
+            `data-il-path` = id, `aria-pressed` = if (id == "pi") "true" else "false",
+            path_labels[[id]]))
+        )
+      )),
+      tags$div(class = "lc-il-stage"),
+      warunki_tree_formula(),
+      tags$p(class = "lc-il-status", `aria-live` = "polite")
+    )
+  )
+}
+
+warunki_path_widget <- warunki_tree_widget(warunki_tree_cases["bananpol"],
+  label = "Przykład liczbowy", title = "Od warunku do wspólnej drogi", paths = TRUE)
+
+warunki_cases_widget <- warunki_tree_widget(warunki_tree_cases,
+  label = "Ten sam wzór", title = "Reguła iloczynu w czterech sytuacjach")
 
 warunki_signal_panel <- figure_panel(
   label = "Interpretacja",
@@ -548,15 +593,15 @@ warunki_block <- list(
         risk_try("znajdź liczbę 12 w tabeli, na drzewie i na wykresie udziałów. Potem odszukaj w każdym widoku mianownik 100 i mianownik 1000."),
         warunki_views_widget,
         "W każdym widoku liczba incydentów i liczebność grup są takie same. Jeśli wynik zmienia się wraz z rodzajem wykresu, zmieniliśmy definicję albo mianownik, a nie tylko sposób prezentacji.",
-        "Każdy widok eksponuje co innego. W tabeli liczby 12 i 17 stoją w tej samej kolumnie, więc łatwo przeczytać P(B | A) = 12/17. Na drzewie 12 stoi na końcu gałęzi wychodzącej z węzła „Przegrzanie: 100”, więc naturalnie czytamy P(A | B) = 12/100. Wykres udziałów w ogóle nie pokazuje liczebności grup: słupek zmian z przegrzaniem ma ten sam rozmiar co słupek 900 zmian bez przegrzania. Porównuje więc wyłącznie P(A | B) = 0.12 z P(A | nie B) = 5/900 ≈ 0.006 i ukrywa, że pierwsza grupa jest dziewięć razy mniejsza."
+        "Każdy widok eksponuje co innego. W tabeli liczby 12 i 17 stoją w tej samej kolumnie, więc łatwo przeczytać P(B | A) = 12/17. Na drzewie 12 stoi na końcu gałęzi wychodzącej z węzła „Przegrzanie 100”, więc naturalnie czytamy P(A | B) = 12/100. Wykres udziałów w ogóle nie pokazuje liczebności grup: słupek zmian z przegrzaniem ma ten sam rozmiar co słupek 900 zmian bez przegrzania. Porównuje więc wyłącznie P(A | B) = 0.12 z P(A | nie B) = 5/900 ≈ 0.006 i ukrywa, że pierwsza grupa jest dziewięć razy mniejsza."
       ),
       sections = list(
         list(
           id = "iloczyn", title = "Mnożymy wzdłuż drogi",
           body = list(
             c(
-              "Drzewo pokazuje coś więcej niż tylko liczebności. Na gałęziach stoją prawdopodobieństwa, a na końcach liczby zmian — i między jednymi a drugimi jest prosty związek. Żeby dojść do liścia „Incydent” w górnej części drzewa, trzeba przejść dwie gałęzie: najpierw trafić do grupy zmian z przegrzaniem, a potem, już wewnątrz tej grupy, trafić na incydent. Iloczyn nie pojawia się więc jako sztuczka algebraiczna — odpowiada przejściu przez dwa kolejne filtry.",
-              "Pierwszy czynnik odnosi się do wszystkich zmian: przegrzanie dotyczy 10% z 1000, czyli 100 zmian. Drugi czynnik odnosi się już tylko do tej setki: incydent występuje w 12% z nich, czyli w 12 zmianach. Te 12 zmian to 1.2% całej obserwowanej populacji — i dokładnie tyle daje pomnożenie 0.10 przez 0.12. Prześledź tę drogę na liczbach poniżej."
+              "Drzewo pokazuje coś więcej niż tylko liczebności. Na gałęziach stoją prawdopodobieństwa, a na końcach liczby zmian — i między jednymi a drugimi jest prosty związek. Żeby dojść do liścia „Incydent” w lewej gałęzi drzewa, trzeba przejść dwie gałęzie: najpierw trafić do grupy zmian z przegrzaniem, a potem, już wewnątrz tej grupy, trafić na incydent. Iloczyn nie pojawia się więc jako sztuczka algebraiczna — odpowiada przejściu przez dwa kolejne filtry.",
+              "Pierwszy czynnik odnosi się do wszystkich zmian: przegrzanie dotyczy 10% z 1000, czyli 100 zmian. Drugi czynnik odnosi się już tylko do tej setki: incydent występuje w 12% z nich, czyli w 12 zmianach. Te 12 zmian to 1.2% całej obserwowanej populacji — i dokładnie tyle daje pomnożenie 0.10 przez 0.12. Prześledź tę drogę na drzewie poniżej, a potem wybierz pozostałe trzy."
             ),
             warunki_path_widget,
             "Ten rachunek nie korzystał z niczego szczególnego w liczbach 0.10 i 0.12 — działa dla dowolnych wartości, więc uogólniamy go w jedną regułę, nazywaną regułą iloczynu (wzorem na prawdopodobieństwo iloczynu zdarzeń):",
@@ -567,12 +612,14 @@ warunki_block <- list(
               "Wzór (2.2) nie jest nowym założeniem, tylko definicją 2.1 przepisaną inaczej. Mnożymy obie strony wzoru (2.1) przez P(B). Ponieważ w definicji role A i B są symetryczne w przecięciu (A ∩ B = B ∩ A), tę samą operację można wykonać z warunkiem A, o ile P(A) > 0."
             ), lines = c("P(A | B) = P(A ∩ B) / P(B)    | · P(B)", "P(A ∩ B) = P(B) · P(A | B)", "", "P(B | A) = P(A ∩ B) / P(A)    | · P(A)", "P(A ∩ B) = P(A) · P(B | A)")),
             "Warto czytać każdy czynnik razem z jego mianownikiem. W zapisie P(B)·P(A | B) pierwsza liczba mówi, jaka część wszystkich zmian wchodzi do grupy, a druga — jaka część tej grupy kończy się incydentem. Iloczyn wraca do wspólnego mianownika wszystkich zmian.",
+            "Reguła nie zależy od Bananpolu. Te same dwa kroki — najpierw wejście do grupy, potem zdarzenie wewnątrz niej — opisują wypadki na zmianach nocnych, kolizje rowerzystów i wadliwe dostawy. Przełącz sytuację i kliknij dowolny liść: wzór zawsze ma ten sam kształt, zmieniają się tylko liczby i mianowniki.",
+            warunki_cases_widget,
             "Druga postać wzoru (2.2) jest równie prawdziwa, choć na drzewie Bananpolu jej nie widać: drzewo zaczyna od przegrzania, a nie od incydentu. Gdybyśmy narysowali drzewo w odwrotnej kolejności, pierwsza gałąź miałaby wagę P(A) = 0.017, druga P(B | A) = 12/17, a ich iloczyn znów dałby 12/1000 = 0.012. Ta symetria jest podstawą wzoru Bayesa, do którego dojdziemy w następnym rozdziale.",
             risk_check("w2_chk_droga",
               "Na drzewie dróg gałąź „Brak przegrzania” ma wagę 0.9, a następująca po niej gałąź „Incydent” — 5/900 ≈ 0.006. Ile wynosi prawdopodobieństwo drogi „brak przegrzania i incydent” liczone wśród wszystkich zmian?",
               c("0.005" = "path", "0.006" = "branch", "0.9" = "first"),
               correct = "path",
-              explanation = "Ze wzoru (2.2): 0.9 · 5/900 = 5/1000 = 0.005. To 5 zmian z 1000 — dolny liść „Incydent: 5” na drzewie.",
+              explanation = "Ze wzoru (2.2): 0.9 · 5/900 = 5/1000 = 0.005. To 5 zmian z 1000 — liść „Incydent 5” w gałęzi bez przegrzania.",
               hints = c(branch = "0.006 to P(A | nie B) — udział wewnątrz 900 zmian bez przegrzania. Wróć do wspólnego mianownika 1000.", first = "0.9 to dopiero wejście do grupy bez przegrzania. Droga ma dwie gałęzie.")
             )
           )
@@ -900,8 +947,13 @@ warunki_server <- function(input, output, session) {
       )
     )
   })
-  # Drzewo dróg; target = NULL rysuje drzewo bez podświetleń.
-  tree_plot <- function(target = NULL) {
+  # Drzewo dróg rysowane z góry na dół: na wąskim ekranie liście stoją obok siebie
+  # zamiast nachodzić na siebie. target = NULL rysuje drzewo bez podświetleń.
+  # Etykiety ggplot mają stały rozmiar w mm, więc poniżej 520 px szerokości wykresu
+  # zmniejszamy je proporcjonalnie (width = szerokość wyjścia z clientData).
+  # show_p = FALSE rysuje same liczebności, bez prawdopodobieństw na gałęziach.
+  tree_plot <- function(target = NULL, width = NULL, show_p = TRUE) {
+    k <- if (is.null(width) || width <= 0) 1 else min(1, width / 520)
     d <- warunki_views_counts
     prm <- warunki_views_params
     fmt <- function(p) sprintf("%.3f", p)
@@ -911,22 +963,22 @@ warunki_server <- function(input, output, session) {
     num_edges <- target$num_edges %||% integer(0)
     den_edges <- target$den_edges %||% integer(0)
     nodes <- data.frame(
-      x = c(0, 5, 5, 10.5, 10.5, 10.5, 10.5),
-      y = c(0, 1.6, -1.6, 2.5, .7, -.7, -2.5),
+      x = c(0, -3, 3, -4.5, -1.5, 1.5, 4.5),
+      y = c(4, 2, 2, 0, 0, 0, 0),
       label = c(
-        "1000 zmian", paste0("Przegrzanie: ", d$total[1]), paste0("Brak przegrzania: ", d$total[2]),
-        paste0("Incydent: ", d$event[1]), paste0("Brak: ", d$no_event[1]),
-        paste0("Incydent: ", d$event[2]), paste0("Brak: ", d$no_event[2])
+        "1000 zmian", paste0("Przegrzanie\n", d$total[1]), paste0("Brak przegrzania\n", d$total[2]),
+        paste0("Incydent\n", d$event[1]), paste0("Brak\n", d$no_event[1]),
+        paste0("Incydent\n", d$event[2]), paste0("Brak\n", d$no_event[2])
       )
     )
     node_idx <- seq_len(nrow(nodes))
     nodes$fill <- ifelse(node_idx %in% num_nodes, upwr_accent,
       ifelse(node_idx %in% den_nodes, amber, upwr_secondary))
     edges <- data.frame(
-      xs = c(0, 0, 5, 5, 5, 5),
-      ys = c(0, 0, 1.6, 1.6, -1.6, -1.6),
-      xe = c(5, 5, 10.5, 10.5, 10.5, 10.5),
-      ye = c(1.6, -1.6, 2.5, .7, -.7, -2.5),
+      xs = c(0, 0, -3, -3, 3, 3),
+      ys = c(4, 4, 2, 2, 2, 2),
+      xe = c(-3, 3, -4.5, -1.5, 1.5, 4.5),
+      ye = c(2, 2, 0, 0, 0, 0),
       p = c(
         fmt(prm[["share"]]), fmt(1 - prm[["share"]]),
         fmt(prm[["hot"]]), fmt(1 - prm[["hot"]]),
@@ -937,22 +989,23 @@ warunki_server <- function(input, output, session) {
     edges$colour <- ifelse(edge_idx %in% num_edges, upwr_accent,
       ifelse(edge_idx %in% den_edges, amber, upwr_reference))
     edges$width <- ifelse(edge_idx %in% c(num_edges, den_edges), 1.8, .8)
-    ggplot() +
+    p <- ggplot() +
       geom_segment(data = edges, aes(x = xs, y = ys, xend = xe, yend = ye, colour = colour, linewidth = width)) +
       scale_colour_identity() +
       scale_linewidth_identity() +
-      geom_label(
+      if (show_p) geom_label(
         data = edges, aes((xs + xe) / 2, (ys + ye) / 2, label = p),
-        size = 5, colour = upwr_secondary, fontface = "bold", linewidth = 0,
-        label.padding = unit(0.3, "lines")
-      ) +
+        size = 4.6 * k, colour = upwr_secondary, fontface = "bold", linewidth = 0,
+        label.padding = unit(0.25, "lines")
+      )
+    p <- p +
       geom_label(
         data = nodes, aes(x, y, label = label, fill = fill),
-        size = 5.6, colour = "white", fontface = "bold", linewidth = 0,
-        label.padding = unit(0.5, "lines"), label.r = unit(0.25, "lines")
+        size = 5 * k, colour = "white", fontface = "bold", linewidth = 0, lineheight = 0.95,
+        label.padding = unit(0.45, "lines"), label.r = unit(0.25, "lines")
       ) +
       scale_fill_identity() +
-      coord_cartesian(xlim = c(-1.3, 12), ylim = c(-3.1, 3.1)) +
+      coord_cartesian(xlim = c(-5.6, 5.6), ylim = c(-0.55, 4.45)) +
       labs(x = NULL, y = NULL) +
       theme_upwr() +
       theme(
@@ -960,6 +1013,7 @@ warunki_server <- function(input, output, session) {
         axis.line = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()
       )
+    p
   }
   shares_plot <- function() {
     d <- warunki_views_counts
@@ -975,14 +1029,16 @@ warunki_server <- function(input, output, session) {
       labs(x = NULL, y = "Udział", fill = "Wynik") +
       theme_upwr()
   }
-  zoom_plot_server("w2_views_tree", reactive(tree_plot()),
+  zoom_plot_server("w2_views_tree",
+    reactive(tree_plot(width = session$clientData[["output_w2_views_tree-plot_width"]], show_p = FALSE)),
     alt = "Drzewo dróg z prawdopodobieństwami na gałęziach i liczebnościami w węzłach."
   )
   zoom_plot_server("w2_views_shares", reactive(shares_plot()),
     alt = "Słupki udziału incydentów wśród zmian z przegrzaniem i bez przegrzania."
   )
   zoom_plot_server("w2_target_plot",
-    reactive(tree_plot(warunki_views_targets[[input$w2_target %||% "a"]])),
+    reactive(tree_plot(warunki_views_targets[[input$w2_target %||% "a"]],
+      width = session$clientData[["output_w2_target_plot-plot_width"]])),
     alt = "Drzewo dróg z podświetlonym licznikiem (bordowy) i mianownikiem (bursztynowy) wybranego prawdopodobieństwa."
   )
 
