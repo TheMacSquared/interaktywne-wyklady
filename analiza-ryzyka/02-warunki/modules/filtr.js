@@ -1,10 +1,11 @@
 // Dwa widgety rozdziału „Naturalne częstości w Bananpolu”.
 //
 // Kalendarz (.lc-cal[data-config]): rok pracy hali jako 50 tygodni × 5 dni × 2 zmiany
-// = 500 komórek. Przegrzania skupiają się latem, kropka to incydent. Przycisk
-// [data-cal="sort"] układa zmiany w dwie grupy obok siebie (z przegrzaniem i bez,
-// po 10 w kolumnie, incydenty na dole), a odczyty [data-cal-out] pokazują wtedy
-// udział incydentów w każdej grupie.
+// = 500 komórek na rok. Przegrzania skupiają się latem, kropka to incydent.
+// Przyciski [data-cal-sort="hot"|"inc"] układają zmiany w dwie grupy obok siebie
+// (według przegrzania albo według incydentu; w każdej grupie zmiany z drugim
+// zdarzeniem na dole), a odczyty [data-cal-out] pokazują udział w każdej grupie.
+// Ponowne kliknięcie wciśniętego przycisku wraca do kalendarza.
 //
 // Mozaika (.lc-mz[data-config]): kwadrat wszystkich zmian. Szerokość pasa to udział
 // przegrzania (suwak cfg.slider), wysokość zamalowanej części to P(incydent | pas),
@@ -84,25 +85,32 @@
     var cfg = JSON.parse(root.dataset.config || "{}");
     var years = cfg.years || 1, nHot = cfg.hot || 50, incHot = cfg.inc_hot || 6, incCold = cfg.inc_cold || 2;
     var board = root.querySelector(".lc-cal-board");
-    var btn = root.querySelector('[data-cal="sort"]');
+    var btns = Array.prototype.slice.call(root.querySelectorAll("[data-cal-sort]"));
+    btns.forEach(function (b) { b.dataset.label = b.querySelector("span").textContent; });
     var status = root.querySelector(".lc-cal-status");
     var out = {};
     root.querySelectorAll("[data-cal-out]").forEach(function (e) { out[e.getAttribute("data-cal-out")] = e; });
     var second = out.label2 && out.label2.closest(".lc-read");
-    var sorted = false;
+    var mode = null;  // null = kalendarz, "hot" = według przegrzania, "inc" = według incydentu
 
     var cells = makeRegister(cfg);
-    var hot = cells.filter(function (c) { return c.hot; });
-    var cold = cells.filter(function (c) { return !c.hot; });
-    // W każdej grupie najpierw incydenty (lądują na dole), potem reszta w kolejności dat.
-    [hot, cold].forEach(function (g) {
-      g.filter(function (c) { return c.inc; }).concat(g.filter(function (c) { return !c.inc; }))
-        .forEach(function (c, i) { c.slot = i; });
-    });
-    var nCold = cold.length, incAll = incHot + incCold;
+    var nAll = cells.length, nCold = nAll - nHot, incAll = incHot + incCold, nNoInc = nAll - incAll;
     // Po sortowaniu każda grupa ma tyle wierszy, ile kalendarz (10 na rok).
     var rows = 10 * years;
-    var hotCols = Math.ceil(nHot / rows), coldCols = Math.ceil(nCold / rows);
+    var SORTS = {
+      hot: { key: "hot", mark: "inc", labels: ["z przegrzaniem", "bez przegrzania"] },
+      inc: { key: "inc", mark: "hot", labels: ["z incydentem", "bez incydentu"] }
+    };
+    // W każdej grupie najpierw zmiany z drugim zdarzeniem (lądują na dole), potem reszta w kolejności dat.
+    Object.keys(SORTS).forEach(function (k) {
+      var sk = SORTS[k], groups = [[], []];
+      cells.forEach(function (c) { groups[c[sk.key] ? 0 : 1].push(c); });
+      groups.forEach(function (g, gi) {
+        g.filter(function (c) { return c[sk.mark]; }).concat(g.filter(function (c) { return !c[sk.mark]; }))
+          .forEach(function (c, i) { c["slot_" + k] = i; c["grp_" + k] = gi; });
+      });
+      sk.cols = [Math.ceil(groups[0].length / rows), Math.ceil(groups[1].length / rows)];
+    });
 
     var monthEls = [], prev = -1;
     for (var w = 0; w < WEEKS; w++) {
@@ -134,8 +142,8 @@
       el.className = "lc-cal-group " + cls; el.textContent = text;
       board.appendChild(el); return el;
     }
-    var hotLabel = groupLabel("z przegrzaniem", "is-hot");
-    var coldLabel = groupLabel("bez przegrzania", "is-cold");
+    var hotLabel = groupLabel("", "is-hot");
+    var coldLabel = groupLabel("", "is-cold");
     cells.forEach(function (c) {
       var el = document.createElement("div");
       el.className = "lc-cal-cell" + (c.hot ? " is-hot" : "") + (c.inc ? " is-inc" : "");
@@ -160,7 +168,9 @@
       geo.band = function (y) { return geo.top + y * (geo.gridH + geo.bandGap); };
       // Po sortowaniu: dwa bloki po 10 wierszy na rok, wyrównane do dołu kalendarza.
       geo.bottom = geo.band(years - 1) + geo.gridH - pitch;
-      geo.coldX = hotCols * pitch + labelW;
+      // Druga grupa dosunięta do prawej krawędzi, żeby zmieściła się także przy 983 zmianach.
+      geo.cols = Math.floor((W - (geo.size)) / pitch) + 1;
+      geo.right = W - geo.size;
       board.style.height = (geo.bottom + pitch + 4) + "px";
       var font = big ? 11 : 9;
       monthEls.forEach(function (m) {
@@ -176,7 +186,7 @@
       });
       var labTop = geo.bottom - rows * pitch - (big ? 4 : 2);
       hotLabel.style.left = "0px"; hotLabel.style.top = labTop + "px";
-      coldLabel.style.left = (geo.coldX + coldCols * pitch - (pitch - geo.size)) + "px";
+      coldLabel.style.left = (geo.right + geo.size) + "px";
       coldLabel.style.top = labTop + "px";
       hotLabel.style.fontSize = coldLabel.style.fontSize = (font + 1) + "px";
       cells.forEach(function (c) {
@@ -189,10 +199,11 @@
       if (instant) board.classList.add("is-instant");
       cells.forEach(function (c) {
         var x, y, delay = 0;
-        if (sorted) {
-          var cols = c.hot ? hotCols : coldCols;
-          x = (c.hot ? 0 : geo.coldX) + (c.slot % cols) * geo.pitch;
-          y = geo.bottom - Math.floor(c.slot / cols) * geo.pitch;
+        if (mode) {
+          var sk = SORTS[mode], g = c["grp_" + mode], slot = c["slot_" + mode], cols = sk.cols[g];
+          var x0 = g === 0 ? 0 : geo.right - (sk.cols[1] - 1) * geo.pitch;
+          x = x0 + (slot % cols) * geo.pitch;
+          y = geo.bottom - Math.floor(slot / cols) * geo.pitch;
           delay = instant || REDUCE ? 0 : c.w * 12 + c.y * 120;
         } else {
           x = geo.labelW + c.w * geo.pitch;
@@ -201,7 +212,7 @@
         c.el.style.transform = "translate(" + x + "px," + y + "px)";
         c.el.style.transitionDelay = delay + "ms";
       });
-      board.classList.toggle("is-sorted", sorted);
+      board.classList.toggle("is-sorted", !!mode);
       if (instant) { void board.offsetWidth; board.classList.remove("is-instant"); }
     }
 
@@ -209,24 +220,49 @@
       return k + " / " + n + " = " + (k / n).toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
     }
     function texts() {
-      if (sorted) {
-        out.label.textContent = "Z przegrzaniem";
+      var two = true;
+      if (mode === "hot") {
+        out.label.textContent = "Incydent przy przegrzaniu";
         out.value.textContent = ratio(incHot, nHot);
-        out.label2.textContent = "Bez przegrzania";
+        out.label2.textContent = "Incydent bez przegrzania";
         out.value2.textContent = ratio(incCold, nCold);
         status.textContent = "Ten sam rejestr, posortowany według przegrzania.";
-        btn.querySelector("span").textContent = "Wróć do kalendarza";
+      } else if (mode === "inc") {
+        out.label.textContent = "Przegrzanie przy incydencie";
+        out.value.textContent = ratio(incHot, incAll);
+        out.label2.textContent = "Przegrzanie bez incydentu";
+        out.value2.textContent = ratio(nHot - incHot, nNoInc);
+        status.textContent = "Ten sam rejestr, posortowany według incydentu.";
       } else {
-        out.label.textContent = "Wszystkie zmiany";
-        out.value.textContent = ratio(incAll, cells.length);
+        out.label.textContent = btns.length > 1 ? "Incydent" : "Wszystkie zmiany";
+        out.value.textContent = ratio(incAll, nAll);
+        two = btns.length > 1;
+        if (two) {
+          out.label2.textContent = "Przegrzanie";
+          out.value2.textContent = ratio(nHot, nAll);
+        }
         status.textContent = "Bursztyn: przegrzanie. Kropka: incydent.";
-        btn.querySelector("span").textContent = "Posortuj według przegrzania";
       }
-      if (second) second.hidden = !sorted;
-      btn.setAttribute("aria-pressed", String(sorted));
+      if (mode) {
+        hotLabel.textContent = SORTS[mode].labels[0];
+        hotLabel.classList.toggle("is-acc", mode === "inc");
+        coldLabel.textContent = SORTS[mode].labels[1];
+      }
+      if (second) second.hidden = !two;
+      btns.forEach(function (b) {
+        var on = b.getAttribute("data-cal-sort") === mode;
+        b.setAttribute("aria-pressed", String(on));
+        b.querySelector("span").textContent = on ? "Wróć do kalendarza" : b.dataset.label;
+      });
     }
 
-    btn.addEventListener("click", function () { sorted = !sorted; render(false); texts(); });
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var m = b.getAttribute("data-cal-sort");
+        mode = mode === m ? null : m;
+        render(false); texts();
+      });
+    });
     // Rozdział może być ukryty przy starcie: układ liczymy, gdy panel dostanie szerokość.
     if (window.ResizeObserver) new ResizeObserver(function () { layout(); }).observe(board);
     else window.addEventListener("resize", layout);

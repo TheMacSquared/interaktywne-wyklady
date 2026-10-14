@@ -75,6 +75,7 @@ ui <- lecture_page(
       .lc-cal-group { font-weight: 600; opacity: 0; transition: opacity .4s ease .3s; }
       .lc-cal-group.is-hot { color: var(--upwr-cat-bursztyn); }
       .lc-cal-group.is-cold { transform: translateX(-100%); }
+      .lc-cal-group.is-hot.is-acc { color: var(--upwr-accent); }
       .lc-cal-board.is-sorted .lc-cal-group { opacity: 1; }
       .lc-cal .lc-action[aria-pressed='true'] { background: var(--upwr-surface); color: var(--upwr-accent); }
       .lc-cal .lc-read[hidden] { display: none; }

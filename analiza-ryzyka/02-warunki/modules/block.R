@@ -86,28 +86,38 @@ warunki_odprawa_widget <- figure_panel(
 
 # Kalendarz dwóch lat pracy: 1000 zmian, przegrzania latem; sortowanie układa zmiany
 # w dwie grupy obok siebie (z przegrzaniem i bez). Rysunek i odczyt działają w przeglądarce (modules/filtr.js).
-warunki_calendar_widget <- figure_panel(
-  label = "Kalendarz hali",
-  title = "Dwa lata pracy Bananpolu: 1000 zmian",
-  full_width = TRUE,
-  tags$div(class = "lc-cal", `data-config` = '{"years":2,"hot":100,"inc_hot":12,"inc_cold":5}',
-    lc_toolbar(
-      tags$button(type = "button", class = "lc-action is-solid", `data-cal` = "sort",
-        `aria-pressed` = "false", tags$span("Posortuj według przegrzania")),
-      lc_readouts(
-        lc_readout(tags$span(`data-cal-out` = "label", "Wszystkie zmiany"),
-          tags$span(`data-cal-out` = "value", "17 / 1000 = 0.017"), color = upwr_accent),
-        tagAppendAttributes(
-          lc_readout(tags$span(`data-cal-out` = "label2", "Bez przegrzania"),
-            tags$span(`data-cal-out` = "value2", "5 / 900 = 0.006"), color = upwr_cat[["szalwia"]]),
-          hidden = NA)
-      )
-    ),
-    tags$div(class = "lc-cal-board", role = "img",
-      `aria-label` = "Kalendarz 1000 zmian z dwóch lat: 100 zmian z przegrzaniem, głównie latem, i 17 incydentów, z czego 12 przy przegrzaniu."),
-    tags$p(class = "lc-cal-status", `aria-live` = "polite")
+warunki_calendar_panel <- function(title, sorts = c(hot = "Posortuj według przegrzania")) {
+  figure_panel(
+    label = "Kalendarz hali",
+    title = title,
+    full_width = TRUE,
+    tags$div(class = "lc-cal", `data-config` = '{"years":2,"hot":100,"inc_hot":12,"inc_cold":5}',
+      lc_toolbar(
+        lapply(names(sorts), function(k) tags$button(type = "button",
+          class = "lc-action is-solid", `data-cal-sort` = k, `aria-pressed` = "false",
+          tags$span(sorts[[k]]))),
+        lc_readouts(
+          lc_readout(tags$span(`data-cal-out` = "label", "Wszystkie zmiany"),
+            tags$span(`data-cal-out` = "value", "17 / 1000 = 0.017"), color = upwr_accent),
+          tagAppendAttributes(
+            lc_readout(tags$span(`data-cal-out` = "label2", "Bez przegrzania"),
+              tags$span(`data-cal-out` = "value2", "5 / 900 = 0.006"), color = upwr_cat[["szalwia"]]),
+            hidden = if (length(sorts) == 1) NA)
+        )
+      ),
+      tags$div(class = "lc-cal-board", role = "img",
+        `aria-label` = "Kalendarz 1000 zmian z dwóch lat: 100 zmian z przegrzaniem, głównie latem, i 17 incydentów, z czego 12 przy przegrzaniu."),
+      tags$p(class = "lc-cal-status", `aria-live` = "polite")
+    )
   )
-)
+}
+
+warunki_calendar_widget <- warunki_calendar_panel("Dwa lata pracy Bananpolu: 1000 zmian")
+
+# Ten sam rejestr przy pytaniu o symetrię zależności: sortowanie według
+# przegrzania albo według incydentu.
+warunki_calendar_both_widget <- warunki_calendar_panel("Ten sam rejestr w obie strony",
+  sorts = c(hot = "Posortuj według przegrzania", inc = "Posortuj według incydentu"))
 
 # Mozaika: szerokość pasa to udział przegrzania, wysokość zamalowanej części
 # to P(incydent | pas), linia przerywana to P(incydent). Suwak czyta modules/filtr.js.
@@ -898,6 +908,9 @@ warunki_block <- list(
               ),
               answer = "Wariant 1 zostawia 11 incydentów na 1000 zmian, wariant 2 — 14.5. Kontrola ukierunkowana warunkiem zapobiega większej liczbie incydentów przy dziewięciokrotnie mniejszym nakładzie. Rachunek zakłada jednak, że kontrola rzeczywiście działa na mechanizm incydentu — o tym mówi sekcja o przyczynowości."
             ),
+            "Zależność działa w obie strony. Sprawdź to na rejestrze z kalendarza hali: posortuj zmiany najpierw według przegrzania, a potem według incydentu.",
+            risk_try("porównaj incydent przy przegrzaniu (12 / 100) z incydentem w ogóle (17 / 1000), a potem przegrzanie przy incydencie (12 / 17) z przegrzaniem w ogóle (100 / 1000). W którą stronę idą obie nierówności?"),
+            warunki_calendar_both_widget,
             risk_check("w2_chk_symetria",
               "Wiadomo, że P(A | B) > P(A). Co z tego wynika dla P(B | A)?",
               c("P(B | A) > P(B)" = "greater", "P(B | A) = P(A | B)" = "equal", "Nic — trzeba to osobno zmierzyć" = "nothing"),
