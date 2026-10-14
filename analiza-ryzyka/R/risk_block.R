@@ -197,7 +197,7 @@ risk_confusion_matrix <- function() {
     tags$div(class = "lc-cm-side", "Awaria (A)"),
     cell("ok", "prawdziwie dodatni", "TP", "awaria i alarm"),
     cell("bad", "fałszywie ujemny", "FN", "awaria bez alarmu"),
-    tags$div(class = "lc-cm-side", "Brak awarii (¬A)"),
+    tags$div(class = "lc-cm-side", "Brak awarii (Aᶜ)"),
     cell("bad", "fałszywie dodatni", "FP", "brak awarii, ale alarm"),
     cell("ok", "prawdziwie ujemny", "TN", "brak awarii i brak alarmu")
   )

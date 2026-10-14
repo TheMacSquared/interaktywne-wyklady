@@ -37,7 +37,7 @@ alarm_exercises <- list(
     task = "Diagnostyka: wyjaśnij, dlaczego dwóch czujników z tym samym zasilaniem nie wolno automatycznie traktować jako niezależnych.",
     answer = c(
       "Wspólne zasilanie jest wspólną przyczyną wyników obu czujników. Spadek napięcia może wywołać fałszywy alarm na obu naraz, a utrata zasilania wycisza oba jednocześnie — także wtedy, gdy awaria trwa. Przy ustalonym stanie instalacji P(oba alarmy | stan) jest wtedy większe niż iloczyn P(alarm | stan) · P(alarm | stan), więc warunek z definicji 3.6 nie zachodzi.",
-      "Skutek rachunkowy: wzór (3.7) mnoży iloraz wiarygodności przez siebie i zawyża posterior. W skrajnym przypadku, gdy drugi czujnik tylko powtarza pierwszy, drugi alarm nie wnosi żadnej informacji i posterior zostaje na poziomie 0.161 zamiast 0.785."
+      "Skutek rachunkowy: wzór (3.8) mnoży iloraz wiarygodności przez siebie i zawyża posterior. W skrajnym przypadku, gdy drugi czujnik tylko powtarza pierwszy, drugi alarm nie wnosi żadnej informacji i posterior zostaje na poziomie 0.161 zamiast 0.785."
     )
   ),
   list(
@@ -51,7 +51,7 @@ alarm_exercises <- list(
     task = "Druga informacja o innej jakości: po alarmie czujnika (czułość 0.95, FPR 0.05, częstość awarii 0.01) dyżurny prosi operatora o odczyt ręczny termometru. Odczyt wskazuje przegrzanie w 80% zmian z awarią i w 10% zmian bez awarii. Przyjmij warunkową niezależność obu źródeł i oblicz posterior po alarmie i dodatnim odczycie ręcznym.",
     answer = c(
       "Szanse a priori: 0.01/0.99 = 1/99. Iloraz wiarygodności czujnika: 0.95/0.05 = 19; odczytu ręcznego: 0.80/0.10 = 8.",
-      "Ze wzoru (3.7): szanse a posteriori = (1/99) · 19 · 8 = 152/99 ≈ 1.535.",
+      "Ze wzoru (3.8): szanse a posteriori = (1/99) · 19 · 8 = 152/99 ≈ 1.535.",
       "Prawdopodobieństwo: 1.535/(1 + 1.535) ≈ 0.606. Słabsze źródło (LR = 8) podnosi posterior z 0.161 do około 0.61 — mniej niż drugi taki sam czujnik (0.785), ale wciąż wyraźnie."
     )
   ),
@@ -61,6 +61,13 @@ alarm_exercises <- list(
       "Iloraz wiarygodności braku alarmu: P(brak alarmu | awaria) / P(brak alarmu | brak awarii) = 0.05/0.95 = 1/19.",
       "Szanse a posteriori: (1/99) · 19 · (1/19) = 1/99, czyli prawdopodobieństwo 0.01 — dokładnie częstość bazowa.",
       "Przy identycznych czujnikach alarm i milczenie znoszą się: wracamy do stanu wiedzy sprzed obu odczytów. To nie znaczy, że awarii na pewno nie ma; znaczy, że sytuacja wymaga trzeciej, niezależnej informacji."
+    )
+  ),
+  list(
+    task = "Odwrócenie warunku: w Bananpolu 20% zmian przebiega w przeciążeniu, P(incydent | przeciążenie) = 0.15 i P(incydent | normalna praca) = 0.01. Doszło do incydentu. Jakie jest prawdopodobieństwo, że zmiana była przeciążona? Porównaj wynik z udziałem przeciążenia wśród wszystkich zmian.",
+    answer = c(
+      "Mianownik ze wzoru na prawdopodobieństwo całkowite: P(incydent) = 0.20 · 0.15 + 0.80 · 0.01 = 0.038. Ze wzoru Bayesa (3.6): P(przeciążenie | incydent) = 0.030 / 0.038 ≈ 0.789.",
+      "Przeciążenie to tylko 20% zmian, ale około 79% incydentów. Informacja o incydencie prawie czterokrotnie podnosi ocenę, że zmiana była przeciążona."
     )
   )
 )
@@ -126,7 +133,7 @@ alarm_sciaga_widget <- tagList(
     )
   ),
   lc_formula_box(
-    withMathJax("$$P(A\\mid +)=\\frac{P(+\\mid A)\\,P(A)}{P(+\\mid A)\\,P(A)+P(+\\mid \\neg A)\\,P(\\neg A)}$$"),
+    withMathJax("$$P(A\\mid +)=\\frac{P(+\\mid A)\\,P(A)}{P(+\\mid A)\\,P(A)+P(+\\mid A^{c})\\,P(A^{c})}$$"),
     tags$p("Licznik jest drogą przez awarię; mianownik sumą obu dróg kończących się alarmem.")
   ),
   risk_assessment_ui("a3", alarm_quiz, alarm_exercises)
@@ -211,19 +218,19 @@ alarm_block <- list(
           id = "definicje", title = "Cztery wyniki",
           body = list(
             risk_confusion_matrix(),
-            "Cztery wyniki układają się w tablicę o dwóch wierszach (stan instalacji) i dwóch kolumnach (wynik detektora). W analizie ryzyka i w diagnostyce medycznej przyjęła się ta sama konwencja zapisu: A oznacza zdarzenie, którego szukamy (tu: awarię), ¬A jego brak, „+” wynik dodatni detektora (alarm), a „-” wynik ujemny (brak alarmu).",
+            "Cztery wyniki układają się w tablicę o dwóch wierszach (stan instalacji) i dwóch kolumnach (wynik detektora). W analizie ryzyka i w diagnostyce medycznej przyjęła się ta sama konwencja zapisu: A oznacza zdarzenie, którego szukamy (tu: awarię), Aᶜ jego brak, „+” wynik dodatni detektora (alarm), a „-” wynik ujemny (brak alarmu).",
             risk_definition("3.1", "Tablica wyników detektora", c(
-              "Tablica wyników detektora to tablica 2×2, której wiersze odpowiadają stanowi rzeczywistemu (A albo ¬A), a kolumny wynikowi detektora (+ albo -). Jej komórki to liczby lub prawdopodobieństwa wyników: prawdziwie dodatnich TP (A i +), fałszywie ujemnych FN (A i -), fałszywie dodatnich FP (¬A i +) oraz prawdziwie ujemnych TN (¬A i -).",
-              "Suma wiersza A to liczba zdarzeń, suma wiersza ¬A — liczba przypadków bez zdarzenia, a suma kolumny + — liczba wszystkich alarmów."
+              "Tablica wyników detektora to tablica 2×2, której wiersze odpowiadają stanowi rzeczywistemu (A albo Aᶜ), a kolumny wynikowi detektora (+ albo -). Jej komórki to liczby lub prawdopodobieństwa wyników: prawdziwie dodatnich TP (A i +), fałszywie ujemnych FN (A i -), fałszywie dodatnich FP (Aᶜ i +) oraz prawdziwie ujemnych TN (Aᶜ i -).",
+              "Suma wiersza A to liczba zdarzeń, suma wiersza Aᶜ — liczba przypadków bez zdarzenia, a suma kolumny + — liczba wszystkich alarmów."
             )),
             "Detektor opisujemy, dzieląc komórki przez sumy wierszy, bo producent testuje czujnik w warunkach, w których wie, czy awaria wystąpiła. Dwa takie ilorazy wystarczają, żeby opisać zachowanie detektora w obu stanach instalacji.",
             risk_definition("3.2", "Czułość i swoistość", c(
-              "Czułość (ang. sensitivity) to P(+ | A): prawdopodobieństwo alarmu, gdy zdarzenie rzeczywiście zachodzi. Swoistość (ang. specificity) to P(- | ¬A): prawdopodobieństwo braku alarmu, gdy zdarzenia nie ma.",
-              "Odsetek fałszywych alarmów FPR (ang. false positive rate) to P(+ | ¬A) = 1 - swoistość. Obie wielkości opisują detektor, a nie populację, w której pracuje."
+              "Czułość (ang. sensitivity) to P(+ | A): prawdopodobieństwo alarmu, gdy zdarzenie rzeczywiście zachodzi. Swoistość (ang. specificity) to P(- | Aᶜ): prawdopodobieństwo braku alarmu, gdy zdarzenia nie ma.",
+              "Odsetek fałszywych alarmów FPR (ang. false positive rate) to P(+ | Aᶜ) = 1 - swoistość. Obie wielkości opisują detektor, a nie populację, w której pracuje."
             )),
-            risk_formula("\\begin{aligned}\\text{czułość} &= P(+\\mid A)=\\frac{TP}{TP+FN},\\\\[0.6em] \\text{swoistość} &= P(-\\mid \\neg A)=\\frac{TN}{TN+FP}\\end{aligned}", num = "3.1",
+            risk_formula("\\begin{aligned}\\text{czułość} &= P(+\\mid A)=\\frac{TP}{TP+FN},\\\\[0.6em] \\text{swoistość} &= P(-\\mid A^{c})=\\frac{TN}{TN+FP}\\end{aligned}", num = "3.1",
               legend = c("TP" = "liczba prawdziwie dodatnich", "FN" = "liczba fałszywie ujemnych", "TN" = "liczba prawdziwie ujemnych", "FP" = "liczba fałszywie dodatnich")),
-            risk_formula("\\text{FPR}=P(+\\mid \\neg A)=\\frac{FP}{TN+FP}=1-\\text{swoistość}", num = "3.2"),
+            risk_formula("\\text{FPR}=P(+\\mid A^{c})=\\frac{FP}{TN+FP}=1-\\text{swoistość}", num = "3.2"),
             c(
               "Trzecia potrzebna liczba nie dotyczy detektora, lecz miejsca, w którym go zamontowano. Ten sam czujnik w hali z nowymi wentylatorami i w hali ze sprzętem po dwudziestu latach eksploatacji będzie miał identyczną czułość i swoistość, ale zupełnie inną liczbę awarii do wykrycia."
             ),
@@ -262,7 +269,7 @@ alarm_block <- list(
                 "fałszywe alarmy / wszystkie zmiany" = "all"
               ),
               correct = "fpr",
-              explanation = "FPR = P(+ | ¬A), więc mianownikiem są zmiany bez awarii — wiersz ¬A tablicy (wzór 3.2). Iloraz fałszywych alarmów do wszystkich alarmów to zupełnie inna wielkość, zależna od częstości bazowej.",
+              explanation = "FPR = P(+ | Aᶜ), więc mianownikiem są zmiany bez awarii — wiersz Aᶜ tablicy (wzór 3.2). Iloraz fałszywych alarmów do wszystkich alarmów to zupełnie inna wielkość, zależna od częstości bazowej.",
               hints = c(
                 fdr = "To udział fałszywych wśród alarmów, czyli kolumna tablicy. FPR jest liczony w wierszu.",
                 all = "Wszystkie zmiany obejmują też zmiany z awarią, na których fałszywy alarm nie może wystąpić."
@@ -273,7 +280,7 @@ alarm_block <- list(
         list(
           id = "tablica", title = "Tablica 2×2 dla 10 000 zmian",
           body = list(
-            "Znając czułość, FPR i częstość bazową, możemy odtworzyć oczekiwaną tablicę wyników dla dowolnej liczby zmian. Najpierw dzielimy zmiany na wiersze według częstości bazowej, potem każdy wiersz na kolumny według właściwego parametru detektora: wiersz A według czułości, wiersz ¬A według FPR.",
+            "Znając czułość, FPR i częstość bazową, możemy odtworzyć oczekiwaną tablicę wyników dla dowolnej liczby zmian. Najpierw dzielimy zmiany na wiersze według częstości bazowej, potem każdy wiersz na kolumny według właściwego parametru detektora: wiersz A według czułości, wiersz Aᶜ według FPR.",
             risk_try("zacznij od ustawień domyślnych (częstość 0.01, czułość 0.95, FPR 0.05) i odczytaj kolumnę alarmów. Następnie zwiększ częstość awarii do 0.05 i porównaj liczbę prawdziwych i fałszywych alarmów. Na koniec wróć do 0.01 i zmniejszaj FPR."),
             alarm_terms_table,
             figure_panel(
@@ -310,7 +317,7 @@ alarm_block <- list(
           body = list(
             risk_definition("3.4", "Wartości predykcyjne", c(
               "Wartość predykcyjna dodatnia PPV (ang. positive predictive value) to P(A | +): prawdopodobieństwo, że zdarzenie zachodzi, gdy detektor alarmuje. W tym wykładzie nazywamy ją też wiarygodnością alarmu lub posteriorem po alarmie.",
-              "Wartość predykcyjna ujemna NPV (ang. negative predictive value) to P(¬A | -): prawdopodobieństwo, że zdarzenia nie ma, gdy detektor milczy. W przeciwieństwie do czułości i swoistości obie wartości predykcyjne zależą od częstości bazowej."
+              "Wartość predykcyjna ujemna NPV (ang. negative predictive value) to P(Aᶜ | -): prawdopodobieństwo, że zdarzenia nie ma, gdy detektor milczy. W przeciwieństwie do czułości i swoistości obie wartości predykcyjne zależą od częstości bazowej."
             )),
             "W tablicy 2×2 wartości predykcyjne to ilorazy w kolumnach: PPV = TP/(TP + FP), NPV = TN/(TN + FN). Czułość i swoistość czytamy wierszami, wartości predykcyjne — kolumnami. Siatka poniżej pokazuje, dlaczego kolumna alarmów wygląda tak niekorzystnie.",
             risk_try("odczytaj liczbę prawdziwych i fałszywych alarmów przy ustawieniach domyślnych i znajdź je na siatce. Potem w tablicy 2×2 z poprzedniego rozdziału zmniejsz FPR do 0.01 i wróć tutaj — parametry obu widoków są wspólne."),
@@ -347,13 +354,13 @@ alarm_block <- list(
             c(
               "Krok pierwszy: z definicji prawdopodobieństwa warunkowego P(A | +) = P(A ∩ +) / P(+). Licznik to prawdopodobieństwo, że zmiana leży na drodze „awaria i alarm”; mianownik — że kończy się alarmem.",
               "Krok drugi: licznika nie znamy wprost, ale znamy czułość. Reguła mnożenia daje P(A ∩ +) = P(A) · P(+ | A): idziemy po drzewie najpierw gałęzią „awaria”, potem gałęzią „alarm”. W Bananpolu: 0.01 · 0.95 = 0.0095.",
-              "Krok trzeci: mianownik rozkładamy na dwie rozłączne drogi. Zdarzenia A i ¬A tworzą podział wszystkich zmian, więc wzór na prawdopodobieństwo całkowite daje:"
+              "Krok trzeci: mianownik rozkładamy na dwie rozłączne drogi. Zdarzenia A i Aᶜ tworzą podział wszystkich zmian, więc wzór na prawdopodobieństwo całkowite daje:"
             ),
-            risk_formula("P(+)=P(+\\mid A)\\,P(A)+P(+\\mid \\neg A)\\,P(\\neg A)", num = "3.3",
-              legend = c("P(+)" = "prawdopodobieństwo alarmu na losowej zmianie", "P(+\\mid A)" = "czułość", "P(+\\mid \\neg A)" = "FPR", "P(A)" = "częstość bazowa")),
+            risk_formula("P(+)=P(+\\mid A)\\,P(A)+P(+\\mid A^{c})\\,P(A^{c})", num = "3.3",
+              legend = c("P(+)" = "prawdopodobieństwo alarmu na losowej zmianie", "P(+\\mid A)" = "czułość", "P(+\\mid A^{c})" = "FPR", "P(A)" = "częstość bazowa")),
             "W Bananpolu P(+) = 0.95 · 0.01 + 0.05 · 0.99 = 0.0095 + 0.0495 = 0.059, czyli 590 alarmów na 10 000 zmian. Podstawiając licznik z kroku drugiego i mianownik (3.3) do definicji, dostajemy wzór Bayesa.",
-            risk_formula("P(A\\mid +)=\\frac{P(+\\mid A)\\,P(A)}{P(+\\mid A)\\,P(A)+P(+\\mid \\neg A)\\,P(\\neg A)}", num = "3.4",
-              legend = c("P(A\\mid +)" = "wiarygodność alarmu (PPV, posterior)", "P(+\\mid A)\\,P(A)" = "droga przez awarię — licznik", "P(+\\mid \\neg A)\\,P(\\neg A)" = "droga przez fałszywe alarmy")),
+            risk_formula("P(A\\mid +)=\\frac{P(+\\mid A)\\,P(A)}{P(+\\mid A)\\,P(A)+P(+\\mid A^{c})\\,P(A^{c})}", num = "3.4",
+              legend = c("P(A\\mid +)" = "wiarygodność alarmu (PPV, posterior)", "P(+\\mid A)\\,P(A)" = "droga przez awarię — licznik", "P(+\\mid A^{c})\\,P(A^{c})" = "droga przez fałszywe alarmy")),
             lc_p("Licznik jest drogą przez awarię; mianownik sumą obu dróg kończących się alarmem."),
             lc_p(
               "Wzór Bayesa nie wnosi nowej matematyki — porządkuje rachunek, który
@@ -366,14 +373,14 @@ alarm_block <- list(
             ), lines = c(
               "P(A | +) = P(A ∩ +) / P(+)                          (definicja warunku)",
               "P(A ∩ +) = P(+ | A) · P(A)                          (reguła mnożenia)",
-              "P(+) = P(+ | A) · P(A) + P(+ | ¬A) · P(¬A)          (prawdopodobieństwo całkowite, 3.3)",
+              "P(+) = P(+ | A) · P(A) + P(+ | Aᶜ) · P(Aᶜ)          (prawdopodobieństwo całkowite, 3.3)",
               "P(A | +) = 0.0095 / (0.0095 + 0.0495) = 0.0095 / 0.059 ≈ 0.161"
             )),
             c(
               "Ten sam schemat daje wartość predykcyjną ujemną. Dyżurny, który przez całą zmianę nie dostał alarmu, też ma pytanie: czy mogę spokojnie spać? Zamieniamy w rachunku „+” na „-”, czułość na 1 - czułość, a FPR na swoistość."
             ),
-            risk_formula("P(\\neg A\\mid -)=\\frac{P(-\\mid \\neg A)\\,P(\\neg A)}{P(-\\mid \\neg A)\\,P(\\neg A)+P(-\\mid A)\\,P(A)}", num = "3.5",
-              legend = c("P(-\\mid \\neg A)" = "swoistość", "P(-\\mid A)" = "1 - czułość, czyli odsetek przeoczonych awarii")),
+            risk_formula("P(A^{c}\\mid -)=\\frac{P(-\\mid A^{c})\\,P(A^{c})}{P(-\\mid A^{c})\\,P(A^{c})+P(-\\mid A)\\,P(A)}", num = "3.5",
+              legend = c("P(-\\mid A^{c})" = "swoistość", "P(-\\mid A)" = "1 - czułość, czyli odsetek przeoczonych awarii")),
             risk_example("3.3", "Czy cisza uspokaja?",
               problem = "Przy częstości awarii 0.01, czułości 0.95 i FPR 0.05 oblicz NPV oraz prawdopodobieństwo awarii na zmianie, na której czujnik milczał. Porównaj je z częstością bazową.",
               steps = c(
@@ -386,6 +393,45 @@ alarm_block <- list(
             )
           ),
           decision = "Komunikuj posterior wraz z liczebnościami, a nie samą czułość."
+        ),
+        list(
+          id = "przyczyny", title = "Więcej niż dwa stany",
+          body = list(
+            c(
+              "Alarm rozdzielał świat na dwa stany: awaria albo jej brak. Często stanów jest więcej. Po incydencie w Bananpolu inspektor pyta, w którym trybie pracy przebiegała zmiana; po alarmie serwis pyta, który z kilku podzespołów zawiódł. Schemat rachunku się nie zmienia: licznik to jedna droga drzewa, mianownik — suma wszystkich dróg kończących się tą samą obserwacją.",
+              "Zapiszmy to ogólnie. Ukryte stany A₁, …, Aₖ tworzą układ zupełny (definicja 2.2 z wykładu 02), a O oznacza obserwację: alarm, incydent, otwartą bramkę. Mianownik to wzór na prawdopodobieństwo całkowite (2.4) zastosowany do O."
+            ),
+            risk_formula("P(A_j\\mid O)=\\frac{P(O\\mid A_j)\\,P(A_j)}{\\sum_{i=1}^{k} P(O\\mid A_i)\\,P(A_i)}", num = "3.6",
+              legend = c("A_j" = "stan, o który pytamy", "P(A_j)" = "udział stanu przed obserwacją", "P(O\\mid A_j)" = "prawdopodobieństwo obserwacji w tym stanie", "\\sum_i" = "prawdopodobieństwo całkowite obserwacji, wzór (2.4)")),
+            "Wzór (3.4) jest przypadkiem k = 2: stanami są A i Aᶜ, a obserwacją alarm „+”. Ogólna postać przydaje się wszędzie tam, gdzie po fakcie pytamy o źródło.",
+            risk_example("3.4", "Po incydencie: który tryb?",
+              problem = list(
+                "Na zmianie w Bananpolu doszło do incydentu.",
+                risk_parts(
+                  "Jakie jest prawdopodobieństwo, że czujnik wykrył na niej przegrzanie? Dane z drzewa 1000 zmian z wykładu 02: P(przegrzanie) = 0.10, P(incydent | przegrzanie) = 0.12, P(incydent | brak przegrzania) = 5/900.",
+                  "Zmiany dzielą się na przeciążone (udział 0.20, P(incydent | przeciążenie) = 0.15) i normalne (P(incydent | normalna praca) = 0.01). Jakie jest prawdopodobieństwo, że zmiana z incydentem była przeciążona?"
+                )
+              ),
+              steps = c(
+                "Licznik: 0.10 · 0.12 = 0.012. Mianownik ze wzoru (2.4): 0.012 + 0.90 · 5/900 = 0.012 + 0.005 = 0.017. Ze wzoru (3.6): P(przegrzanie | incydent) = 0.012 / 0.017 ≈ 0.706.",
+                "Licznik: 0.20 · 0.15 = 0.030. Mianownik: 0.030 + 0.80 · 0.01 = 0.038. Stąd P(przeciążenie | incydent) = 0.030 / 0.038 ≈ 0.789."
+              ),
+              steps_type = "a",
+              answer = "(a) Około 0.71: przegrzanie dotyczy tylko 10% zmian, ale towarzyszy siedmiu na dziesięć incydentów. (b) Około 0.79: przeciążenie to 20% zmian, ale prawie cztery piąte incydentów. Obserwacja przesuwa ocenę w stronę stanu, w którym jest ona częstsza."
+            ),
+            risk_derivation("Monty Hall według wzoru (3.6)", c(
+              "Wracamy do studia z wykładu 02. Wybrałeś bramkę 2. Niech H₁, H₂, H₃ oznaczają położenie nagrody — to układ zupełny, każdy stan z prawdopodobieństwem 1/3. Obserwacja O: prowadzący otworzył bramkę 1. Z zasad gry P(O | H₁) = 0 (nie odsłoni nagrody), P(O | H₂) = 1/2 (rzuca monetą), P(O | H₃) = 1 (nie ma wyboru).",
+              "Mianownik to wzór (2.4), licznik — droga przez H₃:"
+            ), lines = c("P(O) = 1/3 · 0 + 1/3 · 1/2 + 1/3 · 1 = 1/2", "P(H₃ | O) = (1/3 · 1) / (1/2) = 2/3", "P(H₂ | O) = (1/3 · 1/2) / (1/2) = 1/3")),
+            "Rachunek, który w studiu daje przewagę zmianie bramki, w zakładzie wskazuje najbardziej prawdopodobne źródło incydentu. W przykładzie 3.4(a) P(incydent | przegrzanie) = 0.12, a P(przegrzanie | incydent) ≈ 0.71 — dwa kierunki tego samego warunku różnią się prawie sześciokrotnie.",
+            risk_check("d3_chk_przyczyny",
+              "W Bananpolu P(incydent | przegrzanie) = 0.12, a P(przegrzanie | incydent) ≈ 0.71. Która informacja najbardziej odpowiada za to, że druga liczba jest dużo większa od pierwszej?",
+              c("Incydenty są rzadkie: jest ich 17, a zmian z przegrzaniem 100" = "base", "Czujnik przegrzania jest mało dokładny" = "sensor", "Wzór Bayesa zawsze zwiększa prawdopodobieństwo" = "always"),
+              correct = "base",
+              explanation = "Z reguły iloczynu (2.2) stosunek obu liczb to P(przegrzanie) / P(incydent) = 0.10 / 0.017 ≈ 5.9. Decyduje stosunek wielkości grup, do których się odnoszą: 100 zmian z przegrzaniem wobec 17 incydentów.",
+              hints = c(sensor = "Obie liczby dotyczą tych samych 12 zmian z oboma zdarzeniami. Co różni mianowniki 100 i 17?", always = "Wzór (3.6) może też obniżać prawdopodobieństwo — np. P(normalna praca | incydent) ≈ 0.21 < 0.80.")
+            )
+          )
         )
       )
     ),
@@ -411,20 +457,20 @@ alarm_block <- list(
             ),
             c(
               "Przy czułości 0.95 i FPR 0.05 krzywa przechodzi przez około 0.019 dla częstości 0.001, przez 0.161 dla 0.01, przez 0.5 dla 0.05 i przez około 0.83 dla 0.2. Między częstością 0.001 a 0.01 posterior rośnie ponad ośmiokrotnie; między 0.1 a 0.2 — już tylko z 0.68 do 0.83. Przy FPR 0.01 wartość dla częstości 0.01 skacze do 0.490, a przy czułości 0.80 (i FPR 0.05) spada tylko do 0.139. Lewa część krzywej jest wrażliwa na FPR, prawie wcale na czułość.",
-              "Tę stromość najłatwiej zrozumieć, gdy zamiast prawdopodobieństw użyjemy szans. Szanse zdarzenia to iloraz P(A)/P(¬A): częstość 0.01 odpowiada szansom 1 : 99, częstość 0.05 — szansom 1 : 19. Dzieląc wzór Bayesa (3.4) dla A przez ten sam wzór dla ¬A, skracamy wspólny mianownik P(+) i dostajemy bardzo prostą zależność."
+              "Tę stromość najłatwiej zrozumieć, gdy zamiast prawdopodobieństw użyjemy szans. Szanse zdarzenia to iloraz P(A)/P(Aᶜ): częstość 0.01 odpowiada szansom 1 : 99, częstość 0.05 — szansom 1 : 19. Dzieląc wzór Bayesa (3.4) dla A przez ten sam wzór dla Aᶜ, skracamy wspólny mianownik P(+) i dostajemy bardzo prostą zależność."
             ),
             risk_definition("3.5", "Iloraz wiarygodności", c(
-              "Iloraz wiarygodności wyniku dodatniego to LR₊ = P(+ | A) / P(+ | ¬A) = czułość / FPR. Mówi, ile razy częściej alarm pojawia się przy awarii niż bez niej.",
-              "Analogicznie iloraz wiarygodności wyniku ujemnego to LR₋ = P(- | A) / P(- | ¬A) = (1 - czułość) / swoistość. LR₊ > 1 podnosi przekonanie o zdarzeniu, LR₋ < 1 je obniża."
+              "Iloraz wiarygodności wyniku dodatniego to LR₊ = P(+ | A) / P(+ | Aᶜ) = czułość / FPR. Mówi, ile razy częściej alarm pojawia się przy awarii niż bez niej.",
+              "Analogicznie iloraz wiarygodności wyniku ujemnego to LR₋ = P(- | A) / P(- | Aᶜ) = (1 - czułość) / swoistość. LR₊ > 1 podnosi przekonanie o zdarzeniu, LR₋ < 1 je obniża."
             )),
-            risk_formula("\\frac{P(A\\mid +)}{P(\\neg A\\mid +)}=\\frac{P(+\\mid A)}{P(+\\mid \\neg A)}\\cdot\\frac{P(A)}{P(\\neg A)}", num = "3.6",
-              legend = c("\\frac{P(A)}{P(\\neg A)}" = "szanse a priori", "\\frac{P(+\\mid A)}{P(+\\mid \\neg A)}" = "iloraz wiarygodności LR₊", "\\frac{P(A\\mid +)}{P(\\neg A\\mid +)}" = "szanse a posteriori")),
-            "Wzór (3.6) mówi: szanse po alarmie = szanse przed alarmem · LR₊. Czujnik Bananpolu ma LR₊ = 0.95/0.05 = 19 — każdy alarm mnoży szanse awarii przez 19, niezależnie od hali. Jeśli szanse wyjściowe są maleńkie, nawet dziewiętnastokrotny wzrost daje mało; stąd stromość krzywej po lewej stronie.",
-            risk_example("3.4", "Ten sam czujnik w dwóch halach",
+            risk_formula("\\frac{P(A\\mid +)}{P(A^{c}\\mid +)}=\\frac{P(+\\mid A)}{P(+\\mid A^{c})}\\cdot\\frac{P(A)}{P(A^{c})}", num = "3.7",
+              legend = c("\\frac{P(A)}{P(A^{c})}" = "szanse a priori", "\\frac{P(+\\mid A)}{P(+\\mid A^{c})}" = "iloraz wiarygodności LR₊", "\\frac{P(A\\mid +)}{P(A^{c}\\mid +)}" = "szanse a posteriori")),
+            "Wzór (3.7) mówi: szanse po alarmie = szanse przed alarmem · LR₊. Czujnik Bananpolu ma LR₊ = 0.95/0.05 = 19 — każdy alarm mnoży szanse awarii przez 19, niezależnie od hali. Jeśli szanse wyjściowe są maleńkie, nawet dziewiętnastokrotny wzrost daje mało; stąd stromość krzywej po lewej stronie.",
+            risk_example("3.5", "Ten sam czujnik w dwóch halach",
               problem = "Czujnik (czułość 0.95, FPR 0.05) pracuje w hali A, gdzie awaria zdarza się na 0.01 zmian, i w hali B ze starszym sprzętem, gdzie awaria zdarza się na 0.05 zmian. Oblicz wiarygodność alarmu w obu halach metodą szans.",
               steps = c(
                 "LR₊ = 0.95/0.05 = 19 w obu halach — to cecha czujnika.",
-                "Hala A: szanse a priori 0.01/0.99 = 1/99. Ze wzoru (3.6) szanse a posteriori = 19/99. Prawdopodobieństwo: 19/(19 + 99) = 19/118 ≈ 0.161.",
+                "Hala A: szanse a priori 0.01/0.99 = 1/99. Ze wzoru (3.7) szanse a posteriori = 19/99. Prawdopodobieństwo: 19/(19 + 99) = 19/118 ≈ 0.161.",
                 "Hala B: szanse a priori 0.05/0.95 = 1/19. Szanse a posteriori = 19 · 1/19 = 1, czyli 1 : 1. Prawdopodobieństwo: 1/(1 + 1) = 0.5.",
                 "Kontrola wzorem (3.4) dla hali B: 0.95 · 0.05/(0.95 · 0.05 + 0.05 · 0.95) = 0.0475/0.095 = 0.5."
               ),
@@ -436,7 +482,7 @@ alarm_block <- list(
               correct = "b",
               explanation = "Szanse a priori 0.1/0.9 = 1/9; po alarmie 19/9. Prawdopodobieństwo 19/(19 + 9) = 19/28 ≈ 0.68. Ten sam czujnik, inna hala, inna wiarygodność alarmu.",
               hints = c(
-                a = "Czułość to P(alarm | awaria). Pytamy o kierunek odwrotny — użyj wzoru (3.6).",
+                a = "Czułość to P(alarm | awaria). Pytamy o kierunek odwrotny — użyj wzoru (3.7).",
                 c = "0.16 odpowiada częstości 0.01. Tu częstość jest dziesięć razy wyższa."
               )
             )
@@ -447,13 +493,13 @@ alarm_block <- list(
           id = "transfer", title = "Przykład transferowy: test przesiewowy",
           text = "Identyczny mechanizm działa w medycynie. Test przesiewowy o czułości 90% i FPR 9% stosowany w populacji, w której choroba dotyka 1% badanych, daje wynik dodatni, który potwierdza się w mniej więcej jednym przypadku na dziesięć. Dlatego po badaniu przesiewowym wykonuje się test potwierdzający — i dlatego programy przesiewowe kieruje się do grup o podwyższonej częstości bazowej.",
           body = list(
-            risk_example("3.5", "Naturalne częstości w badaniu przesiewowym",
+            risk_example("3.6", "Naturalne częstości w badaniu przesiewowym",
               problem = "Test przesiewowy ma czułość 0.90 i FPR 0.09; choroba występuje u 1% badanych. Przedstaw wynik dla 1000 osób w naturalnych częstościach i oblicz, jaka część wyników dodatnich jest prawdziwa.",
               steps = c(
                 "Chorzy: 1% z 1000 = 10 osób. Wynik dodatni ma 90% z nich: 9 osób.",
                 "Zdrowi: 990 osób. Wynik fałszywie dodatni ma 9% z nich: 0.09 · 990 = 89.1, czyli około 89 osób.",
                 "Wszystkich wyników dodatnich: 9 + 89 = 98. Prawdziwych: 9/98 ≈ 0.092.",
-                "Wzorem (3.4): 0.9 · 0.01/(0.9 · 0.01 + 0.09 · 0.99) = 0.009/0.0981 ≈ 0.092. Metodą szans (3.6): LR₊ = 0.9/0.09 = 10, szanse 1/99 · 10 = 10/99, prawdopodobieństwo 10/109 ≈ 0.092."
+                "Wzorem (3.4): 0.9 · 0.01/(0.9 · 0.01 + 0.09 · 0.99) = 0.009/0.0981 ≈ 0.092. Metodą szans (3.7): LR₊ = 0.9/0.09 = 10, szanse 1/99 · 10 = 10/99, prawdopodobieństwo 10/109 ≈ 0.092."
               ),
               answer = "Około 9 na 98 wyników dodatnich jest prawdziwych, czyli mniej więcej jeden na jedenaście. Opis „jeden na dziesięć” w tekście to zaokrąglenie tej samej liczby."
             ),
@@ -468,15 +514,15 @@ alarm_block <- list(
           ),
           body = list(
             risk_definition("3.6", "Warunkowa niezależność dwóch detektorów", c(
-              "Wyniki dwóch detektorów są warunkowo niezależne przy danym stanie, jeśli zarówno przy zdarzeniu, jak i przy jego braku prawdopodobieństwo wspólnego wyniku jest iloczynem prawdopodobieństw pojedynczych wyników: P(+₁ ∩ +₂ | A) = P(+₁ | A) · P(+₂ | A) oraz P(+₁ ∩ +₂ | ¬A) = P(+₁ | ¬A) · P(+₂ | ¬A)."
+              "Wyniki dwóch detektorów są warunkowo niezależne przy danym stanie, jeśli zarówno przy zdarzeniu, jak i przy jego braku prawdopodobieństwo wspólnego wyniku jest iloczynem prawdopodobieństw pojedynczych wyników: P(+₁ ∩ +₂ | A) = P(+₁ | A) · P(+₂ | A) oraz P(+₁ ∩ +₂ | Aᶜ) = P(+₁ | Aᶜ) · P(+₂ | Aᶜ)."
             )),
-            "Przy warunkowej niezależności ilorazy wiarygodności się mnożą, a wzór (3.6) stosujemy dwa razy z rzędu. Posterior po pierwszej informacji staje się szansami a priori dla drugiej.",
-            risk_formula("\\frac{P(A\\mid +_1,+_2)}{P(\\neg A\\mid +_1,+_2)}=\\mathrm{LR}_1\\cdot \\mathrm{LR}_2\\cdot\\frac{P(A)}{P(\\neg A)}", num = "3.7",
+            "Przy warunkowej niezależności ilorazy wiarygodności się mnożą, a wzór (3.7) stosujemy dwa razy z rzędu. Posterior po pierwszej informacji staje się szansami a priori dla drugiej.",
+            risk_formula("\\frac{P(A\\mid +_1,+_2)}{P(A^{c}\\mid +_1,+_2)}=\\mathrm{LR}_1\\cdot \\mathrm{LR}_2\\cdot\\frac{P(A)}{P(A^{c})}", num = "3.8",
               legend = c("\\mathrm{LR}_1,\\ \\mathrm{LR}_2" = "ilorazy wiarygodności obu informacji", "+_1,+_2" = "alarm pierwszego i drugiego detektora")),
-            risk_example("3.6", "Dwa niezależne alarmy",
+            risk_example("3.7", "Dwa niezależne alarmy",
               problem = "W hali Bananpolu (częstość awarii 0.01) alarmują dwa identyczne czujniki (czułość 0.95, FPR 0.05), których wyniki są warunkowo niezależne. Oblicz posterior po dwóch alarmach dwiema metodami.",
               steps = c(
-                "Metoda szans (3.7): szanse a priori 1/99; po dwóch alarmach 1/99 · 19 · 19 = 361/99 ≈ 3.65. Prawdopodobieństwo: 361/(361 + 99) = 361/460 ≈ 0.785.",
+                "Metoda szans (3.8): szanse a priori 1/99; po dwóch alarmach 1/99 · 19 · 19 = 361/99 ≈ 3.65. Prawdopodobieństwo: 361/(361 + 99) = 361/460 ≈ 0.785.",
                 "Metoda sekwencyjna (3.4): po pierwszym alarmie posterior 0.161 staje się nową częstością bazową. 0.95 · 0.161/(0.95 · 0.161 + 0.05 · 0.839) ≈ 0.785.",
                 "Naturalne częstości dla 10 000 zmian: 100 awarii · 0.95² ≈ 90 podwójnych alarmów prawdziwych; 9900 zmian bez awarii · 0.05² ≈ 25 podwójnych fałszywych. 90/(90 + 25) ≈ 0.78."
               ),
@@ -488,7 +534,7 @@ alarm_block <- list(
           id = "niezaleznosc", title = "Założenie warunkowej niezależności",
           text = "Dwa czujniki mogą reagować na to samo zakłócenie lub utracić wspólne zasilanie. Warunkowa niezależność oznacza, że przy ustalonym stanie instalacji (awaria albo jej brak) wynik jednego czujnika nie zmienia prawdopodobieństwa wyniku drugiego — i to założenie trzeba uzasadnić mechanizmem, tak jak w poprzednim wykładzie.",
           body = list(
-            risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.6. Następnie ustaw 0.25, 0.5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale „Czułość i swoistość”."),
+            risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.7. Następnie ustaw 0.25, 0.5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale „Czułość i swoistość”."),
             figure_panel(
               label = "Porównanie", title = "Dwa alarmy",
               lc_toolbar(
@@ -498,8 +544,8 @@ alarm_block <- list(
               full_width = TRUE
             ),
             c(
-              "Przy parametrach domyślnych i braku kopiowania panel pokazuje 0.785 — dokładnie wynik przykładu 3.6. Przy kopiowaniu 0.25 posterior po dwóch alarmach spada do 0.391, przy 0.5 do 0.263, a przy pełnym kopiowaniu wraca do 0.161, czyli do wartości po jednym alarmie. Nawet umiarkowana zależność zjada większość zysku z drugiego czujnika.",
-              "Mechanizm widać w naturalnych częstościach: kopiowanie najbardziej zwiększa liczbę podwójnych fałszywych alarmów. Bez kopiowania podwójny fałszywy alarm wymaga dwóch niezależnych pomyłek (0.05² = 0.0025); przy kopiowaniu wystarczy jedna. Założenie (3.7) jest więc najbardziej optymistycznym wariantem — jeśli nie ma za nim mechanizmu, raport powinien pokazać też wariant z zależnością."
+              "Przy parametrach domyślnych i braku kopiowania panel pokazuje 0.785 — dokładnie wynik przykładu 3.7. Przy kopiowaniu 0.25 posterior po dwóch alarmach spada do 0.391, przy 0.5 do 0.263, a przy pełnym kopiowaniu wraca do 0.161, czyli do wartości po jednym alarmie. Nawet umiarkowana zależność zjada większość zysku z drugiego czujnika.",
+              "Mechanizm widać w naturalnych częstościach: kopiowanie najbardziej zwiększa liczbę podwójnych fałszywych alarmów. Bez kopiowania podwójny fałszywy alarm wymaga dwóch niezależnych pomyłek (0.05² = 0.0025); przy kopiowaniu wystarczy jedna. Założenie (3.8) jest więc najbardziej optymistycznym wariantem — jeśli nie ma za nim mechanizmu, raport powinien pokazać też wariant z zależnością."
             ),
             risk_check("d3_chk_niezal",
               "Dwa czujniki wiszą na wspólnym wsporniku i reagują na te same drgania. Oba alarmują. Co wiemy o posteriorze po dwóch alarmach?",
@@ -511,7 +557,7 @@ alarm_block <- list(
               correct = "between",
               explanation = "0.785 wymaga warunkowej niezależności (definicja 3.6). Przy pełnym kopiowaniu drugi alarm nie wnosi informacji i posterior zostaje na 0.161. Częściowa zależność daje w tym modelu wynik pomiędzy: 0.391 przy kopiowaniu 0.25 i 0.263 przy 0.5. Zależność zmniejsza zysk z drugiego alarmu, ale nie zamienia go w dowód przeciwko awarii.",
               hints = c(
-                indep = "Wzór (3.7) zakłada warunkową niezależność. Czy wspólne drgania ją naruszają?",
+                indep = "Wzór (3.8) zakłada warunkową niezależność. Czy wspólne drgania ją naruszają?",
                 lower = "Skrajny przypadek zależności to pełne kopiowanie. Jaki posterior daje wtedy drugi alarm?"
               )
             )
@@ -550,10 +596,10 @@ alarm_block <- list(
             risk_definition("3.7", "Próg reakcji", c(
               "Próg reakcji q* to wartość posterioru, przy której oczekiwany koszt reakcji i jej braku są równe. Przy posteriorze powyżej progu reakcja minimalizuje oczekiwany koszt; poniżej — nie. Próg zależy od kosztów i skuteczności reakcji, a nie od detektora."
             )),
-            risk_formula("q^{*}=\\frac{c}{L},\\qquad \\text{reaguj, gdy } P(A\\mid +)>q^{*}", num = "3.8",
+            risk_formula("q^{*}=\\frac{c}{L},\\qquad \\text{reaguj, gdy } P(A\\mid +)>q^{*}", num = "3.9",
               legend = c("c" = "koszt reakcji", "L" = "strata, której reakcja zapobiega", "q^{*}" = "próg reakcji")),
-            "W Bananpolu q* = 100/2000 = 0.05. Łącząc wzór (3.8) z wzorem (3.6), można przełożyć próg na posteriorze na próg na częstości bazowej: reagujemy na alarm, gdy szanse a priori · 19 > 0.05/0.95 = 1/19, czyli gdy szanse a priori przekraczają 1/361. Odpowiada to częstości awarii około 0.0028. Poniżej tej częstości pojedynczy alarm tego czujnika nie uzasadnia wyjazdu przy tych kosztach.",
-            risk_example("3.7", "Jedna reguła, trzy sytuacje",
+            "W Bananpolu q* = 100/2000 = 0.05. Łącząc wzór (3.9) z wzorem (3.7), można przełożyć próg na posteriorze na próg na częstości bazowej: reagujemy na alarm, gdy szanse a priori · 19 > 0.05/0.95 = 1/19, czyli gdy szanse a priori przekraczają 1/361. Odpowiada to częstości awarii około 0.0028. Poniżej tej częstości pojedynczy alarm tego czujnika nie uzasadnia wyjazdu przy tych kosztach.",
+            risk_example("3.8", "Jedna reguła, trzy sytuacje",
               problem = list(
                 "Reakcja kosztuje 100 zł, brak reakcji przy awarii 2000 zł, a reakcja w pełni zapobiega stracie. Czujnik ma czułość 0.95 i FPR 0.05. Rozstrzygnij, czy reagować:",
                 risk_parts(
@@ -563,8 +609,8 @@ alarm_block <- list(
                 )
               ),
               steps = c(
-                "Próg ze wzoru (3.8): q* = 100/2000 = 0.05. Posterior 0.161 > 0.05. Oczekiwany koszt braku reakcji: 2000 · 0.161 ≈ 322 zł > 100 zł. Reagujemy.",
-                "Ze wzoru (3.4): 0.95 · 0.002/(0.95 · 0.002 + 0.05 · 0.998) ≈ 0.037 < 0.05. Oczekiwany koszt braku reakcji: 2000 · 0.037 ≈ 73 zł < 100 zł. Sam alarm nie uzasadnia wyjazdu; opłaca się tania druga informacja. Jeśli drugi, warunkowo niezależny czujnik też alarmuje, ze wzoru (3.7): szanse 0.002/0.998 · 361 ≈ 0.72, posterior ≈ 0.42 > 0.05. Reagujemy.",
+                "Próg ze wzoru (3.9): q* = 100/2000 = 0.05. Posterior 0.161 > 0.05. Oczekiwany koszt braku reakcji: 2000 · 0.161 ≈ 322 zł > 100 zł. Reagujemy.",
+                "Ze wzoru (3.4): 0.95 · 0.002/(0.95 · 0.002 + 0.05 · 0.998) ≈ 0.037 < 0.05. Oczekiwany koszt braku reakcji: 2000 · 0.037 ≈ 73 zł < 100 zł. Sam alarm nie uzasadnia wyjazdu; opłaca się tania druga informacja. Jeśli drugi, warunkowo niezależny czujnik też alarmuje, ze wzoru (3.8): szanse 0.002/0.998 · 361 ≈ 0.72, posterior ≈ 0.42 > 0.05. Reagujemy.",
                 "Z przykładu 3.3: P(awaria | brak alarmu) ≈ 0.00053. Oczekiwany koszt braku reakcji: około 1.06 zł. Nie reagujemy."
               ),
               steps_type = "a",
@@ -574,7 +620,7 @@ alarm_block <- list(
               "Wyjazd ekipy podrożał do 300 zł; strata przy zignorowanej awarii nadal wynosi 2000 zł, a reakcja w pełni jej zapobiega. Jaki jest próg reakcji?",
               c("0.05" = "old", "0.15" = "new", "0.50" = "half"),
               correct = "new",
-              explanation = "Ze wzoru (3.8): q* = 300/2000 = 0.15. Posterior 0.161 w hali Bananpolu nadal przekracza próg, ale już tylko nieznacznie — niewielka zmiana kosztów lub częstości bazowej może odwrócić decyzję.",
+              explanation = "Ze wzoru (3.9): q* = 300/2000 = 0.15. Posterior 0.161 w hali Bananpolu nadal przekracza próg, ale już tylko nieznacznie — niewielka zmiana kosztów lub częstości bazowej może odwrócić decyzję.",
               hints = c(
                 old = "0.05 odpowiadało kosztowi reakcji 100 zł. Przelicz iloraz c/L dla nowego kosztu.",
                 half = "Próg 0.5 odpowiadałby równym kosztom obu pomyłek. Tu strata jest znacznie większa od kosztu reakcji."
@@ -593,9 +639,9 @@ alarm_block <- list(
       sections = list(list(
         id = "podsumowanie", title = "Podsumowanie",
         text = c(
-          "Wykład zaczął się od pytania dyżurnego: co oznacza alarm? Odpowiedź wymaga odwrócenia warunku. Detektor opisujemy liczbami liczonymi w wierszach tablicy 2×2 — czułością i swoistością (3.1) oraz odsetkiem fałszywych alarmów (3.2) — natomiast dyżurnego interesuje liczba z kolumny: wartość predykcyjna dodatnia P(awaria | alarm). Most między nimi buduje wzór Bayesa (3.4), który jest tylko definicją prawdopodobieństwa warunkowego (2.1) z mianownikiem rozpisanym wzorem na prawdopodobieństwo całkowite (3.3).",
-          "Wiarygodność alarmu nie jest cechą czujnika, lecz pary czujnik–populacja. W zapisie szans (3.6) czujnik wnosi iloraz wiarygodności, a hala — szanse a priori; przy rzadkich awariach nawet dobry czujnik daje przewagę fałszywych alarmów, za to cisza jest bardzo wiarygodna (3.5). Druga informacja mnoży ilorazy wiarygodności (3.7), ale tylko wtedy, gdy jest warunkowo niezależna od pierwszej; wspólna przyczyna zjada zysk.",
-          "Posterior nie jest decyzją. Próg reakcji (3.8) wynika z kosztów i skuteczności działania, a nie z detektora; niski posterior może uzasadniać reakcję, jeśli strata jest duża. Rachunek i wartości warto rozdzielić: analityk liczy posterior, organizacja ustala próg, a procedura łączy oba przed nocnym telefonem."
+          "Wykład zaczął się od pytania dyżurnego: co oznacza alarm? Odpowiedź wymaga odwrócenia warunku. Detektor opisujemy liczbami liczonymi w wierszach tablicy 2×2 — czułością i swoistością (3.1) oraz odsetkiem fałszywych alarmów (3.2) — natomiast dyżurnego interesuje liczba z kolumny: wartość predykcyjna dodatnia P(awaria | alarm). Most między nimi buduje wzór Bayesa (3.4), który jest tylko definicją prawdopodobieństwa warunkowego (2.1) z mianownikiem rozpisanym wzorem na prawdopodobieństwo całkowite (3.3). Ta sama konstrukcja dla wielu stanów (3.6) wskazuje najbardziej prawdopodobne źródło incydentu — i rozstrzyga zagadkę Monty’ego Halla z wykładu 02.",
+          "Wiarygodność alarmu nie jest cechą czujnika, lecz pary czujnik–populacja. W zapisie szans (3.7) czujnik wnosi iloraz wiarygodności, a hala — szanse a priori; przy rzadkich awariach nawet dobry czujnik daje przewagę fałszywych alarmów, za to cisza jest bardzo wiarygodna (3.5). Druga informacja mnoży ilorazy wiarygodności (3.8), ale tylko wtedy, gdy jest warunkowo niezależna od pierwszej; wspólna przyczyna zjada zysk.",
+          "Posterior nie jest decyzją. Próg reakcji (3.9) wynika z kosztów i skuteczności działania, a nie z detektora; niski posterior może uzasadniać reakcję, jeśli strata jest duża. Rachunek i wartości warto rozdzielić: analityk liczy posterior, organizacja ustala próg, a procedura łączy oba przed nocnym telefonem."
         )
       ), list(
         id = "sciaga", title = "Ściąga",
