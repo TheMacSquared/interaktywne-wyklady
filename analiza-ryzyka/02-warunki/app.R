@@ -122,6 +122,46 @@ ui <- lecture_page(
         .lc-il .lc-annot-note { font-size: 12.5px; hyphens: auto; }
       }
       .lc-il-status { margin: .3em 0 0; min-height: 1.5em; color: var(--upwr-ink-soft); font-size: .92em; }
+      .lc-ratio { margin: .8em 0; }
+      .lc-ratio-svg { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto; }
+      .lc-ratio figcaption { text-align: center; color: var(--upwr-ink-soft); font-size: .92em; margin-top: .3em; }
+      .lc-ratio-omega { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+      .lc-ratio-omega.is-new { stroke: var(--upwr-cat-bursztyn); stroke-width: 2; stroke-dasharray: 6 4; }
+      .lc-ratio-b { fill: color-mix(in srgb, var(--upwr-cat-bursztyn) 30%, var(--upwr-surface)); stroke: var(--upwr-cat-bursztyn); stroke-width: 2; }
+      .lc-ratio-a { fill: none; stroke: var(--upwr-accent); stroke-width: 2; }
+      .lc-ratio-ab { fill: var(--upwr-accent); fill-opacity: .85; stroke: none; }
+      .lc-ratio-set { font: italic 700 18px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+      .lc-ratio-set.is-b, .lc-ratio-num.is-b { fill: var(--upwr-cat-bursztyn); }
+      .lc-ratio-set.is-a, .lc-ratio-num.is-a { fill: var(--upwr-accent); }
+      .lc-ratio-num { font: 600 13px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-ratio-num.is-ab { fill: var(--upwr-surface); }
+      .lc-ratio-eq { font: 13px var(--upwr-mono); fill: var(--upwr-ink); }
+      .lc-ratio-eq.is-res { font-weight: 700; fill: var(--upwr-accent); }
+      .lc-ratio-arrow { stroke: var(--upwr-ink-subtle); stroke-width: 2; }
+      .lc-ratio-head { fill: var(--upwr-ink-subtle); }
+      .lc-chain2 { margin: 1em 0; }
+      .lc-chain2-svg { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto; }
+      .lc-chain2 figcaption { text-align: center; color: var(--upwr-ink-soft); font-size: .92em; margin-top: .3em; }
+      .lc-chain2-node rect { fill: var(--upwr-surface); stroke: var(--upwr-secondary); stroke-width: 1.5; }
+      .lc-chain2-node text { font: 15px var(--upwr-sans); fill: var(--upwr-ink); }
+      .lc-chain2-node .lc-chain2-n { font: 600 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+      .lc-chain2-node.is-1 rect { stroke: var(--upwr-cat-bursztyn); stroke-width: 2.5; }
+      .lc-chain2-node.is-2 rect { stroke: var(--upwr-cat-niebo); stroke-width: 2.5; }
+      .lc-chain2-node.is-leaf rect { fill: var(--upwr-accent); stroke: var(--upwr-accent); }
+      .lc-chain2-node.is-leaf text { fill: var(--upwr-surface); }
+      .lc-chain2-node.is-off { opacity: .45; }
+      .lc-chain2-edge { stroke: var(--upwr-reference); stroke-width: 2; stroke-linecap: round; }
+      .lc-chain2-edge.is-off { opacity: .45; }
+      .lc-chain2-edge.is-1 { stroke: var(--upwr-cat-bursztyn); stroke-width: 5; }
+      .lc-chain2-edge.is-2 { stroke: var(--upwr-cat-niebo); stroke-width: 5; }
+      .lc-chain2-edge.is-3 { stroke: var(--upwr-cat-szalwia); stroke-width: 5; }
+      .lc-chain2-p { font: 700 14px var(--upwr-mono); }
+      .lc-chain2-p.is-1, .lc-chain2-eq .is-1 { fill: var(--upwr-cat-bursztyn); }
+      .lc-chain2-p.is-2, .lc-chain2-eq .is-2 { fill: var(--upwr-cat-niebo); }
+      .lc-chain2-p.is-3, .lc-chain2-eq .is-3 { fill: var(--upwr-cat-szalwia); }
+      .lc-chain2-den { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-chain2-eq { font: 600 16px var(--upwr-mono); fill: var(--upwr-ink); }
+      .lc-chain2-eq .is-res { fill: var(--upwr-accent); font-weight: 700; }
       @media (prefers-reduced-motion: reduce) {
         .lc-cal-cell, .lc-cal-month, .lc-cal-day, .lc-cal-group { transition: none !important; }
       }

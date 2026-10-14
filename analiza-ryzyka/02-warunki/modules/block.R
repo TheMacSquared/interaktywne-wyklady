@@ -33,7 +33,7 @@ warunki_exercises <- list(
     task = "Diagnostyka: wskaż, dlaczego wspólne zasilanie narusza założenie niezależności dwóch zabezpieczeń.",
     answer = c(
       "Utrata wspólnego zasilania wyłącza oba zabezpieczenia naraz. Informacja, że jedno z nich nie zadziałało, zwiększa więc prawdopodobieństwo, że zasilanie padło, a tym samym — że nie zadziałało również drugie. P(awaria 2 | awaria 1) > P(awaria 2), co z definicji 2.3 oznacza zależność.",
-      "Liczbowo, ze wzoru (2.6) przy q = 0.05 i c = 0.01: P(obie) = 0.01 + 0.99 · 0.0025 ≈ 0.0125, czyli mniej więcej pięć razy więcej niż 0.0025 z iloczynu (2.5)."
+      "Liczbowo, jak w przykładzie 2.7, przy q = 0.05 i c = 0.01: P(obie) = 0.01 + 0.99 · 0.0025 ≈ 0.0125, czyli mniej więcej pięć razy więcej niż 0.0025 z iloczynu (2.5)."
     )
   ),
   list(
@@ -96,6 +96,96 @@ warunki_mosaic_widget <- figure_panel(
     tags$div(class = "lc-mz-stage")
   )
 )
+
+# Rysunek do „dlaczego iloraz?”: lewy kadr to cały świat Ω z A, B i A ∩ B,
+# prawy to świat po filtrze — samo B powiększone do rozmiaru całego kadru.
+# Zbiory są schematyczne (nie w skali); liczebności stoją przy obiektach.
+warunki_ratio_figure <- local({
+  k <- 95 / 70
+  bx <- 150; by <- 138; br <- 70; ax <- 215; ay <- 118; ar <- 40
+  rx <- 470; ry <- 138
+  svg <- sprintf('<svg class="lc-ratio-svg" viewBox="0 0 640 312" role="img"
+  aria-label="Po lewej cały świat 1000 zmian ze zbiorami B (100 zmian z przegrzaniem) i A (17 incydentów), część wspólna 12 zmian. Po prawej zostaje tylko B, powiększone do całego kadru; część wspólna to 12 ze 100.">
+  <defs>
+    <clipPath id="lc-ratio-b1"><circle cx="%1$s" cy="%2$s" r="%3$s"/></clipPath>
+    <clipPath id="lc-ratio-b2"><circle cx="%7$s" cy="%8$s" r="%9$s"/></clipPath>
+  </defs>
+  <rect class="lc-ratio-omega" x="20" y="36" width="270" height="208" rx="6"/>
+  <text class="lc-ratio-num" x="20" y="26">cały świat Ω: 1000 zmian</text>
+  <circle class="lc-ratio-b" cx="%1$s" cy="%2$s" r="%3$s"/>
+  <circle class="lc-ratio-a" cx="%4$s" cy="%5$s" r="%6$s"/>
+  <circle class="lc-ratio-ab" cx="%4$s" cy="%5$s" r="%6$s" clip-path="url(#lc-ratio-b1)"/>
+  <circle class="lc-ratio-a" cx="%4$s" cy="%5$s" r="%6$s"/>
+  <text class="lc-ratio-set is-b" x="92" y="198">B</text>
+  <text class="lc-ratio-num is-b" x="92" y="216">100</text>
+  <text class="lc-ratio-set is-a" x="244" y="96">A</text>
+  <text class="lc-ratio-num is-a" x="262" y="96">17</text>
+  <text class="lc-ratio-num is-ab" x="198" y="134" text-anchor="middle">12</text>
+
+  <line class="lc-ratio-arrow" x1="300" y1="140" x2="352" y2="140"/>
+  <path class="lc-ratio-head" d="M352 133 L364 140 L352 147 Z"/>
+  <text class="lc-ratio-num" x="332" y="126" text-anchor="middle">tylko B</text>
+
+  <rect class="lc-ratio-omega is-new" x="370" y="36" width="250" height="208" rx="6"/>
+  <circle class="lc-ratio-b" cx="%7$s" cy="%8$s" r="%9$s"/>
+  <circle class="lc-ratio-ab" cx="%10$s" cy="%11$s" r="%12$s" clip-path="url(#lc-ratio-b2)"/>
+  <text class="lc-ratio-num is-b" x="370" y="26">nowy cały świat B: 100 zmian</text>
+  <text class="lc-ratio-num is-ab" x="%13$s" y="%14$s" text-anchor="middle">12</text>
+
+  <text class="lc-ratio-eq" x="155" y="270" text-anchor="middle">P(A ∩ B) = 12 / 1000 = 0.012</text>
+  <text class="lc-ratio-eq" x="155" y="292" text-anchor="middle">P(B) = 100 / 1000 = 0.10</text>
+  <text class="lc-ratio-eq is-res" x="495" y="270" text-anchor="middle">P(A | B) = 12 / 100 = 0.12</text>
+  <text class="lc-ratio-eq" x="495" y="292" text-anchor="middle">= 0.012 / 0.10</text>
+</svg>',
+    bx, by, br, ax, ay, ar, rx, ry, round(br * k, 1),
+    round(rx + (ax - bx) * k, 1), round(ry + (ay - by) * k, 1), round(ar * k, 1),
+    round(rx + (ax - bx) * k - 22, 1), round(ry + (ay - by) * k + 26, 1))
+  tags$figure(class = "lc-ratio", HTML(svg),
+    tags$figcaption("Filtr B nie zmienia części wspólnej A ∩ B — zmienia tylko to, do czego ją porównujemy: do całego świata albo do samego B."))
+})
+
+# Drzewo do przykładu 2.4: jedna droga przez trzy poziomy (lato →
+# przegrzanie → incydent) z wyszarzonymi gałęziami bocznymi. Na każdej gałęzi
+# prawdopodobieństwo i jego mianownik, który zawęża się z poziomu na poziom.
+warunki_chain_figure <- local({
+  node <- function(x, y, label, n, cls) sprintf(
+    '<g class="lc-chain2-node %s"><rect x="%s" y="%s" width="150" height="48" rx="7"/>
+     <text x="%s" y="%s" text-anchor="middle">%s</text>
+     <text class="lc-chain2-n" x="%s" y="%s" text-anchor="middle">%s</text></g>',
+    cls, x - 75, y - 24, x, y - 4, label, x, y + 16, n)
+  edge <- function(x1, y1, x2, y2, cls) sprintf(
+    '<line class="lc-chain2-edge %s" x1="%s" y1="%s" x2="%s" y2="%s"/>', cls, x1, y1 + 24, x2, y2 - 24)
+  lab <- function(x, y, p, den, cls) sprintf(
+    '<text class="lc-chain2-p %s" x="%s" y="%s" text-anchor="end">%s</text>
+     <text class="lc-chain2-den" x="%s" y="%s" text-anchor="end">%s</text>',
+    cls, x, y, p, x, y + 17, den)
+  y <- c(36, 136, 236, 336)
+  x <- c(420, 340, 260, 180)
+  side <- c(540, 460, 380)
+  svg <- paste0(
+    '<svg class="lc-chain2-svg" viewBox="0 0 640 440" role="img" aria-label="Drzewo przykładu 2.4: z 1000 zmian 250 wypada latem (0.25), z nich 75 ma przegrzanie (0.30), z tych 75 incydentem kończy się 9 (0.12). Iloczyn 0.25 · 0.30 · 0.12 = 0.009, czyli 9 na 1000 zmian.">',
+    edge(x[1], y[1], side[1], y[2], "is-off"), edge(x[2], y[2], side[2], y[3], "is-off"),
+    edge(x[3], y[3], side[3], y[4], "is-off"),
+    edge(x[1], y[1], x[2], y[2], "is-1"), edge(x[2], y[2], x[3], y[3], "is-2"),
+    edge(x[3], y[3], x[4], y[4], "is-3"),
+    lab((x[1] + x[2]) / 2 - 26, (y[1] + y[2]) / 2 - 4, "P(C) = 0.25", "z 1000 zmian", "is-1"),
+    lab((x[2] + x[3]) / 2 - 26, (y[2] + y[3]) / 2 - 4, "P(B | C) = 0.30", "z 250 letnich", "is-2"),
+    lab((x[3] + x[4]) / 2 - 26, (y[3] + y[4]) / 2 - 4, "P(A | B ∩ C) = 0.12", "z 75 z przegrzaniem", "is-3"),
+    node(x[1], y[1], "Wszystkie zmiany", "1000", "is-root"),
+    node(x[2], y[2], "Lato (C)", "250", "is-1"),
+    node(x[3], y[3], "Przegrzanie (B)", "75", "is-2"),
+    node(x[4], y[4], "Incydent (A)", "9", "is-leaf"),
+    node(side[1], y[2], "Poza latem", "750", "is-off"),
+    node(side[2], y[3], "Brak przegrzania", "175", "is-off"),
+    node(side[3], y[4], "Brak incydentu", "66", "is-off"),
+    '<text class="lc-chain2-eq" x="340" y="402" text-anchor="middle">',
+    'P(A ∩ B ∩ C) = <tspan class="is-1">0.25</tspan> × <tspan class="is-2">0.30</tspan> × ',
+    '<tspan class="is-3">0.12</tspan> = <tspan class="is-res">0.009</tspan></text>',
+    '<text class="lc-chain2-den" x="340" y="426" text-anchor="middle">9 na 1000 zmian · mianowniki: 1000 → 250 → 75</text>',
+    '</svg>')
+  tags$figure(class = "lc-chain2", HTML(svg),
+    tags$figcaption("Każda gałąź liczy udział wewnątrz grupy, do której już doszliśmy; iloczyn wraca do wspólnego mianownika 1000 zmian."))
+})
 
 warunki_monty_widget <- figure_panel(
   label = "Idź na całość",
@@ -286,16 +376,6 @@ warunki_total_widget <- risk_widget_panel(
   ),
   plot_id = "w2_total_plot", stats_id = "w2_total_stats",
   note = "Wynik jest ważoną sumą dwóch rozłącznych dróg."
-)
-
-warunki_common_widget <- risk_widget_panel(
-  title = "Niezależność kontra wspólna przyczyna",
-  controls = tagList(
-    lc_slider("w2_component_fail", "P awarii pojedynczego zabezpieczenia", 0.001, 0.20, 0.05, 0.001),
-    lc_slider("w2_common", "P utraty wspólnego zasilania", 0, 0.10, 0.01, 0.001)
-  ),
-  plot_id = "w2_common_plot", stats_id = "w2_common_stats",
-  note = "Wspólna przyczyna jest osobnym zdarzeniem, a nie nieobjaśnioną korelacją."
 )
 
 # Drzewo dróg z regułą iloczynu: wybór drogi podświetla gałęzie i podstawia jej
@@ -535,7 +615,8 @@ warunki_block <- list(
             risk_derivation("dlaczego iloraz?", c(
               "Wzór (2.1) jest wprost przepisaniem liczenia na przypadkach. Jeśli w n porównywalnych przypadkach warunek B zaszedł n_B razy, a oba zdarzenia naraz — n_AB razy, to udział A wśród przypadków z B wynosi n_AB / n_B.",
               "Dzieląc licznik i mianownik przez n, nie zmieniamy ilorazu, a dostajemy częstości odniesione do całej populacji:"
-            ), lines = c("n_AB / n_B = (n_AB / n) / (n_B / n)", "           ≈ P(A ∩ B) / P(B)", "", "Bananpol: 12 / 100 = (12/1000) / (100/1000) = 0.012 / 0.10 = 0.12")),
+            ), lines = c("n_AB / n_B = (n_AB / n) / (n_B / n)", "           ≈ P(A ∩ B) / P(B)", "", "Bananpol: 12 / 100 = (12/1000) / (100/1000) = 0.012 / 0.10 = 0.12"),
+              figure = warunki_ratio_figure),
             "W tym języku gest prowadzącego jest warunkiem B. Załóżmy, jak w przykładzie 2.2, że wybrałeś bramkę 2, a B oznacza: „za bramką 1 jest Zonk, a odsłonił ją prowadzący znający układ”. Pytanie o zmianę bramki to pytanie o P(nagroda za bramką 3 | B) — i rachunek na przefiltrowanych światach daje 2/3, dokładnie tyle, ile pokazała symulacja. We wzorze (2.1): P(B) = 150/300 = 1/2, P(nagroda za 3 ∩ B) = 100/300 = 1/3, a iloraz to (1/3) / (1/2) = 2/3.",
             "Prawdopodobieństwo warunkowe zachowuje się jak zwykłe prawdopodobieństwo, tylko w mniejszym świecie. W szczególności P(B | B) = 1, bo w przefiltrowanej grupie warunek zachodzi zawsze, a P(Aᶜ | B) = 1 - P(A | B): w grupie 100 zmian z przegrzaniem 12 kończy się incydentem, więc 88 — bez incydentu. Z tej własności korzystają gałęzie drzewa, które w kolejnym rozdziale zawsze sumują się do jedynki na każdym rozwidleniu."
           )
@@ -624,15 +705,16 @@ warunki_block <- list(
             risk_formula("P(A\\cap B\\cap C)=P(C)\\,P(B\\mid C)\\,P(A\\mid B\\cap C)", num = "2.3",
               legend = c("P(C)" = "pierwsza gałąź, liczona wśród wszystkich przypadków", "P(B\\mid C)" = "druga gałąź, liczona wśród przypadków z C", "P(A\\mid B\\cap C)" = "trzecia gałąź, liczona wśród przypadków z B i C naraz")),
             "Wzór (2.3) wynika z dwukrotnego zastosowania (2.2): najpierw P(A ∩ (B ∩ C)) = P(B ∩ C) · P(A | B ∩ C), a potem P(B ∩ C) = P(C) · P(B | C). Każdy czynnik ma własny, coraz węższy mianownik — i dlatego najczęstszym błędem przy dłuższych drogach jest wstawienie w środek łańcucha prawdopodobieństwa liczonego w całej populacji zamiast w grupie, do której doszliśmy.",
-            risk_example("2.4", "Przeciążenie, przegrzanie, incydent",
-              problem = "W Bananpolu 20% zmian przebiega w trybie przeciążenia (C). Na zmianach w przeciążeniu czujnik wykrywa przegrzanie (B) w 30% przypadków. Na zmianach w przeciążeniu z wykrytym przegrzaniem incydent (A) zdarza się w 15% przypadków. Oblicz prawdopodobieństwo, że losowa zmiana jest przeciążona, z przegrzaniem i z incydentem, oraz zapisz wynik w naturalnych częstościach.",
+            risk_example("2.4", "Lato, przegrzanie, incydent",
+              problem = "Kalendarz hali pokazał, że przegrzania skupiają się latem. Przyjmij, że lato (C) to 25% zmian w roku. Latem czujnik wykrywa przegrzanie (B) na 30% zmian. Na letnich zmianach z wykrytym przegrzaniem incydent (A) zdarza się w 12% przypadków. Oblicz prawdopodobieństwo, że losowa zmiana wypada latem, z przegrzaniem i z incydentem, oraz zapisz wynik w naturalnych częstościach.",
               steps = c(
-                "Ze wzoru (2.3): P(A ∩ B ∩ C) = 0.20 · 0.30 · 0.15.",
-                "0.20 · 0.30 = 0.06; 0.06 · 0.15 = 0.009.",
-                "Naturalne częstości: z 1000 zmian 200 jest przeciążonych, z nich 60 ma przegrzanie, z tych 60 incydentem kończy się 9."
+                "Ze wzoru (2.3): P(A ∩ B ∩ C) = 0.25 · 0.30 · 0.12.",
+                "0.25 · 0.30 = 0.075; 0.075 · 0.12 = 0.009.",
+                "Naturalne częstości: z 1000 zmian 250 wypada latem, z nich 75 ma przegrzanie, z tych 75 incydentem kończy się 9."
               ),
-              answer = "0.009, czyli około 9 zmian na 1000. Liczba 0.15 dotyczy tylko 60 zmian na końcu łańcucha — pomnożona przez 1000 dałaby absurdalne 150 incydentów."
-            )
+              answer = "0.009, czyli około 9 zmian na 1000. Liczba 0.12 dotyczy tylko 75 zmian na końcu łańcucha — pomnożona przez 1000 dałaby absurdalne 120 incydentów."
+            ),
+            warunki_chain_figure
           )
         )
       ),
@@ -754,39 +836,27 @@ warunki_block <- list(
           )
         ),
         list(
-          id = "wspolna", title = "Wspólne zasilanie",
-          text = "Utrata wspólnego zasilania może jednocześnie wyłączyć obie gałęzie i zniwelować redundancję. Ten przykład celowo wybiega naprzód: wróci w pełnej skali w wykładach o niezawodności systemu i drzewie błędów.",
+          id = "wspolna", title = "Wspólna przyczyna",
+          text = "Najczęstszym powodem zależności jest wspólna przyczyna: jedno zdarzenie, które naraz podnosi szansę obu. W hali typowym przykładem są dwa zabezpieczenia podłączone do jednego zasilania.",
           body = list(
-            "Dwa niezależne zabezpieczenia, z których każde zawodzi z prawdopodobieństwem q, zawodzą razem z prawdopodobieństwem q² — to wzór (2.5). Przy q = 0.05 daje to 0.0025, czyli dwadzieścia razy mniej niż dla jednego zabezpieczenia. Właśnie ta obietnica czyni redundancję atrakcyjną. Jeśli jednak oba zabezpieczenia mają wspólne zasilanie, pojawia się trzecia droga do jednoczesnej awarii, która omija mnożenie.",
-            "Najprostszy model rozdziela dwie sytuacje, które tworzą układ zupełny: zasilanie padło (prawdopodobieństwo c) albo działa (1 - c). Gdy padło, oba zabezpieczenia są wyłączone na pewno. Gdy działa, zawodzą niezależnie, każde z prawdopodobieństwem q. Wzór (2.4) daje wtedy:",
-            risk_formula("P(\\text{obie awarie})=c\\cdot 1+(1-c)\\,q^{2}", num = "2.6",
-              legend = c("c" = "prawdopodobieństwo utraty wspólnego zasilania", "q" = "prawdopodobieństwo awarii pojedynczego zabezpieczenia przy działającym zasilaniu", "q^{2}" = "jednoczesna awaria obu przy działającym zasilaniu, z niezależności")),
-            "Zwróć uwagę, że niezależność nie znika z modelu — obowiązuje nadal, ale tylko wewnątrz grupy „zasilanie działa”. Taką sytuację nazywamy niezależnością warunkową: zdarzenia są niezależne przy ustalonej wspólnej przyczynie, a zależne, gdy tę przyczynę pominiemy.",
+            "Dwa niezależne zabezpieczenia, z których każde zawodzi z prawdopodobieństwem q, zawodzą razem z prawdopodobieństwem q² — to wzór (2.5). Przy q = 0.05 daje to 0.0025, czyli dwadzieścia razy mniej niż dla jednego zabezpieczenia. Jeśli jednak oba mają wspólne zasilanie, pojawia się druga droga do jednoczesnej awarii, która omija mnożenie: zasilanie pada i wyłącza oba naraz.",
             risk_example("2.7", "Ile kosztuje wspólne zasilanie?",
-              problem = "Każde z dwóch zabezpieczeń zawodzi z prawdopodobieństwem q = 0.05 przy działającym zasilaniu. Wspólne zasilanie pada z prawdopodobieństwem c = 0.01. Porównaj prawdopodobieństwo jednoczesnej awarii obu zabezpieczeń w modelu niezależnym i w modelu ze wspólną przyczyną.",
+              problem = "Każde z dwóch zabezpieczeń zawodzi z prawdopodobieństwem q = 0.05 przy działającym zasilaniu. Wspólne zasilanie pada z prawdopodobieństwem c = 0.01 i wtedy oba zabezpieczenia są wyłączone. Porównaj prawdopodobieństwo jednoczesnej awarii obu zabezpieczeń w modelu niezależnym i w modelu ze wspólną przyczyną.",
               steps = c(
                 "Model niezależny, wzór (2.5): q² = 0.05² = 0.0025.",
-                "Model ze wspólną przyczyną, wzór (2.6): 0.01 + 0.99 · 0.0025 = 0.01 + 0.002475 = 0.012475.",
-                "Stosunek: 0.012475 / 0.0025 ≈ 5.0."
+                "Model ze wspólną przyczyną: zasilanie padło (c = 0.01) albo działa (0.99) — to układ zupełny. Gdy padło, oba zabezpieczenia zawodzą na pewno; gdy działa, zawodzą niezależnie, razem z prawdopodobieństwem 0.0025.",
+                "Ze wzoru (2.4): P(obie awarie) = 0.01 · 1 + 0.99 · 0.0025 = 0.01 + 0.002475 ≈ 0.0125."
               ),
-              answer = "Około 0.0125 zamiast 0.0025 — pięć razy więcej. Rzadka wspólna przyczyna (1%) dominuje wynik, bo jej droga nie jest mnożona przez drugie małe q. Im lepsze pojedyncze zabezpieczenia, tym większy względny udział wspólnej przyczyny."
+              answer = "Około 0.0125 zamiast 0.0025 — pięć razy więcej. Rzadka wspólna przyczyna (1%) dominuje wynik, bo jej droga nie jest mnożona przez drugie małe q."
             ),
-            risk_try("zacznij od P utraty wspólnego zasilania równego 0 i sprawdź, że oba słupki są równe. Potem ustaw 0.01 i zmniejszaj P awarii pojedynczego zabezpieczenia do 0.01."),
-            warunki_common_widget,
-            "Przy c = 0 oba modele pokrywają się, bo pozostaje tylko droga niezależna. Już przy c = 0.01 słupek „Jawna wspólna przyczyna” jest około pięć razy wyższy. Gdy przy c = 0.01 zmniejszamy q do 0.01, model niezależny obiecuje 0.0001, a model ze wspólną przyczyną podaje około 0.0101 — ponad sto razy więcej. Poprawa pojedynczych zabezpieczeń prawie nie zmienia wyniku, bo prawie całe ryzyko jednoczesnej awarii pochodzi teraz od zasilania. Skuteczniejszą inwestycją jest wtedy rozdzielenie zasilania niż wymiana czujników.",
-            risk_check("w2_chk_wspolna",
-              "W modelu (2.6) q = 0.01 i c = 0.001. Które działanie najbardziej zmniejszy prawdopodobieństwo jednoczesnej awarii?",
-              c("Zmniejszenie q do 0.005" = "q", "Rozdzielenie zasilania, czyli c ≈ 0" = "c", "Oba działania dają podobny efekt" = "same"),
-              correct = "c",
-              explanation = "Przy c = 0.001 wynik to około 0.0011, z czego 0.001 pochodzi od wspólnej przyczyny. Po usunięciu jej zostaje q² = 0.0001. Zmniejszenie q do 0.005 obniżyłoby tylko składnik 0.0001 do 0.000025 — wynik nadal przekraczałby 0.001.",
-              hints = c(q = "Policz oba składniki wzoru (2.6). Który z nich dominuje?", same = "Porównaj wkład c · 1 z wkładem (1 - c) · q².")
-            )
+            "Zwróć uwagę, że niezależność nie znika z modelu — obowiązuje nadal, ale tylko wewnątrz grupy „zasilanie działa”. Taką sytuację nazywamy niezależnością warunkową: zdarzenia są niezależne przy ustalonej wspólnej przyczynie, a zależne, gdy tę przyczynę pominiemy. Wrócimy do niej w wykładzie 03 przy dwóch czujnikach.",
+            "Ile wspólna przyczyna kosztuje układ z zapasem i jak wpisać ją w architekturę systemu, policzymy w wykładzie 08 o niezawodności systemu."
           )
         ),
         list(
           id = "audyt", title = "Zanim pomnożysz",
           bullets = c("Czy elementy mają wspólne zasilanie, otoczenie lub obsługę?", "Czy jedna awaria może obciążyć drugi element?", "Czy oba wyniki pochodzą z tego samego procesu rejestracji?"),
-          body = "Każde pytanie z listy odpowiada innemu mechanizmowi zależności: wspólnej przyczynie, przeciążeniu jednego elementu po awarii drugiego i wspólnemu źródłowi błędu w danych. Jeśli na którekolwiek odpowiedź brzmi „tak” albo „nie wiadomo”, iloczyn P(A) · P(B) jest optymistycznym przybliżeniem, a nie wynikiem. Wtedy trzeba albo jawnie zamodelować wspólną przyczynę, jak we wzorze (2.6), albo uczciwie podać wynik jako dolne oszacowanie ryzyka."
+          body = "Każde pytanie z listy odpowiada innemu mechanizmowi zależności: wspólnej przyczynie, przeciążeniu jednego elementu po awarii drugiego i wspólnemu źródłowi błędu w danych. Jeśli na którekolwiek odpowiedź brzmi „tak” albo „nie wiadomo”, iloczyn P(A) · P(B) jest optymistycznym przybliżeniem, a nie wynikiem. Wtedy trzeba albo jawnie zamodelować wspólną przyczynę, jak w przykładzie 2.7, albo uczciwie podać wynik jako dolne oszacowanie ryzyka."
         )
       ),
       pitfall = "P(A ∩ B)=P(A)P(B) wolno użyć dopiero po uzasadnieniu niezależności."
@@ -803,7 +873,7 @@ warunki_block <- list(
           id = "miary", title = "Jak mocno warunek zmienia ocenę?",
           body = list(
             "Porównanie P(A | B) z P(A) mówi, czy warunek coś wnosi. Do decyzji potrzebna jest jeszcze miara tego, jak dużo wnosi. W analizie ryzyka używa się dwóch podstawowych miar: różnicy ryzyk, która mówi, o ile zdarzeń więcej przypada na każdą zmianę z warunkiem, i ilorazu ryzyk (ryzyka względnego), który mówi, ile razy częściej zdarzenie występuje w grupie z warunkiem niż bez niego.",
-            risk_formula("RD=P(A\\mid B)-P(A\\mid B^{c}),\\qquad RR=\\frac{P(A\\mid B)}{P(A\\mid B^{c})}", num = "2.7",
+            risk_formula("RD=P(A\\mid B)-P(A\\mid B^{c}),\\qquad RR=\\frac{P(A\\mid B)}{P(A\\mid B^{c})}", num = "2.6",
               legend = c("B^{c}" = "dopełnienie warunku: brak przegrzania", "RD" = "różnica ryzyk, w jednostkach prawdopodobieństwa", "RR" = "iloraz ryzyk (ryzyko względne), bez jednostki")),
             "W Bananpolu RD = 0.12 - 5/900 ≈ 0.114, a RR = 0.12 / (5/900) = 21.6. Iloraz 21.6 jest większy niż „około 7×” z porównania z P(A), bo porównujemy teraz dwie rozłączne grupy, a nie grupę z całością, która sama zawiera zmiany z przegrzaniem. Obie liczby są poprawne, ale odpowiadają na różne pytania — w raporcie trzeba nazwać, z czym porównujemy.",
             risk_example("2.8", "Gdzie skierować kontrolę?",
@@ -812,7 +882,7 @@ warunki_block <- list(
                 "Wariant 1: P(A | B) spada z 0.12 do 0.06, czyli z 12 do 6 incydentów. Łącznie 6 + 5 = 11 incydentów, P(A) = 0.011.",
                 "Wariant 2: w grupie bez przegrzania 5 incydentów spada do 2.5. Łącznie 12 + 2.5 = 14.5 incydentu, P(A) = 0.0145.",
                 "Efekt na jedną skontrolowaną zmianę: wariant 1 — 6 / 100 = 0.06 incydentu; wariant 2 — 2.5 / 900 ≈ 0.0028 incydentu.",
-                "Kontrola w grupie z przegrzaniem jest około 22 razy wydajniejsza na jedną zmianę — to ten sam iloraz co RR we wzorze (2.7)."
+                "Kontrola w grupie z przegrzaniem jest około 22 razy wydajniejsza na jedną zmianę — to ten sam iloraz co RR we wzorze (2.6)."
               ),
               answer = "Wariant 1 zostawia 11 incydentów na 1000 zmian, wariant 2 — 14.5. Kontrola ukierunkowana warunkiem zapobiega większej liczbie incydentów przy dziewięciokrotnie mniejszym nakładzie. Rachunek zakłada jednak, że kontrola rzeczywiście działa na mechanizm incydentu — o tym mówi sekcja o przyczynowości."
             ),
@@ -837,7 +907,7 @@ warunki_block <- list(
           "Warunek może dobrze przewidywać incydent, ponieważ oba zjawiska mają wspólną przyczynę. Decyzja o kontroli może wtedy nadal być rozsądna, lecz decyzja o usunięciu przyczyny wymaga mocniejszego uzasadnienia.",
           "Klasyczny przykład spoza zakładu: nocne zmiany wiążą się z wyższą częstością wypadków. Czy winna jest pora, zmęczenie, obsada, czy rodzaj zadań zlecanych nocą? Skierowanie dodatkowego nadzoru na noc jest zasadne od razu; przestawienie całej produkcji na dzień — dopiero po zrozumieniu mechanizmu."
         ),
-        body = "W Bananpolu wspólną przyczyną mogłoby być przeciążenie z przykładu 2.4: zmiany w przeciążeniu częściej mają przegrzanie i częściej kończą się incydentem, nawet jeśli samo przegrzanie incydentu nie powoduje. Wtedy wymiana wentylatorów usunęłaby sygnał przegrzania, ale nie incydenty. Rozróżnienie, czy warunek jest przyczyną, czy tylko wskaźnikiem, wymaga porównania grup przy ustalonej wspólnej przyczynie — tej samej niezależności warunkowej, którą poznaliśmy przy wspólnym zasilaniu.")
+        body = "W Bananpolu wspólną przyczyną mogłoby być przeciążenie z przykładu 2.5: zmiany w przeciążeniu częściej mają przegrzanie i częściej kończą się incydentem, nawet jeśli samo przegrzanie incydentu nie powoduje. Wtedy wymiana wentylatorów usunęłaby sygnał przegrzania, ale nie incydenty. Rozróżnienie, czy warunek jest przyczyną, czy tylko wskaźnikiem, wymaga porównania grup przy ustalonej wspólnej przyczynie — tej samej niezależności warunkowej, którą poznaliśmy przy wspólnym zasilaniu.")
       ),
       decision = "Przegrzanie uzasadnia dodatkową kontrolę, ale sam związek warunkowy nie dowodzi przyczynowości."
     ),
@@ -850,7 +920,7 @@ warunki_block <- list(
           text = c(
             "Wykład zaczął się od obserwacji, że to samo zdarzenie ma różne prawdopodobieństwa w różnych grupach odniesienia. Prawdopodobieństwo warunkowe (definicja 2.1, wzór 2.1) formalizuje filtrowanie: liczymy A wyłącznie wśród przypadków, w których zaszło B. Prowadzący w studiu i czujnik przegrzania w hali robią to samo — zawężają świat, a ruch prowadzącego niesie informację, bo zależy od tego, co ukryte.",
             "Z definicji wynikają dwa narzędzia rachunkowe. Reguła iloczynu (2.2) i jej wersja łańcuchowa (2.3) opisują drogi na drzewie: mnożymy wzdłuż gałęzi, pilnując mianownika każdego czynnika. Wzór na prawdopodobieństwo całkowite (2.4) sumuje rozłączne drogi układu zupełnego (definicja 2.2) i tłumaczy, dlaczego rzadki, ale ryzykowny tryb może odpowiadać za mniejszość incydentów.",
-            "Niezależność (definicja 2.3, wzór 2.5) jest szczególnym przypadkiem, w którym warunek niczego nie zmienia, i wymaga uzasadnienia mechanizmem. Wspólna przyczyna (2.6) potrafi wielokrotnie podnieść ryzyko jednoczesnej awarii. Wreszcie miary (2.7) przekładają różnicę między grupami na decyzję — ale związek warunkowy wskazuje, gdzie działać, a nie dowodzi, co jest przyczyną."
+            "Niezależność (definicja 2.3, wzór 2.5) jest szczególnym przypadkiem, w którym warunek niczego nie zmienia, i wymaga uzasadnienia mechanizmem. Wspólna przyczyna (przykład 2.7) potrafi wielokrotnie podnieść ryzyko jednoczesnej awarii. Wreszcie miary (2.6) przekładają różnicę między grupami na decyzję — ale związek warunkowy wskazuje, gdzie działać, a nie dowodzi, co jest przyczyną."
           )
         ),
         list(id = "sciaga", title = "Checklista", bullets = c("Co dokładnie oznaczają A i B?", "Jaki jest mianownik każdego prawdopodobieństwa?", "Czy grupy tworzą kompletną i rozłączną partycję?", "Czy niezależność została uzasadniona mechanizmem?", "Czy związek warunkowy nie został nazwany przyczyną bez dowodu?")),
@@ -1022,30 +1092,5 @@ warunki_server <- function(input, output, session) {
     )
   })
 
-  common_plot <- reactive({
-    independent <- input$w2_component_fail^2
-    with_common <- input$w2_common + (1 - input$w2_common) * independent
-    ggplot(data.frame(
-      model = c("Tylko niezależne awarie", "Jawna wspólna przyczyna"),
-      p = c(independent, with_common)
-    ), aes(model, p, fill = model)) +
-      geom_col(width = .6) +
-      scale_x_discrete(labels = scales::label_wrap(14)) +
-      scale_fill_manual(values = upwr_cat_n(2), guide = "none") +
-      labs(x = NULL, y = "P(awarii)") +
-      theme_upwr()
-  })
-  zoom_plot_server("w2_common_plot", common_plot,
-    alt = "Porównanie prawdopodobieństwa awarii dwóch zabezpieczeń bez i ze wspólną przyczyną."
-  )
-  output$w2_common_stats <- renderUI({
-    independent <- input$w2_component_fail^2
-    with_common <- input$w2_common + (1 - input$w2_common) * independent
-    # Kolory jak słupki wykresu.
-    tagList(
-      lc_readout("Model niezależny", risk_fmt_p(independent), color = upwr_cat_n(2)[1], swatch = TRUE),
-      lc_readout("Ze wspólną przyczyną", risk_fmt_p(with_common), color = upwr_cat_n(2)[2], swatch = TRUE)
-    )
-  })
   risk_assessment_server("w2", warunki_quiz, input, output)
 }
