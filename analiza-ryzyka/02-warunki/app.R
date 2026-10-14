@@ -57,6 +57,7 @@ ui <- lecture_page(
   header_extras = tagList(
     includeScript(file.path(app_dir, "modules", "filtr.js")),
     includeScript(file.path(app_dir, "modules", "iloczyn.js")),
+    includeScript(file.path(app_dir, "modules", "raport.js")),
     tags$style(HTML("
       .lc-cal-board { position: relative; width: 100%; margin: .4em 0 .2em; }
       .lc-cal-cell { position: absolute; left: 0; top: 0; border-radius: 2px;
@@ -76,6 +77,7 @@ ui <- lecture_page(
       .lc-cal-group.is-hot { color: var(--upwr-cat-bursztyn); }
       .lc-cal-group.is-cold { transform: translateX(-100%); }
       .lc-cal-group.is-hot.is-acc { color: var(--upwr-accent); }
+      .lc-cal-group.is-hot.is-neutral { color: var(--upwr-ink-soft); }
       .lc-cal-board.is-sorted .lc-cal-group { opacity: 1; }
       .lc-cal .lc-action[aria-pressed='true'] { background: var(--upwr-surface); color: var(--upwr-accent); }
       .lc-cal .lc-read[hidden] { display: none; }
@@ -146,20 +148,20 @@ ui <- lecture_page(
       .lc-chain2-node rect { fill: var(--upwr-surface); stroke: var(--upwr-secondary); stroke-width: 1.5; }
       .lc-chain2-node text { font: 15px var(--upwr-sans); fill: var(--upwr-ink); }
       .lc-chain2-node .lc-chain2-n { font: 600 15px var(--upwr-mono); fill: var(--upwr-ink-soft); }
-      .lc-chain2-node.is-1 rect { stroke: var(--upwr-cat-bursztyn); stroke-width: 2.5; }
-      .lc-chain2-node.is-2 rect { stroke: var(--upwr-cat-niebo); stroke-width: 2.5; }
+      .lc-chain2-node.is-1 rect { stroke: var(--upwr-cat-niebo); stroke-width: 2.5; }
+      .lc-chain2-node.is-2 rect { stroke: var(--upwr-cat-bursztyn); stroke-width: 2.5; }
       .lc-chain2-node.is-leaf rect { fill: var(--upwr-accent); stroke: var(--upwr-accent); }
       .lc-chain2-node.is-leaf text { fill: var(--upwr-surface); }
       .lc-chain2-node.is-off { opacity: .45; }
       .lc-chain2-edge { stroke: var(--upwr-reference); stroke-width: 2; stroke-linecap: round; }
       .lc-chain2-edge.is-off { opacity: .45; }
-      .lc-chain2-edge.is-1 { stroke: var(--upwr-cat-bursztyn); stroke-width: 5; }
-      .lc-chain2-edge.is-2 { stroke: var(--upwr-cat-niebo); stroke-width: 5; }
-      .lc-chain2-edge.is-3 { stroke: var(--upwr-cat-szalwia); stroke-width: 5; }
+      .lc-chain2-edge.is-1 { stroke: var(--upwr-cat-niebo); stroke-width: 5; }
+      .lc-chain2-edge.is-2 { stroke: var(--upwr-cat-bursztyn); stroke-width: 5; }
+      .lc-chain2-edge.is-3 { stroke: var(--upwr-accent); stroke-width: 5; }
       .lc-chain2-p { font: 700 14px var(--upwr-mono); }
-      .lc-chain2-p.is-1, .lc-chain2-eq .is-1 { fill: var(--upwr-cat-bursztyn); }
-      .lc-chain2-p.is-2, .lc-chain2-eq .is-2 { fill: var(--upwr-cat-niebo); }
-      .lc-chain2-p.is-3, .lc-chain2-eq .is-3 { fill: var(--upwr-cat-szalwia); }
+      .lc-chain2-p.is-1, .lc-chain2-eq .is-1 { fill: var(--upwr-cat-niebo); }
+      .lc-chain2-p.is-2, .lc-chain2-eq .is-2 { fill: var(--upwr-cat-bursztyn); }
+      .lc-chain2-p.is-3, .lc-chain2-eq .is-3 { fill: var(--upwr-accent); }
       .lc-chain2-den { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
       .lc-chain2-eq { font: 600 16px var(--upwr-mono); fill: var(--upwr-ink); }
       .lc-chain2-eq .is-res { fill: var(--upwr-accent); font-weight: 700; }
@@ -195,8 +197,24 @@ ui <- lecture_page(
       .lc-od-caption { min-height: 3em; margin: .5em 0 .3em; color: var(--upwr-ink-soft); }
       .lc-od-nav { display: flex; justify-content: space-between; }
       .lc-od-nav .lc-action[disabled] { opacity: .35; cursor: default; }
+      .lc-rk-stage { position: relative; width: 100%; aspect-ratio: 720 / 340; background: var(--upwr-panel); border: 1px solid var(--upwr-rule); overflow: hidden; }
+      .lc-rk-hall { position: absolute; border-radius: 4px; }
+      .lc-rk-hall.is-over { background: color-mix(in srgb, var(--upwr-cat-bursztyn) 22%, var(--upwr-surface)); border: 1.5px solid var(--upwr-cat-bursztyn); }
+      .lc-rk-hall.is-norm { background: color-mix(in srgb, var(--upwr-cat-szalwia) 22%, var(--upwr-surface)); border: 1.5px solid var(--upwr-cat-szalwia); }
+      .lc-rk-stage.is-ready .lc-rk-hall { transition: left .9s ease, width .9s ease; }
+      .lc-rk-risk { position: absolute; transform: translateX(-50%); white-space: nowrap; font: 600 15px var(--upwr-mono); color: var(--upwr-ink); }
+      .lc-rk-hname { position: absolute; font-size: 13px; color: var(--upwr-ink); white-space: nowrap; }
+      .lc-rk-dot { position: absolute; width: max(7px, 1.3%); aspect-ratio: 1; border-radius: 50%; background: var(--upwr-accent);
+        box-shadow: 0 0 0 1.5px var(--upwr-surface); transform: translate(-50%, -50%); opacity: 0;
+        transition: left .9s cubic-bezier(.45, 0, .2, 1), top .9s cubic-bezier(.45, 0, .2, 1), opacity .4s ease; }
+      .lc-rk-binder { position: absolute; background: var(--upwr-surface); border: 1px solid var(--upwr-secondary); border-radius: 3px; opacity: 0; transition: opacity .5s ease; }
+      .lc-rk-binder::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--upwr-secondary); }
+      .lc-rk-bdiv { position: absolute; height: 1px; background: var(--upwr-rule); opacity: 0; transition: opacity .5s ease; }
+      .lc-rk-blbl { position: absolute; font-size: 12px; color: var(--upwr-ink-soft); white-space: nowrap; opacity: 0; transition: opacity .5s ease; }
+      .lc-rk-stage.is-binder .lc-rk-binder, .lc-rk-stage.is-binder .lc-rk-bdiv, .lc-rk-stage.is-binder .lc-rk-blbl { opacity: 1; }
+      .lc-rk-readout { font: 13px var(--upwr-mono); color: var(--upwr-ink-soft); margin: 0 0 .8em; }
       @media (prefers-reduced-motion: reduce) {
-        .lc-cal-cell, .lc-cal-month, .lc-cal-day, .lc-cal-group, .lc-od-cell, .lc-od-person, .lc-od-bubble { transition: none !important; }
+        .lc-cal-cell, .lc-cal-month, .lc-cal-day, .lc-cal-group, .lc-od-cell, .lc-od-person, .lc-od-bubble, .lc-rk-stage, .lc-rk-stage * { transition: none !important; }
       }
     "))
   )

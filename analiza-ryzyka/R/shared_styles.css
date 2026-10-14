@@ -1957,12 +1957,12 @@ mjx-container mjx-text {
   align-items: center;
   gap: 12px;
 }
-.lc-formula-tex { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
+.lc-formula-tex { flex: 1 1 auto; min-width: 0; overflow-x: auto; font-size: 1.3em; color: var(--upwr-ink); }
 .lc-formula-num { flex: 0 0 auto; color: var(--upwr-reference); }
 .lc-formula-legend {
-  margin-top: 4px;
+  margin-top: 6px;
   font-family: var(--upwr-serif);
-  font-size: calc(14px * var(--lc-font-scale));
+  font-size: calc(15.5px * var(--lc-font-scale));
   line-height: 1.5;
   color: var(--upwr-ink-soft);
 }

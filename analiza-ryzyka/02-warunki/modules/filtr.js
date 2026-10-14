@@ -2,8 +2,8 @@
 //
 // Kalendarz (.lc-cal[data-config]): rok pracy hali jako 50 tygodni × 5 dni × 2 zmiany
 // = 500 komórek na rok. Przegrzania skupiają się latem, kropka to incydent.
-// Przyciski [data-cal-sort="hot"|"inc"] układają zmiany w dwie grupy obok siebie
-// (według przegrzania albo według incydentu; w każdej grupie zmiany z drugim
+// Przyciski [data-cal-sort="hot"|"inc"|"pora"] układają zmiany w dwie grupy obok siebie
+// (według przegrzania, według incydentu albo według pory zmiany; w każdej grupie zmiany z drugim
 // zdarzeniem na dole), a odczyty [data-cal-out] pokazują udział w każdej grupie.
 // Ponowne kliknięcie wciśniętego przycisku wraca do kalendarza.
 //
@@ -94,12 +94,14 @@
     var mode = null;  // null = kalendarz, "hot" = według przegrzania, "inc" = według incydentu
 
     var cells = makeRegister(cfg);
+    cells.forEach(function (c) { c.noc = c.s === 1; });
     var nAll = cells.length, nCold = nAll - nHot, incAll = incHot + incCold, nNoInc = nAll - incAll;
     // Po sortowaniu każda grupa ma tyle wierszy, ile kalendarz (10 na rok).
     var rows = 10 * years;
     var SORTS = {
       hot: { key: "hot", mark: "inc", labels: ["z przegrzaniem", "bez przegrzania"] },
-      inc: { key: "inc", mark: "hot", labels: ["z incydentem", "bez incydentu"] }
+      inc: { key: "inc", mark: "hot", labels: ["z incydentem", "bez incydentu"] },
+      pora: { key: "noc", mark: "inc", labels: ["zmiany nocne", "zmiany dzienne"] }
     };
     // W każdej grupie najpierw zmiany z drugim zdarzeniem (lądują na dole), potem reszta w kolejności dat.
     Object.keys(SORTS).forEach(function (k) {
@@ -227,6 +229,14 @@
         out.label2.textContent = "Incydent bez przegrzania";
         out.value2.textContent = ratio(incCold, nCold);
         status.textContent = "Ten sam rejestr, posortowany według przegrzania.";
+      } else if (mode === "pora") {
+        var incNoc = cells.filter(function (c) { return c.noc && c.inc; }).length;
+        var nNoc = cells.filter(function (c) { return c.noc; }).length;
+        out.label.textContent = "Incydent nocą";
+        out.value.textContent = ratio(incNoc, nNoc);
+        out.label2.textContent = "Incydent w dzień";
+        out.value2.textContent = ratio(incAll - incNoc, nAll - nNoc);
+        status.textContent = "Ten sam rejestr, posortowany według pory zmiany. Noc prawie nic nie zmienia.";
       } else if (mode === "inc") {
         out.label.textContent = "Przegrzanie przy incydencie";
         out.value.textContent = ratio(incHot, incAll);
@@ -236,7 +246,7 @@
       } else {
         out.label.textContent = btns.length > 1 ? "Incydent" : "Wszystkie zmiany";
         out.value.textContent = ratio(incAll, nAll);
-        two = btns.length > 1;
+        two = btns.some(function (b) { return b.getAttribute("data-cal-sort") === "inc"; });
         if (two) {
           out.label2.textContent = "Przegrzanie";
           out.value2.textContent = ratio(nHot, nAll);
@@ -246,6 +256,7 @@
       if (mode) {
         hotLabel.textContent = SORTS[mode].labels[0];
         hotLabel.classList.toggle("is-acc", mode === "inc");
+        hotLabel.classList.toggle("is-neutral", mode === "pora");
         coldLabel.textContent = SORTS[mode].labels[1];
       }
       if (second) second.hidden = !two;

@@ -258,7 +258,21 @@ risk_definition <- function(num, term, text) {
 
 # Wzór z numerem i objaśnieniem symboli. `legend` to nazwany wektor:
 # nazwa = symbol w TeX-u, wartość = znaczenie.
-risk_formula <- function(tex, num = NULL, legend = NULL) {
+# colors: nazwany wektor litera -> kolor, np. c(A = upwr_accent, B = "#c08540");
+# litery zdarzeń dostają we wzorze i w legendzie ten sam kolor co w widgetach.
+risk_tex_colors <- function(tex, colors) {
+  for (letter in names(colors)) {
+    tex <- gsub(paste0("(?<![A-Za-z\\\\])", letter, "(?![A-Za-z])"),
+      paste0("\\\\color{", colors[[letter]], "}{", letter, "}"), tex, perl = TRUE)
+  }
+  tex
+}
+
+risk_formula <- function(tex, num = NULL, legend = NULL, colors = NULL) {
+  if (!is.null(colors)) {
+    tex <- risk_tex_colors(tex, colors)
+    if (!is.null(legend)) names(legend) <- risk_tex_colors(names(legend), colors)
+  }
   lc_formula_box(
     class = "lc-formula-numbered",
     tags$div(

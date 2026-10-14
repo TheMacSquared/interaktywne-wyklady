@@ -116,6 +116,9 @@ warunki_calendar_widget <- warunki_calendar_panel("Dwa lata pracy Bananpolu: 100
 
 # Ten sam rejestr przy pytaniu o symetrię zależności: sortowanie według
 # przegrzania albo według incydentu.
+warunki_calendar_pora_widget <- warunki_calendar_panel("Czy noc coś zmienia?",
+  sorts = c(hot = "Posortuj według przegrzania", pora = "Posortuj według pory zmiany"))
+
 warunki_calendar_both_widget <- warunki_calendar_panel("Ten sam rejestr w obie strony",
   sorts = c(hot = "Posortuj według przegrzania", inc = "Posortuj według incydentu"))
 
@@ -229,6 +232,47 @@ warunki_chain_figure <- local({
     tags$figcaption("Każda gałąź liczy udział wewnątrz grupy, do której już doszliśmy; iloczyn wraca do wspólnego mianownika 1000 zmian."))
 })
 
+# Kolory zdarzeń we wzorach, jak w widgetach: A — incydent (burgund),
+# B — przegrzanie albo warunek (bursztyn), C — lato (niebo).
+warunki_event_colors <- c(A = upwr_accent, B = unname(upwr_cat[["bursztyn"]]), C = unname(upwr_cat[["niebo"]]))
+
+# Scena „Raport kierownika”: dwie hale o powierzchni proporcjonalnej do liczby
+# zmian, incydenty jako kropki, w trzecim kadrze zjeżdżają do segregatora według
+# pochodzenia. Rysunek i kadry działają w przeglądarce (modules/raport.js).
+warunki_raport_frames <- list(
+  list(name = "Dwa tryby", share = 0.05, n_o = 0L, n_n = 0L, dots = FALSE, binder = FALSE,
+    text = "Kierownik jest pewien: w hali przeciążonej ryzyko jest piętnaście razy wyższe, więc tam należy szukać incydentów.",
+    read = "Zmian: 1000 · przeciążenie 50 · normalna praca 950"),
+  list(name = "Gdzie groźniej?", share = 0.05, n_o = 7L, n_n = 10L, dots = TRUE, binder = FALSE,
+    text = "W wąskiej hali incydenty leżą gęsto, w szerokiej rzadko, bo szeroka mieści znacznie więcej zmian.",
+    read = "Incydenty: 17 · przy przeciążeniu 7 · przy normalnej pracy 10"),
+  list(name = "Skąd incydenty?", share = 0.05, n_o = 7L, n_n = 10L, dots = TRUE, binder = TRUE,
+    text = "Posortowane według pochodzenia incydenty pokazują, że więcej z nich bierze się z normalnej pracy.",
+    read = "Incydenty: 17 · z przeciążenia 7 · z normalnej pracy 10"),
+  list(name = "A gdyby 0.20?", share = 0.20, n_o = 30L, n_n = 8L, dots = TRUE, binder = TRUE,
+    text = "Gdy przeciążonych zmian jest 200, to one dają większość incydentów.",
+    read = "Udział przeciążenia 0.20 · incydenty 38 · z przeciążenia 30 · z normalnej pracy 8")
+)
+warunki_raport_widget <- figure_panel(
+  label = "Scena",
+  title = "Raport kierownika: skąd biorą się incydenty?",
+  full_width = TRUE,
+  tags$div(class = "lc-rk",
+    `data-config` = jsonlite::toJSON(list(frames = warunki_raport_frames), auto_unbox = TRUE),
+    tags$div(class = "lc-od-head",
+      tags$span(class = "lc-od-name-out", `data-rk-out` = "name", "Dwa tryby"),
+      tags$span(class = "lc-od-step", `data-rk-out` = "step", "Kadr 1 z 4")
+    ),
+    tags$div(class = "lc-rk-stage", role = "img"),
+    tags$p(class = "lc-od-caption lc-rk-caption", `aria-live` = "polite"),
+    tags$p(class = "lc-rk-readout"),
+    tags$div(class = "lc-od-nav",
+      tags$button(type = "button", class = "lc-action is-outline", `data-rk` = "prev", lc_icon("prev"), tags$span("Wstecz")),
+      tags$button(type = "button", class = "lc-action is-solid", `data-rk` = "next", tags$span("Dalej"), lc_icon("next"))
+    )
+  )
+)
+
 warunki_monty_widget <- figure_panel(
   label = "Idź na całość",
   title = "Zostać przy bramce czy zmienić wybór?",
@@ -340,7 +384,7 @@ warunki_monty_widget <- figure_panel(
 }
 
 # Widget używa stałych liczb Bananpolu z narracji (1000 zmian, 100 z przegrzaniem,
-# 12 i 5 incydentów), więc działa niezależnie od suwaków z poprzedniego rozdziału.
+# 12 i 5 incydentów), więc działa niezależnie od suwaka mozaiki.
 warunki_views_counts <- data.frame(
   condition = c("Przegrzanie", "Brak przegrzania"),
   event = c(12L, 5L),
@@ -349,37 +393,6 @@ warunki_views_counts <- data.frame(
   stringsAsFactors = FALSE
 )
 warunki_views_params <- c(share = 0.10, hot = 0.12, normal = 5 / 900)
-
-# Wielkości, które można zaznaczyć na drzewie. Węzły licznika są bordowe, węzły
-# mianownika bursztynowe; przy prawdopodobieństwach warunkowych licznik leży
-# wewnątrz mianownika, więc jego węzeł jest liczony w obu.
-warunki_views_targets <- list(
-  a = list(
-    label = "P(A) — incydent wśród wszystkich zmian",
-    tex = "P(A)", num_nodes = c(4L, 6L), den_nodes = 1L, num_edges = c(1L, 3L, 2L, 5L), den_edges = integer(0),
-    num = 17L, den = 1000L, num_caption = "incydenty (obie drogi)", den_caption = "wszystkie zmiany"
-  ),
-  b = list(
-    label = "P(B) — przegrzanie wśród wszystkich zmian",
-    tex = "P(B)", num_nodes = 2L, den_nodes = 1L, num_edges = 1L, den_edges = integer(0),
-    num = 100L, den = 1000L, num_caption = "zmiany z przegrzaniem", den_caption = "wszystkie zmiany"
-  ),
-  ab = list(
-    label = "P(A ∩ B) — incydent i przegrzanie naraz",
-    tex = "P(A\\cap B)", num_nodes = 4L, den_nodes = 1L, num_edges = c(1L, 3L), den_edges = integer(0),
-    num = 12L, den = 1000L, num_caption = "incydent i przegrzanie", den_caption = "wszystkie zmiany"
-  ),
-  a_b = list(
-    label = "P(A | B) — incydent wśród zmian z przegrzaniem",
-    tex = "P(A\\mid B)", num_nodes = 4L, den_nodes = c(2L, 5L), num_edges = 3L, den_edges = c(1L, 4L),
-    num = 12L, den = 100L, num_caption = "incydent i przegrzanie", den_caption = "zmiany z przegrzaniem"
-  ),
-  b_a = list(
-    label = "P(B | A) — przegrzanie wśród zmian z incydentem",
-    tex = "P(B\\mid A)", num_nodes = 4L, den_nodes = 6L, num_edges = c(1L, 3L), den_edges = c(2L, 5L),
-    num = 12L, den = 17L, num_caption = "incydent i przegrzanie", den_caption = "wszystkie incydenty"
-  )
-)
 
 warunki_views_widget <- figure_panel(
   label = "Trzy widoki", title = "Te same liczby: drzewo, tabela i dane do jUPWR",
@@ -405,31 +418,6 @@ warunki_views_widget <- figure_panel(
     tone = "info"
   ),
   full_width = TRUE
-)
-
-warunki_tree_read_widget <- figure_panel(
-  label = "Czytaj od mianownika", title = "Licznik i mianownik na drzewie",
-  tags$div(class = "lc-choices",
-    radioButtons(
-      "w2_target", "Zaznacz na drzewie",
-      choices = setNames(names(warunki_views_targets), vapply(warunki_views_targets, `[[`, "", "label")),
-      selected = "a"
-    )
-  ),
-  lc_plot("w2_target_plot", ratio = "1.5/1", ratio_narrow = "1.1/1", max_height = "420px"),
-  uiOutput("w2_target_result"),
-  full_width = TRUE
-)
-
-warunki_total_widget <- risk_widget_panel(
-  title = "Dwie drogi do incydentu",
-  controls = tagList(
-    lc_slider("w2_mode_share", "Udział pracy w przeciążeniu", 0, 1, 0.20, 0.01),
-    lc_slider("w2_overload", "P(incydent | przeciążenie)", 0, 0.40, 0.15, 0.01),
-    lc_slider("w2_regular", "P(incydent | normalna praca)", 0, 0.10, 0.01, 0.005)
-  ),
-  plot_id = "w2_total_plot", stats_id = "w2_total_stats",
-  note = "Wynik jest ważoną sumą dwóch rozłącznych dróg."
 )
 
 # Drzewo dróg z regułą iloczynu: wybór drogi podświetla gałęzie i podstawia jej
@@ -631,7 +619,7 @@ warunki_block <- list(
               "Niech A i B będą zdarzeniami i niech P(B) > 0. Prawdopodobieństwem warunkowym zdarzenia A pod warunkiem B nazywamy liczbę P(A | B) określoną wzorem (2.1).",
               "Zdarzenie B nazywamy warunkiem. Dla warunku o zerowym prawdopodobieństwie wzór (2.1) nie ma sensu — nie można filtrować do pustej grupy przypadków."
             )),
-            risk_formula("P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)},\\qquad P(B)>0", num = "2.1",
+            risk_formula(colors = warunki_event_colors, "P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)},\\qquad P(B)>0", num = "2.1",
               legend = c("P(A\\cap B)" = "prawdopodobieństwo, że zaszły oba zdarzenia naraz", "P(B)" = "prawdopodobieństwo warunku, czyli wielkość przefiltrowanej grupy", "P(A\\mid B)" = "udział A wewnątrz tej grupy")),
             "Tę wielkość nazywamy prawdopodobieństwem warunkowym, a zapis P(A | B) czytamy: prawdopodobieństwo A pod warunkiem B.",
             risk_derivation("dlaczego iloraz?", c(
@@ -701,7 +689,7 @@ warunki_block <- list(
             ),
             warunki_path_widget,
             "Ten rachunek nie korzystał z niczego szczególnego w liczbach 0.10 i 0.12 — działa dla dowolnych wartości, więc uogólniamy go w jedną regułę, nazywaną regułą iloczynu (wzorem na prawdopodobieństwo iloczynu zdarzeń):",
-            risk_formula("P(A\\cap B)=P(B)\\,P(A\\mid B)=P(A)\\,P(B\\mid A)", num = "2.2",
+            risk_formula(colors = warunki_event_colors, "P(A\\cap B)=P(B)\\,P(A\\mid B)=P(A)\\,P(B\\mid A)", num = "2.2",
               legend = c("P(B)" = "udział wszystkich zmian, które wchodzą do grupy B", "P(A\\mid B)" = "udział A wewnątrz grupy B", "P(A)\\,P(B\\mid A)" = "ta sama droga przebyta w odwrotnej kolejności")),
             "Pierwszy czynnik wprowadza do grupy spełniającej warunek, drugi liczy zdarzenie wewnątrz tej grupy.",
             risk_derivation("reguła iloczynu", c(
@@ -724,7 +712,7 @@ warunki_block <- list(
           id = "lancuch", title = "Dłuższe drogi",
           body = list(
             "Drzewo może mieć więcej niż dwa poziomy. Wtedy reguła iloczynu działa krok po kroku: każda kolejna gałąź jest prawdopodobieństwem warunkowym względem wszystkiego, co zaszło wcześniej na tej drodze. Dla trzech zdarzeń dostajemy regułę łańcuchową:",
-            risk_formula("P(A\\cap B\\cap C)=P(C)\\,P(B\\mid C)\\,P(A\\mid B\\cap C)", num = "2.3",
+            risk_formula(colors = warunki_event_colors, "P(A\\cap B\\cap C)=P(C)\\,P(B\\mid C)\\,P(A\\mid B\\cap C)", num = "2.3",
               legend = c("P(C)" = "pierwsza gałąź, liczona wśród wszystkich przypadków", "P(B\\mid C)" = "druga gałąź, liczona wśród przypadków z C", "P(A\\mid B\\cap C)" = "trzecia gałąź, liczona wśród przypadków z B i C naraz")),
             "Wzór (2.3) wynika z dwukrotnego zastosowania (2.2): najpierw P(A ∩ (B ∩ C)) = P(B ∩ C) · P(A | B ∩ C), a potem P(B ∩ C) = P(C) · P(B | C). Każdy czynnik ma własny, coraz węższy mianownik — i dlatego najczęstszym błędem przy dłuższych drogach jest wstawienie w środek łańcucha prawdopodobieństwa liczonego w całej populacji zamiast w grupie, do której doszliśmy.",
             risk_example("2.2", "Lato, przegrzanie, incydent",
@@ -750,6 +738,17 @@ warunki_block <- list(
       ),
       sections = list(
         list(
+          id = "skad", title = "Skąd biorą się incydenty?",
+          text = c(
+            "Kierownik hali jest pewien, skąd biorą się incydenty: z przeciążenia, bo tam ryzyko zmiany jest piętnaście razy wyższe. Zanim przyznasz mu rację, sprawdź, ile zmian w ogóle przebiega w przeciążeniu.",
+            "Przejdź przez cztery kadry i zanotuj, z której hali pochodzi więcej incydentów."
+          ),
+          body = list(
+            warunki_raport_widget,
+            "O liczbie incydentów decyduje iloczyn dwóch rzeczy: jak często dany tryb występuje i jak ryzykowna jest w nim zmiana. Wąska hala jest groźniejsza na jedną zmianę, ale szeroka ma tych zmian dziewiętnaście razy więcej. Ten rachunek — ryzyko trybu razy jego udział, zsumowane po wszystkich trybach — dostanie za chwilę nazwę i wzór."
+          )
+        ),
+        list(
           id = "partycja", title = "Kompletna partycja",
           text = "Dzielimy przestrzeń na rozłączne tryby B_i, które razem obejmują wszystkie analizowane zmiany, i sumujemy wkład każdej drogi. Żadna zmiana nie może zniknąć ani należeć do dwóch trybów naraz.",
           body = list(
@@ -758,7 +757,7 @@ warunki_block <- list(
               "Najprostszym układem zupełnym jest para: zdarzenie B i jego dopełnienie Bᶜ (czytamy „nie B”)."
             )),
             "Przegrzanie i brak przegrzania tworzą układ zupełny: każda zmiana należy do dokładnie jednej z tych grup. Podobnie tryby „przeciążenie” i „normalna praca”, jeśli każdą zmianę zakwalifikowano do jednego z nich. Nie tworzą natomiast układu zupełnego kategorie „zmiana nocna” i „zmiana w przeciążeniu”, bo zmiana nocna może być przeciążona, a zmiana dzienna normalna nie należy do żadnej z nich.",
-            risk_formula("P(A)=\\sum_{i=1}^{k} P(B_i)\\,P(A\\mid B_i)", num = "2.4",
+            risk_formula(colors = warunki_event_colors, "P(A)=\\sum_{i=1}^{k} P(B_i)\\,P(A\\mid B_i)", num = "2.4",
               legend = c("B_1,\\ldots,B_k" = "układ zupełny zdarzeń (tryby pracy)", "P(B_i)" = "waga drogi: udział trybu i", "P(A\\mid B_i)" = "prawdopodobieństwo A wewnątrz trybu i")),
             "Wagi P(B_i) są udziałami trybów pracy i sumują się do jedności.",
             risk_derivation("wzór na prawdopodobieństwo całkowite", c(
@@ -769,24 +768,12 @@ warunki_block <- list(
           )
         ),
         list(
-          id = "drzewo", title = "Licznik i mianownik na drzewie",
-          body = list(
-            "Wróćmy do drzewa z 1000 zmian Bananpolu. Wybierz prawdopodobieństwo, a drzewo pokaże, które węzły tworzą licznik, a które mianownik. Zacznij od P(A): incydent może powstać na dwóch rozłącznych drogach, więc jego licznik to suma dwóch liści. Przy prawdopodobieństwach warunkowych licznik leży wewnątrz mianownika — te same zmiany liczymy raz na górze i raz na dole ułamka.",
-            risk_try("przejdź kolejno przez wszystkie pięć opcji. Przy każdej zapisz, czy mianownikiem jest korzeń drzewa (1000), węzeł pośredni (100) czy suma liści (17)."),
-            warunki_tree_read_widget,
-            "Drzewo pokazuje ważoną sumę w konkretnych zmianach: 12 incydentów z gałęzi przegrzania i 5 z gałęzi bez przegrzania. Suwaki w następnej sekcji robią to samo w ułamkach, dla dwóch trybów pracy.",
-            "Ostatnia opcja, P(B | A), idzie pod prąd drzewa: jej mianownikiem nie jest żaden pojedynczy węzeł, lecz suma dwóch liści „Incydent” z różnych gałęzi. Tu odczytujemy ją z gotowych liczebności. Liczenie w tym kierunku z samych prawdopodobieństw na gałęziach to temat wykładu 03."
-          )
-        ),
-        list(
           id = "wagi", title = "Nie sumujemy samych ryzyk warunkowych",
-          text = "P(A | B₁) i P(A | B₂) mają różne mianowniki. Zanim je dodamy, ważymy każde prawdopodobieństwo udziałem odpowiadającego mu trybu pracy. Sprawdź to na suwakach: przesuwaj udział przeciążenia i obserwuj, jak wynik ogólny wędruje między dwiema wartościami warunkowymi.",
+          text = "P(A | B₁) i P(A | B₂) mają różne mianowniki. Zanim je dodamy, ważymy każde prawdopodobieństwo udziałem odpowiadającego mu trybu pracy — dokładnie tak, jak w raporcie kierownika szeroka hala ważyła więcej niż wąska.",
           body = list(
-            risk_try("ustaw udział przeciążenia na 0, potem na 1. Odczytaj, ile wynosi P(incydent) na obu krańcach, i porównaj z suwakami ryzyk warunkowych."),
-            warunki_total_widget,
-            "Prosta, po której porusza się punkt na wykresie, jest wykresem jednej reguły — ważonej sumy rozłącznych dróg, czyli wzoru (2.4) dla dwóch trybów. Przy udziale przeciążenia s ma on postać P(A) = s · P(A | przeciążenie) + (1 - s) · P(A | normalna praca). To funkcja liniowa zmiennej s: na lewym krańcu wykresu (s = 0) równa się ryzyku pracy normalnej, na prawym (s = 1) — ryzyku przeciążenia, a pomiędzy nimi rośnie jednostajnie.",
-            risk_example("2.3", "Skąd biorą się incydenty?",
-              problem = "Przyjmij ustawienia startowe suwaków: udział przeciążenia 0.20, P(incydent | przeciążenie) = 0.15, P(incydent | normalna praca) = 0.01. Oblicz P(incydent) i udział każdej drogi w incydentach. Następnie powtórz rachunek dla udziału przeciążenia 0.05.",
+            "Dla dwóch trybów wzór (2.4) ma postać P(A) = s · P(A | przeciążenie) + (1 - s) · P(A | normalna praca), gdzie s to udział przeciążenia. Gdy s = 0, wynik równa się ryzyku pracy normalnej, gdy s = 1 — ryzyku przeciążenia, a pomiędzy nimi zawsze leży gdzieś po drodze, bliżej trybu, który zajmuje więcej zmian.",
+            risk_example("2.3", "Ten sam rachunek przy dwóch udziałach",
+              problem = "Przyjmij dane z raportu kierownika w wariancie z udziałem przeciążenia 0.20: P(incydent | przeciążenie) = 0.15, P(incydent | normalna praca) = 0.01. Oblicz P(incydent) i udział każdej drogi w incydentach. Następnie powtórz rachunek dla udziału przeciążenia 0.05.",
               steps = c(
                 "Ze wzoru (2.4): P(A) = 0.20 · 0.15 + 0.80 · 0.01 = 0.030 + 0.008 = 0.038.",
                 "Udział drogi przez przeciążenie: 0.030 / 0.038 ≈ 0.79; przez pracę normalną: 0.008 / 0.038 ≈ 0.21.",
@@ -801,7 +788,7 @@ warunki_block <- list(
               c("Tak, jeśli przeciążenie jest bardzo częste" = "yes", "Nie, wynik zawsze leży między 0.01 a 0.15" = "no", "Tak, bo sumujemy dwa ryzyka: 0.15 + 0.01" = "sum"),
               correct = "no",
               explanation = "Wzór (2.4) to średnia ważona z wagami sumującymi się do jedności, więc wynik leży między najmniejszym a największym ryzykiem warunkowym. Nawet gdy wszystkie zmiany są przeciążone, P(incydent) = 0.15.",
-              hints = c(yes = "Przesuń suwak udziału do 1. Ile wynosi wtedy P(incydent)?", sum = "Dodawanie ryzyk bez wag to dokładnie błąd z tytułu sekcji. Różne mianowniki, różne grupy.")
+              hints = c(yes = "Co się dzieje, gdy wszystkie zmiany są przeciążone? Ile wynosi wtedy P(incydent)?", sum = "Dodawanie ryzyk bez wag to dokładnie błąd z tytułu sekcji. Różne mianowniki, różne grupy.")
             )
           )
         ),
@@ -824,6 +811,17 @@ warunki_block <- list(
       ),
       sections = list(
         list(
+          id = "noc", title = "Czy noc coś zmienia?",
+          text = c(
+            "Przegrzanie wyraźnie zmienia ocenę: incydent przy przegrzaniu zdarza się w 12 zmianach na 100, bez niego — w mniej więcej 6 na 1000. A pora zmiany? Ten sam rejestr 1000 zmian da się podzielić na dzienne i nocne.",
+            "Posortuj kalendarz najpierw według przegrzania, a potem według pory zmiany. Czy wiedza, że zmiana była nocna, zmienia szansę incydentu?"
+          ),
+          body = list(
+            warunki_calendar_pora_widget,
+            "Przegrzanie rozdziela rejestr na dwie bardzo różne grupy: 0.12 i 0.006. Pora zmiany — nie: nocą 9 incydentów na 500 zmian, w dzień 8 na 500, a w całym rejestrze 17 na 1000. Wiedza, że zmiana była nocna, praktycznie nie zmienia oceny. Dokładnie równe te liczby nie będą nigdy — w danych zawsze zostaje drobny rozrzut — ale różnica 0.018 wobec 0.016 to jedna zmiana z incydentem w tę czy w tamtą stronę. Taką sytuację nazwiemy za chwilę niezależnością."
+          )
+        ),
+        list(
           id = "definicja", title = "Definicja i trzy równoważne testy",
           body = list(
             "Warunek P(A | B) = P(A) jest intuicyjny, ale ma dwie wady: wymaga P(B) > 0 i wygląda na niesymetryczny, jakby B wpływało na A, a nie odwrotnie. Dlatego formalna definicja korzysta z reguły iloczynu (2.2): jeśli P(A | B) = P(A), to P(A ∩ B) = P(B) · P(A). Tę równość przyjmujemy za definicję.",
@@ -831,7 +829,7 @@ warunki_block <- list(
               "Zdarzenia A i B nazywamy niezależnymi, jeśli spełniają wzór (2.5). W przeciwnym razie nazywamy je zależnymi.",
               "Dla P(B) > 0 niezależność jest równoważna warunkowi P(A | B) = P(A), a dla P(A) > 0 — warunkowi P(B | A) = P(B)."
             )),
-            risk_formula("P(A\\cap B)=P(A)\\,P(B)", num = "2.5",
+            risk_formula(colors = warunki_event_colors, "P(A\\cap B)=P(A)\\,P(B)", num = "2.5",
               legend = c("P(A\\cap B)" = "prawdopodobieństwo, że oba zdarzenia zachodzą naraz", "P(A)\\,P(B)" = "iloczyn prawdopodobieństw bezwarunkowych")),
             risk_derivation("równoważność trzech testów", c(
               "Załóżmy, że P(A) > 0 i P(B) > 0. Dzielimy wzór (2.5) przez P(B) albo przez P(A) i korzystamy z definicji 2.1:"
@@ -895,7 +893,7 @@ warunki_block <- list(
           id = "miary", title = "Jak mocno warunek zmienia ocenę?",
           body = list(
             "Porównanie P(A | B) z P(A) mówi, czy warunek coś wnosi. Do decyzji potrzebna jest jeszcze miara tego, jak dużo wnosi. W analizie ryzyka używa się dwóch podstawowych miar: różnicy ryzyk, która mówi, o ile zdarzeń więcej przypada na każdą zmianę z warunkiem, i ilorazu ryzyk (ryzyka względnego), który mówi, ile razy częściej zdarzenie występuje w grupie z warunkiem niż bez niego.",
-            risk_formula("RD=P(A\\mid B)-P(A\\mid B^{c}),\\qquad RR=\\frac{P(A\\mid B)}{P(A\\mid B^{c})}", num = "2.6",
+            risk_formula(colors = warunki_event_colors, "RD=P(A\\mid B)-P(A\\mid B^{c}),\\qquad RR=\\frac{P(A\\mid B)}{P(A\\mid B^{c})}", num = "2.6",
               legend = c("B^{c}" = "dopełnienie warunku: brak przegrzania", "RD" = "różnica ryzyk, w jednostkach prawdopodobieństwa", "RR" = "iloraz ryzyk (ryzyko względne), bez jednostki")),
             "W Bananpolu RD = 0.12 - 5/900 ≈ 0.114, a RR = 0.12 / (5/900) = 21.6. Iloraz 21.6 jest większy niż „około 7×” z porównania z P(A), bo porównujemy teraz dwie rozłączne grupy, a nie grupę z całością, która sama zawiera zmiany z przegrzaniem. Obie liczby są poprawne, ale odpowiadają na różne pytania — w raporcie trzeba nazwać, z czym porównujemy.",
             risk_example("2.6", "Gdzie skierować kontrolę?",
@@ -979,23 +977,6 @@ warunki_server <- function(input, output, session) {
                   total = sum(d$total))
     )
   })
-  output$w2_target_result <- renderUI({
-    tg <- warunki_views_targets[[input$w2_target %||% "a"]]
-    tagList(
-      lc_readouts(
-        lc_readout("Licznik", format(tg$num), color = upwr_accent),
-        lc_readout("Mianownik", format(tg$den), color = upwr_cat[["bursztyn"]]),
-        lc_readout("Wynik", risk_fmt_p(tg$num / tg$den), color = upwr_secondary)
-      ),
-      lc_caption(paste0(tg$label, ". Licznik: ", tg$num_caption, "; mianownik: ", tg$den_caption, ".")),
-      lc_formula_box(withMathJax(sprintf(
-        "$$%s=\\frac{%d}{%d}=%s$$", tg$tex, tg$num, tg$den, sprintf("%.3f", tg$num / tg$den)
-      ))),
-      if (tg$den < 1000L) lc_p(
-        "Licznik jest częścią mianownika: ", format(tg$num), " zmian z licznika należy jednocześnie do bursztynowej grupy w mianowniku. Ich węzeł jest bordowy, bo liczymy je dwa razy — raz na górze, raz na dole ułamka."
-      )
-    )
-  })
   # Drzewo dróg rysowane z góry na dół: na wąskim ekranie liście stoją obok siebie
   # zamiast nachodzić na siebie. target = NULL rysuje drzewo bez podświetleń.
   # Etykiety ggplot mają stały rozmiar w mm, więc poniżej 520 px szerokości wykresu
@@ -1068,37 +1049,5 @@ warunki_server <- function(input, output, session) {
     reactive(tree_plot(width = session$clientData[["output_w2_views_tree-plot_width"]], show_p = FALSE)),
     alt = "Drzewo dróg z prawdopodobieństwami na gałęziach i liczebnościami w węzłach."
   )
-  zoom_plot_server("w2_target_plot",
-    reactive(tree_plot(warunki_views_targets[[input$w2_target %||% "a"]],
-      width = session$clientData[["output_w2_target_plot-plot_width"]])),
-    alt = "Drzewo dróg z podświetlonym licznikiem (bordowy) i mianownikiem (bursztynowy) wybranego prawdopodobieństwa."
-  )
-
-  total_plot <- reactive({
-    s <- seq(0, 1, length.out = 201)
-    y <- s * input$w2_overload + (1 - s) * input$w2_regular
-    ggplot(data.frame(share = s, p = y), aes(share, p)) +
-      geom_line(colour = upwr_accent, linewidth = 1) +
-      geom_point(
-        data = data.frame(
-          share = input$w2_mode_share,
-          p = risk_total_probability(input$w2_mode_share, input$w2_overload, input$w2_regular)
-        ),
-        size = 3, colour = upwr_secondary
-      ) +
-      labs(x = "Udział pracy w przeciążeniu", y = "P(incydent)") +
-      theme_upwr()
-  })
-  zoom_plot_server("w2_total_plot", total_plot,
-    alt = "Prawdopodobieństwo incydentu rosnące wraz z udziałem pracy w przeciążeniu."
-  )
-  output$w2_total_stats <- renderUI({
-    p <- risk_total_probability(input$w2_mode_share, input$w2_overload, input$w2_regular)
-    tagList(
-      lc_readout("P(incydent)", risk_fmt_p(p), color = upwr_accent),
-      lc_readout("Na 1000 zmian", paste0("≈ ", round(p * 1000)), color = upwr_secondary)
-    )
-  })
-
   risk_assessment_server("w2", warunki_quiz, input, output)
 }
