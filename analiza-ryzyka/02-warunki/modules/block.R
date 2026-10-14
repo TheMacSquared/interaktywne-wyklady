@@ -510,7 +510,7 @@ warunki_block <- list(
   id = "warunki", title = "Warunki zmieniają ocenę",
   chapters = list(
     list(
-      id = "pytanie", title = "Warunek", hook = "Jedna otwarta bramka zmienia wszystko", lead = "Zaczynamy w studiu teleturnieju, gdzie klasyczne liczenie szans zawodzi.",
+      id = "pytanie", title = "Warunek", hook = "Idź na całość", lead = "Zaczynamy w studiu teleturnieju, gdzie klasyczne liczenie szans zawodzi.",
       intro = c(
         "Zaczynamy w studiu „Idź na całość”. Przed Tobą trzy bramki: za jedną nagroda, za dwiema Zonk. Wybierasz jedną. Prowadzący — który wie, gdzie stoi nagroda — otwiera jedną z pozostałych bramek i pokazuje Zonka. I pada pytanie, od którego zaczęły się dekady sporów: zostajesz przy swojej bramce czy zmieniasz?",
         "Klasyczna definicja z wykładu 01 podpowiada odpowiedź od ręki: zamknięte zostały dwie bramki, obie równie możliwe, więc szansa wynosi 1/2 i zmiana niczego nie daje. Zanim przeczytasz cokolwiek dalej, zagraj kilka rund i uruchom symulację tysiąca gier. Zapisz w głowie odpowiedź na jedno pytanie: czy ruch prowadzącego czegoś Cię nauczył, czy niczego nie zmienił?"
