@@ -510,34 +510,52 @@ warunki_block <- list(
   id = "warunki", title = "Warunki zmieniają ocenę",
   chapters = list(
     list(
-      id = "pytanie", title = "Populacja odniesienia", hook = "Ten sam incydent, trzy różne liczby", lead = "Zanim policzymy, nazywamy warunek i populację odniesienia.",
+      id = "pytanie", title = "Warunek", hook = "Jedna otwarta bramka zmienia wszystko", lead = "Zaczynamy w studiu teleturnieju, gdzie klasyczne liczenie szans zawodzi.",
       intro = c(
-        "W poprzednim wykładzie ustaliliśmy język: zdarzenie, mianownik, jednostkę i okres. Dziś do tego języka dochodzi jedno słowo, które potrafi zmienić każdą liczbę w raporcie: warunek. Czujnik w dojrzewalni Bananpolu zgłosił przegrzanie łożyska wentylatora — i od tej chwili pytanie „jak często zdarza się incydent?” przestaje mieć jedną odpowiedź.",
-        "To samo zdarzenie może mieć inne prawdopodobieństwo w całym zakładzie i inne w wybranej grupie zmian. Kluczowe jest nie tylko to, co liczymy, lecz także spośród jakich przypadków liczymy. Ten wykład uczy zadawać pytanie tak precyzyjnie, żeby wskazywało właściwy mianownik."
+        "Zaczynamy w studiu „Idź na całość”. Przed Tobą trzy bramki: za jedną nagroda, za dwiema Zonk. Wybierasz jedną. Prowadzący — który wie, gdzie stoi nagroda — otwiera jedną z pozostałych bramek i pokazuje Zonka. I pada pytanie, od którego zaczęły się dekady sporów: zostajesz przy swojej bramce czy zmieniasz?",
+        "Klasyczna definicja z wykładu 01 podpowiada odpowiedź od ręki: zamknięte zostały dwie bramki, obie równie możliwe, więc szansa wynosi 1/2 i zmiana niczego nie daje. Zanim przeczytasz cokolwiek dalej, zagraj kilka rund i uruchom symulację tysiąca gier. Zapisz w głowie odpowiedź na jedno pytanie: czy ruch prowadzącego czegoś Cię nauczył, czy niczego nie zmienił?"
       ),
-      callout = list(
-        label = "Dane Bananpolu",
-        text = "Zdarzenie A: incydent przegrzania łożyska podczas zmiany. Warunek B: czujnik wykrył przegrzanie. Jednostka: 8-godzinna zmiana robocza; horyzont: 1000 porównywalnych zmian. Liczby są fikcyjne.",
-        color = "uwaga"
+      body = list(
+        risk_try("wybierz bramkę, zdecyduj, czy zostajesz, czy zmieniasz, i sprawdź wynik. Po pierwszej grze dograj „+1000” i zapisz odsetek wygranych przy pozostaniu i przy zmianie."),
+        warunki_monty_widget
       ),
       sections = list(
+        list(
+          id = "zonk", title = "Gdzie zawiodło 1/2?",
+          text = c(
+            "Symulacja nie zostawia wątpliwości: zmiana bramki wygrywa w mniej więcej dwóch grach na trzy, a pozostanie — w jednej na trzy. Klasyczna definicja nie pomyliła się w rachunku. Zawiodło założenie, że po ruchu prowadzącego obie zamknięte bramki są równie możliwe.",
+            "Prowadzący wie, gdzie stoi nagroda, a jego gest od tego zależy — więc niesie informację. Żeby ją policzyć, potrzebujemy jednego nowego słowa: warunek. Do studia wrócimy w następnym rozdziale; najpierw zobaczmy, jak to słowo działa w hali."
+          )
+        ),
+        list(
+          id = "hala", title = "Warunek w hali",
+          text = c(
+            "W poprzednim wykładzie ustaliliśmy język: zdarzenie, mianownik, jednostkę i okres. Dziś do tego języka dochodzi jedno słowo, które potrafi zmienić każdą liczbę w raporcie: warunek. W dojrzewalni Bananpolu zmiany różnią się warunkami: na części z nich przegrzewa się łożysko wentylatora. Gdy wiemy, że zmiana była „gorąca”, pytanie „jak często zdarza się incydent?” przestaje mieć jedną odpowiedź.",
+            "To samo zdarzenie może mieć inne prawdopodobieństwo w całym zakładzie i inne w wybranej grupie zmian. Kluczowe jest nie tylko to, co liczymy, lecz także spośród jakich przypadków liczymy. Ten wykład uczy zadawać pytanie tak precyzyjnie, żeby wskazywało właściwy mianownik. W hali będziemy liczyć w przód: znamy okoliczność zmiany — przegrzanie, porę roku, tryb pracy — i pytamy, jak zmienia ona ryzyko skutku. Odwrotny kierunek, od sygnału do ukrytego stanu, to temat wykładu 03."
+          ),
+          callout = list(
+            label = "Dane Bananpolu",
+            text = "Zdarzenie A: incydent przegrzania łożyska podczas zmiany. Warunek B: na zmianie wystąpiło przegrzanie łożyska. Jednostka: 8-godzinna zmiana robocza; horyzont: 1000 porównywalnych zmian. Liczby są fikcyjne.",
+            color = "uwaga"
+          )
+        ),
         list(id = "sens", title = "Trzy podobne pytania", text = c(
-          "O incydent w Bananpolu można zapytać na trzy sposoby, które brzmią niemal tak samo, a odpowiadają na zupełnie różne pytania. Można pytać, jak często incydent zdarza się w ogóle — wtedy liczymy go wśród wszystkich zmian. Można pytać, jak często zdarza się po wykryciu przegrzania — wtedy liczymy go wyłącznie wśród zmian, na których czujnik zgłosił przegrzanie. Można wreszcie pytać, jak często przegrzanie poprzedzało incydent — wtedy patrzymy wyłącznie na zmiany, na których incydent rzeczywiście zaszedł.",
-          "Różnica między tymi pytaniami nie leży w zdarzeniu, o które pytamy, lecz w grupie przypadków, spośród których liczymy. Warunek „po wykryciu przegrzania” zawęża tę grupę: odrzucamy zmiany bez przegrzania i dopiero w tym, co zostało, sprawdzamy, jak często doszło do incydentu. To samo zdarzenie, inny mianownik — i inna liczba.",
+          "O incydent w Bananpolu można zapytać na trzy sposoby, które brzmią niemal tak samo, a odpowiadają na zupełnie różne pytania. Można pytać, jak często incydent zdarza się w ogóle — wtedy liczymy go wśród wszystkich zmian. Można pytać, jak często zdarza się przy przegrzaniu — wtedy liczymy go wyłącznie wśród zmian z przegrzaniem. Można wreszcie pytać, jak często przegrzanie poprzedzało incydent — wtedy patrzymy wyłącznie na zmiany, na których incydent rzeczywiście zaszedł.",
+          "Różnica między tymi pytaniami nie leży w zdarzeniu, o które pytamy, lecz w grupie przypadków, spośród których liczymy. Warunek „przy przegrzaniu” zawęża tę grupę: odrzucamy zmiany bez przegrzania i dopiero w tym, co zostało, sprawdzamy, jak często doszło do incydentu. To samo zdarzenie, inny mianownik — i inna liczba.",
           "Pomyłka między tymi pytaniami nie jest błędem rachunkowym, tylko błędem pytania. Dyrektor, który słyszy „12% zmian z przegrzaniem kończy się incydentem”, a zapamiętuje „12% wszystkich zmian kończy się incydentem”, zawyża problem siedmiokrotnie — mimo że nikt nie policzył niczego źle.",
           "Dlatego każde pytanie o częstość formułujemy pełnym zdaniem, które nazywa zarówno zdarzenie, jak i grupę odniesienia:"
         ), bullets = c(
           "Jak często dochodzi do incydentu? — liczymy wśród wszystkich porównywalnych zmian.",
-          "Jak często dochodzi do incydentu po wykryciu przegrzania? — liczymy tylko wśród zmian z przegrzaniem.",
-          "W ilu incydentach wcześniej wykryto przegrzanie? — liczymy tylko wśród zmian, na których zaszedł incydent."
+          "Jak często dochodzi do incydentu przy przegrzaniu? — liczymy tylko wśród zmian z przegrzaniem.",
+          "Na ilu zmianach z incydentem było przegrzanie? — liczymy tylko wśród zmian, na których zaszedł incydent."
         )),
         list(
           id = "zapis", title = "Zapis, który pilnuje mianownika",
           body = list(
             c(
-              "Pełne zdania są dokładne, ale długie. Rachunek prawdopodobieństwa ma dla nich skrócony zapis, który zachowuje całą informację o mianowniku. Niech A oznacza zdarzenie „na zmianie doszło do incydentu”, a B — „czujnik wykrył przegrzanie”. Wtedy P(A) to prawdopodobieństwo incydentu liczone wśród wszystkich zmian, P(A ∩ B) — prawdopodobieństwo, że na zmianie zaszły oba zdarzenia naraz, także liczone wśród wszystkich zmian, a P(A | B) — prawdopodobieństwo incydentu liczone wyłącznie wśród zmian z przegrzaniem.",
+              "Pełne zdania są dokładne, ale długie. Rachunek prawdopodobieństwa ma dla nich skrócony zapis, który zachowuje całą informację o mianowniku. Niech A oznacza zdarzenie „na zmianie doszło do incydentu”, a B — „na zmianie wystąpiło przegrzanie”. Wtedy P(A) to prawdopodobieństwo incydentu liczone wśród wszystkich zmian, P(A ∩ B) — prawdopodobieństwo, że na zmianie zaszły oba zdarzenia naraz, także liczone wśród wszystkich zmian, a P(A | B) — prawdopodobieństwo incydentu liczone wyłącznie wśród zmian z przegrzaniem.",
               "Pionowa kreska w zapisie P(A | B) jest najważniejszym znakiem tego wykładu. To, co stoi na prawo od niej, opisuje grupę odniesienia; to, co stoi na lewo — zdarzenie, którego udział w tej grupie liczymy. Zamiana stron kreski zamienia pytanie: P(B | A) to udział zmian z przegrzaniem wśród zmian z incydentem. Symbol ∩ oznacza natomiast „oba naraz” i niczego nie filtruje, dlatego P(A ∩ B) nigdy nie przekracza ani P(A), ani P(B).",
-              "W Bananpolu zarejestrowano 1000 porównywalnych zmian. Przegrzanie wykryto na 100 z nich, incydentów było łącznie 17, a 12 z nich wystąpiło na zmianach z przegrzaniem. Te liczby wystarczą, by odpowiedzieć na wszystkie trzy pytania z poprzedniej sekcji — pod warunkiem, że do każdego dobierzemy właściwy mianownik."
+              "W Bananpolu zarejestrowano 1000 porównywalnych zmian. Przegrzanie wystąpiło na 100 z nich, incydentów było łącznie 17, a 12 z nich wystąpiło na zmianach z przegrzaniem. Te liczby wystarczą, by odpowiedzieć na wszystkie trzy pytania z poprzedniej sekcji — pod warunkiem, że do każdego dobierzemy właściwy mianownik."
             ),
             risk_example("2.1", "Trzy pytania, trzy mianowniki",
               problem = "Na podstawie danych Bananpolu (1000 zmian, 100 z przegrzaniem, 17 incydentów, w tym 12 na zmianach z przegrzaniem) oblicz P(A), P(A ∩ B), P(A | B) i P(B | A). Przy każdej liczbie zapisz, spośród jakich zmian ją liczysz.",
@@ -549,9 +567,9 @@ warunki_block <- list(
               ),
               answer = "Licznik 12 pojawia się w trzech ostatnich wynikach, ale za każdym razem dzielimy go przez inny mianownik: 1000, 100 albo 17. Stąd trzy różne liczby: 0.012, 0.12 i około 0.71. Żadna z nich nie jest „prawdziwszym” ryzykiem — każda odpowiada na inne pytanie."
             ),
-            "Przykład 2.1 pokazuje, jak łatwo o pomyłkę w raporcie. Zdanie „siedem na dziesięć incydentów poprzedziło przegrzanie” dotyczy P(B | A) ≈ 0.71 i jest prawdziwe. Zdanie „siedem na dziesięć przegrzań kończy się incydentem” dotyczyłoby P(A | B) i jest fałszywe — w rzeczywistości incydentem kończy się 12 na 100 przegrzań. Obie wersje brzmią podobnie; różnią się tylko stroną kreski. W kolejnych rozdziałach nadamy temu zapisowi formalną definicję i nauczymy się przechodzić od jednej liczby do drugiej.",
+            "Przykład 2.1 pokazuje, jak łatwo o pomyłkę w raporcie. Zdanie „siedem na dziesięć incydentów poprzedziło przegrzanie” dotyczy P(B | A) ≈ 0.71 i jest prawdziwe. Zdanie „siedem na dziesięć przegrzań kończy się incydentem” dotyczyłoby P(A | B) i jest fałszywe — w rzeczywistości incydentem kończy się 12 na 100 przegrzań. Obie wersje brzmią podobnie; różnią się tylko stroną kreski. W kolejnych rozdziałach nadamy temu zapisowi formalną definicję. Tu obie liczby odczytujemy z gotowej tabeli; jak policzyć jedną z drugiej, gdy tabeli nie mamy, pokaże wykład 03.",
             risk_check("w2_chk_zapis",
-              "Kierownik zmiany pisze: „Na zmianach z incydentem przegrzanie wykryto w 12 przypadkach na 17”. Który zapis opisuje tę liczbę?",
+              "Kierownik zmiany pisze: „Na zmianach z incydentem przegrzanie wystąpiło w 12 przypadkach na 17”. Który zapis opisuje tę liczbę?",
               c("P(A | B)" = "ab", "P(B | A)" = "ba", "P(A ∩ B)" = "and"),
               correct = "ba",
               explanation = "Grupą odniesienia są zmiany z incydentem (A), a liczymy w niej udział przegrzań (B). To P(B | A) = 12/17 ≈ 0.71.",
@@ -563,21 +581,16 @@ warunki_block <- list(
       pitfall = "Częstość incydentu wśród zmian z przegrzaniem i częstość przegrzania wśród zmian z incydentem to dwie różne liczby — zwykle nie są równe."
     ),
     list(
-      id = "filtr", title = "Prawdopodobieństwo warunkowe", hook = "Jedna otwarta bramka zmienia wszystko", lead = "Zaczynamy w studiu teleturnieju: jedna odsłonięta bramka zmienia całą ocenę.",
+      id = "filtr", title = "Prawdopodobieństwo warunkowe", hook = "Warunek zmienia mianownik", lead = "Wracamy do studia: ruch prowadzącego to filtr, który ma swoją nazwę i wzór.",
       intro = c(
-        "Zanim wrócimy do hali Bananpolu, przenieśmy się do studia „Idź na całość”. Przed Tobą trzy bramki: za jedną nagroda, za dwiema Zonk. Wybierasz jedną. Prowadzący — który wie, gdzie stoi nagroda — otwiera jedną z pozostałych bramek i pokazuje Zonka. I pada pytanie, od którego zaczęły się dekady sporów: zostajesz przy swojej bramce czy zmieniasz?",
-        "Zagraj kilka rund, zanim przeczytasz cokolwiek dalej, i uruchom symulację tysiąca gier. Po drodze zapisz w głowie odpowiedź na jedno pytanie: czy ruch prowadzącego czegoś Cię nauczył, czy niczego nie zmienił?"
-      ),
-      body = list(
-        risk_try("wybierz bramkę, zdecyduj, czy zostajesz, czy zmieniasz, i sprawdź wynik. Po pierwszej grze dograj „+1000” i zapisz odsetek wygranych przy pozostaniu i przy zmianie."),
-        warunki_monty_widget
+        "Gra z pierwszego rozdziału zostawiła pytanie bez odpowiedzi: dlaczego zmiana bramki wygrywa mniej więcej dwa razy częściej, skoro zamknięte zostały tylko dwie bramki? Z językiem warunku i mianownika możemy to wreszcie policzyć."
       ),
       sections = list(
         list(
           id = "lekcja", title = "Co właściwie zrobił prowadzący?",
           body = list(
             c(
-              "Symulacja jest bezlitosna dla intuicji „50 na 50”: zmiana bramki wygrywa mniej więcej dwa razy częściej. Żeby zobaczyć dlaczego, policz światy, w których możesz się znaleźć. W dwóch grach na trzy Twój pierwszy wybór trafia w Zonka — i wtedy prowadzący nie ma żadnej swobody: musi odsłonić jedynego pozostałego Zonka, więc nagroda stoi za bramką, na którą się przełączysz. Tylko w jednej grze na trzy pierwszy strzał trafia w nagrodę i zmiana przegrywa.",
+              "Wróćmy do wyniku gry: zmiana bramki wygrywa mniej więcej dwa razy częściej, wbrew klasycznemu „50 na 50”. Żeby zobaczyć dlaczego, policz światy, w których możesz się znaleźć. W dwóch grach na trzy Twój pierwszy wybór trafia w Zonka — i wtedy prowadzący nie ma żadnej swobody: musi odsłonić jedynego pozostałego Zonka, więc nagroda stoi za bramką, na którą się przełączysz. Tylko w jednej grze na trzy pierwszy strzał trafia w nagrodę i zmiana przegrywa.",
               "Kluczem nie jest samo otwarcie bramki, lecz to, że ruch prowadzącego zależy od tego, co jest ukryte. Jego gest odfiltrowuje część możliwych światów: po odsłonięciu Zonka za bramką 1 zostają tylko te scenariusze, które są zgodne z tym, co widzisz. Prawdopodobieństwa liczone w tym przefiltrowanym świecie różnią się od tych sprzed filtracji — i właśnie ta operacja dostanie za chwilę nazwę i wzór.",
               "Filtrowanie da się przeprowadzić dosłownie, na liczbach gier. Zamiast pytać o prawdopodobieństwa, wyobraźmy sobie wiele rozegranych partii i zapytajmy, ile z nich wygląda dokładnie tak, jak to, co widzimy w studiu."
             ),
@@ -625,7 +638,7 @@ warunki_block <- list(
           id = "mianownik", title = "Naturalne częstości w Bananpolu",
           body = list(
             c(
-              "Wracamy do hali. Wykryte przegrzanie robi ze zmianami dokładnie to, co prowadzący z bramkami: filtruje świat. Poniżej jest rok pracy Bananpolu — 50 tygodni po pięć dni roboczych, dzienna i nocna zmiana, razem 500 zmian. Czujnik zgłaszał przegrzanie głównie latem; kilka zmian skończyło się incydentem.",
+              "Wracamy do hali. Informacja o przegrzaniu robi ze zmianami dokładnie to, co prowadzący z bramkami: filtruje świat. Poniżej jest rok pracy Bananpolu — 50 tygodni po pięć dni roboczych, dzienna i nocna zmiana, razem 500 zmian. Czujnik zgłaszał przegrzanie głównie latem; kilka zmian skończyło się incydentem.",
               "Zanim cokolwiek policzysz, znajdź w kalendarzu incydenty i zobacz, ile z nich wypadło na bursztynowych zmianach. Potem posortuj zmiany."
             ),
             risk_try("policz kropki w całym kalendarzu, a potem posortuj zmiany według przegrzania i policz kropki w każdej grupie. Który ułamek odpowiada na pytanie „jak ryzykowna jest zmiana z przegrzaniem?”"),
@@ -655,7 +668,7 @@ warunki_block <- list(
           )
         )
       ),
-      takeaway = "Warunek zmienia mianownik, nie przeszłość. Prowadzący w studiu i czujnik przegrzania w hali wykonują tę samą operację: zawężają świat, w którym liczymy."
+      takeaway = "Warunek zmienia mianownik, nie przeszłość. Prowadzący w studiu i informacja o przegrzaniu w hali wykonują tę samą operację: zawężają świat, w którym liczymy."
     ),
     list(
       id = "reprezentacje", title = "Reguła mnożenia", hook = "Drogę do incydentu da się narysować", lead = "Tabela, drzewo dróg i udziały są różnymi mapami tych samych liczebności, a drzewo podpowiada regułę mnożenia.",
@@ -706,7 +719,7 @@ warunki_block <- list(
               legend = c("P(C)" = "pierwsza gałąź, liczona wśród wszystkich przypadków", "P(B\\mid C)" = "druga gałąź, liczona wśród przypadków z C", "P(A\\mid B\\cap C)" = "trzecia gałąź, liczona wśród przypadków z B i C naraz")),
             "Wzór (2.3) wynika z dwukrotnego zastosowania (2.2): najpierw P(A ∩ (B ∩ C)) = P(B ∩ C) · P(A | B ∩ C), a potem P(B ∩ C) = P(C) · P(B | C). Każdy czynnik ma własny, coraz węższy mianownik — i dlatego najczęstszym błędem przy dłuższych drogach jest wstawienie w środek łańcucha prawdopodobieństwa liczonego w całej populacji zamiast w grupie, do której doszliśmy.",
             risk_example("2.4", "Lato, przegrzanie, incydent",
-              problem = "Kalendarz hali pokazał, że przegrzania skupiają się latem. Przyjmij, że lato (C) to 25% zmian w roku. Latem czujnik wykrywa przegrzanie (B) na 30% zmian. Na letnich zmianach z wykrytym przegrzaniem incydent (A) zdarza się w 12% przypadków. Oblicz prawdopodobieństwo, że losowa zmiana wypada latem, z przegrzaniem i z incydentem, oraz zapisz wynik w naturalnych częstościach.",
+              problem = "Kalendarz hali pokazał, że przegrzania skupiają się latem. Przyjmij, że lato (C) to 25% zmian w roku. Latem przegrzanie (B) występuje na 30% zmian. Na letnich zmianach z przegrzaniem incydent (A) zdarza się w 12% przypadków. Oblicz prawdopodobieństwo, że losowa zmiana wypada latem, z przegrzaniem i z incydentem, oraz zapisz wynik w naturalnych częstościach.",
               steps = c(
                 "Ze wzoru (2.3): P(A ∩ B ∩ C) = 0.25 · 0.30 · 0.12.",
                 "0.25 · 0.30 = 0.075; 0.075 · 0.12 = 0.009.",
@@ -753,7 +766,7 @@ warunki_block <- list(
             risk_try("przejdź kolejno przez wszystkie pięć opcji. Przy każdej zapisz, czy mianownikiem jest korzeń drzewa (1000), węzeł pośredni (100) czy suma liści (17)."),
             warunki_tree_read_widget,
             "Drzewo pokazuje ważoną sumę w konkretnych zmianach: 12 incydentów z gałęzi przegrzania i 5 z gałęzi bez przegrzania. Suwaki w następnej sekcji robią to samo w ułamkach, dla dwóch trybów pracy.",
-            "Najciekawsza jest ostatnia opcja, P(B | A). Jej mianownikiem nie jest żaden pojedynczy węzeł drzewa, lecz suma dwóch liści „Incydent” z różnych gałęzi — czyli dokładnie licznik z opcji P(A). Drzewo zbudowane w kolejności „najpierw warunek, potem zdarzenie” pozwala więc odwrócić pytanie, ale wymaga do tego wzoru na prawdopodobieństwo całkowite w mianowniku. Takie odwrócenie to temat następnego wykładu."
+            "Ostatnia opcja, P(B | A), idzie pod prąd drzewa: jej mianownikiem nie jest żaden pojedynczy węzeł, lecz suma dwóch liści „Incydent” z różnych gałęzi. Tu odczytujemy ją z gotowych liczebności. Liczenie w tym kierunku z samych prawdopodobieństw na gałęziach to temat wykładu 03."
           )
         ),
         list(
@@ -918,7 +931,7 @@ warunki_block <- list(
         list(
           id = "podsumowanie", title = "Podsumowanie",
           text = c(
-            "Wykład zaczął się od obserwacji, że to samo zdarzenie ma różne prawdopodobieństwa w różnych grupach odniesienia. Prawdopodobieństwo warunkowe (definicja 2.1, wzór 2.1) formalizuje filtrowanie: liczymy A wyłącznie wśród przypadków, w których zaszło B. Prowadzący w studiu i czujnik przegrzania w hali robią to samo — zawężają świat, a ruch prowadzącego niesie informację, bo zależy od tego, co ukryte.",
+            "Wykład zaczął się od obserwacji, że to samo zdarzenie ma różne prawdopodobieństwa w różnych grupach odniesienia. Prawdopodobieństwo warunkowe (definicja 2.1, wzór 2.1) formalizuje filtrowanie: liczymy A wyłącznie wśród przypadków, w których zaszło B. Prowadzący w studiu i informacja o przegrzaniu w hali robią to samo — zawężają świat, a ruch prowadzącego niesie informację, bo zależy od tego, co ukryte. Cały wykład liczył w przód: od znanej okoliczności do ryzyka skutku.",
             "Z definicji wynikają dwa narzędzia rachunkowe. Reguła iloczynu (2.2) i jej wersja łańcuchowa (2.3) opisują drogi na drzewie: mnożymy wzdłuż gałęzi, pilnując mianownika każdego czynnika. Wzór na prawdopodobieństwo całkowite (2.4) sumuje rozłączne drogi układu zupełnego (definicja 2.2) i tłumaczy, dlaczego rzadki, ale ryzykowny tryb może odpowiadać za mniejszość incydentów.",
             "Niezależność (definicja 2.3, wzór 2.5) jest szczególnym przypadkiem, w którym warunek niczego nie zmienia, i wymaga uzasadnienia mechanizmem. Wspólna przyczyna (przykład 2.7) potrafi wielokrotnie podnieść ryzyko jednoczesnej awarii. Wreszcie miary (2.6) przekładają różnicę między grupami na decyzję — ale związek warunkowy wskazuje, gdzie działać, a nie dowodzi, co jest przyczyną."
           )
@@ -926,9 +939,9 @@ warunki_block <- list(
         list(id = "sciaga", title = "Checklista", bullets = c("Co dokładnie oznaczają A i B?", "Jaki jest mianownik każdego prawdopodobieństwa?", "Czy grupy tworzą kompletną i rozłączną partycję?", "Czy niezależność została uzasadniona mechanizmem?", "Czy związek warunkowy nie został nazwany przyczyną bez dowodu?")),
         list(id = "raport", title = "Jedno zdanie do raportu", text = c(
           "Podaj wynik razem z warunkiem i horyzontem, porównaj go z wynikiem ogólnym, a następnie oddziel obserwowany związek od interpretacji przyczynowej i decyzji operacyjnej.",
-          "Wzorzec: „W grupie zmian z wykrytym przegrzaniem incydent wystąpił w 12 na 100 zmian, wobec 17 na 1000 wśród wszystkich zmian. Związek uzasadnia ukierunkowaną kontrolę; nie przesądza o przyczynie.”"
+          "Wzorzec: „W grupie zmian z przegrzaniem incydent wystąpił w 12 na 100 zmian, wobec 17 na 1000 wśród wszystkich zmian. Związek uzasadnia ukierunkowaną kontrolę; nie przesądza o przyczynie.”"
         )),
-        list(id = "most", title = "Co dalej", text = "Umiemy już przejść od P(A) do P(A | B) i z powrotem do P(A) przez sumę dróg. Na drzewie widzieliśmy też, że P(B | A) = 12/17 to zupełnie inna liczba niż P(A | B) = 0.12. W następnym wykładzie odwrócimy kierunek warunku: czujnik alarmuje, a my pytamy o P(awaria | alarm). Narzędziem będzie wzór Bayesa, zbudowany z definicji 2.1 oraz wzorów (2.2) i (2.4).")
+        list(id = "most", title = "Co dalej", text = "Dziś liczyliśmy w przód: znając okoliczność zmiany — przegrzanie, lato, tryb pracy — pytaliśmy, jak zmienia ona ryzyko skutku. Po drodze widzieliśmy, że P(B | A) = 12/17 to inna liczba niż P(A | B) = 0.12, ale odczytywaliśmy ją z gotowej tabeli. W następnym wykładzie kierunek się odwraca: okoliczności nie widać, widać tylko sygnał — alarm czujnika — a pytamy o stan, którego nie widać. Dane przyjdą wtedy „pod prąd”, jako P(alarm | awaria), i do ich odwrócenia potrzebny będzie wzór Bayesa.")
       ),
       widget = warunki_sciaga_widget
     )

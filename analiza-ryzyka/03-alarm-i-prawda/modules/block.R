@@ -147,7 +147,7 @@ alarm_block <- list(
       lead = "Odwrócenie warunku potrafi całkowicie zmienić odpowiedź.",
       intro = c(
         "Trzecia w nocy, telefon z chłodni Bananpolu: czujnik przegrzania znowu alarmuje. Wysyłać ekipę? Odpowiedź zależy od liczby, o którą mało kto pyta w środku nocy — od tego, jak często awaria zdarza się w ogóle.",
-        "W poprzednim wykładzie nauczyliśmy się filtrować mianownik warunkiem. Dziś wykonamy najtrudniejszy manewr tego kursu: odwrócenie kierunku warunku. Producent czujnika podaje P(alarm | awaria); dyżurny przy telefonie potrzebuje P(awaria | alarm). To nie są te same liczby — a różnica między nimi bywa dziesięciokrotna."
+        "W poprzednim wykładzie liczyliśmy w przód: znając okoliczność zmiany, pytaliśmy o ryzyko skutku. Dyżurny jest w odwrotnej sytuacji — stanu urządzenia nie widzi, widzi tylko sygnał, i z niego musi wnioskować o tym, czego nie widać. To najtrudniejszy manewr tego kursu: odwrócenie kierunku warunku. Producent czujnika podaje P(alarm | awaria); dyżurny przy telefonie potrzebuje P(awaria | alarm). To nie są te same liczby — a różnica między nimi bywa dziesięciokrotna."
       ),
       callout = list(
         label = "Dane Bananpolu",
@@ -179,7 +179,7 @@ alarm_block <- list(
           id = "kierunek", title = "Dwa kierunki jednego warunku",
           body = list(
             c(
-              "Zapis P(A | B) z wykładu 02 (wzór 2.1) czytamy: prawdopodobieństwo A wśród przypadków, w których zaszło B. Warunek wskazuje mianownik. Jeśli zamienimy miejscami A i B, zmieni się mianownik — a wraz z nim cała liczba. P(alarm | awaria) liczymy wśród zmian z awarią; P(awaria | alarm) liczymy wśród zmian z alarmem. Obie liczby mają ten sam licznik: zmiany, na których wystąpiły jednocześnie awaria i alarm.",
+              "W wykładzie 02 warunek był okolicznością, którą znamy — przegrzanie, lato, tryb pracy — a liczby przychodziły w kierunku drzewa: od okoliczności do skutku. Tam też pierwszy raz zobaczyliśmy, że odwrócenie kreski zmienia liczbę: P(incydent | przegrzanie) = 0.12, a P(przegrzanie | incydent) ≈ 0.71 (przykład 2.1). Zapis P(A | B) czytamy: prawdopodobieństwo A wśród przypadków, w których zaszło B. Warunek wskazuje mianownik. Jeśli zamienimy miejscami A i B, zmieni się mianownik — a wraz z nim cała liczba. P(alarm | awaria) liczymy wśród zmian z awarią; P(awaria | alarm) liczymy wśród zmian z alarmem. Obie liczby mają ten sam licznik: zmiany, na których wystąpiły jednocześnie awaria i alarm.",
               "Różnica jest łatwa do zobaczenia na przykładzie spoza przemysłu. Prawie każdy zawodowy koszykarz jest wysoki, ale wśród wysokich ludzi koszykarzy jest znikomy odsetek. P(wysoki | koszykarz) jest bliskie 1, a P(koszykarz | wysoki) bliskie 0. Nikt nie pomyli tych liczb w przypadku koszykarzy; przy czujnikach i testach mylimy je nagminnie, bo obie brzmią jak „skuteczność”."
             ),
             risk_example("3.1", "Ten sam licznik, dwa mianowniki",
@@ -419,11 +419,7 @@ alarm_block <- list(
               steps_type = "a",
               answer = "(a) Około 0.71: przegrzanie dotyczy tylko 10% zmian, ale towarzyszy siedmiu na dziesięć incydentów. (b) Około 0.79: przeciążenie to 20% zmian, ale prawie cztery piąte incydentów. Obserwacja przesuwa ocenę w stronę stanu, w którym jest ona częstsza."
             ),
-            risk_derivation("Monty Hall według wzoru (3.6)", c(
-              "Wracamy do studia z wykładu 02. Wybrałeś bramkę 2. Niech H₁, H₂, H₃ oznaczają położenie nagrody — to układ zupełny, każdy stan z prawdopodobieństwem 1/3. Obserwacja O: prowadzący otworzył bramkę 1. Z zasad gry P(O | H₁) = 0 (nie odsłoni nagrody), P(O | H₂) = 1/2 (rzuca monetą), P(O | H₃) = 1 (nie ma wyboru).",
-              "Mianownik to wzór (2.4), licznik — droga przez H₃:"
-            ), lines = c("P(O) = 1/3 · 0 + 1/3 · 1/2 + 1/3 · 1 = 1/2", "P(H₃ | O) = (1/3 · 1) / (1/2) = 2/3", "P(H₂ | O) = (1/3 · 1/2) / (1/2) = 1/3")),
-            "Rachunek, który w studiu daje przewagę zmianie bramki, w zakładzie wskazuje najbardziej prawdopodobne źródło incydentu. W przykładzie 3.4(a) P(incydent | przegrzanie) = 0.12, a P(przegrzanie | incydent) ≈ 0.71 — dwa kierunki tego samego warunku różnią się prawie sześciokrotnie.",
+            "Wzór (3.6) wskazuje najbardziej prawdopodobne źródło incydentu. W przykładzie 3.4(a) P(incydent | przegrzanie) = 0.12, a P(przegrzanie | incydent) ≈ 0.71 — dwa kierunki tego samego warunku różnią się prawie sześciokrotnie.",
             risk_check("d3_chk_przyczyny",
               "W Bananpolu P(incydent | przegrzanie) = 0.12, a P(przegrzanie | incydent) ≈ 0.71. Która informacja najbardziej odpowiada za to, że druga liczba jest dużo większa od pierwszej?",
               c("Incydenty są rzadkie: jest ich 17, a zmian z przegrzaniem 100" = "base", "Czujnik przegrzania jest mało dokładny" = "sensor", "Wzór Bayesa zawsze zwiększa prawdopodobieństwo" = "always"),
@@ -431,6 +427,18 @@ alarm_block <- list(
               explanation = "Z reguły iloczynu (2.2) stosunek obu liczb to P(przegrzanie) / P(incydent) = 0.10 / 0.017 ≈ 5.9. Decyduje stosunek wielkości grup, do których się odnoszą: 100 zmian z przegrzaniem wobec 17 incydentów.",
               hints = c(sensor = "Obie liczby dotyczą tych samych 12 zmian z oboma zdarzeniami. Co różni mianowniki 100 i 17?", always = "Wzór (3.6) może też obniżać prawdopodobieństwo — np. P(normalna praca | incydent) ≈ 0.21 < 0.80.")
             )
+          )
+        ),
+        list(
+          id = "zonk", title = "I tu był Zonk",
+          body = list(
+            c(
+              "Pamiętasz studio „Idź na całość” z początku wykładu 02? Zmiana bramki wygrywała w dwóch grach na trzy, a klasyczne „50 na 50” zawiodło. W wykładzie 02 rozwiązaliśmy zagadkę, filtrując 300 rozegranych gier. Teraz wystarczy jeden rachunek.",
+              "To dokładnie sytuacja z tego wykładu: położenie nagrody jest ukrytym stanem, a gest prowadzącego — obserwacją. Prowadzący pełni rolę czujnika, który „alarmuje” z różnym prawdopodobieństwem zależnie od tego, gdzie stoi nagroda."
+            ),
+            "Wybrałeś bramkę 2. Niech H₁, H₂, H₃ oznaczają położenie nagrody — to układ zupełny, każdy stan z prawdopodobieństwem 1/3. Obserwacja O: prowadzący otworzył bramkę 1. Z zasad gry P(O | H₁) = 0 (nie odsłoni nagrody), P(O | H₂) = 1/2 (rzuca monetą), P(O | H₃) = 1 (nie ma wyboru). Mianownik to wzór (2.4), licznik — droga przez H₃:",
+            tags$pre(class = "lc-derivation-lines", paste(c("P(O) = 1/3 · 0 + 1/3 · 1/2 + 1/3 · 1 = 1/2", "P(H₃ | O) = (1/3 · 1) / (1/2) = 2/3", "P(H₂ | O) = (1/3 · 1/2) / (1/2) = 1/3"), collapse = "\n")),
+            "Ten sam wynik co na 300 grach: 2/3 dla zmiany, 1/3 dla pozostania. Prowadzący „nie ma wyboru”, gdy nagroda stoi za bramką 3, a rzuca monetą, gdy stoi za Twoją — i ta asymetria jest całą informacją, którą niesie jego gest."
           )
         )
       )
