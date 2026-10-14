@@ -52,27 +52,59 @@ warunki_exercises <- list(
   )
 )
 
-# Kalendarz roku pracy: 500 zmian, przegrzania latem; sortowanie układa zmiany
+# Scena „Odprawa”: rejestr 1000 zmian na tablicy (ten sam co w kalendarzu hali)
+# i trzy osoby pytające o incydent. Każdy kadr obrysowuje inny mianownik.
+# Rysunek i kadry działają w przeglądarce (modules/filtr.js).
+warunki_odprawa_frames <- list(
+  list(name = "Rejestr zmian", text = "Po dwóch latach na tablicy w biurze wisi rejestr 1000 zmian. Bursztynowe zmiany miały przegrzanie, kropka oznacza incydent. Na odprawę przychodzą trzy osoby z pytaniem o incydent."),
+  list(name = "Pytanie dyrektora", person = 0L, group = "all", num = 17L, den = 1000L,
+    text = "Dyrektor pyta: jak często mamy incydent? Liczymy kropki na całej tablicy."),
+  list(name = "Pytanie kierownika", person = 1L, group = "hot", num = 12L, den = 100L,
+    text = "Kierownik zmiany pyta: a jak często, gdy łożysko się grzeje? Liczymy tylko wśród bursztynowych zmian."),
+  list(name = "Pytanie BHP", person = 2L, group = "inc", num = 12L, den = 17L,
+    text = "Specjalista BHP pyta: ile incydentów zdarzyło się przy przegrzaniu? Liczymy tylko wśród zmian z kropką.")
+)
+warunki_odprawa_widget <- figure_panel(
+  label = "Scena",
+  title = "Odprawa: trzy pytania o ten sam incydent",
+  full_width = TRUE,
+  tags$div(class = "lc-od",
+    `data-config` = jsonlite::toJSON(c(list(years = 2L, hot = 100L, inc_hot = 12L, inc_cold = 5L),
+      list(frames = warunki_odprawa_frames)), auto_unbox = TRUE),
+    tags$div(class = "lc-od-head",
+      tags$span(class = "lc-od-name-out", `data-od-out` = "name", "Rejestr zmian"),
+      tags$span(class = "lc-od-step", `data-od-out` = "step", "Kadr 1 z 4")
+    ),
+    tags$div(class = "lc-od-stage"),
+    tags$p(class = "lc-od-caption", `aria-live` = "polite"),
+    tags$div(class = "lc-od-nav",
+      tags$button(type = "button", class = "lc-action is-outline", `data-od` = "prev", lc_icon("prev"), tags$span("Wstecz")),
+      tags$button(type = "button", class = "lc-action is-solid", `data-od` = "next", tags$span("Dalej"), lc_icon("next"))
+    )
+  )
+)
+
+# Kalendarz dwóch lat pracy: 1000 zmian, przegrzania latem; sortowanie układa zmiany
 # w dwie grupy obok siebie (z przegrzaniem i bez). Rysunek i odczyt działają w przeglądarce (modules/filtr.js).
 warunki_calendar_widget <- figure_panel(
   label = "Kalendarz hali",
-  title = "Rok pracy Bananpolu: 500 zmian",
+  title = "Dwa lata pracy Bananpolu: 1000 zmian",
   full_width = TRUE,
-  tags$div(class = "lc-cal", `data-config` = '{"hot":50,"inc_hot":6,"inc_cold":2}',
+  tags$div(class = "lc-cal", `data-config` = '{"years":2,"hot":100,"inc_hot":12,"inc_cold":5}',
     lc_toolbar(
       tags$button(type = "button", class = "lc-action is-solid", `data-cal` = "sort",
         `aria-pressed` = "false", tags$span("Posortuj według przegrzania")),
       lc_readouts(
         lc_readout(tags$span(`data-cal-out` = "label", "Wszystkie zmiany"),
-          tags$span(`data-cal-out` = "value", "8 / 500 = 0.016"), color = upwr_accent),
+          tags$span(`data-cal-out` = "value", "17 / 1000 = 0.017"), color = upwr_accent),
         tagAppendAttributes(
           lc_readout(tags$span(`data-cal-out` = "label2", "Bez przegrzania"),
-            tags$span(`data-cal-out` = "value2", "2 / 450 = 0.004"), color = upwr_cat[["szalwia"]]),
+            tags$span(`data-cal-out` = "value2", "5 / 900 = 0.006"), color = upwr_cat[["szalwia"]]),
           hidden = NA)
       )
     ),
     tags$div(class = "lc-cal-board", role = "img",
-      `aria-label` = "Kalendarz 500 zmian w roku: 50 zmian z przegrzaniem, głównie latem, i 8 incydentów, z czego 6 przy przegrzaniu."),
+      `aria-label` = "Kalendarz 1000 zmian z dwóch lat: 100 zmian z przegrzaniem, głównie latem, i 17 incydentów, z czego 12 przy przegrzaniu."),
     tags$p(class = "lc-cal-status", `aria-live` = "polite")
   )
 )
@@ -84,13 +116,13 @@ warunki_mosaic_widget <- figure_panel(
   title = "Te same zmiany jako pola",
   full_width = TRUE,
   tags$div(class = "lc-mz",
-    `data-config` = '{"share":0.10,"p_hot":0.12,"p_cold":0.005,"slider":"w2_mz_share"}',
+    `data-config` = '{"share":0.10,"p_hot":0.12,"p_cold":0.005556,"slider":"w2_mz_share"}',
     lc_toolbar(
       lc_slider("w2_mz_share", "Udział zmian z przegrzaniem", 0.02, 0.40, 0.10, 0.01),
       lc_readouts(
         lc_readout("P(incydent | przegrzanie)", tags$span(`data-mz-out` = "hot", "0.12"), color = upwr_accent),
-        lc_readout("P(incydent | brak przegrzania)", tags$span(`data-mz-out` = "cold", "0.005"), color = upwr_cat[["szalwia"]]),
-        lc_readout("P(incydent)", tags$span(`data-mz-out` = "all", "0.0165"), color = upwr_secondary)
+        lc_readout("P(incydent | brak przegrzania)", tags$span(`data-mz-out` = "cold", "0.006"), color = upwr_cat[["szalwia"]]),
+        lc_readout("P(incydent)", tags$span(`data-mz-out` = "all", "0.017"), color = upwr_secondary)
       )
     ),
     tags$div(class = "lc-mz-stage")
@@ -537,17 +569,17 @@ warunki_block <- list(
             label = "Dane Bananpolu",
             text = "Zdarzenie A: incydent przegrzania łożyska podczas zmiany. Warunek B: na zmianie wystąpiło przegrzanie łożyska. Jednostka: 8-godzinna zmiana robocza; horyzont: 1000 porównywalnych zmian. Liczby są fikcyjne.",
             color = "uwaga"
+          ),
+          body = list(
+            risk_try("przejdź przez cztery kadry. Przy każdym pytaniu zanotuj, spośród ilu zmian liczymy i ile z nich ma kropkę."),
+            warunki_odprawa_widget
           )
         ),
         list(id = "sens", title = "Trzy podobne pytania", text = c(
-          "O incydent w Bananpolu można zapytać na trzy sposoby, które brzmią niemal tak samo, a odpowiadają na zupełnie różne pytania. Można pytać, jak często incydent zdarza się w ogóle — wtedy liczymy go wśród wszystkich zmian. Można pytać, jak często zdarza się przy przegrzaniu — wtedy liczymy go wyłącznie wśród zmian z przegrzaniem. Można wreszcie pytać, jak często przegrzanie poprzedzało incydent — wtedy patrzymy wyłącznie na zmiany, na których incydent rzeczywiście zaszedł.",
+          "Trzy osoby na odprawie pytały o to samo zdarzenie, a dostały trzy różne liczby: 17 na 1000, 12 na 100 i 12 na 17. Żadna z nich nie jest „prawdziwszym” ryzykiem — każda odpowiada na inne pytanie.",
           "Różnica między tymi pytaniami nie leży w zdarzeniu, o które pytamy, lecz w grupie przypadków, spośród których liczymy. Warunek „przy przegrzaniu” zawęża tę grupę: odrzucamy zmiany bez przegrzania i dopiero w tym, co zostało, sprawdzamy, jak często doszło do incydentu. To samo zdarzenie, inny mianownik — i inna liczba.",
           "Pomyłka między tymi pytaniami nie jest błędem rachunkowym, tylko błędem pytania. Dyrektor, który słyszy „12% zmian z przegrzaniem kończy się incydentem”, a zapamiętuje „12% wszystkich zmian kończy się incydentem”, zawyża problem siedmiokrotnie — mimo że nikt nie policzył niczego źle.",
-          "Dlatego każde pytanie o częstość formułujemy pełnym zdaniem, które nazywa zarówno zdarzenie, jak i grupę odniesienia:"
-        ), bullets = c(
-          "Jak często dochodzi do incydentu? — liczymy wśród wszystkich porównywalnych zmian.",
-          "Jak często dochodzi do incydentu przy przegrzaniu? — liczymy tylko wśród zmian z przegrzaniem.",
-          "Na ilu zmianach z incydentem było przegrzanie? — liczymy tylko wśród zmian, na których zaszedł incydent."
+          "Dlatego każde pytanie o częstość formułujemy pełnym zdaniem, które nazywa zarówno zdarzenie, jak i grupę odniesienia — tak jak zrobiły to trzy osoby na odprawie."
         )),
         list(
           id = "zapis", title = "Zapis, który pilnuje mianownika",
@@ -638,28 +670,28 @@ warunki_block <- list(
           id = "mianownik", title = "Naturalne częstości w Bananpolu",
           body = list(
             c(
-              "Wracamy do hali. Informacja o przegrzaniu robi ze zmianami dokładnie to, co prowadzący z bramkami: filtruje świat. Poniżej jest rok pracy Bananpolu — 50 tygodni po pięć dni roboczych, dzienna i nocna zmiana, razem 500 zmian. Czujnik zgłaszał przegrzanie głównie latem; kilka zmian skończyło się incydentem.",
+              "Wracamy do hali. Informacja o przegrzaniu robi ze zmianami dokładnie to, co prowadzący z bramkami: filtruje świat. Poniżej jest ten sam rejestr co na odprawie, rozpisany na kalendarz: dwa lata pracy Bananpolu, po 50 tygodni z pięcioma dniami roboczymi, dzienna i nocna zmiana — razem 1000 zmian. Przegrzania zdarzały się głównie latem.",
               "Zanim cokolwiek policzysz, znajdź w kalendarzu incydenty i zobacz, ile z nich wypadło na bursztynowych zmianach. Potem posortuj zmiany."
             ),
             risk_try("policz kropki w całym kalendarzu, a potem posortuj zmiany według przegrzania i policz kropki w każdej grupie. Który ułamek odpowiada na pytanie „jak ryzykowna jest zmiana z przegrzaniem?”"),
             warunki_calendar_widget,
-            "Sortowanie niczego w kalendarzu nie zmieniło: te same zmiany, te same incydenty. Zmienił się tylko zbiór, w którym liczymy. Wśród wszystkich 500 zmian incydentów było 8, czyli 0.016. Wśród 50 zmian z przegrzaniem — 6, czyli 6/50 = 0.12, a wśród 450 pozostałych — 2, czyli około 0.004. Ułamek 6/50 to P(A | B): mianownikiem jest liczba zmian spełniających warunek, a nie liczba wszystkich zmian.",
+            "Sortowanie niczego w kalendarzu nie zmieniło: te same zmiany, te same incydenty. Zmienił się tylko zbiór, w którym liczymy. Wśród wszystkich 1000 zmian incydentów było 17, czyli 0.017. Wśród 100 zmian z przegrzaniem — 12, czyli 12/100 = 0.12, a wśród 900 pozostałych — 5, czyli około 0.006. Ułamek 12/100 to P(A | B): mianownikiem jest liczba zmian spełniających warunek, a nie liczba wszystkich zmian.",
             "Ten sposób liczenia — na konkretnych zmianach zamiast na ułamkach — nazywamy naturalnymi częstościami. Wróci on w następnym wykładzie jako główne narzędzie do rozbrajania pozornie paradoksalnych wyników. Przy każdym prawdopodobieństwie warunkowym zadawaj dwa pytania kontrolne: ile przypadków spełnia warunek B i w ilu spośród nich zaszło także A?",
             "Posortowany kalendarz to już prawie mozaika: zmiany z przegrzaniem po lewej, pozostałe po prawej, w każdej grupie incydenty na dole. Zamieńmy zmiany na pola. Szerokość pasa mówi wtedy, jak częsty jest warunek, a wysokość zamalowanej części — jak często w tej grupie dochodzi do incydentu. Oś pionowa sięga tylko do 0.20, inaczej incydentów nie byłoby widać.",
             risk_try("przesuń udział zmian z przegrzaniem od 0.02 do 0.40 i obserwuj linię przerywaną. Czy kiedykolwiek wychodzi poza wysokości obu pasów?"),
             warunki_mosaic_widget,
-            "Wysokości pasów się nie ruszają: suwak zmienia tylko to, jak często warunek występuje, a nie ryzyko w każdej grupie. Rusza się za to linia P(incydent) w całym zakładzie. Zawsze leży między 0.005 a 0.12 — bliżej tego pasa, który jest szerszy. Przy udziale 0.10 model daje 0.0165; kalendarz pokazał 8/500 = 0.016, bo 0.005 · 450 = 2.25 incydentu, a w kalendarzu można zaznaczyć tylko całe zmiany.",
+            "Wysokości pasów się nie ruszają: suwak zmienia tylko to, jak często warunek występuje, a nie ryzyko w każdej grupie. Rusza się za to linia P(incydent) w całym zakładzie. Zawsze leży między 0.006 a 0.12 — bliżej tego pasa, który jest szerszy. Przy udziale 0.10 daje 0.017, dokładnie tyle, ile kropek było w kalendarzu: 17 na 1000.",
             risk_example("2.3", "Ile zmian zostaje po filtrze?",
-              problem = "W roku pracy z 500 zmianami udział przegrzania wynosi 0.40, P(incydent | przegrzanie) = 0.12 i P(incydent | brak przegrzania) = 0.005. Ile zmian spełnia warunek, ile incydentów wypada w każdej grupie i ile wynosi P(incydent) w modelu?",
+              problem = "W rejestrze 1000 zmian udział przegrzania wynosi 0.40, P(incydent | przegrzanie) = 0.12 i P(incydent | brak przegrzania) = 5/900 ≈ 0.0056. Ile zmian spełnia warunek, ile incydentów wypada w każdej grupie i ile wynosi P(incydent) w modelu?",
               steps = c(
-                "Warunek spełnia 0.40 · 500 = 200 zmian; bez przegrzania zostaje 300.",
-                "Incydenty wśród zmian z przegrzaniem: 0.12 · 200 = 24. Wśród pozostałych: 0.005 · 300 = 1.5, czyli w kalendarzu 2 zmiany po zaokrągleniu.",
-                "Model: P(incydent) = 0.40 · 0.12 + 0.60 · 0.005 = 0.048 + 0.003 = 0.051."
+                "Warunek spełnia 0.40 · 1000 = 400 zmian; bez przegrzania zostaje 600.",
+                "Incydenty wśród zmian z przegrzaniem: 0.12 · 400 = 48. Wśród pozostałych: 600 · 5/900 ≈ 3.3, czyli w rejestrze około 3 zmiany.",
+                "Model: P(incydent) = 0.40 · 0.12 + 0.60 · 5/900 ≈ 0.048 + 0.0033 ≈ 0.051."
               ),
-              answer = "Po filtrze zostaje 200 zmian i 24 incydenty, więc P(A | B) nadal wynosi 0.12. Zmienił się natomiast wynik ogólny: 0.051 zamiast 0.0165, bo liczniejsza grupa z przegrzaniem ciągnie średnią w swoją stronę."
+              answer = "Po filtrze zostaje 400 zmian i 48 incydentów, więc P(A | B) nadal wynosi 0.12. Zmienił się natomiast wynik ogólny: 0.051 zamiast 0.017, bo liczniejsza grupa z przegrzaniem ciągnie średnią w swoją stronę."
             ),
             risk_check("w2_chk_mianownik",
-              "W kalendarzu 500 zmian jest 50 zmian z przegrzaniem, w tym 6 z incydentem, oraz 2 incydenty na pozostałych zmianach. Ile wynosi udział incydentów wśród zmian z przegrzaniem?",
+              "W rejestrze drugiej hali Bananpolu na 500 zmian jest 50 zmian z przegrzaniem, w tym 6 z incydentem, oraz 2 incydenty na pozostałych zmianach. Ile wynosi udział incydentów wśród zmian z przegrzaniem?",
               c("6/500 = 0.012" = "all", "6/50 = 0.12" = "cond", "6/8 = 0.75" = "inverse"),
               correct = "cond",
               explanation = "Warunek „przegrzanie” zawęża mianownik do 50 zmian. 6/500 to P(A ∩ B), a 6/8 to P(B | A) — udział przegrzań wśród zmian z incydentem.",

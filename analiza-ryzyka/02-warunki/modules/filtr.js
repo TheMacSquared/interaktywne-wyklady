@@ -10,6 +10,13 @@
 // przegrzania (suwak cfg.slider), wysokość zamalowanej części to P(incydent | pas),
 // przerywana linia to P(incydent) w całym zakładzie.
 //
+// Scena „Odprawa” (.lc-od[data-config]): ten sam rejestr zmian na tablicy i trzy
+// osoby z trzema pytaniami o incydent. Kadry [data-od="prev|next"] obrysowują
+// kolejno wszystkie zmiany, zmiany z przegrzaniem i zmiany z incydentem.
+//
+// Kalendarz i scena losują rejestr tym samym generatorem i ziarnem, więc
+// pokazują dokładnie te same zmiany.
+//
 // Całość działa w przeglądarce, bez serwera.
 (function () {
   var NS = "http://www.w3.org/2000/svg";
@@ -34,35 +41,24 @@
     };
   }
 
-  // --- Kalendarz ------------------------------------------------------------
+  // --- Rejestr zmian ---------------------------------------------------------
 
   var WEEKS = 50, DAYS = 5;
   var MONTHS = ["sty", "lut", "mar", "kwi", "maj", "cze", "lip", "sie", "wrz", "paź", "lis", "gru"];
   var DAY_NAMES = ["pon", "wt", "śr", "czw", "pt"];
   var START = Date.UTC(2026, 0, 5);
 
-  function initCalendar(root) {
-    if (root.dataset.ready) return;
-    root.dataset.ready = "1";
-    var cfg = JSON.parse(root.dataset.config || "{}");
-    var nHot = cfg.hot || 50, incHot = cfg.inc_hot || 6, incCold = cfg.inc_cold || 2;
+  // Lata × 50 tygodni × 5 dni × 2 zmiany. Przegrzania ważone porą roku (szczyt
+  // w lipcu, tydzień 29), incydenty losowane osobno w obu grupach.
+  function makeRegister(cfg) {
+    var years = cfg.years || 1, nHot = cfg.hot || 50;
     var rnd = mulberry32(cfg.seed || 20260915);
-    var board = root.querySelector(".lc-cal-board");
-    var btn = root.querySelector('[data-cal="sort"]');
-    var status = root.querySelector(".lc-cal-status");
-    var out = {};
-    root.querySelectorAll("[data-cal-out]").forEach(function (e) { out[e.getAttribute("data-cal-out")] = e; });
-    var second = out.label2 && out.label2.closest(".lc-read");
-    var sorted = false;
-
-    // Przegrzania ważone porą roku: szczyt w lipcu (tydzień 29).
     function weekWeight(w) { var d = w - 29; return 0.5 + 9 * Math.exp(-(d * d) / 32); }
-
     var cells = [];
-    for (var w = 0; w < WEEKS; w++)
-      for (var d = 0; d < DAYS; d++)
-        for (var s = 0; s < 2; s++) cells.push({ w: w, d: d, s: s, hot: false, inc: false });
-
+    for (var y = 0; y < years; y++)
+      for (var w = 0; w < WEEKS; w++)
+        for (var d = 0; d < DAYS; d++)
+          for (var s = 0; s < 2; s++) cells.push({ y: y, w: w, d: d, s: s, hot: false, inc: false });
     // Losowanie ważone bez zwracania: klucz u^(1/waga), bierzemy największe.
     cells.forEach(function (c) { c.key = Math.pow(rnd(), 1 / weekWeight(c.w)); });
     cells.slice().sort(function (a, b) { return b.key - a.key; })
@@ -75,20 +71,41 @@
         arr[i].inc = true;
       }
     }
+    sample(cells.filter(function (c) { return c.hot; }), cfg.inc_hot || 0);
+    sample(cells.filter(function (c) { return !c.hot; }), cfg.inc_cold || 0);
+    return cells;
+  }
+
+  // --- Kalendarz ------------------------------------------------------------
+
+  function initCalendar(root) {
+    if (root.dataset.ready) return;
+    root.dataset.ready = "1";
+    var cfg = JSON.parse(root.dataset.config || "{}");
+    var years = cfg.years || 1, nHot = cfg.hot || 50, incHot = cfg.inc_hot || 6, incCold = cfg.inc_cold || 2;
+    var board = root.querySelector(".lc-cal-board");
+    var btn = root.querySelector('[data-cal="sort"]');
+    var status = root.querySelector(".lc-cal-status");
+    var out = {};
+    root.querySelectorAll("[data-cal-out]").forEach(function (e) { out[e.getAttribute("data-cal-out")] = e; });
+    var second = out.label2 && out.label2.closest(".lc-read");
+    var sorted = false;
+
+    var cells = makeRegister(cfg);
     var hot = cells.filter(function (c) { return c.hot; });
     var cold = cells.filter(function (c) { return !c.hot; });
-    sample(hot, incHot);
-    sample(cold, incCold);
     // W każdej grupie najpierw incydenty (lądują na dole), potem reszta w kolejności dat.
     [hot, cold].forEach(function (g) {
       g.filter(function (c) { return c.inc; }).concat(g.filter(function (c) { return !c.inc; }))
         .forEach(function (c, i) { c.slot = i; });
     });
     var nCold = cold.length, incAll = incHot + incCold;
-    var hotCols = Math.ceil(nHot / 10), coldCols = Math.ceil(nCold / 10);
+    // Po sortowaniu każda grupa ma tyle wierszy, ile kalendarz (10 na rok).
+    var rows = 10 * years;
+    var hotCols = Math.ceil(nHot / rows), coldCols = Math.ceil(nCold / rows);
 
     var monthEls = [], prev = -1;
-    for (w = 0; w < WEEKS; w++) {
+    for (var w = 0; w < WEEKS; w++) {
       var mon = new Date(START + w * 7 * 86400000).getUTCMonth();
       if (mon !== prev) {
         var m = document.createElement("div");
@@ -96,11 +113,22 @@
         board.appendChild(m); monthEls.push({ el: m, w: w }); prev = mon;
       }
     }
-    var dayEls = DAY_NAMES.map(function (name) {
-      var el = document.createElement("div");
-      el.className = "lc-cal-day"; el.textContent = name;
-      board.appendChild(el); return el;
-    });
+    var dayEls = [];
+    for (var yy = 0; yy < years; yy++) {
+      DAY_NAMES.forEach(function (name, i) {
+        var el = document.createElement("div");
+        el.className = "lc-cal-day"; el.textContent = name;
+        board.appendChild(el); dayEls.push({ el: el, y: yy, d: i });
+      });
+    }
+    var yearEls = [];
+    if (years > 1) {
+      for (yy = 0; yy < years; yy++) {
+        var ye = document.createElement("div");
+        ye.className = "lc-cal-year"; ye.textContent = "rok " + (yy + 1);
+        board.appendChild(ye); yearEls.push(ye);
+      }
+    }
     function groupLabel(text, cls) {
       var el = document.createElement("div");
       el.className = "lc-cal-group " + cls; el.textContent = text;
@@ -111,7 +139,7 @@
     cells.forEach(function (c) {
       var el = document.createElement("div");
       el.className = "lc-cal-cell" + (c.hot ? " is-hot" : "") + (c.inc ? " is-inc" : "");
-      el.title = "Tydzień " + (c.w + 1) + ", " + DAY_NAMES[c.d] + ", zmiana " +
+      el.title = (years > 1 ? "Rok " + (c.y + 1) + ", tydzień " : "Tydzień ") + (c.w + 1) + ", " + DAY_NAMES[c.d] + ", zmiana " +
         (c.s ? "nocna" : "dzienna") + (c.hot ? ", przegrzanie" : "") + (c.inc ? ", incydent" : "");
       board.appendChild(el); c.el = el;
     });
@@ -120,7 +148,7 @@
     function layout() {
       var W = board.clientWidth;
       if (!W) return;
-      var labelW = W < 420 ? 28 : 36;
+      var labelW = (W < 420 ? 28 : 36) + (years > 1 ? 10 : 0);
       var pitch = Math.max(4, Math.floor((W - labelW) / WEEKS));
       var big = pitch >= 10;
       geo = {
@@ -128,19 +156,25 @@
         dayGap: big ? 6 : 3, top: big ? 20 : 16
       };
       geo.gridH = DAYS * 2 * pitch + (DAYS - 1) * geo.dayGap;
-      // Po sortowaniu: dwa bloki po 10 wierszy, wyrównane do dołu kalendarza.
-      geo.bottom = geo.top + geo.gridH - pitch;
+      geo.bandGap = years > 1 ? (big ? 22 : 16) : 0;
+      geo.band = function (y) { return geo.top + y * (geo.gridH + geo.bandGap); };
+      // Po sortowaniu: dwa bloki po 10 wierszy na rok, wyrównane do dołu kalendarza.
+      geo.bottom = geo.band(years - 1) + geo.gridH - pitch;
       geo.coldX = hotCols * pitch + labelW;
-      board.style.height = (geo.top + geo.gridH + 4) + "px";
+      board.style.height = (geo.bottom + pitch + 4) + "px";
       var font = big ? 11 : 9;
       monthEls.forEach(function (m) {
         m.el.style.left = (labelW + m.w * pitch) + "px"; m.el.style.fontSize = font + "px";
       });
-      dayEls.forEach(function (el, i) {
-        el.style.top = (geo.top + i * (2 * pitch + geo.dayGap)) + "px";
-        el.style.height = (2 * pitch) + "px"; el.style.fontSize = font + "px";
+      dayEls.forEach(function (o) {
+        o.el.style.top = (geo.band(o.y) + o.d * (2 * pitch + geo.dayGap)) + "px";
+        o.el.style.height = (2 * pitch) + "px"; o.el.style.fontSize = font + "px";
       });
-      var labTop = geo.bottom - 10 * pitch - (big ? 4 : 2);
+      yearEls.forEach(function (el, y) {
+        el.style.left = "0px"; el.style.fontSize = font + "px";
+        el.style.top = (y === 0 ? 0 : geo.band(y) - font - 6) + "px";
+      });
+      var labTop = geo.bottom - rows * pitch - (big ? 4 : 2);
       hotLabel.style.left = "0px"; hotLabel.style.top = labTop + "px";
       coldLabel.style.left = (geo.coldX + coldCols * pitch - (pitch - geo.size)) + "px";
       coldLabel.style.top = labTop + "px";
@@ -159,10 +193,10 @@
           var cols = c.hot ? hotCols : coldCols;
           x = (c.hot ? 0 : geo.coldX) + (c.slot % cols) * geo.pitch;
           y = geo.bottom - Math.floor(c.slot / cols) * geo.pitch;
-          delay = instant || REDUCE ? 0 : c.w * 12;
+          delay = instant || REDUCE ? 0 : c.w * 12 + c.y * 120;
         } else {
           x = geo.labelW + c.w * geo.pitch;
-          y = geo.top + c.d * (2 * geo.pitch + geo.dayGap) + c.s * geo.pitch;
+          y = geo.band(c.y) + c.d * (2 * geo.pitch + geo.dayGap) + c.s * geo.pitch;
         }
         c.el.style.transform = "translate(" + x + "px," + y + "px)";
         c.el.style.transitionDelay = delay + "ms";
@@ -180,7 +214,7 @@
         out.value.textContent = ratio(incHot, nHot);
         out.label2.textContent = "Bez przegrzania";
         out.value2.textContent = ratio(incCold, nCold);
-        status.textContent = "Ten sam rok, posortowany według przegrzania.";
+        status.textContent = "Ten sam rejestr, posortowany według przegrzania.";
         btn.querySelector("span").textContent = "Wróć do kalendarza";
       } else {
         out.label.textContent = "Wszystkie zmiany";
@@ -197,6 +231,86 @@
     if (window.ResizeObserver) new ResizeObserver(function () { layout(); }).observe(board);
     else window.addEventListener("resize", layout);
     layout(); texts();
+  }
+
+
+  // --- Scena „Odprawa” --------------------------------------------------------
+
+  var OD_COLS = 40, OD_PITCH = 13, OD_X = 80, OD_Y = 128;
+  var OD_PEOPLE = [
+    { x: 270, name: "dyrektor", tie: true },
+    { x: 440, name: "kierownik zmiany", helmet: true },
+    { x: 610, name: "specjalista BHP", vest: true }
+  ];
+
+  function initOdprawa(root) {
+    if (root.dataset.ready) return;
+    root.dataset.ready = "1";
+    var cfg = JSON.parse(root.dataset.config || "{}");
+    var frames = cfg.frames || [];
+    var cells = makeRegister(cfg);
+    var stage = root.querySelector(".lc-od-stage");
+    var caption = root.querySelector(".lc-od-caption");
+    var nameEl = root.querySelector('[data-od-out="name"]');
+    var stepEl = root.querySelector('[data-od-out="step"]');
+    var prevBtn = root.querySelector('[data-od="prev"]'), nextBtn = root.querySelector('[data-od="next"]');
+    var rows = Math.ceil(cells.length / OD_COLS);
+    var W = 720, H = OD_Y + rows * OD_PITCH + 16, k = 0;
+    var s = svg("svg", { viewBox: "0 0 " + W + " " + H, class: "lc-od-svg", role: "img",
+      "aria-label": "Rejestr " + cells.length + " zmian na tablicy i trzy osoby pytające o incydent." }, stage);
+
+    var people = OD_PEOPLE.map(function (p, i) {
+      var g = svg("g", { class: "lc-od-person", transform: "translate(" + p.x + ",0)" }, s);
+      if (p.helmet) svg("path", { d: "M-15 14 Q0 -2 15 14 Z", class: "lc-od-helmet" }, g);
+      svg("circle", { cx: 0, cy: 22, r: 12, class: "lc-od-face" }, g);
+      svg("path", { d: "M-22 70 Q-22 40 0 40 Q22 40 22 70 Z", class: "lc-od-body" + (p.vest ? " is-vest" : "") }, g);
+      if (p.tie) svg("path", { d: "M0 41 L-4 48 L0 62 L4 48 Z", class: "lc-od-tie" }, g);
+      svg("text", { x: 0, y: 88, "text-anchor": "middle", class: "lc-od-name" }, g, p.name);
+      var bubble = svg("g", { class: "lc-od-bubble" }, g);
+      svg("rect", { x: 26, y: 2, width: 30, height: 26, rx: 9 }, bubble);
+      svg("path", { d: "M30 26 L24 34 L38 27 Z" }, bubble);
+      svg("text", { x: 41, y: 21, "text-anchor": "middle" }, bubble, "?");
+      return g;
+    });
+
+    svg("rect", { x: OD_X - 10, y: OD_Y - 10, width: OD_COLS * OD_PITCH + 18, height: rows * OD_PITCH + 18,
+      rx: 6, class: "lc-od-board" }, s);
+    cells.forEach(function (c, i) {
+      var x = OD_X + (i % OD_COLS) * OD_PITCH, y = OD_Y + Math.floor(i / OD_COLS) * OD_PITCH;
+      var g = svg("g", { class: "lc-od-cell" + (c.hot ? " is-hot" : "") + (c.inc ? " is-inc" : "") }, s);
+      svg("rect", { x: x, y: y, width: OD_PITCH - 2, height: OD_PITCH - 2, rx: 1.5 }, g);
+      if (c.inc) svg("circle", { cx: x + (OD_PITCH - 2) / 2, cy: y + (OD_PITCH - 2) / 2, r: 3 }, g);
+      c.g = g;
+    });
+    var frac = svg("text", { x: OD_X - 10, y: 58, class: "lc-od-frac" }, s);
+
+    function show(i) {
+      k = Math.max(0, Math.min(frames.length - 1, i));
+      var f = frames[k];
+      cells.forEach(function (c) {
+        var inGroup = f.group === "all" || (f.group === "hot" && c.hot) || (f.group === "inc" && c.inc);
+        c.g.classList.toggle("is-dim", !!f.group && !inGroup);
+        c.g.classList.toggle("is-den", !!f.group && f.group !== "all" && inGroup);
+      });
+      s.classList.toggle("is-all", f.group === "all");
+      people.forEach(function (g, j) {
+        g.classList.toggle("is-on", f.person === j);
+        g.classList.toggle("is-off", f.person !== undefined && f.person !== j);
+      });
+      frac.textContent = "";
+      if (f.num !== undefined) {
+        svg("tspan", { class: "is-num" }, frac, String(f.num));
+        svg("tspan", {}, frac, " / " + f.den);
+      }
+      caption.textContent = f.text;
+      if (nameEl) nameEl.textContent = f.name;
+      if (stepEl) stepEl.textContent = "Kadr " + (k + 1) + " z " + frames.length;
+      prevBtn.disabled = k === 0;
+      nextBtn.disabled = k === frames.length - 1;
+    }
+    prevBtn.addEventListener("click", function () { show(k - 1); });
+    nextBtn.addEventListener("click", function () { show(k + 1); });
+    show(0);
   }
 
   // --- Mozaika --------------------------------------------------------------
@@ -262,6 +376,7 @@
   function scan() {
     document.querySelectorAll(".lc-cal:not([data-ready])").forEach(initCalendar);
     document.querySelectorAll(".lc-mz:not([data-ready])").forEach(initMosaic);
+    document.querySelectorAll(".lc-od:not([data-ready])").forEach(initOdprawa);
   }
   document.addEventListener("DOMContentLoaded", scan);
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });

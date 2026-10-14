@@ -162,8 +162,40 @@ ui <- lecture_page(
       .lc-chain2-den { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
       .lc-chain2-eq { font: 600 16px var(--upwr-mono); fill: var(--upwr-ink); }
       .lc-chain2-eq .is-res { fill: var(--upwr-accent); font-weight: 700; }
+      .lc-cal-year { position: absolute; font-family: var(--upwr-mono); font-weight: 600; color: var(--upwr-ink-soft); line-height: 1; transition: opacity .4s ease; }
+      .lc-cal-board.is-sorted .lc-cal-year { opacity: 0; }
+      .lc-od-head { display: flex; justify-content: space-between; align-items: baseline; margin: .2em 0 .3em; }
+      .lc-od-name-out { font: 600 1.02em var(--upwr-sans); color: var(--upwr-ink); }
+      .lc-od-step { font: .8em var(--upwr-mono); color: var(--upwr-ink-subtle); }
+      .lc-od-svg { display: block; width: 100%; max-width: 720px; height: auto; margin: 0 auto; }
+      .lc-od-person { transition: opacity .4s ease; }
+      .lc-od-person.is-off { opacity: .35; }
+      .lc-od-face { fill: color-mix(in srgb, var(--upwr-cat-bursztyn) 25%, var(--upwr-surface)); stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
+      .lc-od-body { fill: var(--upwr-secondary); }
+      .lc-od-body.is-vest { fill: color-mix(in srgb, var(--upwr-cat-kurkuma, #d4a72c) 85%, var(--upwr-surface)); stroke: var(--upwr-ink-soft); stroke-width: 1; }
+      .lc-od-tie { fill: var(--upwr-accent); }
+      .lc-od-helmet { fill: var(--upwr-cat-bursztyn); }
+      .lc-od-name { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+      .lc-od-person.is-on .lc-od-name { font-weight: 700; fill: var(--upwr-ink); }
+      .lc-od-bubble { opacity: 0; transition: opacity .3s ease; }
+      .lc-od-person.is-on .lc-od-bubble { opacity: 1; }
+      .lc-od-bubble rect, .lc-od-bubble path { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
+      .lc-od-bubble text { font: 700 17px var(--upwr-sans); fill: var(--upwr-accent); }
+      .lc-od-board { fill: color-mix(in srgb, #a07c4a 22%, var(--upwr-surface)); stroke: #a07c4a; stroke-width: 2; transition: stroke .3s ease; }
+      .lc-od-svg.is-all .lc-od-board { stroke: var(--upwr-ink); stroke-width: 3; }
+      .lc-od-cell rect { fill: color-mix(in srgb, var(--upwr-cat-szalwia) 22%, var(--upwr-surface)); transition: opacity .4s ease; }
+      .lc-od-cell.is-hot rect { fill: var(--upwr-cat-bursztyn); }
+      .lc-od-cell circle { fill: var(--upwr-accent); }
+      .lc-od-cell { transition: opacity .4s ease; }
+      .lc-od-cell.is-dim { opacity: .12; }
+      .lc-od-cell.is-den rect { stroke: var(--upwr-ink); stroke-width: 1.5; }
+      .lc-od-frac { font: 700 24px var(--upwr-mono); fill: var(--upwr-ink); }
+      .lc-od-frac .is-num { fill: var(--upwr-accent); }
+      .lc-od-caption { min-height: 3em; margin: .5em 0 .3em; color: var(--upwr-ink-soft); }
+      .lc-od-nav { display: flex; justify-content: space-between; }
+      .lc-od-nav .lc-action[disabled] { opacity: .35; cursor: default; }
       @media (prefers-reduced-motion: reduce) {
-        .lc-cal-cell, .lc-cal-month, .lc-cal-day, .lc-cal-group { transition: none !important; }
+        .lc-cal-cell, .lc-cal-month, .lc-cal-day, .lc-cal-group, .lc-od-cell, .lc-od-person, .lc-od-bubble { transition: none !important; }
       }
     "))
   )
