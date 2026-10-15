@@ -2,6 +2,97 @@
 # CHAPTER 3: Przedział dla średniej
 # ============================================================================
 
+# PROTOTYP pitagoras: SE różnicy jako przeciwprostokątna (Ryc. 3.2a)
+# Skala: 1 cm błędu standardowego = 120 px. Wartości z panelu wzrostu (Ryc. 3.2).
+ch3_se_triangle <- function(se1 = 1.4, se2 = 1.2) {
+  k <- 120; x0 <- 40; y0 <- 210
+  a <- se1 * k; b <- se2 * k; se_d <- sqrt(se1^2 + se2^2)
+  num <- function(v) formatC(v, format = "f", digits = 2, drop0trailing = TRUE)
+  bx <- 330; by1 <- 120; by2 <- 175
+  tags$div(class = "ch3-pyth", role = "img",
+    `aria-label` = paste0("Trójkąt prostokątny: przyprostokątne SE1 = ", num(se1),
+      " i SE2 = ", num(se2), ", przeciwprostokątna SE różnicy = ", num(se_d),
+      ". Obok odcinek SE1 + SE2 = ", num(se1 + se2), " dłuższy niż SE różnicy."),
+    HTML(sprintf('
+<svg viewBox="0 0 660 250" xmlns="http://www.w3.org/2000/svg">
+  <path class="p-right" d="M%1$.0f %2$.0f h-14 v-14 h14" />
+  <line class="p-se1" x1="%3$.0f" y1="%2$.0f" x2="%1$.0f" y2="%2$.0f" />
+  <line class="p-se2" x1="%1$.0f" y1="%2$.0f" x2="%1$.0f" y2="%4$.0f" />
+  <line class="p-sed" x1="%3$.0f" y1="%2$.0f" x2="%1$.0f" y2="%4$.0f" />
+  <text class="p-t p-c1" x="%5$.0f" y="%6$.0f" text-anchor="middle">SE₁ <tspan class="p-n">%7$s</tspan></text>
+  <text class="p-t p-c2" x="%8$.0f" y="%9$.0f" text-anchor="start">SE₂ <tspan class="p-n">%10$s</tspan></text>
+  <text class="p-t p-cd" x="%11$.0f" y="%12$.0f" text-anchor="end">SE różnicy <tspan class="p-n">%13$s</tspan></text>
+
+  <line class="p-se1" x1="%14$.0f" y1="%15$.0f" x2="%16$.0f" y2="%15$.0f" />
+  <line class="p-se2" x1="%16$.0f" y1="%15$.0f" x2="%17$.0f" y2="%15$.0f" />
+  <line class="p-sed" x1="%14$.0f" y1="%18$.0f" x2="%19$.0f" y2="%18$.0f" />
+  <line class="p-tick" x1="%14$.0f" y1="%20$.0f" x2="%14$.0f" y2="%21$.0f" />
+  <text class="p-t" x="%17$.0f" y="%22$.0f" text-anchor="end">SE₁ + SE₂ <tspan class="p-n">%23$s</tspan></text>
+  <text class="p-t p-cd" x="%19$.0f" y="%24$.0f" text-anchor="end">SE różnicy <tspan class="p-n">%13$s</tspan></text>
+</svg>',
+      x0 + a, y0, x0, y0 - b,
+      x0 + a / 2, y0 + 26, num(se1),
+      x0 + a + 12, y0 - b / 2 + 5, num(se2),
+      x0 + a / 2 - 10, y0 - b / 2 - 12, num(se_d),
+      bx, by1, bx + a, bx + a + b, by2, bx + se_d * k,
+      by1 - 30, by2 + 12, by1 - 14, num(se1 + se2), by2 + 30))
+  )
+}
+
+ch3_pyth_css <- "
+.ch3-pyth svg { display: block; width: 100%; height: auto; max-width: 660px; margin: 0 auto; }
+.ch3-pyth line { stroke-width: 6; stroke-linecap: round; }
+.ch3-pyth .p-se1 { stroke: var(--upwr-cat-niebo); }
+.ch3-pyth .p-se2 { stroke: var(--upwr-cat-bursztyn); }
+.ch3-pyth .p-sed { stroke: var(--upwr-cat-indygo); }
+.ch3-pyth .p-tick { stroke: var(--upwr-rule); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.ch3-pyth .p-right { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.ch3-pyth .p-t { font: 600 15px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.ch3-pyth .p-c1 { fill: var(--upwr-cat-niebo); }
+.ch3-pyth .p-c2 { fill: var(--upwr-cat-bursztyn); }
+.ch3-pyth .p-cd { fill: var(--upwr-cat-indygo); }
+.ch3-pyth .p-n { font: 500 14px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+"
+
+# PROTOTYP progi: trzy położenia przedziału względem progu hipotezy (Ryc. 3.2b)
+ch3_threshold_diagram <- function() {
+  rows <- list(
+    list(lo = 380, hi = 560, cls = "is-yes", lab = "TAK"),
+    list(lo = 255, hi = 435, cls = "is-maybe", lab = "NIEPEWNE"),
+    list(lo = 90,  hi = 270, cls = "is-no", lab = "NIE")
+  )
+  thr <- 320; y0 <- 46; dy <- 58
+  bars <- vapply(seq_along(rows), function(i) {
+    r <- rows[[i]]; y <- y0 + (i - 1) * dy; mid <- (r$lo + r$hi) / 2
+    sprintf('<g class="%s"><line class="t-ci" x1="%d" y1="%d" x2="%d" y2="%d"/>
+      <line class="t-cap" x1="%d" y1="%d" x2="%d" y2="%d"/><line class="t-cap" x1="%d" y1="%d" x2="%d" y2="%d"/>
+      <circle class="t-est" cx="%d" cy="%d" r="6"/>
+      <text class="t-lab" x="700" y="%d" text-anchor="end">%s</text></g>',
+      r$cls, r$lo, y, r$hi, y, r$lo, y - 9, r$lo, y + 9, r$hi, y - 9, r$hi, y + 9,
+      mid, y, y + 5, r$lab)
+  }, character(1))
+  tags$div(class = "ch3-thr", role = "img",
+    `aria-label` = "Trzy przedziały względem progu hipotezy: cały po stronie hipotezy — TAK, przecina próg — NIEPEWNE, cały po drugiej stronie — NIE.",
+    HTML(sprintf('<svg viewBox="0 0 710 210" xmlns="http://www.w3.org/2000/svg">
+      <rect class="t-hyp" x="%d" y="10" width="%d" height="190"/>
+      <line class="t-thr" x1="%d" y1="10" x2="%d" y2="200"/>
+      %s</svg>', thr, 580 - thr, thr, thr, paste(bars, collapse = "\n")))
+  )
+}
+
+ch3_thr_css <- "
+.ch3-thr svg { display: block; width: 100%; height: auto; max-width: 710px; margin: 0 auto; }
+.ch3-thr .t-hyp { fill: var(--upwr-cat-wrzos); opacity: .16; }
+.ch3-thr .t-thr { stroke: var(--upwr-ink-soft); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.ch3-thr .t-ci, .ch3-thr .t-cap { stroke: var(--upwr-cat-niebo); stroke-width: 5; stroke-linecap: round; }
+.ch3-thr .t-cap { stroke-width: 2.5; }
+.ch3-thr .t-est { fill: var(--upwr-cat-bursztyn); }
+.ch3-thr .t-lab { font: 700 14px var(--upwr-mono); letter-spacing: .04em; }
+.ch3-thr .is-yes .t-lab { fill: var(--upwr-cat-szalwia); }
+.ch3-thr .is-maybe .t-lab { fill: var(--upwr-cat-bursztyn); }
+.ch3-thr .is-no .t-lab { fill: var(--upwr-cat-terakota); }
+"
+
 ch3_ui <- list(
   id    = "ch-srednia",
   num   = "03",
@@ -40,8 +131,13 @@ ch3_ui <- list(
       przy małej liczbie obserwacji. Tak powstaje ", gloss("przedział ufności"),
       " dla średniej populacji:"),
 
-    lc_formula_box(
-      withMathJax("$$CI = \\bar{x} \\pm t^* \\cdot \\frac{s}{\\sqrt{n}}$$")
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|CI⟧ = ⟦2|\\bar{x}⟧ \\pm ⟦3|t^*⟧ \\cdot \\frac{⟦4|s⟧}{\\sqrt{⟦5|n⟧}}",
+      notes  = list("przedział ufności", "średnia z próby", "wartość krytyczna",
+                    "odchylenie standardowe", "liczba obserwacji"),
+      colors = c("niebo", "accent", "terakota", "wrzos", "szalwia"),
+      above  = c(2, 4)
     ),
 
     lc_p("Środkiem przedziału jest średnia z próby \\(\\bar{x}\\). Jego połowę
@@ -52,6 +148,14 @@ ch3_ui <- list(
       żeby osiągnąć wybrany ", gloss("poziom ufności"), ". Dla 95% jest to
       około 2, a dokładną wartość podaje program. Warto jednak raz zobaczyć,
       jak powstaje przedział."),
+
+    # PROTOTYP rozklad-t: rozkład t a normalny, wartości krytyczne
+    figure_panel(
+      label = "Ryc. 3.0a", title = "Rozkład t ma cięższe ogony",
+      width_mode = "text",
+      lc_plot("ch3_tnorm_plot", ratio = "2/1", max_height = "380px"),
+      lc_caption("t* dla 95%: 2.78 przy n = 5, 2.06 przy n = 25, 1.96 w rozkładzie normalnym.")
+    ),
 
     lc_h2("ch3-budowa", "Budowa przedziału — krok po kroku"),
 
@@ -99,8 +203,13 @@ ch3_ui <- list(
       ", gloss("wariancja", "wariancje"), " ", gloss("estymator", "estymatorów"), " się dodają, więc błąd standardowy różnicy to
       pierwiastek z sumy kwadratów błędów standardowych obu średnich:"),
 
-    lc_formula_box(
-      withMathJax("$$CI = (\\bar{x}_1 - \\bar{x}_2) \\pm t^* \\cdot \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}}$$")
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "CI = (⟦1|\\bar{x}_1 - \\bar{x}_2⟧) \\pm ⟦2|t^*⟧ \\cdot \\sqrt{\\frac{⟦3|s_1^2⟧}{⟦4|n_1⟧} + \\frac{s_2^2}{n_2}}",
+      notes  = list("różnica średnich z prób", "wartość krytyczna",
+                    "wariancja grupy 1", "liczebność grupy 1"),
+      colors = c("accent", "terakota", "wrzos", "szalwia"),
+      above  = c(1, 3)
     ),
 
     lc_p("Każda grupa ma tu własne odchylenie standardowe, nie zakładamy
@@ -140,6 +249,14 @@ ch3_ui <- list(
       w trójkącie prostokątnym: przeciwprostokątna jest krótsza niż suma
       przyprostokątnych. Ta własność ma praktyczne
       skutki przy porównywaniu przedziałów dwóch grup na wykresie."),
+
+    # PROTOTYP pitagoras: SE różnicy jako przeciwprostokątna
+    figure_panel(
+      label = "Ryc. 3.2a", title = "Dodają się wariancje, nie błędy standardowe",
+      width_mode = "text",
+      tags$style(HTML(ch3_pyth_css)),
+      ch3_se_triangle()
+    ),
 
     lc_h2("ch3-scenariusze", "Dwa CI grup czy CI różnicy? — trzy scenariusze"),
 
@@ -203,8 +320,13 @@ ch3_ui <- list(
       w błonnik. Źródłem rozbieżności jest własność, którą widzieliśmy przy
       wzroście. Błąd standardowy różnicy to"),
 
-    lc_formula_box(
-      withMathJax("$$SE_{różnicy} = \\sqrt{SE_1^2 + SE_2^2} \\;<\\; SE_1 + SE_2$$")
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|SE_{różnicy}⟧ = \\sqrt{⟦2|SE_1⟧^2 + ⟦3|SE_2⟧^2} \\;<\\; SE_1 + SE_2",
+      notes  = list("błąd standardowy różnicy", "błąd standardowy grupy 1",
+                    "błąd standardowy grupy 2"),
+      colors = c("indygo", "niebo", "bursztyn"),
+      above  = 2
     ),
 
     lc_p("W scenariuszu C błędy standardowe grup wynoszą 0.093 i 0.086 g.
@@ -231,6 +353,14 @@ ch3_ui <- list(
       rozstrzygają. Przed kliknięciem „Pokaż werdykt” warto odpowiedzieć samodzielnie.
       Przypadki A dotyczą jednej średniej, B różnicy dwóch średnich, a C
       wielu grup naraz."),
+
+    # PROTOTYP progi: przedział względem progu hipotezy
+    figure_panel(
+      label = "Ryc. 3.2b", title = "Przedział a obszar hipotezy",
+      width_mode = "text",
+      tags$style(HTML(ch3_thr_css)),
+      ch3_threshold_diagram()
+    ),
 
     lc_h3("Przedział dla jednej średniej", num = "A"),
 
@@ -352,6 +482,39 @@ ch3_ui <- list(
 # ============================================================================
 
 ch3_server <- function(input, output, session) {
+
+  # PROTOTYP rozklad-t: gęstość N(0, 1) i t (df = 4), ogony poza ±t*
+  zoom_plot_server("ch3_tnorm_plot", reactive({
+    df_t <- 4
+    t_star <- qt(0.975, df_t); z_star <- qnorm(0.975)
+    x <- seq(-5, 5, length.out = 600)
+    dens <- data.frame(x = x, norm = dnorm(x), t = dt(x, df_t))
+    tails <- subset(dens, abs(x) >= t_star)
+    col_t <- unname(upwr_cat["indygo"])
+    col_crit <- unname(upwr_cat["terakota"])
+
+    ggplot(dens) +
+      geom_area(data = subset(tails, x > 0), aes(x, t), fill = col_t, alpha = 0.3) +
+      geom_area(data = subset(tails, x < 0), aes(x, t), fill = col_t, alpha = 0.3) +
+      geom_line(aes(x, norm), colour = upwr_secondary, linewidth = 0.6, linetype = "22") +
+      geom_line(aes(x, t), colour = col_t, linewidth = 1.1) +
+      geom_segment(data = data.frame(v = c(-z_star, z_star)),
+                   aes(x = v, xend = v, y = 0, yend = dnorm(z_star) + 0.03),
+                   colour = upwr_secondary, linewidth = 0.5) +
+      geom_segment(data = data.frame(v = c(-t_star, t_star)),
+                   aes(x = v, xend = v, y = 0, yend = dt(t_star, df_t) + 0.06),
+                   colour = col_crit, linewidth = 0.9) +
+      annotate("text", x = 0.55, y = dnorm(0) + 0.005, label = "N(0, 1)", hjust = 0,
+               colour = upwr_secondary, size = 4) +
+      annotate("text", x = -1.5, y = dt(-1.5, df_t) + 0.06, label = "t, df = 4", hjust = 1,
+               colour = col_t, fontface = "bold", size = 4) +
+      scale_x_continuous(breaks = round(c(-t_star, -z_star, 0, z_star, t_star), 2),
+                         labels = function(b) format(b, drop0trailing = TRUE, trim = TRUE)) +
+      labs(x = NULL, y = NULL) +
+      coord_cartesian(xlim = c(-4.5, 4.5), ylim = c(0, 0.43), expand = FALSE) +
+      theme(axis.text.y = element_blank(), panel.grid.major.y = element_blank(),
+            panel.grid.minor = element_blank(), axis.ticks.y = element_blank())
+  }), alt = "Gęstość rozkładu normalnego (przerywana) i rozkładu t o 4 stopniach swobody; t ma niższy środek i cięższe ogony, więc jego wartość krytyczna 2.78 leży dalej niż 1.96")
 
 
   # --- Widget 1: Budowa przedziału krok po kroku ---

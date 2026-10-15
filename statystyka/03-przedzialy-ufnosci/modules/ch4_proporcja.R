@@ -31,8 +31,12 @@ ch4_ui <- list(
     lc_p("Estymatorem \\(p\\) jest ", gloss("proporcja z próby"), " \\(\\hat{p}\\):
       liczba odpowiedzi TAK \\(x\\) podzielona przez ", gloss("liczebność"), " próby \\(n\\)."),
 
-    lc_formula_box(
-      withMathJax("$$\\hat{p} = \\frac{x}{n}$$")
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|\\hat{p}⟧ = \\frac{⟦2|x⟧}{⟦3|n⟧}",
+      notes  = list("proporcja z próby", "liczba odpowiedzi TAK", "liczba obserwacji"),
+      colors = c("accent", "niebo", "szalwia"),
+      above  = 2
     ),
 
     lc_p("Jak bardzo \\(\\hat{p}\\) waha się z próby na próbę, wynika z wykładu 02.
@@ -45,8 +49,13 @@ ch4_ui <- list(
       informację: \\(\\hat{p}\\) jest średnią z \\(n\\) zer i jedynek, więc przy
       dużej próbie ma w przybliżeniu rozkład normalny."),
 
-    lc_formula_box(
-      withMathJax("$$E(\\hat{p}) = p \\qquad SE(\\hat{p}) = \\sqrt{\\frac{p(1-p)}{n}}$$")
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "E(⟦1|\\hat{p}⟧) = ⟦2|p⟧ \\qquad ⟦3|SE⟧(\\hat{p}) = \\sqrt{\\frac{p(1-p)}{⟦4|n⟧}}",
+      notes  = list("proporcja z próby", "proporcja w populacji", "błąd standardowy",
+                    "liczba obserwacji"),
+      colors = c("accent", "grafit", "indygo", "szalwia"),
+      above  = c(1, 3)
     ),
 
     lc_p("Prawdziwego \\(p\\) nie znamy, więc we wzorze na SE zastępujemy je przez
@@ -58,8 +67,13 @@ ch4_ui <- list(
       jak w wykładzie 02. Tak zbudowany ", gloss("przedział ufności"),
       " nazywa się ", gloss("przedział Walda", "przedziałem Walda"), "."),
 
-    lc_formula_box(
-      withMathJax("$$CI = \\hat{p} \\pm z^*_{\\alpha/2} \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$$")
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|CI⟧ = ⟦2|\\hat{p}⟧ \\pm ⟦3|z^*_{\\alpha/2}⟧ \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{⟦4|n⟧}}",
+      notes  = list("przedział ufności", "proporcja z próby", "wartość krytyczna",
+                    "liczba obserwacji"),
+      colors = c("niebo", "accent", "terakota", "szalwia"),
+      above  = c(2, 3)
     ),
 
     lc_p("To przybliżenie zawodzi, gdy próba jest mała albo \\(\\hat{p}\\) leży
@@ -127,8 +141,12 @@ ch4_ui <- list(
       różnicy średnich w rozdziale 3. Błąd standardowy różnicy to pierwiastek
       z tej sumy:"),
 
-    lc_formula_box(
-      withMathJax("$$CI = (\\hat{p}_1 - \\hat{p}_2) \\pm z^* \\cdot \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}}$$")
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "CI = (⟦1|\\hat{p}_1 - \\hat{p}_2⟧) \\pm ⟦2|z^*⟧ \\cdot \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{⟦3|n_1⟧} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}}",
+      notes  = list("różnica proporcji z prób", "wartość krytyczna", "liczebność grupy 1"),
+      colors = c("accent", "terakota", "szalwia"),
+      above  = 1
     ),
 
     lc_p("Dodają się wariancje, a nie błędy standardowe. Dlatego SE różnicy

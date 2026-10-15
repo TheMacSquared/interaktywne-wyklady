@@ -90,9 +90,13 @@ ch1_ui <- list(
     lc_p("Estymator jest nieobciążony, gdy jego ", gloss("wartość oczekiwana"), " jest równa
       szacowanemu parametrowi:"),
 
-    lc_formula_box(withMathJax(
-      "$$E(\\hat{\\theta}) = \\theta$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|E⟧(⟦2|\\hat{\\theta}⟧) = ⟦3|\\theta⟧",
+      notes  = list("wartość oczekiwana", "estymator", "parametr"),
+      colors = c("indygo", "accent", "grafit"),
+      above  = 2
+    ),
 
     lc_p("Pojedyncza estymata może wypaść za wysoko albo za nisko, ale średnio,
       w bardzo wielu hipotetycznych próbach, estymator trafia w parametr.
@@ -130,9 +134,13 @@ ch1_ui <- list(
       Estymator jest zgodny, gdy wraz ze wzrostem wielkości próby zbiega
       (według prawdopodobieństwa) do prawdziwego parametru:"),
 
-    lc_formula_box(withMathJax(
-      "$$\\hat{\\theta}_n \\xrightarrow{p} \\theta \\quad \\text{gdy} \\quad n \\to \\infty$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|\\hat{\\theta}_n⟧ \\xrightarrow{p} ⟦2|\\theta⟧ \\quad \\text{gdy} \\quad ⟦3|n⟧ \\to \\infty",
+      notes  = list("estymator", "parametr", "liczba obserwacji"),
+      colors = c("accent", "grafit", "szalwia"),
+      above  = 2
+    ),
 
     lc_p("Oznacza to, że dla dowolnie małego marginesu prawdopodobieństwo,
       że estymata odbiegnie od parametru o więcej niż ten margines, maleje

@@ -33,18 +33,34 @@ ch2_ui <- list(
       Dla średniej oznacza to, że w około 95% prób X̄ leży nie dalej niż 1.96·SE
       od μ:"),
 
-    lc_formula_box(withMathJax(
-      "$$P\\left(\\mu - 1.96 \\cdot SE \\le \\bar{X} \\le \\mu + 1.96 \\cdot SE\\right) = 0.95$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "P\\left(⟦1|\\mu⟧ - ⟦2|1.96⟧ \\cdot ⟦3|SE⟧ \\le ⟦4|\\bar{X}⟧ \\le \\mu + 1.96 \\cdot SE\\right) = ⟦5|0.95⟧",
+      notes  = list("średnia populacji", "wartość krytyczna", "błąd standardowy",
+                    "średnia z próby", "poziom ufności"),
+      colors = c("grafit", "terakota", "indygo", "accent", "niebo"),
+      above  = c(2, 4)
+    ),
 
     lc_p("To zdanie opisuje średnią, a nas interesuje μ. Odległość działa jednak
       w obie strony, więc wystarczy przekształcić obie nierówności tak, żeby μ
       znalazło się w środku. Zdarzenie jest to samo, zmienia się tylko zapis,
       dlatego prawdopodobieństwo pozostaje równe 0.95:"),
 
-    lc_formula_box(withMathJax(
-      "$$P\\left(\\bar{X} - 1.96 \\cdot SE \\le \\mu \\le \\bar{X} + 1.96 \\cdot SE\\right) = 0.95$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "P\\left(⟦1|\\bar{X}⟧ - 1.96 \\cdot SE \\le ⟦2|\\mu⟧ \\le \\bar{X} + 1.96 \\cdot SE\\right) = 0.95",
+      notes  = list("losowy środek", "stały parametr"),
+      colors = c("accent", "grafit")
+    ),
+
+    # PROTOTYP odwrocenie: ta sama odległość czytana od μ i od x̄
+    figure_panel(
+      label = "Ryc. 2.0a", title = "Odwrócenie: od μ do x̄ i z powrotem",
+      width_mode = "text",
+      lc_plot("ch2_flip_plot", ratio = "1.7/1", max_height = "420px"),
+      lc_caption("x̄ w pasie μ ± 1.96·SE ⇔ μ w przedziale x̄ ± 1.96·SE.")
+    ),
 
     lc_p("Przedział od x̄ - 1.96·SE do x̄ + 1.96·SE to 95% ",
       gloss("przedział ufności"), " dla μ (CI, od ang. ",
@@ -166,6 +182,35 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
+
+  # PROTOTYP odwrocenie: rozkład x̄ wokół μ (góra) i przedziały wokół x̄ (dół)
+  zoom_plot_server("ch2_flip_plot", reactive({
+    mu <- 170; se <- 2; me <- 1.96 * se
+    curve_df <- data.frame(x = seq(160, 180, length.out = 400))
+    curve_df$y <- dnorm(curve_df$x, mu, se) / dnorm(mu, mu, se)
+    band_df <- subset(curve_df, abs(x - mu) <= me)
+    xbars <- data.frame(xbar = c(168.4, 172.9, 175.2), y = c(-0.35, -0.6, -0.85))
+    xbars$col <- ifelse(abs(xbars$xbar - mu) <= me, col_hit, col_miss)
+
+    ggplot() +
+      geom_area(data = band_df, aes(x, y), fill = col_ci, alpha = 0.35) +
+      geom_line(data = curve_df, aes(x, y), colour = upwr_secondary, linewidth = 0.7) +
+      geom_vline(xintercept = mu, linetype = "22", colour = upwr_secondary, linewidth = 0.6) +
+      geom_segment(data = xbars, aes(x = xbar, xend = xbar, y = 0, yend = y),
+                   colour = upwr_reference, linetype = "dotted", linewidth = 0.4) +
+      geom_point(data = xbars, aes(x = xbar, y = 0), colour = col_estimate,
+                 shape = 18, size = 5) +
+      geom_errorbarh(data = xbars, aes(xmin = xbar - me, xmax = xbar + me, y = y),
+                     colour = xbars$col, height = 0.09, linewidth = 1.4) +
+      geom_point(data = xbars, aes(x = xbar, y = y), colour = col_estimate,
+                 shape = 18, size = 4.5) +
+      scale_x_continuous(breaks = c(mu - me, mu, mu + me),
+                         labels = c("μ - 1.96·SE", "μ", "μ + 1.96·SE")) +
+      labs(x = NULL, y = NULL) +
+      coord_cartesian(xlim = c(160, 180), ylim = c(-1, 1.08), expand = FALSE) +
+      theme(axis.text.y = element_blank(), panel.grid.major.y = element_blank(),
+            panel.grid.minor = element_blank(), axis.ticks.y = element_blank())
+  }), alt = "Rozkład średniej z próby wokół μ z zaznaczonym pasem ±1.96·SE oraz trzy przedziały x̄ ± 1.96·SE: dwa, których środek leży w pasie, obejmują μ, trzeci nie")
 
   # --- PROTOTYP SCENY (2026-10-08): Zarzuć siatkę ---
   scene_texts(input, output, "ch2_siatka", list(
