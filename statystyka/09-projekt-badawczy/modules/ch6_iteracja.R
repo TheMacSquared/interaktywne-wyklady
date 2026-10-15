@@ -8,6 +8,8 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
             czego w danych brakuje, jest równie ważna jak lista wyników."
   ),
 
+  proj_stage_map(current = 6),  # PROTOTYP mapa: pasek etapów
+
   lc_p("Rozdział 5 sprawdził każdy trop osobno i wypełnił tablicę. Cel
     badania był jednak sformułowany dla całej wiązki naraz: ",
     tags$em(tr_goal), " Ten rozdział składa wyniki w jeden obraz, sprawdza,
@@ -88,6 +90,17 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     wytwarzała ten związek, kobiety musiałyby mieć jednocześnie wyższą
     atrakcyjność i wyższą ocenę. Jest odwrotnie, więc uwzględnienie płci
     nie powinno osłabić związku, a raczej nieco go wzmocnić."),
+
+  # PROTOTYP trojkat: płeć wiąże się z obiema zmiennymi, ale w przeciwnych kierunkach
+  figure_panel(
+    label = "Ryc. 6.1a",
+    title = "Płeć jako kandydat na zmienną zakłócającą",
+    width_mode = "text",
+    proj_confounder(
+      nodes = c("Płeć", "Atrakcyjność (beauty)", "Ocena kursu (eval)"),
+      edges = c("kobiety: +0.18", "kobiety: -0.25", "r = 0.19")
+    )
+  ),
 
   lc_h3("Pozostałe zmienne — tabela zbiorcza"),
 

@@ -8,6 +8,8 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
             oparcie w danych, a nie, skąd bierze się ocena kursu."
   ),
 
+  proj_stage_map(current = 5),  # PROTOTYP mapa: pasek etapów
+
   lc_p("Konspekt z rozdziału 4 jest gotowy: mamy cel, pięć tropów,
     zmienne i plan interpretacji. Dopiero teraz dobieramy narzędzia
     statystyczne, bo dopiero teraz wiadomo, czego mają szukać. Cel badania

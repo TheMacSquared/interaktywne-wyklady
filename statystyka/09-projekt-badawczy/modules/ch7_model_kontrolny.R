@@ -9,6 +9,8 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
             to około 0.3 punktu na pięciopunktowej skali ocen."
   ),
 
+  proj_stage_map(current = 7),  # PROTOTYP mapa: pasek etapów
+
   lc_p("Rozdział 6 skończył się dwiema obserwacjami. Tropy zachodzą na
     siebie, a płeć, status native speaker i liczba punktów kursu wiążą się
     jednocześnie z atrakcyjnością i z oceną kursu. Testy z rozdziału 5
@@ -27,9 +29,14 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     gloss("zmienna kontrolna", "zmiennych kontrolnych"), ". W najszerszym
     modelu tego rozdziału:"),
 
-  lc_formula_box(withMathJax(
-    "$$\\text{eval} = \\beta_0 + \\beta_1 \\, \\text{beauty} + \\beta_2 \\, \\text{płeć} + \\beta_3 \\, \\text{wiek} + \\ldots + \\beta_{10} \\, \\text{response rate} + \\varepsilon$$"
-  )),
+  # PROTOTYP wzory: model kontrolny ze znacznikami (beauty vs zmienne kontrolne)
+  lc_formula_annotated(
+    "⟦1|\\text{eval}⟧ = \\beta_0 + ⟦2|\\beta_1⟧ \\, ⟦3|\\text{beauty}⟧ + ⟦4|\\beta_2 \\, \\text{płeć} + \\beta_3 \\, \\text{wiek} + \\ldots + \\beta_{10} \\, \\text{response rate}⟧ + ⟦5|\\varepsilon⟧",
+    notes  = list("ocena kursu", "współczynnik przy beauty", "ocena atrakcyjności",
+                  "zmienne kontrolne", "reszta"),
+    colors = c("indygo", "accent", "niebo", "szalwia", "wrzos"),
+    above  = c(2, 4)
+  ),
 
   lc_p("Zmienne kontrolne dokładamy warstwami, tak jak w kroku 4 wykładu
     08: najpierw sama atrakcyjność, potem cechy prowadzącego (płeć, wiek,
@@ -119,6 +126,15 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     z przedziałem od 0.15 do 0.42. To mniej więcej połowa odchylenia
     standardowego ocen kursów (0.55) i więcej niż różnica między kobietami
     i mężczyznami w tym samym modelu (0.20)."),
+
+  # PROTOTYP wzory: przeliczenie współczynnika na różnicę ocen
+  lc_formula_annotated(
+    "⟦1|\\Delta \\text{eval}⟧ = ⟦2|\\beta_1⟧ \\cdot ⟦3|\\Delta \\text{beauty}⟧",
+    notes  = list("różnica ocen kursu", "współczynnik przy beauty",
+                  "różnica atrakcyjności"),
+    colors = c("indygo", "accent", "niebo"),
+    above  = 2
+  ),
 
   lc_p("Te przedziały są jednak zbyt wąskie. Testy i przedziały z regresji
     zakładają ", gloss("niezależność obserwacji"), ", o której mówił rozdział

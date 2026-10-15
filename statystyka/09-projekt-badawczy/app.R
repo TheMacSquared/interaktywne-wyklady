@@ -140,6 +140,45 @@ header_extras <- tagList(
       color: var(--upwr-ink-soft);
     }
 
+    /* PROTOTYP mapa: etapy projektu (Ryc. 1.0a i paski na początku rozdziałów) */
+    .proj-map { margin: 8px 0 16px; }
+    .pm-phases { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 6px; }
+    .pm-phase {
+      font: 600 12px/1 var(--upwr-mono); letter-spacing: .08em; text-transform: uppercase;
+      color: var(--upwr-ink-subtle); border-bottom: 1px solid var(--upwr-rule); padding-bottom: 6px;
+    }
+    .pm-steps {
+      list-style: none; margin: 0; padding: 0; display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px;
+    }
+    .pm-step { display: flex; flex-direction: column; gap: 3px;
+      border-top: 4px solid var(--pm-c); padding-top: 7px; }
+    .pm-num  { font: 600 13px/1 var(--upwr-mono); color: var(--pm-c); }
+    .pm-name { font-weight: 600; font-size: 14.5px; line-height: 1.2; color: var(--upwr-ink); }
+    .pm-sub  { font-size: 12.5px; line-height: 1.3; color: var(--upwr-ink-soft); }
+    .proj-map.is-mini .pm-steps { gap: 4px; }
+    .proj-map.is-mini .pm-step { border-top-width: 3px; padding-top: 5px; opacity: .45; }
+    .proj-map.is-mini .pm-step.is-done { opacity: .7; }
+    .proj-map.is-mini .pm-step.is-current { opacity: 1; border-top-width: 6px; }
+    .proj-map.is-mini .pm-name { font-size: 12px; font-weight: 500; }
+    .proj-map.is-mini .is-current .pm-name { font-weight: 700; }
+    @media (max-width: 700px) {
+      .proj-map:not(.is-mini) .pm-phases { display: none; }
+      .proj-map:not(.is-mini) .pm-steps { grid-template-columns: 1fr 1fr; }
+      .proj-map.is-mini .pm-name { display: none; }
+    }
+
+    /* PROTOTYP trojkat: schemat zmiennej zakłócającej (Ryc. 6.1a) */
+    .case-confounder { display: block; width: 100%; max-width: 600px; height: auto; margin: 4px auto; }
+    .cf-node rect { fill: color-mix(in srgb, var(--cf-c) 16%, var(--upwr-surface));
+      stroke: var(--cf-c); stroke-width: 2; }
+    .cf-node text { fill: var(--upwr-ink); font: 600 17px var(--upwr-sans); }
+    .cf-edge { stroke: var(--upwr-ink-soft); }
+    .cf-edge.is-open { stroke-dasharray: 7 6; stroke: var(--upwr-ink-subtle); }
+    .cf-head { fill: var(--upwr-ink-soft); }
+    .cf-val { fill: var(--upwr-ink); font: 500 15px var(--upwr-mono);
+      paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 5px; stroke-linejoin: round; }
+
     @media (max-width: 992px) {
       .construct-map { grid-template-columns: 1fr; }
 

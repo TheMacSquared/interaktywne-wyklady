@@ -35,6 +35,13 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     sprawdzają, czy pierwsze wyniki nie są zasługą innych zmiennych,
     a rozdział 8 kończy projekt wnioskiem."),
 
+  # PROTOTYP mapa: etapy projektu jako mapa całego wykładu
+  figure_panel(
+    label = "Ryc. 1.0a",
+    title = "Etapy projektu badawczego",
+    proj_stage_map()
+  ),
+
   lc_p("Zanim sformułujemy jakiekolwiek pytanie, warto obejrzeć samą tabelę
     i ustalić, co jest w niej jedną ",
     gloss("jednostka obserwacji", "jednostką obserwacji"), ", jakiego typu

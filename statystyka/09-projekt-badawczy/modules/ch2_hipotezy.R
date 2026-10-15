@@ -9,6 +9,8 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
             wyjaśniliby ten sam wynik inaczej."
   ),
 
+  proj_stage_map(current = 2),  # PROTOTYP mapa: pasek etapów
+
   lc_h2("sec-01", "Od pytania do hipotezy badawczej"),
 
   lc_p("W rozdziale 1 postawiliśmy cel: ", tags$em(tr_goal), " Do celu
