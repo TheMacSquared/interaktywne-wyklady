@@ -56,7 +56,7 @@ ch6_ui <- list(
       Błąd standardowy różnicy znamy z wykładu 03, z ", gloss("przedział ufności", "przedziału ufności"), " dla
       różnicy średnich: ", gloss("wariancja", "wariancje"), " obu średnich się dodają."),
 
-    # PROTOTYP wzory: statystyka t Welcha ze znacznikami
+    # Statystyka t Welcha ze znacznikami
     lc_formula_annotated(
       "⟦1|t⟧ = \\frac{⟦2|\\bar{x}_1⟧ - ⟦3|\\bar{x}_2⟧}{\\sqrt{\\dfrac{⟦4|s_1^2⟧}{⟦5|n_1⟧} + \\dfrac{s_2^2}{n_2}}}",
       notes  = list("statystyka t", "średnia grupy 1", "średnia grupy 2",
@@ -204,7 +204,7 @@ ch6_ui <- list(
       To jest ", gloss("test t"), " jednej próby z rozdziału 04 z wartością odniesienia
       \\(\\mu_0 = 0\\), policzony na kolumnie różnic:"),
 
-    # PROTOTYP wzory: test t dla par ze znacznikami
+    # Test t dla par ze znacznikami
     lc_formula_annotated(
       "⟦1|t⟧ = \\frac{⟦2|\\bar{d}⟧}{⟦3|s_d⟧ / \\sqrt{⟦4|n⟧}}, \\qquad ⟦5|df⟧ = n - 1",
       notes  = list("statystyka t", "średnia różnic", "odchylenie standardowe różnic",

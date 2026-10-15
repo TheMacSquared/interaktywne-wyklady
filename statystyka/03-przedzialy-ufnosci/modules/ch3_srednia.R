@@ -40,7 +40,6 @@ ch3_ui <- list(
       przy małej liczbie obserwacji. Tak powstaje ", gloss("przedział ufności"),
       " dla średniej populacji:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|CI⟧ = ⟦2|\\bar{x}⟧ \\pm ⟦3|t^*⟧ \\cdot \\frac{⟦4|s⟧}{\\sqrt{⟦5|n⟧}}",
       notes  = list("przedział ufności", "średnia z próby", "wartość krytyczna",
@@ -58,9 +57,9 @@ ch3_ui <- list(
       około 2, a dokładną wartość podaje program. Warto jednak raz zobaczyć,
       jak powstaje przedział."),
 
-    # PROTOTYP rozklad-t: rozkład t a normalny, wartości krytyczne
+    # Rozkład t a normalny, wartości krytyczne
     figure_panel(
-      label = "Ryc. 3.0a", title = "Rozkład t ma cięższe ogony",
+      label = "Ryc. 3.1", title = "Rozkład t ma cięższe ogony",
       width_mode = "text",
       lc_plot("ch3_tnorm_plot", ratio = "2/1", max_height = "380px"),
       lc_caption("t* dla 95%: 2.78 przy n = 5, 2.06 przy n = 25, 1.96 w rozkładzie normalnym.")
@@ -74,7 +73,7 @@ ch3_ui <- list(
       Przycisk „Nowa próba” losuje kolejne 25 osób."),
 
     figure_panel(
-      label = "Ryc. 3.1",
+      label = "Ryc. 3.2",
       full_width = TRUE,
       lc_step_widget("ch3_step",
         title = "Konstruowanie przedziału",
@@ -112,7 +111,6 @@ ch3_ui <- list(
       ", gloss("wariancja", "wariancje"), " ", gloss("estymator", "estymatorów"), " się dodają, więc błąd standardowy różnicy to
       pierwiastek z sumy kwadratów błędów standardowych obu średnich:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "CI = (⟦1|\\bar{x}_1 - \\bar{x}_2⟧) \\pm ⟦2|t^*⟧ \\cdot \\sqrt{\\frac{⟦3|s_1^2⟧}{⟦4|n_1⟧} + \\frac{s_2^2}{n_2}}",
       notes  = list("różnica średnich z prób", "wartość krytyczna",
@@ -130,7 +128,7 @@ ch3_ui <- list(
       na skalę różnicy, na której zero oznacza brak różnicy."),
 
     figure_panel(
-      label = "Ryc. 3.2",
+      label = "Ryc. 3.3",
       full_width = TRUE,
       lc_step_widget("ch3_dstep",
         title = "Konstruowanie CI dla różnicy",
@@ -221,7 +219,6 @@ ch3_ui <- list(
       w błonnik. Źródłem rozbieżności jest własność, którą widzieliśmy przy
       wzroście. Błąd standardowy różnicy to"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|SE_{różnicy}⟧ = \\sqrt{⟦2|SE_1⟧^2 + ⟦3|SE_2⟧^2} \\;<\\; SE_1 + SE_2",
       notes  = list("błąd standardowy różnicy", "błąd standardowy grupy 1",
@@ -376,7 +373,7 @@ ch3_ui <- list(
 
 ch3_server <- function(input, output, session) {
 
-  # PROTOTYP rozklad-t: gęstość N(0, 1) i t (df = 4), ogony poza ±t*
+  # Gęstość N(0, 1) i t (df = 4), ogony poza ±t*
   zoom_plot_server("ch3_tnorm_plot", reactive({
     df_t <- 4
     t_star <- qt(0.975, df_t); z_star <- qnorm(0.975)

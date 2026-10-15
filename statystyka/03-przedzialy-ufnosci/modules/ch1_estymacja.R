@@ -90,7 +90,6 @@ ch1_ui <- list(
     lc_p("Estymator jest nieobciążony, gdy jego ", gloss("wartość oczekiwana"), " jest równa
       szacowanemu parametrowi:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|E⟧(⟦2|\\hat{\\theta}⟧) = ⟦3|\\theta⟧",
       notes  = list("wartość oczekiwana", "estymator", "parametr"),
@@ -134,7 +133,6 @@ ch1_ui <- list(
       Estymator jest zgodny, gdy wraz ze wzrostem wielkości próby zbiega
       (według prawdopodobieństwa) do prawdziwego parametru:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|\\hat{\\theta}_n⟧ \\xrightarrow{p} ⟦2|\\theta⟧ \\quad \\text{gdy} \\quad ⟦3|n⟧ \\to \\infty",
       notes  = list("estymator", "parametr", "liczba obserwacji"),

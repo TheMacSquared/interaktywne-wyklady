@@ -21,9 +21,9 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     stresu, czy kierunki różnią się ocenami. Przed dalszą lekturą warto
     samodzielnie ocenić, czy te dane pozwolą na nie odpowiedzieć."),
 
-  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
   figure_panel(
-    label = "Ryc. 3.0a",
+    label = "Ryc. 3.1",
     title = "Struktura zbioru ankiety",
     width_mode = "text",
     dd_schema("znajomy studenta", 8, c(
@@ -59,7 +59,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     szerokość ", gloss("przedział ufności", "przedziału ufności"), ".
     Zależy ona od rozrzutu danych i od liczby obserwacji:"),
 
-  # PROTOTYP wzory: szerokość przedziału ufności ze znacznikami
+  # Szerokość przedziału ufności ze znacznikami
   lc_formula_annotated(
     "\\text{szerokość} = 2 \\cdot ⟦1|t^*_{\\alpha/2,\\, n-1}⟧ \\cdot \\frac{⟦2|s⟧}{\\sqrt{⟦3|n⟧}}",
     notes  = list("wartość krytyczna", "odchylenie standardowe", "liczba obserwacji"),
@@ -76,7 +76,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     standardowego (d = 0.5)."),
 
   figure_panel(
-    label = "Ryc. 3.1",
+    label = "Ryc. 3.2",
     title = "Liczba obserwacji a precyzja i moc",
     lc_slider("tab2_n", "Liczba obserwacji", 5, 200, 8, 1),
     lc_plots(

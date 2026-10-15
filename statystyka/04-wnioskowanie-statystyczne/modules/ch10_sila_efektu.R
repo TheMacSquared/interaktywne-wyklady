@@ -45,7 +45,7 @@ ch10_ui <- list(
       o tym samym odchyleniu standardowym s statystykę t można zapisać przez
       różnicę wyrażoną w odchyleniach standardowych, którą oznaczymy d:"),
 
-    # PROTOTYP wzory: t przez d ze znacznikami (d w kolorze efektu, jak odczyty rozdziału)
+    # t przez d ze znacznikami (d w kolorze efektu, jak odczyty rozdziału)
     lc_formula_annotated(
       "⟦1|t⟧ = \\frac{\\bar{x}_1 - \\bar{x}_2}{s\\sqrt{2/n}} = ⟦2|d⟧ \\cdot \\sqrt{\\frac{⟦3|n⟧}{2}}, \\qquad d = \\frac{⟦4|\\bar{x}_1 - \\bar{x}_2⟧}{⟦5|s⟧}",
       notes  = list("statystyka t", "wielkość efektu", "liczebność grupy",
@@ -109,7 +109,7 @@ ch10_ui <- list(
       niezależnych z rozdziału 08 w mianowniku stoi odchylenie standardowe
       połączone z obu grup."),
 
-    # PROTOTYP wzory: d Cohena ze znacznikami
+    # D Cohena ze znacznikami
     lc_formula_annotated(
       "⟦1|d⟧ = \\frac{⟦2|\\bar{x}_1 - \\bar{x}_2⟧}{⟦3|s_p⟧}, \\qquad s_p = \\sqrt{\\frac{(⟦4|n_1⟧ - 1)\\,⟦5|s_1^2⟧ + (n_2 - 1)\\,s_2^2}{n_1 + n_2 - 2}}",
       notes  = list("d Cohena", "różnica średnich", "połączone odchylenie standardowe",
@@ -206,7 +206,7 @@ ch10_ui <- list(
       od -1 do +1. Test korelacji sprawdzał tylko, czy r z próby różni się od
       zera bardziej, niż wynikałoby z przypadku."),
 
-    # PROTOTYP wzory: ten sam wzór na r co w rozdziale 06
+    # Ten sam wzór na r co w rozdziale 06
     ch4_r_formula(),
 
     lc_p("Łatwiejszy do interpretacji jest często ",
@@ -289,7 +289,7 @@ ch10_ui <- list(
       i przez rozmiar tabeli, dzięki czemu przyjmuje wartości od 0 (brak
       związku) do 1 (pełna zależność)."),
 
-    # PROTOTYP wzory: V Cramera ze znacznikami
+    # V Cramera ze znacznikami
     lc_formula_annotated(
       "⟦1|V⟧ = \\sqrt{\\frac{⟦2|\\chi^2⟧}{⟦3|n⟧ \\cdot (⟦4|\\min(r, c)⟧ - 1)}}",
       notes  = list("V Cramera", "statystyka χ²", "liczba obserwacji", "mniejszy wymiar tabeli"),
@@ -364,7 +364,7 @@ ch10_ui <- list(
       zmienności wyników tłumaczy badany czynnik. To ta sama idea co r²
       w korelacji."),
 
-    # PROTOTYP wzory: η² ze znacznikami (bursztyn = między, jak w ANOVA)
+    # η² ze znacznikami (bursztyn = między, jak w ANOVA)
     lc_formula_annotated(
       "⟦1|\\eta^2⟧ = \\frac{⟦2|SS_{\\text{między}}⟧}{⟦3|SS_{\\text{całkowita}}⟧}",
       notes  = list("eta kwadrat", "zmienność między grupami", "zmienność całkowita"),

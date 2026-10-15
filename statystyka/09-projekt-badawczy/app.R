@@ -140,7 +140,7 @@ header_extras <- tagList(
       color: var(--upwr-ink-soft);
     }
 
-    /* PROTOTYP mapa: etapy projektu (Ryc. 1.0a i paski na początku rozdziałów) */
+    /* Etapy projektu (Ryc. 1.1 i paski na początku rozdziałów) */
     .proj-map { margin: 8px 0 16px; }
     .pm-phases { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 6px; }
     .pm-phase {
@@ -168,7 +168,7 @@ header_extras <- tagList(
       .proj-map.is-mini .pm-name { display: none; }
     }
 
-    /* PROTOTYP trojkat: schemat zmiennej zakłócającej (Ryc. 6.1a) */
+    /* Schemat zmiennej zakłócającej (Ryc. 6.2) */
     .case-confounder { display: block; width: 100%; max-width: 600px; height: auto; margin: 4px auto; }
     .cf-node rect { fill: color-mix(in srgb, var(--cf-c) 16%, var(--upwr-surface));
       stroke: var(--cf-c); stroke-width: 2; }

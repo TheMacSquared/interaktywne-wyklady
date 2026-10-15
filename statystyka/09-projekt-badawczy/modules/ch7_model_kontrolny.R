@@ -9,7 +9,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
             to około 0.3 punktu na pięciopunktowej skali ocen."
   ),
 
-  proj_stage_map(current = 7),  # PROTOTYP mapa: pasek etapów
+  proj_stage_map(current = 7),  # Pasek etapów
 
   lc_p("Rozdział 6 skończył się dwiema obserwacjami. Tropy zachodzą na
     siebie, a płeć, status native speaker i liczba punktów kursu wiążą się
@@ -29,7 +29,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     gloss("zmienna kontrolna", "zmiennych kontrolnych"), ". W najszerszym
     modelu tego rozdziału:"),
 
-  # PROTOTYP wzory: model kontrolny ze znacznikami (beauty vs zmienne kontrolne)
+  # Model kontrolny ze znacznikami (beauty vs zmienne kontrolne)
   lc_formula_annotated(
     "⟦1|\\text{eval}⟧ = \\beta_0 + ⟦2|\\beta_1⟧ \\, ⟦3|\\text{beauty}⟧ + ⟦4|\\beta_2 \\, \\text{płeć} + \\beta_3 \\, \\text{wiek} + \\ldots + \\beta_{10} \\, \\text{response rate}⟧ + ⟦5|\\varepsilon⟧",
     notes  = list("ocena kursu", "współczynnik przy beauty", "ocena atrakcyjności",
@@ -127,7 +127,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     standardowego ocen kursów (0.55) i więcej niż różnica między kobietami
     i mężczyznami w tym samym modelu (0.20)."),
 
-  # PROTOTYP wzory: przeliczenie współczynnika na różnicę ocen
+  # Przeliczenie współczynnika na różnicę ocen
   lc_formula_annotated(
     "⟦1|\\Delta \\text{eval}⟧ = ⟦2|\\beta_1⟧ \\cdot ⟦3|\\Delta \\text{beauty}⟧",
     notes  = list("różnica ocen kursu", "współczynnik przy beauty",

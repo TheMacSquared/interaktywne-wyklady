@@ -35,9 +35,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     sprawdzają, czy pierwsze wyniki nie są zasługą innych zmiennych,
     a rozdział 8 kończy projekt wnioskiem."),
 
-  # PROTOTYP mapa: etapy projektu jako mapa całego wykładu
+  # Etapy projektu jako mapa całego wykładu
   figure_panel(
-    label = "Ryc. 1.0a",
+    label = "Ryc. 1.1",
     title = "Etapy projektu badawczego",
     proj_stage_map()
   ),
@@ -49,7 +49,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     dziesięć wierszy; pod tabelą jest opis wszystkich kolumn."),
 
   figure_panel(
-    label = "Ryc. 1.1",
+    label = "Ryc. 1.2",
     title = "Podgląd danych",
     lc_toolbar(
       numericInput("ch1_row_from", "Pokaż od wiersza", value = 1,
@@ -167,7 +167,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     kontaktu z danymi."),
 
   figure_panel(
-    label = "Ryc. 1.2",
+    label = "Ryc. 1.3",
     title = "Tablica tropów (stan początkowy)",
     tr_board_ui(reveal = character(0), show_verdict = TRUE)
   ),

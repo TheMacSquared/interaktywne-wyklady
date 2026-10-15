@@ -1,5 +1,4 @@
-# PROTOTYP wizualne-stopy (07-dobre-dane): diagramy-punkty zatrzymania.
-# Cały plik jest prototypem; wywołania oznaczone „# PROTOTYP <id>” w modułach.
+# Diagramy wykładu 07: punkty zatrzymania przy kolejnych zbiorach danych.
 #   schemat — dd_schema(): struktura zbioru (jednostka obserwacji, n, typy kolumn)
 #   katalog — dd_problem_map(): siedem problemów w dwóch grupach (rozdz. 1)
 #   mapa    — dd_dataset_map(): dziesięć zbiorów × siedem problemów (rozdz. 11)
@@ -93,7 +92,7 @@ dd_group_color <- function(group) {
 }
 
 # ============================================================================
-# PROTOTYP schemat: struktura zbioru
+# Struktura zbioru
 # ============================================================================
 # unit: czym jest jeden wiersz (np. "okręg szkolny"); n: liczba wierszy;
 # cols: nazwany wektor kolumna → klucz typu z .dd_types.
@@ -136,7 +135,7 @@ dd_schema <- function(unit, n, cols) {
 }
 
 # ============================================================================
-# PROTOTYP katalog: siedem problemów w dwóch grupach
+# Siedem problemów w dwóch grupach
 # ============================================================================
 dd_problem_map <- function() {
   tile <- function(p) {
@@ -159,7 +158,7 @@ dd_problem_map <- function() {
 }
 
 # ============================================================================
-# PROTOTYP mapa: dziesięć zbiorów × siedem problemów
+# Dziesięć zbiorów × siedem problemów
 # ============================================================================
 # Poziom problemu: 2 = poważny, 1 = ślad (jedna podgrupa, łagodna postać).
 # Werdykt: good / clean (dobry po czyszczeniu) / bad.
@@ -213,7 +212,7 @@ dd_dataset_map <- function() {
 }
 
 # ============================================================================
-# PROTOTYP braki: mapa braków (wiersz × zmienna)
+# Mapa braków (wiersz × zmienna)
 # ============================================================================
 dd_missing_matrix_plot <- function(df, id_col = "id") {
   vars <- setdiff(names(df), id_col)
@@ -244,7 +243,7 @@ dd_missing_matrix_plot <- function(df, id_col = "id") {
 # CSS prototypów (wstrzykiwany w app.R przez header_extras)
 # ============================================================================
 dd_proto_css <- "
-/* PROTOTYP schemat */
+/* Schemat */
 .dds { font-family: var(--upwr-sans); color: var(--upwr-ink); padding: .4em 0 .2em; }
 .dds-grid {
   display: grid; grid-template-columns: 9.5em repeat(var(--k), minmax(2.4em, 5.2em));
@@ -275,7 +274,7 @@ dd_proto_css <- "
   .dds-legend { margin-left: 0; }
 }
 
-/* PROTOTYP katalog */
+/* Katalog */
 .ddp { display: grid; grid-template-columns: 1fr; gap: 1.1em; padding: .3em 0; }
 .ddp-glabel { font: 600 .74em/1.2 var(--upwr-mono); letter-spacing: .07em;
   text-transform: uppercase; color: var(--c); border-bottom: 2px solid var(--c);
@@ -293,7 +292,7 @@ dd_proto_css <- "
 .ddp-name { font-size: .86em; line-height: 1.2; text-align: center; color: var(--upwr-ink); }
 @container (max-width: 520px) { .ddp-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
-/* PROTOTYP mapa */
+/* Mapa */
 .ddm { font-family: var(--upwr-sans); color: var(--upwr-ink); overflow-x: auto; }
 .ddm-row { display: grid; grid-template-columns: minmax(11em, 1.6fr) repeat(7, minmax(3.6em, 1fr)) 8.2em;
   align-items: center; min-width: 40em; border-bottom: 1px solid var(--upwr-rule-soft); }

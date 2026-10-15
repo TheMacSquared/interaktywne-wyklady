@@ -37,7 +37,7 @@ ch2_ui <- lecture_chapter(
       wariancję wspólną. Tak działa ", gloss("test t", "test t"), " w wersji
       Studenta:"),
 
-    # PROTOTYP wzory: wariancja wspólna i statystyka t Studenta (dwa wzory zamiast jednego boxu)
+    # Wariancja wspólna i statystyka t Studenta (dwa wzory zamiast jednego boxu)
     lc_formula_annotated(
       "⟦1|s_p^2⟧ = \\frac{⟦2|(n_1 - 1)⟧\\,⟦3|s_1^2⟧ + (n_2 - 1)\\,s_2^2}{⟦4|n_1 + n_2 - 2⟧}",
       notes  = list("wariancja wspólna", "waga grupy 1", "wariancja grupy 1", "suma wag"),
@@ -107,7 +107,7 @@ ch2_ui <- lecture_chapter(
       przypadkiem. Formalne testy jednorodności wariancji mają we wszystkich
       grupach tę samą ", gloss("hipoteza zerowa", "hipotezę zerową"), ":"),
 
-    # PROTOTYP wzory: hipoteza zerowa testów wariancji
+    # Hipoteza zerowa testów wariancji
     lc_formula_annotated(
       "⟦1|H_0⟧: ⟦2|\\sigma_1^2⟧ = \\sigma_2^2 = \\ldots = \\sigma_{⟦3|k⟧}^2",
       notes  = list("hipoteza zerowa", "wariancja w populacji 1", "liczba grup"),
@@ -168,7 +168,7 @@ ch2_ui <- lecture_chapter(
       \\(\\sqrt{s_1^2/n_1 + s_2^2/n_2}\\), a stopnie swobody liczy wzór
       Welcha–Satterthwaite'a:"),
 
-    # PROTOTYP wzory: stopnie swobody Welcha–Satterthwaite'a
+    # Stopnie swobody Welcha–Satterthwaite'a
     lc_formula_annotated(
       "⟦1|df⟧ = \\frac{\\left(\\dfrac{⟦2|s_1^2⟧}{n_1} + \\dfrac{s_2^2}{n_2}\\right)^2}
         {\\dfrac{(s_1^2/n_1)^2}{⟦3|n_1 - 1⟧} + \\dfrac{(s_2^2/n_2)^2}{n_2 - 1}}",

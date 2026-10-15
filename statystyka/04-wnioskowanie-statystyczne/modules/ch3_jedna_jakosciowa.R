@@ -68,7 +68,7 @@ ch3_ui <- list(
       znamy dokładnie, więc prawdopodobieństwo każdego możliwego wyniku przy
       prawdziwej H₀ możemy po prostu policzyć."),
 
-    # PROTOTYP wzory: rozkład dwumianowy pod H₀ ze znacznikami
+    # Rozkład dwumianowy pod H₀ ze znacznikami
     lc_formula_annotated(
       "P(⟦1|K⟧ = ⟦2|j⟧) = \\binom{⟦3|n⟧}{j}\\, ⟦4|p_0⟧^{\\,j} (1-p_0)^{n-j}, \\qquad j = 0, 1, \\ldots, n",
       notes  = list("liczba sukcesów", "możliwy wynik", "liczba obserwacji", "proporcja z H₀"),
@@ -82,7 +82,7 @@ ch3_ui <- list(
       wyniki, które przy H₀ są nie bardziej prawdopodobne niż nasze \\(k\\),
       po obu stronach rozkładu. P-wartość jest sumą ich prawdopodobieństw."),
 
-    # PROTOTYP wzory: dwustronna p-wartość testu dwumianowego ze znacznikami
+    # Dwustronna p-wartość testu dwumianowego ze znacznikami
     lc_formula_annotated(
       "⟦1|p⟧ = \\sum_{⟦2|j:\\ P(K = j)\\, \\leq\\, P(K = k)⟧} ⟦3|P(K = j)⟧",
       notes  = list("p-wartość", "wyniki nie bardziej prawdopodobne", "prawdopodobieństwo wyniku"),
@@ -260,7 +260,7 @@ ch3_ui <- list(
       ", gloss("przedział Walda"), ". Statystyka testowa mierzy, o ile
       ", gloss("błąd standardowy", "błędów standardowych"), " \\(\\hat{p}\\) odbiega od \\(p_0\\)."),
 
-    # PROTOTYP wzory: statystyka z testu proporcji ze znacznikami
+    # Statystyka z testu proporcji ze znacznikami
     lc_formula_annotated(
       "⟦1|z⟧ = \\frac{⟦2|\\hat{p}⟧ - ⟦3|p_0⟧}{\\sqrt{p_0(1-p_0)/⟦4|n⟧}}",
       notes  = list("statystyka z", "proporcja z próby", "proporcja z H₀", "liczba obserwacji"),

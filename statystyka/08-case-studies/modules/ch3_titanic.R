@@ -47,9 +47,9 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
 
   lc_p("Analizę przeprowadzimy w czterech krokach:"),
 
-  # PROTOTYP pipeline: mapa kroków zamiast listy numerowanej
+  # Mapa kroków zamiast listy numerowanej
   figure_panel(
-    label = "Ryc. 3.0a",
+    label = "Ryc. 3.1",
     title = "Przebieg analizy",
     case_pipeline(case_steps_ch3)
   ),
@@ -64,7 +64,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
     wybraną cechę. Liczba pod słupkiem to liczebność grupy."),
 
   figure_panel(
-    label = "Ryc. 3.1",
+    label = "Ryc. 3.2",
     title = "Odsetek ocalałych w grupach",
     lc_toolbar(
       lc_segmented("ch3_desc_by", "Podział",
@@ -91,7 +91,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
     w wierszach, czyli rozkład przeżycia w każdej klasie."),
 
   figure_panel(
-    label = "Ryc. 3.2",
+    label = "Ryc. 3.3",
     title = "Klasa a przeżycie",
     uiOutput("ch3_crosstab"),
     uiOutput("ch3_chi2")
@@ -132,9 +132,9 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
     klasy, 37.2% drugiej, 27.8% trzeciej i tylko 2.6% załogi. Panel
     pokazuje odsetki ocalałych w klasach osobno dla mężczyzn i kobiet."),
 
-  # PROTOTYP trojkat: płeć jako wspólne tło klasy i przeżycia (siła: V Cramera)
+  # Płeć jako wspólne tło klasy i przeżycia (siła: V Cramera)
   figure_panel(
-    label = "Ryc. 3.3a",
+    label = "Ryc. 3.4",
     title = "Płeć jako wspólne tło",
     width_mode = "text",
     case_confounder(
@@ -145,7 +145,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
   ),
 
   figure_panel(
-    label = "Ryc. 3.3",
+    label = "Ryc. 3.5",
     title = "Odsetek ocalałych w klasach, osobno dla płci",
     lc_toolbar(
       lc_segmented("ch3_sex_group", "Grupa",
@@ -179,7 +179,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
     mężczyzna z pierwszej klasy. Iloraz poniżej 1 oznacza mniejsze szanse."),
 
   figure_panel(
-    label = "Ryc. 3.4",
+    label = "Ryc. 3.6",
     title = "Ilorazy szans przeżycia",
     lc_toolbar(
       lc_segmented("ch3_model", "Model",
@@ -212,7 +212,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
     correct = "odds"
   ),
 
-  # PROTOTYP wzory: iloraz szans jako stosunek dwóch szans
+  # Iloraz szans jako stosunek dwóch szans
   lc_formula_annotated(
     "⟦1|\\text{OR}⟧ = \\frac{⟦2|p_K⟧ \\, / \\, (1 - p_K)}{⟦3|p_M⟧ \\, / \\, (1 - p_M)}",
     notes  = list("iloraz szans", "prawdopodobieństwo: kobieta", "prawdopodobieństwo: mężczyzna"),
@@ -248,7 +248,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
     tags$li("Wiek jest podzielony tylko na dorosłych i dzieci, bez granicy
       wieku w danych."),
     tags$li("Model zakłada, że różnice między klasami są takie same dla
-      kobiet i mężczyzn. Ryc. 3.3 pokazuje, że tak nie jest: wśród kobiet
+      kobiet i mężczyzn. Ryc. 3.5 pokazuje, że tak nie jest: wśród kobiet
       klasa liczyła się dużo bardziej. Uchwyciłaby to interakcja z rozdziału
       03B wykładu 06.")
   ),

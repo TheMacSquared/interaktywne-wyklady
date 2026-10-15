@@ -104,7 +104,7 @@ ch7_ui <- list(
       jako niezależne, prawdopodobieństwo co najmniej jednego fałszywego alarmu
       w całej serii wynosi:"),
 
-    # PROTOTYP wzory: liczba par i ryzyko serii testów ze znacznikami
+    # Liczba par i ryzyko serii testów ze znacznikami
     lc_formula_annotated(
       "⟦1|m⟧ = \\frac{⟦2|k⟧(k-1)}{2}, \\qquad ⟦3|P(\\text{co najmniej jeden fałszywy alarm})⟧ = 1 - (1 - ⟦4|\\alpha⟧)^m",
       notes  = list("liczba par", "liczba grup", "ryzyko w całej serii", "poziom istotności"),
@@ -170,7 +170,7 @@ ch7_ui <- list(
       leżą od średniej własnej grupy). ", gloss("statystyka F", "Statystyka F"),
       " to stosunek tych dwóch części:"),
 
-    # PROTOTYP wzory: statystyka F ze znacznikami. Licznik i mianownik w kolorach
+    # Statystyka F ze znacznikami. Licznik i mianownik w kolorach
     # scen (bursztyn = między, niebo = wewnątrz); opisy zastępują słowny ułamek.
     lc_formula_annotated(
       "⟦1|F⟧ = \\frac{⟦2|\\sum_{j=1}^{k} n_j\\,(\\bar{x}_j - \\bar{x})^2 \\,/\\, (k-1)⟧}{⟦3|\\sum_{j=1}^{k} \\sum_{i=1}^{n_j} (x_{ij} - \\bar{x}_j)^2 \\,/\\, (n-k)⟧}",

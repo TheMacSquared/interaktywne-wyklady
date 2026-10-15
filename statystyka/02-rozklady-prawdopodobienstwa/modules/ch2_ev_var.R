@@ -35,7 +35,6 @@ ch2_ev_var_ui <- list(
       to ", gloss("wartość oczekiwana"), " E(X): suma wszystkich wartości
       pomnożonych przez ich prawdopodobieństwa."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|E(X)⟧ = ⟦2|\\sum_x⟧ ⟦3|x⟧ \\cdot ⟦4|P(X = x)⟧",
       notes  = list("wartość oczekiwana", "suma po wartościach", "możliwa wartość", "prawdopodobieństwo (waga)"),
@@ -177,7 +176,6 @@ ch2_ev_var_ui <- list(
       to ", gloss("odchylenie standardowe"), " SD(X), wyrażone w tych samych
       jednostkach co X."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|Var(X)⟧ = ⟦2|\\sum_x⟧ \\big(⟦3|x⟧ - ⟦4|E(X)⟧\\big)^2 \\cdot ⟦5|P(X = x)⟧ \\qquad ⟦6|SD(X)⟧ = \\sqrt{Var(X)}",
       notes  = list("wariancja", "suma po wartościach", "możliwa wartość", "wartość oczekiwana", "prawdopodobieństwo", "odchylenie standardowe"),

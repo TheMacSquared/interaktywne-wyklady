@@ -20,9 +20,9 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     pozwala zapytać na przykład, czy studenci, którzy uczą się więcej, mają
     wyższą średnią ocen, albo czy poziom stresu różni się między kierunkami."),
 
-  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
   figure_panel(
-    label = "Ryc. 10.0a",
+    label = "Ryc. 10.1",
     title = "Struktura zbioru ankiety",
     width_mode = "text",
     dd_schema("student", 150, c(
@@ -42,7 +42,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     zapis wartości."),
 
   figure_panel(
-    label = "Ryc. 10.1",
+    label = "Ryc. 10.2",
     title = "Odpowiedzi 150 studentów",
     uiOutput("tab9_table")
   ),

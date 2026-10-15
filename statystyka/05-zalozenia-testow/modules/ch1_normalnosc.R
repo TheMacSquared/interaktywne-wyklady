@@ -2,7 +2,7 @@
 # CHAPTER 1: Normalność rozkładu
 # ============================================================================
 
-# PROTOTYP moc-sw: dane i wykres statyczny.
+# Dane i wykres statyczny.
 
 # Odsetek odrzuceń H₀ (α = 0.05) w 5000 próbach na punkt; symulacja jak w tekście
 # (rozkłady z generate_test_data(), set.seed(2026)).
@@ -77,7 +77,7 @@ ch1_ui <- lecture_chapter(
       potrzeba, żeby przybliżenie było dobre. Jednej liczby obserwacji, od
       której można przestać patrzeć na dane, nie ma."),
 
-    # PROTOTYP wzory: skośność średniej maleje z √n
+    # Skośność średniej maleje z √n
     lc_formula_annotated(
       "⟦1|\\gamma_{\\bar{x}}⟧ = \\frac{⟦2|\\gamma⟧}{\\sqrt{⟦3|n⟧}}",
       notes  = list("skośność średniej", "skośność danych", "liczba obserwacji"),
@@ -219,9 +219,9 @@ ch1_ui <- lecture_chapter(
       testu t przy takiej liczebności nie stanowi żadnego problemu, bo jest
       symetryczny i nie ma wartości odstających."),
 
-    # PROTOTYP moc-sw: odsetek odrzuceń H₀ w teście Shapiro-Wilka a liczebność
+    # Odsetek odrzuceń H₀ w teście Shapiro-Wilka a liczebność
     figure_panel(
-      label = "Ryc. 1.2a",
+      label = "Ryc. 1.3",
       title = "Jak często Shapiro-Wilk odrzuca normalność",
       width_mode = "text",
       lc_plot("ch1_sw_power", ratio = "16/10")
@@ -266,7 +266,7 @@ ch1_ui <- lecture_chapter(
       logarytmów (po prawej)."),
 
     figure_panel(
-      label = "Ryc. 1.3",
+      label = "Ryc. 1.4",
       title = "Efekt transformacji logarytmicznej",
       lc_toolbar(
         lc_slider("ch1_trans_n", "n", 30, 200, 80, 10),
@@ -327,7 +327,6 @@ ch1_ui <- lecture_chapter(
 
 ch1_server <- function(input, output, session) {
 
-  # PROTOTYP moc-sw
   zoom_plot_server("ch1_sw_power", reactive(ch1_sw_power_fn()),
     alt = "Odsetek odrzuceń normalności w teście Shapiro-Wilka w zależności od liczebności próby dla czterech rozkładów")
 

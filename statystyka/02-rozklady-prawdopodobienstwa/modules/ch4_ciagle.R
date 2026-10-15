@@ -2,7 +2,7 @@
 # CHAPTER 4: Rozkłady ciągłe
 # ============================================================================
 
-# PROTOTYP poisson-wykladniczy: oś czasu z ustalonymi zdarzeniami (Ryc. 4.6a).
+# Oś czasu z ustalonymi zdarzeniami (Ryc. 4.7).
 # Nad osią liczba zdarzeń w każdej godzinie (Poisson, col_poisson), pod osią
 # odstępy między kolejnymi zdarzeniami (wykładniczy, col_exponential).
 ch4_event_times <- c(0.18, 0.55, 0.62, 1.30, 1.71, 2.05, 2.12, 2.38, 2.90,
@@ -43,8 +43,8 @@ ch4_event_timeline <- function(t = ch4_event_times, hours = 4) {
   )
 }
 
-# PROTOTYP mapa-ciaglych: pięć pytań i odpowiadające im rozkłady ciągłe
-# (Ryc. 4.10a). Ten sam układ co mapa dyskretnych (Ryc. 3.8a), ale miniatury
+# Pięć pytań i odpowiadające im rozkłady ciągłe
+# (Ryc. 4.11). Ten sam układ co mapa dyskretnych (Ryc. 3.10), ale miniatury
 # to gładkie krzywe gęstości, każda w swojej skali.
 ch4_continuous_map <- function() {
   items <- list(
@@ -170,7 +170,6 @@ ch4_ui <- list(
       prawdopodobieństwo, że zmienna wpadnie do przedziału od a do b, to pole
       pod krzywą f(x) nad tym przedziałem. Pole pod krzywą liczy się całką."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|P(a \\le X \\le b)⟧ = ⟦2|\\int_a^b⟧ ⟦3|f(x)⟧ \\, dx, \\qquad \\int_{-\\infty}^{\\infty} f(x) \\, dx = 1",
       notes  = list("prawdopodobieństwo przedziału", "pole od a do b", "gęstość"),
@@ -230,7 +229,6 @@ ch4_ui <- list(
       Dystrybuanta podaje prawdopodobieństwo, że zmienna nie przekroczy
       wartości x."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|F(x)⟧ = P(X \\le x) = ⟦2|\\int_{-\\infty}^{x}⟧ ⟦3|f(t)⟧ \\, dt, \\qquad P(a < X \\le b) = F(b) - F(a)",
       notes  = list("dystrybuanta", "pole na lewo od x", "gęstość"),
@@ -307,7 +305,6 @@ ch4_ui <- list(
       więc wykres jest prostokątem. Jego wysokość wynika z warunku, że pole
       wynosi 1."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "f(x) = \\frac{1}{⟦1|b-a⟧} \\;\\text{ dla } a \\le x \\le b, \\qquad E(X) = ⟦2|\\frac{a+b}{2}⟧, \\qquad Var(X) = \\frac{(⟦1|b-a⟧)^2}{12}",
       notes  = list("szerokość przedziału", "środek przedziału"),
@@ -379,7 +376,6 @@ ch4_ui <- list(
       wykładniczy ma też prostą dystrybuantę, więc prawdopodobieństwa można
       liczyć bez całkowania."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "f(x) = ⟦1|\\lambda⟧ e^{-\\lambda ⟦2|x⟧}, \\quad F(x) = 1 - e^{-\\lambda x} \\;\\text{ dla } x \\ge 0",
       notes  = list("tempo zdarzeń", "czas oczekiwania"),
@@ -434,9 +430,9 @@ ch4_ui <- list(
       jak przychodzące wiadomości, a słabo do zużywających się elementów, jak
       starzejąca się maszyna."),
 
-    # PROTOTYP poisson-wykladniczy: te same zdarzenia jako zliczenia i jako odstępy
+    # Te same zdarzenia jako zliczenia i jako odstępy
     figure_panel(
-      label = "Ryc. 4.6a",
+      label = "Ryc. 4.7",
       title = "Jedna oś czasu, dwie zmienne losowe",
       width_mode = "wide",
       ch4_event_timeline()
@@ -476,7 +472,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.7",
+      label = "Ryc. 4.8",
       title = "Rozkład t-Studenta t(df)",
       full_width = TRUE,
       lc_toolbar(
@@ -522,7 +518,6 @@ ch4_ui <- list(
       dla wartości ujemnych, a dla dodatnich ma długi prawy ogon. Liczba
       stopni swobody df mówi, ile kwadratów sumujemy."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "X = ⟦1|Z_1^2 + Z_2^2 + \\ldots + Z_{df}^2⟧, \\; ⟦2|Z_i⟧ \\sim N(0, 1)",
       notes  = list("suma kwadratów", "zmienna N(0, 1)"),
@@ -535,7 +530,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.8",
+      label = "Ryc. 4.9",
       title = "Rozkład χ²(df)",
       full_width = TRUE,
       lc_toolbar(
@@ -583,7 +578,6 @@ ch4_ui <- list(
       i ma prawy ogon. Parametry μ i σ to średnia i odchylenie standardowe
       logarytmu, a nie samej zmiennej X."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "Me = e^{⟦1|\\mu⟧}, \\qquad E(X) = e^{⟦1|\\mu⟧ + ⟦2|\\sigma⟧^2/2}, \\qquad Var(X) = \\left(e^{\\sigma^2} - 1\\right) \\cdot e^{2\\mu + \\sigma^2}",
       notes  = list("średnia ln X", "odchylenie std. ln X"),
@@ -591,7 +585,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.9",
+      label = "Ryc. 4.10",
       title = "Rozkład LogN(μ, σ)",
       full_width = TRUE,
       lc_toolbar(
@@ -627,14 +621,14 @@ ch4_ui <- list(
        jest dobrym kandydatem na model."
     ),
 
-    # PROTOTYP mapa-ciaglych: zamknięcie rozdziału, jak Ryc. 3.8a dla dyskretnych
+    # Zamknięcie rozdziału, jak Ryc. 3.10 dla dyskretnych
     lc_h2("ch4-porownanie", "Porównanie rozkładów ciągłych"),
 
     lc_p("Pięć rozkładów z tego rozdziału odpowiada na pięć różnych pytań
       o dane."),
 
     figure_panel(
-      label = "Ryc. 4.10a",
+      label = "Ryc. 4.11",
       title = "Które pytanie, który rozkład",
       width_mode = "wide",
       ch4_continuous_map()

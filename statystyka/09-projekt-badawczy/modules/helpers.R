@@ -449,7 +449,7 @@ tr_board_ui <- function(reveal = tr_trop_order, show_verdict = TRUE) {
 }
 
 
-# PROTOTYP mapa: etapy projektu badawczego (rozdziały 1–8) w dwóch fazach.
+# Etapy projektu badawczego (rozdziały 1–8) w dwóch fazach.
 # current = k rysuje pasek z wyróżnionym etapem k (początek rozdziałów 2–8).
 proj_stages <- list(
   list(name = "Cel",            sub = "pytanie i tropy",          col = "wrzos"),
@@ -485,7 +485,7 @@ proj_stage_map <- function(current = NULL) {
 }
 
 
-# PROTOTYP trojkat: schemat zmiennej zakłócającej Z → X, Z → Y, X → Y?
+# Schemat zmiennej zakłócającej Z → X, Z → Y, X → Y?
 # (kopia case_confounder() z wykładu 08; tu grubość stała, liczą się kierunki).
 proj_confounder <- function(nodes, edges, strength = c(0.3, 0.3, 0.3),
                             colors = c("bursztyn", "niebo", "grafit")) {

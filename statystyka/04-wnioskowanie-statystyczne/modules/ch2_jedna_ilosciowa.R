@@ -75,7 +75,7 @@ ch2_ui <- list(
       t-Studenta"), " z \\(n - 1\\) ", gloss("stopnie swobody", "stopniami swobody"), ". Tak powstaje statystyka ",
       gloss("test t", "testu t"), " jednej próby:"),
 
-    # PROTOTYP wzory: statystyka t jednej próby ze znacznikami
+    # Statystyka t jednej próby ze znacznikami
     lc_formula_annotated(
       "⟦1|t⟧ = \\frac{⟦2|\\bar{x}⟧ - ⟦3|\\mu_0⟧}{⟦4|s⟧ / \\sqrt{⟦5|n⟧}}, \\quad ⟦6|df⟧ = n - 1",
       notes  = list("statystyka t", "średnia z próby", "wartość referencyjna",
@@ -182,7 +182,7 @@ ch2_ui <- list(
       p-wartość. W teście dwustronnym jest to pole obu ogonów rozkładu
       poza \\(\\pm|t|\\):"),
 
-    # PROTOTYP wzory: dwustronna p-wartość testu t ze znacznikami
+    # Dwustronna p-wartość testu t ze znacznikami
     lc_formula_annotated(
       "⟦1|p⟧ = P\\left(⟦2|\\left|T\\right|⟧ \\geq ⟦3|\\left|t\\right|⟧ \\;\\middle|\\; H_0\\right), \\qquad T \\sim ⟦4|t_{n-1}⟧",
       notes  = list("p-wartość", "statystyka przy H₀", "statystyka z próby", "rozkład t-Studenta"),
@@ -216,7 +216,7 @@ ch2_ui <- list(
       dalej od \\(\\bar{x}\\) niż \\(t^* \\cdot SE\\). To dwa zapisy tego
       samego warunku:"),
 
-    # PROTOTYP wzory: równoważność testu i przedziału ze znacznikami
+    # Równoważność testu i przedziału ze znacznikami
     lc_formula_annotated(
       "⟦1|\\left|t\\right|⟧ \\geq ⟦2|t^*_{\\alpha/2,\\, n-1}⟧ \\iff ⟦3|\\mu_0⟧ \\notin ⟦4|\\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}⟧",
       notes  = list("statystyka z próby", "wartość krytyczna", "wartość referencyjna", "przedział ufności"),

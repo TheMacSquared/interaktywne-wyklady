@@ -42,7 +42,6 @@ ch1_ui <- list(
       wraz ze wzrostem liczby rzutów częstość względna zbliża się do
       prawdopodobieństwa."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "\\frac{⟦1|n_k⟧}{⟦2|n⟧} \\;\\longrightarrow\\; ⟦3|P(X = k)⟧ \\qquad \\text{gdy } n \\to \\infty",
       notes  = list("liczba wyników k", "liczba rzutów", "prawdopodobieństwo"),
@@ -218,7 +217,6 @@ ch1_ui <- list(
       liczb jest rozkładem. Prawdopodobieństwa muszą być nieujemne i muszą
       sumować się do 1, bo któryś z wyników na pewno wystąpi."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|P(X = k)⟧ \\geq 0 \\quad \\text{dla każdego } k, \\qquad ⟦2|\\sum_{k}⟧ P(X = k) = 1",
       notes  = list("prawdopodobieństwo wyniku k", "suma po wynikach"),

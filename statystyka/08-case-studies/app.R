@@ -55,7 +55,7 @@ source(file.path(app_dir, "modules", "ch1_caschools.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_pingwiny.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch3_titanic.R"),   local = TRUE)
 
-# PROTOTYP pipeline + trojkat: style mapy przebiegu analizy i schematu zakłócenia.
+# Style mapy przebiegu analizy i schematu zakłócenia.
 case_extras <- tags$style(HTML("
   .case-pipeline {
     list-style: none; margin: 12px 0 18px; padding: 0;
@@ -112,7 +112,7 @@ ui <- lecture_page(
   lecture_title = "Case studies",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  header_extras = case_extras  # PROTOTYP pipeline + trojkat
+  header_extras = case_extras
 )
 
 # ============================================================================

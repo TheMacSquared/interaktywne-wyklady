@@ -170,9 +170,9 @@ ch4_ui <- list(
       najwyżej jednego odchylenia standardowego od średniej, około 95% —
       dwóch, a 99.7% — trzech."),
 
-    # PROTOTYP regula-wzorzec: wzorcowa krzywa dzwonowa z pasami ±1, ±2, ±3 SD
+    # Wzorcowa krzywa dzwonowa z pasami ±1, ±2, ±3 SD
     figure_panel(
-      label = "Ryc. 4.2b",
+      label = "Ryc. 4.3",
       title = "Reguła 68–95–99.7 na rozkładzie normalnym",
       width_mode = "text",
       tags$div(class = "proto-regula",
@@ -184,7 +184,7 @@ ch4_ui <- list(
       i podaje, jaki odsetek danych naprawdę w nich leży."),
 
     figure_panel(
-      label = "Ryc. 4.3",
+      label = "Ryc. 4.4",
       title = "Reguła 68–95–99.7 — czy zawsze działa?",
       selectInput("ch4_emp_var", "Wybierz zmienną:",
         choices = c("Wzrost (cm)" = "wzrost",
@@ -248,7 +248,7 @@ ch4_ui <- list(
       i 200 cm."),
 
     figure_panel(
-      label = "Ryc. 4.4",
+      label = "Ryc. 4.5",
       lc_step_widget("ch4_bp",
         title = "Wykres pudełkowy — budowa krok po kroku",
         steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
@@ -286,7 +286,7 @@ ch4_ui <- list(
       na płeć albo kierunek studiów; pod wykresem są statystyki każdej grupy."),
 
     figure_panel(
-      label = "Ryc. 4.5",
+      label = "Ryc. 4.6",
       title = "Wykresy pudełkowe w grupach",
       lc_toolbar(
         selectInput("ch4_grp_var", "Zmienna ilościowa",
@@ -334,7 +334,7 @@ ch4_ui <- list(
       maksimum."),
 
     figure_panel(
-      label = "Ryc. 4.6",
+      label = "Ryc. 4.7",
       title = "Porównanie miar rozrzutu i ich odporności",
       lc_toolbar(
         lc_action("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
@@ -393,7 +393,7 @@ ch4_ui <- list(
       z ankiety (po lewej) z ich współczynnikami zmienności (po prawej)."),
 
     figure_panel(
-      label = "Ryc. 4.7",
+      label = "Ryc. 4.8",
       title = "Porównanie zmienności między zmiennymi",
       lc_plots(
         tags$div(
@@ -583,7 +583,7 @@ ch4_server <- function(input, output, session) {
     }
   })
 
-  # PROTOTYP regula-wzorzec: krzywa normalna, pasy jak w Ryc. 4.3, klamry z odsetkami
+  # Krzywa normalna, pasy jak w Ryc. 4.4, klamry z odsetkami
   zoom_plot_server("ch4_proto_regula", reactive({
     x <- seq(-3.6, 3.6, length.out = 600)
     dens <- data.frame(x = x, y = dnorm(x))

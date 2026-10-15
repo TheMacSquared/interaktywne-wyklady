@@ -60,7 +60,7 @@ ch3_ui <- list(
       z daną cechą podzielona przez liczbę wszystkich jednostek. Jeśli
       w próbie 50 osób egzamin zdały 34, to p̂ = 34/50 = 0.68."),
 
-    # PROTOTYP wzory: ta sama formuła odsetka dla populacji i dla próby
+    # Ta sama formuła odsetka dla populacji i dla próby
     lc_formula_annotated(
       "⟦1|p⟧ = \\frac{⟦2|K⟧}{⟦3|N⟧} \\qquad\\qquad ⟦4|\\hat{p}⟧ = \\frac{⟦5|k⟧}{⟦6|n⟧}",
       notes = list(

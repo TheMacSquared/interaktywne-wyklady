@@ -49,7 +49,7 @@ case_quiz_server <- function(input, output, id, correct, feedback) {
 }
 
 
-# PROTOTYP pipeline: mapa przebiegu analizy (kroki studium jako łańcuch kart).
+# Mapa przebiegu analizy (kroki studium jako łańcuch kart).
 # steps: lista list(name, tools, ref, kind); kind ∈ explore/test/model/conclude
 # daje kolor etapu (te same role co case_explore … case_conclude).
 # current = k rysuje wersję skróconą (pasek) z wyróżnionym krokiem k.
@@ -102,7 +102,7 @@ case_steps_ch3 <- list(
 )
 
 
-# PROTOTYP trojkat: schemat zmiennej zakłócającej Z → X, Z → Y, X → Y?
+# Schemat zmiennej zakłócającej Z → X, Z → Y, X → Y?
 # Grubość krawędzi rośnie z siłą związku (|r| albo V), etykieta to wartość.
 # nodes: c(z, x, y); edges: c(zx, zy, xy) jako napisy; strength: liczby 0–1.
 case_confounder <- function(nodes, edges, strength,

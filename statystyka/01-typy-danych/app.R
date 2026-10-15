@@ -369,8 +369,8 @@ app_extras <- tagList(
     .ops-label { font-size: 12px; }
   }
 
-  /* PROTOTYP mapa-narzedzi: siatka statystyk (Ryc. 5.3a) */
-  /* PROTOTYP pelna-tabela: dwie tabele obok siebie w Ryc. 5.4 */
+  /* Siatka statystyk (Ryc. 5.6) */
+  /* Dwie tabele obok siebie w Ryc. 5.7 */
   .ch5-full-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
   .ch5-full-pair h4 { margin: 0 0 6px; }
   @media (max-width: 640px) { .ch5-full-pair { grid-template-columns: 1fr; gap: 14px; } }

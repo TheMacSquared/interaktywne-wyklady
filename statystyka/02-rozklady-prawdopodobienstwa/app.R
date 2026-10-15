@@ -131,7 +131,7 @@ ui <- lecture_page(
         .lc-cdf-canvas { aspect-ratio: 1.15 / 1; }
       }
     ")),
-    # PROTOTYP dwumian-ciagi / mapa-dyskretnych / poisson-wykladniczy: style rycin 3.2a, 3.8a, 4.4a
+    # Style rycin: ciągi prób dwumianu, mapy rozkładów, oś czasu zdarzeń
     tags$style(HTML("
       .bseq { display: flex; justify-content: center; align-items: flex-end; gap: 1.6em;
               padding: .6em 0 .2em; flex-wrap: wrap; }

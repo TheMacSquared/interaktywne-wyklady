@@ -33,7 +33,6 @@ ch2_ui <- list(
       Dla średniej oznacza to, że w około 95% prób X̄ leży nie dalej niż 1.96·SE
       od μ:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "P\\left(⟦1|\\mu⟧ - ⟦2|1.96⟧ \\cdot ⟦3|SE⟧ \\le ⟦4|\\bar{X}⟧ \\le \\mu + 1.96 \\cdot SE\\right) = ⟦5|0.95⟧",
       notes  = list("średnia populacji", "wartość krytyczna", "błąd standardowy",
@@ -47,16 +46,15 @@ ch2_ui <- list(
       znalazło się w środku. Zdarzenie jest to samo, zmienia się tylko zapis,
       dlatego prawdopodobieństwo pozostaje równe 0.95:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "P\\left(⟦1|\\bar{X}⟧ - 1.96 \\cdot SE \\le ⟦2|\\mu⟧ \\le \\bar{X} + 1.96 \\cdot SE\\right) = 0.95",
       notes  = list("losowy środek", "stały parametr"),
       colors = c("accent", "param")
     ),
 
-    # PROTOTYP odwrocenie: ta sama odległość czytana od μ i od x̄
+    # Ta sama odległość czytana od μ i od x̄
     figure_panel(
-      label = "Ryc. 2.0a", title = "Odwrócenie: od μ do x̄ i z powrotem",
+      label = "Ryc. 2.1", title = "Odwrócenie: od μ do x̄ i z powrotem",
       width_mode = "text",
       lc_plot("ch2_flip_plot", ratio = "1.7/1", max_height = "420px"),
       lc_caption("x̄ w pasie μ ± 1.96·SE ⇔ μ w przedziale x̄ ± 1.96·SE.")
@@ -132,7 +130,7 @@ ch2_ui <- list(
       jedno poprawnie opisuje ten wynik."),
 
     figure_panel(
-      label = "Ryc. 2.1", title = "Quiz: interpretacja CI",
+      label = "Ryc. 2.2", title = "Quiz: interpretacja CI",
       full_width = TRUE,
       p("Wybierz poprawną interpretację:"),
       uiOutput("ch2_quiz_options"),
@@ -183,7 +181,7 @@ ch2_ui <- list(
 
 ch2_server <- function(input, output, session) {
 
-  # PROTOTYP odwrocenie: rozkład x̄ wokół μ (góra) i przedziały wokół x̄ (dół)
+  # Rozkład x̄ wokół μ (góra) i przedziały wokół x̄ (dół)
   zoom_plot_server("ch2_flip_plot", reactive({
     mu <- 170; se <- 2; me <- 1.96 * se
     curve_df <- data.frame(x = seq(160, 180, length.out = 400))

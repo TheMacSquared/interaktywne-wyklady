@@ -17,7 +17,7 @@
   `flipper_length_mm:speciesGentoo` = "Płetwa × Gentoo"
 )
 
-# PROTOTYP P4-kodowanie: schemat zmiennych wskaźnikowych. Wiersz = gatunek,
+# Schemat zmiennych wskaźnikowych. Wiersz = gatunek,
 # kolumny: wartości Chinstrap i Gentoo (0/1), wyraz wolny i nachylenie prostej.
 # Kolory β jak w znacznikach wzorów (β₂ bursztyn = Chinstrap, β₃ terakota = Gentoo).
 ch3b_dummy_diagram <- function(interaction = FALSE) {
@@ -145,7 +145,7 @@ ch3b_ui <- list(
       wszystkich innych. Przy trzech gatunkach potrzebne są więc dwie takie
       zmienne. Tutaj kategorią odniesienia jest Adelie."),
 
-    # PROTOTYP P1-wzory: model z gatunkiem; kolory β jak kolory gatunków
+    # Model z gatunkiem; kolory β jak kolory gatunków
     lc_formula_annotated(
       "\\text{masa} = ⟦1|\\beta_0⟧ + ⟦2|\\beta_1⟧\\,\\text{płetwa} + ⟦3|\\beta_2⟧\\,\\text{Chinstrap} + ⟦4|\\beta_3⟧\\,\\text{Gentoo} + \\varepsilon",
       notes  = list("wyraz wolny Adelie", "wspólne nachylenie",
@@ -154,9 +154,9 @@ ch3b_ui <- list(
       above  = c(2, 4)
     ),
 
-    # PROTOTYP P4-kodowanie: tabela 0/1 → prosta każdego gatunku
+    # Tabela 0/1 → prosta każdego gatunku
     figure_panel(
-      label = "Ryc. 3B.1a", title = "Zmienne wskaźnikowe i prosta każdego gatunku",
+      label = "Ryc. 3B.2", title = "Zmienne wskaźnikowe i prosta każdego gatunku",
       width_mode = "compact",
       ch3b_dummy_diagram(interaction = FALSE)
     ),
@@ -193,7 +193,7 @@ ch3b_ui <- list(
       interakcję zapisuje się jako iloczyn długości płetwy i zmiennej
       wskaźnikowej."),
 
-    # PROTOTYP P1-wzory: model z interakcją w dwóch wierszach
+    # Model z interakcją w dwóch wierszach
     lc_formula_annotated(
       "\\begin{aligned} \\text{masa} = {} & \\beta_0 + ⟦1|\\beta_1⟧\\,\\text{płetwa} + \\beta_2\\,\\text{Chinstrap} + \\beta_3\\,\\text{Gentoo} \\\\ & + ⟦2|\\beta_4⟧\\,\\text{płetwa}\\cdot\\text{Chinstrap} + ⟦3|\\beta_5⟧\\,\\text{płetwa}\\cdot\\text{Gentoo} + \\varepsilon \\end{aligned}",
       notes  = list("nachylenie Adelie", "zmiana nachylenia Chinstrap",
@@ -202,9 +202,9 @@ ch3b_ui <- list(
       above  = c(1)
     ),
 
-    # PROTOTYP P4-kodowanie: ta sama tabela z kolumną nachylenia z interakcją
+    # Ta sama tabela z kolumną nachylenia z interakcją
     figure_panel(
-      label = "Ryc. 3B.1b", title = "Interakcja: każdy gatunek ma własne nachylenie",
+      label = "Ryc. 3B.3", title = "Interakcja: każdy gatunek ma własne nachylenie",
       width_mode = "compact",
       ch3b_dummy_diagram(interaction = TRUE)
     ),
@@ -217,7 +217,7 @@ ch3b_ui <- list(
       na tych samych danych."),
 
     figure_panel(
-      label = "Ryc. 3B.2",
+      label = "Ryc. 3B.4",
       title = "Model addytywny kontra model z interakcją",
       full_width = TRUE,
       lc_toolbar(

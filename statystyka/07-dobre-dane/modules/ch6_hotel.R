@@ -27,9 +27,9 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     tags$li(tags$code("kraj_goscia"), " — kraj pochodzenia gościa.")
   ),
 
-  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
   figure_panel(
-    label = "Ryc. 6.0a",
+    label = "Ryc. 6.1",
     title = "Struktura zbioru hotelu",
     width_mode = "text",
     dd_schema("recenzja gościa", 80, c(
@@ -65,7 +65,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     sprawdźmy, czy jej wartości w ogóle się różnią."),
 
   figure_panel(
-    label = "Ryc. 6.1",
+    label = "Ryc. 6.2",
     title = "Rozkład oceny ogólnej",
     lc_plot("tab5_plot_zadowolenie", max_height = "300px")
   ),
@@ -83,7 +83,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     patrzymy, czy każda grupa ma dość obserwacji do porównania."),
 
   figure_panel(
-    label = "Ryc. 6.2",
+    label = "Ryc. 6.3",
     title = "Liczebność typów pokoju",
     lc_plot("tab5_plot_departament", max_height = "300px")
   ),
@@ -104,7 +104,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     tygodni."),
 
   figure_panel(
-    label = "Ryc. 6.3",
+    label = "Ryc. 6.4",
     title = "Rozkład długości pobytu",
     lc_toolbar(
       lc_segmented("tab5_staz_view", NULL,
@@ -126,7 +126,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     rozrzut."),
 
   figure_panel(
-    label = "Ryc. 6.4",
+    label = "Ryc. 6.5",
     title = "Rozkład ceny za noc",
     lc_plot("tab5_plot_wynagrodzenie", max_height = "300px")
   ),
@@ -143,7 +143,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     grup."),
 
   figure_panel(
-    label = "Ryc. 6.5",
+    label = "Ryc. 6.6",
     title = "Liczebność gości według kraju",
     lc_plot("tab5_plot_plec", max_height = "300px")
   ),
@@ -161,7 +161,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     rozrzutu zwróć uwagę, jaką część osi poziomej zajmują dane."),
 
   figure_panel(
-    label = "Ryc. 6.6",
+    label = "Ryc. 6.7",
     title = "Cena za noc a długość pobytu",
     lc_plot("tab5_scatter", max_height = "300px")
   ),
@@ -182,7 +182,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     dwóch tygodni."),
 
   figure_panel(
-    label = "Ryc. 6.7",
+    label = "Ryc. 6.8",
     title = "Ta sama zależność przy większym rozrzucie pobytów",
     lc_slider("tab5_sd_mult", "Mnożnik rozrzutu danych", 1, 5, 1, 0.5),
     lc_plot("tab5_scatter_sim", max_height = "300px")

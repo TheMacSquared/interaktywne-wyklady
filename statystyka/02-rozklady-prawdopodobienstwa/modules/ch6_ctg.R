@@ -52,7 +52,6 @@ ch6_ui <- list(
       i ", gloss("wariancja", "wariancji"), ". Jeśli pojedyncza obserwacja ma wartość
       oczekiwaną μ i ", gloss("odchylenie standardowe"), " σ, a obserwacje w próbie są niezależne, to:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "E(\\bar{X}) = \\mu, \\qquad ⟦1|SE⟧ = SD(\\bar{X}) = \\frac{⟦2|\\sigma⟧}{\\sqrt{⟦3|n⟧}}",
       notes  = list("błąd standardowy", "odchylenie std. obserwacji", "wielkość próby"),
@@ -73,7 +72,6 @@ ch6_ui <- list(
       skończoną wariancję σ², to wraz ze wzrostem n rozkład średniej X̄ zbliża się do
       rozkładu normalnego o średniej μ i odchyleniu standardowym σ/√n:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|\\bar{X}_n⟧ \\xrightarrow{d} ⟦2|N⟧\\left(\\mu, ⟦3|\\frac{\\sigma}{\\sqrt{n}}⟧\\right) \\quad \\text{dla } n \\to \\infty",
       notes  = list("średnia z próby", "rozkład normalny", "błąd standardowy"),

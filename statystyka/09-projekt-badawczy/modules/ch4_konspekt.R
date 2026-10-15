@@ -7,7 +7,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
             badania: zmienne, hipotezy, alternatywne wyjaśnienia i sposób interpretacji."
   ),
 
-  proj_stage_map(current = 4),  # PROTOTYP mapa: pasek etapów
+  proj_stage_map(current = 4),  # Pasek etapów
 
   lc_h2("sec-01", "Cztery części konspektu"),
 

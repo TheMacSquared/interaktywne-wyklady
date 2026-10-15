@@ -2,7 +2,7 @@
 # CHAPTER 5: Opis i wnioskowanie
 # ============================================================================
 
-# PROTOTYP schemat: cztery węzły w rzędzie; klamra „opis” nad próbą, tabelą
+# Cztery węzły w rzędzie; klamra „opis” nad próbą, tabelą
 # i statystyką, strzałka „wnioskowanie” pod spodem wraca do populacji.
 ch5_flow_diagram <- function() {
   node <- function(col, name, sym, color, sym_color = color, small = FALSE) {
@@ -83,9 +83,9 @@ ch5_ui <- list(
       w przybliżeniu, bo zależy od tego, kto trafił do próby. Każdy kolejny
       wykład zajmuje się jednym odcinkiem tej drogi."),
 
-    # PROTOTYP schemat: droga od populacji do statystyki i z powrotem
+    # Droga od populacji do statystyki i z powrotem
     figure_panel(
-      label = "Ryc. 5.0a",
+      label = "Ryc. 5.1",
       title = "Od populacji do statystyki",
       width_mode = "text",
       ch5_flow_diagram()

@@ -36,7 +36,7 @@ ch3_ui <- list(
     lc_p(gloss("regresja wieloraka", "Regresja wieloraka"), " rozszerza równanie
       prostej o kolejne predyktory. Przy \\(k\\) predyktorach model ma postać:"),
 
-    # PROTOTYP P1-wzory: model wieloraki ze znacznikami symboli
+    # Model wieloraki ze znacznikami symboli
     lc_formula_annotated(
       "Y = ⟦1|\\beta_0⟧ + ⟦2|\\beta_1⟧ X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_{⟦3|k⟧} + ⟦4|\\varepsilon⟧",
       notes  = list("wyraz wolny", "nachylenie przy X₁", "liczba predyktorów",
@@ -203,7 +203,7 @@ ch3_ui <- list(
       \\(R_j^2\\) modelu, w którym \\(X_j\\) przewiduje się pozostałymi
       predyktorami:"),
 
-    # PROTOTYP P1-wzory: VIF ze znacznikami symboli
+    # VIF ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|\\text{VIF}_j⟧ = \\frac{1}{1 - ⟦2|R_j^2⟧}",
       notes  = list("inflacja wariancji", "R² dla Xⱼ z pozostałych"),

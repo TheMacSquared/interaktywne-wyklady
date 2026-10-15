@@ -71,7 +71,7 @@ ui <- lecture_page(
   module_label  = "Statystyka",
   chapters      = .chapters,
   header_extras = tagList(
-    # PROTOTYP P4-kodowanie: style schematu zmiennych wskaźnikowych (Ryc. 3B.1a/b)
+    # Style schematu zmiennych wskaźnikowych (Ryc. 3B.2/b)
     tags$style(HTML("
       .dum-grid {
         display: grid; grid-template-columns: auto repeat(2, 5.5em) repeat(2, auto);

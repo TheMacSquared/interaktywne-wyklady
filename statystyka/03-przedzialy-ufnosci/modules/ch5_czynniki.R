@@ -33,7 +33,6 @@ ch5_ui <- list(
       error). Cały przedział ma szerokość 2·ME. Dla średniej margines błędu
       to iloczyn ", gloss("wartość krytyczna", "wartości krytycznej"), " rozkładu t i błędu standardowego:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|ME⟧ = ⟦2|t^*⟧ \\cdot \\frac{⟦3|s⟧}{\\sqrt{⟦4|n⟧}}",
       notes  = list("margines błędu", "wartość krytyczna", "odchylenie standardowe",
@@ -102,7 +101,6 @@ ch5_ui <- list(
       ustalamy z góry, jakiej precyzji potrzebujemy, i liczymy, ile obserwacji
       trzeba zebrać. Wystarczy rozwiązać wzór na margines błędu względem n:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|n⟧ = \\left(\\frac{⟦2|z^*⟧ \\cdot ⟦3|s⟧}{⟦4|ME_{\\text{max}}⟧}\\right)^2",
       notes  = list("potrzebna liczebność", "wartość krytyczna", "zakładane odchylenie",

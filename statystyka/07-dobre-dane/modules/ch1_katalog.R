@@ -33,9 +33,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     danych da się często naprawić, choć naprawa kosztuje czas i część
     informacji."),
 
-  # PROTOTYP katalog: siedem problemów w dwóch grupach (kafelki prowadzą do sekcji)
+  # Siedem problemów w dwóch grupach (kafelki prowadzą do sekcji)
   figure_panel(
-    label = "Ryc. 1.0a",
+    label = "Ryc. 1.1",
     title = "Siedem problemów w danych",
     width_mode = "text",
     dd_problem_map()
@@ -48,7 +48,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     w populacji. Jak bardzo to oszacowanie może się mylić, mówi ",
     gloss("błąd standardowy"), ". Dla średniej jest to:"),
 
-  # PROTOTYP wzory: błąd standardowy ze znacznikami
+  # Błąd standardowy ze znacznikami
   lc_formula_annotated(
     "⟦1|SE⟧ = \\frac{⟦2|s⟧}{\\sqrt{⟦3|n⟧}}",
     notes  = list("błąd standardowy", "odchylenie standardowe", "liczba obserwacji"),
@@ -66,7 +66,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     różnią się średnią ocen. Panel pokazuje jego dane i ", gloss("histogram", "histogram"), " średnich ocen."),
 
   figure_panel(
-    label = "Ryc. 1.1",
+    label = "Ryc. 1.2",
     title = "Sześć ankiet",
     lc_plots(
       uiOutput("cat1_table"),
@@ -112,7 +112,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     zadowolenia i wykres rozrzutu stażu i wynagrodzenia."),
 
   figure_panel(
-    label = "Ryc. 1.2",
+    label = "Ryc. 1.3",
     title = "Ankieta zadowolenia w dziale IT",
     lc_plots(
       uiOutput("cat2_table"),
@@ -162,7 +162,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     tabelę i wykres ceny względem powierzchni przed poprawkami i po nich."),
 
   figure_panel(
-    label = "Ryc. 1.3",
+    label = "Ryc. 1.4",
     title = "Ogłoszenia mieszkań",
     lc_toolbar(
       lc_segmented("cat3_view", NULL,
@@ -217,7 +217,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     oczyszczeniu — histogram odzyskanych wartości."),
 
   figure_panel(
-    label = "Ryc. 1.4",
+    label = "Ryc. 1.5",
     title = "Ankieta z pytaniami otwartymi",
     lc_toolbar(
       lc_segmented("cat4_view", NULL,
@@ -268,7 +268,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     w każdej zmiennej."),
 
   figure_panel(
-    label = "Ryc. 1.5",
+    label = "Ryc. 1.6",
     title = "Ankieta z pominiętymi pytaniami",
     lc_plots(
       uiOutput("cat5_table"),
@@ -282,9 +282,9 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     komplet odpowiedzi mają tylko 2 z 12 osób. Gdybyśmy usunęli każdy
     wiersz z jakimkolwiek brakiem, z dwunastu ankiet zostałyby dwie."),
 
-  # PROTOTYP braki: mapa braków wiersz × zmienna, ostatnia kolumna = komplet
+  # Mapa braków wiersz × zmienna, ostatnia kolumna = komplet
   figure_panel(
-    label = "Ryc. 1.5a",
+    label = "Ryc. 1.7",
     title = "Gdzie leżą braki",
     width_mode = "text",
     lc_plot("cat5_matrix", ratio = "1.3/1", max_height = "380px")
@@ -322,7 +322,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     je w kolejności pomiarów, a przełącznik zamienia dni na średnie miesięczne."),
 
   figure_panel(
-    label = "Ryc. 1.6",
+    label = "Ryc. 1.8",
     title = "Dzienna temperatura przez pół roku",
     lc_toolbar(
       lc_segmented("cat6_view", NULL,
@@ -378,7 +378,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     pokazuje, ile obserwacji mamy w każdej z wersji."),
 
   figure_panel(
-    label = "Ryc. 1.7",
+    label = "Ryc. 1.9",
     title = "Wizyty pacjentów",
     lc_toolbar(
       lc_segmented("cat7_view", NULL,
@@ -607,7 +607,7 @@ ch1_server <- function(input, output, session) {
       ylim(0, 35)
   }))
 
-  # PROTOTYP braki: mapa braków
+  # Mapa braków
   zoom_plot_server("cat5_matrix", reactive(dd_missing_matrix_plot(cat_missing)))
 
   # --- Problem 6: Brak niezależności (przełącznik) ---

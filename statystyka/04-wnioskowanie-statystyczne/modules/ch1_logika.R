@@ -205,7 +205,7 @@ ch1d_ui <- list(
       prawdopodobieństwo wykrycia efektu, który naprawdę istnieje, nazywamy ",
       gloss("moc testu", "mocą testu"), "."),
 
-    # PROTOTYP wzory: α, β i moc ze znacznikami (kolory jak na Ryc. 3.1)
+    # α, β i moc ze znacznikami (kolory jak na Ryc. 3.1)
     lc_formula_annotated(
       "\\begin{aligned}
       P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ prawdziwa}) &= ⟦1|\\alpha⟧ \\\\
@@ -310,7 +310,7 @@ ch1d_ui <- list(
       otrzymalibyśmy wynik co najmniej tak skrajny jak zaobserwowany. Dla różnicy
       średnich w eksperymencie z telefonem:"),
 
-    # PROTOTYP wzory: definicja p-wartości ze znacznikami
+    # Definicja p-wartości ze znacznikami
     lc_formula_annotated(
       "⟦1|p⟧ = P\\left(⟦2|\\left|\\bar{X}_A - \\bar{X}_B\\right|⟧ \\geq ⟦3|\\left|d_{\\text{obs}}\\right|⟧ \\;\\middle|\\; ⟦4|H_0⟧\\right)",
       notes  = list("p-wartość", "różnica w powtórzeniu", "różnica z naszej próby", "założenie"),
@@ -427,9 +427,9 @@ ch1d_ui <- list(
       odrzucenia, więc ta reguła odrzuca prawdziwą H₀ z prawdopodobieństwem
       \\(\\alpha\\)."),
 
-    # PROTOTYP p-alfa: jeden wynik naraz; środek = H₀, krańce = Hₐ, p jako liczba
+    # Jeden wynik naraz; środek = H₀, krańce = Hₐ, p jako liczba
     figure_panel(
-      label = "Ryc. 3.4a",
+      label = "Ryc. 3.5",
       title = "p-wartość a α",
       width_mode = "text",
       lc_toolbar(
@@ -440,7 +440,7 @@ ch1d_ui <- list(
       lc_plot("ch1d_palpha_plot", ratio = "2/1", max_height = "380px")
     ),
 
-    # PROTOTYP p-alfa: odczyt ryciny (nowy akapit, do akceptacji)
+    # Odczyt ryciny
     lc_p("Wynik 2.17 leży dalej od zera niż wartość krytyczna 1.96, czyli
       w obszarze Hₐ, a jego ogony są węższe niż pole α: p = 0.030 < 0.05.
       Wynik 1.50 zostaje w obszarze H₀, a jego ogony obejmują całe pole α
@@ -487,7 +487,7 @@ ch1d_ui <- list(
       i przyjęty poziom istotności."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.6",
       title = "Quiz: odrzucić czy nie?",
       uiOutput("ch1_quiz_scenario"),
       p("Decyzja:"),
@@ -520,7 +520,7 @@ ch1d_ui <- list(
 
 ch1_server <- function(input, output, session) {
 
-  # PROTOTYP p-alfa: jeden wynik naraz na N(0, 1) pod H₀. Środek (|z| < 1.96)
+  # Jeden wynik naraz na N(0, 1) pod H₀. Środek (|z| < 1.96)
   # podpisany H₀, krańce Hₐ; pole za ±|z| = p-wartość, jej liczba w odczycie.
   ch1d_palpha_z <- reactive(as.numeric(input$ch1d_palpha_case %||% "2.17"))
 

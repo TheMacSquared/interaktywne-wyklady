@@ -60,7 +60,7 @@ ch5_ui <- list(
       liczba obserwacji w jej wierszu pomnożona przez odsetek jej kolumny w całej
       próbie. Po uproszczeniu:"),
 
-    # PROTOTYP wzory: liczebność oczekiwana ze znacznikami
+    # Liczebność oczekiwana ze znacznikami
     lc_formula_annotated(
       "⟦1|E_{ij}⟧ = \\frac{⟦2|n_{i\\cdot}⟧ \\cdot ⟦3|n_{\\cdot j}⟧}{⟦4|n⟧}",
       notes  = list("liczebność oczekiwana", "suma wiersza", "suma kolumny", "liczba obserwacji"),
@@ -76,7 +76,7 @@ ch5_ui <- list(
       bo odchylenie o 10 znaczy więcej w komórce, w której spodziewamy się
       20 obserwacji, niż w tej, w której spodziewamy się 200:"),
 
-    # PROTOTYP wzory: statystyka χ² ze znacznikami
+    # Statystyka χ² ze znacznikami
     lc_formula_annotated(
       "⟦1|\\chi^2⟧ = ⟦2|\\sum_{i,j}⟧ \\frac{(⟦3|O_{ij}⟧ - ⟦4|E_{ij}⟧)^2}{E_{ij}}, \\qquad ⟦5|df⟧ = (⟦6|r⟧ - 1)(⟦7|c⟧ - 1)",
       notes  = list("statystyka χ²", "suma po komórkach", "liczebność obserwowana",

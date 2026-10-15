@@ -59,9 +59,9 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
       " — średni wynik testu Stanford 9 z czytania i matematyki (pkt).")
   ),
 
-  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
   figure_panel(
-    label = "Ryc. 2.0a",
+    label = "Ryc. 2.1",
     title = "Struktura zbioru CASchools",
     width_mode = "text",
     dd_schema("okręg szkolny", 420, c(
@@ -103,7 +103,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     zakres i wartości, które nie mieszczą się w sensownych granicach."),
 
   figure_panel(
-    label = "Ryc. 2.1",
+    label = "Ryc. 2.2",
     title = "Rozkład wybranej zmiennej",
     lc_toolbar(
       selectInput("tab1_var", "Zmienna",
@@ -132,7 +132,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     i czy prosta dobrze go opisuje."),
 
   figure_panel(
-    label = "Ryc. 2.2",
+    label = "Ryc. 2.3",
     title = "Wynik testu a cechy okręgu",
     lc_toolbar(
       selectInput("tab1_x", "Zmienna X",

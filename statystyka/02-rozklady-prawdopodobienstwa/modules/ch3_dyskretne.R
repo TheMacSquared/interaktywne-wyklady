@@ -38,7 +38,7 @@ exp_texts <- function(input, output, id, texts) {
 }
 exp_X <- function() tags$code("X", .noWS = "outside")
 
-# PROTOTYP dwumian-ciagi: wszystkie ciągi n prób (Ryc. 3.2a). Kolumna = liczba
+# Wszystkie ciągi n prób (Ryc. 3.3). Kolumna = liczba
 # sukcesów k, wiersz = jeden ciąg; sukces w kolorze p^k ze wzoru (terakota),
 # porażka w kolorze (1 − p)^(n − k) (indygo), liczba ciągów w kolorze C(n, k).
 ch3_binom_sequences <- function(n = 4) {
@@ -59,8 +59,8 @@ ch3_binom_sequences <- function(n = 4) {
     cols)
 }
 
-# PROTOTYP mapa-dyskretnych: cztery pytania i odpowiadające im rozkłady
-# (Ryc. 3.8a). Miniatury mają parametry z Ryc. 3.8, kolory z helpers.R.
+# Cztery pytania i odpowiadające im rozkłady
+# (Ryc. 3.10). Miniatury mają parametry z Ryc. 3.9, kolory z helpers.R.
 ch3_discrete_map <- function() {
   items <- list(
     list(q = "Każdy wynik tak samo?", name = "jednostajny", par = "1, …, n",
@@ -144,7 +144,6 @@ ch3_ui <- list(
       jest n, liczba możliwych wyników, a prawdopodobieństwo każdego wyniku
       to po prostu 1/n."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "P(X = k) = \\frac{1}{⟦1|n⟧}, \\quad E(X) = \\frac{⟦1|n⟧+1}{2}, \\quad Var(X) = \\frac{⟦1|n⟧^2 - 1}{12}",
       notes  = list("liczba możliwych wyników"),
@@ -212,7 +211,6 @@ ch3_ui <- list(
              aria = "Rzut sześcioma kostkami, liczba szóstek i histogram powtórzeń"))
     ),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "P(X = k) = ⟦1|\\binom{n}{k}⟧ \\, ⟦2|p^k⟧ \\, ⟦3|(1-p)^{n-k}⟧, \\quad E(X) = np, \\quad Var(X) = np(1-p)",
       notes  = list("liczba ułożeń", "k sukcesów", "n − k porażek"),
@@ -220,7 +218,7 @@ ch3_ui <- list(
       above  = 2
     ),
 
-    # PROTOTYP dwumian-ciagi: wszystkie ciągi czterech prób według liczby sukcesów
+    # Wszystkie ciągi czterech prób według liczby sukcesów
     lc_p("Przy czterech próbach wszystkie możliwe ciągi sukcesów i porażek da
       się wypisać: jest ich 16. Ułożone według liczby sukcesów tworzą słupki
       o wysokościach 1, 4, 6, 4 i 1. To są właśnie współczynniki
@@ -228,7 +226,7 @@ ch3_ui <- list(
       więc wysokości słupków to od razu kształt rozkładu B(4, 0.5)."),
 
     figure_panel(
-      label = "Ryc. 3.2a",
+      label = "Ryc. 3.3",
       title = "Ciągi czterech prób według liczby sukcesów",
       width_mode = "text",
       ch3_binom_sequences(4)
@@ -243,7 +241,7 @@ ch3_ui <- list(
       a SD ≈ 1.58. Na wykresie można nałożyć na siebie cztery scenariusze."),
 
     figure_panel(
-      label = "Ryc. 3.3",
+      label = "Ryc. 3.4",
       title = "Rozkład dwumianowy B(n, p)",
       full_width = TRUE,
       lc_toolbar(
@@ -294,7 +292,7 @@ ch3_ui <- list(
       klientów w nich weszło."),
 
     figure_panel(
-      label = "Ryc. 3.4",
+      label = "Ryc. 3.5",
       width_mode = "text",
       exp_widget("ch3_exp_pois", "Od godziny w sklepie do rozkładu Poissona", "Obserwuj godzinę",
         list(kind = "poisson", lambda = 4, window = 60, kmax = 11, unit = "godzina",
@@ -302,7 +300,6 @@ ch3_ui <- list(
              aria = "Klienci wchodzący do sklepu w ciągu godziny, liczba klientów i histogram powtórzeń"))
     ),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "P(X = ⟦1|k⟧) = \\frac{⟦2|\\lambda⟧^k e^{-⟦2|\\lambda⟧}}{k!}, \\quad E(X) = ⟦2|\\lambda⟧, \\quad Var(X) = ⟦2|\\lambda⟧",
       notes  = list("liczba zdarzeń", "średnia liczba zdarzeń"),
@@ -320,7 +317,7 @@ ch3_ui <- list(
       tylko 0.053."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.6",
       title = "Rozkład Poissona Pois(λ)",
       full_width = TRUE,
       lc_toolbar(
@@ -374,7 +371,7 @@ ch3_ui <- list(
       kilkanaście rzutów."),
 
     figure_panel(
-      label = "Ryc. 3.6",
+      label = "Ryc. 3.7",
       width_mode = "text",
       exp_widget("ch3_exp_geom", "Od rzutów do pierwszej szóstki do rozkładu geometrycznego", "Rzucaj do szóstki",
         list(kind = "geometric", faces = 6, hit = 6, kmax = 12, unit = "seria",
@@ -382,7 +379,6 @@ ch3_ui <- list(
              aria = "Rzuty kostką do pierwszej szóstki, liczba rzutów i histogram powtórzeń"))
     ),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "P(X = k) = ⟦1|(1-p)^{k-1}⟧ \\cdot ⟦2|p⟧, \\quad E(X) = \\frac{1}{p}, \\quad Var(X) = \\frac{1-p}{p^2}",
       notes  = list("k − 1 porażek", "sukces na końcu"),
@@ -397,7 +393,7 @@ ch3_ui <- list(
       (5/6)¹⁰ ≈ 0.162."),
 
     figure_panel(
-      label = "Ryc. 3.7",
+      label = "Ryc. 3.8",
       title = "Rozkład geometryczny Geom(p)",
       full_width = TRUE,
       lc_toolbar(
@@ -441,7 +437,7 @@ ch3_ui <- list(
       i przedział ±1 SD można włączyć na wykresie."),
 
     figure_panel(
-      label = "Ryc. 3.8",
+      label = "Ryc. 3.9",
       title = "Cztery rozkłady obok siebie",
       full_width = TRUE,
       checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
@@ -459,9 +455,9 @@ ch3_ui <- list(
       że przy silnie skośnych rozkładach sama para E(X) i SD nie opisuje
       dobrze kształtu."),
 
-    # PROTOTYP mapa-dyskretnych: pytanie → rozkład → kształt (wizualna wersja Zasady)
+    # Pytanie → rozkład → kształt (wizualna wersja Zasady)
     figure_panel(
-      label = "Ryc. 3.8a",
+      label = "Ryc. 3.10",
       title = "Które pytanie, który rozkład",
       width_mode = "wide",
       ch3_discrete_map()

@@ -315,7 +315,7 @@ ch2_ui <- list(
       kwadratów \\(SS_{res}\\), tę samą, którą minimalizuje metoda najmniejszych
       kwadratów. \\(R^2\\) mówi, jaką część \\(SS_{tot}\\) model usunął."),
 
-    # PROTOTYP P1-wzory: R² ze znacznikami symboli
+    # R² ze znacznikami symboli
     lc_formula_annotated(
       "R^2 = 1 - \\frac{⟦1|SS_{res}⟧}{⟦2|SS_{tot}⟧} = 1 - \\frac{\\sum_{i=1}^{n}(y_i - ⟦3|\\hat{y}_i⟧)^2}{\\sum_{i=1}^{n}(y_i - ⟦4|\\bar{y}⟧)^2}",
       notes  = list("suma kwadratów reszt", "całkowita suma kwadratów",
@@ -487,7 +487,7 @@ ch2_ui <- list(
     lc_p("Odpowiada na nie ", gloss("RMSE"), " (ang. root mean squared error),
       pierwiastek ze średniego kwadratu reszt:"),
 
-    # PROTOTYP P1-wzory: RMSE ze znacznikami symboli
+    # RMSE ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|RMSE⟧ = \\sqrt{\\frac{1}{⟦2|n⟧}\\sum_{i=1}^{n}(⟦3|y_i⟧ - ⟦4|\\hat{y}_i⟧)^2}",
       notes  = list("typowa pomyłka", "liczba obserwacji", "obserwacja",

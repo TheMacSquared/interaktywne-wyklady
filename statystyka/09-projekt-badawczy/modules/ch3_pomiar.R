@@ -8,7 +8,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Pomiar", content = tag
             potem we wniosku jako ograniczenie."
   ),
 
-  proj_stage_map(current = 3),  # PROTOTYP mapa: pasek etapów
+  proj_stage_map(current = 3),  # Pasek etapów
 
   lc_h2("sec-01", "Pojęcie → wskaźnik → zmienna → ograniczenie"),
 

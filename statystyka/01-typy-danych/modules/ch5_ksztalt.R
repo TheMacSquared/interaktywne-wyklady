@@ -2,7 +2,7 @@
 # CHAPTER 5: Kształt rozkładu
 # ============================================================================
 
-# PROTOTYP mapa-narzedzi: siatka statystyk (HTML/CSS, style w app.R)
+# Siatka statystyk (HTML/CSS, style w app.R)
 ch5_tools_map <- function() {
   chip <- function(txt, color = NULL) {
     tags$span(class = "tmap-chip",
@@ -70,14 +70,14 @@ ch5_ui <- list(
       above = c(3, 4, 5)
     ),
 
-    # PROTOTYP skosnosc-kroki: krokowa budowa skośności (standaryzacja → z³ → bilans)
+    # Krokowa budowa skośności (standaryzacja → z³ → bilans)
     lc_p("Panel przeprowadza to obliczenie na danych z ankiety. Najpierw
       zamieniamy każdą obserwację na odległość od średniej w odchyleniach
       standardowych, potem podnosimy te odległości do trzeciej potęgi,
       a na końcu sumujemy osobno wkłady z lewej i z prawej strony."),
 
     figure_panel(
-      label = "Ryc. 5.0a",
+      label = "Ryc. 5.1",
       lc_step_widget("ch5_sk",
         title = "Obliczanie skośności",
         steps = c("Dane", "Standaryzacja", "Trzecie potęgi", "Bilans"),
@@ -100,7 +100,7 @@ ch5_ui <- list(
       rozkład symetryczny."),
 
     figure_panel(
-      label = "Ryc. 5.1",
+      label = "Ryc. 5.2",
       title = "Porównanie trzech typów skośności",
       lc_plot("ch5_skew_comparison", max_height = "300px"),
       uiOutput("ch5_skew_comparison_caption")
@@ -119,7 +119,7 @@ ch5_ui <- list(
       a przy ujemnej mniejsza. Sprawdźmy to na danych z ankiety."),
 
     figure_panel(
-      label = "Ryc. 5.2",
+      label = "Ryc. 5.3",
       title = "Sprawdź skośność w naszych danych",
       selectInput("ch5_skew_var", "Wybierz zmienną:",
         choices = c(
@@ -177,9 +177,9 @@ ch5_ui <- list(
       skrajne) i platykurtyczne (ujemna: lekkie ogony, wartości skupione
       w ograniczonym zakresie)."),
 
-    # PROTOTYP potegi: wkład obserwacji przy drugiej i czwartej potędze
+    # Wkład obserwacji przy drugiej i czwartej potędze
     figure_panel(
-      label = "Ryc. 5.2a",
+      label = "Ryc. 5.4",
       title = "Wkład obserwacji: kwadrat i czwarta potęga",
       width_mode = "text",
       tags$div(class = "proto-potegi",
@@ -192,7 +192,7 @@ ch5_ui <- list(
       o wybranej kurtozie. Dolny wykres powiększa prawy ogon."),
 
     figure_panel(
-      label = "Ryc. 5.3",
+      label = "Ryc. 5.5",
       title = "Porównaj rozkłady o różnej kurtozie",
       lc_toolbar(
         lc_slider("ch5_kurt_val", "Nadwyżkowa kurtoza", -1.2, 6, 0, 0.2),
@@ -231,22 +231,22 @@ ch5_ui <- list(
       Panel poniżej zestawia ", gloss("histogram"), ", ", gloss("wykres pudełkowy"), " i tabelę wszystkich
       omówionych statystyk dla wybranej zmiennej."),
 
-    # PROTOTYP mapa-narzedzi: położenie / rozrzut × wrażliwe / odporne
+    # Położenie / rozrzut × wrażliwe / odporne
     figure_panel(
-      label = "Ryc. 5.3a",
+      label = "Ryc. 5.6",
       title = "Mapa narzędzi",
       width_mode = "text",
       ch5_tools_map()
     ),
 
     figure_panel(
-      label = "Ryc. 5.4",
+      label = "Ryc. 5.7",
       title = "Pełna charakterystyka rozkładu",
       lc_toolbar(
         lc_segmented("ch5_full_var", "Zmienna",
           choices = c("Wzrost" = "wzrost", "Średnia ocen" = "srednia_ocen",
                       "Czas dojazdu" = "czas_dojazdu", "Waga" = "waga")),
-        # PROTOTYP pelna-tabela: zestaw minimum albo pełny (dwie tabele obok siebie)
+        # Zestaw minimum albo pełny (dwie tabele obok siebie)
         lc_segmented("ch5_full_set", "Zestaw",
           choices = c("Minimum" = "min", "Pełny" = "full"), selected = "min")
       ),
@@ -380,7 +380,7 @@ ch5_server <- function(input, output, session) {
       ", Mediana = ", round(med, 2))
   })
 
-  # PROTOTYP skosnosc-kroki: serwer widgetu krokowego
+  # Serwer widgetu krokowego
   ch5_sk_step <- lc_step_server("ch5_sk", input)$step
 
   ch5_sk_data <- reactive({
@@ -469,7 +469,7 @@ ch5_server <- function(input, output, session) {
       })
   })
 
-  # PROTOTYP potegi: słupki z² i z⁴ dla odległości 1, 2, 3 SD
+  # Słupki z² i z⁴ dla odległości 1, 2, 3 SD
   zoom_plot_server("ch5_proto_potegi", reactive({
     z <- 1:3
     df <- data.frame(
@@ -668,7 +668,7 @@ ch5_server <- function(input, output, session) {
     mode_bin_idx <- which.max(h$counts)
     mode_val <- (h$breaks[mode_bin_idx] + h$breaks[mode_bin_idx + 1]) / 2
 
-    # PROTOTYP pelna-tabela: minimum (n, średnia, SD, mediana, kwartyle) albo
+    # Minimum (n, średnia, SD, mediana, kwartyle) albo
     # pełny zestaw w dwóch tabelach obok siebie.
     f2 <- function(x) formatC(x, format = "f", digits = 2)
     stat_table <- function(names, values, label) {

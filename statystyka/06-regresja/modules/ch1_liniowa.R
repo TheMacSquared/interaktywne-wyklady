@@ -34,7 +34,7 @@
 
 .ch1_pred_choices <- setNames(names(.ch1_pred_specs), vapply(.ch1_pred_specs, `[[`, character(1), "label"))
 
-# PROTOTYP P2-anatomia: prosta Y = β₀ + β₁X, trójkąt nachylenia i błąd ε
+# Prosta Y = β₀ + β₁X, trójkąt nachylenia i błąd ε
 # jednego punktu. Kolory jak w znacznikach wzorów: β₀ terakota, β₁ indygo,
 # ε bursztyn, obserwacje niebo.
 ch1_anatomy_plot <- function() {
@@ -122,7 +122,7 @@ ch1_ui <- list(
       gloss("regresja prosta", "regresji liniowej prostej"), ". Model zapisuje
       każdą wartość \\(Y\\) jako punkt na prostej plus odchylenie losowe:"),
 
-    # PROTOTYP P1-wzory: model regresji prostej ze znacznikami symboli
+    # Model regresji prostej ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|Y⟧ = ⟦2|\\beta_0⟧ + ⟦3|\\beta_1⟧ ⟦4|X⟧ + ⟦5|\\varepsilon⟧",
       notes  = list("zmienna zależna", "wyraz wolny", "nachylenie", "predyktor",
@@ -131,9 +131,9 @@ ch1_ui <- list(
       above  = c(2, 4)
     ),
 
-    # PROTOTYP P2-anatomia: rycina z β₀, β₁ i ε na jednej prostej
+    # Rycina z β₀, β₁ i ε na jednej prostej
     figure_panel(
-      label = "Ryc. 1.0a", title = "Z czego składa się prosta regresji",
+      label = "Ryc. 1.1", title = "Z czego składa się prosta regresji",
       width_mode = "text",
       lc_plot("ch1_anatomy_plot", ratio = "1.6/1", max_height = "340px")
     ),
@@ -153,7 +153,7 @@ ch1_ui <- list(
       gloss("odchylenie standardowe", "odchylenia standardowego"), "."),
 
     figure_panel(
-      label = "Ryc. 1.1", title = "Co robią β₀, β₁ i szum?",
+      label = "Ryc. 1.2", title = "Co robią β₀, β₁ i szum?",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch1_beta_b0", "β₀ (punkt startu)", -10, 20, 5, 1),
@@ -186,7 +186,7 @@ ch1_ui <- list(
       dwie średnie, dwa odchylenia standardowe i współczynnik korelacji.
       Nachylenie i wyraz wolny wyznacza się tak:"),
 
-    # PROTOTYP P1-wzory: b₁ i b₀ z korelacji
+    # B₁ i b₀ z korelacji
     lc_formula_annotated(
       "⟦1|b_1⟧ = ⟦2|r⟧ \\cdot \\frac{⟦3|s_Y⟧}{⟦4|s_X⟧}, \\qquad ⟦5|b_0⟧ = ⟦6|\\bar{y}⟧ - b_1 ⟦7|\\bar{x}⟧",
       notes  = list("nachylenie", "korelacja", "odch. std. Y", "odch. std. X",
@@ -204,7 +204,7 @@ ch1_ui <- list(
       losowej próbie 65 punktów."),
 
     figure_panel(
-      label = "Ryc. 1.2",
+      label = "Ryc. 1.3",
       full_width = TRUE,
       lc_step_widget("ch1_corr",
         title = "Jak policzyć regresję z korelacji?",
@@ -265,7 +265,7 @@ ch1_ui <- list(
       do średniego wyniku wybranej grupy na drugim kolokwium."),
 
     figure_panel(
-      label = "Ryc. 1.3", title = "Najlepsi i najsłabsi na drugim kolokwium",
+      label = "Ryc. 1.4", title = "Najlepsi i najsłabsi na drugim kolokwium",
       full_width = TRUE,
       lc_toolbar(
         lc_segmented("ch1_rtm_group", "Grupa",
@@ -356,7 +356,7 @@ ch1_ui <- list(
       Spośród wszystkich prostych wybieramy tę, dla której suma kwadratów
       jest najmniejsza:"),
 
-    # PROTOTYP P1-wzory: suma kwadratów reszt
+    # Suma kwadratów reszt
     lc_formula_annotated(
       "⟦1|SS_{res}⟧ = \\sum_{i=1}^{n} (⟦2|y_i⟧ - ⟦3|\\hat{y}_i⟧)^2 = \\sum_{i=1}^{n} (y_i - ⟦4|b_0⟧ - ⟦5|b_1⟧ ⟦6|x_i⟧)^2 \\;\\to\\; \\min",
       notes  = list("suma kwadratów reszt", "obserwacja", "wartość przewidywana",
@@ -373,7 +373,7 @@ ch1_ui <- list(
       z inną prostą."),
 
     figure_panel(
-      label = "Ryc. 1.4",
+      label = "Ryc. 1.5",
       full_width = TRUE,
       lc_step_widget("ch1_ols",
         title = "Jak linia staje się modelem",
@@ -405,7 +405,7 @@ ch1_ui <- list(
       ". Reszta to różnica między wartością zaobserwowaną a wartością
       przewidzianą przez model:"),
 
-    # PROTOTYP P1-wzory: reszta
+    # Reszta
     lc_formula_annotated(
       "⟦1|e_i⟧ = ⟦2|y_i⟧ - ⟦3|\\hat{y}_i⟧",
       notes  = list("reszta", "obserwacja", "wartość przewidywana"),
@@ -463,7 +463,7 @@ ch1_ui <- list(
       budowę co w teście t z wykładu 04: estymata podzielona przez swój błąd
       standardowy. Mówi, ile błędów standardowych dzieli \\(b_1\\) od zera."),
 
-    # PROTOTYP P1-wzory: statystyka t dla nachylenia
+    # Statystyka t dla nachylenia
     lc_formula_annotated(
       "⟦1|t⟧ = \\frac{⟦2|b_1⟧}{⟦3|SE(b_1)⟧}, \\qquad df = ⟦4|n⟧ - 2",
       notes  = list("statystyka testowa", "nachylenie z próby", "błąd standardowy",
@@ -507,7 +507,7 @@ ch1_ui <- list(
       nachyleniu."),
 
     figure_panel(
-      label = "Ryc. 1.5", title = "Kiedy nachylenie jest istotne?",
+      label = "Ryc. 1.6", title = "Kiedy nachylenie jest istotne?",
       full_width = TRUE,
       lc_toolbar(
         selectInput("ch1_pval_scenario", "Scenariusz",
@@ -544,7 +544,7 @@ ch1_ui <- list(
       " dla \\(\\beta_1\\), zbudowany jak w wykładzie 03: estymata plus minus
       ", gloss("wartość krytyczna"), " razy błąd standardowy."),
 
-    # PROTOTYP P1-wzory: przedział ufności dla β₁
+    # Przedział ufności dla β₁
     lc_formula_annotated(
       "⟦1|b_1⟧ \\pm ⟦2|t^*_{\\alpha/2,\\, n-2}⟧ \\cdot ⟦3|SE(b_1)⟧",
       notes  = list("nachylenie z próby", "wartość krytyczna", "błąd standardowy"),
@@ -587,7 +587,7 @@ ch1_ui <- list(
       swoją ocenę z odpowiedzią."),
 
     figure_panel(
-      label = "Ryc. 1.6", title = "CASchools: od tabeli wyników do interpretacji",
+      label = "Ryc. 1.7", title = "CASchools: od tabeli wyników do interpretacji",
       full_width = TRUE,
       lc_toolbar(
         selectInput("ch1_cas_x", "Zmienna X",
@@ -627,7 +627,7 @@ ch1_ui <- list(
       poprawnie odczytuje ten współczynnik."),
 
     figure_panel(
-      label = "Ryc. 1.7",
+      label = "Ryc. 1.8",
       title = "Co znaczy b₁ = 1.94?",
       p("Model: wynik z czytania (punkty) ~ dochód okręgu (tys. USD),
         \\(b_1 = 1.94\\). Które zdanie jest poprawne?"),
@@ -677,7 +677,7 @@ ch1_ui <- list(
       przewidywanie. Po podstawieniu wartości \\(X\\) do równania dostajemy ",
       gloss("wartość przewidywana", "wartość przewidywaną"), ":"),
 
-    # PROTOTYP P1-wzory: wartość przewidywana
+    # Wartość przewidywana
     lc_formula_annotated(
       "⟦1|\\hat{Y}⟧ = ⟦2|b_0⟧ + ⟦3|b_1⟧ ⟦4|X⟧",
       notes  = list("wartość przewidywana", "wyraz wolny", "nachylenie", "predyktor"),
@@ -696,7 +696,7 @@ ch1_ui <- list(
       \\(\\hat{Y}\\) samodzielnie przed odsłonięciem odpowiedzi."),
 
     figure_panel(
-      label = "Ryc. 1.8", title = "Użyj równania regresji do przewidywania",
+      label = "Ryc. 1.9", title = "Użyj równania regresji do przewidywania",
       full_width = TRUE,
       lc_toolbar(
         selectInput("ch1_pred_case", "Model",
@@ -770,7 +770,7 @@ ch1_ui <- list(
 
 ch1_server <- function(input, output, session) {
 
-  # PROTOTYP P2-anatomia: statyczna rycina prostej z β₀, β₁ i ε
+  # Statyczna rycina prostej z β₀, β₁ i ε
   zoom_plot_server("ch1_anatomy_plot", reactive(ch1_anatomy_plot()),
     alt = "Prosta regresji z zaznaczonym wyrazem wolnym przy X równym zero, trójkątem nachylenia o podstawie 1 i pionowym odcinkiem błędu jednego punktu")
 

@@ -8,7 +8,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
             czego w danych brakuje, jest równie ważna jak lista wyników."
   ),
 
-  proj_stage_map(current = 6),  # PROTOTYP mapa: pasek etapów
+  proj_stage_map(current = 6),  # Pasek etapów
 
   lc_p("Rozdział 5 sprawdził każdy trop osobno i wypełnił tablicę. Cel
     badania był jednak sformułowany dla całej wiązki naraz: ",
@@ -91,9 +91,9 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     atrakcyjność i wyższą ocenę. Jest odwrotnie, więc uwzględnienie płci
     nie powinno osłabić związku, a raczej nieco go wzmocnić."),
 
-  # PROTOTYP trojkat: płeć wiąże się z obiema zmiennymi, ale w przeciwnych kierunkach
+  # Płeć wiąże się z obiema zmiennymi, ale w przeciwnych kierunkach
   figure_panel(
-    label = "Ryc. 6.1a",
+    label = "Ryc. 6.2",
     title = "Płeć jako kandydat na zmienną zakłócającą",
     width_mode = "text",
     proj_confounder(
@@ -112,7 +112,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     zmiennych, których związek jest wyraźnie większy niż u pozostałych,
     i to zarówno z beauty, jak i z oceną kursu."),
 
-  figure_panel(label = "Ryc. 6.2", title = "Związki cech prowadzącego i kursu z beauty i z oceną kursu",
+  figure_panel(label = "Ryc. 6.3", title = "Związki cech prowadzącego i kursu z beauty i z oceną kursu",
     uiOutput("ch6_confounder_table")
   ),
 

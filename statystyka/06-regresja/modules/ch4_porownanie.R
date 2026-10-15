@@ -90,7 +90,7 @@ ch4_ui <- list(
     lc_p("Najprostsza poprawka dotyczy samego R². R² skorygowany liczy
       dopasowanie z uwzględnieniem liczby predyktorów k:"),
 
-    # PROTOTYP P1-wzory: skorygowany R² ze znacznikami symboli
+    # Skorygowany R² ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|R^2_{adj}⟧ = 1 - \\frac{(1 - R^2)(⟦2|n⟧ - 1)}{n - ⟦3|k⟧ - 1}",
       notes  = list("skorygowany R²", "liczba obserwacji", "liczba predyktorów"),
@@ -110,7 +110,7 @@ ch4_ui <- list(
       parametrów. W ", gloss("regresja liniowa", "regresji liniowej"), " z k predyktorami szacujemy k + 1
       współczynników i ", gloss("wariancja", "wariancję"), " reszt, razem k + 2 parametry:"),
 
-    # PROTOTYP P1-wzory: AIC i BIC jako dopasowanie + kara
+    # AIC i BIC jako dopasowanie + kara
     lc_formula_annotated(
       "\\text{AIC} = ⟦1|-2\\ln\\hat{L}⟧ + ⟦2|2(k + 2)⟧, \\qquad \\text{BIC} = -2\\ln\\hat{L} + ⟦3|(k + 2)\\ln n⟧",
       notes  = list("niedopasowanie", "kara AIC", "kara BIC"),

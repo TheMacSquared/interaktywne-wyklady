@@ -31,7 +31,6 @@ ch5_ui <- list(
       środka krzywej, i ", gloss("odchylenie standardowe"), " \\(\\sigma\\), które
       ustala jej szerokość. Zapisujemy to krótko \\(X \\sim N(\\mu, \\sigma)\\)."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "f(x) = \\frac{1}{⟦1|\\sigma⟧\\sqrt{2\\pi}} \\, e^{-\\frac{(x-⟦2|\\mu⟧)^2}{2⟦1|\\sigma⟧^2}} \\qquad E(X) = ⟦2|\\mu⟧ \\qquad Var(X) = ⟦1|\\sigma⟧^2",
       notes  = list("odchylenie standardowe", "średnia"),
@@ -160,7 +159,6 @@ ch5_ui <- list(
       u mężczyzny. Odpowiedzią jest ", gloss("standaryzacja"), ". Od wartości
       odejmujemy średnią i dzielimy wynik przez odchylenie standardowe:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|z⟧ = \\frac{⟦2|x⟧ - ⟦3|\\mu⟧}{⟦4|\\sigma⟧} \\qquad X \\sim N(\\mu, \\sigma) \\;\\Rightarrow\\; Z = \\frac{X - \\mu}{\\sigma} \\sim N(0, 1)",
       notes  = list("wynik standaryzowany", "wartość", "średnia", "odchylenie standardowe"),

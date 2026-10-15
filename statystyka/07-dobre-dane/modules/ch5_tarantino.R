@@ -31,9 +31,9 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     tags$li(tags$code("minutes_in"), " — minuta filmu, w której zdarzenie nastąpiło.")
   ),
 
-  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
   figure_panel(
-    label = "Ryc. 5.0a",
+    label = "Ryc. 5.1",
     title = "Struktura zbioru tarantino",
     width_mode = "text",
     dd_schema("zdarzenie", 1894, c(
@@ -69,7 +69,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     tylko liczą zdarzenia."),
 
   figure_panel(
-    label = "Ryc. 5.1",
+    label = "Ryc. 5.2",
     title = "Kiedy w filmach pojawiają się zdarzenia",
     lc_toolbar(
       lc_segmented("tab4_view", NULL,
@@ -99,7 +99,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     się tu zastosować do tabeli w obecnej postaci."),
 
   figure_panel(
-    label = "Ryc. 5.2",
+    label = "Ryc. 5.3",
     title = "Jaka analiza tu pasuje?",
     uiOutput("tab4_quiz_options"),
     uiOutput("tab4_quiz_result")
@@ -114,7 +114,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     jednostką obserwacji staje się film."),
 
   figure_panel(
-    label = "Ryc. 5.3",
+    label = "Ryc. 5.4",
     title = "Agregacja do poziomu filmów",
     lc_action("tab4_aggregate", "Zagreguj dane", variant = "solid"),
     uiOutput("tab4_agg_result")

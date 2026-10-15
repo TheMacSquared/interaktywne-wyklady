@@ -51,7 +51,7 @@ ch3_ui <- lecture_chapter(
       że liczebność oczekiwana komórki to suma jej wiersza pomnożona przez sumę
       jej kolumny i podzielona przez liczbę wszystkich obserwacji:"),
 
-    # PROTOTYP wzory: liczebność oczekiwana komórki
+    # Liczebność oczekiwana komórki
     lc_formula_annotated(
       "⟦1|E_{ij}⟧ = \\frac{⟦2|n_{i\\cdot}⟧ \\cdot ⟦3|n_{\\cdot j}⟧}{⟦4|n⟧}",
       notes  = list("liczebność oczekiwana", "suma wiersza", "suma kolumny", "liczba obserwacji"),

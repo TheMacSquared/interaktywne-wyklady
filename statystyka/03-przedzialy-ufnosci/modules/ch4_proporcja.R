@@ -31,7 +31,6 @@ ch4_ui <- list(
     lc_p("Estymatorem \\(p\\) jest ", gloss("proporcja z próby"), " \\(\\hat{p}\\):
       liczba odpowiedzi TAK \\(x\\) podzielona przez ", gloss("liczebność"), " próby \\(n\\)."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|\\hat{p}⟧ = \\frac{⟦2|x⟧}{⟦3|n⟧}",
       notes  = list("proporcja z próby", "liczba odpowiedzi TAK", "liczba obserwacji"),
@@ -49,7 +48,6 @@ ch4_ui <- list(
       informację: \\(\\hat{p}\\) jest średnią z \\(n\\) zer i jedynek, więc przy
       dużej próbie ma w przybliżeniu rozkład normalny."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "E(⟦1|\\hat{p}⟧) = ⟦2|p⟧ \\qquad ⟦3|SE⟧(\\hat{p}) = \\sqrt{\\frac{p(1-p)}{⟦4|n⟧}}",
       notes  = list("proporcja z próby", "proporcja w populacji", "błąd standardowy",
@@ -67,7 +65,6 @@ ch4_ui <- list(
       jak w wykładzie 02. Tak zbudowany ", gloss("przedział ufności"),
       " nazywa się ", gloss("przedział Walda", "przedziałem Walda"), "."),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "⟦1|CI⟧ = ⟦2|\\hat{p}⟧ \\pm ⟦3|z^*_{\\alpha/2}⟧ \\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{⟦4|n⟧}}",
       notes  = list("przedział ufności", "proporcja z próby", "wartość krytyczna",
@@ -141,7 +138,6 @@ ch4_ui <- list(
       różnicy średnich w rozdziale 3. Błąd standardowy różnicy to pierwiastek
       z tej sumy:"),
 
-    # PROTOTYP wzory: wzór ze znacznikami symboli
     lc_formula_annotated(
       "CI = (⟦1|\\hat{p}_1 - \\hat{p}_2⟧) \\pm ⟦2|z^*⟧ \\cdot \\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{⟦3|n_1⟧} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}}",
       notes  = list("różnica proporcji z prób", "wartość krytyczna", "liczebność grupy 1"),

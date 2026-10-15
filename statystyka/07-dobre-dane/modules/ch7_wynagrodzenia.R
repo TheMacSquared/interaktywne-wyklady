@@ -34,9 +34,9 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     tags$li(tags$code("wage"), " — roczne wynagrodzenie w tysiącach dolarów.")
   ),
 
-  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
   figure_panel(
-    label = "Ryc. 7.0a",
+    label = "Ryc. 7.1",
     title = "Struktura zbioru Wage",
     width_mode = "text",
     dd_schema("mężczyzna", 3000, c(
@@ -77,7 +77,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     kategorie mają dość obserwacji do porównań."),
 
   figure_panel(
-    label = "Ryc. 7.1",
+    label = "Ryc. 7.2",
     title = "Rozkład wybranej zmiennej",
     lc_toolbar(
       selectInput("tab6_var", "Zmienna",
