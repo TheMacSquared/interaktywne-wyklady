@@ -20,6 +20,20 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     czy doświadczenie i wykształcenie uczestników wiążą się z tym, jak
     oceniają swoje umiejętności?"),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 8.0a",
+    title = "Struktura zbioru zgłoszeń",
+    width_mode = "text",
+    dd_schema("zgłoszenie", 90, c(
+      wiek = "ciagla",
+      wyksztalcenie = "porzadkowa",
+      doswiadczenie = "tekst",
+      dostepnosc = "tekst",
+      ocena_umiejetnosci = "tekst"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę, które kolumny zawierają liczby albo

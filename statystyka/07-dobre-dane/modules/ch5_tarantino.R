@@ -31,6 +31,19 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     tags$li(tags$code("minutes_in"), " — minuta filmu, w której zdarzenie nastąpiło.")
   ),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 5.0a",
+    title = "Struktura zbioru tarantino",
+    width_mode = "text",
+    dd_schema("zdarzenie", 1894, c(
+      movie = "nominalna",
+      type = "nominalna",
+      word = "tekst",
+      minutes_in = "ciagla"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę przede wszystkim na to, co opisuje

@@ -19,6 +19,20 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     wpływa na sprzedaż, czyli czy w chłodniejsze dni studenci kupują więcej
     kawy."),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 11.0a",
+    title = "Struktura zbioru sprzedaży",
+    width_mode = "text",
+    dd_schema("dzień", 245, c(
+      dzien = "id",
+      data = "data",
+      dzien_tyg = "nominalna",
+      kawy = "dyskretna",
+      temperatura = "ciagla"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę na puste komórki i na to, czym jest
@@ -88,9 +102,12 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     niezależne, punkty na wykresie tworzyłyby bezkształtną chmurę,
     a korelacja byłaby bliska zera."),
 
-  lc_formula_box(withMathJax(
-    "$$r_1 = \\text{cor}(x_t,\\; x_{t+1})$$"
-  )),
+  # PROTOTYP wzory: autokorelacja rzędu 1 ze znacznikami
+  lc_formula_annotated(
+    "⟦1|r_1⟧ = \\text{cor}(⟦2|x_t⟧,\\; ⟦3|x_{t+1}⟧)",
+    notes  = list("autokorelacja", "sprzedaż danego dnia", "sprzedaż następnego dnia"),
+    colors = c("accent", "niebo", "indygo")
+  ),
 
   conditionalPanel("input.tab10_reveal > 0",
     figure_panel(
@@ -159,6 +176,14 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
   lc_note("Werdykt",
     "Zbiór zły do prostych testów: obserwacje dzienne są zależne, a związek
      temperatury ze sprzedażą miesza się z porą roku."
+  ),
+
+  # PROTOTYP mapa: dziesięć zbiorów × siedem problemów z katalogu
+  figure_panel(
+    label = "Ryc. 11.4a",
+    title = "Dziesięć zbiorów, siedem problemów",
+    width_mode = "wide",
+    dd_dataset_map()
   ),
 
   lc_p("Dziesięć zbiorów dało dziesięć różnych werdyktów, a o żadnym nie

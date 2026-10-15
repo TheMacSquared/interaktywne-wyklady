@@ -21,6 +21,20 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     stresu, czy kierunki różnią się ocenami. Przed dalszą lekturą warto
     samodzielnie ocenić, czy te dane pozwolą na nie odpowiedzieć."),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 3.0a",
+    title = "Struktura zbioru ankiety",
+    width_mode = "text",
+    dd_schema("znajomy studenta", 8, c(
+      plec = "nominalna",
+      kierunek = "nominalna",
+      godziny_nauki = "ciagla",
+      stres = "porzadkowa",
+      srednia_ocen = "ciagla"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("W podglądzie policz, ile osób trafia do każdej grupy, którą
@@ -45,9 +59,13 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     szerokość ", gloss("przedział ufności", "przedziału ufności"), ".
     Zależy ona od rozrzutu danych i od liczby obserwacji:"),
 
-  lc_formula_box(withMathJax(
-    "$$\\text{szerokość} = 2 \\cdot t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$"
-  )),
+  # PROTOTYP wzory: szerokość przedziału ufności ze znacznikami
+  lc_formula_annotated(
+    "\\text{szerokość} = 2 \\cdot ⟦1|t^*_{\\alpha/2,\\, n-1}⟧ \\cdot \\frac{⟦2|s⟧}{\\sqrt{⟦3|n⟧}}",
+    notes  = list("wartość krytyczna", "odchylenie standardowe", "liczba obserwacji"),
+    colors = c("indygo", "wrzos", "szalwia"),
+    above  = 2
+  ),
 
   lc_p("Z wykładu 04 wiemy z kolei, że ", gloss("moc testu"), " to
     prawdopodobieństwo, że test wykryje różnicę, która naprawdę istnieje.

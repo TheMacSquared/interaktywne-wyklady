@@ -34,6 +34,23 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     tags$li(tags$code("wage"), " — roczne wynagrodzenie w tysiącach dolarów.")
   ),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 7.0a",
+    title = "Struktura zbioru Wage",
+    width_mode = "text",
+    dd_schema("mężczyzna", 3000, c(
+      year = "dyskretna",
+      age = "ciagla",
+      maritl = "nominalna",
+      race = "nominalna",
+      education = "porzadkowa",
+      jobclass = "nominalna",
+      health = "porzadkowa",
+      wage = "ciagla"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę na typy zmiennych i na to, czy

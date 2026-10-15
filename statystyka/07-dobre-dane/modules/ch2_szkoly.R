@@ -59,6 +59,26 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
       " — średni wynik testu Stanford 9 z czytania i matematyki (pkt).")
   ),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 2.0a",
+    title = "Struktura zbioru CASchools",
+    width_mode = "text",
+    dd_schema("okręg szkolny", 420, c(
+      district = "id",
+      school = "id",
+      students = "dyskretna",
+      teachers = "ciagla",
+      expenditure = "ciagla",
+      income = "ciagla",
+      english = "ciagla",
+      lunch = "ciagla",
+      calworks = "ciagla",
+      read = "ciagla",
+      math = "ciagla"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("W podglądzie zwróć uwagę, co jest ",

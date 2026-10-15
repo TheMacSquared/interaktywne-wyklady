@@ -19,6 +19,20 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     pytanie o zależność dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"), ", na które w wykładzie 06
     odpowiadała ", gloss("regresja liniowa"), "."),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 9.0a",
+    title = "Struktura zbioru wyników badań",
+    width_mode = "text",
+    dd_schema("pacjent", 150, c(
+      wiek = "ciagla",
+      plec = "nominalna",
+      hemoglobina = "ciagla",
+      glukoza = "ciagla",
+      cisnienie = "ciagla"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę na wartości, które nie mieszczą się

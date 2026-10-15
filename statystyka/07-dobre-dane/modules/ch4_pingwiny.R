@@ -35,6 +35,23 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     333 pingwiny, a nie 344. Ten rozdział pokazuje, skąd wzięła się ta
     różnica i czy usunięcie 11 osobników było uzasadnione."),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 4.0a",
+    title = "Struktura zbioru penguins",
+    width_mode = "text",
+    dd_schema("pingwin", 344, c(
+      species = "nominalna",
+      island = "nominalna",
+      bill_length_mm = "ciagla",
+      bill_depth_mm = "ciagla",
+      flipper_length_mm = "ciagla",
+      body_mass_g = "ciagla",
+      sex = "nominalna",
+      year = "dyskretna"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("W podglądzie zwróć uwagę na komórki z wartością NA i na to, czy

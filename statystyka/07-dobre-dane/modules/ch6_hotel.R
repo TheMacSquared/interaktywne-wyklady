@@ -27,6 +27,20 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     tags$li(tags$code("kraj_goscia"), " — kraj pochodzenia gościa.")
   ),
 
+  # PROTOTYP schemat: struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 6.0a",
+    title = "Struktura zbioru hotelu",
+    width_mode = "text",
+    dd_schema("recenzja gościa", 80, c(
+      ocena_ogolna = "porzadkowa",
+      typ_pokoju = "nominalna",
+      dlugosc_pobytu = "dyskretna",
+      cena_za_noc = "ciagla",
+      kraj_goscia = "nominalna"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę, jak często w kolejnych wierszach

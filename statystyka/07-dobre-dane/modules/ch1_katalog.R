@@ -33,6 +33,14 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     danych da się często naprawić, choć naprawa kosztuje czas i część
     informacji."),
 
+  # PROTOTYP katalog: siedem problemów w dwóch grupach (kafelki prowadzą do sekcji)
+  figure_panel(
+    label = "Ryc. 1.0a",
+    title = "Siedem problemów w danych",
+    width_mode = "text",
+    dd_problem_map()
+  ),
+
   # --- Problem 1: Za mało danych ---
   lc_h2("sec-p1", "1", "Za mało danych"),
 
@@ -40,9 +48,13 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     w populacji. Jak bardzo to oszacowanie może się mylić, mówi ",
     gloss("błąd standardowy"), ". Dla średniej jest to:"),
 
-  lc_formula_box(withMathJax(
-    "$$SE = \\frac{s}{\\sqrt{n}}$$"
-  )),
+  # PROTOTYP wzory: błąd standardowy ze znacznikami
+  lc_formula_annotated(
+    "⟦1|SE⟧ = \\frac{⟦2|s⟧}{\\sqrt{⟦3|n⟧}}",
+    notes  = list("błąd standardowy", "odchylenie standardowe", "liczba obserwacji"),
+    colors = c("indygo", "wrzos", "szalwia"),
+    above  = 2
+  ),
 
   lc_p("Błąd standardowy maleje dopiero z pierwiastkiem z liczby obserwacji.
     Przy małym \\(n\\) oszacowania są tak niepewne, że prawdziwego efektu
@@ -269,6 +281,14 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     ale nie zniszczoną. Braki leżą jednak w różnych wierszach, więc
     komplet odpowiedzi mają tylko 2 z 12 osób. Gdybyśmy usunęli każdy
     wiersz z jakimkolwiek brakiem, z dwunastu ankiet zostałyby dwie."),
+
+  # PROTOTYP braki: mapa braków wiersz × zmienna, ostatnia kolumna = komplet
+  figure_panel(
+    label = "Ryc. 1.5a",
+    title = "Gdzie leżą braki",
+    width_mode = "text",
+    lc_plot("cat5_matrix", ratio = "1.3/1", max_height = "380px")
+  ),
 
   lc_p("Braki zmniejszają liczebność próby, a więc i moc testu (wykład 04).
     Groźniejsze jest jednak ", gloss("obciążenie", "obciążenie"), ". Braki rzadko pojawiają się
@@ -586,6 +606,9 @@ ch1_server <- function(input, output, session) {
       theme_upwr(base_size = 14) +
       ylim(0, 35)
   }))
+
+  # PROTOTYP braki: mapa braków
+  zoom_plot_server("cat5_matrix", reactive(dd_missing_matrix_plot(cat_missing)))
 
   # --- Problem 6: Brak niezależności (przełącznik) ---
   cat6_view <- reactive({

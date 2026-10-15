@@ -52,6 +52,8 @@ lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),            local = TRUE)
 source(file.path(app_dir, "modules", "scene_helpers.R"),      local = TRUE)
+# PROTOTYP wizualne-stopy: diagramy schemat / katalog / mapa / braki
+source(file.path(app_dir, "modules", "proto_visuals.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch0_wprowadzenie.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch1_katalog.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "ch2_szkoly.R"),         local = TRUE)
@@ -86,7 +88,9 @@ ui <- lecture_page(
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
       .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
       .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
-    "))
+    ")),
+    # PROTOTYP wizualne-stopy: CSS diagramów (modules/proto_visuals.R)
+    tags$style(HTML(dd_proto_css))
   )
 )
 
