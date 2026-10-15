@@ -232,7 +232,7 @@ ch4_ui <- list(
       gloss("wartość odstająca", "wartości odstające"), "."),
 
     lc_formula_annotated(
-      "⟦1|\\text{IQR}⟧ = ⟦2|Q_3⟧ - ⟦3|Q_1⟧ \\qquad \\text{granice wartości odstających: } Q_1 - ⟦4|1.5 \\cdot \\text{IQR}⟧, \\;\\; Q_3 + 1.5 \\cdot \\text{IQR}",
+      "⟦1|\\text{IQR}⟧ = ⟦2|Q_3⟧ - ⟦3|Q_1⟧ \\qquad {\\small \\text{granice wąsów: }} Q_1 - ⟦4|1.5 \\cdot \\text{IQR}⟧, \\;\\; Q_3 + 1.5 \\cdot \\text{IQR}",
       notes = list(
         "rozstęp międzykwartylowy",
         "trzeci kwartyl (75%)",
