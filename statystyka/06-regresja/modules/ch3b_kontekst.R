@@ -63,7 +63,6 @@ ch3b_ui <- list(
   id = "ch-3b",
   num = "03B",
   title = "Kontekst i interakcje",
-  duration = "30–45 min",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 03B · Regresja",
@@ -103,16 +102,14 @@ ch3b_ui <- list(
 
     figure_panel(
       label = "Ryc. 3B.1",
-      title = "Paradoks Simpsona krok po kroku",
       full_width = TRUE,
-      lc_toolbar(
-        lc_action("ch3b_simpson_all", "1. Jedna linia dla wszystkich", variant = "outline"),
-        lc_action("ch3b_simpson_groups", "2. Pokaż gatunki", variant = "outline"),
-        lc_action("ch3b_simpson_control", "3. Kontroluj gatunek", variant = "solid")
-      ),
-      lc_plot("ch3b_simpson_plot", max_height = "430px"),
-      uiOutput("ch3b_simpson_explanation"),
-      uiOutput("ch3b_simpson_stats")
+      lc_step_widget("ch3b_simpson",
+        title = "Paradoks Simpsona krok po kroku",
+        steps = c("Jedna linia dla wszystkich", "Pokaż gatunki", "Kontroluj gatunek"),
+        toolbar = lc_toolbar(lc_readouts(uiOutput("ch3b_simpson_stats", inline = TRUE))),
+        plot_id = "ch3b_simpson_plot",
+        ratio = "2/1"
+      )
     ),
 
     lc_p("W danych połączonych prosta lekko opada: każdy dodatkowy milimetr
@@ -318,67 +315,80 @@ ch3b_ui <- list(
 
 ch3b_server <- function(input, output, session) {
   penguins <- .penguins_data
-  simpson_step <- reactiveVal("all")
-
-  observeEvent(input$ch3b_simpson_all, simpson_step("all"))
-  observeEvent(input$ch3b_simpson_groups, simpson_step("groups"))
-  observeEvent(input$ch3b_simpson_control, simpson_step("control"))
+  # Krok widgetu (1..3) żyje w przeglądarce.
+  simpson_step <- lc_step_server("ch3b_simpson", input)$step
 
   simple_model <- lm(bill_depth_mm ~ bill_length_mm, data = penguins)
   controlled_model <- lm(bill_depth_mm ~ bill_length_mm + species, data = penguins)
+
+  # Krok 3: proste z modelu z gatunkiem (wspólne nachylenie), każda w zakresie
+  # długości dzioba swojego gatunku.
+  controlled_lines <- do.call(rbind, lapply(levels(penguins$species), function(sp) {
+    xr <- range(penguins$bill_length_mm[penguins$species == sp])
+    nd <- data.frame(bill_length_mm = xr,
+                     species = factor(sp, levels = levels(penguins$species)))
+    data.frame(species = nd$species, x = xr, y = predict(controlled_model, nd))
+  }))
+  simpson_xlim <- range(penguins$bill_length_mm)
+  simpson_ylim <- range(penguins$bill_depth_mm)
 
   zoom_plot_server("ch3b_simpson_plot", reactive({
     step <- simpson_step()
     plot <- ggplot(penguins, aes(bill_length_mm, bill_depth_mm))
 
-    if (identical(step, "all")) {
+    if (step == 1) {
       plot <- plot +
         geom_point(color = upwr_secondary, alpha = 0.55) +
-        geom_smooth(method = "lm", se = FALSE, color = upwr_accent, linewidth = 1.2)
+        geom_smooth(method = "lm", formula = y ~ x, se = FALSE,
+                    color = upwr_accent, linewidth = 1.2)
     } else {
       plot <- plot +
-        geom_point(aes(color = species, shape = species), alpha = 0.62) +
-        geom_smooth(aes(color = species), method = "lm", se = FALSE, linewidth = 1.05) +
+        geom_point(aes(color = species, shape = species), alpha = if (step == 2) 0.62 else 0.35)
+      plot <- if (step == 2) {
+        plot + geom_smooth(aes(color = species), method = "lm", formula = y ~ x,
+                           se = FALSE, linewidth = 1.05)
+      } else {
+        # Prosta bez gatunku w tle i trzy równoległe proste modelu z gatunkiem.
+        plot +
+          geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = upwr_secondary,
+                      linewidth = 0.9, linetype = "22") +
+          geom_line(data = controlled_lines, aes(x, y, color = species), linewidth = 1.3)
+      }
+      plot <- plot +
         scale_color_manual(values = .ch3b_species_colors, name = "Gatunek") +
         labs(shape = "Gatunek")
     }
 
+    # Legenda nad wykresem: obszar rysunku ma tę samą szerokość we wszystkich krokach.
     plot +
+      coord_cartesian(xlim = simpson_xlim, ylim = simpson_ylim) +
       labs(
         x = "Długość dzioba (mm)",
         y = "Wysokość dzioba (mm)"
       ) +
-      theme_upwr()
+      theme_upwr() +
+      theme(legend.position = "top")
   }), alt = paste(
-    "Punkty długości i wysokości dzioba pingwinów. Po pokazaniu gatunków",
-    "widoczne są trzy grupy i odmienne linie regresji."
+    "Punkty długości i wysokości dzioba pingwinów: jedna prosta dla wszystkich,",
+    "potem osobne proste dla gatunków, na końcu trzy równoległe proste modelu",
+    "z gatunkiem na tle przerywanej prostej ogólnej."
   ))
 
   output$ch3b_simpson_stats <- renderUI({
     b_simple <- coef(simple_model)[["bill_length_mm"]]
     b_control <- coef(controlled_model)[["bill_length_mm"]]
     tagList(
-      lc_readout("Nachylenie bez gatunku", round(b_simple, 3)),
-      lc_readout("Nachylenie po kontroli gatunku", round(b_control, 3), color = upwr_accent)
+      lc_readout("Nachylenie bez gatunku", sprintf("%.2f", b_simple)),
+      lc_readout("Nachylenie po kontroli gatunku", sprintf("%.2f", b_control),
+                 color = upwr_accent)
     )
   })
 
-  output$ch3b_simpson_explanation <- renderUI({
-    step <- simpson_step()
-    if (identical(step, "all")) {
-      return(lc_caption(
-               "Jedna prosta dla 333 pingwinów. Model nie wie, że punkty pochodzą z trzech gatunków."
-             ))
-    }
-    if (identical(step, "groups")) {
-      return(lc_caption(
-               "Kolor ujawnia trzy skupiska. W każdym gatunku prosta rośnie.",
-               tone = "info"
-             ))
-    }
-    lc_caption(
-      "Model z gatunkiem: nachylenie zmienia znak z ujemnego na dodatni.",
-      tone = "ok"
+  output$ch3b_simpson_text <- renderUI({
+    switch(simpson_step(),
+      "Jedna prosta dla 333 pingwinów. Model nie wie, że punkty pochodzą z trzech gatunków.",
+      "Kolor ujawnia trzy skupiska. W każdym gatunku prosta rośnie.",
+      "Model z gatunkiem: trzy równoległe proste o wspólnym nachyleniu. Przerywana prosta bez gatunku opada."
     )
   })
 
