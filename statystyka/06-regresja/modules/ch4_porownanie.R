@@ -90,9 +90,13 @@ ch4_ui <- list(
     lc_p("Najprostsza poprawka dotyczy samego R². R² skorygowany liczy
       dopasowanie z uwzględnieniem liczby predyktorów k:"),
 
-    lc_formula_box(withMathJax(
-      "$$R^2_{adj} = 1 - \\frac{(1 - R^2)(n - 1)}{n - k - 1}$$"
-    )),
+    # PROTOTYP P1-wzory: skorygowany R² ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|R^2_{adj}⟧ = 1 - \\frac{(1 - R^2)(⟦2|n⟧ - 1)}{n - ⟦3|k⟧ - 1}",
+      notes  = list("skorygowany R²", "liczba obserwacji", "liczba predyktorów"),
+      colors = c("accent", "szalwia", "kurkuma"),
+      above  = c(2)
+    ),
 
     lc_p("Czynnik \\((n-1)/(n-k-1)\\) rośnie z każdym predyktorem, więc nowa
       zmienna musi zmniejszyć \\(1 - R^2\\) na tyle, żeby to zrównoważyć.
@@ -106,9 +110,14 @@ ch4_ui <- list(
       parametrów. W ", gloss("regresja liniowa", "regresji liniowej"), " z k predyktorami szacujemy k + 1
       współczynników i ", gloss("wariancja", "wariancję"), " reszt, razem k + 2 parametry:"),
 
+    # PROTOTYP P1-wzory: AIC i BIC jako dopasowanie + kara
+    lc_formula_annotated(
+      "\\text{AIC} = ⟦1|-2\\ln\\hat{L}⟧ + ⟦2|2(k + 2)⟧, \\qquad \\text{BIC} = -2\\ln\\hat{L} + ⟦3|(k + 2)\\ln n⟧",
+      notes  = list("niedopasowanie", "kara AIC", "kara BIC"),
+      colors = c("niebo", "bursztyn", "terakota")
+    ),
+
     lc_formula_box(withMathJax(
-      "$$\\text{AIC} = -2\\ln\\hat{L} + 2(k + 2), \\qquad
-        \\text{BIC} = -2\\ln\\hat{L} + (k + 2)\\ln n$$",
       "$$-2\\ln\\hat{L} = n\\ln\\left(\\text{RMSE}^2\\right) + n\\left(1 + \\ln 2\\pi\\right)$$"
     )),
 

@@ -70,6 +70,61 @@
   vapply(.ch2_rmse_specs, `[[`, character(1), "label")
 )
 
+# PROTOTYP P3-kwadraty: dziewięć punktów, kwadraty reszt względem średniej
+# (SS_tot, szałwia) i względem prostej MNK (SS_res, bursztyn). Osie w tych
+# samych jednostkach, żeby kwadraty były kwadratami.
+.ch2_sq_data <- local({
+  x <- c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
+  y <- c(2.6, 2.2, 4.4, 3.6, 5.3, 4.9, 6.9, 6.1, 7.6)
+  fit <- lm(y ~ x)
+  data.frame(x = x, y = y, mean_y = mean(y), fitted = unname(fitted(fit)))
+})
+
+ch2_squares_readouts <- function() {
+  d <- .ch2_sq_data
+  ss_tot <- sum((d$y - d$mean_y)^2)
+  ss_res <- sum((d$y - d$fitted)^2)
+  tagList(
+    lc_readout(tagList("SS", tags$sub("tot")), lc_fmt(ss_tot, 1),
+               color = upwr_col("szalwia"), swatch = TRUE),
+    lc_readout(tagList("SS", tags$sub("res")), lc_fmt(ss_res, 1),
+               color = upwr_col("bursztyn"), swatch = TRUE),
+    lc_readout("R²", lc_fmt(1 - ss_res / ss_tot, 2))
+  )
+}
+
+ch2_squares_plot <- function() {
+  d <- .ch2_sq_data
+  panel <- function(ref, fill, line_type) {
+    e <- d$y - d[[ref]]
+    sq <- data.frame(xmin = d$x, xmax = d$x + abs(e),
+                     ymin = pmin(d$y, d[[ref]]), ymax = pmax(d$y, d[[ref]]))
+    p <- ggplot(d, aes(x, y)) +
+      geom_rect(data = sq, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+                inherit.aes = FALSE, fill = fill, colour = fill, alpha = 0.28,
+                linewidth = 0.4)
+    p <- if (ref == "mean_y") {
+      p + geom_hline(yintercept = d$mean_y[1], colour = upwr_secondary,
+                     linewidth = 0.8, linetype = line_type)
+    } else {
+      p + geom_abline(intercept = coef(lm(y ~ x, d))[1], slope = coef(lm(y ~ x, d))[2],
+                      colour = upwr_secondary, linewidth = 0.8)
+    }
+    p +
+      geom_segment(aes(xend = x, yend = .data[[ref]]), colour = fill, linewidth = 0.8) +
+      geom_point(colour = upwr_col("niebo"), size = 2.4) +
+      coord_equal(xlim = c(0.5, 12), ylim = c(0.5, 9), expand = FALSE) +
+      labs(x = "X", y = "Y") +
+      theme_upwr() +
+      theme(panel.grid.minor = element_blank())
+  }
+  patchwork::wrap_plots(
+    panel("mean_y", upwr_col("szalwia"), "22"),
+    panel("fitted", upwr_col("bursztyn"), "solid"),
+    nrow = 1
+  )
+}
+
 ch2_ui <- list(
   id    = "ch-jakosc",
   num   = "02",
@@ -315,9 +370,27 @@ ch2_ui <- list(
       kwadratów \\(SS_{res}\\), tę samą, którą minimalizuje metoda najmniejszych
       kwadratów. \\(R^2\\) mówi, jaką część \\(SS_{tot}\\) model usunął."),
 
-    lc_formula_box(withMathJax(
-      "$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}{\\sum_{i=1}^{n}(y_i - \\bar{y})^2}$$"
-    )),
+    # PROTOTYP P1-wzory: R² ze znacznikami symboli
+    lc_formula_annotated(
+      "R^2 = 1 - \\frac{⟦1|SS_{res}⟧}{⟦2|SS_{tot}⟧} = 1 - \\frac{\\sum_{i=1}^{n}(y_i - ⟦3|\\hat{y}_i⟧)^2}{\\sum_{i=1}^{n}(y_i - ⟦4|\\bar{y}⟧)^2}",
+      notes  = list("suma kwadratów reszt", "całkowita suma kwadratów",
+                    "wartość przewidywana", "średnia Y"),
+      colors = c("bursztyn", "szalwia", "wrzos", "accent"),
+      above  = c(1, 3)
+    ),
+
+    # PROTOTYP P3-kwadraty: SS_tot i SS_res jako pola kwadratów
+    figure_panel(
+      label = "Ryc. 2.2a", title = "Kwadraty odległości od średniej i od prostej",
+      width_mode = "text",
+      lc_toolbar(lc_readouts(ch2_squares_readouts())),
+      lc_plot("ch2_squares_plot", ratio = "2/1", max_height = "360px")
+    ),
+
+    lc_p("Ryc. 2.2a pokazuje obie sumy jako pola. Po lewej każdy punkt ma
+      kwadrat o boku równym jego odległości od średniej, po prawej od prostej.
+      \\(R^2\\) to ta część pola, która znika, gdy zamiast średniej użyjemy
+      prostej."),
 
     lc_p("\\(R^2\\) przyjmuje wartości od 0 do 1. Zero oznacza, że model
       przewiduje nie lepiej niż średnia, jedynka, że wszystkie punkty leżą
@@ -482,9 +555,14 @@ ch2_ui <- list(
     lc_p("Odpowiada na nie ", gloss("RMSE"), " (ang. root mean squared error),
       pierwiastek ze średniego kwadratu reszt:"),
 
-    lc_formula_box(withMathJax(
-      "$$RMSE = \\sqrt{\\frac{1}{n}\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}$$"
-    )),
+    # PROTOTYP P1-wzory: RMSE ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|RMSE⟧ = \\sqrt{\\frac{1}{⟦2|n⟧}\\sum_{i=1}^{n}(⟦3|y_i⟧ - ⟦4|\\hat{y}_i⟧)^2}",
+      notes  = list("typowa pomyłka", "liczba obserwacji", "obserwacja",
+                    "wartość przewidywana"),
+      colors = c("accent", "szalwia", "niebo", "wrzos"),
+      above  = c(3, 4)
+    ),
 
     lc_p("RMSE ma jednostki Y, więc czyta się je wprost jako typową wielkość
       pomyłki modelu. Sama liczba nic jednak nie mówi bez odniesienia do skali
@@ -593,6 +671,10 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
+
+  # PROTOTYP P3-kwadraty: statyczna para wykresów SS_tot i SS_res
+  zoom_plot_server("ch2_squares_plot", reactive(ch2_squares_plot()),
+    alt = "Te same punkty dwa razy: po lewej kwadraty odległości od średniej, po prawej mniejsze kwadraty odległości od prostej regresji")
 
   # --- Widget: kwartet Anscombe'a (datasets::anscombe) ---
   ch2_ansc_fit <- reactive({

@@ -2,6 +2,65 @@
 # CHAPTER 5: Regresja logistyczna
 # ============================================================================
 
+# PROTOTYP P5-skale: trzy osie (p, szanse, logit) z tymi samymi pięcioma
+# prawdopodobieństwami. Każda oś ma własną skalę rysowaną na wspólnym x:
+# p: 0..1, szanse: 0..10, logit: -3..3. Kolory jak w znacznikach wzorów.
+ch5_scales_plot <- function() {
+  p_vals <- c(0.1, 0.2, 0.5, 0.8, 0.9)
+  to_x <- list(
+    p     = function(v) (v - 0.5) * 6,
+    odds  = function(v) v * 0.6 - 3,
+    logit = function(v) v
+  )
+  rows <- c(p = 3, odds = 2, logit = 1)
+  cols <- c(p = upwr_col("niebo"), odds = upwr_col("bursztyn"), logit = upwr_accent)
+  val <- list(p = p_vals, odds = p_vals / (1 - p_vals), logit = qlogis(p_vals))
+  pts <- do.call(rbind, lapply(names(rows), function(k) {
+    data.frame(axis = k, k = seq_along(p_vals), x = to_x[[k]](val[[k]]), y = rows[[k]])
+  }))
+  links <- do.call(rbind, lapply(seq_along(p_vals), function(i) {
+    a <- pts[pts$k == i, ]
+    # start pod etykietami podziałki (t = 0.34 spadku), koniec tuż nad osią
+    data.frame(x = a$x[1:2] + (a$x[2:3] - a$x[1:2]) * 0.34, xend = a$x[2:3],
+               y = a$y[1:2] - 0.34, yend = a$y[2:3] + 0.1)
+  }))
+  ticks <- rbind(
+    data.frame(axis = "p", v = c(0, 0.5, 1), lab = c("0", "0.5", "1")),
+    data.frame(axis = "odds", v = c(0, 1, 4, 9), lab = c("0", "1", "4", "9")),
+    data.frame(axis = "logit", v = c(-2, 0, 2), lab = c("-2", "0", "2"))
+  )
+  ticks$x <- mapply(function(a, v) to_x[[a]](v), ticks$axis, ticks$v)
+  ticks$y <- rows[ticks$axis]
+  arrow_end <- grid::arrow(length = grid::unit(0.09, "in"), type = "closed")
+  ggplot() +
+    geom_segment(data = links, aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = upwr_reference, linewidth = 0.4, linetype = "22") +
+    # p: odcinek zamknięty z obu stron
+    annotate("segment", x = -3, xend = 3, y = 3, yend = 3, colour = cols[["p"]], linewidth = 1) +
+    annotate("segment", x = c(-3, 3), xend = c(-3, 3), y = 2.9, yend = 3.1,
+             colour = cols[["p"]], linewidth = 1) +
+    # szanse: zamknięte w 0, otwarte w prawo
+    annotate("segment", x = -3, xend = 3.3, y = 2, yend = 2, colour = cols[["odds"]],
+             linewidth = 1, arrow = arrow_end) +
+    annotate("segment", x = -3, xend = -3, y = 1.9, yend = 2.1, colour = cols[["odds"]],
+             linewidth = 1) +
+    # logit: otwarty w obie strony
+    annotate("segment", x = -3.3, xend = 3.3, y = 1, yend = 1, colour = cols[["logit"]],
+             linewidth = 1, arrow = grid::arrow(length = grid::unit(0.09, "in"),
+                                                type = "closed", ends = "both")) +
+    geom_point(data = pts, aes(x, y, colour = axis), size = 3) +
+    geom_text(data = ticks, aes(x, y - 0.2, label = lab), size = 3.6,
+              family = lc_mono_family, colour = upwr_secondary, vjust = 1) +
+    scale_colour_manual(values = cols, guide = "none") +
+    scale_y_continuous(breaks = rows, labels = c("p", "szanse", "logit"),
+                       limits = c(0.55, 3.25)) +
+    scale_x_continuous(limits = c(-3.4, 3.4), breaks = NULL) +
+    labs(x = NULL, y = NULL) +
+    theme_upwr() +
+    theme(panel.grid = element_blank(), axis.line = element_blank(),
+          axis.text.y = element_text(size = 13))
+}
+
 ch5_ui <- list(
   id    = "ch-logistyczna",
   num   = "05",
@@ -138,17 +197,38 @@ ch5_ui <- list(
       dowolną liczbą, ujemną dla p < 0.5 i dodatnią dla p > 0.5. Regresja
       logistyczna zakłada, że to logit zależy od predyktora liniowo:"),
 
-    lc_formula_box(withMathJax(
-      "$$\\text{logit}(p) = \\ln\\frac{p}{1 - p} = \\beta_0 + \\beta_1 x$$"
-    )),
+    # PROTOTYP P1-wzory: logit ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|\\text{logit}(p)⟧ = \\ln⟦2|\\frac{p}{1 - p}⟧ = ⟦3|\\beta_0⟧ + ⟦4|\\beta_1⟧ x",
+      notes  = list("log-szanse", "szanse", "wyraz wolny", "nachylenie"),
+      colors = c("accent", "bursztyn", "terakota", "indygo"),
+      above  = c(2, 4)
+    ),
+
+    # PROTOTYP P5-skale: p → szanse → logit na trzech osiach
+    figure_panel(
+      label = "Ryc. 5.2a", title = "Prawdopodobieństwo, szanse i logit",
+      width_mode = "text",
+      lc_plot("ch5_scales_plot", ratio = "2/1", max_height = "340px")
+    ),
+
+    lc_p("Ryc. 5.2a pokazuje te same pięć prawdopodobieństw na trzech skalach.
+      Prawdopodobieństwo jest zamknięte między 0 a 1. Szanse mają dolną granicę
+      0, ale w górę rosną bez końca, więc p = 0.9 ląduje daleko od p = 0.8.
+      Logit nie ma granic z żadnej strony i jest symetryczny: p = 0.5 trafia
+      w zero, a p = 0.2 i p = 0.8 w tę samą odległość po obu stronach."),
 
     lc_p("Po przekształceniu tego równania względem p otrzymujemy ",
       gloss("funkcja logistyczna", "funkcję logistyczną"), ", nazywaną też
       sigmoidą od kształtu litery S:"),
 
-    lc_formula_box(withMathJax(
-      "$$p = P(Y = 1) = \\frac{1}{1 + e^{-(\\beta_0 + \\beta_1 x)}}$$"
-    )),
+    # PROTOTYP P1-wzory: sigmoida ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|p⟧ = P(Y = 1) = \\frac{1}{1 + e^{-(⟦2|\\beta_0 + \\beta_1 x⟧)}}",
+      notes  = list("prawdopodobieństwo sukcesu", "logit"),
+      colors = c("niebo", "accent"),
+      above  = c(2)
+    ),
 
     lc_p("Niezależnie od tego, jak duże albo małe jest β₀ + β₁x, wynik leży
       między 0 a 1. Przy wielu predyktorach w wykładniku pojawia się po prostu
@@ -253,9 +333,13 @@ ch5_ui <- list(
       nazywamy ", gloss("iloraz szans", "ilorazem szans"), " (OR, od ang.
       odds ratio): to stosunek szans przy x + 1 do szans przy x."),
 
-    lc_formula_box(withMathJax(
-      "$$OR = \\frac{\\text{szanse przy } x + 1}{\\text{szanse przy } x} = e^{\\beta_1}$$"
-    )),
+    # PROTOTYP P1-wzory: iloraz szans ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|OR⟧ = \\frac{\\text{szanse przy } x + 1}{\\text{szanse przy } x} = e^{⟦2|\\beta_1⟧}",
+      notes  = list("iloraz szans", "nachylenie logitu"),
+      colors = c("wrzos", "indygo"),
+      above  = c(2)
+    ),
 
     lc_p("OR = 1 oznacza brak związku, OR > 1 wzrost szans, a OR < 1 ich spadek.
       W modelu CASchools z progiem 656 pkt iloraz szans dla dochodu wynosi 1.18.
@@ -451,6 +535,10 @@ ch5_ui <- list(
 # ============================================================================
 
 ch5_server <- function(input, output, session) {
+
+  # PROTOTYP P5-skale: statyczna rycina trzech skal
+  zoom_plot_server("ch5_scales_plot", reactive(ch5_scales_plot()),
+    alt = "Pięć prawdopodobieństw od 0.1 do 0.9 na trzech osiach: prawdopodobieństwa od 0 do 1, szans od 0 bez górnej granicy i logitu bez granic, połączone przerywanymi liniami")
 
   ch5_fmt <- function(x, digits = 3) {
     ifelse(is.na(x), "", formatC(x, digits = digits, format = "f"))

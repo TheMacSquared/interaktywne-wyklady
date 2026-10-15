@@ -36,9 +36,14 @@ ch3_ui <- list(
     lc_p(gloss("regresja wieloraka", "Regresja wieloraka"), " rozszerza równanie
       prostej o kolejne predyktory. Przy \\(k\\) predyktorach model ma postać:"),
 
-    lc_formula_box(withMathJax(
-      "$$Y = \\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_k + \\varepsilon$$"
-    )),
+    # PROTOTYP P1-wzory: model wieloraki ze znacznikami symboli
+    lc_formula_annotated(
+      "Y = ⟦1|\\beta_0⟧ + ⟦2|\\beta_1⟧ X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_{⟦3|k⟧} + ⟦4|\\varepsilon⟧",
+      notes  = list("wyraz wolny", "nachylenie przy X₁", "liczba predyktorów",
+                    "błąd losowy"),
+      colors = c("terakota", "indygo", "kurkuma", "bursztyn"),
+      above  = c(2, 3)
+    ),
 
     lc_p("Współczynniki szacuje się tak samo jak w ",
       gloss("regresja prosta", "regresji prostej"), ": ", gloss("metoda najmniejszych kwadratów", "metodą najmniejszych kwadratów"), ",
@@ -198,9 +203,12 @@ ch3_ui <- list(
       \\(R_j^2\\) modelu, w którym \\(X_j\\) przewiduje się pozostałymi
       predyktorami:"),
 
-    lc_formula_box(withMathJax(
-      "$$\\text{VIF}_j = \\frac{1}{1 - R_j^2}$$"
-    )),
+    # PROTOTYP P1-wzory: VIF ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|\\text{VIF}_j⟧ = \\frac{1}{1 - ⟦2|R_j^2⟧}",
+      notes  = list("inflacja wariancji", "R² dla Xⱼ z pozostałych"),
+      colors = c("accent", "kurkuma")
+    ),
 
     lc_p("Gdy predyktor nie jest związany z pozostałymi, \\(R_j^2 = 0\\)
       i VIF wynosi 1. Im lepiej pozostałe predyktory odtwarzają \\(X_j\\),

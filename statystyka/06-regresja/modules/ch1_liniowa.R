@@ -34,6 +34,53 @@
 
 .ch1_pred_choices <- setNames(names(.ch1_pred_specs), vapply(.ch1_pred_specs, `[[`, character(1), "label"))
 
+# PROTOTYP P2-anatomia: prosta Y = β₀ + β₁X, trójkąt nachylenia i błąd ε
+# jednego punktu. Kolory jak w znacznikach wzorów: β₀ terakota, β₁ indygo,
+# ε bursztyn, obserwacje niebo.
+ch1_anatomy_plot <- function() {
+  b0 <- 1.5; b1 <- 0.8
+  pts <- data.frame(
+    x = c(0.7, 1.4, 2.2, 2.9, 3.6, 4.4, 5.1, 5.7),
+    e = c(0.5, -0.6, 0.3, 1.3, -0.4, -0.7, 0.6, 0.2)
+  )
+  pts$y <- b0 + b1 * pts$x + pts$e
+  hi <- pts[4, ]
+  col_b0 <- upwr_col("terakota"); col_b1 <- upwr_col("indygo")
+  col_e <- upwr_col("bursztyn"); col_pt <- upwr_col("niebo")
+  tx <- 4.5  # początek trójkąta nachylenia
+  ggplot() +
+    geom_vline(xintercept = 0, colour = upwr_reference, linewidth = 0.4) +
+    geom_abline(intercept = b0, slope = b1, colour = upwr_secondary, linewidth = 1) +
+    geom_point(data = pts[-4, ], aes(x, y), colour = col_pt, size = 2.6, alpha = 0.8) +
+    # ε: pionowy odcinek od prostej do punktu
+    annotate("segment", x = hi$x, xend = hi$x, y = b0 + b1 * hi$x, yend = hi$y,
+             colour = col_e, linewidth = 1.1) +
+    geom_point(data = hi, aes(x, y), colour = col_e, size = 3.2) +
+    annotate("text", x = hi$x - 0.12, y = b0 + b1 * hi$x + hi$e / 2, label = "ε",
+             colour = col_e, size = 6, hjust = 1) +
+    # β₁: krok o 1 w poziomie i β₁ w pionie
+    annotate("segment", x = tx, xend = tx + 1, y = b0 + b1 * tx, yend = b0 + b1 * tx,
+             colour = col_b1, linewidth = 0.9) +
+    annotate("segment", x = tx + 1, xend = tx + 1, y = b0 + b1 * tx,
+             yend = b0 + b1 * (tx + 1), colour = col_b1, linewidth = 1.1) +
+    annotate("text", x = tx + 0.5, y = b0 + b1 * tx - 0.25, label = "1",
+             colour = col_b1, size = 5, family = lc_mono_family) +
+    annotate("text", x = tx + 1.12, y = b0 + b1 * (tx + 0.5), label = "β₁",
+             colour = col_b1, size = 6, hjust = 0) +
+    # β₀: wysokość prostej przy X = 0
+    annotate("segment", x = 0, xend = 0, y = 0, yend = b0, colour = col_b0,
+             linewidth = 1.3) +
+    annotate("point", x = 0, y = b0, colour = col_b0, size = 3.4) +
+    annotate("text", x = 0.15, y = b0 / 2, label = "β₀", colour = col_b0,
+             size = 6, hjust = 0) +
+    scale_x_continuous(breaks = 0, limits = c(-0.3, 6.2), expand = c(0, 0)) +
+    scale_y_continuous(breaks = NULL, limits = c(0, 7.2), expand = c(0, 0)) +
+    labs(x = "X", y = "Y") +
+    theme_upwr() +
+    theme(panel.grid = element_blank(),
+          axis.line = element_line(colour = upwr_reference, linewidth = 0.4))
+}
+
 ch1_ui <- list(
   id    = "ch-liniowa",
   num   = "01",
@@ -75,9 +122,21 @@ ch1_ui <- list(
       gloss("regresja prosta", "regresji liniowej prostej"), ". Model zapisuje
       każdą wartość \\(Y\\) jako punkt na prostej plus odchylenie losowe:"),
 
-    lc_formula_box(withMathJax(
-      "$$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$"
-    )),
+    # PROTOTYP P1-wzory: model regresji prostej ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|Y⟧ = ⟦2|\\beta_0⟧ + ⟦3|\\beta_1⟧ ⟦4|X⟧ + ⟦5|\\varepsilon⟧",
+      notes  = list("zmienna zależna", "wyraz wolny", "nachylenie", "predyktor",
+                    "błąd losowy"),
+      colors = c("niebo", "terakota", "indygo", "kurkuma", "bursztyn"),
+      above  = c(2, 4)
+    ),
+
+    # PROTOTYP P2-anatomia: rycina z β₀, β₁ i ε na jednej prostej
+    figure_panel(
+      label = "Ryc. 1.0a", title = "Z czego składa się prosta regresji",
+      width_mode = "text",
+      lc_plot("ch1_anatomy_plot", ratio = "1.6/1", max_height = "340px")
+    ),
 
     lc_p("\\(\\beta_0\\) to ", gloss("wyraz wolny"), ", czyli wysokość prostej
       w punkcie \\(X = 0\\). \\(\\beta_1\\) to ",
@@ -127,9 +186,14 @@ ch1_ui <- list(
       dwie średnie, dwa odchylenia standardowe i współczynnik korelacji.
       Nachylenie i wyraz wolny wyznacza się tak:"),
 
-    lc_formula_box(withMathJax(
-      "$$b_1 = r \\cdot \\frac{s_Y}{s_X}, \\qquad b_0 = \\bar{y} - b_1 \\bar{x}$$"
-    )),
+    # PROTOTYP P1-wzory: b₁ i b₀ z korelacji
+    lc_formula_annotated(
+      "⟦1|b_1⟧ = ⟦2|r⟧ \\cdot \\frac{⟦3|s_Y⟧}{⟦4|s_X⟧}, \\qquad ⟦5|b_0⟧ = ⟦6|\\bar{y}⟧ - b_1 ⟦7|\\bar{x}⟧",
+      notes  = list("nachylenie", "korelacja", "odch. std. Y", "odch. std. X",
+                    "wyraz wolny", "średnia Y", "średnia X"),
+      colors = c("indygo", "szalwia", "wrzos", "wrzos", "terakota", "accent", "accent"),
+      above  = c(1, 3, 6)
+    ),
 
     lc_p("Pierwszy wzór czyta się tak: \\(r\\) mówi, o ile odchyleń
       standardowych zmienia się średnio \\(Y\\), gdy \\(X\\) rośnie o jedno
@@ -292,9 +356,14 @@ ch1_ui <- list(
       Spośród wszystkich prostych wybieramy tę, dla której suma kwadratów
       jest najmniejsza:"),
 
-    lc_formula_box(withMathJax(
-      "$$SS_{res} = \\sum_{i=1}^{n} (y_i - \\hat{y}_i)^2 = \\sum_{i=1}^{n} (y_i - b_0 - b_1 x_i)^2 \\;\\to\\; \\min$$"
-    )),
+    # PROTOTYP P1-wzory: suma kwadratów reszt
+    lc_formula_annotated(
+      "⟦1|SS_{res}⟧ = \\sum_{i=1}^{n} (⟦2|y_i⟧ - ⟦3|\\hat{y}_i⟧)^2 = \\sum_{i=1}^{n} (y_i - ⟦4|b_0⟧ - ⟦5|b_1⟧ ⟦6|x_i⟧)^2 \\;\\to\\; \\min",
+      notes  = list("suma kwadratów reszt", "obserwacja", "wartość przewidywana",
+                    "wyraz wolny", "nachylenie", "predyktor"),
+      colors = c("bursztyn", "niebo", "wrzos", "terakota", "indygo", "kurkuma"),
+      above  = c(2, 5)
+    ),
 
     lc_p("Odległości mierzy się w pionie, bo model przewiduje \\(Y\\) na
       podstawie \\(X\\) i to w \\(Y\\) popełnia pomyłki. Rozwiązaniem tego
@@ -336,9 +405,12 @@ ch1_ui <- list(
       ". Reszta to różnica między wartością zaobserwowaną a wartością
       przewidzianą przez model:"),
 
-    lc_formula_box(withMathJax(
-      "$$e_i = y_i - \\hat{y}_i$$"
-    )),
+    # PROTOTYP P1-wzory: reszta
+    lc_formula_annotated(
+      "⟦1|e_i⟧ = ⟦2|y_i⟧ - ⟦3|\\hat{y}_i⟧",
+      notes  = list("reszta", "obserwacja", "wartość przewidywana"),
+      colors = c("bursztyn", "niebo", "wrzos")
+    ),
 
     lc_p("Reszta dodatnia oznacza punkt nad prostą, czyli obserwację, dla której
       model zaniżył wynik. Reszta ujemna oznacza punkt pod prostą i wynik
@@ -391,9 +463,14 @@ ch1_ui <- list(
       budowę co w teście t z wykładu 04: estymata podzielona przez swój błąd
       standardowy. Mówi, ile błędów standardowych dzieli \\(b_1\\) od zera."),
 
-    lc_formula_box(withMathJax(
-      "$$t = \\frac{b_1}{SE(b_1)}, \\qquad df = n - 2$$"
-    )),
+    # PROTOTYP P1-wzory: statystyka t dla nachylenia
+    lc_formula_annotated(
+      "⟦1|t⟧ = \\frac{⟦2|b_1⟧}{⟦3|SE(b_1)⟧}, \\qquad df = ⟦4|n⟧ - 2",
+      notes  = list("statystyka testowa", "nachylenie z próby", "błąd standardowy",
+                    "liczba obserwacji"),
+      colors = c("accent", "indygo", "wrzos", "szalwia"),
+      above  = c(2)
+    ),
 
     lc_p("Przy prawdziwej H₀ statystyka ma ", gloss("rozkład t-Studenta"), " o ",
       gloss("stopnie swobody", "stopniach swobody"), " \\(n - 2\\): dwa stopnie
@@ -467,9 +544,12 @@ ch1_ui <- list(
       " dla \\(\\beta_1\\), zbudowany jak w wykładzie 03: estymata plus minus
       ", gloss("wartość krytyczna"), " razy błąd standardowy."),
 
-    lc_formula_box(withMathJax(
-      "$$b_1 \\pm t^*_{\\alpha/2,\\, n-2} \\cdot SE(b_1)$$"
-    )),
+    # PROTOTYP P1-wzory: przedział ufności dla β₁
+    lc_formula_annotated(
+      "⟦1|b_1⟧ \\pm ⟦2|t^*_{\\alpha/2,\\, n-2}⟧ \\cdot ⟦3|SE(b_1)⟧",
+      notes  = list("nachylenie z próby", "wartość krytyczna", "błąd standardowy"),
+      colors = c("indygo", "szalwia", "wrzos")
+    ),
 
     lc_p("Panel go nie pokazuje, ale łatwo go policzyć z tabeli. Dla pierwszego
       scenariusza 95% przedział ufności to od 0.70 do 1.35. Dla małej próby
@@ -597,9 +677,13 @@ ch1_ui <- list(
       przewidywanie. Po podstawieniu wartości \\(X\\) do równania dostajemy ",
       gloss("wartość przewidywana", "wartość przewidywaną"), ":"),
 
-    lc_formula_box(withMathJax(
-      "$$\\hat{Y} = b_0 + b_1 X$$"
-    )),
+    # PROTOTYP P1-wzory: wartość przewidywana
+    lc_formula_annotated(
+      "⟦1|\\hat{Y}⟧ = ⟦2|b_0⟧ + ⟦3|b_1⟧ ⟦4|X⟧",
+      notes  = list("wartość przewidywana", "wyraz wolny", "nachylenie", "predyktor"),
+      colors = c("wrzos", "terakota", "indygo", "kurkuma"),
+      above  = c(2, 4)
+    ),
 
     lc_p("Wartość przewidywana szacuje średnie \\(Y\\) wśród obiektów o danym
       \\(X\\), a nie wynik pojedynczego obiektu. Model czytania od dochodu
@@ -685,6 +769,10 @@ ch1_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
+
+  # PROTOTYP P2-anatomia: statyczna rycina prostej z β₀, β₁ i ε
+  zoom_plot_server("ch1_anatomy_plot", reactive(ch1_anatomy_plot()),
+    alt = "Prosta regresji z zaznaczonym wyrazem wolnym przy X równym zero, trójkątem nachylenia o podstawie 1 i pionowym odcinkiem błędu jednego punktu")
 
   # PROTOTYP SCENY (2026-10-08): teksty kroków scen ch1_sc_rtm i ch1_sc_slope
   scene_texts(input, output, "ch1_sc_rtm", list(

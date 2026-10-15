@@ -71,6 +71,32 @@ ui <- lecture_page(
   module_label  = "Statystyka",
   chapters      = .chapters,
   header_extras = tagList(
+    # PROTOTYP P4-kodowanie: style schematu zmiennych wskaźnikowych (Ryc. 3B.1a/b)
+    tags$style(HTML("
+      .dum-grid {
+        display: grid; grid-template-columns: auto repeat(2, 5.5em) repeat(2, auto);
+        column-gap: 0; row-gap: 0; margin: .4em auto; font-size: 1.05em;
+        color: var(--upwr-ink);
+      }
+      .dum-cell { padding: .5em .9em; text-align: center; align-self: center; }
+      .dum-head {
+        font-size: .82em; color: var(--upwr-ink-subtle);
+        border-bottom: 1px solid var(--upwr-rule, var(--upwr-reference));
+      }
+      .dum-sep { border-left: 1px solid var(--upwr-rule, var(--upwr-reference)); }
+      .dum-sp {
+        text-align: left; font-weight: 600; color: var(--dum-c);
+        border-left: 4px solid var(--dum-c); padding-left: .7em;
+      }
+      .dum-01 { font-family: var(--upwr-mono); color: var(--upwr-ink-subtle); }
+      .dum-01.is-one { color: var(--upwr-ink); font-weight: 700; }
+      .dum-eq { white-space: nowrap; font-size: 1.1em; }
+      .dum-b { font-style: normal; }
+      @media (max-width: 600px) {
+        .dum-grid { grid-template-columns: auto repeat(2, 4.8em) repeat(2, auto); font-size: .9em; }
+        .dum-cell { padding: .45em .4em; }
+      }
+    ")),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js"))
   )
