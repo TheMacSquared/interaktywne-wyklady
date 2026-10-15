@@ -2,7 +2,7 @@
 # CHAPTER 4: Rozkłady ciągłe
 # ============================================================================
 
-# PROTOTYP poisson-wykladniczy: oś czasu z ustalonymi zdarzeniami (Ryc. 4.4a).
+# PROTOTYP poisson-wykladniczy: oś czasu z ustalonymi zdarzeniami (Ryc. 4.6a).
 # Nad osią liczba zdarzeń w każdej godzinie (Poisson, col_poisson), pod osią
 # odstępy między kolejnymi zdarzeniami (wykładniczy, col_exponential).
 ch4_event_times <- c(0.18, 0.55, 0.62, 1.30, 1.71, 2.05, 2.12, 2.38, 2.90,
@@ -322,19 +322,6 @@ ch4_ui <- list(
       rozkład Exp(1), mierzony w godzinach. To dwie strony tego samego
       procesu."),
 
-    # PROTOTYP poisson-wykladniczy: te same zdarzenia jako zliczenia i jako odstępy
-    figure_panel(
-      label = "Ryc. 4.4a",
-      title = "Jedna oś czasu, dwie zmienne losowe",
-      width_mode = "wide",
-      ch4_event_timeline()
-    ),
-
-    lc_p("Liczby nad osią to wartości zmiennej o rozkładzie Poissona: ile
-      zdarzeń wpadło do kolejnej godziny. Odcinki pod osią to wartości zmiennej
-      o rozkładzie wykładniczym: ile czasu minęło od poprzedniego zdarzenia.
-      Gdy zdarzeń w godzinie jest dużo, odstępy między nimi są krótkie."),
-
     lc_p("Zamiast liczyć zdarzenia, mierzymy czas do jednego z nich. Pada deszcz
       i czekamy, aż się skończy. Deszcz trwa średnio 15 minut, ale każdy trwa
       inaczej, więc czas do jego końca jest zmienną losową. Może wynieść dowolną
@@ -408,6 +395,20 @@ ch4_ui <- list(
       Dlatego rozkład wykładniczy pasuje do zdarzeń, które nie mają pamięci,
       jak przychodzące wiadomości, a słabo do zużywających się elementów, jak
       starzejąca się maszyna."),
+
+    # PROTOTYP poisson-wykladniczy: te same zdarzenia jako zliczenia i jako odstępy
+    figure_panel(
+      label = "Ryc. 4.6a",
+      title = "Jedna oś czasu, dwie zmienne losowe",
+      width_mode = "wide",
+      ch4_event_timeline()
+    ),
+
+    lc_p("Na koniec wróćmy do związku z rozkładem Poissona. Liczby nad osią
+      to wartości zmiennej o rozkładzie Poissona: ile
+      zdarzeń wpadło do kolejnej godziny. Odcinki pod osią to wartości zmiennej
+      o rozkładzie wykładniczym: ile czasu minęło od poprzedniego zdarzenia.
+      Gdy zdarzeń w godzinie jest dużo, odstępy między nimi są krótkie."),
 
     # ========================================================================
     # WIDGET 4: Rozkład t-Studenta — scenariusze overlay
