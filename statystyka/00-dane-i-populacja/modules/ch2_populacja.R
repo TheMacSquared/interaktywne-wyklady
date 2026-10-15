@@ -2,6 +2,51 @@
 # CHAPTER 2: Populacja i próba
 # ============================================================================
 
+# PROTOTYP zbiory: siatka kropek jak w scenie Ryc. 2.1. Pełne kropki to osoby
+# w operacie, puste poza nim, kropki w kolorze próby to wylosowani.
+ch2_sets_diagram <- function() {
+  cols <- 18; rows <- 6; dx <- 30; x0 <- 45; y0 <- 80
+  in_frame <- 14                              # ostatnie kolumny poza operatem
+  set.seed(22)
+  cells <- expand.grid(c = seq_len(cols), r = seq_len(rows))
+  cells$in_op <- cells$c <= in_frame
+  sampled <- sample(which(cells$in_op), 9)
+  dots <- vapply(seq_len(nrow(cells)), function(i) {
+    cx <- x0 + (cells$c[i] - 1) * dx; cy <- y0 + (cells$r[i] - 1) * dx
+    cls <- if (i %in% sampled) "sd-s" else if (cells$in_op[i]) "sd-p" else "sd-out"
+    sprintf('<circle class="%s" cx="%d" cy="%d" r="%s"/>', cls, cx, cy,
+            if (i %in% sampled) "8" else "6.5")
+  }, character(1))
+  w <- x0 * 2 + (cols - 1) * dx; h <- y0 + (rows - 1) * dx + 40
+  op_w <- (in_frame - 1) * dx + 36
+  svg <- paste0(
+    '<svg class="sets-diagram" viewBox="0 0 ', w, ' ', h, '" role="img" ',
+    'aria-label="Populacja: wszystkie kropki. Operat: kropki w przerywanej ramce. Próba: kilka wyróżnionych kropek w operacie.">',
+    '<rect class="sd-pop" x="12" y="28" width="', w - 24, '" height="', h - 40, '" rx="12"/>',
+    '<rect class="sd-op" x="', x0 - 18, '" y="', y0 - 18, '" width="', op_w, '" height="', (rows - 1) * dx + 36, '" rx="8"/>',
+    paste(dots, collapse = ""),
+    '<text class="sd-lab sd-lab-pop" x="16" y="18">populacja · N</text>',
+    '<text class="sd-lab sd-lab-op" x="', x0 - 16, '" y="', y0 - 24, '">operat losowania</text>',
+    '<text class="sd-lab sd-lab-s" x="', w - 16, '" y="18" text-anchor="end">● próba · n</text>',
+    '</svg>')
+  tagList(
+    tags$style(HTML("
+      .sets-diagram { display: block; width: 100%; max-width: 640px; margin: 4px auto; }
+      .sets-diagram .sd-pop { fill: color-mix(in srgb, var(--upwr-cat-niebo) 8%, transparent);
+                              stroke: var(--upwr-cat-niebo); stroke-width: 2; }
+      .sets-diagram .sd-op  { fill: none; stroke: var(--upwr-ink-soft); stroke-width: 1.6; stroke-dasharray: 6 4; }
+      .sets-diagram .sd-p   { fill: var(--upwr-cat-niebo); opacity: .75; }
+      .sets-diagram .sd-out { fill: none; stroke: var(--upwr-cat-niebo); stroke-width: 1.6; }
+      .sets-diagram .sd-s   { fill: var(--upwr-accent); }
+      .sets-diagram .sd-lab { font: 600 15px var(--upwr-sans); fill: var(--upwr-ink); }
+      .sets-diagram .sd-lab-pop { fill: var(--upwr-cat-niebo); }
+      .sets-diagram .sd-lab-op  { fill: var(--upwr-ink-soft); font-weight: 500; }
+      .sets-diagram .sd-lab-s   { fill: var(--upwr-accent); }
+    ")),
+    tags$div(class = "sets-wrap", HTML(svg))
+  )
+}
+
 ch2_ui <- list(
   id    = "ch-populacja",
   num   = "02",
@@ -48,6 +93,14 @@ ch2_ui <- list(
       losujemy próbę, na przykład wykaz studentów z dziekanatu albo rejestr
       gospodarstw rolnych. Kogo nie ma w operacie, ten nie może trafić
       do próby."),
+
+    # PROTOTYP zbiory: populacja ⊃ operat ⊃ próba (statyczny diagram SVG)
+    figure_panel(
+      label = "Ryc. 2.0a",
+      title = "Populacja, operat, próba",
+      width_mode = "text",
+      ch2_sets_diagram()
+    ),
 
     lc_h2("ch2-losowanie", "Próba z populacji"),
 
