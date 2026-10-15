@@ -232,12 +232,12 @@ ch4_ui <- list(
       gloss("wartość odstająca", "wartości odstające"), "."),
 
     lc_formula_annotated(
-      "⟦1|\\text{IQR}⟧ = ⟦2|Q_3⟧ - ⟦3|Q_1⟧ \\qquad \\text{granice wąsów: } Q_1 - ⟦4|1.5 \\cdot \\text{IQR}⟧, \\;\\; Q_3 + 1.5 \\cdot \\text{IQR}",
+      "⟦1|\\text{IQR}⟧ = ⟦2|Q_3⟧ - ⟦3|Q_1⟧ \\qquad \\text{granice wartości odstających: } Q_1 - ⟦4|1.5 \\cdot \\text{IQR}⟧, \\;\\; Q_3 + 1.5 \\cdot \\text{IQR}",
       notes = list(
         "rozstęp międzykwartylowy",
         "trzeci kwartyl (75%)",
         "pierwszy kwartyl (25%)",
-        "zasięg wąsów"
+        "odległość granicy od pudełka"
       ),
       colors = c("accent", "indygo", "indygo", "terakota"),
       above = 2
@@ -252,7 +252,7 @@ ch4_ui <- list(
       lc_step_widget("ch4_bp",
         title = "Wykres pudełkowy — budowa krok po kroku",
         steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
-                  "Wąsy i odstające", "Gotowy wykres"),
+                  "Granice 1.5 IQR", "Wąsy i odstające", "Gotowy wykres"),
         toolbar = lc_toolbar(
           lc_action("ch4_bp_new", "Losuj nowe dane", variant = "outline")
         ),
@@ -261,10 +261,10 @@ ch4_ui <- list(
       )
     ),
 
-    lc_p("Trzy dodane wartości zwykle wypadają poza granice wąsów i zostają
+    lc_p("Trzy dodane wartości zwykle wypadają poza granice i zostają
       oznaczone jako wartości odstające. Pudełko ich nie zauważa: kwartyle,
       tak jak mediana, zależą tylko od kolejności obserwacji. W danych
-      z ankiety wzrost ma IQR = 11.5 cm, a granice wąsów to 148.2 i 194.3 cm.
+      z ankiety wzrost ma IQR = 11.5 cm, a granice wartości odstających to 148.2 i 194.3 cm.
       Najniższy student ma 150 cm, najwyższy 191.2 cm, więc wykres pudełkowy
       wzrostu nie pokazuje żadnej wartości odstającej."),
 
@@ -718,11 +718,12 @@ ch4_server <- function(input, output, session) {
     whisker_high <- max(vals[vals <= upper_fence])
     outliers <- vals[vals < lower_fence | vals > upper_fence]
 
-    # Stała rama osi X z pełnych danych, wspólna dla kroków.
-    x_lim <- range(vals) + c(-1, 1) * diff(range(vals)) * 0.06
+    # Stała rama osi X z pełnych danych i granic, wspólna dla kroków.
+    x_span <- range(c(vals, lower_fence, upper_fence))
+    x_lim <- x_span + c(-1, 1) * diff(x_span) * 0.06
     frame <- step_frame(xlim = x_lim, ylim = c(-0.9, 0.9), y_axis = FALSE)
 
-    if (step == 5) {
+    if (step == 6) {
       # Final: clean boxplot + histogram for comparison
       df <- data.frame(x = vals)
       p_box <- ggplot(df, aes(x = x, y = "")) +
@@ -745,7 +746,7 @@ ch4_server <- function(input, output, session) {
       return(gridExtra::arrangeGrob(p_box, p_hist, nrow = 2, heights = c(1, 1.2)))
     }
 
-    # Steps 1-4: manual construction
+    # Steps 1-5: manual construction
     df <- data.frame(x = vals, y = 0)
 
     if (step == 1) {
@@ -791,6 +792,36 @@ ch4_server <- function(input, output, session) {
         frame
 
     } else if (step == 4) {
+      set.seed(42)
+      df$y_jit <- runif(nrow(df), -0.2, 0.2)
+
+      # Odcinki 1.5 IQR od krawędzi pudełka do granic
+      steps_df <- data.frame(x = c(q1, q3), xend = c(lower_fence, upper_fence),
+                             y = -0.6, yend = -0.6)
+
+      ggplot(df) +
+        step_result(geom_rect, data = data.frame(xmin = q1, xmax = q3),
+                    mapping = aes(xmin = xmin, xmax = xmax, ymin = -0.4, ymax = 0.4),
+                    alpha = 0.2) +
+        step_layer(geom_segment, "known",
+                   data = data.frame(x = med, xend = med, y = -0.4, yend = 0.4),
+                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
+                   linewidth = 1.2) +
+        step_line("new", xintercept = lower_fence) +
+        step_line("new", xintercept = upper_fence) +
+        step_layer(geom_segment, "new", data = steps_df,
+                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
+                   arrow = grid::arrow(length = grid::unit(0.15, "cm"), ends = "last")) +
+        step_label((q1 + lower_fence) / 2, -0.72, "1.5 IQR", role = "new",
+                   hjust = 0.5, vjust = 0.5) +
+        step_label((q3 + upper_fence) / 2, -0.72, "1.5 IQR", role = "new",
+                   hjust = 0.5, vjust = 0.5) +
+        step_layer(geom_point, "data", mapping = aes(x = x, y = y_jit),
+                   size = 2.5, alpha = 0.5) +
+        labs(x = "Wzrost (cm)", y = "") +
+        frame
+
+    } else if (step == 5) {
       is_outlier <- vals < lower_fence | vals > upper_fence
       df$outlier <- is_outlier
       set.seed(42)
@@ -813,6 +844,9 @@ ch4_server <- function(input, output, session) {
                    data = data.frame(x = med, xend = med, y = -0.4, yend = 0.4),
                    mapping = aes(x = x, xend = xend, y = y, yend = yend),
                    linewidth = 1.2) +
+        # Granice z poprzedniego kroku
+        step_line("known", xintercept = lower_fence) +
+        step_line("known", xintercept = upper_fence) +
         # Whiskers
         step_layer(geom_segment, "new", data = whiskers,
                    mapping = aes(x = x, xend = xend, y = y, yend = yend)) +
@@ -850,7 +884,7 @@ ch4_server <- function(input, output, session) {
       paste0("Q1 = ", round(q1, 1), " cm, Q3 = ", round(q3, 1),
              " cm. Pudełko obejmuje środkowe 50% danych, IQR = ",
              round(q3 - q1, 1), " cm.")
-    } else if (step == 4) {
+    } else if (step %in% 4:5) {
       vals <- ch4_bp_data()
       q1 <- quantile(vals, 0.25)
       q3 <- quantile(vals, 0.75)
@@ -858,15 +892,22 @@ ch4_server <- function(input, output, session) {
       lower_fence <- q1 - 1.5 * iqr_val
       upper_fence <- q3 + 1.5 * iqr_val
       outliers <- vals[vals < lower_fence | vals > upper_fence]
-      paste0("Granice wąsów: ", round(lower_fence, 1), " i ",
-             round(upper_fence, 1), " cm. ",
-             if (length(outliers) > 0) {
-               paste0("Wartości odstające: ",
-                      paste(round(sort(outliers), 1), collapse = ", "), " cm.")
-             } else {
-               "Brak wartości odstających."
-             })
-    } else if (step == 5) {
+      inside <- vals[vals >= lower_fence & vals <= upper_fence]
+      if (step == 4) {
+        paste0("Granice: Q1 − 1.5 IQR = ", round(lower_fence, 1),
+               " cm i Q3 + 1.5 IQR = ", round(upper_fence, 1),
+               " cm. Poza nimi leży obserwacji: ", length(outliers), ".")
+      } else {
+        paste0("Wąsy kończą się na ostatnich obserwacjach przed granicami: ",
+               round(min(inside), 1), " i ", round(max(inside), 1), " cm. ",
+               if (length(outliers) > 0) {
+                 paste0("Wartości odstające: ",
+                        paste(round(sort(outliers), 1), collapse = ", "), " cm.")
+               } else {
+                 "Brak wartości odstających."
+               })
+      }
+    } else if (step == 6) {
       "Gotowy wykres pudełkowy (u góry) obok histogramu tych samych danych (u dołu)."
     }
   })

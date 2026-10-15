@@ -90,7 +90,7 @@
   "rozstęp międzykwartylowy" =
     "IQR = Q3 − Q1 — rozrzut środkowych 50% obserwacji, odporny na wartości odstające.",
   "wykres pudełkowy" =
-    "Wykres oparty na kwartylach: pudełko to Q1–Q3, kreska w środku to mediana, wąsy sięgają do 1.5·IQR.",
+    "Wykres oparty na kwartylach: pudełko to Q1–Q3, kreska w środku to mediana, wąsy sięgają do najdalszych obserwacji nie dalej niż 1.5·IQR od pudełka.",
   "współczynnik zmienności" =
     "CV = SD / średnia × 100% — względna miara rozrzutu, pozwala porównać zmienne mierzone w różnych skalach.",
   "reguła 68-95-99.7" =
