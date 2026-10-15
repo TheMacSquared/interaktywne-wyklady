@@ -19,63 +19,13 @@ ch2_ui <- list(
 
     lc_p("Poprzedni rozdział skończył się odwróceniem zdania z wykładu 02: skoro
       w około 95% prób średnia leży nie dalej niż 1.96·SE od μ, to w tych samych
-      próbach μ leży nie dalej niż 1.96·SE od średniej. Zanim zapiszemy to
-      wzorem, powtórzymy badanie wiele razy i zobaczymy, jak takie zakresy
-      zachowują się w kolejnych próbach. Potem nazwiemy je i sprawdzimy, czego
+      próbach μ leży nie dalej niż 1.96·SE od średniej. W tym rozdziale zapiszemy
+      to odwrócenie wzorem, nazwiemy powstały zakres i sprawdzimy, czego
       dokładnie dotyczy liczba 95%."),
-
-    lc_h2("ch2-wiele-ci", "Wiele przedziałów ufności"),
-
-    # PROTOTYP kolejnosc: scena przed formalizmem (intuicja → wzór)
-    lc_p("W prawdziwym badaniu mamy jedną próbę. Scena pozwala powtórzyć badanie
-      dowolnie wiele razy na ", gloss("populacja", "populacji"), ", w której
-      znamy μ: wzrost o rozkładzie normalnym z μ = 170 cm i σ = 10 cm. Każda
-      grupka 25 osób daje średnią i margines wokół niej, czyli siatkę zarzuconą
-      na oś wzrostu. Taki zakres to ", gloss("przedział ufności"), "; jego wzór
-      zapiszemy w następnej sekcji. W ostatnim kroku odczyt pod stosem podaje ",
-      gloss("pokrycie"), ", czyli odsetek siatek, które złapały μ."),
-
-    # PROTOTYP SCENY (2026-10-08): Zarzuć siatkę — co znaczy 95%
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch2_siatka", "Zarzuć siatkę: co znaczy 95%",
-        steps = c("Siatka", "Powtarzamy", "Gdzie μ?"),
-        labels = c("Zarzuć siatkę", "Zarzuć siatkę", "Zarzuć siatkę"),
-        more_from = 2,
-        config = list(kind = "net", mode = "net", mu = net_world$mu, sigma = net_world$sigma,
-                      n = 25L, mult = "t", tq = net_tq, z = 1.96,
-                      xmin = 140, xmax = 200, height = 550,
-                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali, zarzuca przedział x̄ ± margines na oś wzrostu; kolejne przedziały układają się pod osią, a w ostatnim kroku widać μ i odsetek trafień"))
-    ),
-
-    lc_p("Przy n = 25 i poziomie 95% każda siatka sięga około 4.1 cm w każdą
-      stronę od swojej średniej, a średnie rozrzucają się wokół 170 cm. Siatki różnią się położeniem i nieco szerokością, bo s
-      też zmienia się z próby na próbę. Większość z nich łapie μ, ale co jakiś
-      czas trafia się chybiona."),
-
-    lc_p("Przy małej liczbie przedziałów pokrycie mocno skacze. Wszystkie 10
-      przedziałów trafia w około 60% serii (0.95¹⁰ ≈ 0.60), a w około 9% serii
-      chybiają co najmniej dwa, co daje pokrycie 80% lub mniej. Im więcej
-      przedziałów, tym bliżej 95%: przy 200 przedziałach odchylenie standardowe
-      pokrycia wynosi około 1.5 punktu procentowego, a wynik prawie na pewno
-      mieści się między 90% a 100%. Poziom ufności jest więc długookresową
-      częstością trafień metody, a nie gwarancją dla żadnej pojedynczej serii."),
-
-    lc_p("Chybione przedziały nie mają żadnej wady konstrukcyjnej. Powstały tą samą
-      metodą co trafione, tylko z próby, której średnia wypadła daleko od μ.
-      W prawdziwym badaniu nie wiemy, gdzie leży μ, więc nie da się też
-      rozpoznać, czy nasz jedyny przedział jest jednym z trafionych."),
-
-    lc_p("Pewność ma swoją cenę. Przy 99% przedziały są wyraźnie szersze
-      i chybia średnio jeden na sto. Przy 80% przedziały się zwężają, a chybia
-      średnio co piąty."),
 
     lc_h2("ch2-czym-jest", "Czym jest przedział ufności?"),
 
-    lc_p("Scena pokazała, że siatka sięgająca około 4 cm w każdą stronę od
-      średniej łapie μ w około 95% prób. Teraz zapiszemy, skąd bierze się ta
-      liczba. Z ", gloss("centralne twierdzenie graniczne", "centralnego twierdzenia
+    lc_p("Z ", gloss("centralne twierdzenie graniczne", "centralnego twierdzenia
       granicznego"), " wiemy, że średnia z próby X̄ ma w przybliżeniu ", gloss("rozkład normalny"), "
       o średniej μ i ", gloss("odchylenie standardowe", "odchyleniu standardowym"), " SE = σ/√n, czyli ",
       gloss("błąd standardowy", "błędzie standardowym"), ". W rozkładzie normalnym
@@ -112,26 +62,70 @@ ch2_ui <- list(
       lc_caption("x̄ w pasie μ ± 1.96·SE ⇔ μ w przedziale x̄ ± 1.96·SE.")
     ),
 
-    lc_p("Przedział od x̄ - 1.96·SE do x̄ + 1.96·SE to 95% przedział ufności
-      dla μ (CI, od ang. ",
+    lc_p("Przedział od x̄ - 1.96·SE do x̄ + 1.96·SE to 95% ",
+      gloss("przedział ufności"), " dla μ (CI, od ang. ",
       tags$em("confidence interval"), "), a 95% to jego ",
       gloss("poziom ufności"), ". Warto zauważyć, co w tym wzorze jest losowe.
       Nieznany ", gloss("parametr"), " μ stoi w miejscu. Z próby na próbę zmienia
       się średnia, a razem z nią oba końce przedziału. Prawdopodobieństwo 0.95
       opisuje więc metodę: zanim wylosujemy próbę, wiemy, że przedział zbudowany
-      w ten sposób obejmie μ z prawdopodobieństwem 0.95. W scenie tę liczbę
-      mierzyło pokrycie, czyli odsetek trafionych siatek."),
+      w ten sposób obejmie μ z prawdopodobieństwem 0.95."),
 
     lc_p("W praktyce σ nie znamy, więc SE liczymy z odchylenia standardowego
       próby s, a zamiast 1.96 bierzemy nieco większy mnożnik t* z ",
-      gloss("rozkład t-Studenta", "rozkładu t-Studenta"), ". Przy 25 osobach
-      t* = 2.06, a σ/√n = 2 cm, stąd około 4.1 cm marginesu w scenie. Przy 99%
-      mnożnik rośnie do 2.80, przy 80% spada do 1.32."),
+      gloss("rozkład t-Studenta", "rozkładu t-Studenta"), " (przy 25 osobach 2.06).
+      Tak liczy też scena poniżej."),
 
+    lc_h2("ch2-wiele-ci", "Wiele przedziałów ufności"),
+
+    lc_p("Definicja mówi o tym, co dzieje się w wielu próbach, a w prawdziwym
+      badaniu mamy jedną. Scena pozwala powtórzyć badanie dowolnie wiele razy
+      na ", gloss("populacja", "populacji"), ", w której znamy μ: wzrost o rozkładzie
+      normalnym z μ = 170 cm i σ = 10 cm. Każda grupka 25 osób daje jeden
+      przedział x̄ ± t·s/√n, czyli siatkę zarzuconą na oś wzrostu. W ostatnim
+      kroku odczyt pod stosem podaje ", gloss("pokrycie"), ", czyli odsetek
+      siatek, które złapały μ."),
+
+    # PROTOTYP SCENY (2026-10-08): Zarzuć siatkę — co znaczy 95%
+    figure_panel(
+      label = "Prototyp sceny",
+      width_mode = "text",
+      scene_widget("ch2_siatka", "Zarzuć siatkę: co znaczy 95%",
+        steps = c("Siatka", "Powtarzamy", "Gdzie μ?"),
+        labels = c("Zarzuć siatkę", "Zarzuć siatkę", "Zarzuć siatkę"),
+        more_from = 2,
+        config = list(kind = "net", mode = "net", mu = net_world$mu, sigma = net_world$sigma,
+                      n = 25L, mult = "t", tq = net_tq, z = 1.96,
+                      xmin = 140, xmax = 200, height = 550,
+                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali, zarzuca przedział x̄ ± margines na oś wzrostu; kolejne przedziały układają się pod osią, a w ostatnim kroku widać μ i odsetek trafień"))
+    ),
+
+    lc_p("Przy n = 25 i poziomie 95% każda siatka sięga około 4.1 cm w każdą
+      stronę od swojej średniej (t = 2.06, σ/√n = 2 cm), a średnie rozrzucają
+      się wokół 170 cm. Siatki różnią się położeniem i nieco szerokością, bo s
+      też zmienia się z próby na próbę. Większość z nich łapie μ, ale co jakiś
+      czas trafia się chybiona."),
+
+    lc_p("Przy małej liczbie przedziałów pokrycie mocno skacze. Wszystkie 10
+      przedziałów trafia w około 60% serii (0.95¹⁰ ≈ 0.60), a w około 9% serii
+      chybiają co najmniej dwa, co daje pokrycie 80% lub mniej. Im więcej
+      przedziałów, tym bliżej 95%: przy 200 przedziałach odchylenie standardowe
+      pokrycia wynosi około 1.5 punktu procentowego, a wynik prawie na pewno
+      mieści się między 90% a 100%. Poziom ufności jest więc długookresową
+      częstością trafień metody, a nie gwarancją dla żadnej pojedynczej serii."),
+
+    lc_p("Chybione przedziały nie mają żadnej wady konstrukcyjnej. Powstały tą samą
+      metodą co trafione, tylko z próby, której średnia wypadła daleko od μ.
+      W prawdziwym badaniu nie wiemy, gdzie leży μ, więc nie da się też
+      rozpoznać, czy nasz jedyny przedział jest jednym z trafionych."),
+
+    lc_p("Pewność ma swoją cenę. Przy 99% kwantyl t rośnie do 2.80, przedziały
+      są wyraźnie szersze i chybia średnio jeden na sto. Przy 80% kwantyl spada
+      do 1.32, przedziały się zwężają, a chybia średnio co piąty."),
 
     lc_h2("ch2-jak-interpretowac", "Jak (nie) interpretować przedział ufności"),
 
-    lc_p("Scena pokazała, co znaczy 95%, gdy przedziałów jest wiele.
+    lc_p("Scena pokazuje, co znaczy 95%, gdy przedziałów jest wiele.
       W raporcie mamy jednak jeden przedział i trzeba o nim powiedzieć coś
       prawdziwego. Załóżmy, że z jednej próby otrzymaliśmy 95% przedział ufności
       [165, 175] dla średniego wzrostu w populacji. Z czterech zdań poniżej tylko
