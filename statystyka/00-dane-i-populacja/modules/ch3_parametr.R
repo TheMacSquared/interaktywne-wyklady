@@ -149,14 +149,6 @@ ch3_ui <- list(
       zmienność próbkową, ale wokół złej wartości. Taki systematyczny błąd
       w jedną stronę nazywamy ", gloss("obciążenie", "obciążeniem"), "."),
 
-    # PROTOTYP tarcze: 2 × 2 — sposób doboru × liczebność próby
-    figure_panel(
-      label = "Ryc. 3.2a",
-      title = "Losowanie i liczebność próby",
-      width_mode = "text",
-      lc_plot("ch3_bias_grid", ratio = "16/10")
-    ),
-
     lc_note("Zasada", rule = TRUE,
       "Losowanie zabezpiecza przed obciążeniem, a duże n zmniejsza
        zmienność próbkową. Jedno nie zastąpi drugiego."
@@ -175,46 +167,11 @@ ch3_ui <- list(
   )
 )
 
-# PROTOTYP tarcze: dane do Ryc. 3.2a (stałe ziarno, ta sama populacja co w scenach)
-ch3_bias_data <- local({
-  set.seed(303)
-  lib <- which(faculty$biblioteka)
-  reps <- 40
-  do.call(rbind, lapply(c(20, 300), function(n) {
-    rbind(
-      data.frame(kind = "Losowanie", n = n,
-                 p_hat = replicate(reps, mean(faculty$zdal[sample(pop_N, n)]))),
-      data.frame(kind = "Biblioteka", n = n,
-                 p_hat = replicate(reps, mean(faculty$zdal[sample(lib, n)])))
-    )
-  }))
-})
-ch3_bias_data$kind <- factor(ch3_bias_data$kind, levels = c("Losowanie", "Biblioteka"))
-ch3_bias_data$n_lab <- factor(paste0("n = ", ch3_bias_data$n), levels = c("n = 20", "n = 300"))
-
-ch3_bias_plot <- function() {
-  set.seed(1)
-  ggplot(ch3_bias_data, aes(x = p_hat, y = 0)) +
-    geom_vline(xintercept = pop_zdal, colour = col_param, linewidth = 1.1, linetype = "solid") +
-    geom_jitter(width = 0, height = 0.32, colour = col_stat, alpha = 0.75, size = 2.4) +
-    facet_grid(n_lab ~ kind) +
-    scale_x_continuous(limits = c(0.4, 1), breaks = seq(0.4, 1, 0.2)) +
-    scale_y_continuous(limits = c(-0.5, 0.5), breaks = NULL) +
-    labs(x = "p̂", y = NULL) +
-    theme_upwr() +
-    theme(panel.grid.major.y = element_blank(), panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 12))
-}
-
 # ============================================================================
 # SERVER
 # ============================================================================
 
 ch3_server <- function(input, output, session) {
-
-  # PROTOTYP tarcze: 40 prób każdego rodzaju, p̂ wokół prawdziwego p
-  zoom_plot_server("ch3_bias_grid", reactive(ch3_bias_plot()),
-    alt = "Cztery panele: próby losowe i z biblioteki, przy n = 20 i n = 300; odsetki z prób wokół prawdziwego p")
 
   scene_texts(input, output, "ch3_worek", list(
     tagList("Za drzwiami z napisem EGZAMIN siedzi cały wydział. Nie widzimy, kto zdał. Wywołaj grupkę:
