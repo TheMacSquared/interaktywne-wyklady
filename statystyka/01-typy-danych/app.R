@@ -369,6 +369,37 @@ app_extras <- tagList(
     .ops-label { font-size: 12px; }
   }
 
+  /* PROTOTYP mapa-narzedzi: siatka statystyk (Ryc. 5.3a) */
+  .tmap {
+    display: grid; grid-template-columns: minmax(110px, 0.9fr) repeat(3, minmax(0, 1fr));
+    gap: 6px; max-width: 640px; margin: 8px auto 4px;
+  }
+  .tmap-head {
+    text-align: center; font-weight: 700; font-size: 14px; color: var(--upwr-ink);
+    border-bottom: 3px solid var(--upwr-rule); padding: 4px 0 6px;
+  }
+  .tmap-row {
+    display: flex; align-items: center; font-size: 13px; line-height: 1.3;
+    color: var(--upwr-ink-soft); padding-right: 6px;
+  }
+  .tmap-cell {
+    display: flex; flex-wrap: wrap; gap: 6px; align-content: center; justify-content: center;
+    min-height: 64px; padding: 8px; border-radius: 6px;
+    background: var(--upwr-surface-sunken);
+  }
+  .tmap-chip {
+    --tmap-c: var(--upwr-ink-soft);
+    font-size: 14px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+    color: var(--tmap-c); border: 1.5px solid var(--tmap-c);
+    background: color-mix(in srgb, var(--tmap-c) 10%, var(--upwr-surface));
+  }
+  .tmap-none { color: var(--upwr-reference); font-size: 18px; }
+  @media (max-width: 600px) {
+    .tmap { grid-template-columns: 78px repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .tmap-row, .tmap-head { font-size: 11px; }
+    .tmap-chip { font-size: 11px; padding: 2px 6px; }
+  }
+
   @keyframes taxDetailFade {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: translateY(0); }

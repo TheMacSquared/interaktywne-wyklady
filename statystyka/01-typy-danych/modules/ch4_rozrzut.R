@@ -151,6 +151,16 @@ ch4_ui <- list(
       )
     ),
 
+    # PROTOTYP potegi: kwadraty o polach 1, 4, 9 (wkład odchylenia do sumy)
+    figure_panel(
+      label = "Ryc. 4.2a",
+      title = "Kwadrat odchylenia rośnie szybciej niż odległość",
+      width_mode = "text",
+      tags$div(class = "proto-kwadraty",
+        lc_plot("ch4_proto_kwadraty", ratio = "2.4/1", max_height = "260px")
+      )
+    ),
+
     lc_p("Najdłuższe strzałki dają największy wkład do sumy, bo podnosimy je
       do kwadratu: obserwacja dwa razy dalej od średniej waży cztery razy
       więcej. Odchylenie standardowe można czytać jako typową odległość
@@ -169,6 +179,16 @@ ch4_ui <- list(
       gloss("reguła 68-95-99.7", "reguła 68–95–99.7"), ": około 68% obserwacji leży w odległości
       najwyżej jednego odchylenia standardowego od średniej, około 95% —
       dwóch, a 99.7% — trzech."),
+
+    # PROTOTYP regula-wzorzec: wzorcowa krzywa dzwonowa z pasami ±1, ±2, ±3 SD
+    figure_panel(
+      label = "Ryc. 4.2b",
+      title = "Reguła 68–95–99.7 na rozkładzie normalnym",
+      width_mode = "text",
+      tags$div(class = "proto-regula",
+        lc_plot("ch4_proto_regula", ratio = "2.2/1", max_height = "300px")
+      )
+    ),
 
     lc_p("Panel nakłada te trzy pasy na ", gloss("histogram"), " wybranej zmiennej z ankiety
       i podaje, jaki odsetek danych naprawdę w nich leży."),
@@ -572,6 +592,66 @@ ch4_server <- function(input, output, session) {
       )
     }
   })
+
+  # PROTOTYP potegi: kwadraty o bokach 1, 2, 3 z siatką jednostkową
+  zoom_plot_server("ch4_proto_kwadraty", reactive({
+    pot_col <- upwr_col("terakota")
+    d <- 1:3
+    x0 <- c(0, 2, 5)  # lewe krawędzie kwadratów
+    cells <- do.call(rbind, lapply(seq_along(d), function(k) {
+      g <- expand.grid(i = seq_len(d[k]) - 1, j = seq_len(d[k]) - 1)
+      data.frame(xmin = x0[k] + g$i, xmax = x0[k] + g$i + 1,
+                 ymin = g$j, ymax = g$j + 1)
+    }))
+    sq <- data.frame(xmin = x0, xmax = x0 + d, ymin = 0, ymax = d,
+                     xc = x0 + d / 2, area = d^2)
+
+    ggplot() +
+      geom_rect(data = cells, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+                fill = pot_col, alpha = 0.18, colour = pot_col, linewidth = 0.3) +
+      geom_rect(data = sq, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+                fill = NA, colour = pot_col, linewidth = 1) +
+      geom_text(data = sq, aes(x = xc, y = d + 0.25, label = paste0("pole ", area)),
+                family = lc_mono_family, colour = pot_col, fontface = "bold",
+                size = 4, vjust = 0) +
+      geom_text(data = sq, aes(x = xc, y = -0.3, label = paste0("odległość ", d)),
+                family = lc_mono_family, colour = upwr_secondary, size = 3.6, vjust = 1) +
+      coord_equal(xlim = c(-0.3, 8.3), ylim = c(-0.8, 3.7), expand = FALSE) +
+      theme_void()
+  }))
+
+  # PROTOTYP regula-wzorzec: krzywa normalna, pasy jak w Ryc. 4.3, klamry z odsetkami
+  zoom_plot_server("ch4_proto_regula", reactive({
+    x <- seq(-3.6, 3.6, length.out = 600)
+    dens <- data.frame(x = x, y = dnorm(x))
+    band_alphas <- c(0.40, 0.25, 0.12)
+    pk <- dnorm(0)
+    br <- data.frame(k = 1:3, y = pk * c(1.12, 1.28, 1.44),
+                     lab = c("68%", "95%", "99.7%"))
+
+    p <- ggplot(dens, aes(x = x, y = y))
+    for (k in 3:1) {
+      p <- p + geom_area(data = dens[abs(dens$x) <= k, ], fill = upwr_accent,
+                         alpha = band_alphas[k])
+    }
+    p +
+      geom_line(colour = upwr_secondary, linewidth = 0.9) +
+      geom_segment(data = br, aes(x = -k, xend = k, y = y, yend = y),
+                   colour = upwr_accent, linewidth = 0.6, inherit.aes = FALSE) +
+      geom_segment(data = rbind(transform(br, xs = -k), transform(br, xs = br$k)),
+                   aes(x = xs, xend = xs, y = y, yend = y - pk * 0.04),
+                   colour = upwr_accent, linewidth = 0.6, inherit.aes = FALSE) +
+      geom_text(data = br, aes(x = 0, y = y, label = lab), vjust = -0.45,
+                family = lc_mono_family, colour = upwr_accent, fontface = "bold",
+                size = 4, inherit.aes = FALSE) +
+      scale_x_continuous(breaks = -3:3,
+        labels = c("x̄ − 3s", "x̄ − 2s", "x̄ − s", "x̄", "x̄ + s", "x̄ + 2s", "x̄ + 3s")) +
+      scale_y_continuous(limits = c(0, pk * 1.58), expand = c(0, 0)) +
+      labs(x = NULL, y = NULL) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(),
+            panel.grid.minor.x = element_blank())
+  }))
 
   # --- Widget 2b: Empirical rule (68-95-99.7) ---
 

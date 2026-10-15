@@ -2,6 +2,31 @@
 # CHAPTER 5: Kształt rozkładu
 # ============================================================================
 
+# PROTOTYP mapa-narzedzi: siatka statystyk (HTML/CSS, style w app.R)
+ch5_tools_map <- function() {
+  chip <- function(txt, color = NULL) {
+    tags$span(class = "tmap-chip",
+      style = if (!is.null(color)) paste0("--tmap-c:", color, ";"), txt)
+  }
+  none <- tags$span(class = "tmap-none", "—")
+  cell <- function(...) tags$div(class = "tmap-cell", ...)
+  tags$div(class = "tmap", role = "img",
+    `aria-label` = "Mapa narzędzi: położenie — średnia (wrażliwa), mediana i dominanta (odporne); rozrzut — odchylenie standardowe, wariancja, rozstęp (wrażliwe), IQR (odporny); kształt — skośność i kurtoza (wrażliwe).",
+    tags$div(class = "tmap-corner"),
+    tags$div(class = "tmap-head", "Położenie"),
+    tags$div(class = "tmap-head", "Rozrzut"),
+    tags$div(class = "tmap-head", "Kształt"),
+    tags$div(class = "tmap-row", "Wrażliwe na wartości skrajne"),
+    cell(chip("średnia", "var(--upwr-accent)")),
+    cell(chip("SD"), chip("wariancja"), chip("rozstęp")),
+    cell(chip("skośność"), chip("kurtoza")),
+    tags$div(class = "tmap-row", "Odporne"),
+    cell(chip("mediana", stat_colors[["Mediana"]]), chip("dominanta")),
+    cell(chip("IQR")),
+    cell(none)
+  )
+}
+
 ch5_ui <- list(
   id = "ch-ksztalt", num = "05", title = "Kształt rozkładu",
   content = tagList(
@@ -47,6 +72,26 @@ ch5_ui <- list(
       ),
       colors = c("indygo", "szalwia", "bursztyn", "niebo", "terakota"),
       above = c(3, 4, 5)
+    ),
+
+    # PROTOTYP skosnosc-kroki: krokowa budowa skośności (standaryzacja → z³ → bilans)
+    lc_p("Panel przeprowadza to obliczenie na danych z ankiety. Najpierw
+      zamieniamy każdą obserwację na odległość od średniej w odchyleniach
+      standardowych, potem podnosimy te odległości do trzeciej potęgi,
+      a na końcu sumujemy osobno wkłady z lewej i z prawej strony."),
+
+    figure_panel(
+      label = "Ryc. 5.0a",
+      lc_step_widget("ch5_sk",
+        title = "Obliczanie skośności",
+        steps = c("Dane", "Standaryzacja", "Trzecie potęgi", "Bilans"),
+        toolbar = lc_toolbar(
+          lc_segmented("ch5_sk_var", "Zmienna",
+            choices = c("Czas dojazdu" = "czas_dojazdu", "Wzrost" = "wzrost"))
+        ),
+        plot_id = "ch5_sk_plot",
+        ratio = "2.2/1"
+      )
     ),
 
     lc_p("Trzecia potęga zachowuje znak, więc odchylenia w prawo i w lewo
@@ -136,6 +181,16 @@ ch5_ui <- list(
       skrajne) i platykurtyczne (ujemna: lekkie ogony, wartości skupione
       w ograniczonym zakresie)."),
 
+    # PROTOTYP potegi: wkład obserwacji przy drugiej i czwartej potędze
+    figure_panel(
+      label = "Ryc. 5.2a",
+      title = "Wkład obserwacji: kwadrat i czwarta potęga",
+      width_mode = "text",
+      tags$div(class = "proto-potegi",
+        lc_plot("ch5_proto_potegi", ratio = "2.2/1", max_height = "280px")
+      )
+    ),
+
     lc_p("W panelu poniżej porównujemy z rozkładem normalnym rozkład o tej
       samej średniej (0) i tym samym odchyleniu standardowym (1), ale
       o wybranej kurtozie. Dolny wykres powiększa prawy ogon."),
@@ -179,6 +234,14 @@ ch5_ui <- list(
       rozkładu ", gloss("zmienna ilościowa", "zmiennej ilościowej"), ".
       Panel poniżej zestawia ", gloss("histogram"), ", ", gloss("wykres pudełkowy"), " i tabelę wszystkich
       omówionych statystyk dla wybranej zmiennej."),
+
+    # PROTOTYP mapa-narzedzi: położenie / rozrzut / kształt × wrażliwe / odporne
+    figure_panel(
+      label = "Ryc. 5.3a",
+      title = "Mapa narzędzi",
+      width_mode = "text",
+      ch5_tools_map()
+    ),
 
     figure_panel(
       label = "Ryc. 5.4",
@@ -317,6 +380,117 @@ ch5_server <- function(input, output, session) {
       " | Średnia = ", round(m, 2),
       ", Mediana = ", round(med, 2))
   })
+
+  # PROTOTYP skosnosc-kroki: serwer widgetu krokowego
+  ch5_sk_step <- lc_step_server("ch5_sk", input)$step
+
+  ch5_sk_data <- reactive({
+    var <- input$ch5_sk_var %||% "czas_dojazdu"
+    x <- student_data[[var]]
+    m <- mean(x); s <- sd(x)
+    z <- (x - m) / s
+    set.seed(7)
+    list(x = x, z = z, m = m, s = s, z3 = z^3, n = length(x),
+         jit = runif(length(x), -0.35, 0.35),
+         label = variable_meta[[var]]$label)
+  })
+
+  zoom_plot_server("ch5_sk_plot", reactive({
+    step <- ch5_sk_step()
+    d <- ch5_sk_data()
+    col_l <- upwr_col("niebo")
+    col_r <- upwr_col("terakota")
+    side <- ifelse(d$z < 0, "l", "r")
+    side_cols <- c(l = col_l, r = col_r)
+
+    if (step <= 2) {
+      xv <- if (step == 1) d$x else d$z
+      ctr <- if (step == 1) d$m else 0
+      df <- data.frame(x = xv, y = d$jit, side = side)
+      p <- ggplot(df, aes(x = x, y = y))
+      if (step == 2) {
+        p <- p + geom_vline(xintercept = -3:3, colour = upwr_reference,
+                            linewidth = 0.3, linetype = "22")
+      }
+      p +
+        geom_point(aes(colour = if (step == 2) side else "d"),
+                   size = 2.4, alpha = 0.7) +
+        scale_colour_manual(values = c(side_cols, d = STEP_ROLES$data$colour)) +
+        step_line(if (step == 1) "new" else "known", xintercept = ctr, helper = FALSE) +
+        step_label(ctr + diff(range(xv)) * 0.01, 0.5,
+                   if (step == 1) sprintf("x̄ = %.1f", d$m) else "x̄",
+                   role = if (step == 1) "new" else "known", hjust = 0, vjust = 0) +
+        scale_x_continuous(breaks = if (step == 2) -3:4 else waiver()) +
+        labs(x = if (step == 1) d$label else "Odległość od średniej (w SD)", y = NULL) +
+        step_frame(xlim = range(xv) + c(-1, 1) * diff(range(xv)) * 0.05,
+                   ylim = c(-0.5, 0.62), y_axis = FALSE)
+
+    } else if (step == 3) {
+      df <- data.frame(z = d$z, z3 = d$z3, side = side)
+      ggplot(df, aes(x = z, y = z3, colour = side)) +
+        geom_hline(yintercept = 0, colour = upwr_secondary, linewidth = 0.5) +
+        geom_segment(aes(xend = z, y = 0, yend = z3), linewidth = 0.6, alpha = 0.7) +
+        geom_point(size = 1.8) +
+        scale_colour_manual(values = side_cols) +
+        labs(x = "Odległość od średniej (w SD)", y = "z³") +
+        theme(legend.position = "none")
+
+    } else {
+      sums <- c(l = sum(d$z3[d$z3 < 0]), r = sum(d$z3[d$z3 > 0]))
+      tot <- sum(sums)
+      df <- data.frame(
+        what = factor(c("Lewa strona", "Prawa strona", "Suma"),
+                      levels = c("Suma", "Prawa strona", "Lewa strona")),
+        val = c(sums[["l"]], sums[["r"]], tot),
+        fill = c(col_l, col_r, upwr_col("indygo"))
+      )
+      lim <- max(abs(df$val)) * 1.25
+      ggplot(df, aes(x = val, y = what)) +
+        geom_vline(xintercept = 0, colour = upwr_secondary, linewidth = 0.5) +
+        geom_col(aes(fill = I(fill)), width = 0.55, alpha = 0.9) +
+        geom_text(aes(label = formatC(val, format = "f", digits = 1), hjust = ifelse(val < 0, 1.15, -0.15)),
+                  family = lc_mono_family, colour = upwr_secondary, size = 4) +
+        scale_x_continuous(limits = c(-lim, lim)) +
+        labs(x = "Suma z³", y = NULL) +
+        theme(panel.grid.major.y = element_blank())
+    }
+  }))
+
+  output$ch5_sk_text <- renderUI({
+    step <- ch5_sk_step()
+    d <- ch5_sk_data()
+    switch(as.character(step),
+      "1" = paste0(d$n, " obserwacji i ich średnia."),
+      "2" = paste0("Ta sama oś w jednostkach SD: średnia to 0, odchylenie standardowe to 1."),
+      "3" = "Trzecia potęga zachowuje znak i wydłuża dalekie obserwacje.",
+      "4" = {
+        tot <- sum(d$z3)
+        paste0("Suma ", lc_fmt(tot, 1), " podzielona przez ", d$n,
+               " daje skośność ", lc_fmt(tot / d$n, 2), ".")
+      })
+  })
+
+  # PROTOTYP potegi: słupki z² i z⁴ dla odległości 1, 2, 3 SD
+  zoom_plot_server("ch5_proto_potegi", reactive({
+    z <- 1:3
+    df <- data.frame(
+      z = rep(z, 2),
+      pot = factor(rep(c("z²", "z⁴"), each = 3), levels = c("z²", "z⁴")),
+      val = c(z^2, z^4)
+    )
+    ggplot(df, aes(x = factor(z), y = val, fill = pot)) +
+      geom_col(position = position_dodge(width = 0.7), width = 0.62) +
+      geom_text(aes(label = val), position = position_dodge(width = 0.7),
+                vjust = -0.4, family = lc_mono_family, colour = upwr_secondary,
+                size = 3.8) +
+      scale_fill_manual(values = c("z²" = upwr_reference, "z⁴" = upwr_col("terakota")),
+                        name = NULL) +
+      scale_x_discrete(labels = paste(z, "SD")) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+      labs(x = "Odległość od średniej", y = "Wkład do sumy") +
+      theme(legend.position = "top", legend.text = element_text(size = 13),
+            panel.grid.major.x = element_blank())
+  }))
 
   # --------------------------------------------------------------------------
   # Widget 2: Kurtosis (suwak kurtozy, bez t-rozkładu)
