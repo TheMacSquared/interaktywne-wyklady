@@ -2,27 +2,7 @@
 # CHAPTER 1: Normalność rozkładu
 # ============================================================================
 
-# PROTOTYP dwie-grupy / moc-sw: dane i wykresy statyczne.
-
-# Dwie grupy normalne (średnie 160 i 180, SD 6) i ich suma.
-ch1_pooled_plot_fn <- function() {
-  x <- seq(135, 205, length.out = 400)
-  dA <- 0.5 * dnorm(x, 160, 6); dB <- 0.5 * dnorm(x, 180, 6)
-  df <- rbind(
-    data.frame(x = x, d = dA, g = "A"),
-    data.frame(x = x, d = dB, g = "B")
-  )
-  ggplot() +
-    geom_area(data = data.frame(x = x, d = dA + dB), aes(x, d),
-              fill = upwr_reference, alpha = 0.25) +
-    geom_line(data = data.frame(x = x, d = dA + dB), aes(x, d),
-              colour = upwr_secondary, linewidth = 1.1) +
-    geom_line(data = df, aes(x, d, colour = g), linewidth = 1, linetype = "dashed") +
-    scale_colour_manual(values = c(A = col_test, B = col_alt), guide = "none") +
-    scale_y_continuous(breaks = NULL) +
-    labs(x = "Wartość", y = NULL) +
-    theme_upwr()
-}
+# PROTOTYP moc-sw: dane i wykres statyczny.
 
 # Odsetek odrzuceń H₀ (α = 0.05) w 5000 próbach na punkt; symulacja jak w tekście
 # (rozkłady z generate_test_data(), set.seed(2026)).
@@ -123,14 +103,6 @@ ch1_ui <- lecture_chapter(
         W praktyce oglądamy rozkład każdej zmiennej i wykres rozrzutu."),
       tags$li(strong(gloss("regresja liniowa", "Regresja liniowa"), ":"),
         " rozkład reszt, a nie samych zmiennych. Wrócimy do tego w wykładzie 06.")
-    ),
-
-    # PROTOTYP dwie-grupy: dwie normalne grupy razem dają rozkład dwumodalny
-    figure_panel(
-      label = "Ryc. 1.0a",
-      title = "Dwie grupy osobno i razem",
-      width_mode = "text",
-      lc_plot("ch1_pooled_plot", ratio = "2/1")
     ),
 
     lc_p("Test t i ANOVA dobrze znoszą łagodne odchylenia od normalności, zwłaszcza
@@ -355,9 +327,7 @@ ch1_ui <- lecture_chapter(
 
 ch1_server <- function(input, output, session) {
 
-  # PROTOTYP dwie-grupy / moc-sw
-  zoom_plot_server("ch1_pooled_plot", reactive(ch1_pooled_plot_fn()),
-    alt = "Dwie normalne grupy o różnych średnich i ich wspólny, dwumodalny rozkład")
+  # PROTOTYP moc-sw
   zoom_plot_server("ch1_sw_power", reactive(ch1_sw_power_fn()),
     alt = "Odsetek odrzuceń normalności w teście Shapiro-Wilka w zależności od liczebności próby dla czterech rozkładów")
 
