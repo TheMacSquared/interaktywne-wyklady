@@ -54,14 +54,13 @@ source(file.path(app_dir, "modules", "ch2_idea.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch3_srednia.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch4_proporcja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch5_czynniki.R"),  local = TRUE)
-source(file.path(app_dir, "modules", "ch6_sciaga.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch7_cwiczenia.R"), local = TRUE)
 
 # ============================================================================
 # UI
 # ============================================================================
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui, ch7_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch7_ui)
 
 ui <- lecture_page(
   lecture_id    = "przedzialy-ufnosci",
@@ -94,7 +93,6 @@ server <- function(input, output, session) {
   ch3_server(input, output, session)
   ch4_server(input, output, session)
   ch5_server(input, output, session)
-  ch6_server(input, output, session)
   ch7_server(input, output, session)
 }
 

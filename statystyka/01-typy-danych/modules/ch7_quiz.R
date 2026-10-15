@@ -30,13 +30,13 @@ QUIZ_TYPE_MAX_QUESTIONS <- 15
 # ============================================================================
 
 ch7_ui <- list(
-  id = "ch-quiz", num = "07", title = "Quiz",
+  id = "ch-quiz", num = "06", title = "Quiz",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 07 · Statystyka opisowa",
-      num    = "07",
+      kicker = "Rozdział 06 · Statystyka opisowa",
+      num    = "06",
       title  = "Quiz.",
       lead   = "Przeczytaj opis zmiennej i wybierz jej typ. Każde pytanie ma
                 cztery opcje — dokładnie jedną poprawną. Quiz losuje 15 pytań
@@ -86,7 +86,7 @@ ch7_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "08",
+      num       = "07",
       title     = "Ćwiczenia",
       lead      = "czas na praktykę — zadania z typów danych i statystyki opisowej.",
       target_id = "ch-cwiczenia"
@@ -287,15 +287,9 @@ ch7_server <- function(input, output, session) {
       ),
       lc_status(lc_verdict(tags$strong(result_text), type = result_type)),
       lc_toolbar(
-        lc_action("ch7_start", "Spróbuj ponownie", variant = "solid"),
-        lc_action("ch7_back_to_ch6", "Wróć do ściągi", variant = "outline")
+        lc_action("ch7_start", "Spróbuj ponownie", variant = "solid")
       )
     )
-  })
-
-  # Nawigacja powrotna
-  observeEvent(input$ch7_back_to_ch6, {
-    session$sendCustomMessage("switchToChapter", "ch-sciaga")
   })
 
 }

@@ -54,7 +54,6 @@ source(file.path(app_dir, "modules", "ch3_dyskretne.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch4_ciagle.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch5_normalny.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch6_ctg.R"),       local = TRUE)
-source(file.path(app_dir, "modules", "ch7_sciaga.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch8_quiz.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch9_cwiczenia.R"), local = TRUE)
 
@@ -63,7 +62,7 @@ source(file.path(app_dir, "modules", "ch9_cwiczenia.R"), local = TRUE)
 # ============================================================================
 
 .chapters <- list(ch1_ui, ch2_ev_var_ui, ch3_ui, ch4_ui,
-                  ch5_ui, ch6_ui, ch7_ui, ch8_ui, ch9_ui)
+                  ch5_ui, ch6_ui, ch8_ui, ch9_ui)
 
 ui <- lecture_page(
   lecture_id    = "rozklady-prawdopodobienstwa",
@@ -153,7 +152,6 @@ server <- function(input, output, session) {
   ch4_server(input, output, session)
   ch5_server(input, output, session)
   ch6_server(input, output, session)
-  ch7_server(input, output, session)
   ch8_server(input, output, session)
   ch9_server(input, output, session)
 

@@ -389,15 +389,7 @@ ch4_ui <- lecture_chapter(
     lc_p("Następny wykład, poświęcony regresji, przenosi te same pomysły na
       modele. Tam założenia dotyczą reszt, a nie samych zmiennych, i ocenia
       się je tymi samymi narzędziami: wykresem Q-Q, porównaniem rozrzutu
-      i wykresem reszt względem wartości przewidywanych. Zanim do niego
-      przejdziemy, rozdział 05 zbiera cały ten wykład w zwięzłej ściądze."),
-
-    lc_chapter_next(
-      num = "05",
-      title = "Ściąga",
-      lead = "kompaktowa referencja do diagnostyki i alternatyw.",
-      target_id = "ch-sciaga"
-    )
+      i wykresem reszt względem wartości przewidywanych.")
   )
 )
 

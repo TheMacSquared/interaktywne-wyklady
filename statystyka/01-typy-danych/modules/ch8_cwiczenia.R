@@ -8,13 +8,13 @@
 # ============================================================================
 
 ch8_ui <- list(
-  id = "ch-cwiczenia", num = "08", title = "Ćwiczenia",
+  id = "ch-cwiczenia", num = "07", title = "Ćwiczenia",
   content = tagList(
 
     # --- Chapter hero ---
     lc_chapter_hero(
-      kicker = "Rozdział 08 · Statystyka opisowa",
-      num    = "08",
+      kicker = "Rozdział 07 · Statystyka opisowa",
+      num    = "07",
       title  = "Ćwiczenia.",
       lead   = "Czas na praktykę — trzy bloki zadań w Jamovi: rozpoznawanie
                 typów zmiennych, dobór narzędzi, analiza prawdziwych danych.

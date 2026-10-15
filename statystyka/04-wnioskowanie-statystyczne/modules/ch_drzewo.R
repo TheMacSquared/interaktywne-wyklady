@@ -75,9 +75,9 @@ ch_drzewo_ui <- list(
 
     lc_chapter_next(
       num       = "12",
-      title     = "Ściąga",
-      lead      = "kompaktowe podsumowanie wszystkich testów w tabelach.",
-      target_id = "ch-sciaga"
+      title     = "Ćwiczenia",
+      lead      = "zadania z testowania hipotez na danych UPWr.",
+      target_id = "ch-cwiczenia"
     )
   )
 )

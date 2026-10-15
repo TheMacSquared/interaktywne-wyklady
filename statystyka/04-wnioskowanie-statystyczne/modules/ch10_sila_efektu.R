@@ -450,8 +450,7 @@ ch10_ui <- list(
 
     lc_p("Pozostaje praktyczne pytanie: który test wybrać do konkretnych danych.
       Odpowiada na nie drzewo decyzyjne w następnym rozdziale. Prowadzi ono
-      od typu zmiennych i liczby grup do testu, a ściąga zbiera w jednym
-      miejscu wzory, tabele testów i miary siły efektu."),
+      od typu zmiennych i liczby grup do testu."),
 
     lc_chapter_next(
       num       = "11",

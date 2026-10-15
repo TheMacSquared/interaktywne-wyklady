@@ -9,13 +9,13 @@
 
 ch7_ui <- list(
   id    = "ch-cwiczenia",
-  num   = "07",
+  num   = "06",
   title = "Ćwiczenia",
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 07 · Przedziały ufności",
-      num    = "07",
+      kicker = "Rozdział 06 · Przedziały ufności",
+      num    = "06",
       title  = "Ćwiczenia praktyczne.",
       lead   = "Czas zastosować wszystko, co poznaliśmy o przedziałach
                 ufności na rzeczywistych danych."

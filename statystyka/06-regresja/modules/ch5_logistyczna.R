@@ -433,15 +433,14 @@ ch5_ui <- list(
       kiedy wynikom testów można ufać. Regresja łączy te wątki: jej
       współczynniki to estymatory z przedziałami ufności i testami, a założenia
       sprawdza się na wykresach. Następne wykłady wykorzystują te narzędzia
-      do oceny jakości danych i całych analiz. Ściąga w rozdziale 06 zbiera
-      wzory i zasady regresji, a ćwiczenia w rozdziale 07 pozwalają przećwiczyć
-      samodzielną interpretację modelu."),
+      do oceny jakości danych i całych analiz. Ćwiczenia w rozdziale 06 pozwalają
+      przećwiczyć samodzielną interpretację modelu."),
 
     lc_chapter_next(
       num       = "06",
-      title     = "Ściąga",
-      lead      = "podsumowanie wzorów i zasad",
-      target_id = "ch-sciaga"
+      title     = "Ćwiczenia",
+      lead      = "zadania interpretacyjne i porównywanie modeli",
+      target_id = "ch-cwiczenia"
     )
   )
 )

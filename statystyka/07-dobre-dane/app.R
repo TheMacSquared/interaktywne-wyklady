@@ -64,14 +64,13 @@ source(file.path(app_dir, "modules", "ch8_ankieta.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "ch9_laboratorium.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch10_studenci.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch11_kawiarnia.R"),     local = TRUE)
-source(file.path(app_dir, "modules", "ch12_sciaga.R"),        local = TRUE)
 
 # ============================================================================
 # UI
 # ============================================================================
 
 .chapters <- list(ch0_ui, ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui,
-                  ch7_ui, ch8_ui, ch9_ui, ch10_ui, ch11_ui, ch12_ui)
+                  ch7_ui, ch8_ui, ch9_ui, ch10_ui, ch11_ui)
 
 ui <- lecture_page(
   lecture_id    = "dobre-dane",
@@ -110,7 +109,6 @@ server <- function(input, output, session) {
   ch9_server(input, output, session)
   ch10_server(input, output, session)
   ch11_server(input, output, session)
-  ch12_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

@@ -59,9 +59,6 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
     daje samodzielna ocena zbioru według listy kontrolnej przed
     przeczytaniem werdyktu."),
 
-  lc_p("Rozdział 12 to ściąga: lista kontrolna, podsumowanie dziesięciu zbiorów
-    i zestawienie, jakich danych wymagają metody poznane w wykładach 01–06."),
-
   lc_chapter_next(
     num = "01",
     title = "Katalog problemów",

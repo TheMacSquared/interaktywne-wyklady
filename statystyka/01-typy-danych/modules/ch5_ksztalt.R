@@ -212,9 +212,9 @@ ch5_ui <- list(
 
     lc_chapter_next(
       num       = "06",
-      title     = "Ściąga",
-      lead      = "wszystkie narzędzia (położenie, rozrzut, kształt) w jednym miejscu.",
-      target_id = "ch-sciaga"
+      title     = "Quiz",
+      lead      = "sprawdź się — rozpoznawanie typów zmiennych w praktyce.",
+      target_id = "ch-quiz"
     ),
 
     br(), br()

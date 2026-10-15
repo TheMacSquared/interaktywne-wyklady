@@ -25,12 +25,12 @@ QUIZ_MAX_QUESTIONS <- 10
 # ============================================================================
 
 ch8_ui <- list(
-  id = "ch-quiz", num = "08", title = "Quiz",
+  id = "ch-quiz", num = "07", title = "Quiz",
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 08 · Rozkłady prawdopodobieństwa",
-      num    = "08",
+      kicker = "Rozdział 07 · Rozkłady prawdopodobieństwa",
+      num    = "07",
       title  = "Quiz.",
       lead   = "Ćwiczenie: rozpoznawanie rozkładów w praktyce."
     ),
@@ -70,7 +70,7 @@ ch8_ui <- list(
     ),
 
     lc_chapter_next(
-      num       = "09",
+      num       = "08",
       title     = "Ćwiczenia",
       lead      = "zadania z rozkładów prawdopodobieństwa do samodzielnego rozwiązania.",
       target_id = "ch-cwiczenia"
@@ -274,15 +274,9 @@ ch8_server <- function(input, output, session) {
       ),
       lc_status(lc_verdict(tags$strong(result_text), type = result_type)),
       lc_toolbar(
-        lc_action("ch8_start", "Spróbuj ponownie", variant = "solid"),
-        lc_action("ch8_back_to_ch7", "Wróć do ściągi", variant = "outline")
+        lc_action("ch8_start", "Spróbuj ponownie", variant = "solid")
       )
     )
-  })
-
-  # Nawigacja powrotna
-  observeEvent(input$ch8_back_to_ch7, {
-    updateNavbarPage(session, "main_nav", selected = "7. Ściąga")
   })
 
 }

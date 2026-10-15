@@ -256,9 +256,9 @@ ch6_ui <- list(
 
     lc_chapter_next(
       num       = "07",
-      title     = "Ściąga",
-      lead      = "kompaktowe podsumowanie wszystkich wzorów i rozkładów.",
-      target_id = "ch-sciaga"
+      title     = "Quiz",
+      lead      = "rozpoznawanie rozkładów w praktyce.",
+      target_id = "ch-quiz"
     )
   )
 )

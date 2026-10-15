@@ -8,12 +8,12 @@
 # ============================================================================
 
 ch9_ui <- list(
-  id = "ch-cwiczenia", num = "09", title = "Ćwiczenia",
+  id = "ch-cwiczenia", num = "08", title = "Ćwiczenia",
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 09 · Rozkłady prawdopodobieństwa",
-      num    = "09",
+      kicker = "Rozdział 08 · Rozkłady prawdopodobieństwa",
+      num    = "08",
       title  = "Ćwiczenia.",
       lead   = "Trzy bloki zadań — od obliczeń przez rozpoznawanie rozkładów
                 po analizę prawdziwych danych. Narzędzie: Jamovi (90 min)."

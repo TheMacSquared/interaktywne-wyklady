@@ -265,9 +265,9 @@ ch5_ui <- list(
 
     lc_chapter_next(
       num       = "06",
-      title     = "Ściąga",
-      lead      = "podsumowanie wzorów i zasad",
-      target_id = "ch-sciaga"
+      title     = "Ćwiczenia",
+      lead      = "czas zastosować tę wiedzę na rzeczywistym zbiorze danych",
+      target_id = "ch-cwiczenia"
     )
   )
 )

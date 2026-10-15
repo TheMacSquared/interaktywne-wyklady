@@ -12,13 +12,13 @@ QUIZ_DANE_MAX_QUESTIONS <- 10
 
 ch7_ui <- list(
   id    = "ch-quiz",
-  num   = "07",
+  num   = "06",
   title = "Quiz",
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 07 · Dane i populacja",
-      num    = "07",
+      kicker = "Rozdział 06 · Dane i populacja",
+      num    = "06",
       title  = "Quiz.",
       lead   = "Każde pytanie opisuje krótko jedno badanie. Wskaż populację,
                 próbę, parametr, statystykę albo sposób doboru próby. Quiz
@@ -164,7 +164,7 @@ ch7_server <- function(input, output, session) {
     type <- if (pct >= 70) "ok" else if (pct >= 50) "warning" else "danger"
     text <- if (pct >= 90) "Świetnie, pojęcia są opanowane."
             else if (pct >= 70) "Dobry wynik."
-            else if (pct >= 50) "Nieźle, ale warto wrócić do ściągi."
+            else if (pct >= 50) "Nieźle, ale warto wrócić do rozdziałów 02–04."
             else "Wróć do rozdziałów 02–04 i spróbuj ponownie."
     tagList(
       lc_readouts(
@@ -173,13 +173,8 @@ ch7_server <- function(input, output, session) {
       ),
       lc_status(lc_verdict(tags$strong(text), type = type)),
       lc_toolbar(
-        lc_action("ch7_start", "Spróbuj ponownie", variant = "solid"),
-        lc_action("ch7_back", "Wróć do ściągi", variant = "outline")
+        lc_action("ch7_start", "Spróbuj ponownie", variant = "solid")
       )
     )
-  })
-
-  observeEvent(input$ch7_back, {
-    session$sendCustomMessage("switchToChapter", "ch-sciaga")
   })
 }

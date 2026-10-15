@@ -172,15 +172,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     dni w kawiarni w tabeli wyglądają jak zwykłe wiersze. Dlatego ocenę
     każdego zbioru warto zaczynać od pytania, co jest ", gloss("jednostka obserwacji", "jednostką obserwacji"), "
     i czy jednostki są od siebie niezależne, a dopiero potem cokolwiek
-    liczyć."),
-
-  lc_chapter_next(
-    num = "12",
-    title = "Ściąga",
-    lead = "Ściąga zbiera kryteria z dziesięciu przypadków w jedną listę
-            kontrolną do oceny własnych danych.",
-    target_id = "ch12"
-  )
+    liczyć.")
 ))
 
 # Pary (dzień t, dzień t + lag) w kolejności kalendarza; pomija pary z brakiem.

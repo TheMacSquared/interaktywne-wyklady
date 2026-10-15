@@ -6,13 +6,13 @@ source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
 
 ch7_ui <- list(
   id    = "ch-cwiczenia",
-  num   = "07",
+  num   = "06",
   title = "Ćwiczenia",
   content = tagList(
 
     lc_chapter_hero(
-      kicker = "Rozdział 07 · Regresja",
-      num    = "07",
+      kicker = "Rozdział 06 · Regresja",
+      num    = "06",
       title  = "Ćwiczenia praktyczne.",
       lead   = "Interpretacja wspolczynnikow, diagnostyka, porownywanie modeli
                 i regresja logistyczna na krotkich zadaniach."

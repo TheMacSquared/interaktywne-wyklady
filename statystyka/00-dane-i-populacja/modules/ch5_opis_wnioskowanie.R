@@ -100,9 +100,9 @@ ch5_ui <- list(
 
     lc_chapter_next(
       num       = "06",
-      title     = "Ściąga",
-      lead      = "wszystkie pojęcia w jednym miejscu",
-      target_id = "ch-sciaga"
+      title     = "Quiz",
+      lead      = "populacja, próba, parametr czy statystyka?",
+      target_id = "ch-quiz"
     )
   )
 )

@@ -53,13 +53,12 @@ source(file.path(app_dir, "modules", "ch1_normalnosc.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch2_wariancje.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch3_chi_fisher.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch4_mapa.R"),         local = TRUE)
-source(file.path(app_dir, "modules", "ch5_sciaga.R"),       local = TRUE)
 
 # ============================================================================
 # UI
 # ============================================================================
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui)
 
 ui <- lecture_page(
   lecture_id    = "zalozenia-testow",
@@ -90,7 +89,6 @@ server <- function(input, output, session) {
   ch2_server(input, output, session)
   ch3_server(input, output, session)
   ch4_server(input, output, session)
-  ch5_server(input, output, session)
 }
 
 shinyApp(ui = ui, server = server)

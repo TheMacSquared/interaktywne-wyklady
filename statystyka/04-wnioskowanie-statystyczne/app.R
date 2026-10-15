@@ -62,7 +62,6 @@ source(file.path(app_dir, "modules", "ch6_dwie_grupy.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch7_anova.R"),            local = TRUE)
 source(file.path(app_dir, "modules", "ch10_sila_efektu.R"),     local = TRUE)
 source(file.path(app_dir, "modules", "ch_drzewo.R"),            local = TRUE)
-source(file.path(app_dir, "modules", "ch8_sciaga.R"),           local = TRUE)
 source(file.path(app_dir, "modules", "ch9_cwiczenia.R"),        local = TRUE)
 
 # ============================================================================
@@ -256,7 +255,7 @@ header_extras <- tagList(
 # ============================================================================
 
 .chapters <- list(ch1_ui, ch2h_ui, ch1d_ui, ch2_ui, ch3_ui, ch4_ui,
-                  ch5_ui, ch6_ui, ch7_ui, ch10_ui, ch_drzewo_ui, ch8_ui, ch9_ui)
+                  ch5_ui, ch6_ui, ch7_ui, ch10_ui, ch_drzewo_ui, ch9_ui)
 
 ui <- lecture_page(
   lecture_id    = "wnioskowanie-statystyczne",
@@ -292,7 +291,6 @@ server <- function(input, output, session) {
   ch7_server(input, output, session)
   ch10_server(input, output, session)
   ch_drzewo_server(input, output, session)
-  ch8_server(input, output, session)
   ch9_server(input, output, session)
 
 }

@@ -16,11 +16,11 @@
     "Interakcje",
     "Porównywanie modeli",
     "Regresja logistyczna",
-    "Ściąga i ćwiczenia"
+    "Ćwiczenia"
   ),
   chapter = c(
     "01", "01", "01", "02", "02", "03",
-    "03B", "03B", "03B", "04", "05", "06–07"
+    "03B", "03B", "03B", "04", "05", "06"
   ),
   level = c(
     "rdzeń", "rdzeń", "rdzeń", "rdzeń", "pogłębienie", "rdzeń",

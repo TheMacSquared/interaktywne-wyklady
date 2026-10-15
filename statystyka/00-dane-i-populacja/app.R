@@ -52,10 +52,9 @@ source(file.path(app_dir, "modules", "ch2_populacja.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch3_parametr.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch4_przypadek.R"),          local = TRUE)
 source(file.path(app_dir, "modules", "ch5_opis_wnioskowanie.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ch6_sciaga.R"),         local = TRUE)
 source(file.path(app_dir, "modules", "ch7_quiz.R"),           local = TRUE)
 
-.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch6_ui, ch7_ui)
+.chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui, ch5_ui, ch7_ui)
 
 ui <- lecture_page(
   lecture_id    = "dane-i-populacja",
@@ -83,7 +82,6 @@ server <- function(input, output, session) {
   ch3_server(input, output, session)
   ch4_server(input, output, session)
   ch5_server(input, output, session)
-  ch6_server(input, output, session)
   ch7_server(input, output, session)
 }
 

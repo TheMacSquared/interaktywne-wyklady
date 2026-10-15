@@ -37,7 +37,7 @@ gdzie najczytelniej pokazuje konkretny mechanizm.
   porównanie modeli → logistyczna;
 - pogłębienie: założenia, ekstrapolacja, zmienne jakościowe, paradoks Simpsona,
   interakcje i train/test;
-- zakończenie: ściąga i ćwiczenia na obu przypadkach.
+- zakończenie: ćwiczenia na obu przypadkach.
 
 ## Koncepcje pedagogiczne
 

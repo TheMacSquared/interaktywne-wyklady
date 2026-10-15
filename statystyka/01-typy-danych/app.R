@@ -159,7 +159,6 @@ source(file.path(app_dir, "modules", "ch2_jakosciowe.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_polozenie.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch4_rozrzut.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch5_ksztalt.R"),    local = TRUE)
-source(file.path(app_dir, "modules", "ch6_sciaga.R"),     local = TRUE)
 source(file.path(app_dir, "modules", "ch7_quiz.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch8_cwiczenia.R"),  local = TRUE)
 
@@ -353,7 +352,7 @@ app_extras <- tagList(
 # ============================================================================
 
 .chapters <- list(ch1_ui, ch2_ui, ch3_ui, ch4_ui,
-                  ch5_ui, ch6_ui, ch7_ui, ch8_ui)
+                  ch5_ui, ch7_ui, ch8_ui)
 
 ui <- lecture_page(
   lecture_id    = "typy-danych",
@@ -424,7 +423,6 @@ server <- function(input, output, session) {
   ch3_server(input, output, session)
   ch4_server(input, output, session)
   ch5_server(input, output, session)
-  ch6_server(input, output, session)
   ch7_server(input, output, session)
   ch8_server(input, output, session)
 
