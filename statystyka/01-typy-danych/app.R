@@ -370,6 +370,11 @@ app_extras <- tagList(
   }
 
   /* PROTOTYP mapa-narzedzi: siatka statystyk (Ryc. 5.3a) */
+  /* PROTOTYP pelna-tabela: dwie tabele obok siebie w Ryc. 5.4 */
+  .ch5-full-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
+  .ch5-full-pair h4 { margin: 0 0 6px; }
+  @media (max-width: 640px) { .ch5-full-pair { grid-template-columns: 1fr; gap: 14px; } }
+
   .tmap {
     display: grid; grid-template-columns: minmax(110px, 0.9fr) repeat(2, minmax(0, 1fr));
     gap: 6px; max-width: 520px; margin: 8px auto 4px;

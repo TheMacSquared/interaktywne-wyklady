@@ -245,7 +245,10 @@ ch5_ui <- list(
       lc_toolbar(
         lc_segmented("ch5_full_var", "Zmienna",
           choices = c("Wzrost" = "wzrost", "Średnia ocen" = "srednia_ocen",
-                      "Czas dojazdu" = "czas_dojazdu", "Waga" = "waga"))
+                      "Czas dojazdu" = "czas_dojazdu", "Waga" = "waga")),
+        # PROTOTYP pelna-tabela: zestaw minimum albo pełny (dwie tabele obok siebie)
+        lc_segmented("ch5_full_set", "Zestaw",
+          choices = c("Minimum" = "min", "Pełny" = "full"), selected = "min")
       ),
       lc_plot("ch5_full_hist", ratio = "1.8/1", max_height = "350px"),
       lc_plot("ch5_full_box", ratio = "5.2/1", max_height = "120px"),
@@ -665,38 +668,43 @@ ch5_server <- function(input, output, session) {
     mode_bin_idx <- which.max(h$counts)
     mode_val <- (h$breaks[mode_bin_idx] + h$breaks[mode_bin_idx + 1]) / 2
 
-    stats_df <- data.frame(
-      Statystyka = c(
-        "n", "Średnia", "Mediana", "Dominanta (środek przedziałowy)",
-        "Śr. ucięta 10%",
-        "Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
-        "Minimum", "Q1", "Q3", "Maksimum",
-        "Skośność", "Kurtoza (nadwyżkowa)"
+    # PROTOTYP pelna-tabela: minimum (n, średnia, SD, mediana, kwartyle) albo
+    # pełny zestaw w dwóch tabelach obok siebie.
+    f2 <- function(x) formatC(x, format = "f", digits = 2)
+    stat_table <- function(names, values, label) {
+      lc_table(data.frame(Statystyka = names, Wartość = values, stringsAsFactors = FALSE),
+        cols = list(lc_col("Statystyka", "Statystyka", "row"), lc_col("Wartość", "Wartość")),
+        label = label)
+    }
+
+    if (!identical(input$ch5_full_set, "full")) {
+      return(stat_table(
+        c("n", "Średnia", "Odch. std.", "Mediana", "Q1", "Q3"),
+        c(as.character(n), f2(m), f2(s), f2(med), f2(q1), f2(q3)),
+        "Charakterystyka rozkładu — zestaw minimum"))
+    }
+
+    tags$div(class = "ch5-full-pair",
+      tags$div(
+        tags$h4("Położenie"),
+        stat_table(
+          c("n", "Średnia", "Mediana", "Dominanta", "Śr. ucięta 10%",
+            "Minimum", "Q1", "Q3", "Maksimum"),
+          c(as.character(n), f2(m), f2(med), f2(mode_val), f2(trimmed),
+            f2(min(vals)), f2(q1), f2(q3), f2(max(vals))),
+          "Statystyki położenia")
       ),
-      Wartość = c(
-        as.character(n),
-        formatC(m, format = "f", digits = 2),
-        formatC(med, format = "f", digits = 2),
-        formatC(mode_val, format = "f", digits = 2),
-        formatC(trimmed, format = "f", digits = 2),
-        formatC(s, format = "f", digits = 2),
-        formatC(v, format = "f", digits = 2),
-        formatC(rng, format = "f", digits = 2),
-        formatC(iqr_val, format = "f", digits = 2),
-        formatC(cv, format = "f", digits = 1),
-        formatC(min(vals), format = "f", digits = 2),
-        formatC(q1, format = "f", digits = 2),
-        formatC(q3, format = "f", digits = 2),
-        formatC(max(vals), format = "f", digits = 2),
-        formatC(sk, format = "f", digits = 3),
-        formatC(ku, format = "f", digits = 3)
-      ),
-      stringsAsFactors = FALSE
-        )
-        lc_table(stats_df,
-          cols = list(lc_col("Statystyka", "Statystyka", "row"), lc_col("Wartość", "Wartość")),
-          label = "Pełna charakterystyka rozkładu")
-      })
+      tags$div(
+        tags$h4("Rozrzut i kształt"),
+        stat_table(
+          c("Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
+            "Skośność", "Kurtoza"),
+          c(f2(s), f2(v), f2(rng), f2(iqr_val), formatC(cv, format = "f", digits = 1),
+            formatC(sk, format = "f", digits = 3), formatC(ku, format = "f", digits = 3)),
+          "Statystyki rozrzutu i kształtu")
+      )
+    )
+  })
 
   output$ch5_full_interpretation <- renderUI({
     d <- ch5_full_data()
