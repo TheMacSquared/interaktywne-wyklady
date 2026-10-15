@@ -44,12 +44,11 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
 
   lc_p("Analizę przeprowadzimy w czterech krokach:"),
 
-  tags$ol(
-    tags$li("Opis grup: rozkład masy w każdym gatunku (wykład 01)."),
-    tags$li("Założenia: normalność i jednorodność wariancji w grupach
-      (wykład 05), a na ich podstawie wybór testu."),
-    tags$li("Test dla trzech grup i porównania par (wykład 04)."),
-    tags$li("Sprawdzenie, czy wniosek zmienia się po podziale na płeć.")
+  # PROTOTYP pipeline: mapa kroków zamiast listy numerowanej
+  figure_panel(
+    label = "Ryc. 2.0a",
+    title = "Przebieg analizy",
+    case_pipeline(case_steps_ch2)
   ),
 
   # ========================================================================
@@ -138,6 +137,14 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
     średnia masa jest taka sama we wszystkich trzech gatunkach. Jeśli ją
     odrzucimy, test Games-Howella wskaże, które pary się różnią, i poda
     przedział ufności dla każdej różnicy."),
+
+  # PROTOTYP wzory: hipoteza o równych średnich trzech gatunków
+  lc_formula_annotated(
+    "H_0: ⟦1|\\mu_A⟧ = ⟦2|\\mu_C⟧ = ⟦3|\\mu_G⟧",
+    notes  = list("średnia Adelie", "średnia Chinstrap", "średnia Gentoo"),
+    colors = c("niebo", "bursztyn", "szalwia"),
+    above  = 2
+  ),
 
   figure_panel(
     label = "Ryc. 2.3",

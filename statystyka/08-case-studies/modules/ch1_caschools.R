@@ -64,20 +64,19 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
 
   lc_p("Analizę przeprowadzimy w sześciu krokach:"),
 
-  tags$ol(
-    tags$li("Poznanie danych: rozkłady zmiennych i ich wzajemne korelacje (wykłady 01 i 07)."),
-    tags$li("Prosty związek STR z wynikami: test korelacji i regresja prosta (wykłady 04 i 06)."),
-    tags$li("Sprawdzenie, czy ubóstwo jest ", gloss("zmienna zakłócająca", "zmienną zakłócającą"),
-            " (wykład 04, w tym ANOVA)."),
-    tags$li("Regresja wieloraka: czy związek STR z wynikami przetrwa kontrolę innych zmiennych (wykład 06)."),
-    tags$li("Analiza wybranego modelu: współczynniki, przedziały ufności, reszty (wykłady 05 i 06)."),
-    tags$li("Odpowiedź na pytanie decyzyjne i ograniczenia analizy.")
+  # PROTOTYP pipeline: mapa sześciu kroków zamiast listy numerowanej
+  # (dawna lista tags$ol z odwołaniami do wykładów — w historii gita).
+  figure_panel(
+    label = "Ryc. 1.0a",
+    title = "Przebieg analizy",
+    case_pipeline(case_steps_ch1)
   ),
 
   # ========================================================================
   # KROK 1: Poznanie danych
   # ========================================================================
   lc_h2("sec-02", "Krok 1: Poznanie danych"),
+  case_pipeline(case_steps_ch1, current = 1),  # PROTOTYP pipeline: pasek postępu
 
   lc_p(
     "Zanim policzymy cokolwiek o związkach, sprawdzamy, jakie wartości
@@ -151,6 +150,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 2: Prosty związek STR -> wyniki
   # ========================================================================
   lc_h2("sec-03", "Krok 2: Prosty związek STR z wynikami"),
+  case_pipeline(case_steps_ch1, current = 2),  # PROTOTYP pipeline: pasek postępu
 
   lc_p(
     "Sprawdzamy związek, który zobaczyłby polityk, gdyby spojrzał tylko na
@@ -162,9 +162,12 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     hipotezę, że w ", gloss("populacja", "populacji"), " współczynnik ", gloss("korelacja", "korelacji"),
     " \\(\\rho\\) między STR a wynikiem wynosi zero:"),
 
-  lc_formula_box(withMathJax(
-    "$$H_0: \\rho = 0 \\qquad H_a: \\rho \\neq 0$$"
-  )),
+  # PROTOTYP wzory: hipotezy testu korelacji ze znacznikami
+  lc_formula_annotated(
+    "⟦1|H_0⟧: ⟦2|\\rho⟧ = 0 \\qquad ⟦3|H_a⟧: \\rho \\neq 0",
+    notes  = list("hipoteza zerowa", "korelacja w populacji", "hipoteza alternatywna"),
+    colors = c("grafit", "accent", "wrzos")
+  ),
 
   lc_p("Siłę związku w jednostkach wyniku opisuje ",
     gloss("regresja prosta", "regresja prosta"), " z wykładu 06. Jej
@@ -221,6 +224,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 3: Ubóstwo jako zmienna zakłócająca
   # ========================================================================
   lc_h2("sec-04", "Krok 3: Ubóstwo jako zmienna zakłócająca"),
+  case_pipeline(case_steps_ch1, current = 3),  # PROTOTYP pipeline: pasek postępu
 
   lc_p(
     "Sprawdzamy, czy za liczbą uczniów na nauczyciela i za wynikami nie
@@ -255,6 +259,18 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     z ubóstwem.
     Ubóstwo może zatem tłumaczyć część korelacji STR z wynikami, ale
     raczej nie całą."),
+
+  # PROTOTYP trojkat: schemat zmiennej zakłócającej z siłą obu związków
+  figure_panel(
+    label = "Ryc. 1.4a",
+    title = "Ubóstwo jako wspólne tło",
+    width_mode = "text",
+    case_confounder(
+      nodes    = c("Ubóstwo (dotacje)", "STR", "Wynik"),
+      edges    = c("r = 0.14", "r = -0.87", "r = -0.23"),
+      strength = c(0.14, 0.87, 0.23)
+    )
+  ),
 
   lc_p("Skalę różnic między okręgami biednymi i zamożnymi najłatwiej zobaczyć,
     dzieląc okręgi na trzy grupy według odsetka dotacji: poniżej 25%
@@ -298,6 +314,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 4: Kontrolowanie zakłóceń (regresja wieloraka)
   # ========================================================================
   lc_h2("sec-05", "Krok 4: Związek STR z wynikami po kontroli innych zmiennych"),
+  case_pipeline(case_steps_ch1, current = 4),  # PROTOTYP pipeline: pasek postępu
 
   lc_p(
     "Dokładamy do modelu kolejne ", gloss("zmienna kontrolna", "zmienne kontrolne"),
@@ -311,9 +328,14 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     różny STR, ale te same wartości pozostałych ",
     gloss("predyktor", "predyktorów"), ". W najszerszym modelu tego kroku:"),
 
-  lc_formula_box(withMathJax(
-    "$$\\text{wynik} = \\beta_0 + \\beta_1 \\, \\text{STR} + \\beta_2 \\, \\text{dochód} + \\beta_3 \\, \\text{angielski} + \\beta_4 \\, \\text{dotacje} + \\varepsilon$$"
-  )),
+  # PROTOTYP wzory: model wieloraki ze znacznikami (STR vs zmienne kontrolne)
+  lc_formula_annotated(
+    "⟦1|\\text{wynik}⟧ = \\beta_0 + ⟦2|\\beta_1⟧ \\, ⟦3|\\text{STR}⟧ + ⟦4|\\beta_2 \\, \\text{dochód} + \\beta_3 \\, \\text{angielski} + \\beta_4 \\, \\text{dotacje}⟧ + ⟦5|\\varepsilon⟧",
+    notes  = list("zmienna zależna", "współczynnik przy STR", "uczniowie na nauczyciela",
+                  "zmienne kontrolne", "reszta"),
+    colors = c("indygo", "accent", "niebo", "szalwia", "wrzos"),
+    above  = c(2, 4)
+  ),
 
   lc_p("Panel buduje cztery modele, za każdym razem dokładając jedną zmienną:
     sam STR, potem dochód, odsetek uczniów uczących się angielskiego
@@ -376,6 +398,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 5: Wybrany model — szczegóły
   # ========================================================================
   lc_h2("sec-06", "Krok 5: Analiza wybranego modelu"),
+  case_pipeline(case_steps_ch1, current = 5),  # PROTOTYP pipeline: pasek postępu
 
   lc_p(
     "Przyglądamy się wybranemu modelowi w całości: wszystkim współczynnikom,
@@ -448,6 +471,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 6: Odpowiedź na pytanie decyzyjne
   # ========================================================================
   lc_h2("sec-07", "Krok 6: Odpowiedź na pytanie decyzyjne"),
+  case_pipeline(case_steps_ch1, current = 6),  # PROTOTYP pipeline: pasek postępu
 
   lc_p(
     "Wracamy do pytania polityka: czego można się spodziewać po zmniejszeniu

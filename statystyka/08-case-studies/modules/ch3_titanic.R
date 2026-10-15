@@ -47,11 +47,11 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
 
   lc_p("Analizę przeprowadzimy w czterech krokach:"),
 
-  tags$ol(
-    tags$li("Opis: odsetki przeżycia w grupach (wykład 01)."),
-    tags$li("Test χ² niezależności klasy i przeżycia (wykład 04)."),
-    tags$li("Sprawdzenie, czy płeć zakłóca związek klasy z przeżyciem."),
-    tags$li("Regresja logistyczna z klasą, płcią i wiekiem naraz (wykład 06).")
+  # PROTOTYP pipeline: mapa kroków zamiast listy numerowanej
+  figure_panel(
+    label = "Ryc. 3.0a",
+    title = "Przebieg analizy",
+    case_pipeline(case_steps_ch3)
   ),
 
   # ========================================================================
@@ -132,6 +132,18 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
     klasy, 37.2% drugiej, 27.8% trzeciej i tylko 2.6% załogi. Panel
     pokazuje odsetki ocalałych w klasach osobno dla mężczyzn i kobiet."),
 
+  # PROTOTYP trojkat: płeć jako wspólne tło klasy i przeżycia (siła: V Cramera)
+  figure_panel(
+    label = "Ryc. 3.3a",
+    title = "Płeć jako wspólne tło",
+    width_mode = "text",
+    case_confounder(
+      nodes    = c("Płeć", "Klasa", "Przeżycie"),
+      edges    = c("V = 0.40", "V = 0.45", "V = 0.29"),
+      strength = c(0.40, 0.45, 0.29)
+    )
+  ),
+
   figure_panel(
     label = "Ryc. 3.3",
     title = "Odsetek ocalałych w klasach, osobno dla płci",
@@ -198,6 +210,14 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
       "W każdej klasie przeżyło 11.25 razy więcej kobiet niż mężczyzn." = "count"
     ),
     correct = "odds"
+  ),
+
+  # PROTOTYP wzory: iloraz szans jako stosunek dwóch szans
+  lc_formula_annotated(
+    "⟦1|\\text{OR}⟧ = \\frac{⟦2|p_K⟧ \\, / \\, (1 - p_K)}{⟦3|p_M⟧ \\, / \\, (1 - p_M)}",
+    notes  = list("iloraz szans", "prawdopodobieństwo: kobieta", "prawdopodobieństwo: mężczyzna"),
+    colors = c("indygo", "bursztyn", "niebo"),
+    above  = 2
   ),
 
   lc_p("Szanse to nie prawdopodobieństwo. Model przewiduje dla dorosłej
