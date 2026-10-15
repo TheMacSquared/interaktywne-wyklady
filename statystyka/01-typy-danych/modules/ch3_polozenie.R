@@ -2,6 +2,42 @@
 # CHAPTER 3: Statystyki położenia
 # ============================================================================
 
+# Drabina operacji (Ryc. 3.10): każdy typ dziedziczy operacje typów niższych
+# i dokłada własne. Klocki od dołu; kolor klocka to typ, który go wnosi.
+ch3_ops_levels <- list(
+  list(sym = "= ≠", stat = "liczebność, dominanta", color = type_colors[["nominalna"]]),
+  list(sym = "< >", stat = "mediana, percentyle",  color = type_colors[["porzadkowa"]]),
+  list(sym = "+ −", stat = "średnia",              color = NA)
+)
+
+ch3_ops_ladder <- function() {
+  cols <- list(
+    list(label = "Nominalne",  level = 1, color = type_colors[["nominalna"]]),
+    list(label = "Porządkowe", level = 2, color = type_colors[["porzadkowa"]]),
+    list(label = "Dyskretne",  level = 3, color = type_colors[["ilosciowa_dyskretna"]]),
+    list(label = "Ciągłe",     level = 3, color = type_colors[["ilosciowa_ciagla"]])
+  )
+  block <- function(k, col) {
+    lev <- ch3_ops_levels[[k]]
+    color <- if (is.na(lev$color)) col$color else lev$color
+    tags$div(
+      class = paste("ops-step", if (k < col$level) "is-inherited"),
+      style = paste0("--ops-c:", color, ";"),
+      tags$div(class = "ops-sym", lev$sym),
+      tags$div(class = "ops-stat", lev$stat)
+    )
+  }
+  tags$div(class = "ops-ladder", role = "img",
+    `aria-label` = "Drabina operacji: nominalne = ≠ (liczebność, dominanta), porządkowe dodatkowo < > (mediana, percentyle), ilościowe dodatkowo + − (średnia).",
+    lapply(cols, function(col) {
+      tags$div(class = "ops-col",
+        tags$div(class = "ops-stack", lapply(rev(seq_len(col$level)), block, col = col)),
+        tags$div(class = "ops-label", style = paste0("--ops-c:", col$color, ";"), col$label)
+      )
+    })
+  )
+}
+
 ch3_ui <- list(
   id = "ch-polozenie", num = "03", title = "Statystyki położenia",
   content = tagList(
@@ -385,6 +421,26 @@ ch3_ui <- list(
               click = "ch3_game_click"),
       uiOutput("ch3_game_feedback")
     ),
+
+    # ====================================================================
+    # Klamra: drabina operacji
+    # ====================================================================
+    lc_h2("ch3-drabina", "Która miara dla którego typu"),
+
+    lc_p("Miary położenia z tego i poprzedniego rozdziału układają się w drabinę.
+      Każdy typ zmiennej pozwala na operacje typów niższych i dokłada własne.
+      Kategorie nominalne można tylko rozróżnić, więc zostaje dominanta.
+      Porządkowe da się uszeregować, więc dochodzą mediana i percentyle.
+      Dopiero na liczbach wolno dodawać, więc dopiero tam ma sens średnia.
+      Dla zmiennej ilościowej wolno policzyć wszystkie trzy miary, a wybór
+      między nimi zależy od kształtu rozkładu."),
+
+    figure_panel(
+      label = "Ryc. 3.10",
+      title = "Drabina operacji",
+      ch3_ops_ladder()
+    ),
+
     lc_chapter_next(
       num       = "04",
       title     = "Statystyki rozrzutu",

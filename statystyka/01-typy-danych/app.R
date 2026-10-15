@@ -339,6 +339,36 @@ app_extras <- tagList(
 
   }
 
+  /* Drabina operacji (Ryc. 3.10) */
+  .ops-ladder {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px; align-items: end; max-width: 640px; margin: 8px auto 4px;
+  }
+  .ops-col { display: flex; flex-direction: column; gap: 8px; }
+  .ops-stack { display: flex; flex-direction: column; gap: 4px; }
+  .ops-step {
+    height: 78px; border-radius: 6px; color: #fff; background: var(--ops-c);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  /* Odziedziczone: jasne tło w kolorze typu, napis w tym kolorze */
+  .ops-step.is-inherited {
+    background: color-mix(in srgb, var(--ops-c) 18%, var(--upwr-surface));
+    color: var(--ops-c);
+  }
+  .ops-sym { font: 700 26px/1.1 var(--upwr-mono); letter-spacing: .08em; }
+  .ops-stat { font-size: 13px; margin-top: 4px; }
+  .ops-label {
+    text-align: center; font-weight: 700; font-size: 14px; color: var(--upwr-ink);
+    border-top: 3px solid var(--ops-c); padding-top: 6px;
+  }
+  @media (max-width: 600px) {
+    .ops-ladder { gap: 6px; }
+    .ops-step { height: 62px; }
+    .ops-sym { font-size: 18px; }
+    .ops-stat { font-size: 11px; }
+    .ops-label { font-size: 12px; }
+  }
+
   @keyframes taxDetailFade {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: translateY(0); }
