@@ -2,6 +2,27 @@
 # CHAPTER 5: Kształt rozkładu
 # ============================================================================
 
+# Siatka statystyk (HTML/CSS, style w app.R)
+ch5_tools_map <- function() {
+  chip <- function(txt, color = NULL) {
+    tags$span(class = "tmap-chip",
+      style = if (!is.null(color)) paste0("--tmap-c:", color, ";"), txt)
+  }
+  cell <- function(...) tags$div(class = "tmap-cell", ...)
+  tags$div(class = "tmap", role = "img",
+    `aria-label` = "Mapa narzędzi: położenie — średnia (wrażliwa), mediana i dominanta (odporne); rozrzut — odchylenie standardowe, wariancja, rozstęp (wrażliwe), IQR (odporny).",
+    tags$div(class = "tmap-corner"),
+    tags$div(class = "tmap-head", "Położenie"),
+    tags$div(class = "tmap-head", "Rozrzut"),
+    tags$div(class = "tmap-row", "Wrażliwe na wartości skrajne"),
+    cell(chip("średnia", "var(--upwr-accent)")),
+    cell(chip("SD"), chip("wariancja"), chip("rozstęp")),
+    tags$div(class = "tmap-row", "Odporne"),
+    cell(chip("mediana", stat_colors[["Mediana"]]), chip("dominanta")),
+    cell(chip("IQR"))
+  )
+}
+
 ch5_ui <- list(
   id = "ch-ksztalt", num = "05", title = "Kształt rozkładu",
   content = tagList(
@@ -49,6 +70,26 @@ ch5_ui <- list(
       above = c(3, 4, 5)
     ),
 
+    # Krokowa budowa skośności (standaryzacja → z³ → bilans)
+    lc_p("Panel przeprowadza to obliczenie na danych z ankiety. Najpierw
+      zamieniamy każdą obserwację na odległość od średniej w odchyleniach
+      standardowych, potem podnosimy te odległości do trzeciej potęgi,
+      a na końcu sumujemy osobno wkłady z lewej i z prawej strony."),
+
+    figure_panel(
+      label = "Ryc. 5.1",
+      lc_step_widget("ch5_sk",
+        title = "Obliczanie skośności",
+        steps = c("Dane", "Standaryzacja", "Trzecie potęgi", "Bilans"),
+        toolbar = lc_toolbar(
+          lc_segmented("ch5_sk_var", "Zmienna",
+            choices = c("Czas dojazdu" = "czas_dojazdu", "Wzrost" = "wzrost"))
+        ),
+        plot_id = "ch5_sk_plot",
+        ratio = "2.2/1"
+      )
+    ),
+
     lc_p("Trzecia potęga zachowuje znak, więc odchylenia w prawo i w lewo
       mogą się znosić. W rozkładzie symetrycznym znoszą się całkowicie
       i skośność wynosi około zera. Potęgowanie wzmacnia duże odległości,
@@ -59,7 +100,7 @@ ch5_ui <- list(
       rozkład symetryczny."),
 
     figure_panel(
-      label = "Ryc. 5.1",
+      label = "Ryc. 5.2",
       title = "Porównanie trzech typów skośności",
       lc_plot("ch5_skew_comparison", max_height = "300px"),
       uiOutput("ch5_skew_comparison_caption")
@@ -78,7 +119,7 @@ ch5_ui <- list(
       a przy ujemnej mniejsza. Sprawdźmy to na danych z ankiety."),
 
     figure_panel(
-      label = "Ryc. 5.2",
+      label = "Ryc. 5.3",
       title = "Sprawdź skośność w naszych danych",
       selectInput("ch5_skew_var", "Wybierz zmienną:",
         choices = c(
@@ -136,12 +177,22 @@ ch5_ui <- list(
       skrajne) i platykurtyczne (ujemna: lekkie ogony, wartości skupione
       w ograniczonym zakresie)."),
 
+    # Wkład obserwacji przy drugiej i czwartej potędze
+    figure_panel(
+      label = "Ryc. 5.4",
+      title = "Wkład obserwacji: kwadrat i czwarta potęga",
+      width_mode = "text",
+      tags$div(class = "proto-potegi",
+        lc_plot("ch5_proto_potegi", ratio = "2.2/1", max_height = "280px")
+      )
+    ),
+
     lc_p("W panelu poniżej porównujemy z rozkładem normalnym rozkład o tej
       samej średniej (0) i tym samym odchyleniu standardowym (1), ale
       o wybranej kurtozie. Dolny wykres powiększa prawy ogon."),
 
     figure_panel(
-      label = "Ryc. 5.3",
+      label = "Ryc. 5.5",
       title = "Porównaj rozkłady o różnej kurtozie",
       lc_toolbar(
         lc_slider("ch5_kurt_val", "Nadwyżkowa kurtoza", -1.2, 6, 0, 0.2),
@@ -180,13 +231,24 @@ ch5_ui <- list(
       Panel poniżej zestawia ", gloss("histogram"), ", ", gloss("wykres pudełkowy"), " i tabelę wszystkich
       omówionych statystyk dla wybranej zmiennej."),
 
+    # Położenie / rozrzut × wrażliwe / odporne
     figure_panel(
-      label = "Ryc. 5.4",
+      label = "Ryc. 5.6",
+      title = "Mapa narzędzi",
+      width_mode = "text",
+      ch5_tools_map()
+    ),
+
+    figure_panel(
+      label = "Ryc. 5.7",
       title = "Pełna charakterystyka rozkładu",
       lc_toolbar(
         lc_segmented("ch5_full_var", "Zmienna",
           choices = c("Wzrost" = "wzrost", "Średnia ocen" = "srednia_ocen",
-                      "Czas dojazdu" = "czas_dojazdu", "Waga" = "waga"))
+                      "Czas dojazdu" = "czas_dojazdu", "Waga" = "waga")),
+        # Zestaw minimum albo pełny (dwie tabele obok siebie)
+        lc_segmented("ch5_full_set", "Zestaw",
+          choices = c("Minimum" = "min", "Pełny" = "full"), selected = "min")
       ),
       lc_plot("ch5_full_hist", ratio = "1.8/1", max_height = "350px"),
       lc_plot("ch5_full_box", ratio = "5.2/1", max_height = "120px"),
@@ -317,6 +379,117 @@ ch5_server <- function(input, output, session) {
       " | Średnia = ", round(m, 2),
       ", Mediana = ", round(med, 2))
   })
+
+  # Serwer widgetu krokowego
+  ch5_sk_step <- lc_step_server("ch5_sk", input)$step
+
+  ch5_sk_data <- reactive({
+    var <- input$ch5_sk_var %||% "czas_dojazdu"
+    x <- student_data[[var]]
+    m <- mean(x); s <- sd(x)
+    z <- (x - m) / s
+    set.seed(7)
+    list(x = x, z = z, m = m, s = s, z3 = z^3, n = length(x),
+         jit = runif(length(x), -0.35, 0.35),
+         label = variable_meta[[var]]$label)
+  })
+
+  zoom_plot_server("ch5_sk_plot", reactive({
+    step <- ch5_sk_step()
+    d <- ch5_sk_data()
+    col_l <- upwr_col("niebo")
+    col_r <- upwr_col("terakota")
+    side <- ifelse(d$z < 0, "l", "r")
+    side_cols <- c(l = col_l, r = col_r)
+
+    if (step <= 2) {
+      xv <- if (step == 1) d$x else d$z
+      ctr <- if (step == 1) d$m else 0
+      df <- data.frame(x = xv, y = d$jit, side = side)
+      p <- ggplot(df, aes(x = x, y = y))
+      if (step == 2) {
+        p <- p + geom_vline(xintercept = -3:3, colour = upwr_reference,
+                            linewidth = 0.3, linetype = "22")
+      }
+      p +
+        geom_point(aes(colour = if (step == 2) side else "d"),
+                   size = 2.4, alpha = 0.7) +
+        scale_colour_manual(values = c(side_cols, d = STEP_ROLES$data$colour)) +
+        step_line(if (step == 1) "new" else "known", xintercept = ctr, helper = FALSE) +
+        step_label(ctr + diff(range(xv)) * 0.01, 0.5,
+                   if (step == 1) sprintf("x̄ = %.1f", d$m) else "x̄",
+                   role = if (step == 1) "new" else "known", hjust = 0, vjust = 0) +
+        scale_x_continuous(breaks = if (step == 2) -3:4 else waiver()) +
+        labs(x = if (step == 1) d$label else "Odległość od średniej (w SD)", y = NULL) +
+        step_frame(xlim = range(xv) + c(-1, 1) * diff(range(xv)) * 0.05,
+                   ylim = c(-0.5, 0.62), y_axis = FALSE)
+
+    } else if (step == 3) {
+      df <- data.frame(z = d$z, z3 = d$z3, side = side)
+      ggplot(df, aes(x = z, y = z3, colour = side)) +
+        geom_hline(yintercept = 0, colour = upwr_secondary, linewidth = 0.5) +
+        geom_segment(aes(xend = z, y = 0, yend = z3), linewidth = 0.6, alpha = 0.7) +
+        geom_point(size = 1.8) +
+        scale_colour_manual(values = side_cols) +
+        labs(x = "Odległość od średniej (w SD)", y = "z³") +
+        theme(legend.position = "none")
+
+    } else {
+      sums <- c(l = sum(d$z3[d$z3 < 0]), r = sum(d$z3[d$z3 > 0]))
+      tot <- sum(sums)
+      df <- data.frame(
+        what = factor(c("Lewa strona", "Prawa strona", "Suma"),
+                      levels = c("Suma", "Prawa strona", "Lewa strona")),
+        val = c(sums[["l"]], sums[["r"]], tot),
+        fill = c(col_l, col_r, upwr_col("indygo"))
+      )
+      lim <- max(abs(df$val)) * 1.25
+      ggplot(df, aes(x = val, y = what)) +
+        geom_vline(xintercept = 0, colour = upwr_secondary, linewidth = 0.5) +
+        geom_col(aes(fill = I(fill)), width = 0.55, alpha = 0.9) +
+        geom_text(aes(label = formatC(val, format = "f", digits = 1), hjust = ifelse(val < 0, 1.15, -0.15)),
+                  family = lc_mono_family, colour = upwr_secondary, size = 4) +
+        scale_x_continuous(limits = c(-lim, lim)) +
+        labs(x = "Suma z³", y = NULL) +
+        theme(panel.grid.major.y = element_blank())
+    }
+  }))
+
+  output$ch5_sk_text <- renderUI({
+    step <- ch5_sk_step()
+    d <- ch5_sk_data()
+    switch(as.character(step),
+      "1" = paste0(d$n, " obserwacji i ich średnia."),
+      "2" = paste0("Ta sama oś w jednostkach SD: średnia to 0, odchylenie standardowe to 1."),
+      "3" = "Trzecia potęga zachowuje znak i wydłuża dalekie obserwacje.",
+      "4" = {
+        tot <- sum(d$z3)
+        paste0("Suma ", lc_fmt(tot, 1), " podzielona przez ", d$n,
+               " daje skośność ", lc_fmt(tot / d$n, 2), ".")
+      })
+  })
+
+  # Słupki z² i z⁴ dla odległości 1, 2, 3 SD
+  zoom_plot_server("ch5_proto_potegi", reactive({
+    z <- 1:3
+    df <- data.frame(
+      z = rep(z, 2),
+      pot = factor(rep(c("z²", "z⁴"), each = 3), levels = c("z²", "z⁴")),
+      val = c(z^2, z^4)
+    )
+    ggplot(df, aes(x = factor(z), y = val, fill = pot)) +
+      geom_col(position = position_dodge(width = 0.7), width = 0.62) +
+      geom_text(aes(label = val), position = position_dodge(width = 0.7),
+                vjust = -0.4, family = lc_mono_family, colour = upwr_secondary,
+                size = 3.8) +
+      scale_fill_manual(values = c("z²" = upwr_reference, "z⁴" = upwr_col("terakota")),
+                        name = NULL) +
+      scale_x_discrete(labels = paste(z, "SD")) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+      labs(x = "Odległość od średniej", y = "Wkład do sumy") +
+      theme(legend.position = "top", legend.text = element_text(size = 13),
+            panel.grid.major.x = element_blank())
+  }))
 
   # --------------------------------------------------------------------------
   # Widget 2: Kurtosis (suwak kurtozy, bez t-rozkładu)
@@ -495,38 +668,43 @@ ch5_server <- function(input, output, session) {
     mode_bin_idx <- which.max(h$counts)
     mode_val <- (h$breaks[mode_bin_idx] + h$breaks[mode_bin_idx + 1]) / 2
 
-    stats_df <- data.frame(
-      Statystyka = c(
-        "n", "Średnia", "Mediana", "Dominanta (środek przedziałowy)",
-        "Śr. ucięta 10%",
-        "Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
-        "Minimum", "Q1", "Q3", "Maksimum",
-        "Skośność", "Kurtoza (nadwyżkowa)"
+    # Minimum (n, średnia, SD, mediana, kwartyle) albo
+    # pełny zestaw w dwóch tabelach obok siebie.
+    f2 <- function(x) formatC(x, format = "f", digits = 2)
+    stat_table <- function(names, values, label) {
+      lc_table(data.frame(Statystyka = names, Wartość = values, stringsAsFactors = FALSE),
+        cols = list(lc_col("Statystyka", "Statystyka", "row"), lc_col("Wartość", "Wartość")),
+        label = label)
+    }
+
+    if (!identical(input$ch5_full_set, "full")) {
+      return(stat_table(
+        c("n", "Średnia", "Odch. std.", "Mediana", "Q1", "Q3"),
+        c(as.character(n), f2(m), f2(s), f2(med), f2(q1), f2(q3)),
+        "Charakterystyka rozkładu — zestaw minimum"))
+    }
+
+    tags$div(class = "ch5-full-pair",
+      tags$div(
+        tags$h4("Położenie"),
+        stat_table(
+          c("n", "Średnia", "Mediana", "Dominanta", "Śr. ucięta 10%",
+            "Minimum", "Q1", "Q3", "Maksimum"),
+          c(as.character(n), f2(m), f2(med), f2(mode_val), f2(trimmed),
+            f2(min(vals)), f2(q1), f2(q3), f2(max(vals))),
+          "Statystyki położenia")
       ),
-      Wartość = c(
-        as.character(n),
-        formatC(m, format = "f", digits = 2),
-        formatC(med, format = "f", digits = 2),
-        formatC(mode_val, format = "f", digits = 2),
-        formatC(trimmed, format = "f", digits = 2),
-        formatC(s, format = "f", digits = 2),
-        formatC(v, format = "f", digits = 2),
-        formatC(rng, format = "f", digits = 2),
-        formatC(iqr_val, format = "f", digits = 2),
-        formatC(cv, format = "f", digits = 1),
-        formatC(min(vals), format = "f", digits = 2),
-        formatC(q1, format = "f", digits = 2),
-        formatC(q3, format = "f", digits = 2),
-        formatC(max(vals), format = "f", digits = 2),
-        formatC(sk, format = "f", digits = 3),
-        formatC(ku, format = "f", digits = 3)
-      ),
-      stringsAsFactors = FALSE
-        )
-        lc_table(stats_df,
-          cols = list(lc_col("Statystyka", "Statystyka", "row"), lc_col("Wartość", "Wartość")),
-          label = "Pełna charakterystyka rozkładu")
-      })
+      tags$div(
+        tags$h4("Rozrzut i kształt"),
+        stat_table(
+          c("Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
+            "Skośność", "Kurtoza"),
+          c(f2(s), f2(v), f2(rng), f2(iqr_val), formatC(cv, format = "f", digits = 1),
+            formatC(sk, format = "f", digits = 3), formatC(ku, format = "f", digits = 3)),
+          "Statystyki rozrzutu i kształtu")
+      )
+    )
+  })
 
   output$ch5_full_interpretation <- renderUI({
     d <- ch5_full_data()

@@ -2,6 +2,38 @@
 # CHAPTER 1: Normalność rozkładu
 # ============================================================================
 
+# Dane i wykres statyczny.
+
+# Odsetek odrzuceń H₀ (α = 0.05) w 5000 próbach na punkt; symulacja jak w tekście
+# (rozkłady z generate_test_data(), set.seed(2026)).
+ch1_sw_power_data <- data.frame(
+  n    = rep(c(10, 20, 30, 50, 100, 200), 4),
+  dist = rep(c("Normalny", "Prawoskośny", "Ciężkie ogony", "Jednostajny"), each = 6),
+  rej  = c(5, 5, 5, 6, 5, 6,
+           25, 53, 75, 95, 100, 100,
+           19, 34, 46, 65, 88, 99,
+           9, 20, 39, 74, 100, 100)
+)
+
+ch1_sw_power_fn <- function() {
+  cols <- c("Normalny" = upwr_reference, "Prawoskośny" = col_fail,
+            "Ciężkie ogony" = unname(upwr_cat["indygo"]), "Jednostajny" = unname(upwr_cat["bursztyn"]))
+  ends <- ch1_sw_power_data[ch1_sw_power_data$n == 200, ]
+  ends$y <- c(6, 108, 92, 100)                 # rozsunięcie etykiet na prawym końcu
+  ggplot(ch1_sw_power_data, aes(n, rej, colour = dist)) +
+    geom_hline(yintercept = 5, linetype = "dashed", colour = upwr_reference) +
+    geom_line(linewidth = 1.1) +
+    geom_point(size = 2.2) +
+    geom_text(data = ends, aes(y = y, label = dist), hjust = 0, nudge_x = 0.05, size = 4.4,
+              family = if (lc_mono_family == "IBM Plex Mono") "IBM Plex Sans" else "") +
+    scale_x_log10(breaks = c(10, 20, 30, 50, 100, 200), expand = expansion(mult = c(0.03, 0.32))) +
+    scale_y_continuous(limits = c(0, 110), breaks = seq(0, 100, 25),
+                       labels = function(v) paste0(v, "%")) +
+    scale_colour_manual(values = cols, guide = "none") +
+    labs(x = "Liczebność próby (n)", y = "Odrzucenia H₀") +
+    theme_upwr()
+}
+
 ch1_ui <- lecture_chapter(
   id = "ch-normalnosc",
   num = "01",
@@ -44,6 +76,14 @@ ch1_ui <- lecture_chapter(
       gloss("wartość odstająca", "wartości odstających"), ", tym większej próby
       potrzeba, żeby przybliżenie było dobre. Jednej liczby obserwacji, od
       której można przestać patrzeć na dane, nie ma."),
+
+    # Skośność średniej maleje z √n
+    lc_formula_annotated(
+      "⟦1|\\gamma_{\\bar{x}}⟧ = \\frac{⟦2|\\gamma⟧}{\\sqrt{⟦3|n⟧}}",
+      notes  = list("skośność średniej", "skośność danych", "liczba obserwacji"),
+      colors = c("indygo", "terakota", "szalwia"),
+      above  = 2
+    ),
 
     lc_p("Co dokładnie sprawdzamy, zależy od metody:"),
 
@@ -179,6 +219,14 @@ ch1_ui <- lecture_chapter(
       testu t przy takiej liczebności nie stanowi żadnego problemu, bo jest
       symetryczny i nie ma wartości odstających."),
 
+    # Odsetek odrzuceń H₀ w teście Shapiro-Wilka a liczebność
+    figure_panel(
+      label = "Ryc. 1.3",
+      title = "Jak często Shapiro-Wilk odrzuca normalność",
+      width_mode = "text",
+      lc_plot("ch1_sw_power", ratio = "16/10")
+    ),
+
     lc_p("Test normalności ma więc tę samą słabość co każdy test istotności: jego
       wynik zależy od liczebności. Przy małej próbie ma niską ",
       gloss("moc testu", "moc"), " i przepuszcza poważne odchylenia, przy dużej
@@ -218,7 +266,7 @@ ch1_ui <- lecture_chapter(
       logarytmów (po prawej)."),
 
     figure_panel(
-      label = "Ryc. 1.3",
+      label = "Ryc. 1.4",
       title = "Efekt transformacji logarytmicznej",
       lc_toolbar(
         lc_slider("ch1_trans_n", "n", 30, 200, 80, 10),
@@ -279,10 +327,15 @@ ch1_ui <- lecture_chapter(
 
 ch1_server <- function(input, output, session) {
 
+  zoom_plot_server("ch1_sw_power", reactive(ch1_sw_power_fn()),
+    alt = "Odsetek odrzuceń normalności w teście Shapiro-Wilka w zależności od liczebności próby dla czterech rozkładów")
+
   ch1_data <- reactiveVal(NULL)
 
   observeEvent(input$ch1_gen, {
-    ch1_data(generate_test_data(input$ch1_n, input$ch1_dist))
+    # Rozkład zapisany przy danych: od niego zależy szerokość słupków.
+    ch1_data(structure(generate_test_data(input$ch1_n, input$ch1_dist),
+                       dist = input$ch1_dist))
   })
 
   zoom_plot_server("ch1_normality_plots", reactive({
@@ -296,7 +349,12 @@ ch1_server <- function(input, output, session) {
       df <- data.frame(x = x)
 
       p1 <- ggplot(df, aes(x = x)) +
-        geom_histogram(aes(y = after_stat(density)), bins = 20,
+        # Liczba przedziałów rośnie wolno z n (reguła Sturgesa): szerokie słupki
+        # także przy dużej próbie. Dla dwumodalnego dwa razy więcej, żeby
+        # dolina między szczytami nie znikła w jednym słupku.
+        geom_histogram(aes(y = after_stat(density)),
+                       bins = nclass.Sturges(x) *
+                         if (identical(attr(x, "dist"), "bimodal")) 2 else 1,
                        fill = col_test, alpha = 0.6, color = "white") +
         stat_function(fun = dnorm, args = list(mean = mean(x), sd = sd(x)),
                       color = col_ok, linewidth = 1.2, linetype = "dashed") +

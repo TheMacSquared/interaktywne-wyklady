@@ -2,6 +2,65 @@
 # CHAPTER 5: Opis i wnioskowanie
 # ============================================================================
 
+# Cztery węzły w rzędzie; klamra „opis” nad próbą, tabelą
+# i statystyką, strzałka „wnioskowanie” pod spodem wraca do populacji.
+ch5_flow_diagram <- function() {
+  node <- function(col, name, sym, color, sym_color = color, small = FALSE) {
+    tags$div(class = paste("fm-node", if (small) "is-small"),
+      style = sprintf("grid-row:3;grid-column:%d;--fm-c:%s;--fm-sc:%s;", col, color, sym_color),
+      tags$div(class = "fm-name", name),
+      tags$div(class = "fm-sym", sym))
+  }
+  arrow <- function(col, label) {
+    tags$div(class = "fm-arrow", style = sprintf("grid-row:3;grid-column:%d;", col),
+      tags$span(label), tags$span(class = "fm-arr", "→"))
+  }
+  line <- function(row, col, cls) {
+    tags$div(class = paste("fm-line", cls), style = sprintf("grid-row:%d;grid-column:%d;", row, col))
+  }
+  tagList(
+    tags$style(HTML("
+      .fm { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);
+            max-width: 720px; margin: 6px auto 2px; }
+      .fm-node { border: 2px solid var(--fm-c); border-radius: 8px; padding: 10px 6px;
+                 text-align: center; background: color-mix(in srgb, var(--fm-c) 9%, transparent); }
+      .fm-name { font-weight: 600; font-size: 15px; color: var(--upwr-ink); }
+      .fm-sym  { font-size: 20px; margin-top: 2px; color: var(--fm-sc); }
+      .fm-node.is-small .fm-sym { font-size: 14px; margin-top: 6px; }
+      .fm-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center;
+                  padding: 0 6px; font-size: 12px; color: var(--upwr-ink-soft); }
+      .fm-arr { font-size: 22px; line-height: 1; }
+      .fm-lab { text-align: center; font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+      .fm-lab-opis { grid-row: 1; grid-column: 3 / 8; color: var(--upwr-cat-bursztyn); }
+      .fm-lab-wn   { grid-row: 5; grid-column: 1 / 8; color: var(--upwr-cat-wrzos); }
+      .fm-line { height: 12px; border: 0 solid; }
+      .fm-top  { border-top-width: 2px; border-color: var(--upwr-cat-bursztyn); margin-top: 4px; margin-bottom: 6px; }
+      .fm-bot  { border-bottom-width: 2px; border-color: var(--upwr-cat-wrzos); border-style: dashed; margin-top: 6px; }
+      .fm-start { margin-left: 50%; border-left-width: 2px; }
+      .fm-end   { margin-right: 50%; border-right-width: 2px; }
+      .fm-bot.fm-start { position: relative; }
+      .fm-bot.fm-start::before { content: ''; position: absolute; left: -7px; top: -8px;
+        border: 6px solid transparent; border-bottom: 8px solid var(--upwr-cat-wrzos); border-top: 0; }
+      @media (max-width: 600px) { .fm-node { padding: 8px 2px; } .fm-name { font-size: 12px; } .fm-sym { font-size: 16px; }
+        .fm-arrow { padding: 0 2px; } .fm-arrow span:first-child { display: none; } }
+    ")),
+    tags$div(class = "fm", role = "img",
+      `aria-label` = "Schemat: populacja z parametrem, losowanie, próba, pomiar, tabela, liczenie, statystyka. Opis obejmuje próbę, tabelę i statystykę; wnioskowanie wraca od statystyki do parametru populacji.",
+      tags$div(class = "fm-lab fm-lab-opis", "opis"),
+      line(2, 3, "fm-top fm-start"), lapply(4:6, line, row = 2, cls = "fm-top"), line(2, 7, "fm-top fm-end"),
+      node(1, "Populacja", "μ, p", "var(--upwr-cat-niebo)", "var(--upwr-cat-wrzos)"),
+      arrow(2, "losowanie"),
+      node(3, "Próba", "n", "var(--upwr-accent)"),
+      arrow(4, "pomiar"),
+      node(5, "Tabela", "wiersze × kolumny", "var(--upwr-ink-soft)", small = TRUE),
+      arrow(6, "liczenie"),
+      node(7, "Statystyka", "x̄, p̂", "var(--upwr-cat-bursztyn)"),
+      line(4, 1, "fm-bot fm-start"), lapply(2:6, line, row = 4, cls = "fm-bot"), line(4, 7, "fm-bot fm-end"),
+      tags$div(class = "fm-lab fm-lab-wn", "wnioskowanie")
+    )
+  )
+}
+
 ch5_ui <- list(
   id    = "ch-opis-wnioskowanie",
   num   = "05",
@@ -23,6 +82,14 @@ ch5_ui <- list(
       w tabeli i liczymy ", gloss("statystyka", "statystykę"), ". Statystyka trafia w parametr tylko
       w przybliżeniu, bo zależy od tego, kto trafił do próby. Każdy kolejny
       wykład zajmuje się jednym odcinkiem tej drogi."),
+
+    # Droga od populacji do statystyki i z powrotem
+    figure_panel(
+      label = "Ryc. 5.1",
+      title = "Od populacji do statystyki",
+      width_mode = "text",
+      ch5_flow_diagram()
+    ),
 
     lc_h2("ch5-dwa-zadania", "Opis próby i wniosek o populacji"),
 

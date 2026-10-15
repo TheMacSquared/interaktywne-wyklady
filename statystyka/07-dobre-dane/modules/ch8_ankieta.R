@@ -20,13 +20,27 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     czy doświadczenie i wykształcenie uczestników wiążą się z tym, jak
     oceniają swoje umiejętności?"),
 
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 8.1",
+    title = "Struktura zbioru zgłoszeń",
+    width_mode = "text",
+    dd_schema("zgłoszenie", 90, c(
+      wiek = "ciagla",
+      wyksztalcenie = "porzadkowa",
+      doswiadczenie = "tekst",
+      dostepnosc = "tekst",
+      ocena_umiejetnosci = "tekst"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę, które kolumny zawierają liczby albo
     powtarzające się kategorie, a które swobodny tekst."),
 
   figure_panel(
-    label = "Ryc. 8.1",
+    label = "Ryc. 8.2",
     title = "Zgłoszenia na kurs (90 osób)",
     uiOutput("tab7_table")
   ),
@@ -45,7 +59,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     i pokazuje, ile wartości program w ogóle rozpoznał jako liczby."),
 
   figure_panel(
-    label = "Ryc. 8.2",
+    label = "Ryc. 8.3",
     title = "Średnia wybranej zmiennej",
     selectInput("tab7_var", "Wybierz zmienną:",
       choices = c("wiek", "wyksztalcenie", "doswiadczenie", "dostepnosc", "ocena_umiejetnosci")),
@@ -75,7 +89,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     zwróć uwagę, ile braków powstało i ile decyzji podjęliśmy za respondentów."),
 
   figure_panel(
-    label = "Ryc. 8.3",
+    label = "Ryc. 8.4",
     title = "Dane surowe i po przekodowaniu",
     lc_segmented("tab7_toggle", "Widok danych", choices = c("Surowe", "Oczyszczone")),
     uiOutput("tab7_clean_table"),
@@ -135,7 +149,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     nie mają odpowiednika po ", gloss("standaryzacja", "standaryzacji"), "."),
 
   figure_panel(
-    label = "Ryc. 8.4",
+    label = "Ryc. 8.5",
     title = "12 zgłoszeń przed i po standaryzacji",
     lc_toolbar(
       lc_segmented("tab7b_view", NULL,

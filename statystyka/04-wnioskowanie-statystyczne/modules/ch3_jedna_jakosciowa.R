@@ -68,9 +68,13 @@ ch3_ui <- list(
       znamy dokładnie, więc prawdopodobieństwo każdego możliwego wyniku przy
       prawdziwej H₀ możemy po prostu policzyć."),
 
-    lc_formula_box(withMathJax(
-      "$$P(K = j) = \\binom{n}{j}\\, p_0^{\\,j} (1-p_0)^{n-j}, \\qquad j = 0, 1, \\ldots, n$$"
-    )),
+    # Rozkład dwumianowy pod H₀ ze znacznikami
+    lc_formula_annotated(
+      "P(⟦1|K⟧ = ⟦2|j⟧) = \\binom{⟦3|n⟧}{j}\\, ⟦4|p_0⟧^{\\,j} (1-p_0)^{n-j}, \\qquad j = 0, 1, \\ldots, n",
+      notes  = list("liczba sukcesów", "możliwy wynik", "liczba obserwacji", "proporcja z H₀"),
+      colors = c("indygo", "accent", "szalwia", "param"),
+      above  = c(3, 4)
+    ),
 
     lc_p(gloss("p-wartość", "P-wartość"), " to prawdopodobieństwo, że przy
       prawdziwej H₀ próba da wynik co najmniej tak skrajny jak obserwowany.
@@ -78,9 +82,13 @@ ch3_ui <- list(
       wyniki, które przy H₀ są nie bardziej prawdopodobne niż nasze \\(k\\),
       po obu stronach rozkładu. P-wartość jest sumą ich prawdopodobieństw."),
 
-    lc_formula_box(withMathJax(
-      "$$p = \\sum_{j:\\ P(K = j)\\, \\leq\\, P(K = k)} P(K = j)$$"
-    )),
+    # Dwustronna p-wartość testu dwumianowego ze znacznikami
+    lc_formula_annotated(
+      "⟦1|p⟧ = \\sum_{⟦2|j:\\ P(K = j)\\, \\leq\\, P(K = k)⟧} ⟦3|P(K = j)⟧",
+      notes  = list("p-wartość", "wyniki nie bardziej prawdopodobne", "prawdopodobieństwo wyniku"),
+      colors = c("bursztyn", "accent", "niebo"),
+      above  = c(3)
+    ),
 
     lc_p("Tak zbudowany ", gloss("test dwumianowy"), " jest testem dokładnym:
       p-wartość pochodzi wprost z rozkładu dwumianowego, a nie z przybliżenia
@@ -252,9 +260,13 @@ ch3_ui <- list(
       ", gloss("przedział Walda"), ". Statystyka testowa mierzy, o ile
       ", gloss("błąd standardowy", "błędów standardowych"), " \\(\\hat{p}\\) odbiega od \\(p_0\\)."),
 
-    lc_formula_box(withMathJax(
-      "$$z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}$$"
-    )),
+    # Statystyka z testu proporcji ze znacznikami
+    lc_formula_annotated(
+      "⟦1|z⟧ = \\frac{⟦2|\\hat{p}⟧ - ⟦3|p_0⟧}{\\sqrt{p_0(1-p_0)/⟦4|n⟧}}",
+      notes  = list("statystyka z", "proporcja z próby", "proporcja z H₀", "liczba obserwacji"),
+      colors = c("indygo", "accent", "param", "szalwia"),
+      above  = c(2, 3)
+    ),
 
     lc_p("W odróżnieniu od przedziału Walda błąd standardowy liczymy z \\(p_0\\),
       a nie z \\(\\hat{p}\\), bo p-wartość wyznacza się przy założeniu, że H₀

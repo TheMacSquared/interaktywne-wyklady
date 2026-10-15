@@ -17,6 +17,48 @@
   `flipper_length_mm:speciesGentoo` = "Płetwa × Gentoo"
 )
 
+# Schemat zmiennych wskaźnikowych. Wiersz = gatunek,
+# kolumny: wartości Chinstrap i Gentoo (0/1), wyraz wolny i nachylenie prostej.
+# Kolory β jak w znacznikach wzorów (β₂ bursztyn = Chinstrap, β₃ terakota = Gentoo).
+ch3b_dummy_diagram <- function(interaction = FALSE) {
+  b <- function(k, col = NULL) {
+    tags$span(class = "dum-b", style = if (!is.null(col)) paste0("color:var(--upwr-cat-", col, ")"),
+              paste0("β", c("₀", "₁", "₂", "₃", "₄", "₅")[k + 1]))
+  }
+  plus <- function(...) tags$span(class = "dum-sum", ...)
+  rows <- list(
+    list(sp = "Adelie", col = "szalwia", d = c(0, 0),
+         a = b(0), s = b(1, "indygo")),
+    list(sp = "Chinstrap", col = "bursztyn", d = c(1, 0),
+         a = plus(b(0), " + ", b(2, "bursztyn")),
+         s = if (interaction) plus(b(1, "indygo"), " + ", b(4, "bursztyn")) else b(1, "indygo")),
+    list(sp = "Gentoo", col = "terakota", d = c(0, 1),
+         a = plus(b(0), " + ", b(3, "terakota")),
+         s = if (interaction) plus(b(1, "indygo"), " + ", b(5, "terakota")) else b(1, "indygo"))
+  )
+  cell <- function(cls, ...) tags$div(class = paste("dum-cell", cls), ...)
+  tags$div(
+    class = paste("dum-grid", if (interaction) "is-interaction"), role = "img",
+    `aria-label` = if (interaction) {
+      "Adelie: wyraz wolny β0, nachylenie β1. Chinstrap: β0 + β2, nachylenie β1 + β4. Gentoo: β0 + β3, nachylenie β1 + β5."
+    } else {
+      "Adelie: Chinstrap 0, Gentoo 0, wyraz wolny β0. Chinstrap: 1, 0, wyraz wolny β0 + β2. Gentoo: 0, 1, wyraz wolny β0 + β3. Nachylenie β1 wspólne."
+    },
+    cell("dum-head", ""),
+    cell("dum-head", "Chinstrap"),
+    cell("dum-head", "Gentoo"),
+    cell("dum-head dum-sep", "wyraz wolny"),
+    cell("dum-head", "nachylenie"),
+    lapply(rows, function(r) tagList(
+      cell("dum-sp", style = paste0("--dum-c:var(--upwr-cat-", r$col, ")"), r$sp),
+      cell(paste("dum-01", if (r$d[1] == 1) "is-one"), r$d[1]),
+      cell(paste("dum-01", if (r$d[2] == 1) "is-one"), r$d[2]),
+      cell("dum-eq dum-sep", r$a),
+      cell(paste("dum-eq", if (interaction) "is-key"), r$s)
+    ))
+  )
+}
+
 ch3b_ui <- list(
   id = "ch-3b",
   num = "03B",
@@ -103,9 +145,21 @@ ch3b_ui <- list(
       wszystkich innych. Przy trzech gatunkach potrzebne są więc dwie takie
       zmienne. Tutaj kategorią odniesienia jest Adelie."),
 
-    lc_formula_box(withMathJax(
-      "$$\\text{masa} = \\beta_0 + \\beta_1\\,\\text{płetwa} + \\beta_2\\,\\text{Chinstrap} + \\beta_3\\,\\text{Gentoo} + \\varepsilon$$"
-    )),
+    # Model z gatunkiem; kolory β jak kolory gatunków
+    lc_formula_annotated(
+      "\\text{masa} = ⟦1|\\beta_0⟧ + ⟦2|\\beta_1⟧\\,\\text{płetwa} + ⟦3|\\beta_2⟧\\,\\text{Chinstrap} + ⟦4|\\beta_3⟧\\,\\text{Gentoo} + \\varepsilon",
+      notes  = list("wyraz wolny Adelie", "wspólne nachylenie",
+                    "przesunięcie Chinstrap", "przesunięcie Gentoo"),
+      colors = c("szalwia", "indygo", "bursztyn", "terakota"),
+      above  = c(2, 4)
+    ),
+
+    # Tabela 0/1 → prosta każdego gatunku
+    figure_panel(
+      label = "Ryc. 3B.2", title = "Zmienne wskaźnikowe i prosta każdego gatunku",
+      width_mode = "compact",
+      ch3b_dummy_diagram(interaction = FALSE)
+    ),
 
     lc_p("Dla pingwina Adelie obie zmienne wskaźnikowe są równe 0, więc
       zostaje prosta \\(\\beta_0 + \\beta_1\\,\\text{płetwa}\\). Dla Chinstrap
@@ -139,9 +193,21 @@ ch3b_ui <- list(
       interakcję zapisuje się jako iloczyn długości płetwy i zmiennej
       wskaźnikowej."),
 
-    lc_formula_box(withMathJax(
-      "$$\\text{masa} = \\beta_0 + \\beta_1\\,\\text{płetwa} + \\beta_2\\,\\text{Chinstrap} + \\beta_3\\,\\text{Gentoo} + \\beta_4\\,\\text{płetwa}\\cdot\\text{Chinstrap} + \\beta_5\\,\\text{płetwa}\\cdot\\text{Gentoo} + \\varepsilon$$"
-    )),
+    # Model z interakcją w dwóch wierszach
+    lc_formula_annotated(
+      "\\begin{aligned} \\text{masa} = {} & \\beta_0 + ⟦1|\\beta_1⟧\\,\\text{płetwa} + \\beta_2\\,\\text{Chinstrap} + \\beta_3\\,\\text{Gentoo} \\\\ & + ⟦2|\\beta_4⟧\\,\\text{płetwa}\\cdot\\text{Chinstrap} + ⟦3|\\beta_5⟧\\,\\text{płetwa}\\cdot\\text{Gentoo} + \\varepsilon \\end{aligned}",
+      notes  = list("nachylenie Adelie", "zmiana nachylenia Chinstrap",
+                    "zmiana nachylenia Gentoo"),
+      colors = c("indygo", "bursztyn", "terakota"),
+      above  = c(1)
+    ),
+
+    # Ta sama tabela z kolumną nachylenia z interakcją
+    figure_panel(
+      label = "Ryc. 3B.3", title = "Interakcja: każdy gatunek ma własne nachylenie",
+      width_mode = "compact",
+      ch3b_dummy_diagram(interaction = TRUE)
+    ),
 
     lc_p("Dla Adelie oba iloczyny są równe 0 i nachylenie wynosi
       \\(\\beta_1\\). Dla Gentoo nachylenie wynosi \\(\\beta_1 + \\beta_5\\),
@@ -151,7 +217,7 @@ ch3b_ui <- list(
       na tych samych danych."),
 
     figure_panel(
-      label = "Ryc. 3B.2",
+      label = "Ryc. 3B.4",
       title = "Model addytywny kontra model z interakcją",
       full_width = TRUE,
       lc_toolbar(

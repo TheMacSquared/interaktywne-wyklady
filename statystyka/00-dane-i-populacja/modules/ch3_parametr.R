@@ -60,6 +60,21 @@ ch3_ui <- list(
       z daną cechą podzielona przez liczbę wszystkich jednostek. Jeśli
       w próbie 50 osób egzamin zdały 34, to p̂ = 34/50 = 0.68."),
 
+    # Ta sama formuła odsetka dla populacji i dla próby
+    lc_formula_annotated(
+      "⟦1|p⟧ = \\frac{⟦2|K⟧}{⟦3|N⟧} \\qquad\\qquad ⟦4|\\hat{p}⟧ = \\frac{⟦5|k⟧}{⟦6|n⟧}",
+      notes = list(
+        "parametr",
+        "z cechą w populacji",
+        "liczebność populacji",
+        "statystyka",
+        "z cechą w próbie",
+        "liczebność próby"
+      ),
+      colors = c("wrzos", "niebo", "niebo", "bursztyn", "szalwia", "szalwia"),
+      above = c(1, 2, 4, 5)
+    ),
+
     lc_h2("ch3-zmiennosc", "Każda grupka daje inny wynik"),
 
     lc_p("W prawdziwym badaniu mamy jedną próbę i jedną wartość statystyki.

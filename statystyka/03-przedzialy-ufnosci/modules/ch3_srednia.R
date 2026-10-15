@@ -40,8 +40,12 @@ ch3_ui <- list(
       przy małej liczbie obserwacji. Tak powstaje ", gloss("przedział ufności"),
       " dla średniej populacji:"),
 
-    lc_formula_box(
-      withMathJax("$$CI = \\bar{x} \\pm t^* \\cdot \\frac{s}{\\sqrt{n}}$$")
+    lc_formula_annotated(
+      "⟦1|CI⟧ = ⟦2|\\bar{x}⟧ \\pm ⟦3|t^*⟧ \\cdot \\frac{⟦4|s⟧}{\\sqrt{⟦5|n⟧}}",
+      notes  = list("przedział ufności", "średnia z próby", "wartość krytyczna",
+                    "odchylenie standardowe", "liczba obserwacji"),
+      colors = c("niebo", "accent", "terakota", "wrzos", "szalwia"),
+      above  = c(2, 4)
     ),
 
     lc_p("Środkiem przedziału jest średnia z próby \\(\\bar{x}\\). Jego połowę
@@ -53,6 +57,14 @@ ch3_ui <- list(
       około 2, a dokładną wartość podaje program. Warto jednak raz zobaczyć,
       jak powstaje przedział."),
 
+    # Rozkład t a normalny, wartości krytyczne
+    figure_panel(
+      label = "Ryc. 3.1", title = "Rozkład t ma cięższe ogony",
+      width_mode = "text",
+      lc_plot("ch3_tnorm_plot", ratio = "2/1", max_height = "380px"),
+      lc_caption("t* dla 95%: 2.78 przy n = 5, 2.06 przy n = 25, 1.96 w rozkładzie normalnym.")
+    ),
+
     lc_h2("ch3-budowa", "Budowa przedziału — krok po kroku"),
 
     lc_p("Panel składa przedział z próby 25 pomiarów wzrostu losowanej
@@ -61,7 +73,7 @@ ch3_ui <- list(
       Przycisk „Nowa próba” losuje kolejne 25 osób."),
 
     figure_panel(
-      label = "Ryc. 3.1",
+      label = "Ryc. 3.2",
       full_width = TRUE,
       lc_step_widget("ch3_step",
         title = "Konstruowanie przedziału",
@@ -99,8 +111,12 @@ ch3_ui <- list(
       ", gloss("wariancja", "wariancje"), " ", gloss("estymator", "estymatorów"), " się dodają, więc błąd standardowy różnicy to
       pierwiastek z sumy kwadratów błędów standardowych obu średnich:"),
 
-    lc_formula_box(
-      withMathJax("$$CI = (\\bar{x}_1 - \\bar{x}_2) \\pm t^* \\cdot \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}}$$")
+    lc_formula_annotated(
+      "CI = (⟦1|\\bar{x}_1 - \\bar{x}_2⟧) \\pm ⟦2|t^*⟧ \\cdot \\sqrt{\\frac{⟦3|s_1^2⟧}{⟦4|n_1⟧} + \\frac{s_2^2}{n_2}}",
+      notes  = list("różnica średnich z prób", "wartość krytyczna",
+                    "wariancja grupy 1", "liczebność grupy 1"),
+      colors = c("accent", "terakota", "wrzos", "szalwia"),
+      above  = c(1, 3)
     ),
 
     lc_p("Każda grupa ma tu własne odchylenie standardowe, nie zakładamy
@@ -112,7 +128,7 @@ ch3_ui <- list(
       na skalę różnicy, na której zero oznacza brak różnicy."),
 
     figure_panel(
-      label = "Ryc. 3.2",
+      label = "Ryc. 3.3",
       full_width = TRUE,
       lc_step_widget("ch3_dstep",
         title = "Konstruowanie CI dla różnicy",
@@ -203,8 +219,12 @@ ch3_ui <- list(
       w błonnik. Źródłem rozbieżności jest własność, którą widzieliśmy przy
       wzroście. Błąd standardowy różnicy to"),
 
-    lc_formula_box(
-      withMathJax("$$SE_{różnicy} = \\sqrt{SE_1^2 + SE_2^2} \\;<\\; SE_1 + SE_2$$")
+    lc_formula_annotated(
+      "⟦1|SE_{różnicy}⟧ = \\sqrt{⟦2|SE_1⟧^2 + ⟦3|SE_2⟧^2} \\;<\\; SE_1 + SE_2",
+      notes  = list("błąd standardowy różnicy", "błąd standardowy grupy 1",
+                    "błąd standardowy grupy 2"),
+      colors = c("wrzos", "niebo", "bursztyn"),
+      above  = 2
     ),
 
     lc_p("W scenariuszu C błędy standardowe grup wynoszą 0.093 i 0.086 g.
@@ -352,6 +372,39 @@ ch3_ui <- list(
 # ============================================================================
 
 ch3_server <- function(input, output, session) {
+
+  # Gęstość N(0, 1) i t (df = 4), ogony poza ±t*
+  zoom_plot_server("ch3_tnorm_plot", reactive({
+    df_t <- 4
+    t_star <- qt(0.975, df_t); z_star <- qnorm(0.975)
+    x <- seq(-5, 5, length.out = 600)
+    dens <- data.frame(x = x, norm = dnorm(x), t = dt(x, df_t))
+    tails <- subset(dens, abs(x) >= t_star)
+    col_t <- unname(upwr_cat["indygo"])
+    col_crit <- unname(upwr_cat["terakota"])
+
+    ggplot(dens) +
+      geom_area(data = subset(tails, x > 0), aes(x, t), fill = col_t, alpha = 0.3) +
+      geom_area(data = subset(tails, x < 0), aes(x, t), fill = col_t, alpha = 0.3) +
+      geom_line(aes(x, norm), colour = upwr_secondary, linewidth = 0.6, linetype = "22") +
+      geom_line(aes(x, t), colour = col_t, linewidth = 1.1) +
+      geom_segment(data = data.frame(v = c(-z_star, z_star)),
+                   aes(x = v, xend = v, y = 0, yend = dnorm(z_star) + 0.03),
+                   colour = upwr_secondary, linewidth = 0.5) +
+      geom_segment(data = data.frame(v = c(-t_star, t_star)),
+                   aes(x = v, xend = v, y = 0, yend = dt(t_star, df_t) + 0.06),
+                   colour = col_crit, linewidth = 0.9) +
+      annotate("text", x = 0.55, y = dnorm(0) + 0.005, label = "N(0, 1)", hjust = 0,
+               colour = upwr_secondary, size = 4) +
+      annotate("text", x = -1.5, y = dt(-1.5, df_t) + 0.06, label = "t, df = 4", hjust = 1,
+               colour = col_t, fontface = "bold", size = 4) +
+      scale_x_continuous(breaks = round(c(-t_star, -z_star, 0, z_star, t_star), 2),
+                         labels = function(b) format(b, drop0trailing = TRUE, trim = TRUE)) +
+      labs(x = NULL, y = NULL) +
+      coord_cartesian(xlim = c(-4.5, 4.5), ylim = c(0, 0.43), expand = FALSE) +
+      theme(axis.text.y = element_blank(), panel.grid.major.y = element_blank(),
+            panel.grid.minor = element_blank(), axis.ticks.y = element_blank())
+  }), alt = "Gęstość rozkładu normalnego (przerywana) i rozkładu t o 4 stopniach swobody; t ma niższy środek i cięższe ogony, więc jego wartość krytyczna 2.78 leży dalej niż 1.96")
 
 
   # --- Widget 1: Budowa przedziału krok po kroku ---

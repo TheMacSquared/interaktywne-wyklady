@@ -138,17 +138,25 @@ ch5_ui <- list(
       dowolną liczbą, ujemną dla p < 0.5 i dodatnią dla p > 0.5. Regresja
       logistyczna zakłada, że to logit zależy od predyktora liniowo:"),
 
-    lc_formula_box(withMathJax(
-      "$$\\text{logit}(p) = \\ln\\frac{p}{1 - p} = \\beta_0 + \\beta_1 x$$"
-    )),
+    # Logit ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|\\text{logit}(p)⟧ = \\ln⟦2|\\frac{p}{1 - p}⟧ = ⟦3|\\beta_0⟧ + ⟦4|\\beta_1⟧ x",
+      notes  = list("log-szanse", "szanse", "wyraz wolny", "nachylenie"),
+      colors = c("accent", "bursztyn", "terakota", "indygo"),
+      above  = c(2, 4)
+    ),
 
     lc_p("Po przekształceniu tego równania względem p otrzymujemy ",
       gloss("funkcja logistyczna", "funkcję logistyczną"), ", nazywaną też
       sigmoidą od kształtu litery S:"),
 
-    lc_formula_box(withMathJax(
-      "$$p = P(Y = 1) = \\frac{1}{1 + e^{-(\\beta_0 + \\beta_1 x)}}$$"
-    )),
+    # Sigmoida ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|p⟧ = P(Y = 1) = \\frac{1}{1 + e^{-(⟦2|\\beta_0 + \\beta_1 x⟧)}}",
+      notes  = list("prawdopodobieństwo sukcesu", "logit"),
+      colors = c("niebo", "accent"),
+      above  = c(2)
+    ),
 
     lc_p("Niezależnie od tego, jak duże albo małe jest β₀ + β₁x, wynik leży
       między 0 a 1. Przy wielu predyktorach w wykładniku pojawia się po prostu
@@ -253,9 +261,13 @@ ch5_ui <- list(
       nazywamy ", gloss("iloraz szans", "ilorazem szans"), " (OR, od ang.
       odds ratio): to stosunek szans przy x + 1 do szans przy x."),
 
-    lc_formula_box(withMathJax(
-      "$$OR = \\frac{\\text{szanse przy } x + 1}{\\text{szanse przy } x} = e^{\\beta_1}$$"
-    )),
+    # Iloraz szans ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|OR⟧ = \\frac{\\text{szanse przy } x + 1}{\\text{szanse przy } x} = e^{⟦2|\\beta_1⟧}",
+      notes  = list("iloraz szans", "nachylenie logitu"),
+      colors = c("indygo", "indygo"),
+      above  = c(2)
+    ),
 
     lc_p("OR = 1 oznacza brak związku, OR > 1 wzrost szans, a OR < 1 ich spadek.
       W modelu CASchools z progiem 656 pkt iloraz szans dla dochodu wynosi 1.18.

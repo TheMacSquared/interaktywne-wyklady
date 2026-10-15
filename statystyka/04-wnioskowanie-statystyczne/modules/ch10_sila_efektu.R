@@ -45,9 +45,14 @@ ch10_ui <- list(
       o tym samym odchyleniu standardowym s statystykę t można zapisać przez
       różnicę wyrażoną w odchyleniach standardowych, którą oznaczymy d:"),
 
-    lc_formula_box(withMathJax(
-      "$$t = \\frac{\\bar{x}_1 - \\bar{x}_2}{s\\sqrt{2/n}} = d \\cdot \\sqrt{\\frac{n}{2}}, \\qquad d = \\frac{\\bar{x}_1 - \\bar{x}_2}{s}$$"
-    )),
+    # t przez d ze znacznikami (d w kolorze efektu, jak odczyty rozdziału)
+    lc_formula_annotated(
+      "⟦1|t⟧ = \\frac{\\bar{x}_1 - \\bar{x}_2}{s\\sqrt{2/n}} = ⟦2|d⟧ \\cdot \\sqrt{\\frac{⟦3|n⟧}{2}}, \\qquad d = \\frac{⟦4|\\bar{x}_1 - \\bar{x}_2⟧}{⟦5|s⟧}",
+      notes  = list("statystyka t", "wielkość efektu", "liczebność grupy",
+                    "różnica średnich", "odchylenie standardowe"),
+      colors = c("indygo", "wrzos", "szalwia", "accent", "grafit"),
+      above  = c(4)
+    ),
 
     lc_p("Ten sam efekt d daje tym większe t i tym mniejszą ", gloss("p-wartość"), ", im
       większa jest próba. Przy dostatecznie dużym n każda niezerowa różnica
@@ -104,9 +109,14 @@ ch10_ui <- list(
       niezależnych z rozdziału 08 w mianowniku stoi odchylenie standardowe
       połączone z obu grup."),
 
-    lc_formula_box(withMathJax(
-      "$$d = \\frac{\\bar{x}_1 - \\bar{x}_2}{s_p}, \\qquad s_p = \\sqrt{\\frac{(n_1 - 1)\\,s_1^2 + (n_2 - 1)\\,s_2^2}{n_1 + n_2 - 2}}$$"
-    )),
+    # D Cohena ze znacznikami
+    lc_formula_annotated(
+      "⟦1|d⟧ = \\frac{⟦2|\\bar{x}_1 - \\bar{x}_2⟧}{⟦3|s_p⟧}, \\qquad s_p = \\sqrt{\\frac{(⟦4|n_1⟧ - 1)\\,⟦5|s_1^2⟧ + (n_2 - 1)\\,s_2^2}{n_1 + n_2 - 2}}",
+      notes  = list("d Cohena", "różnica średnich", "połączone odchylenie standardowe",
+                    "liczebność grupy", "wariancja w grupie"),
+      colors = c("wrzos", "accent", "grafit", "szalwia", "wrzos"),
+      above  = c(2, 4, 5)
+    ),
 
     lc_p("W teście t jednej próby z rozdziału 04 porównujemy średnią z wartością
       odniesienia \\(\\mu_0\\), a w teście dla ", gloss("próby zależne", "prób zależnych"), " z rozdziału 08
@@ -196,9 +206,8 @@ ch10_ui <- list(
       od -1 do +1. Test korelacji sprawdzał tylko, czy r z próby różni się od
       zera bardziej, niż wynikałoby z przypadku."),
 
-    lc_formula_box(withMathJax(
-      "$$r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum (x_i - \\bar{x})^2 \\cdot \\sum (y_i - \\bar{y})^2}}$$"
-    )),
+    # Ten sam wzór na r co w rozdziale 06
+    ch4_r_formula(),
 
     lc_p("Łatwiejszy do interpretacji jest często ",
       gloss("współczynnik determinacji", "kwadrat korelacji r²"), ". Mówi on,
@@ -280,9 +289,13 @@ ch10_ui <- list(
       i przez rozmiar tabeli, dzięki czemu przyjmuje wartości od 0 (brak
       związku) do 1 (pełna zależność)."),
 
-    lc_formula_box(withMathJax(
-      "$$V = \\sqrt{\\frac{\\chi^2}{n \\cdot (\\min(r, c) - 1)}}$$"
-    )),
+    # V Cramera ze znacznikami
+    lc_formula_annotated(
+      "⟦1|V⟧ = \\sqrt{\\frac{⟦2|\\chi^2⟧}{⟦3|n⟧ \\cdot (⟦4|\\min(r, c)⟧ - 1)}}",
+      notes  = list("V Cramera", "statystyka χ²", "liczba obserwacji", "mniejszy wymiar tabeli"),
+      colors = c("wrzos", "indygo", "szalwia", "szalwia"),
+      above  = c(2)
+    ),
 
     lc_p("We wzorze \\(r\\) i \\(c\\) oznaczają liczbę wierszy i kolumn tabeli.
       Dla tabeli 2×2 V jest równe współczynnikowi φ (fi). Gdy obie grupy są
@@ -351,9 +364,13 @@ ch10_ui <- list(
       zmienności wyników tłumaczy badany czynnik. To ta sama idea co r²
       w korelacji."),
 
-    lc_formula_box(withMathJax(
-      "$$\\eta^2 = \\frac{SS_{\\text{między}}}{SS_{\\text{całkowita}}}$$"
-    )),
+    # η² ze znacznikami (bursztyn = między, jak w ANOVA)
+    lc_formula_annotated(
+      "⟦1|\\eta^2⟧ = \\frac{⟦2|SS_{\\text{między}}⟧}{⟦3|SS_{\\text{całkowita}}⟧}",
+      notes  = list("eta kwadrat", "zmienność między grupami", "zmienność całkowita"),
+      colors = c("wrzos", "bursztyn", "grafit"),
+      above  = c(2)
+    ),
 
     lc_p("Programy podają kilka wariantów tej miary: η² częściowe (ang. partial)
       i η² uogólnione. W jednoczynnikowej ANOVA dla grup

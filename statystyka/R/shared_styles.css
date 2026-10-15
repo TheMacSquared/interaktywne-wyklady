@@ -2420,7 +2420,8 @@ mjx-container mjx-text {
 
 /* Wzór ze znacznikami (lc_formula_annotated): kolorowe części, opisy pod
    wzorem, strzałki rysuje R/lc_formula.js w warstwie .lc-fa-links */
-.lc-formula-box.lc-fa { position: relative; font-size: 1.3em; }
+.lc-formula-box.lc-fa { position: relative; font-size: 1.3em; --fa-param: #8f7d22; }
+html[data-lc-theme="dark"] .lc-formula-box.lc-fa { --fa-param: var(--upwr-cat-kurkuma); }
 .lc-fa-tex { position: relative; z-index: 1; }
 .lc-fa .lc-fa-p1 { color: var(--fa-1); }
 .lc-fa .lc-fa-p2 { color: var(--fa-2); }

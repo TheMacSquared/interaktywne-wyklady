@@ -35,6 +35,23 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     333 pingwiny, a nie 344. Ten rozdział pokazuje, skąd wzięła się ta
     różnica i czy usunięcie 11 osobników było uzasadnione."),
 
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 4.1",
+    title = "Struktura zbioru penguins",
+    width_mode = "text",
+    dd_schema("pingwin", 344, c(
+      species = "nominalna",
+      island = "nominalna",
+      bill_length_mm = "ciagla",
+      bill_depth_mm = "ciagla",
+      flipper_length_mm = "ciagla",
+      body_mass_g = "ciagla",
+      sex = "nominalna",
+      year = "dyskretna"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("W podglądzie zwróć uwagę na komórki z wartością NA i na to, czy
@@ -58,7 +75,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     w kilku wierszach, czy rozkładają po całym zbiorze."),
 
   figure_panel(
-    label = "Ryc. 4.1",
+    label = "Ryc. 4.2",
     title = "Odsetek braków w każdej zmiennej",
     lc_plot("tab3_missing", ratio = "2.5/1", max_height = "250px")
   ),
@@ -76,7 +93,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     i rozrzutem oraz czy w którejś nie ma podejrzanych wartości."),
 
   figure_panel(
-    label = "Ryc. 4.2",
+    label = "Ryc. 4.3",
     title = "Pomiary ciała według gatunku",
     lc_toolbar(
       selectInput("tab3_var", "Zmienna",

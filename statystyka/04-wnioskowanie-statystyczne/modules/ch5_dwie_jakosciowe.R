@@ -60,9 +60,13 @@ ch5_ui <- list(
       liczba obserwacji w jej wierszu pomnożona przez odsetek jej kolumny w całej
       próbie. Po uproszczeniu:"),
 
-    lc_formula_box(withMathJax(
-      "$$E_{ij} = \\frac{n_{i\\cdot} \\cdot n_{\\cdot j}}{n}$$"
-    )),
+    # Liczebność oczekiwana ze znacznikami
+    lc_formula_annotated(
+      "⟦1|E_{ij}⟧ = \\frac{⟦2|n_{i\\cdot}⟧ \\cdot ⟦3|n_{\\cdot j}⟧}{⟦4|n⟧}",
+      notes  = list("liczebność oczekiwana", "suma wiersza", "suma kolumny", "liczba obserwacji"),
+      colors = c("niebo", "bursztyn", "bursztyn", "szalwia"),
+      above  = c(2, 3)
+    ),
 
     lc_p("gdzie \\(n_{i\\cdot}\\) to suma i-tego wiersza, \\(n_{\\cdot j}\\) suma
       j-tej kolumny, a n liczba wszystkich obserwacji. ", gloss("statystyka testowa", "Statystyka testowa"), " zbiera
@@ -72,9 +76,14 @@ ch5_ui <- list(
       bo odchylenie o 10 znaczy więcej w komórce, w której spodziewamy się
       20 obserwacji, niż w tej, w której spodziewamy się 200:"),
 
-    lc_formula_box(withMathJax(
-      "$$\\chi^2 = \\sum_{i,j} \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}, \\qquad df = (r - 1)(c - 1)$$"
-    )),
+    # Statystyka χ² ze znacznikami
+    lc_formula_annotated(
+      "⟦1|\\chi^2⟧ = ⟦2|\\sum_{i,j}⟧ \\frac{(⟦3|O_{ij}⟧ - ⟦4|E_{ij}⟧)^2}{E_{ij}}, \\qquad ⟦5|df⟧ = (⟦6|r⟧ - 1)(⟦7|c⟧ - 1)",
+      notes  = list("statystyka χ²", "suma po komórkach", "liczebność obserwowana",
+                    "liczebność oczekiwana", "stopnie swobody", "liczba wierszy", "liczba kolumn"),
+      colors = c("indygo", "bursztyn", "accent", "niebo", "szalwia", "terakota", "wrzos"),
+      above  = c(2, 3, 4)
+    ),
 
     lc_p("Gdy H₀ jest prawdziwa, a próba dostatecznie duża, statystyka ta ma
       w przybliżeniu ", gloss("rozkład chi-kwadrat", "rozkład χ²"), " znany

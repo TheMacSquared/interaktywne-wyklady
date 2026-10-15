@@ -75,8 +75,13 @@ ch2_ui <- list(
       t-Studenta"), " z \\(n - 1\\) ", gloss("stopnie swobody", "stopniami swobody"), ". Tak powstaje statystyka ",
       gloss("test t", "testu t"), " jednej próby:"),
 
-    lc_formula_box(
-      withMathJax("$$t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1$$")
+    # Statystyka t jednej próby ze znacznikami
+    lc_formula_annotated(
+      "⟦1|t⟧ = \\frac{⟦2|\\bar{x}⟧ - ⟦3|\\mu_0⟧}{⟦4|s⟧ / \\sqrt{⟦5|n⟧}}, \\quad ⟦6|df⟧ = n - 1",
+      notes  = list("statystyka t", "średnia z próby", "wartość referencyjna",
+                    "odchylenie standardowe", "liczba obserwacji", "stopnie swobody"),
+      colors = c("indygo", "accent", "param", "wrzos", "szalwia", "szalwia"),
+      above  = c(2, 3)
     ),
 
     lc_p("Licznik mówi, jak daleko średnia z próby leży od \\(\\mu_0\\)
@@ -177,8 +182,12 @@ ch2_ui <- list(
       p-wartość. W teście dwustronnym jest to pole obu ogonów rozkładu
       poza \\(\\pm|t|\\):"),
 
-    lc_formula_box(
-      withMathJax("$$p = P\\left(|T| \\geq |t| \\;\\middle|\\; H_0\\right), \\qquad T \\sim t_{n-1}$$")
+    # Dwustronna p-wartość testu t ze znacznikami
+    lc_formula_annotated(
+      "⟦1|p⟧ = P\\left(⟦2|\\left|T\\right|⟧ \\geq ⟦3|\\left|t\\right|⟧ \\;\\middle|\\; H_0\\right), \\qquad T \\sim ⟦4|t_{n-1}⟧",
+      notes  = list("p-wartość", "statystyka przy H₀", "statystyka z próby", "rozkład t-Studenta"),
+      colors = c("bursztyn", "niebo", "indygo", "indygo"),
+      above  = c(2)
     ),
 
     lc_p("Jak w rozdziale 03, p-wartość to prawdopodobieństwo, że przy
@@ -207,8 +216,12 @@ ch2_ui <- list(
       dalej od \\(\\bar{x}\\) niż \\(t^* \\cdot SE\\). To dwa zapisy tego
       samego warunku:"),
 
-    lc_formula_box(
-      withMathJax("$$|t| \\geq t^*_{\\alpha/2,\\, n-1} \\iff \\mu_0 \\notin \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
+    # Równoważność testu i przedziału ze znacznikami
+    lc_formula_annotated(
+      "⟦1|\\left|t\\right|⟧ \\geq ⟦2|t^*_{\\alpha/2,\\, n-1}⟧ \\iff ⟦3|\\mu_0⟧ \\notin ⟦4|\\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}⟧",
+      notes  = list("statystyka z próby", "wartość krytyczna", "wartość referencyjna", "przedział ufności"),
+      colors = c("indygo", "terakota", "param", "accent"),
+      above  = c(1, 2)
     ),
 
     lc_p("Test dwustronny na poziomie \\(\\alpha\\) odrzuca H₀: μ = μ₀

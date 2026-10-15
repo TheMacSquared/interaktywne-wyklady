@@ -205,13 +205,17 @@ ch1d_ui <- list(
       prawdopodobieństwo wykrycia efektu, który naprawdę istnieje, nazywamy ",
       gloss("moc testu", "mocą testu"), "."),
 
-    lc_formula_box(withMathJax(
-      "$$\\begin{aligned}
-      \\alpha &= P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ prawdziwa}) \\\\
-      \\beta &= P(\\text{nie odrzucamy } H_0 \\mid H_0 \\text{ fałszywa}) \\\\
-      \\text{moc} = 1 - \\beta &= P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ fałszywa})
-      \\end{aligned}$$"
-    )),
+    # α, β i moc ze znacznikami (kolory jak na Ryc. 3.1)
+    lc_formula_annotated(
+      "\\begin{aligned}
+      P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ prawdziwa}) &= ⟦1|\\alpha⟧ \\\\
+      P(\\text{nie odrzucamy } H_0 \\mid H_0 \\text{ fałszywa}) &= ⟦2|\\beta⟧ \\\\
+      P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ fałszywa}) &= ⟦3|1 - \\beta⟧
+      \\end{aligned}",
+      notes  = list("błąd I rodzaju", "błąd II rodzaju", "moc testu"),
+      colors = c("accent", "grafit", "szalwia"),
+      side   = "right"
+    ),
 
     lc_p("Oba prawdopodobieństwa są warunkowe i opisują procedurę, a nie pojedynczy
       wynik, podobnie jak ", gloss("poziom ufności"), " w wykładzie 03. \\(\\alpha = 0.05\\)
@@ -306,9 +310,13 @@ ch1d_ui <- list(
       otrzymalibyśmy wynik co najmniej tak skrajny jak zaobserwowany. Dla różnicy
       średnich w eksperymencie z telefonem:"),
 
-    lc_formula_box(withMathJax(
-      "$$p = P\\left(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\;\\middle|\\; H_0\\right)$$"
-    )),
+    # Definicja p-wartości ze znacznikami
+    lc_formula_annotated(
+      "⟦1|p⟧ = P\\left(⟦2|\\left|\\bar{X}_A - \\bar{X}_B\\right|⟧ \\geq ⟦3|\\left|d_{\\text{obs}}\\right|⟧ \\;\\middle|\\; ⟦4|H_0⟧\\right)",
+      notes  = list("p-wartość", "różnica w powtórzeniu", "różnica z naszej próby", "założenie"),
+      colors = c("bursztyn", "niebo", "accent", "grafit"),
+      above  = c(2)
+    ),
 
     lc_p("gdzie \\(d_{\\text{obs}}\\) to różnica średnich zaobserwowana w naszej
       próbie. Wartość bezwzględna oznacza, że „co najmniej tak skrajny” liczymy
@@ -417,8 +425,27 @@ ch1d_ui <- list(
       \\(p \\geq \\alpha\\), nie mamy podstaw do jej odrzucenia. p-wartość spada
       poniżej \\(\\alpha\\) dokładnie wtedy, gdy wynik trafia do obszaru
       odrzucenia, więc ta reguła odrzuca prawdziwą H₀ z prawdopodobieństwem
-      \\(\\alpha\\). Werdykt formułuje się w ustalony sposób. Gdy
-      \\(p < \\alpha\\):"),
+      \\(\\alpha\\)."),
+
+    # Jeden wynik naraz; środek = H₀, krańce = Hₐ, p jako liczba
+    figure_panel(
+      label = "Ryc. 3.5",
+      title = "p-wartość a α",
+      width_mode = "text",
+      lc_toolbar(
+        lc_segmented("ch1d_palpha_case", "Wynik",
+          choices = c("z = 2.17" = "2.17", "z = 1.50" = "1.50"), selected = "2.17"),
+        lc_readouts(uiOutput("ch1d_palpha_read", inline = TRUE))
+      ),
+      lc_plot("ch1d_palpha_plot", ratio = "2/1", max_height = "380px")
+    ),
+
+    # Odczyt ryciny
+    lc_p("Wynik 2.17 leży dalej od zera niż wartość krytyczna 1.96, czyli
+      w obszarze Hₐ, a jego ogony są węższe niż pole α: p = 0.030 < 0.05.
+      Wynik 1.50 zostaje w obszarze H₀, a jego ogony obejmują całe pole α
+      i więcej: p = 0.134. Werdykt formułuje się
+      w ustalony sposób. Gdy \\(p < \\alpha\\):"),
 
     lc_formula_box(
       tags$em("„Na przyjętym poziomie istotności α odrzucamy hipotezę zerową
@@ -460,7 +487,7 @@ ch1d_ui <- list(
       i przyjęty poziom istotności."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.6",
       title = "Quiz: odrzucić czy nie?",
       uiOutput("ch1_quiz_scenario"),
       p("Decyzja:"),
@@ -492,6 +519,57 @@ ch1d_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
+
+  # Jeden wynik naraz na N(0, 1) pod H₀. Środek (|z| < 1.96)
+  # podpisany H₀, krańce Hₐ; pole za ±|z| = p-wartość, jej liczba w odczycie.
+  ch1d_palpha_z <- reactive(as.numeric(input$ch1d_palpha_case %||% "2.17"))
+
+  output$ch1d_palpha_read <- renderUI({
+    z <- ch1d_palpha_z()
+    p <- 2 * pnorm(-abs(z))
+    tagList(
+      lc_readout("p", sprintf("%.3f", p), color = col_pvalue, swatch = TRUE),
+      lc_readout("α", "0.05", color = col_reject, swatch = TRUE),
+      lc_readout(NULL, if (p < 0.05) "p < α" else "p ≥ α")
+    )
+  })
+
+  zoom_plot_server("ch1d_palpha_plot", reactive({
+    z <- ch1d_palpha_z()
+    crit <- qnorm(0.975)
+    x <- seq(-4, 4, length.out = 801)
+    curve_df <- data.frame(x = x, y = dnorm(x))
+    p_df <- curve_df[abs(curve_df$x) >= abs(z), ]
+    p_df$side <- ifelse(p_df$x < 0, "l", "r")
+    regions <- data.frame(
+      x = c(-3.05, 0, 3.05), y = 0.22,
+      lab = c("bold(H[a])", "bold(H[0])", "bold(H[a])"),
+      col = c(col_reject, col_h0, col_reject)
+    )
+
+    ggplot() +
+      annotate("rect", xmin = -4, xmax = -crit, ymin = 0, ymax = 0.43,
+               fill = col_reject, alpha = 0.06) +
+      annotate("rect", xmin = crit, xmax = 4, ymin = 0, ymax = 0.43,
+               fill = col_reject, alpha = 0.06) +
+      geom_area(data = p_df, aes(x, y, group = side), fill = col_pvalue, alpha = 0.6) +
+      geom_line(data = curve_df, aes(x, y), color = col_h0, linewidth = 1.2) +
+      geom_vline(xintercept = c(-crit, crit), linetype = "dashed", color = col_reject) +
+      geom_segment(aes(x = z, xend = z, y = 0, yend = 0.41),
+                   color = upwr_secondary, linewidth = 1.1) +
+      annotate("label", x = z, y = 0.41, label = sprintf("z = %.2f", z),
+               family = lc_mono_family, size = 4.2, label.size = 0,
+               fill = "white", color = upwr_secondary) +
+      geom_text(data = regions, aes(x, y, label = lab, color = col), parse = TRUE,
+                size = 9) +
+      scale_color_identity() +
+      scale_x_continuous(breaks = c(-crit, 0, crit), labels = c("-1.96", "0", "1.96"),
+                         expand = c(0, 0)) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.04))) +
+      labs(x = "Statystyka testowa", y = NULL) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
+  }))
 
   observe({
     session$sendCustomMessage("ws_pvalue_chart", list(

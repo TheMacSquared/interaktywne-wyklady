@@ -31,9 +31,12 @@ ch5_ui <- list(
       środka krzywej, i ", gloss("odchylenie standardowe"), " \\(\\sigma\\), które
       ustala jej szerokość. Zapisujemy to krótko \\(X \\sim N(\\mu, \\sigma)\\)."),
 
-    lc_formula_box(withMathJax(
-      "$$f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} \\, e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}} \\qquad E(X) = \\mu \\qquad Var(X) = \\sigma^2$$"
-    )),
+    lc_formula_annotated(
+      "f(x) = \\frac{1}{⟦1|\\sigma⟧\\sqrt{2\\pi}} \\, e^{-\\frac{(x-⟦2|\\mu⟧)^2}{2⟦1|\\sigma⟧^2}} \\qquad E(X) = ⟦2|\\mu⟧ \\qquad Var(X) = ⟦1|\\sigma⟧^2",
+      notes  = list("odchylenie standardowe", "średnia"),
+      colors = c("wrzos", "accent"),
+      above  = 2
+    ),
 
     lc_p("Parametry mają tu bezpośrednią interpretację. ",
       gloss("wartość oczekiwana", "Wartość oczekiwana"), " rozkładu jest równa
@@ -156,9 +159,12 @@ ch5_ui <- list(
       u mężczyzny. Odpowiedzią jest ", gloss("standaryzacja"), ". Od wartości
       odejmujemy średnią i dzielimy wynik przez odchylenie standardowe:"),
 
-    lc_formula_box(withMathJax(
-      "$$z = \\frac{x - \\mu}{\\sigma} \\qquad X \\sim N(\\mu, \\sigma) \\;\\Rightarrow\\; Z = \\frac{X - \\mu}{\\sigma} \\sim N(0, 1)$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|z⟧ = \\frac{⟦2|x⟧ - ⟦3|\\mu⟧}{⟦4|\\sigma⟧} \\qquad X \\sim N(\\mu, \\sigma) \\;\\Rightarrow\\; Z = \\frac{X - \\mu}{\\sigma} \\sim N(0, 1)",
+      notes  = list("wynik standaryzowany", "wartość", "średnia", "odchylenie standardowe"),
+      colors = c("indygo", "niebo", "accent", "wrzos"),
+      above  = c(2, 3)
+    ),
 
     lc_p("Wynik z (z-score) mówi, o ile odchyleń standardowych wartość leży
       od średniej; znak mówi, po której stronie. Jeśli X ma rozkład normalny,

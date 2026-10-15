@@ -44,12 +44,11 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
 
   lc_p("Analizę przeprowadzimy w czterech krokach:"),
 
-  tags$ol(
-    tags$li("Opis grup: rozkład masy w każdym gatunku (wykład 01)."),
-    tags$li("Założenia: normalność i jednorodność wariancji w grupach
-      (wykład 05), a na ich podstawie wybór testu."),
-    tags$li("Test dla trzech grup i porównania par (wykład 04)."),
-    tags$li("Sprawdzenie, czy wniosek zmienia się po podziale na płeć.")
+  # Mapa kroków zamiast listy numerowanej
+  figure_panel(
+    label = "Ryc. 2.1",
+    title = "Przebieg analizy",
+    case_pipeline(case_steps_ch2)
   ),
 
   # ========================================================================
@@ -63,7 +62,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
     pojedynczymi ptakami. Odczyty podają średnią masę gatunku."),
 
   figure_panel(
-    label = "Ryc. 2.1",
+    label = "Ryc. 2.2",
     title = "Masa ciała w trzech gatunkach",
     lc_toolbar(lc_readouts(uiOutput("ch2_desc_reads"))),
     lc_plot("ch2_desc_plot", ratio = "1.6/1", max_height = "340px")
@@ -91,7 +90,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
     i ", gloss("test Levene'a", "testem Levene'a"), "."),
 
   figure_panel(
-    label = "Ryc. 2.2",
+    label = "Ryc. 2.3",
     title = "Wykresy Q-Q masy ciała w gatunkach",
     lc_plot("ch2_qq_plot", ratio = "2.4/1", max_height = "300px"),
     uiOutput("ch2_assump_table")
@@ -139,8 +138,16 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
     odrzucimy, test Games-Howella wskaże, które pary się różnią, i poda
     przedział ufności dla każdej różnicy."),
 
+  # Hipoteza o równych średnich trzech gatunków
+  lc_formula_annotated(
+    "H_0: ⟦1|\\mu_A⟧ = ⟦2|\\mu_C⟧ = ⟦3|\\mu_G⟧",
+    notes  = list("średnia Adelie", "średnia Chinstrap", "średnia Gentoo"),
+    colors = c("niebo", "bursztyn", "szalwia"),
+    above  = 2
+  ),
+
   figure_panel(
-    label = "Ryc. 2.3",
+    label = "Ryc. 2.4",
     title = "Różnice średnich masy między parami gatunków",
     lc_toolbar(lc_readouts(uiOutput("ch2_welch_reads"))),
     lc_plot("ch2_gh_plot", ratio = "2.2/1", max_height = "260px"),
@@ -187,7 +194,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
     porównuje gatunki osobno wśród samic i wśród samców."),
 
   figure_panel(
-    label = "Ryc. 2.4",
+    label = "Ryc. 2.5",
     title = "Masa ciała gatunków osobno dla samic i samców",
     lc_toolbar(
       lc_segmented("ch2_sex_group", "Grupa",

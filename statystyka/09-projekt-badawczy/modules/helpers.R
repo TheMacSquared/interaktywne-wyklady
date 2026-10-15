@@ -447,3 +447,78 @@ tr_board_ui <- function(reveal = tr_trop_order, show_verdict = TRUE) {
                        "tropy-row tropy-row-on", "tropy-row tropy-row-off")
   )
 }
+
+
+# Etapy projektu badawczego (rozdziały 1–8) w dwóch fazach.
+# current = k rysuje pasek z wyróżnionym etapem k (początek rozdziałów 2–8).
+proj_stages <- list(
+  list(name = "Cel",            sub = "pytanie i tropy",          col = "wrzos"),
+  list(name = "Hipotezy",       sub = "alternatywne wyjaśnienia", col = "wrzos"),
+  list(name = "Pomiar",         sub = "pojęcie → zmienna",        col = "wrzos"),
+  list(name = "Konspekt",       sub = "plan przed analizą",       col = "wrzos"),
+  list(name = "Pierwsze testy", sub = "jeden test na trop",       col = "niebo"),
+  list(name = "Iteracja",       sub = "zmienne zakłócające",      col = "bursztyn"),
+  list(name = "Model kontrolny", sub = "regresja wieloraka",      col = "szalwia"),
+  list(name = "Wniosek",        sub = "skala i ograniczenia",     col = "accent")
+)
+
+proj_stage_map <- function(current = NULL) {
+  mini <- !is.null(current)
+  cvar <- function(col) if (col == "accent") "var(--upwr-accent)" else paste0("var(--upwr-cat-", col, ")")
+  items <- lapply(seq_along(proj_stages), function(k) {
+    s <- proj_stages[[k]]
+    state <- if (!mini) "" else if (k == current) " is-current" else if (k < current) " is-done" else " is-next"
+    tags$li(class = paste0("pm-step", state),
+      style = paste0("--pm-c:", cvar(s$col), ";"),
+      tags$span(class = "pm-num", sprintf("%02d", k)),
+      tags$span(class = "pm-name", s$name),
+      if (!mini) tags$span(class = "pm-sub", s$sub))
+  })
+  tags$div(class = paste("proj-map", if (mini) "is-mini"),
+    role = "img",
+    `aria-label` = paste("Etapy projektu:", paste(vapply(proj_stages, `[[`, "", "name"), collapse = ", ")),
+    if (!mini) tags$div(class = "pm-phases",
+      tags$span(class = "pm-phase", "Przed danymi"),
+      tags$span(class = "pm-phase", "Z danymi")),
+    tags$ol(class = "pm-steps", items)
+  )
+}
+
+
+# Schemat zmiennej zakłócającej Z → X, Z → Y, X → Y?
+# (kopia case_confounder() z wykładu 08; tu grubość stała, liczą się kierunki).
+proj_confounder <- function(nodes, edges, strength = c(0.3, 0.3, 0.3),
+                            colors = c("bursztyn", "niebo", "grafit")) {
+  W <- 640; H <- 250
+  bw <- 214; bh <- 46
+  pos <- list(z = c(320, 42), x = c(120, 205), y = c(520, 205))
+  node <- function(p, label, col) {
+    tags$g(class = "cf-node", style = paste0("--cf-c:var(--upwr-cat-", col, ");"),
+      tags$rect(x = p[1] - bw / 2, y = p[2] - bh / 2, width = bw, height = bh, rx = 8),
+      tags$text(x = p[1], y = p[2] + 6, `text-anchor` = "middle", label))
+  }
+  edge <- function(a, b, label, s, dashed = FALSE, lab_dx = 0, lab_dy = 0) {
+    d <- b - a; u <- d / sqrt(sum(d^2))
+    t0 <- min(abs((bw / 2 + 6) / u[1]), abs((bh / 2 + 6) / u[2]))
+    p0 <- a + u * t0; p1 <- b - u * (t0 + 14); mid <- (p0 + p1) / 2
+    tagList(
+      tags$line(class = paste("cf-edge", if (dashed) "is-open"),
+        x1 = p0[1], y1 = p0[2], x2 = p1[1], y2 = p1[2],
+        `stroke-width` = round(1.5 + 7 * s, 1), `marker-end` = "url(#cf-arrow)"),
+      tags$text(class = "cf-val", x = mid[1] + lab_dx, y = mid[2] + lab_dy,
+                `text-anchor` = "middle", label))
+  }
+  tags$svg(class = "case-confounder", viewBox = paste(0, 0, W, H), role = "img",
+    `aria-label` = sprintf("%s wiąże się z %s (%s) i z %s (%s); związek %s z %s: %s.",
+      nodes[1], nodes[2], edges[1], nodes[3], edges[2], nodes[2], nodes[3], edges[3]),
+    tags$defs(tags$marker(id = "cf-arrow", viewBox = "0 0 10 10", refX = 0, refY = 5,
+      markerWidth = 16, markerHeight = 16, markerUnits = "userSpaceOnUse",
+      orient = "auto-start-reverse", tags$path(d = "M0,0 L10,5 L0,10 z", class = "cf-head"))),
+    edge(pos$z, pos$x, edges[1], strength[1], lab_dx = -70),
+    edge(pos$z, pos$y, edges[2], strength[2], lab_dx = 70),
+    edge(pos$x, pos$y, edges[3], strength[3], dashed = TRUE, lab_dy = -12),
+    node(pos$z, nodes[1], colors[1]),
+    node(pos$x, nodes[2], colors[2]),
+    node(pos$y, nodes[3], colors[3])
+  )
+}

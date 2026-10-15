@@ -37,10 +37,19 @@ ch2_ui <- lecture_chapter(
       wariancję wspólną. Tak działa ", gloss("test t", "test t"), " w wersji
       Studenta:"),
 
-    lc_formula_box(withMathJax(
-      "$$s_p^2 = \\frac{(n_1 - 1)\\,s_1^2 + (n_2 - 1)\\,s_2^2}{n_1 + n_2 - 2}, \\qquad
-        t = \\frac{\\bar{x}_1 - \\bar{x}_2}{s_p \\sqrt{\\dfrac{1}{n_1} + \\dfrac{1}{n_2}}}$$"
-    )),
+    # Wariancja wspólna i statystyka t Studenta (dwa wzory zamiast jednego boxu)
+    lc_formula_annotated(
+      "⟦1|s_p^2⟧ = \\frac{⟦2|(n_1 - 1)⟧\\,⟦3|s_1^2⟧ + (n_2 - 1)\\,s_2^2}{⟦4|n_1 + n_2 - 2⟧}",
+      notes  = list("wariancja wspólna", "waga grupy 1", "wariancja grupy 1", "suma wag"),
+      colors = c("wrzos", "szalwia", "wrzos", "szalwia"),
+      above  = c(2, 3)
+    ),
+    lc_formula_annotated(
+      "⟦1|t⟧ = \\frac{⟦2|\\bar{x}_1 - \\bar{x}_2⟧}{⟦3|s_p⟧ \\sqrt{\\dfrac{1}{n_1} + \\dfrac{1}{n_2}}}",
+      notes  = list("statystyka testowa", "różnica średnich", "wspólne odchylenie"),
+      colors = c("indygo", "accent", "wrzos"),
+      above  = 2
+    ),
 
     lc_p("Wariancja wspólna \\(s_p^2\\) to średnia ważona wariancji z grup, a wagami
       są ich ", gloss("stopnie swobody"), ". Liczniejsza grupa ma więc większy wpływ na wynik.
@@ -98,9 +107,14 @@ ch2_ui <- lecture_chapter(
       przypadkiem. Formalne testy jednorodności wariancji mają we wszystkich
       grupach tę samą ", gloss("hipoteza zerowa", "hipotezę zerową"), ":"),
 
+    # Hipoteza zerowa testów wariancji
+    lc_formula_annotated(
+      "⟦1|H_0⟧: ⟦2|\\sigma_1^2⟧ = \\sigma_2^2 = \\ldots = \\sigma_{⟦3|k⟧}^2",
+      notes  = list("hipoteza zerowa", "wariancja w populacji 1", "liczba grup"),
+      colors = c("grafit", "wrzos", "szalwia")
+    ),
     lc_formula_box(withMathJax(
-      "$$H_0: \\sigma_1^2 = \\sigma_2^2 = \\ldots = \\sigma_k^2 \\qquad
-        H_a: \\text{co najmniej jedna wariancja jest inna}$$"
+      "$$H_a: \\text{co najmniej jedna wariancja jest inna}$$"
     )),
 
     lc_p(gloss("test Levene'a", "Test Levene'a"), " zamienia każdą obserwację na
@@ -154,10 +168,14 @@ ch2_ui <- lecture_chapter(
       \\(\\sqrt{s_1^2/n_1 + s_2^2/n_2}\\), a stopnie swobody liczy wzór
       Welcha–Satterthwaite'a:"),
 
-    lc_formula_box(withMathJax(
-      "$$df = \\frac{\\left(\\dfrac{s_1^2}{n_1} + \\dfrac{s_2^2}{n_2}\\right)^2}
-        {\\dfrac{(s_1^2/n_1)^2}{n_1 - 1} + \\dfrac{(s_2^2/n_2)^2}{n_2 - 1}}$$"
-    )),
+    # Stopnie swobody Welcha–Satterthwaite'a
+    lc_formula_annotated(
+      "⟦1|df⟧ = \\frac{\\left(\\dfrac{⟦2|s_1^2⟧}{n_1} + \\dfrac{s_2^2}{n_2}\\right)^2}
+        {\\dfrac{(s_1^2/n_1)^2}{⟦3|n_1 - 1⟧} + \\dfrac{(s_2^2/n_2)^2}{n_2 - 1}}",
+      notes  = list("stopnie swobody Welcha", "wariancja grupy 1", "stopnie swobody grupy 1"),
+      colors = c("szalwia", "wrzos", "szalwia"),
+      above  = 2
+    ),
 
     lc_p("Gdy wariancje i liczebności są podobne, wzór daje prawie \\(n_1 + n_2 - 2\\),
       czyli tyle co wersja Studenta. Im bardziej różnią się składniki \\(s_1^2/n_1\\)

@@ -38,6 +38,62 @@ exp_texts <- function(input, output, id, texts) {
 }
 exp_X <- function() tags$code("X", .noWS = "outside")
 
+# Wszystkie ciągi n prób (Ryc. 3.3). Kolumna = liczba
+# sukcesów k, wiersz = jeden ciąg; sukces w kolorze p^k ze wzoru (terakota),
+# porażka w kolorze (1 − p)^(n − k) (indygo), liczba ciągów w kolorze C(n, k).
+ch3_binom_sequences <- function(n = 4) {
+  cols <- lapply(0:n, function(k) {
+    seqs <- if (k == 0) list(integer(0)) else combn(n, k, simplify = FALSE)
+    tags$div(class = "bseq-col",
+      tags$div(class = "bseq-stack", lapply(seqs, function(pos) {
+        tags$div(class = "bseq-row", lapply(seq_len(n), function(i)
+          tags$span(class = paste("bseq-tile", if (i %in% pos) "is-hit"))))
+      })),
+      tags$div(class = "bseq-count", length(seqs)),
+      tags$div(class = "bseq-k", paste0("k = ", k))
+    )
+  })
+  tags$div(class = "bseq", role = "img",
+    `aria-label` = paste0("Wszystkie ", 2^n, " ciągi ", n, " prób ułożone według liczby sukcesów: ",
+                          paste(choose(n, 0:n), collapse = ", "), " ciągów."),
+    cols)
+}
+
+# Cztery pytania i odpowiadające im rozkłady
+# (Ryc. 3.10). Miniatury mają parametry z Ryc. 3.9, kolory z helpers.R.
+ch3_discrete_map <- function() {
+  items <- list(
+    list(q = "Każdy wynik tak samo?", name = "jednostajny", par = "1, …, n",
+         x = 1:6, p = rep(1/6, 6), col = "niebo"),
+    list(q = "Ile sukcesów w n próbach?", name = "dwumianowy", par = "B(n, p)",
+         x = 0:14, p = dbinom(0:14, 20, 0.3), col = "bursztyn"),
+    list(q = "Ile zdarzeń w czasie?", name = "Poissona", par = "Pois(λ)",
+         x = 0:14, p = dpois(0:14, 4), col = "szalwia"),
+    list(q = "Ile prób do 1. sukcesu?", name = "geometryczny", par = "Geom(p)",
+         x = 1:15, p = dgeom(0:14, 0.2), col = "indygo")
+  )
+  ymax <- max(sapply(items, function(it) max(it$p)))
+  spark <- function(it) {
+    m <- length(it$x); w <- 100 / m
+    tags$svg(class = "dmap-spark", viewBox = "0 0 100 44", preserveAspectRatio = "none",
+      `aria-hidden` = "true",
+      lapply(seq_len(m), function(i) {
+        h <- 40 * it$p[i] / ymax
+        tags$rect(x = (i - 1) * w + w * 0.12, y = 42 - h, width = w * 0.76, height = h)
+      }),
+      tags$line(x1 = 0, x2 = 100, y1 = 42.5, y2 = 42.5, class = "dmap-axis"))
+  }
+  tags$div(class = "dmap",
+    lapply(items, function(it) {
+      tags$div(class = "dmap-card", style = paste0("--dm-c: var(--upwr-cat-", it$col, ");"),
+        tags$div(class = "dmap-q", it$q),
+        spark(it),
+        tags$div(class = "dmap-name", it$name, tags$span(class = "dmap-par", it$par))
+      )
+    })
+  )
+}
+
 ch3_ui <- list(
   id = "ch-dyskretne", num = "03", title = "Rozkłady dyskretne",
   content = tagList(
@@ -88,9 +144,11 @@ ch3_ui <- list(
       jest n, liczba możliwych wyników, a prawdopodobieństwo każdego wyniku
       to po prostu 1/n."),
 
-    lc_formula_box(withMathJax(
-      "$$P(X = k) = \\frac{1}{n}, \\quad E(X) = \\frac{n+1}{2}, \\quad Var(X) = \\frac{n^2 - 1}{12}$$"
-    )),
+    lc_formula_annotated(
+      "P(X = k) = \\frac{1}{⟦1|n⟧}, \\quad E(X) = \\frac{⟦1|n⟧+1}{2}, \\quad Var(X) = \\frac{⟦1|n⟧^2 - 1}{12}",
+      notes  = list("liczba możliwych wyników"),
+      colors = c("szalwia")
+    ),
 
     lc_p("Dla zwykłej kostki n = 6, więc każda ściana ma prawdopodobieństwo
       1/6 ≈ 0.167. Wartość oczekiwana wynosi (6 + 1)/2 = 3.5, czyli dokładnie
@@ -153,9 +211,26 @@ ch3_ui <- list(
              aria = "Rzut sześcioma kostkami, liczba szóstek i histogram powtórzeń"))
     ),
 
-    lc_formula_box(withMathJax(
-      "$$P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}, \\quad E(X) = np, \\quad Var(X) = np(1-p)$$"
-    )),
+    lc_formula_annotated(
+      "P(X = k) = ⟦1|\\binom{n}{k}⟧ \\, ⟦2|p^k⟧ \\, ⟦3|(1-p)^{n-k}⟧, \\quad E(X) = np, \\quad Var(X) = np(1-p)",
+      notes  = list("liczba ułożeń", "k sukcesów", "n − k porażek"),
+      colors = c("szalwia", "terakota", "indygo"),
+      above  = 2
+    ),
+
+    # Wszystkie ciągi czterech prób według liczby sukcesów
+    lc_p("Przy czterech próbach wszystkie możliwe ciągi sukcesów i porażek da
+      się wypisać: jest ich 16. Ułożone według liczby sukcesów tworzą słupki
+      o wysokościach 1, 4, 6, 4 i 1. To są właśnie współczynniki
+      \\(\\binom{4}{k}\\). Przy p = 0.5 każdy ciąg ma tę samą szansę 1/16,
+      więc wysokości słupków to od razu kształt rozkładu B(4, 0.5)."),
+
+    figure_panel(
+      label = "Ryc. 3.3",
+      title = "Ciągi czterech prób według liczby sukcesów",
+      width_mode = "text",
+      ch3_binom_sequences(4)
+    ),
 
     lc_p("Wzór czyta się w trzech kawałkach. Czynnik \\(p^k (1-p)^{n-k}\\) to
       prawdopodobieństwo jednego konkretnego ciągu k sukcesów i n − k porażek.
@@ -166,7 +241,7 @@ ch3_ui <- list(
       a SD ≈ 1.58. Na wykresie można nałożyć na siebie cztery scenariusze."),
 
     figure_panel(
-      label = "Ryc. 3.3",
+      label = "Ryc. 3.4",
       title = "Rozkład dwumianowy B(n, p)",
       full_width = TRUE,
       lc_toolbar(
@@ -217,7 +292,7 @@ ch3_ui <- list(
       klientów w nich weszło."),
 
     figure_panel(
-      label = "Ryc. 3.4",
+      label = "Ryc. 3.5",
       width_mode = "text",
       exp_widget("ch3_exp_pois", "Od godziny w sklepie do rozkładu Poissona", "Obserwuj godzinę",
         list(kind = "poisson", lambda = 4, window = 60, kmax = 11, unit = "godzina",
@@ -225,9 +300,12 @@ ch3_ui <- list(
              aria = "Klienci wchodzący do sklepu w ciągu godziny, liczba klientów i histogram powtórzeń"))
     ),
 
-    lc_formula_box(withMathJax(
-      "$$P(X = k) = \\frac{\\lambda^k e^{-\\lambda}}{k!}, \\quad E(X) = \\lambda, \\quad Var(X) = \\lambda$$"
-    )),
+    lc_formula_annotated(
+      "P(X = ⟦1|k⟧) = \\frac{⟦2|\\lambda⟧^k e^{-⟦2|\\lambda⟧}}{k!}, \\quad E(X) = ⟦2|\\lambda⟧, \\quad Var(X) = ⟦2|\\lambda⟧",
+      notes  = list("liczba zdarzeń", "średnia liczba zdarzeń"),
+      colors = c("niebo", "terakota"),
+      above  = 2
+    ),
 
     lc_p("Rozkład Poissona to granica rozkładu dwumianowego, gdy n jest bardzo
       duże, p bardzo małe, a iloczyn np = λ pozostaje stały. Dla B(1000, 0.002)
@@ -239,7 +317,7 @@ ch3_ui <- list(
       tylko 0.053."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.6",
       title = "Rozkład Poissona Pois(λ)",
       full_width = TRUE,
       lc_toolbar(
@@ -293,7 +371,7 @@ ch3_ui <- list(
       kilkanaście rzutów."),
 
     figure_panel(
-      label = "Ryc. 3.6",
+      label = "Ryc. 3.7",
       width_mode = "text",
       exp_widget("ch3_exp_geom", "Od rzutów do pierwszej szóstki do rozkładu geometrycznego", "Rzucaj do szóstki",
         list(kind = "geometric", faces = 6, hit = 6, kmax = 12, unit = "seria",
@@ -301,9 +379,11 @@ ch3_ui <- list(
              aria = "Rzuty kostką do pierwszej szóstki, liczba rzutów i histogram powtórzeń"))
     ),
 
-    lc_formula_box(withMathJax(
-      "$$P(X = k) = (1-p)^{k-1} \\cdot p, \\quad E(X) = \\frac{1}{p}, \\quad Var(X) = \\frac{1-p}{p^2}$$"
-    )),
+    lc_formula_annotated(
+      "P(X = k) = ⟦1|(1-p)^{k-1}⟧ \\cdot ⟦2|p⟧, \\quad E(X) = \\frac{1}{p}, \\quad Var(X) = \\frac{1-p}{p^2}",
+      notes  = list("k − 1 porażek", "sukces na końcu"),
+      colors = c("indygo", "terakota")
+    ),
 
     lc_p("Żeby pierwszy sukces padł w próbie k, najpierw musi się zdarzyć
       k - 1 porażek, każda z prawdopodobieństwem 1 − p, a potem jeden sukces.
@@ -313,7 +393,7 @@ ch3_ui <- list(
       (5/6)¹⁰ ≈ 0.162."),
 
     figure_panel(
-      label = "Ryc. 3.7",
+      label = "Ryc. 3.8",
       title = "Rozkład geometryczny Geom(p)",
       full_width = TRUE,
       lc_toolbar(
@@ -357,7 +437,7 @@ ch3_ui <- list(
       i przedział ±1 SD można włączyć na wykresie."),
 
     figure_panel(
-      label = "Ryc. 3.8",
+      label = "Ryc. 3.9",
       title = "Cztery rozkłady obok siebie",
       full_width = TRUE,
       checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
@@ -374,6 +454,14 @@ ch3_ui <- list(
       sięga przy nim poniżej 1, czyli poza możliwe wartości. To sygnał,
       że przy silnie skośnych rozkładach sama para E(X) i SD nie opisuje
       dobrze kształtu."),
+
+    # Pytanie → rozkład → kształt (wizualna wersja Zasady)
+    figure_panel(
+      label = "Ryc. 3.10",
+      title = "Które pytanie, który rozkład",
+      width_mode = "wide",
+      ch3_discrete_map()
+    ),
 
     lc_note("Zasada", rule = TRUE,
       "„Ile z n prób?” — dwumianowy. „Ile razy w ciągu godziny, na stronie,

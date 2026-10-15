@@ -8,6 +8,8 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
             i pytanie, które z niego wynika."
   ),
 
+  proj_stage_map(current = 8),  # Pasek etapów
+
   lc_p("Cel, który prowadził przez cały wykład, brzmiał: ",
     tags$em(tr_goal), " Rozdziały 5–7 dostarczyły wyników: pięć prostych
     testów, przegląd ", gloss("zmienna zakłócająca", "zmiennych zakłócających"), " i serię modeli kontrolnych.

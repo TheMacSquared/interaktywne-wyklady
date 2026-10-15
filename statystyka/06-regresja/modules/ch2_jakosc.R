@@ -315,9 +315,14 @@ ch2_ui <- list(
       kwadratów \\(SS_{res}\\), tę samą, którą minimalizuje metoda najmniejszych
       kwadratów. \\(R^2\\) mówi, jaką część \\(SS_{tot}\\) model usunął."),
 
-    lc_formula_box(withMathJax(
-      "$$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}} = 1 - \\frac{\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}{\\sum_{i=1}^{n}(y_i - \\bar{y})^2}$$"
-    )),
+    # R² ze znacznikami symboli
+    lc_formula_annotated(
+      "R^2 = 1 - \\frac{⟦1|SS_{res}⟧}{⟦2|SS_{tot}⟧} = 1 - \\frac{\\sum_{i=1}^{n}(y_i - ⟦3|\\hat{y}_i⟧)^2}{\\sum_{i=1}^{n}(y_i - ⟦4|\\bar{y}⟧)^2}",
+      notes  = list("suma kwadratów reszt", "całkowita suma kwadratów",
+                    "wartość przewidywana", "średnia Y"),
+      colors = c("bursztyn", "szalwia", "wrzos", "accent"),
+      above  = c(1, 3)
+    ),
 
     lc_p("\\(R^2\\) przyjmuje wartości od 0 do 1. Zero oznacza, że model
       przewiduje nie lepiej niż średnia, jedynka, że wszystkie punkty leżą
@@ -482,9 +487,14 @@ ch2_ui <- list(
     lc_p("Odpowiada na nie ", gloss("RMSE"), " (ang. root mean squared error),
       pierwiastek ze średniego kwadratu reszt:"),
 
-    lc_formula_box(withMathJax(
-      "$$RMSE = \\sqrt{\\frac{1}{n}\\sum_{i=1}^{n}(y_i - \\hat{y}_i)^2}$$"
-    )),
+    # RMSE ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|RMSE⟧ = \\sqrt{\\frac{1}{⟦2|n⟧}\\sum_{i=1}^{n}(⟦3|y_i⟧ - ⟦4|\\hat{y}_i⟧)^2}",
+      notes  = list("typowa pomyłka", "liczba obserwacji", "obserwacja",
+                    "wartość przewidywana"),
+      colors = c("accent", "szalwia", "niebo", "wrzos"),
+      above  = c(3, 4)
+    ),
 
     lc_p("RMSE ma jednostki Y, więc czyta się je wprost jako typową wielkość
       pomyłki modelu. Sama liczba nic jednak nie mówi bez odniesienia do skali

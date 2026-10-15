@@ -19,13 +19,27 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     pytanie o zależność dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"), ", na które w wykładzie 06
     odpowiadała ", gloss("regresja liniowa"), "."),
 
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 9.1",
+    title = "Struktura zbioru wyników badań",
+    width_mode = "text",
+    dd_schema("pacjent", 150, c(
+      wiek = "ciagla",
+      plec = "nominalna",
+      hemoglobina = "ciagla",
+      glukoza = "ciagla",
+      cisnienie = "ciagla"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę na wartości, które nie mieszczą się
     w zakresie możliwym dla danej wielkości."),
 
   figure_panel(
-    label = "Ryc. 9.1",
+    label = "Ryc. 9.2",
     title = "Wyniki badań 150 pacjentów",
     uiOutput("tab8_table")
   ),
@@ -42,7 +56,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     uruchomiona bez sprawdzenia danych. Zwróć uwagę na skalę osi pionowej."),
 
   figure_panel(
-    label = "Ryc. 9.2",
+    label = "Ryc. 9.3",
     title = "Hemoglobina względem wieku, dane surowe",
     lc_plot("tab8_scatter_raw", ratio = "1.8/1", max_height = "350px")
   ),
@@ -64,7 +78,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     a które tylko nietypowe."),
 
   figure_panel(
-    label = "Ryc. 9.3",
+    label = "Ryc. 9.4",
     title = "Rozkłady czterech zmiennych ilościowych",
     lc_plots(
       lc_plot("tab8_box_hemoglobina", max_height = "260px"),
@@ -86,7 +100,7 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     i rysuje wykres rozrzutu jeszcze raz."),
 
   figure_panel(
-    label = "Ryc. 9.4",
+    label = "Ryc. 9.5",
     title = "Hemoglobina względem wieku po usunięciu błędów",
     checkboxInput("tab8_clean", "Usuń podejrzane obserwacje", value = FALSE),
     conditionalPanel("input.tab8_clean",

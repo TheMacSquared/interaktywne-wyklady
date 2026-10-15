@@ -52,9 +52,12 @@ ch6_ui <- list(
       i ", gloss("wariancja", "wariancji"), ". Jeśli pojedyncza obserwacja ma wartość
       oczekiwaną μ i ", gloss("odchylenie standardowe"), " σ, a obserwacje w próbie są niezależne, to:"),
 
-    lc_formula_box(withMathJax(
-      "$$E(\\bar{X}) = \\mu, \\qquad SE = SD(\\bar{X}) = \\frac{\\sigma}{\\sqrt{n}}$$"
-    )),
+    lc_formula_annotated(
+      "E(\\bar{X}) = \\mu, \\qquad ⟦1|SE⟧ = SD(\\bar{X}) = \\frac{⟦2|\\sigma⟧}{\\sqrt{⟦3|n⟧}}",
+      notes  = list("błąd standardowy", "odchylenie std. obserwacji", "wielkość próby"),
+      colors = c("indygo", "wrzos", "szalwia"),
+      above  = 2
+    ),
 
     lc_p("Średnie z prób skupiają się więc wokół tej samej wartości μ co pojedyncze
       obserwacje, ale są mniej rozproszone. Odchylenie standardowe średniej nazywamy ",
@@ -69,9 +72,12 @@ ch6_ui <- list(
       skończoną wariancję σ², to wraz ze wzrostem n rozkład średniej X̄ zbliża się do
       rozkładu normalnego o średniej μ i odchyleniu standardowym σ/√n:"),
 
-    lc_formula_box(withMathJax(
-      "$$\\bar{X}_n \\xrightarrow{d} N\\left(\\mu, \\frac{\\sigma}{\\sqrt{n}}\\right) \\quad \\text{dla } n \\to \\infty$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|\\bar{X}_n⟧ \\xrightarrow{d} ⟦2|N⟧\\left(\\mu, ⟦3|\\frac{\\sigma}{\\sqrt{n}}⟧\\right) \\quad \\text{dla } n \\to \\infty",
+      notes  = list("średnia z próby", "rozkład normalny", "błąd standardowy"),
+      colors = c("accent", "terakota", "indygo"),
+      above  = 3
+    ),
 
     lc_p("Najważniejsze jest to, czego twierdzenie nie wymaga: rozkład pojedynczej
       obserwacji może być dowolny — skośny, dyskretny, dwumodalny. Warunki dotyczą

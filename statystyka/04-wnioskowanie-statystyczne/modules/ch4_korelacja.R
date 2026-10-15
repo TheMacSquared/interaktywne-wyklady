@@ -2,6 +2,16 @@
 # CHAPTER 6: Dwie zmienne ilościowe (korelacja Pearsona)
 # ============================================================================
 
+# Wzór na r ze znacznikami (ten sam w rozdziałach 06 i 10).
+ch4_r_formula <- function() {
+  lc_formula_annotated(
+    "⟦1|r⟧ = \\frac{⟦2|\\sum⟧ (⟦3|x_i⟧ - \\bar{x})(⟦4|y_i⟧ - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}",
+    notes  = list("korelacja z próby", "suma", "i-ta obserwacja x", "i-ta obserwacja y"),
+    colors = c("accent", "bursztyn", "niebo", "wrzos"),
+    above  = c(2, 3, 4)
+  )
+}
+
 ch4_ui <- list(
   id = "ch-korelacja", num = "06", title = "Korelacja",
   content = tagList(
@@ -39,9 +49,8 @@ ch4_ui <- list(
       towarzyszą niskie wartości drugiej. Jedną liczbą opisuje to współczynnik ",
       gloss("korelacja Pearsona", "korelacji Pearsona"), " \\(r\\):"),
 
-    lc_formula_box(withMathJax(
-      "$$r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}$$"
-    )),
+    # Współczynnik Pearsona ze znacznikami
+    ch4_r_formula(),
 
     lc_p("Licznik sumuje iloczyny odchyleń od średnich. Punkt, który leży powyżej
       średniej w obu zmiennych albo poniżej w obu, dodaje do sumy wartość
@@ -141,9 +150,13 @@ ch4_ui <- list(
       gloss("statystyka testowa", "statystyka testowa"), " jest ta sama:
       \\(r\\) przeliczone na skalę rozkładu t."),
 
-    lc_formula_box(withMathJax(
-      "$$t = \\frac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}, \\qquad df = n - 2$$"
-    )),
+    # Statystyka t testu korelacji ze znacznikami
+    lc_formula_annotated(
+      "⟦1|t⟧ = \\frac{⟦2|r⟧\\sqrt{⟦3|n⟧-2}}{\\sqrt{1-r^2}}, \\qquad ⟦4|df⟧ = n - 2",
+      notes  = list("statystyka t", "korelacja z próby", "liczba par", "stopnie swobody"),
+      colors = c("indygo", "accent", "szalwia", "szalwia"),
+      above  = c(2, 3)
+    ),
 
     lc_p("Gdy H₀: \\(\\rho = 0\\) jest prawdziwa, statystyka \\(t\\) ma ",
       gloss("rozkład t-Studenta"), " o \\(n - 2\\) ",

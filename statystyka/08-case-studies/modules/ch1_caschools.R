@@ -64,20 +64,19 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
 
   lc_p("Analizę przeprowadzimy w sześciu krokach:"),
 
-  tags$ol(
-    tags$li("Poznanie danych: rozkłady zmiennych i ich wzajemne korelacje (wykłady 01 i 07)."),
-    tags$li("Prosty związek STR z wynikami: test korelacji i regresja prosta (wykłady 04 i 06)."),
-    tags$li("Sprawdzenie, czy ubóstwo jest ", gloss("zmienna zakłócająca", "zmienną zakłócającą"),
-            " (wykład 04, w tym ANOVA)."),
-    tags$li("Regresja wieloraka: czy związek STR z wynikami przetrwa kontrolę innych zmiennych (wykład 06)."),
-    tags$li("Analiza wybranego modelu: współczynniki, przedziały ufności, reszty (wykłady 05 i 06)."),
-    tags$li("Odpowiedź na pytanie decyzyjne i ograniczenia analizy.")
+  # Mapa sześciu kroków zamiast listy numerowanej
+  # (dawna lista tags$ol z odwołaniami do wykładów — w historii gita).
+  figure_panel(
+    label = "Ryc. 1.1",
+    title = "Przebieg analizy",
+    case_pipeline(case_steps_ch1)
   ),
 
   # ========================================================================
   # KROK 1: Poznanie danych
   # ========================================================================
   lc_h2("sec-02", "Krok 1: Poznanie danych"),
+  case_pipeline(case_steps_ch1, current = 1),  # Pasek postępu
 
   lc_p(
     "Zanim policzymy cokolwiek o związkach, sprawdzamy, jakie wartości
@@ -90,7 +89,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     podstawowe ", gloss("statystyka opisowa", "statystyki opisowe"), " wybranej zmiennej."),
 
   figure_panel(
-    label = "Ryc. 1.1",
+    label = "Ryc. 1.2",
     title = "Przegląd zmiennych",
     lc_toolbar(
       selectInput("ch1_eda_var", "Zmienna",
@@ -129,7 +128,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     Żeby to ocenić, potrzebujemy korelacji wszystkich par zmiennych."),
 
   figure_panel(
-    label = "Ryc. 1.2",
+    label = "Ryc. 1.3",
     title = "Macierz korelacji",
     lc_plot("ch1_corr_plot", max_height = "400px")
   ),
@@ -151,6 +150,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 2: Prosty związek STR -> wyniki
   # ========================================================================
   lc_h2("sec-03", "Krok 2: Prosty związek STR z wynikami"),
+  case_pipeline(case_steps_ch1, current = 2),  # Pasek postępu
 
   lc_p(
     "Sprawdzamy związek, który zobaczyłby polityk, gdyby spojrzał tylko na
@@ -162,9 +162,12 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     hipotezę, że w ", gloss("populacja", "populacji"), " współczynnik ", gloss("korelacja", "korelacji"),
     " \\(\\rho\\) między STR a wynikiem wynosi zero:"),
 
-  lc_formula_box(withMathJax(
-    "$$H_0: \\rho = 0 \\qquad H_a: \\rho \\neq 0$$"
-  )),
+  # Hipotezy testu korelacji ze znacznikami
+  lc_formula_annotated(
+    "⟦1|H_0⟧: ⟦2|\\rho⟧ = 0 \\qquad ⟦3|H_a⟧: \\rho \\neq 0",
+    notes  = list("hipoteza zerowa", "korelacja w populacji", "hipoteza alternatywna"),
+    colors = c("grafit", "param", "wrzos")
+  ),
 
   lc_p("Siłę związku w jednostkach wyniku opisuje ",
     gloss("regresja prosta", "regresja prosta"), " z wykładu 06. Jej
@@ -174,7 +177,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     prostej."),
 
   figure_panel(
-    label = "Ryc. 1.3",
+    label = "Ryc. 1.4",
     title = "Wynik a liczba uczniów na nauczyciela",
     lc_toolbar(
       checkboxInput("ch1_str_color", "Koloruj wg poziomu ubóstwa", value = FALSE)
@@ -221,6 +224,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 3: Ubóstwo jako zmienna zakłócająca
   # ========================================================================
   lc_h2("sec-04", "Krok 3: Ubóstwo jako zmienna zakłócająca"),
+  case_pipeline(case_steps_ch1, current = 3),  # Pasek postępu
 
   lc_p(
     "Sprawdzamy, czy za liczbą uczniów na nauczyciela i za wynikami nie
@@ -236,7 +240,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     potrzebne związki: odsetka dotacji z wynikiem i odsetka dotacji ze STR."),
 
   figure_panel(
-    label = "Ryc. 1.4",
+    label = "Ryc. 1.5",
     title = "Dotacje do obiadów, wyniki i liczba uczniów na nauczyciela",
     lc_readouts(uiOutput("ch1_conf_stats")),
     lc_plots(
@@ -256,6 +260,18 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     Ubóstwo może zatem tłumaczyć część korelacji STR z wynikami, ale
     raczej nie całą."),
 
+  # Schemat zmiennej zakłócającej z siłą obu związków
+  figure_panel(
+    label = "Ryc. 1.6",
+    title = "Ubóstwo jako wspólne tło",
+    width_mode = "text",
+    case_confounder(
+      nodes    = c("Ubóstwo (dotacje)", "STR", "Wynik"),
+      edges    = c("r = 0.14", "r = -0.87", "r = -0.23"),
+      strength = c(0.14, 0.87, 0.23)
+    )
+  ),
+
   lc_p("Skalę różnic między okręgami biednymi i zamożnymi najłatwiej zobaczyć,
     dzieląc okręgi na trzy grupy według odsetka dotacji: poniżej 25%
     (niski poziom ubóstwa), od 25% do 50% (średni) i co najmniej 50%
@@ -265,7 +281,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     grup się różnią."),
 
   figure_panel(
-    label = "Ryc. 1.5",
+    label = "Ryc. 1.7",
     title = "Wyniki w grupach ubóstwa",
     lc_plot("ch1_anova_plot", max_height = "320px"),
     uiOutput("ch1_anova_result")
@@ -298,6 +314,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 4: Kontrolowanie zakłóceń (regresja wieloraka)
   # ========================================================================
   lc_h2("sec-05", "Krok 4: Związek STR z wynikami po kontroli innych zmiennych"),
+  case_pipeline(case_steps_ch1, current = 4),  # Pasek postępu
 
   lc_p(
     "Dokładamy do modelu kolejne ", gloss("zmienna kontrolna", "zmienne kontrolne"),
@@ -311,9 +328,14 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     różny STR, ale te same wartości pozostałych ",
     gloss("predyktor", "predyktorów"), ". W najszerszym modelu tego kroku:"),
 
-  lc_formula_box(withMathJax(
-    "$$\\text{wynik} = \\beta_0 + \\beta_1 \\, \\text{STR} + \\beta_2 \\, \\text{dochód} + \\beta_3 \\, \\text{angielski} + \\beta_4 \\, \\text{dotacje} + \\varepsilon$$"
-  )),
+  # Model wieloraki ze znacznikami (STR vs zmienne kontrolne)
+  lc_formula_annotated(
+    "⟦1|\\text{wynik}⟧ = \\beta_0 + ⟦2|\\beta_1⟧ \\, ⟦3|\\text{STR}⟧ + ⟦4|\\beta_2 \\, \\text{dochód} + \\beta_3 \\, \\text{angielski} + \\beta_4 \\, \\text{dotacje}⟧ + ⟦5|\\varepsilon⟧",
+    notes  = list("zmienna zależna", "współczynnik przy STR", "uczniowie na nauczyciela",
+                  "zmienne kontrolne", "reszta"),
+    colors = c("niebo", "accent", "niebo", "szalwia", "bursztyn"),
+    above  = c(2, 4)
+  ),
 
   lc_p("Panel buduje cztery modele, za każdym razem dokładając jedną zmienną:
     sam STR, potem dochód, odsetek uczniów uczących się angielskiego
@@ -323,7 +345,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     pokazuje współczynnik STR w kolejnych modelach."),
 
   figure_panel(
-    label = "Ryc. 1.6",
+    label = "Ryc. 1.8",
     title = "Seria modeli i współczynnik przy STR",
     uiOutput("ch1_model_comparison"),
     lc_plot("ch1_beta_str_plot", max_height = "250px")
@@ -376,6 +398,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 5: Wybrany model — szczegóły
   # ========================================================================
   lc_h2("sec-06", "Krok 5: Analiza wybranego modelu"),
+  case_pipeline(case_steps_ch1, current = 5),  # Pasek postępu
 
   lc_p(
     "Przyglądamy się wybranemu modelowi w całości: wszystkim współczynnikom,
@@ -393,7 +416,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     modelu."),
 
   figure_panel(
-    label = "Ryc. 1.7",
+    label = "Ryc. 1.9",
     title = "Model wieloraki — wybór predyktorów",
     lc_toolbar(
       checkboxGroupInput("ch1_reg_vars", "Predyktory", inline = TRUE,
@@ -448,6 +471,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   # KROK 6: Odpowiedź na pytanie decyzyjne
   # ========================================================================
   lc_h2("sec-07", "Krok 6: Odpowiedź na pytanie decyzyjne"),
+  case_pipeline(case_steps_ch1, current = 6),  # Pasek postępu
 
   lc_p(
     "Wracamy do pytania polityka: czego można się spodziewać po zmniejszeniu
@@ -471,7 +495,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     standardowego wyniku i ułamek różnicy między okręgami o niskim
     i wysokim ubóstwie (36.1 pkt). Ponadto sama wartość współczynnika
     zależy od wyboru zmiennych kontrolnych. W modelach, które można zbudować
-    w panelu Ryc. 1.7 i które uwzględniają dochód albo odsetek dotacji,
+    w panelu Ryc. 1.9 i które uwzględniają dochód albo odsetek dotacji,
     a pomijają wydatki, współczynnik przy STR leży między -0.07 a -1.12."),
 
   lc_p("Decydentowi można więc uczciwie powiedzieć tyle: pierwszy wykres

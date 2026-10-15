@@ -20,13 +20,29 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     pozwala zapytać na przykład, czy studenci, którzy uczą się więcej, mają
     wyższą średnią ocen, albo czy poziom stresu różni się między kierunkami."),
 
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 10.1",
+    title = "Struktura zbioru ankiety",
+    width_mode = "text",
+    dd_schema("student", 150, c(
+      plec = "nominalna",
+      kierunek = "nominalna",
+      rok_studiow = "porzadkowa",
+      godziny_nauki = "ciagla",
+      stres = "porzadkowa",
+      srednia_ocen = "ciagla",
+      liczba_kursow = "dyskretna"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Oceniając tabelę, sprawdź, czy każda kolumna ma jeden typ i spójny
     zapis wartości."),
 
   figure_panel(
-    label = "Ryc. 10.1",
+    label = "Ryc. 10.2",
     title = "Odpowiedzi 150 studentów",
     uiOutput("tab9_table")
   ),

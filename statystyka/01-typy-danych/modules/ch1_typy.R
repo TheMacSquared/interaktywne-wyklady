@@ -30,6 +30,16 @@ ch1_ui <- list(
       ankietowanych wyniósłby 2.45 — coś między Ekonomią a Informatyką, czyli nic.
       Zanim więc cokolwiek policzymy, musimy rozpoznać typ każdej ", gloss("zmienna", "zmiennej"), "."),
 
+    # Kierunki zakodowane 1–4 i „średni kierunek” na osi
+    figure_panel(
+      label = "Ryc. 1.1",
+      title = "Średnia z kodów kierunków",
+      width_mode = "text",
+      tags$div(class = "proto-kierunek-os",
+        lc_plot("ch1_proto_kierunek_os", ratio = "2.6/1", max_height = "260px")
+      )
+    ),
+
     # --- Widget 1: Taxonomy tree ---
     lc_h2("ch1-taksonomia", "Taksonomia typów danych"),
 
@@ -53,7 +63,7 @@ ch1_ui <- list(
       drzewa pokazują przykłady z naszej ankiety."),
 
     figure_panel(
-      label = "Ryc. 1.1",
+      label = "Ryc. 1.2",
       title = "Taksonomia typów danych",
       div(class = "taxonomy-tree",
         tags$ul(
@@ -132,7 +142,7 @@ ch1_ui <- list(
       Przełącznik nad wykresami zamienia je na wykresy źle dobrane do typu."),
 
     figure_panel(
-      label = "Ryc. 1.2",
+      label = "Ryc. 1.3",
       title = "Cztery typy zmiennych — jeden wykres na typ",
       lc_toolbar(
         checkboxInput("ch1_show_bad", "Pokaż źle dobrane wykresy", value = FALSE),
@@ -207,7 +217,7 @@ ch1_ui <- list(
       wierszy."),
 
     figure_panel(
-      label = "Ryc. 1.3",
+      label = "Ryc. 1.4",
       title = "Pierwsze 10 obserwacji — nasz zbiór danych",
       uiOutput("ch1_data_preview")
     ),
@@ -260,6 +270,33 @@ ch1_ui <- list(
 # --------------------------------------------------------------------------
 
 ch1_server <- function(input, output, session) {
+
+  # Liczebności kodów 1–4 i średnia kodów
+  zoom_plot_server("ch1_proto_kierunek_os", reactive({
+    lv <- c("Biologia", "Ekonomia", "Informatyka", "Psychologia")
+    code <- as.integer(factor(student_data$kierunek, levels = lv))
+    df <- data.frame(code = 1:4, n = tabulate(code, 4))
+    m <- mean(code)
+    col_nom <- type_colors[["nominalna"]]
+    y_top <- max(df$n) * 1.25
+
+    ggplot(df, aes(x = code, y = n)) +
+      geom_col(width = 0.42, fill = col_nom, alpha = 0.85) +
+      geom_text(aes(label = n), vjust = -0.5, family = lc_mono_family,
+                colour = upwr_secondary, size = 3.6) +
+      annotate("segment", x = m, xend = m, y = 0, yend = y_top * 0.88,
+               colour = upwr_accent, linewidth = 1.1, linetype = "22") +
+      annotate("point", x = m, y = 0, shape = 17, size = 4.5, colour = upwr_accent) +
+      annotate("text", x = m, y = y_top * 0.97, label = paste0("średnia = ", formatC(round(m * 100 + 1e-6) / 100, format = "f", digits = 2)),
+               family = lc_mono_family, colour = upwr_accent, size = 4,
+               fontface = "bold") +
+      scale_x_continuous(breaks = 1:4, labels = paste0(1:4, "\n", lv),
+                         limits = c(0.5, 4.5)) +
+      scale_y_continuous(limits = c(0, y_top), expand = expansion(mult = c(0, 0.02))) +
+      labs(x = NULL, y = "Liczba studentów") +
+      theme(panel.grid.major.x = element_blank(),
+            axis.text.x = element_text(size = 11, lineheight = 1.1))
+  }))
 
   ch1_selected_leaf <- reactiveVal(NULL)
 

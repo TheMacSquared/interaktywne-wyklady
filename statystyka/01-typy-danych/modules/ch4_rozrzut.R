@@ -170,11 +170,21 @@ ch4_ui <- list(
       najwyżej jednego odchylenia standardowego od średniej, około 95% —
       dwóch, a 99.7% — trzech."),
 
+    # Wzorcowa krzywa dzwonowa z pasami ±1, ±2, ±3 SD
+    figure_panel(
+      label = "Ryc. 4.3",
+      title = "Reguła 68–95–99.7 na rozkładzie normalnym",
+      width_mode = "text",
+      tags$div(class = "proto-regula",
+        lc_plot("ch4_proto_regula", ratio = "2.2/1", max_height = "300px")
+      )
+    ),
+
     lc_p("Panel nakłada te trzy pasy na ", gloss("histogram"), " wybranej zmiennej z ankiety
       i podaje, jaki odsetek danych naprawdę w nich leży."),
 
     figure_panel(
-      label = "Ryc. 4.3",
+      label = "Ryc. 4.4",
       title = "Reguła 68–95–99.7 — czy zawsze działa?",
       selectInput("ch4_emp_var", "Wybierz zmienną:",
         choices = c("Wzrost (cm)" = "wzrost",
@@ -238,7 +248,7 @@ ch4_ui <- list(
       i 200 cm."),
 
     figure_panel(
-      label = "Ryc. 4.4",
+      label = "Ryc. 4.5",
       lc_step_widget("ch4_bp",
         title = "Wykres pudełkowy — budowa krok po kroku",
         steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
@@ -276,7 +286,7 @@ ch4_ui <- list(
       na płeć albo kierunek studiów; pod wykresem są statystyki każdej grupy."),
 
     figure_panel(
-      label = "Ryc. 4.5",
+      label = "Ryc. 4.6",
       title = "Wykresy pudełkowe w grupach",
       lc_toolbar(
         selectInput("ch4_grp_var", "Zmienna ilościowa",
@@ -324,7 +334,7 @@ ch4_ui <- list(
       maksimum."),
 
     figure_panel(
-      label = "Ryc. 4.6",
+      label = "Ryc. 4.7",
       title = "Porównanie miar rozrzutu i ich odporności",
       lc_toolbar(
         lc_action("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
@@ -383,7 +393,7 @@ ch4_ui <- list(
       z ankiety (po lewej) z ich współczynnikami zmienności (po prawej)."),
 
     figure_panel(
-      label = "Ryc. 4.7",
+      label = "Ryc. 4.8",
       title = "Porównanie zmienności między zmiennymi",
       lc_plots(
         tags$div(
@@ -572,6 +582,39 @@ ch4_server <- function(input, output, session) {
       )
     }
   })
+
+  # Krzywa normalna, pasy jak w Ryc. 4.4, klamry z odsetkami
+  zoom_plot_server("ch4_proto_regula", reactive({
+    x <- seq(-3.6, 3.6, length.out = 600)
+    dens <- data.frame(x = x, y = dnorm(x))
+    band_alphas <- c(0.40, 0.25, 0.12)
+    pk <- dnorm(0)
+    br <- data.frame(k = 1:3, y = pk * c(1.12, 1.28, 1.44),
+                     lab = c("68%", "95%", "99.7%"))
+
+    p <- ggplot(dens, aes(x = x, y = y))
+    for (k in 3:1) {
+      p <- p + geom_area(data = dens[abs(dens$x) <= k, ], fill = upwr_accent,
+                         alpha = band_alphas[k])
+    }
+    p +
+      geom_line(colour = upwr_secondary, linewidth = 0.9) +
+      geom_segment(data = br, aes(x = -k, xend = k, y = y, yend = y),
+                   colour = upwr_accent, linewidth = 0.6, inherit.aes = FALSE) +
+      geom_segment(data = rbind(transform(br, xs = -k), transform(br, xs = br$k)),
+                   aes(x = xs, xend = xs, y = y, yend = y - pk * 0.04),
+                   colour = upwr_accent, linewidth = 0.6, inherit.aes = FALSE) +
+      geom_text(data = br, aes(x = 0, y = y, label = lab), vjust = -0.45,
+                family = lc_mono_family, colour = upwr_accent, fontface = "bold",
+                size = 4, inherit.aes = FALSE) +
+      scale_x_continuous(breaks = -3:3,
+        labels = c("x̄ − 3s", "x̄ − 2s", "x̄ − s", "x̄", "x̄ + s", "x̄ + 2s", "x̄ + 3s")) +
+      scale_y_continuous(limits = c(0, pk * 1.58), expand = c(0, 0)) +
+      labs(x = NULL, y = NULL) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+            panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(),
+            panel.grid.minor.x = element_blank())
+  }))
 
   # --- Widget 2b: Empirical rule (68-95-99.7) ---
 

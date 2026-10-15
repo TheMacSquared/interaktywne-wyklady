@@ -19,13 +19,27 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     wpływa na sprzedaż, czyli czy w chłodniejsze dni studenci kupują więcej
     kawy."),
 
+  # Struktura zbioru (jednostka obserwacji, n, typy kolumn)
+  figure_panel(
+    label = "Ryc. 11.1",
+    title = "Struktura zbioru sprzedaży",
+    width_mode = "text",
+    dd_schema("dzień", 245, c(
+      dzien = "id",
+      data = "data",
+      dzien_tyg = "nominalna",
+      kawy = "dyskretna",
+      temperatura = "ciagla"
+    ))
+  ),
+
   lc_h2("sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę na puste komórki i na to, czym jest
     jeden wiersz."),
 
   figure_panel(
-    label = "Ryc. 11.1",
+    label = "Ryc. 11.2",
     title = "Sprzedaż kawy dzień po dniu",
     uiOutput("tab10_table")
   ),
@@ -40,7 +54,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
   lc_p("Wykres pokazuje odsetek brakujących wartości w obu zmiennych."),
 
   figure_panel(
-    label = "Ryc. 11.2",
+    label = "Ryc. 11.3",
     title = "Odsetek braków w zmiennych",
     lc_plot("tab10_missing", max_height = "300px"),
     uiOutput("tab10_missing_info")
@@ -62,7 +76,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     podobne."),
 
   figure_panel(
-    label = "Ryc. 11.3",
+    label = "Ryc. 11.4",
     title = "Sprzedaż w kolejnych dniach roku akademickiego",
     lc_action("tab10_reveal", "Pokaż dane w kolejności", variant = "solid"),
     conditionalPanel("input.tab10_reveal > 0",
@@ -88,13 +102,16 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     niezależne, punkty na wykresie tworzyłyby bezkształtną chmurę,
     a korelacja byłaby bliska zera."),
 
-  lc_formula_box(withMathJax(
-    "$$r_1 = \\text{cor}(x_t,\\; x_{t+1})$$"
-  )),
+  # Autokorelacja rzędu 1 ze znacznikami
+  lc_formula_annotated(
+    "⟦1|r_1⟧ = \\text{cor}(⟦2|x_t⟧,\\; ⟦3|x_{t+1}⟧)",
+    notes  = list("autokorelacja", "sprzedaż danego dnia", "sprzedaż następnego dnia"),
+    colors = c("accent", "niebo", "indygo")
+  ),
 
   conditionalPanel("input.tab10_reveal > 0",
     figure_panel(
-      label = "Ryc. 11.4",
+      label = "Ryc. 11.5",
       title = "Sprzedaż danego dnia i dnia następnego",
       lc_plot("tab10_lag", max_height = "300px"),
       uiOutput("tab10_autocorr_info")
@@ -159,6 +176,14 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
   lc_note("Werdykt",
     "Zbiór zły do prostych testów: obserwacje dzienne są zależne, a związek
      temperatury ze sprzedażą miesza się z porą roku."
+  ),
+
+  # Dziesięć zbiorów × siedem problemów z katalogu
+  figure_panel(
+    label = "Ryc. 11.6",
+    title = "Dziesięć zbiorów, siedem problemów",
+    width_mode = "wide",
+    dd_dataset_map()
   ),
 
   lc_p("Dziesięć zbiorów dało dziesięć różnych werdyktów, a o żadnym nie
