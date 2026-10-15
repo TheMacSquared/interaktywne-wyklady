@@ -287,7 +287,7 @@ ch1_server <- function(input, output, session) {
       annotate("segment", x = m, xend = m, y = 0, yend = y_top * 0.88,
                colour = upwr_accent, linewidth = 1.1, linetype = "22") +
       annotate("point", x = m, y = 0, shape = 17, size = 4.5, colour = upwr_accent) +
-      annotate("text", x = m, y = y_top * 0.97, label = paste0("x̄ = ", formatC(round(m * 100 + 1e-6) / 100, format = "f", digits = 2)),
+      annotate("text", x = m, y = y_top * 0.97, label = paste0("średnia = ", formatC(round(m * 100 + 1e-6) / 100, format = "f", digits = 2)),
                family = lc_mono_family, colour = upwr_accent, size = 4,
                fontface = "bold") +
       scale_x_continuous(breaks = 1:4, labels = paste0(1:4, "\n", lv),
