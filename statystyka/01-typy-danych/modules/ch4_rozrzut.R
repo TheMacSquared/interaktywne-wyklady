@@ -151,16 +151,6 @@ ch4_ui <- list(
       )
     ),
 
-    # PROTOTYP potegi: kwadraty o polach 1, 4, 9 (wkład odchylenia do sumy)
-    figure_panel(
-      label = "Ryc. 4.2a",
-      title = "Kwadrat odchylenia rośnie szybciej niż odległość",
-      width_mode = "text",
-      tags$div(class = "proto-kwadraty",
-        lc_plot("ch4_proto_kwadraty", ratio = "2.4/1", max_height = "260px")
-      )
-    ),
-
     lc_p("Najdłuższe strzałki dają największy wkład do sumy, bo podnosimy je
       do kwadratu: obserwacja dwa razy dalej od średniej waży cztery razy
       więcej. Odchylenie standardowe można czytać jako typową odległość
@@ -592,33 +582,6 @@ ch4_server <- function(input, output, session) {
       )
     }
   })
-
-  # PROTOTYP potegi: kwadraty o bokach 1, 2, 3 z siatką jednostkową
-  zoom_plot_server("ch4_proto_kwadraty", reactive({
-    pot_col <- upwr_col("terakota")
-    d <- 1:3
-    x0 <- c(0, 2, 5)  # lewe krawędzie kwadratów
-    cells <- do.call(rbind, lapply(seq_along(d), function(k) {
-      g <- expand.grid(i = seq_len(d[k]) - 1, j = seq_len(d[k]) - 1)
-      data.frame(xmin = x0[k] + g$i, xmax = x0[k] + g$i + 1,
-                 ymin = g$j, ymax = g$j + 1)
-    }))
-    sq <- data.frame(xmin = x0, xmax = x0 + d, ymin = 0, ymax = d,
-                     xc = x0 + d / 2, area = d^2)
-
-    ggplot() +
-      geom_rect(data = cells, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
-                fill = pot_col, alpha = 0.18, colour = pot_col, linewidth = 0.3) +
-      geom_rect(data = sq, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
-                fill = NA, colour = pot_col, linewidth = 1) +
-      geom_text(data = sq, aes(x = xc, y = d + 0.25, label = paste0("pole ", area)),
-                family = lc_mono_family, colour = pot_col, fontface = "bold",
-                size = 4, vjust = 0) +
-      geom_text(data = sq, aes(x = xc, y = -0.3, label = paste0("odległość ", d)),
-                family = lc_mono_family, colour = upwr_secondary, size = 3.6, vjust = 1) +
-      coord_equal(xlim = c(-0.3, 8.3), ylim = c(-0.8, 3.7), expand = FALSE) +
-      theme_void()
-  }))
 
   # PROTOTYP regula-wzorzec: krzywa normalna, pasy jak w Ryc. 4.3, klamry z odsetkami
   zoom_plot_server("ch4_proto_regula", reactive({
