@@ -149,8 +149,8 @@ ch1_ui <- list(
       średnią populacji."),
 
     lc_p("Panel poniżej generuje dane z tego modelu dla wybranych wartości
-      \\(\\beta_0\\), \\(\\beta_1\\) i \\(\\sigma\\), czyli ", gloss("odchylenie standardowe", "odchylenia
-      standardowego"), " błędu losowego."),
+      \\(\\beta_0\\), \\(\\beta_1\\) i rozrzutu błędu losowego \\(\\varepsilon\\), czyli jego ",
+      gloss("odchylenie standardowe", "odchylenia standardowego"), "."),
 
     figure_panel(
       label = "Ryc. 1.1", title = "Co robią β₀, β₁ i szum?",
@@ -158,7 +158,7 @@ ch1_ui <- list(
       lc_toolbar(
         lc_slider("ch1_beta_b0", "β₀ (punkt startu)", -10, 20, 5, 1),
         lc_slider("ch1_beta_b1", "β₁ (nachylenie)", -3, 3, 1, 0.25),
-        lc_slider("ch1_beta_sigma", "Szum σ", 0, 8, 2, 0.5)
+        lc_slider("ch1_beta_sigma", "Szum ε", 0, 8, 2, 0.5)
       ),
       lc_plot("ch1_beta_plot", max_height = "320px"),
       uiOutput("ch1_beta_info")
@@ -167,9 +167,9 @@ ch1_ui <- list(
     lc_p("\\(\\beta_0\\) przesuwa całą prostą w górę i w dół, nie zmieniając jej
       kąta. \\(\\beta_1\\) obraca prostą: przy wartościach dodatnich prosta rośnie,
       przy ujemnych opada, a przy zerze jest pozioma i znajomość \\(X\\) nic nie
-      mówi o \\(Y\\). \\(\\sigma\\) nie rusza prostej, tylko rozrzuca punkty wokół
-      niej. Przy \\(\\sigma = 0\\) wszystkie punkty leżą na linii, przy dużym
-      \\(\\sigma\\) trend ginie w szumie. Korelacja \\(r\\) zależy od nachylenia
+      mówi o \\(Y\\). Błąd \\(\\varepsilon\\) nie rusza prostej, tylko rozrzuca punkty
+      wokół niej. Bez błędu wszystkie punkty leżą na linii, przy dużym rozrzucie
+      \\(\\varepsilon\\) trend ginie w szumie. Korelacja \\(r\\) zależy od nachylenia
       i od szumu jednocześnie, dlatego sama nie wystarcza, żeby odtworzyć
       nachylenie."),
 
@@ -827,7 +827,7 @@ ch1_server <- function(input, output, session) {
     lc_status(
       p(tags$strong("Interpretacja:"),
         paste0(" gdy X wzrasta o 1, oczekiwane Y ", change,
-               ". Szum σ = ", input$ch1_beta_sigma,
+               ". Szum ε = ", input$ch1_beta_sigma,
                " rozprasza punkty wokół linii."))
     )
   })
