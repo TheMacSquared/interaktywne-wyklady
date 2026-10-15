@@ -70,73 +70,6 @@
   vapply(.ch2_rmse_specs, `[[`, character(1), "label")
 )
 
-# PROTOTYP P3-kwadraty: widget krokowy na sześciu punktach (rozstaw 3, więc
-# kwadraty się nie nakładają). Krok 1: kwadraty od średniej (SS_tot, szałwia),
-# krok 2: od prostej MNK (SS_res, bursztyn), krok 3: obie sumy jako dwa
-# kwadraty, mały w rogu dużego; reszta dużego to R².
-.ch2_sq_data <- local({
-  x <- c(1, 4, 7, 10, 13, 16)
-  y <- c(2.0, 4.3, 3.4, 6.2, 5.2, 7.4)
-  fit <- lm(y ~ x)
-  data.frame(x = x, y = y, mean_y = mean(y), fitted = unname(fitted(fit)))
-})
-.ch2_sq_ss <- with(.ch2_sq_data, c(tot = sum((y - mean_y)^2), res = sum((y - fitted)^2)))
-
-ch2_squares_plot <- function(step) {
-  d <- .ch2_sq_data
-  frame <- list(
-    coord_equal(xlim = c(0, 20), ylim = c(0.3, 9.3), expand = FALSE),
-    labs(x = "X", y = "Y"),
-    theme_upwr(),
-    theme(panel.grid.minor = element_blank())
-  )
-  col_tot <- upwr_col("szalwia"); col_res <- upwr_col("bursztyn")
-
-  if (step <= 2) {
-    ref <- if (step == 1) "mean_y" else "fitted"
-    fill <- if (step == 1) col_tot else col_res
-    e <- d$y - d[[ref]]
-    sq <- data.frame(xmin = d$x, xmax = d$x + abs(e),
-                     ymin = pmin(d$y, d[[ref]]), ymax = pmax(d$y, d[[ref]]))
-    ref_layer <- if (step == 1) {
-      geom_hline(yintercept = d$mean_y[1], colour = upwr_secondary,
-                 linewidth = 0.8, linetype = "22")
-    } else {
-      geom_abline(intercept = coef(lm(y ~ x, d))[1], slope = coef(lm(y ~ x, d))[2],
-                  colour = upwr_secondary, linewidth = 0.8)
-    }
-    return(ggplot(d, aes(x, y)) +
-      geom_rect(data = sq, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
-                inherit.aes = FALSE, fill = fill, colour = fill, alpha = 0.3,
-                linewidth = 0.5) +
-      ref_layer +
-      geom_segment(aes(xend = x, yend = .data[[ref]]), colour = fill, linewidth = 0.9) +
-      geom_point(colour = upwr_col("niebo"), size = 3) +
-      frame)
-  }
-
-  # Krok 3: suma pól. Duży kwadrat = SS_tot, w lewym dolnym rogu SS_res.
-  a <- sqrt(.ch2_sq_ss[["tot"]]); b <- sqrt(.ch2_sq_ss[["res"]])
-  x0 <- 10 - a / 2; y0 <- 4.8 - a / 2
-  ggplot() +
-    annotate("rect", xmin = x0, xmax = x0 + a, ymin = y0, ymax = y0 + a,
-             fill = col_tot, colour = col_tot, alpha = 0.45, linewidth = 0.6) +
-    annotate("rect", xmin = x0, xmax = x0 + b, ymin = y0, ymax = y0 + b,
-             fill = col_res, colour = col_res, alpha = 0.85, linewidth = 0.6) +
-    annotate("text", x = x0 + b / 2, y = y0 + b / 2, label = "SS[res]", parse = TRUE,
-             colour = "white", size = 5) +
-    annotate("text", x = x0 + (a + b) / 2, y = y0 + (a + b) / 2 + 0.2, label = "R^2",
-             parse = TRUE, colour = upwr_secondary, size = 8) +
-    annotate("text", x = x0 + a + 0.3, y = y0 + a - 0.1, label = "SS[tot]", parse = TRUE,
-             colour = col_tot, size = 5, hjust = 0, vjust = 1) +
-    frame +
-    theme(axis.text = element_blank(), axis.ticks = element_blank(),
-          axis.title = element_blank(), axis.line = element_blank(),
-          axis.line.x = element_blank(), axis.line.y = element_blank(),
-          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          panel.grid.major.x = element_blank(), panel.grid.major.y = element_blank())
-}
-
 ch2_ui <- list(
   id    = "ch-jakosc",
   num   = "02",
@@ -390,23 +323,6 @@ ch2_ui <- list(
       colors = c("bursztyn", "szalwia", "wrzos", "accent"),
       above  = c(1, 3)
     ),
-
-    # PROTOTYP P3-kwadraty: SS_tot i SS_res jako pola kwadratów
-    figure_panel(
-      label = "Ryc. 2.2a", width_mode = "text",
-      lc_step_widget("ch2_sq",
-        title = "R² jako stosunek pól",
-        steps = c("Od średniej", "Od prostej", "Suma pól"),
-        plot_id = "ch2_squares_plot",
-        ratio = "2.1/1"
-      )
-    ),
-
-    lc_p("Ryc. 2.2a buduje obie sumy jako pola. W pierwszym kroku każdy punkt
-      ma kwadrat o boku równym jego odległości od średniej, w drugim od prostej.
-      W trzecim oba zestawy kwadratów są zsumowane w dwa kwadraty:
-      \\(R^2\\) to ta część dużego kwadratu, która znika, gdy zamiast średniej
-      użyjemy prostej."),
 
     lc_p("\\(R^2\\) przyjmuje wartości od 0 do 1. Zero oznacza, że model
       przewiduje nie lepiej niż średnia, jedynka, że wszystkie punkty leżą
@@ -687,19 +603,6 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
-
-  # PROTOTYP P3-kwadraty: statyczna para wykresów SS_tot i SS_res
-  ch2_sq_step <- lc_step_server("ch2_sq", input)$step
-  zoom_plot_server("ch2_squares_plot", reactive(ch2_squares_plot(ch2_sq_step())),
-    alt = "Kwadraty odległości punktów od średniej, potem od prostej regresji, na końcu obie sumy jako dwa kwadraty: mały w rogu dużego")
-  output$ch2_sq_text <- renderUI({
-    ss <- .ch2_sq_ss
-    switch(ch2_sq_step(),
-      tagList("SS", tags$sub("tot"), " = ", lc_fmt(ss[["tot"]], 1)),
-      tagList("SS", tags$sub("res"), " = ", lc_fmt(ss[["res"]], 1)),
-      tagList("R² = 1 − ", lc_fmt(ss[["res"]], 1), " / ", lc_fmt(ss[["tot"]], 1),
-              " = ", lc_fmt(1 - ss[["res"]] / ss[["tot"]], 2)))
-  })
 
   # --- Widget: kwartet Anscombe'a (datasets::anscombe) ---
   ch2_ansc_fit <- reactive({
