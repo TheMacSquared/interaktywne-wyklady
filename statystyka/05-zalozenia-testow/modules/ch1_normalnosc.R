@@ -2,7 +2,7 @@
 # CHAPTER 1: Normalność rozkładu
 # ============================================================================
 
-# PROTOTYP dwie-grupy / qq-katalog / moc-sw: dane i wykresy statyczne.
+# PROTOTYP dwie-grupy / moc-sw: dane i wykresy statyczne.
 
 # Dwie grupy normalne (średnie 160 i 180, SD 6) i ich suma.
 ch1_pooled_plot_fn <- function() {
@@ -22,45 +22,6 @@ ch1_pooled_plot_fn <- function() {
     scale_y_continuous(breaks = NULL) +
     labs(x = "Wartość", y = NULL) +
     theme_upwr()
-}
-
-# Wzorcowe dane: kwantyle rozkładów zamiast losowania, żeby wzór był czysty.
-ch1_qq_gallery_data <- local({
-  pp <- ppoints(40)
-  z <- function(v) (v - mean(v)) / sd(v)
-  out <- c(qnorm(pp[-40]), 5)
-  pats <- list(
-    "Normalny"          = qnorm(pp),
-    "Prawoskośny"       = qgamma(pp, shape = 2),
-    "Ciężkie ogony"     = qt(pp, df = 3),
-    "Lekkie ogony"      = qunif(pp),
-    "Dwa skupienia"     = sort(c(qnorm(ppoints(20), -2, 0.5), qnorm(ppoints(20), 2, 0.5))),
-    "Wartość odstająca" = out
-  )
-  do.call(rbind, lapply(names(pats), function(nm) {
-    v <- z(pats[[nm]])
-    data.frame(pattern = nm, theo = qnorm(pp), sample = sort(v))
-  }))
-})
-ch1_qq_gallery_data$pattern <- factor(ch1_qq_gallery_data$pattern,
-                                      levels = unique(ch1_qq_gallery_data$pattern))
-
-ch1_qq_gallery_fn <- function() {
-  # Prosta przez pierwszy i trzeci kwartyl, jak w stat_qq_line().
-  lines <- do.call(rbind, lapply(split(ch1_qq_gallery_data, ch1_qq_gallery_data$pattern), function(d) {
-    q <- quantile(d$sample, c(0.25, 0.75)); t <- qnorm(c(0.25, 0.75))
-    slope <- diff(q) / diff(t)
-    data.frame(pattern = d$pattern[1], slope = slope, intercept = q[1] - slope * t[1])
-  }))
-  ggplot(ch1_qq_gallery_data, aes(theo, sample)) +
-    geom_abline(data = lines, aes(slope = slope, intercept = intercept),
-                colour = col_ok, linewidth = 0.9) +
-    geom_point(colour = col_test, size = 1.8, alpha = 0.85) +
-    facet_wrap(~ pattern, ncol = 3) +
-    labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
-    theme_upwr() +
-    theme(axis.text = element_blank(), panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 12))
 }
 
 # Odsetek odrzuceń H₀ (α = 0.05) w 5000 próbach na punkt; symulacja jak w tekście
@@ -217,14 +178,6 @@ ch1_ui <- lecture_chapter(
         stromym skokiem w środku wykresu."),
       tags$li(strong("Pojedyncza wartość odstająca:"), " jeden punkt daleko od
         prostej przy prawie idealnym ułożeniu reszty.")
-    ),
-
-    # PROTOTYP qq-katalog: sześć wzorów wykresu Q-Q na wzorcowych danych
-    figure_panel(
-      label = "Ryc. 1.0b",
-      title = "Katalog wzorów Q-Q",
-      width_mode = "wide",
-      lc_plot("ch1_qq_gallery", ratio = "3/2")
     ),
 
     lc_p("Panel losuje próbę z wybranego rozkładu i rysuje obok siebie histogram
@@ -402,11 +355,9 @@ ch1_ui <- lecture_chapter(
 
 ch1_server <- function(input, output, session) {
 
-  # PROTOTYP dwie-grupy / qq-katalog / moc-sw
+  # PROTOTYP dwie-grupy / moc-sw
   zoom_plot_server("ch1_pooled_plot", reactive(ch1_pooled_plot_fn()),
     alt = "Dwie normalne grupy o różnych średnich i ich wspólny, dwumodalny rozkład")
-  zoom_plot_server("ch1_qq_gallery", reactive(ch1_qq_gallery_fn()),
-    alt = "Sześć wykresów Q-Q: normalny, prawoskośny, ciężkie ogony, lekkie ogony, dwa skupienia, wartość odstająca")
   zoom_plot_server("ch1_sw_power", reactive(ch1_sw_power_fn()),
     alt = "Odsetek odrzuceń normalności w teście Shapiro-Wilka w zależności od liczebności próby dla czterech rozkładów")
 
@@ -427,7 +378,9 @@ ch1_server <- function(input, output, session) {
       df <- data.frame(x = x)
 
       p1 <- ggplot(df, aes(x = x)) +
-        geom_histogram(aes(y = after_stat(density)), bins = 20,
+        # Liczba przedziałów rośnie wolno z n (reguła Sturgesa): szerokie słupki
+        # także przy dużej próbie.
+        geom_histogram(aes(y = after_stat(density)), bins = nclass.Sturges(x),
                        fill = col_test, alpha = 0.6, color = "white") +
         stat_function(fun = dnorm, args = list(mean = mean(x), sd = sd(x)),
                       color = col_ok, linewidth = 1.2, linetype = "dashed") +
