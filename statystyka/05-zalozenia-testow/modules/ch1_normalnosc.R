@@ -2,6 +2,97 @@
 # CHAPTER 1: Normalność rozkładu
 # ============================================================================
 
+# PROTOTYP dwie-grupy / qq-katalog / moc-sw: dane i wykresy statyczne.
+
+# Dwie grupy normalne (średnie 160 i 180, SD 6) i ich suma.
+ch1_pooled_plot_fn <- function() {
+  x <- seq(135, 205, length.out = 400)
+  dA <- 0.5 * dnorm(x, 160, 6); dB <- 0.5 * dnorm(x, 180, 6)
+  df <- rbind(
+    data.frame(x = x, d = dA, g = "A"),
+    data.frame(x = x, d = dB, g = "B")
+  )
+  ggplot() +
+    geom_area(data = data.frame(x = x, d = dA + dB), aes(x, d),
+              fill = upwr_reference, alpha = 0.25) +
+    geom_line(data = data.frame(x = x, d = dA + dB), aes(x, d),
+              colour = upwr_secondary, linewidth = 1.1) +
+    geom_line(data = df, aes(x, d, colour = g), linewidth = 1, linetype = "dashed") +
+    scale_colour_manual(values = c(A = col_test, B = col_alt), guide = "none") +
+    scale_y_continuous(breaks = NULL) +
+    labs(x = "Wartość", y = NULL) +
+    theme_upwr()
+}
+
+# Wzorcowe dane: kwantyle rozkładów zamiast losowania, żeby wzór był czysty.
+ch1_qq_gallery_data <- local({
+  pp <- ppoints(40)
+  z <- function(v) (v - mean(v)) / sd(v)
+  out <- c(qnorm(pp[-40]), 5)
+  pats <- list(
+    "Normalny"          = qnorm(pp),
+    "Prawoskośny"       = qgamma(pp, shape = 2),
+    "Ciężkie ogony"     = qt(pp, df = 3),
+    "Lekkie ogony"      = qunif(pp),
+    "Dwa skupienia"     = sort(c(qnorm(ppoints(20), -2, 0.5), qnorm(ppoints(20), 2, 0.5))),
+    "Wartość odstająca" = out
+  )
+  do.call(rbind, lapply(names(pats), function(nm) {
+    v <- z(pats[[nm]])
+    data.frame(pattern = nm, theo = qnorm(pp), sample = sort(v))
+  }))
+})
+ch1_qq_gallery_data$pattern <- factor(ch1_qq_gallery_data$pattern,
+                                      levels = unique(ch1_qq_gallery_data$pattern))
+
+ch1_qq_gallery_fn <- function() {
+  # Prosta przez pierwszy i trzeci kwartyl, jak w stat_qq_line().
+  lines <- do.call(rbind, lapply(split(ch1_qq_gallery_data, ch1_qq_gallery_data$pattern), function(d) {
+    q <- quantile(d$sample, c(0.25, 0.75)); t <- qnorm(c(0.25, 0.75))
+    slope <- diff(q) / diff(t)
+    data.frame(pattern = d$pattern[1], slope = slope, intercept = q[1] - slope * t[1])
+  }))
+  ggplot(ch1_qq_gallery_data, aes(theo, sample)) +
+    geom_abline(data = lines, aes(slope = slope, intercept = intercept),
+                colour = col_ok, linewidth = 0.9) +
+    geom_point(colour = col_test, size = 1.8, alpha = 0.85) +
+    facet_wrap(~ pattern, ncol = 3) +
+    labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
+    theme_upwr() +
+    theme(axis.text = element_blank(), panel.grid.minor = element_blank(),
+          strip.text = element_text(size = 12))
+}
+
+# Odsetek odrzuceń H₀ (α = 0.05) w 5000 próbach na punkt; symulacja jak w tekście
+# (rozkłady z generate_test_data(), set.seed(2026)).
+ch1_sw_power_data <- data.frame(
+  n    = rep(c(10, 20, 30, 50, 100, 200), 4),
+  dist = rep(c("Normalny", "Prawoskośny", "Ciężkie ogony", "Jednostajny"), each = 6),
+  rej  = c(5, 5, 5, 6, 5, 6,
+           25, 53, 75, 95, 100, 100,
+           19, 34, 46, 65, 88, 99,
+           9, 20, 39, 74, 100, 100)
+)
+
+ch1_sw_power_fn <- function() {
+  cols <- c("Normalny" = upwr_reference, "Prawoskośny" = col_fail,
+            "Ciężkie ogony" = unname(upwr_cat["indygo"]), "Jednostajny" = unname(upwr_cat["bursztyn"]))
+  ends <- ch1_sw_power_data[ch1_sw_power_data$n == 200, ]
+  ends$y <- c(6, 108, 92, 100)                 # rozsunięcie etykiet na prawym końcu
+  ggplot(ch1_sw_power_data, aes(n, rej, colour = dist)) +
+    geom_hline(yintercept = 5, linetype = "dashed", colour = upwr_reference) +
+    geom_line(linewidth = 1.1) +
+    geom_point(size = 2.2) +
+    geom_text(data = ends, aes(y = y, label = dist), hjust = 0, nudge_x = 0.05, size = 4.4,
+              family = if (lc_mono_family == "IBM Plex Mono") "IBM Plex Sans" else "") +
+    scale_x_log10(breaks = c(10, 20, 30, 50, 100, 200), expand = expansion(mult = c(0.03, 0.32))) +
+    scale_y_continuous(limits = c(0, 110), breaks = seq(0, 100, 25),
+                       labels = function(v) paste0(v, "%")) +
+    scale_colour_manual(values = cols, guide = "none") +
+    labs(x = "Liczebność próby (n)", y = "Odrzucenia H₀") +
+    theme_upwr()
+}
+
 ch1_ui <- lecture_chapter(
   id = "ch-normalnosc",
   num = "01",
@@ -45,6 +136,14 @@ ch1_ui <- lecture_chapter(
       potrzeba, żeby przybliżenie było dobre. Jednej liczby obserwacji, od
       której można przestać patrzeć na dane, nie ma."),
 
+    # PROTOTYP wzory: skośność średniej maleje z √n
+    lc_formula_annotated(
+      "⟦1|\\gamma_{\\bar{x}}⟧ = \\frac{⟦2|\\gamma⟧}{\\sqrt{⟦3|n⟧}}",
+      notes  = list("skośność średniej", "skośność danych", "liczba obserwacji"),
+      colors = c("indygo", "terakota", "szalwia"),
+      above  = 2
+    ),
+
     lc_p("Co dokładnie sprawdzamy, zależy od metody:"),
 
     tags$ul(
@@ -63,6 +162,14 @@ ch1_ui <- lecture_chapter(
         W praktyce oglądamy rozkład każdej zmiennej i wykres rozrzutu."),
       tags$li(strong(gloss("regresja liniowa", "Regresja liniowa"), ":"),
         " rozkład reszt, a nie samych zmiennych. Wrócimy do tego w wykładzie 06.")
+    ),
+
+    # PROTOTYP dwie-grupy: dwie normalne grupy razem dają rozkład dwumodalny
+    figure_panel(
+      label = "Ryc. 1.0a",
+      title = "Dwie grupy osobno i razem",
+      width_mode = "text",
+      lc_plot("ch1_pooled_plot", ratio = "2/1")
     ),
 
     lc_p("Test t i ANOVA dobrze znoszą łagodne odchylenia od normalności, zwłaszcza
@@ -110,6 +217,14 @@ ch1_ui <- lecture_chapter(
         stromym skokiem w środku wykresu."),
       tags$li(strong("Pojedyncza wartość odstająca:"), " jeden punkt daleko od
         prostej przy prawie idealnym ułożeniu reszty.")
+    ),
+
+    # PROTOTYP qq-katalog: sześć wzorów wykresu Q-Q na wzorcowych danych
+    figure_panel(
+      label = "Ryc. 1.0b",
+      title = "Katalog wzorów Q-Q",
+      width_mode = "wide",
+      lc_plot("ch1_qq_gallery", ratio = "3/2")
     ),
 
     lc_p("Panel losuje próbę z wybranego rozkładu i rysuje obok siebie histogram
@@ -178,6 +293,14 @@ ch1_ui <- lecture_chapter(
       wykrywa każde z nich prawie zawsze, także rozkład jednostajny, który dla
       testu t przy takiej liczebności nie stanowi żadnego problemu, bo jest
       symetryczny i nie ma wartości odstających."),
+
+    # PROTOTYP moc-sw: odsetek odrzuceń H₀ w teście Shapiro-Wilka a liczebność
+    figure_panel(
+      label = "Ryc. 1.2a",
+      title = "Jak często Shapiro-Wilk odrzuca normalność",
+      width_mode = "text",
+      lc_plot("ch1_sw_power", ratio = "16/10")
+    ),
 
     lc_p("Test normalności ma więc tę samą słabość co każdy test istotności: jego
       wynik zależy od liczebności. Przy małej próbie ma niską ",
@@ -278,6 +401,14 @@ ch1_ui <- lecture_chapter(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
+
+  # PROTOTYP dwie-grupy / qq-katalog / moc-sw
+  zoom_plot_server("ch1_pooled_plot", reactive(ch1_pooled_plot_fn()),
+    alt = "Dwie normalne grupy o różnych średnich i ich wspólny, dwumodalny rozkład")
+  zoom_plot_server("ch1_qq_gallery", reactive(ch1_qq_gallery_fn()),
+    alt = "Sześć wykresów Q-Q: normalny, prawoskośny, ciężkie ogony, lekkie ogony, dwa skupienia, wartość odstająca")
+  zoom_plot_server("ch1_sw_power", reactive(ch1_sw_power_fn()),
+    alt = "Odsetek odrzuceń normalności w teście Shapiro-Wilka w zależności od liczebności próby dla czterech rozkładów")
 
   ch1_data <- reactiveVal(NULL)
 
