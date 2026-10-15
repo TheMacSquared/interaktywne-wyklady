@@ -364,7 +364,9 @@ ch1_server <- function(input, output, session) {
   ch1_data <- reactiveVal(NULL)
 
   observeEvent(input$ch1_gen, {
-    ch1_data(generate_test_data(input$ch1_n, input$ch1_dist))
+    # Rozkład zapisany przy danych: od niego zależy szerokość słupków.
+    ch1_data(structure(generate_test_data(input$ch1_n, input$ch1_dist),
+                       dist = input$ch1_dist))
   })
 
   zoom_plot_server("ch1_normality_plots", reactive({
@@ -379,8 +381,11 @@ ch1_server <- function(input, output, session) {
 
       p1 <- ggplot(df, aes(x = x)) +
         # Liczba przedziałów rośnie wolno z n (reguła Sturgesa): szerokie słupki
-        # także przy dużej próbie.
-        geom_histogram(aes(y = after_stat(density)), bins = nclass.Sturges(x),
+        # także przy dużej próbie. Dla dwumodalnego dwa razy więcej, żeby
+        # dolina między szczytami nie znikła w jednym słupku.
+        geom_histogram(aes(y = after_stat(density)),
+                       bins = nclass.Sturges(x) *
+                         if (identical(attr(x, "dist"), "bimodal")) 2 else 1,
                        fill = col_test, alpha = 0.6, color = "white") +
         stat_function(fun = dnorm, args = list(mean = mean(x), sd = sd(x)),
                       color = col_ok, linewidth = 1.2, linetype = "dashed") +
