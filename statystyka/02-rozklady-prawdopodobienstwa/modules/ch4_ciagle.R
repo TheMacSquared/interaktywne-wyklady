@@ -2,6 +2,47 @@
 # CHAPTER 4: Rozkłady ciągłe
 # ============================================================================
 
+# PROTOTYP poisson-wykladniczy: oś czasu z ustalonymi zdarzeniami (Ryc. 4.4a).
+# Nad osią liczba zdarzeń w każdej godzinie (Poisson, col_poisson), pod osią
+# odstępy między kolejnymi zdarzeniami (wykładniczy, col_exponential).
+ch4_event_times <- c(0.18, 0.55, 0.62, 1.30, 1.71, 2.05, 2.12, 2.38, 2.90,
+                     3.47, 3.60, 3.92)
+ch4_event_timeline <- function(t = ch4_event_times, hours = 4) {
+  x0 <- 130; x1 <- 790; sx <- function(h) x0 + (x1 - x0) * h / hours
+  y_axis <- 92; y_gap <- 122
+  counts <- tabulate(floor(t) + 1, nbins = hours)
+  tags$svg(class = "evt", viewBox = "0 0 800 150", role = "img",
+    `aria-label` = paste0("Oś czasu z ", length(t), " zdarzeniami w ", hours,
+      " godzinach. Liczba zdarzeń w kolejnych godzinach: ", paste(counts, collapse = ", "),
+      ". Pod osią odstępy między kolejnymi zdarzeniami."),
+    # pasy godzin
+    lapply(seq_len(hours), function(h) tags$rect(class = paste("evt-hour", if (h %% 2 == 0) "is-alt"),
+      x = sx(h - 1), y = 18, width = sx(h) - sx(h - 1), height = y_gap + 14 - 18)),
+    # zliczenia nad osią
+    lapply(seq_len(hours), function(h) tags$text(class = "evt-count",
+      x = (sx(h - 1) + sx(h)) / 2, y = 56, `text-anchor` = "middle", counts[h])),
+    # oś i podziałka godzin
+    tags$line(class = "evt-axis", x1 = x0, x2 = x1, y1 = y_axis, y2 = y_axis),
+    lapply(0:hours, function(h) tags$text(class = "evt-tick", x = sx(h), y = 148,
+      `text-anchor` = "middle", paste0(h, " h"))),
+    # odstępy pod osią między kolejnymi zdarzeniami
+    lapply(seq_along(t)[-1], function(i) {
+      a <- sx(t[i - 1]) + 3; b <- sx(t[i]) - 3
+      tags$g(class = "evt-gap",
+        tags$line(x1 = a, x2 = b, y1 = y_gap, y2 = y_gap),
+        tags$line(x1 = a, x2 = a, y1 = y_gap - 5, y2 = y_gap + 5),
+        tags$line(x1 = b, x2 = b, y1 = y_gap - 5, y2 = y_gap + 5))
+    }),
+    # zdarzenia
+    lapply(t, function(e) tags$g(
+      tags$line(class = "evt-drop", x1 = sx(e), x2 = sx(e), y1 = y_axis, y2 = y_gap),
+      tags$circle(class = "evt-dot", cx = sx(e), cy = y_axis, r = 6))),
+    # etykiety wierszy
+    tags$text(class = "evt-lab is-count", x = 0, y = 56, "liczba w godzinie"),
+    tags$text(class = "evt-lab is-gap", x = 0, y = y_gap + 5, "odstęp")
+  )
+}
+
 ch4_ui <- list(
   id = "ch-ciagle", num = "04", title = "Rozkłady ciągłe",
   content = tagList(
@@ -91,9 +132,13 @@ ch4_ui <- list(
       prawdopodobieństwo, że zmienna wpadnie do przedziału od a do b, to pole
       pod krzywą f(x) nad tym przedziałem. Pole pod krzywą liczy się całką."),
 
-    lc_formula_box(withMathJax(
-      "$$P(a \\le X \\le b) = \\int_a^b f(x) \\, dx, \\qquad \\int_{-\\infty}^{\\infty} f(x) \\, dx = 1$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|P(a \\le X \\le b)⟧ = ⟦2|\\int_a^b⟧ ⟦3|f(x)⟧ \\, dx, \\qquad \\int_{-\\infty}^{\\infty} f(x) \\, dx = 1",
+      notes  = list("prawdopodobieństwo przedziału", "pole od a do b", "gęstość"),
+      colors = c("accent", "bursztyn", "indygo"),
+      above  = 2
+    ),
 
     lc_p("Z tej definicji wynikają dwie konsekwencje, które odróżniają rozkłady
       ciągłe od dyskretnych. Pierwsza: P(X = x) = 0 dla każdej pojedynczej
@@ -147,9 +192,13 @@ ch4_ui <- list(
       Dystrybuanta podaje prawdopodobieństwo, że zmienna nie przekroczy
       wartości x."),
 
-    lc_formula_box(withMathJax(
-      "$$F(x) = P(X \\le x) = \\int_{-\\infty}^{x} f(t) \\, dt, \\qquad P(a < X \\le b) = F(b) - F(a)$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|F(x)⟧ = P(X \\le x) = ⟦2|\\int_{-\\infty}^{x}⟧ ⟦3|f(t)⟧ \\, dt, \\qquad P(a < X \\le b) = F(b) - F(a)",
+      notes  = list("dystrybuanta", "pole na lewo od x", "gęstość"),
+      colors = c("accent", "bursztyn", "indygo"),
+      above  = 2
+    ),
 
     figure_panel(
       label = "Ryc. 4.3",
@@ -220,9 +269,13 @@ ch4_ui <- list(
       więc wykres jest prostokątem. Jego wysokość wynika z warunku, że pole
       wynosi 1."),
 
-    lc_formula_box(withMathJax(
-      "$$f(x) = \\frac{1}{b-a} \\;\\text{ dla } a \\le x \\le b, \\qquad E(X) = \\frac{a+b}{2}, \\qquad Var(X) = \\frac{(b-a)^2}{12}$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "f(x) = \\frac{1}{⟦1|b-a⟧} \\;\\text{ dla } a \\le x \\le b, \\qquad E(X) = ⟦2|\\frac{a+b}{2}⟧, \\qquad Var(X) = \\frac{(⟦1|b-a⟧)^2}{12}",
+      notes  = list("szerokość przedziału", "środek przedziału"),
+      colors = c("szalwia", "accent"),
+      above  = 2
+    ),
 
     figure_panel(
       label = "Ryc. 4.4",
@@ -269,6 +322,19 @@ ch4_ui <- list(
       rozkład Exp(1), mierzony w godzinach. To dwie strony tego samego
       procesu."),
 
+    # PROTOTYP poisson-wykladniczy: te same zdarzenia jako zliczenia i jako odstępy
+    figure_panel(
+      label = "Ryc. 4.4a",
+      title = "Jedna oś czasu, dwie zmienne losowe",
+      width_mode = "wide",
+      ch4_event_timeline()
+    ),
+
+    lc_p("Liczby nad osią to wartości zmiennej o rozkładzie Poissona: ile
+      zdarzeń wpadło do kolejnej godziny. Odcinki pod osią to wartości zmiennej
+      o rozkładzie wykładniczym: ile czasu minęło od poprzedniego zdarzenia.
+      Gdy zdarzeń w godzinie jest dużo, odstępy między nimi są krótkie."),
+
     lc_p("Zamiast liczyć zdarzenia, mierzymy czas do jednego z nich. Pada deszcz
       i czekamy, aż się skończy. Deszcz trwa średnio 15 minut, ale każdy trwa
       inaczej, więc czas do jego końca jest zmienną losową. Może wynieść dowolną
@@ -288,9 +354,17 @@ ch4_ui <- list(
       wykładniczy ma też prostą dystrybuantę, więc prawdopodobieństwa można
       liczyć bez całkowania."),
 
-    lc_formula_box(withMathJax(
-      "$$f(x) = \\lambda e^{-\\lambda x}, \\quad F(x) = 1 - e^{-\\lambda x} \\;\\text{ dla } x \\ge 0, \\qquad E(X) = \\frac{1}{\\lambda}, \\quad Var(X) = \\frac{1}{\\lambda^2}$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "f(x) = ⟦1|\\lambda⟧ e^{-\\lambda ⟦2|x⟧}, \\quad F(x) = 1 - e^{-\\lambda x} \\;\\text{ dla } x \\ge 0",
+      notes  = list("tempo zdarzeń", "czas oczekiwania"),
+      colors = c("terakota", "niebo")
+    ),
+    lc_formula_annotated(
+      "⟦1|E(X)⟧ = \\frac{1}{\\lambda}, \\quad Var(X) = \\frac{1}{\\lambda^2}",
+      notes  = list("średni czas oczekiwania"),
+      colors = c("accent")
+    ),
 
     lc_p("Scenariusze w panelu mają różne jednostki czasu, podane w etykietach."),
 
@@ -409,9 +483,17 @@ ch4_ui <- list(
       dla wartości ujemnych, a dla dodatnich ma długi prawy ogon. Liczba
       stopni swobody df mówi, ile kwadratów sumujemy."),
 
-    lc_formula_box(withMathJax(
-      "$$X = Z_1^2 + Z_2^2 + \\ldots + Z_{df}^2, \\; Z_i \\sim N(0, 1), \\qquad E(X) = df, \\qquad Var(X) = 2 \\cdot df$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "X = ⟦1|Z_1^2 + Z_2^2 + \\ldots + Z_{df}^2⟧, \\; ⟦2|Z_i⟧ \\sim N(0, 1)",
+      notes  = list("suma kwadratów", "zmienna N(0, 1)"),
+      colors = c("bursztyn", "niebo")
+    ),
+    lc_formula_annotated(
+      "E(X) = ⟦1|df⟧, \\qquad Var(X) = 2 \\cdot df",
+      notes  = list("liczba składników"),
+      colors = c("szalwia")
+    ),
 
     figure_panel(
       label = "Ryc. 4.8",
@@ -462,9 +544,12 @@ ch4_ui <- list(
       i ma prawy ogon. Parametry μ i σ to średnia i odchylenie standardowe
       logarytmu, a nie samej zmiennej X."),
 
-    lc_formula_box(withMathJax(
-      "$$Me = e^{\\mu}, \\qquad E(X) = e^{\\mu + \\sigma^2/2}, \\qquad Var(X) = \\left(e^{\\sigma^2} - 1\\right) \\cdot e^{2\\mu + \\sigma^2}$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "Me = e^{⟦1|\\mu⟧}, \\qquad E(X) = e^{⟦1|\\mu⟧ + ⟦2|\\sigma⟧^2/2}, \\qquad Var(X) = \\left(e^{\\sigma^2} - 1\\right) \\cdot e^{2\\mu + \\sigma^2}",
+      notes  = list("średnia ln X", "odchylenie std. ln X"),
+      colors = c("accent", "wrzos")
+    ),
 
     figure_panel(
       label = "Ryc. 4.9",

@@ -42,9 +42,13 @@ ch1_ui <- list(
       wraz ze wzrostem liczby rzutów częstość względna zbliża się do
       prawdopodobieństwa."),
 
-    lc_formula_box(withMathJax(
-      "$$\\frac{n_k}{n} \\;\\longrightarrow\\; P(X = k) \\qquad \\text{gdy } n \\to \\infty$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "\\frac{⟦1|n_k⟧}{⟦2|n⟧} \\;\\longrightarrow\\; ⟦3|P(X = k)⟧ \\qquad \\text{gdy } n \\to \\infty",
+      notes  = list("liczba wyników k", "liczba rzutów", "prawdopodobieństwo"),
+      colors = c("niebo", "szalwia", "indygo"),
+      above  = 1
+    ),
 
     lc_p("Panel rzuca wirtualną kostką. Lewy wykres pokazuje częstości
       względne wszystkich ścianek na tle linii 1/6, prawy — jak zmieniała
@@ -214,9 +218,12 @@ ch1_ui <- list(
       liczb jest rozkładem. Prawdopodobieństwa muszą być nieujemne i muszą
       sumować się do 1, bo któryś z wyników na pewno wystąpi."),
 
-    lc_formula_box(withMathJax(
-      "$$P(X = k) \\geq 0 \\quad \\text{dla każdego } k, \\qquad \\sum_{k} P(X = k) = 1$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|P(X = k)⟧ \\geq 0 \\quad \\text{dla każdego } k, \\qquad ⟦2|\\sum_{k}⟧ P(X = k) = 1",
+      notes  = list("prawdopodobieństwo wyniku k", "suma po wynikach"),
+      colors = c("indygo", "bursztyn")
+    ),
 
     lc_p("Panel pozwala ustawić prawdopodobieństwa czterech wyników.
       Słupki są zielone tylko wtedy, gdy suma wynosi 1."),

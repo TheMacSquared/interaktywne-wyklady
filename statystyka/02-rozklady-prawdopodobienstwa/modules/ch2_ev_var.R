@@ -35,9 +35,13 @@ ch2_ev_var_ui <- list(
       to ", gloss("wartość oczekiwana"), " E(X): suma wszystkich wartości
       pomnożonych przez ich prawdopodobieństwa."),
 
-    lc_formula_box(withMathJax(
-      "$$E(X) = \\sum_x x \\cdot P(X = x)$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|E(X)⟧ = ⟦2|\\sum_x⟧ ⟦3|x⟧ \\cdot ⟦4|P(X = x)⟧",
+      notes  = list("wartość oczekiwana", "suma po wartościach", "możliwa wartość", "prawdopodobieństwo (waga)"),
+      colors = c("accent", "bursztyn", "niebo", "indygo"),
+      above  = c(2, 4)
+    ),
 
     lc_p("Wartość oczekiwana jest więc średnią ważoną: wartości prawdopodobne
       ważą w niej dużo, mało prawdopodobne — mało. Nie musi przy tym być wartością,
@@ -173,9 +177,13 @@ ch2_ev_var_ui <- list(
       to ", gloss("odchylenie standardowe"), " SD(X), wyrażone w tych samych
       jednostkach co X."),
 
-    lc_formula_box(withMathJax(
-      "$$Var(X) = \\sum_x \\big(x - E(X)\\big)^2 \\cdot P(X = x) \\qquad SD(X) = \\sqrt{Var(X)}$$"
-    )),
+    # PROTOTYP wzory: wzór ze znacznikami symboli
+    lc_formula_annotated(
+      "⟦1|Var(X)⟧ = ⟦2|\\sum_x⟧ \\big(⟦3|x⟧ - ⟦4|E(X)⟧\\big)^2 \\cdot ⟦5|P(X = x)⟧ \\qquad ⟦6|SD(X)⟧ = \\sqrt{Var(X)}",
+      notes  = list("wariancja", "suma po wartościach", "możliwa wartość", "wartość oczekiwana", "prawdopodobieństwo", "odchylenie standardowe"),
+      colors = c("wrzos", "bursztyn", "niebo", "accent", "indygo", "wrzos"),
+      above  = c(2, 4, 6)
+    ),
 
     lc_p("Dla loterii A: Var(X) = 0.5 · (10 - 5)² + 0.5 · (0 - 5)² = 25 zł²,
       więc SD(X) = 5 zł. Dla loterii C: Var(X) = 0.1 · (100 - 10)² +

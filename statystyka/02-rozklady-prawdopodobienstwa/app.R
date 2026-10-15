@@ -130,6 +130,44 @@ ui <- lecture_page(
         .lc-cdf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .lc-cdf-canvas { aspect-ratio: 1.15 / 1; }
       }
+    ")),
+    # PROTOTYP dwumian-ciagi / mapa-dyskretnych / poisson-wykladniczy: style rycin 3.2a, 3.8a, 4.4a
+    tags$style(HTML("
+      .bseq { display: flex; justify-content: center; align-items: flex-end; gap: 1.6em;
+              padding: .6em 0 .2em; flex-wrap: wrap; }
+      .bseq-col { display: flex; flex-direction: column; align-items: center; }
+      .bseq-stack { display: flex; flex-direction: column; justify-content: flex-end; gap: 5px; }
+      .bseq-row { display: flex; gap: 3px; }
+      .bseq-tile { width: 1.15em; height: 1.15em; border-radius: 3px;
+                   background: color-mix(in srgb, var(--upwr-cat-indygo) 22%, var(--upwr-surface));
+                   border: 1.5px solid var(--upwr-cat-indygo); box-sizing: border-box; }
+      .bseq-tile.is-hit { background: var(--upwr-cat-terakota); border-color: var(--upwr-cat-terakota); }
+      .bseq-count { margin-top: .6em; font: 600 1.25em var(--upwr-mono); color: var(--upwr-cat-szalwia); }
+      .bseq-k { font: .85em var(--upwr-mono); color: var(--upwr-ink-subtle); }
+
+      .dmap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1em; }
+      @media (max-width: 720px) { .dmap { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      .dmap-card { border-top: 4px solid var(--dm-c); padding: .7em .2em 0; display: flex;
+                   flex-direction: column; gap: .6em; }
+      .dmap-q { font-size: .95em; color: var(--upwr-ink); min-height: 2.6em; }
+      .dmap-spark { width: 100%; height: 4.2em; display: block; }
+      .dmap-spark rect { fill: var(--dm-c); }
+      .dmap-spark .dmap-axis { stroke: var(--upwr-ink-subtle); stroke-width: 1; vector-effect: non-scaling-stroke; }
+      .dmap-name { font-weight: 600; color: var(--dm-c); }
+      .dmap-par { display: block; font: 400 .9em var(--upwr-sans); color: var(--upwr-ink-subtle); }
+
+      .evt { display: block; width: 100%; height: auto; }
+      .evt-hour { fill: var(--upwr-surface); }
+      .evt-hour.is-alt { fill: var(--upwr-surface-sunken); }
+      .evt-axis { stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+      .evt-dot { fill: var(--upwr-ink); }
+      .evt-drop { stroke: var(--upwr-rule); stroke-width: 1; stroke-dasharray: 2 3; }
+      .evt-count { font: 700 26px var(--upwr-mono); fill: var(--upwr-cat-szalwia); }
+      .evt-gap line { stroke: var(--upwr-cat-terakota); stroke-width: 2.5; stroke-linecap: round; }
+      .evt-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .evt-lab { font: 13px var(--upwr-sans); }
+      .evt-lab.is-count { fill: var(--upwr-cat-szalwia); }
+      .evt-lab.is-gap { fill: var(--upwr-cat-terakota); }
     "))
   )
 )
