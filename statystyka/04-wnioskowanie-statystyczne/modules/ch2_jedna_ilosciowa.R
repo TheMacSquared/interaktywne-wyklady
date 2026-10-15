@@ -80,7 +80,7 @@ ch2_ui <- list(
       "⟦1|t⟧ = \\frac{⟦2|\\bar{x}⟧ - ⟦3|\\mu_0⟧}{⟦4|s⟧ / \\sqrt{⟦5|n⟧}}, \\quad ⟦6|df⟧ = n - 1",
       notes  = list("statystyka t", "średnia z próby", "wartość referencyjna",
                     "odchylenie standardowe", "liczba obserwacji", "stopnie swobody"),
-      colors = c("indygo", "accent", "niebo", "wrzos", "szalwia", "kurkuma"),
+      colors = c("indygo", "accent", "param", "wrzos", "szalwia", "szalwia"),
       above  = c(2, 3)
     ),
 
@@ -186,7 +186,7 @@ ch2_ui <- list(
     lc_formula_annotated(
       "⟦1|p⟧ = P\\left(⟦2|\\left|T\\right|⟧ \\geq ⟦3|\\left|t\\right|⟧ \\;\\middle|\\; H_0\\right), \\qquad T \\sim ⟦4|t_{n-1}⟧",
       notes  = list("p-wartość", "statystyka przy H₀", "statystyka z próby", "rozkład t-Studenta"),
-      colors = c("bursztyn", "niebo", "indygo", "kurkuma"),
+      colors = c("bursztyn", "niebo", "indygo", "indygo"),
       above  = c(2)
     ),
 
@@ -220,7 +220,7 @@ ch2_ui <- list(
     lc_formula_annotated(
       "⟦1|\\left|t\\right|⟧ \\geq ⟦2|t^*_{\\alpha/2,\\, n-1}⟧ \\iff ⟦3|\\mu_0⟧ \\notin ⟦4|\\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}⟧",
       notes  = list("statystyka z próby", "wartość krytyczna", "wartość referencyjna", "przedział ufności"),
-      colors = c("indygo", "terakota", "niebo", "accent"),
+      colors = c("indygo", "terakota", "param", "accent"),
       above  = c(1, 2)
     ),
 

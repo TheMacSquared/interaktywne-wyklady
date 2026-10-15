@@ -34,7 +34,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     "⟦1|\\text{eval}⟧ = \\beta_0 + ⟦2|\\beta_1⟧ \\, ⟦3|\\text{beauty}⟧ + ⟦4|\\beta_2 \\, \\text{płeć} + \\beta_3 \\, \\text{wiek} + \\ldots + \\beta_{10} \\, \\text{response rate}⟧ + ⟦5|\\varepsilon⟧",
     notes  = list("ocena kursu", "współczynnik przy beauty", "ocena atrakcyjności",
                   "zmienne kontrolne", "reszta"),
-    colors = c("indygo", "accent", "niebo", "szalwia", "wrzos"),
+    colors = c("niebo", "accent", "niebo", "szalwia", "bursztyn"),
     above  = c(2, 4)
   ),
 
@@ -132,7 +132,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     "⟦1|\\Delta \\text{eval}⟧ = ⟦2|\\beta_1⟧ \\cdot ⟦3|\\Delta \\text{beauty}⟧",
     notes  = list("różnica ocen kursu", "współczynnik przy beauty",
                   "różnica atrakcyjności"),
-    colors = c("indygo", "accent", "niebo"),
+    colors = c("niebo", "accent", "niebo"),
     above  = 2
   ),
 

@@ -209,7 +209,7 @@ ch6_ui <- list(
       "⟦1|t⟧ = \\frac{⟦2|\\bar{d}⟧}{⟦3|s_d⟧ / \\sqrt{⟦4|n⟧}}, \\qquad ⟦5|df⟧ = n - 1",
       notes  = list("statystyka t", "średnia różnic", "odchylenie standardowe różnic",
                     "liczba par", "stopnie swobody"),
-      colors = c("indygo", "accent", "wrzos", "szalwia", "kurkuma"),
+      colors = c("indygo", "accent", "wrzos", "szalwia", "szalwia"),
       above  = c(2)
     ),
 

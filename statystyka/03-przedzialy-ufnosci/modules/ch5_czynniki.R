@@ -38,7 +38,7 @@ ch5_ui <- list(
       "⟦1|ME⟧ = ⟦2|t^*⟧ \\cdot \\frac{⟦3|s⟧}{\\sqrt{⟦4|n⟧}}",
       notes  = list("margines błędu", "wartość krytyczna", "odchylenie standardowe",
                     "liczba obserwacji"),
-      colors = c("grafit", "terakota", "wrzos", "szalwia"),
+      colors = c("wrzos", "terakota", "wrzos", "szalwia"),
       above  = c(2, 3)
     ),
 
@@ -107,7 +107,7 @@ ch5_ui <- list(
       "⟦1|n⟧ = \\left(\\frac{⟦2|z^*⟧ \\cdot ⟦3|s⟧}{⟦4|ME_{\\text{max}}⟧}\\right)^2",
       notes  = list("potrzebna liczebność", "wartość krytyczna", "zakładane odchylenie",
                     "dopuszczalny margines"),
-      colors = c("szalwia", "terakota", "wrzos", "grafit"),
+      colors = c("szalwia", "terakota", "wrzos", "wrzos"),
       above  = c(2, 3)
     ),
 

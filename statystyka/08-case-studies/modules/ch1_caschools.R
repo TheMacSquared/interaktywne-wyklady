@@ -166,7 +166,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   lc_formula_annotated(
     "⟦1|H_0⟧: ⟦2|\\rho⟧ = 0 \\qquad ⟦3|H_a⟧: \\rho \\neq 0",
     notes  = list("hipoteza zerowa", "korelacja w populacji", "hipoteza alternatywna"),
-    colors = c("grafit", "accent", "wrzos")
+    colors = c("grafit", "param", "wrzos")
   ),
 
   lc_p("Siłę związku w jednostkach wyniku opisuje ",
@@ -333,7 +333,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     "⟦1|\\text{wynik}⟧ = \\beta_0 + ⟦2|\\beta_1⟧ \\, ⟦3|\\text{STR}⟧ + ⟦4|\\beta_2 \\, \\text{dochód} + \\beta_3 \\, \\text{angielski} + \\beta_4 \\, \\text{dotacje}⟧ + ⟦5|\\varepsilon⟧",
     notes  = list("zmienna zależna", "współczynnik przy STR", "uczniowie na nauczyciela",
                   "zmienne kontrolne", "reszta"),
-    colors = c("indygo", "accent", "niebo", "szalwia", "wrzos"),
+    colors = c("niebo", "accent", "niebo", "szalwia", "bursztyn"),
     above  = c(2, 4)
   ),
 

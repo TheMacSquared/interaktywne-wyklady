@@ -55,7 +55,7 @@ ch3_ui <- lecture_chapter(
     lc_formula_annotated(
       "⟦1|E_{ij}⟧ = \\frac{⟦2|n_{i\\cdot}⟧ \\cdot ⟦3|n_{\\cdot j}⟧}{⟦4|n⟧}",
       notes  = list("liczebność oczekiwana", "suma wiersza", "suma kolumny", "liczba obserwacji"),
-      colors = c("indygo", "bursztyn", "kurkuma", "szalwia"),
+      colors = c("niebo", "bursztyn", "bursztyn", "szalwia"),
       above  = c(2, 3)
     ),
 

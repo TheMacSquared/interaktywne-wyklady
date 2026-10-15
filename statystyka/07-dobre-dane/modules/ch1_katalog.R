@@ -52,7 +52,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   lc_formula_annotated(
     "⟦1|SE⟧ = \\frac{⟦2|s⟧}{\\sqrt{⟦3|n⟧}}",
     notes  = list("błąd standardowy", "odchylenie standardowe", "liczba obserwacji"),
-    colors = c("indygo", "wrzos", "szalwia"),
+    colors = c("wrzos", "wrzos", "szalwia"),
     above  = 2
   ),
 

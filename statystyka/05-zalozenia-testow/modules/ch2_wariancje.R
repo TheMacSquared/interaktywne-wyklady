@@ -41,13 +41,13 @@ ch2_ui <- lecture_chapter(
     lc_formula_annotated(
       "⟦1|s_p^2⟧ = \\frac{⟦2|(n_1 - 1)⟧\\,⟦3|s_1^2⟧ + (n_2 - 1)\\,s_2^2}{⟦4|n_1 + n_2 - 2⟧}",
       notes  = list("wariancja wspólna", "waga grupy 1", "wariancja grupy 1", "suma wag"),
-      colors = c("indygo", "szalwia", "wrzos", "szalwia"),
+      colors = c("wrzos", "szalwia", "wrzos", "szalwia"),
       above  = c(2, 3)
     ),
     lc_formula_annotated(
       "⟦1|t⟧ = \\frac{⟦2|\\bar{x}_1 - \\bar{x}_2⟧}{⟦3|s_p⟧ \\sqrt{\\dfrac{1}{n_1} + \\dfrac{1}{n_2}}}",
       notes  = list("statystyka testowa", "różnica średnich", "wspólne odchylenie"),
-      colors = c("accent", "niebo", "indygo"),
+      colors = c("indygo", "accent", "wrzos"),
       above  = 2
     ),
 
@@ -111,7 +111,7 @@ ch2_ui <- lecture_chapter(
     lc_formula_annotated(
       "⟦1|H_0⟧: ⟦2|\\sigma_1^2⟧ = \\sigma_2^2 = \\ldots = \\sigma_{⟦3|k⟧}^2",
       notes  = list("hipoteza zerowa", "wariancja w populacji 1", "liczba grup"),
-      colors = c("grafit", "wrzos", "kurkuma")
+      colors = c("grafit", "wrzos", "szalwia")
     ),
     lc_formula_box(withMathJax(
       "$$H_a: \\text{co najmniej jedna wariancja jest inna}$$"
@@ -173,7 +173,7 @@ ch2_ui <- lecture_chapter(
       "⟦1|df⟧ = \\frac{\\left(\\dfrac{⟦2|s_1^2⟧}{n_1} + \\dfrac{s_2^2}{n_2}\\right)^2}
         {\\dfrac{(s_1^2/n_1)^2}{⟦3|n_1 - 1⟧} + \\dfrac{(s_2^2/n_2)^2}{n_2 - 1}}",
       notes  = list("stopnie swobody Welcha", "wariancja grupy 1", "stopnie swobody grupy 1"),
-      colors = c("indygo", "wrzos", "terakota"),
+      colors = c("szalwia", "wrzos", "szalwia"),
       above  = 2
     ),
 

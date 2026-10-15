@@ -72,7 +72,7 @@ ch3_ui <- list(
     lc_formula_annotated(
       "P(⟦1|K⟧ = ⟦2|j⟧) = \\binom{⟦3|n⟧}{j}\\, ⟦4|p_0⟧^{\\,j} (1-p_0)^{n-j}, \\qquad j = 0, 1, \\ldots, n",
       notes  = list("liczba sukcesów", "możliwy wynik", "liczba obserwacji", "proporcja z H₀"),
-      colors = c("indygo", "accent", "szalwia", "niebo"),
+      colors = c("indygo", "accent", "szalwia", "param"),
       above  = c(3, 4)
     ),
 
@@ -264,7 +264,7 @@ ch3_ui <- list(
     lc_formula_annotated(
       "⟦1|z⟧ = \\frac{⟦2|\\hat{p}⟧ - ⟦3|p_0⟧}{\\sqrt{p_0(1-p_0)/⟦4|n⟧}}",
       notes  = list("statystyka z", "proporcja z próby", "proporcja z H₀", "liczba obserwacji"),
-      colors = c("indygo", "accent", "niebo", "szalwia"),
+      colors = c("indygo", "accent", "param", "szalwia"),
       above  = c(2, 3)
     ),
 

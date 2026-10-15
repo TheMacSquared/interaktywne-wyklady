@@ -226,7 +226,7 @@ ch3_ui <- list(
       "⟦1|SE_{różnicy}⟧ = \\sqrt{⟦2|SE_1⟧^2 + ⟦3|SE_2⟧^2} \\;<\\; SE_1 + SE_2",
       notes  = list("błąd standardowy różnicy", "błąd standardowy grupy 1",
                     "błąd standardowy grupy 2"),
-      colors = c("indygo", "niebo", "bursztyn"),
+      colors = c("wrzos", "niebo", "bursztyn"),
       above  = 2
     ),
 

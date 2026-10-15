@@ -94,7 +94,7 @@ ch4_ui <- list(
     lc_formula_annotated(
       "⟦1|R^2_{adj}⟧ = 1 - \\frac{(1 - R^2)(⟦2|n⟧ - 1)}{n - ⟦3|k⟧ - 1}",
       notes  = list("skorygowany R²", "liczba obserwacji", "liczba predyktorów"),
-      colors = c("accent", "szalwia", "kurkuma"),
+      colors = c("accent", "szalwia", "szalwia"),
       above  = c(2)
     ),
 

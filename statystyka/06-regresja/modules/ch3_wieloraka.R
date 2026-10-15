@@ -41,7 +41,7 @@ ch3_ui <- list(
       "Y = ⟦1|\\beta_0⟧ + ⟦2|\\beta_1⟧ X_1 + \\beta_2 X_2 + \\ldots + \\beta_k X_{⟦3|k⟧} + ⟦4|\\varepsilon⟧",
       notes  = list("wyraz wolny", "nachylenie przy X₁", "liczba predyktorów",
                     "błąd losowy"),
-      colors = c("terakota", "indygo", "kurkuma", "bursztyn"),
+      colors = c("terakota", "indygo", "szalwia", "bursztyn"),
       above  = c(2, 3)
     ),
 
@@ -207,7 +207,7 @@ ch3_ui <- list(
     lc_formula_annotated(
       "⟦1|\\text{VIF}_j⟧ = \\frac{1}{1 - ⟦2|R_j^2⟧}",
       notes  = list("inflacja wariancji", "R² dla Xⱼ z pozostałych"),
-      colors = c("accent", "kurkuma")
+      colors = c("accent", "indygo")
     ),
 
     lc_p("Gdy predyktor nie jest związany z pozostałymi, \\(R_j^2 = 0\\)

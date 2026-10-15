@@ -154,7 +154,7 @@ ch4_ui <- list(
     lc_formula_annotated(
       "⟦1|t⟧ = \\frac{⟦2|r⟧\\sqrt{⟦3|n⟧-2}}{\\sqrt{1-r^2}}, \\qquad ⟦4|df⟧ = n - 2",
       notes  = list("statystyka t", "korelacja z próby", "liczba par", "stopnie swobody"),
-      colors = c("indygo", "accent", "szalwia", "kurkuma"),
+      colors = c("indygo", "accent", "szalwia", "szalwia"),
       above  = c(2, 3)
     ),
 

@@ -265,7 +265,7 @@ ch5_ui <- list(
     lc_formula_annotated(
       "⟦1|OR⟧ = \\frac{\\text{szanse przy } x + 1}{\\text{szanse przy } x} = e^{⟦2|\\beta_1⟧}",
       notes  = list("iloraz szans", "nachylenie logitu"),
-      colors = c("wrzos", "indygo"),
+      colors = c("indygo", "indygo"),
       above  = c(2)
     ),
 

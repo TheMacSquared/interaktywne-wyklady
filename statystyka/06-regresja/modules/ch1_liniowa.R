@@ -127,7 +127,7 @@ ch1_ui <- list(
       "⟦1|Y⟧ = ⟦2|\\beta_0⟧ + ⟦3|\\beta_1⟧ ⟦4|X⟧ + ⟦5|\\varepsilon⟧",
       notes  = list("zmienna zależna", "wyraz wolny", "nachylenie", "predyktor",
                     "błąd losowy"),
-      colors = c("niebo", "terakota", "indygo", "kurkuma", "bursztyn"),
+      colors = c("niebo", "terakota", "indygo", "niebo", "bursztyn"),
       above  = c(2, 4)
     ),
 
@@ -191,7 +191,7 @@ ch1_ui <- list(
       "⟦1|b_1⟧ = ⟦2|r⟧ \\cdot \\frac{⟦3|s_Y⟧}{⟦4|s_X⟧}, \\qquad ⟦5|b_0⟧ = ⟦6|\\bar{y}⟧ - b_1 ⟦7|\\bar{x}⟧",
       notes  = list("nachylenie", "korelacja", "odch. std. Y", "odch. std. X",
                     "wyraz wolny", "średnia Y", "średnia X"),
-      colors = c("indygo", "szalwia", "wrzos", "wrzos", "terakota", "accent", "accent"),
+      colors = c("indygo", "accent", "wrzos", "wrzos", "terakota", "accent", "accent"),
       above  = c(1, 3, 6)
     ),
 
@@ -361,7 +361,7 @@ ch1_ui <- list(
       "⟦1|SS_{res}⟧ = \\sum_{i=1}^{n} (⟦2|y_i⟧ - ⟦3|\\hat{y}_i⟧)^2 = \\sum_{i=1}^{n} (y_i - ⟦4|b_0⟧ - ⟦5|b_1⟧ ⟦6|x_i⟧)^2 \\;\\to\\; \\min",
       notes  = list("suma kwadratów reszt", "obserwacja", "wartość przewidywana",
                     "wyraz wolny", "nachylenie", "predyktor"),
-      colors = c("bursztyn", "niebo", "wrzos", "terakota", "indygo", "kurkuma"),
+      colors = c("bursztyn", "niebo", "wrzos", "terakota", "indygo", "niebo"),
       above  = c(2, 5)
     ),
 
@@ -681,7 +681,7 @@ ch1_ui <- list(
     lc_formula_annotated(
       "⟦1|\\hat{Y}⟧ = ⟦2|b_0⟧ + ⟦3|b_1⟧ ⟦4|X⟧",
       notes  = list("wartość przewidywana", "wyraz wolny", "nachylenie", "predyktor"),
-      colors = c("wrzos", "terakota", "indygo", "kurkuma"),
+      colors = c("wrzos", "terakota", "indygo", "niebo"),
       above  = c(2, 4)
     ),
 

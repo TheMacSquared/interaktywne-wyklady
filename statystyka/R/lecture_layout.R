@@ -686,7 +686,11 @@ lc_formula_box <- function(...) {
 # jako ⟦k|...⟧, gdzie k to numer opisu w `notes`; części się nie zagnieżdżają.
 # Numeruj od lewej do prawej, żeby strzałki się nie krzyżowały.
 # notes: lista; element to tekst albo list(sym = "TeX", text = "opis").
-# colors: nazwy z upwr_cat albo "accent"; domyślnie kolejne kolory palety.
+# colors: nazwy z upwr_cat, "accent" albo "param" (parametr populacji:
+# przyciemniona kurkuma); domyślnie kolejne kolory palety. Role kolorów
+# w całym kursie: n i df szałwia, Σ bursztyn, obserwacje niebo, estymator
+# accent, rozrzut i SE wrzos, wartość krytyczna terakota, statystyka testowa
+# i wynik miary indygo, parametr populacji "param".
 # side: "below" (opisy pod wzorem) albo "right" (kolumna opisów na prawo,
 # dla wzorów wielowierszowych; części numeruj wtedy od góry do dołu).
 # above: numery opisów stawianych nad wzorem (tylko side = "below"); przy
@@ -702,8 +706,9 @@ lc_formula_annotated <- function(tex, notes, colors = NULL,
   }
   stopifnot(length(colors) == n, n <= 8)
   color_var <- ifelse(colors == "accent", "var(--upwr-accent)",
-                      paste0("var(--upwr-cat-", colors, ")"))
-  stopifnot(all(colors == "accent" | colors %in% names(upwr_cat)))
+                ifelse(colors == "param", "var(--fa-param)",
+                       paste0("var(--upwr-cat-", colors, ")")))
+  stopifnot(all(colors %in% c("accent", "param") | colors %in% names(upwr_cat)))
 
   tex <- gsub("⟦([0-9]+)\\|(.*?)⟧", "\\\\class{lc-fa-p\\1}{\\2}", tex, perl = TRUE)
   stopifnot(!grepl("⟦|⟧", tex))

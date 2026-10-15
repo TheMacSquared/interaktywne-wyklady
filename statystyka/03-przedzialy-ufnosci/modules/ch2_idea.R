@@ -38,7 +38,7 @@ ch2_ui <- list(
       "P\\left(⟦1|\\mu⟧ - ⟦2|1.96⟧ \\cdot ⟦3|SE⟧ \\le ⟦4|\\bar{X}⟧ \\le \\mu + 1.96 \\cdot SE\\right) = ⟦5|0.95⟧",
       notes  = list("średnia populacji", "wartość krytyczna", "błąd standardowy",
                     "średnia z próby", "poziom ufności"),
-      colors = c("grafit", "terakota", "indygo", "accent", "niebo"),
+      colors = c("param", "terakota", "wrzos", "accent", "niebo"),
       above  = c(2, 4)
     ),
 
@@ -51,7 +51,7 @@ ch2_ui <- list(
     lc_formula_annotated(
       "P\\left(⟦1|\\bar{X}⟧ - 1.96 \\cdot SE \\le ⟦2|\\mu⟧ \\le \\bar{X} + 1.96 \\cdot SE\\right) = 0.95",
       notes  = list("losowy środek", "stały parametr"),
-      colors = c("accent", "grafit")
+      colors = c("accent", "param")
     ),
 
     # PROTOTYP odwrocenie: ta sama odległość czytana od μ i od x̄

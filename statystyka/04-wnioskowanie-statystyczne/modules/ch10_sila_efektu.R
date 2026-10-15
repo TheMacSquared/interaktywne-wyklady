@@ -114,7 +114,7 @@ ch10_ui <- list(
       "⟦1|d⟧ = \\frac{⟦2|\\bar{x}_1 - \\bar{x}_2⟧}{⟦3|s_p⟧}, \\qquad s_p = \\sqrt{\\frac{(⟦4|n_1⟧ - 1)\\,⟦5|s_1^2⟧ + (n_2 - 1)\\,s_2^2}{n_1 + n_2 - 2}}",
       notes  = list("d Cohena", "różnica średnich", "połączone odchylenie standardowe",
                     "liczebność grupy", "wariancja w grupie"),
-      colors = c("wrzos", "accent", "grafit", "szalwia", "terakota"),
+      colors = c("wrzos", "accent", "grafit", "szalwia", "wrzos"),
       above  = c(2, 4, 5)
     ),
 
@@ -293,7 +293,7 @@ ch10_ui <- list(
     lc_formula_annotated(
       "⟦1|V⟧ = \\sqrt{\\frac{⟦2|\\chi^2⟧}{⟦3|n⟧ \\cdot (⟦4|\\min(r, c)⟧ - 1)}}",
       notes  = list("V Cramera", "statystyka χ²", "liczba obserwacji", "mniejszy wymiar tabeli"),
-      colors = c("wrzos", "indygo", "szalwia", "grafit"),
+      colors = c("wrzos", "indygo", "szalwia", "szalwia"),
       above  = c(2)
     ),
 

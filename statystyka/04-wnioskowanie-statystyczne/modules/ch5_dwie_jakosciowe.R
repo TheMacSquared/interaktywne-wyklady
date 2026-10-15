@@ -64,7 +64,7 @@ ch5_ui <- list(
     lc_formula_annotated(
       "⟦1|E_{ij}⟧ = \\frac{⟦2|n_{i\\cdot}⟧ \\cdot ⟦3|n_{\\cdot j}⟧}{⟦4|n⟧}",
       notes  = list("liczebność oczekiwana", "suma wiersza", "suma kolumny", "liczba obserwacji"),
-      colors = c("niebo", "bursztyn", "wrzos", "szalwia"),
+      colors = c("niebo", "bursztyn", "bursztyn", "szalwia"),
       above  = c(2, 3)
     ),
 
@@ -81,7 +81,7 @@ ch5_ui <- list(
       "⟦1|\\chi^2⟧ = ⟦2|\\sum_{i,j}⟧ \\frac{(⟦3|O_{ij}⟧ - ⟦4|E_{ij}⟧)^2}{E_{ij}}, \\qquad ⟦5|df⟧ = (⟦6|r⟧ - 1)(⟦7|c⟧ - 1)",
       notes  = list("statystyka χ²", "suma po komórkach", "liczebność obserwowana",
                     "liczebność oczekiwana", "stopnie swobody", "liczba wierszy", "liczba kolumn"),
-      colors = c("indygo", "bursztyn", "accent", "niebo", "kurkuma", "terakota", "wrzos"),
+      colors = c("indygo", "bursztyn", "accent", "niebo", "szalwia", "terakota", "wrzos"),
       above  = c(2, 3, 4)
     ),
 

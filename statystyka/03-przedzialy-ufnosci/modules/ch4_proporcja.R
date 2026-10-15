@@ -54,7 +54,7 @@ ch4_ui <- list(
       "E(⟦1|\\hat{p}⟧) = ⟦2|p⟧ \\qquad ⟦3|SE⟧(\\hat{p}) = \\sqrt{\\frac{p(1-p)}{⟦4|n⟧}}",
       notes  = list("proporcja z próby", "proporcja w populacji", "błąd standardowy",
                     "liczba obserwacji"),
-      colors = c("accent", "grafit", "indygo", "szalwia"),
+      colors = c("accent", "param", "wrzos", "szalwia"),
       above  = c(1, 3)
     ),
 

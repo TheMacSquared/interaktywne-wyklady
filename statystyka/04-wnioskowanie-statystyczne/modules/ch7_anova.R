@@ -108,7 +108,7 @@ ch7_ui <- list(
     lc_formula_annotated(
       "⟦1|m⟧ = \\frac{⟦2|k⟧(k-1)}{2}, \\qquad ⟦3|P(\\text{co najmniej jeden fałszywy alarm})⟧ = 1 - (1 - ⟦4|\\alpha⟧)^m",
       notes  = list("liczba par", "liczba grup", "ryzyko w całej serii", "poziom istotności"),
-      colors = c("indygo", "szalwia", "bursztyn", "accent"),
+      colors = c("szalwia", "szalwia", "bursztyn", "accent"),
       above  = c(3)
     ),
 

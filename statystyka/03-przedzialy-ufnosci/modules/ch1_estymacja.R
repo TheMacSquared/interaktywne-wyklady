@@ -94,7 +94,7 @@ ch1_ui <- list(
     lc_formula_annotated(
       "⟦1|E⟧(⟦2|\\hat{\\theta}⟧) = ⟦3|\\theta⟧",
       notes  = list("wartość oczekiwana", "estymator", "parametr"),
-      colors = c("indygo", "accent", "grafit"),
+      colors = c("indygo", "accent", "param"),
       above  = 2
     ),
 
@@ -138,7 +138,7 @@ ch1_ui <- list(
     lc_formula_annotated(
       "⟦1|\\hat{\\theta}_n⟧ \\xrightarrow{p} ⟦2|\\theta⟧ \\quad \\text{gdy} \\quad ⟦3|n⟧ \\to \\infty",
       notes  = list("estymator", "parametr", "liczba obserwacji"),
-      colors = c("accent", "grafit", "szalwia"),
+      colors = c("accent", "param", "szalwia"),
       above  = 2
     ),
 
