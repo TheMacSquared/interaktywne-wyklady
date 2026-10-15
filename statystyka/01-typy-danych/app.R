@@ -370,23 +370,6 @@ app_extras <- tagList(
   }
 
   /* PROTOTYP mapa-narzedzi: siatka statystyk (Ryc. 5.3a) */
-  /* PROTOTYP trzy-nogi: dowcip o średniej liczbie nóg (Ryc. 1.0b) */
-  .tl-wrap { max-width: 620px; margin: 6px auto 0; }
-  .tl-svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .tl-body { stroke: var(--upwr-ink-soft); stroke-width: 3; stroke-linecap: round; fill: none; }
-  .tl-fill { fill: var(--upwr-surface); }
-  .tl-leash { stroke-width: 1.5; stroke-dasharray: 2 4; }
-  .tl-leg { stroke: var(--upwr-accent); stroke-width: 4.5; stroke-linecap: round; }
-  .tl-ghost { stroke: var(--upwr-reference); stroke-width: 2.5; stroke-dasharray: 4 4; fill: none; }
-  .tl-ghost-leg { stroke-dasharray: 5 5; opacity: .75; }
-  .tl-mean { stroke: var(--upwr-accent); stroke-width: 2; stroke-dasharray: 6 5; }
-  .tl-mean-mark { fill: var(--upwr-accent); }
-  .tl-mean-lab { fill: var(--upwr-accent); font: 600 15px var(--upwr-mono); }
-  .tl-axis { stroke: var(--upwr-reference); stroke-width: 1.5; }
-  .tl-tick { fill: var(--upwr-ink-soft); font: 14px var(--upwr-mono); }
-  .tl-axis-lab { fill: var(--upwr-ink-soft); font: 14px var(--upwr-sans); }
-  .tl-dot { fill: var(--upwr-ink-soft); }
-
   /* PROTOTYP pelna-tabela: dwie tabele obok siebie w Ryc. 5.4 */
   .ch5-full-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
   .ch5-full-pair h4 { margin: 0 0 6px; }

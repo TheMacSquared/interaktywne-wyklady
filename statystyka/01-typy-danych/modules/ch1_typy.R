@@ -2,53 +2,6 @@
 # CHAPTER 1: Typy danych
 # ============================================================================
 
-# PROTOTYP trzy-nogi: dowcip „człowiek z psem ma średnio trzy nogi” (Ryc. 1.0b).
-# Statyczny SVG na zmiennych --upwr-*; oś liczby nóg, średnia tam, gdzie nikogo nie ma.
-ch1_three_legs <- function() {
-  x <- function(v) 60 + v * 125           # oś 0–4 → piksele
-  leg <- function(x1, y1, x2, y2, cls = "tl-leg")
-    tags$line(class = cls, x1 = x1, y1 = y1, x2 = x2, y2 = y2)
-  xh <- x(2); xd <- x(4); xm <- x(3)
-  tags$div(class = "tl-wrap",
-    tags$svg(class = "tl-svg", viewBox = "0 0 660 250", role = "img",
-      `aria-label` = "Człowiek ma dwie nogi, pies cztery. Średnio wychodzi trzy nogi — liczba, której nie ma żadne z nich.",
-      # człowiek nad 2
-      tags$circle(class = "tl-body", cx = xh, cy = 44, r = 12),
-      tags$line(class = "tl-body", x1 = xh, y1 = 56, x2 = xh, y2 = 108),
-      tags$line(class = "tl-body", x1 = xh - 22, y1 = 88, x2 = xh, y2 = 68),
-      tags$line(class = "tl-body", x1 = xh + 22, y1 = 88, x2 = xh, y2 = 68),
-      # smycz łukiem nad widmem
-      tags$path(class = "tl-body tl-leash", d = sprintf("M%d 88 Q%d -30 %d 88", xh + 22, xm + 20, xd + 50)),
-      leg(xh, 108, xh - 13, 150), leg(xh, 108, xh + 13, 150),
-      # pies nad 4
-      tags$ellipse(class = "tl-body tl-fill", cx = xd, cy = 112, rx = 44, ry = 15),
-      tags$circle(class = "tl-body tl-fill", cx = xd + 50, cy = 98, r = 12),
-      tags$path(class = "tl-body tl-fill", d = sprintf("M%d 92 L%d 108 L%d 104 Z", xd + 41, xd + 36, xd + 46)),
-      tags$line(class = "tl-body", x1 = xd - 42, y1 = 106, x2 = xd - 58, y2 = 88),
-      leg(xd - 30, 124, xd - 33, 150), leg(xd - 18, 125, xd - 15, 150),
-      leg(xd + 18, 125, xd + 15, 150), leg(xd + 30, 124, xd + 33, 150),
-      # widmo nad średnią 3
-      tags$circle(class = "tl-ghost", cx = xm, cy = 60, r = 11),
-      tags$line(class = "tl-ghost", x1 = xm, y1 = 71, x2 = xm, y2 = 112),
-      leg(xm, 112, xm - 14, 150, "tl-leg tl-ghost-leg"),
-      leg(xm, 112, xm, 150, "tl-leg tl-ghost-leg"),
-      leg(xm, 112, xm + 14, 150, "tl-leg tl-ghost-leg"),
-      tags$line(class = "tl-mean", x1 = xm, y1 = 156, x2 = xm, y2 = 182),
-      tags$path(class = "tl-mean-mark", d = sprintf("M%d 182 L%d 172 L%d 172 Z", xm, xm - 6, xm + 6)),
-      tags$text(class = "tl-mean-lab", x = xm + 12, y = 174, "x̄ = 3"),
-      # oś
-      tags$line(class = "tl-axis", x1 = x(0) - 10, y1 = 182, x2 = x(4) + 20, y2 = 182),
-      lapply(0:4, function(v) tagList(
-        tags$line(class = "tl-axis", x1 = x(v), y1 = 182, x2 = x(v), y2 = 188),
-        tags$text(class = "tl-tick", x = x(v), y = 206, `text-anchor` = "middle", v)
-      )),
-      tags$circle(class = "tl-dot", cx = xh, cy = 182, r = 6),
-      tags$circle(class = "tl-dot", cx = xd, cy = 182, r = 6),
-      tags$text(class = "tl-axis-lab", x = x(2), y = 236, `text-anchor` = "middle", "liczba nóg")
-    )
-  )
-}
-
 ch1_ui <- list(
   id = "ch-typy", num = "01", title = "Typy danych",
   content = tagList(
@@ -85,18 +38,6 @@ ch1_ui <- list(
       tags$div(class = "proto-kierunek-os",
         lc_plot("ch1_proto_kierunek_os", ratio = "2.6/1", max_height = "260px")
       )
-    ),
-
-    # PROTOTYP trzy-nogi: ta sama pułapka w wersji dowcipu
-    lc_p("Stary dowcip mówi to samo krócej: człowiek wychodzący z psem na spacer
-      ma razem z nim średnio trzy nogi. Rachunek jest poprawny, ale wynik nie
-      opisuje nikogo."),
-
-    figure_panel(
-      label = "Ryc. 1.0b",
-      title = "Średnio trzy nogi",
-      width_mode = "text",
-      ch1_three_legs()
     ),
 
     # --- Widget 1: Taxonomy tree ---
