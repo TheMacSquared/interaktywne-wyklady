@@ -721,7 +721,12 @@ ch4_server <- function(input, output, session) {
     # Stała rama osi X z pełnych danych i granic, wspólna dla kroków.
     x_span <- range(c(vals, lower_fence, upper_fence))
     x_lim <- x_span + c(-1, 1) * diff(x_span) * 0.06
-    frame <- step_frame(xlim = x_lim, ylim = c(-0.9, 0.9), y_axis = FALSE)
+    # Etykiety co 20 cm, dodatkowa cienka siatka co 10 cm do odczytu długości wąsów.
+    x_grid <- list(
+      scale_x_continuous(breaks = seq(0, 300, by = 20), minor_breaks = seq(0, 300, by = 10)),
+      theme(panel.grid.minor.x = element_line(colour = upwr_rule, linewidth = 0.15))
+    )
+    frame <- list(x_grid, step_frame(xlim = x_lim, ylim = c(-0.9, 0.9), y_axis = FALSE))
 
     if (step == 6) {
       # Final: clean boxplot + histogram for comparison
@@ -731,6 +736,7 @@ ch4_server <- function(input, output, session) {
                     outlier.size = 3, width = 0.4) +
         step_layer(geom_jitter, "known", width = 0, height = 0.05, alpha = 0.4, size = 2) +
         labs(x = "", y = "") +
+        x_grid +
         step_frame(xlim = x_lim, ylim = c(0.5, 1.5), y_axis = FALSE)
 
       p_hist <- ggplot(df, aes(x = x)) +
@@ -741,6 +747,7 @@ ch4_server <- function(input, output, session) {
         step_line("known", xintercept = q1) +
         step_line("known", xintercept = q3) +
         labs(x = "Wzrost (cm)", y = "Liczebność") +
+        x_grid +
         step_frame(xlim = x_lim, ylim = c(0, count_max * 1.08))
 
       return(gridExtra::arrangeGrob(p_box, p_hist, nrow = 2, heights = c(1, 1.2)))
