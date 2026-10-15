@@ -21,7 +21,6 @@ ch3b_ui <- list(
   id = "ch-3b",
   num = "03B",
   title = "Kontekst i interakcje",
-  duration = "30–45 min",
   content = tagList(
     lc_chapter_hero(
       kicker = "Rozdział 03B · Regresja",
