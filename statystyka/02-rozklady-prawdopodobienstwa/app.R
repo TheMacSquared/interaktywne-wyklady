@@ -153,6 +153,11 @@ ui <- lecture_page(
       .dmap-spark { width: 100%; height: 4.2em; display: block; }
       .dmap-spark rect { fill: var(--dm-c); }
       .dmap-spark .dmap-axis { stroke: var(--upwr-ink-subtle); stroke-width: 1; vector-effect: non-scaling-stroke; }
+      .dmap.is-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .dmap.is-5 .dmap-q { min-height: 4.2em; }
+      @media (max-width: 720px) { .dmap.is-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      .dmap-spark .dmap-area { fill: var(--dm-c); fill-opacity: .35; stroke: none; }
+      .dmap-spark .dmap-curve { fill: none; stroke: var(--dm-c); stroke-width: 2; vector-effect: non-scaling-stroke; }
       .dmap-name { font-weight: 600; color: var(--dm-c); }
       .dmap-par { display: block; font: 400 .9em var(--upwr-sans); color: var(--upwr-ink-subtle); }
 

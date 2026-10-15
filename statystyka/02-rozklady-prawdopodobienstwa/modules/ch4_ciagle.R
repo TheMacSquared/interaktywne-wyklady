@@ -43,6 +43,44 @@ ch4_event_timeline <- function(t = ch4_event_times, hours = 4) {
   )
 }
 
+# PROTOTYP mapa-ciaglych: pięć pytań i odpowiadające im rozkłady ciągłe
+# (Ryc. 4.10a). Ten sam układ co mapa dyskretnych (Ryc. 3.8a), ale miniatury
+# to gładkie krzywe gęstości, każda w swojej skali.
+ch4_continuous_map <- function() {
+  items <- list(
+    list(q = "Każda wartość z przedziału tak samo?", name = "jednostajny", par = "U(a, b)",
+         x = seq(-0.25, 1.25, length.out = 300), f = function(x) dunif(x, 0, 1), col = "niebo"),
+    list(q = "Ile czasu do zdarzenia?", name = "wykładniczy", par = "Exp(λ)",
+         x = seq(0, 5, length.out = 300), f = function(x) dexp(x, 1), col = "szalwia"),
+    list(q = "Średnia z małej próby?", name = "t-Studenta", par = "t(df)",
+         x = seq(-4.5, 4.5, length.out = 300), f = function(x) dt(x, 3), col = "indygo"),
+    list(q = "Suma kwadratów?", name = "chi-kwadrat", par = "χ²(df)",
+         x = seq(0, 14, length.out = 300), f = function(x) dchisq(x, 4), col = "wrzos"),
+    list(q = "Dodatnie, z długim ogonem?", name = "log-normalny", par = "LogN(μ, σ)",
+         x = seq(0, 5, length.out = 300), f = function(x) dlnorm(x, 0, 0.6), col = "bursztyn")
+  )
+  spark <- function(it) {
+    y <- it$f(it$x)
+    px <- 100 * (it$x - min(it$x)) / diff(range(it$x))
+    py <- 42 - 38 * y / max(y)
+    pts <- paste(sprintf("%.2f,%.2f", px, py), collapse = " ")
+    tags$svg(class = "dmap-spark", viewBox = "0 0 100 44", preserveAspectRatio = "none",
+      `aria-hidden` = "true",
+      tags$polygon(class = "dmap-area", points = paste0("0,42 ", pts, " 100,42")),
+      tags$polyline(class = "dmap-curve", points = pts),
+      tags$line(x1 = 0, x2 = 100, y1 = 42.5, y2 = 42.5, class = "dmap-axis"))
+  }
+  tags$div(class = "dmap is-5",
+    lapply(items, function(it) {
+      tags$div(class = "dmap-card", style = paste0("--dm-c: var(--upwr-cat-", it$col, ");"),
+        tags$div(class = "dmap-q", it$q),
+        spark(it),
+        tags$div(class = "dmap-name", it$name, tags$span(class = "dmap-par", it$par))
+      )
+    })
+  )
+}
+
 ch4_ui <- list(
   id = "ch-ciagle", num = "04", title = "Rozkłady ciągłe",
   content = tagList(
@@ -587,6 +625,19 @@ ch4_ui <- list(
       "Dane zawsze dodatnie, z długim prawym ogonem: zlogarytmuj je i obejrzyj
        histogram. Jeśli wygląda jak symetryczny dzwon, rozkład log-normalny
        jest dobrym kandydatem na model."
+    ),
+
+    # PROTOTYP mapa-ciaglych: zamknięcie rozdziału, jak Ryc. 3.8a dla dyskretnych
+    lc_h2("ch4-porownanie", "Porównanie rozkładów ciągłych"),
+
+    lc_p("Pięć rozkładów z tego rozdziału odpowiada na pięć różnych pytań
+      o dane."),
+
+    figure_panel(
+      label = "Ryc. 4.10a",
+      title = "Które pytanie, który rozkład",
+      width_mode = "wide",
+      ch4_continuous_map()
     ),
 
     lc_p("Rozkład normalny pojawiał się w tym rozdziale wielokrotnie: jako
