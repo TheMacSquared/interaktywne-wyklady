@@ -427,19 +427,24 @@ ch1d_ui <- list(
       odrzucenia, więc ta reguła odrzuca prawdziwą H₀ z prawdopodobieństwem
       \\(\\alpha\\)."),
 
-    # PROTOTYP p-alfa: pole p-wartości na tle pola α, dwa wyniki obok siebie
+    # PROTOTYP p-alfa: jeden wynik naraz; środek = H₀, krańce = Hₐ, p jako liczba
     figure_panel(
       label = "Ryc. 3.4a",
       title = "p-wartość a α",
-      width_mode = "wide",
-      lc_plot("ch1d_palpha_plot", ratio = "2.4/1", max_height = "320px")
+      width_mode = "text",
+      lc_toolbar(
+        lc_segmented("ch1d_palpha_case", "Wynik",
+          choices = c("z = 2.17" = "2.17", "z = 1.50" = "1.50"), selected = "2.17"),
+        lc_readouts(uiOutput("ch1d_palpha_read", inline = TRUE))
+      ),
+      lc_plot("ch1d_palpha_plot", ratio = "2/1", max_height = "380px")
     ),
 
     # PROTOTYP p-alfa: odczyt ryciny (nowy akapit, do akceptacji)
-    lc_p("Po lewej statystyka 2.17 leży dalej od zera niż wartość krytyczna
-      1.96, więc jej ogony są węższe niż pole α: p = 0.030 < 0.05. Po prawej
-      statystyka 1.50 nie dochodzi do wartości krytycznej, a jej ogony
-      obejmują całe pole α i więcej: p = 0.134. Werdykt formułuje się
+    lc_p("Wynik 2.17 leży dalej od zera niż wartość krytyczna 1.96, czyli
+      w obszarze Hₐ, a jego ogony są węższe niż pole α: p = 0.030 < 0.05.
+      Wynik 1.50 zostaje w obszarze H₀, a jego ogony obejmują całe pole α
+      i więcej: p = 0.134. Werdykt formułuje się
       w ustalony sposób. Gdy \\(p < \\alpha\\):"),
 
     lc_formula_box(
@@ -515,45 +520,54 @@ ch1d_ui <- list(
 
 ch1_server <- function(input, output, session) {
 
-  # PROTOTYP p-alfa: dwa wyniki (2.17 i 1.50) na rozkładzie N(0, 1) pod H₀.
-  # Pole pod krzywą = p-wartość; paski pod osią: zasięg α (burgund) i p (bursztyn).
-  zoom_plot_server("ch1d_palpha_plot", reactive({
-    crit <- qnorm(0.975)
-    stats <- c(2.17, 1.50)
-    lab <- factor(sprintf("wynik %.2f", stats), levels = sprintf("wynik %.2f", stats))
-    x <- seq(-4, 4, length.out = 801)
-    curve_df <- do.call(rbind, lapply(seq_along(stats), function(i)
-      data.frame(panel = lab[i], x = x, y = dnorm(x))))
-    p_df <- do.call(rbind, lapply(seq_along(stats), function(i) {
-      d <- data.frame(panel = lab[i], x = x, y = dnorm(x))
-      d <- d[abs(d$x) >= stats[i], ]
-      d$side <- ifelse(d$x < 0, "l", "r")
-      d
-    }))
-    bars <- rbind(
-      data.frame(panel = lab, what = "α", y = -0.03,
-                 x0 = crit, x1 = 4),
-      data.frame(panel = lab, what = "p", y = -0.06,
-                 x0 = stats, x1 = 4)
+  # PROTOTYP p-alfa: jeden wynik naraz na N(0, 1) pod H₀. Środek (|z| < 1.96)
+  # podpisany H₀, krańce Hₐ; pole za ±|z| = p-wartość, jej liczba w odczycie.
+  ch1d_palpha_z <- reactive(as.numeric(input$ch1d_palpha_case %||% "2.17"))
+
+  output$ch1d_palpha_read <- renderUI({
+    z <- ch1d_palpha_z()
+    p <- 2 * pnorm(-abs(z))
+    tagList(
+      lc_readout("p", sprintf("%.3f", p), color = col_pvalue, swatch = TRUE),
+      lc_readout("α", "0.05", color = col_reject, swatch = TRUE),
+      lc_readout(NULL, if (p < 0.05) "p < α" else "p ≥ α")
     )
-    bars <- rbind(bars, transform(bars, x0 = -x1, x1 = -x0))
-    obs <- data.frame(panel = lab, x = stats)
+  })
+
+  zoom_plot_server("ch1d_palpha_plot", reactive({
+    z <- ch1d_palpha_z()
+    crit <- qnorm(0.975)
+    x <- seq(-4, 4, length.out = 801)
+    curve_df <- data.frame(x = x, y = dnorm(x))
+    p_df <- curve_df[abs(curve_df$x) >= abs(z), ]
+    p_df$side <- ifelse(p_df$x < 0, "l", "r")
+    regions <- data.frame(
+      x = c(-3.05, 0, 3.05), y = 0.22,
+      lab = c("bold(H[a])", "bold(H[0])", "bold(H[a])"),
+      col = c(col_reject, col_h0, col_reject)
+    )
 
     ggplot() +
-      geom_area(data = p_df, aes(x, y, group = side), fill = col_pvalue, alpha = 0.55) +
-      geom_line(data = curve_df, aes(x, y), color = col_h0, linewidth = 1.1) +
+      annotate("rect", xmin = -4, xmax = -crit, ymin = 0, ymax = 0.43,
+               fill = col_reject, alpha = 0.06) +
+      annotate("rect", xmin = crit, xmax = 4, ymin = 0, ymax = 0.43,
+               fill = col_reject, alpha = 0.06) +
+      geom_area(data = p_df, aes(x, y, group = side), fill = col_pvalue, alpha = 0.6) +
+      geom_line(data = curve_df, aes(x, y), color = col_h0, linewidth = 1.2) +
       geom_vline(xintercept = c(-crit, crit), linetype = "dashed", color = col_reject) +
-      geom_segment(data = obs, aes(x = x, xend = x, y = 0, yend = dnorm(x)),
-                   color = upwr_secondary, linewidth = 1) +
-      geom_segment(data = bars, aes(x = x0, xend = x1, y = y, yend = y, color = what),
-                   linewidth = 3, lineend = "butt") +
-      scale_color_manual(values = c("α" = col_reject, "p" = col_pvalue),
-                         labels = c("α" = "obszar odrzucenia (α = 0.05)", "p" = "p-wartość"),
-                         name = NULL) +
-      facet_wrap(~panel, nrow = 1) +
-      scale_x_continuous(breaks = c(-crit, 0, crit), labels = c("-1.96", "0", "1.96")) +
+      geom_segment(aes(x = z, xend = z, y = 0, yend = 0.41),
+                   color = upwr_secondary, linewidth = 1.1) +
+      annotate("label", x = z, y = 0.41, label = sprintf("z = %.2f", z),
+               family = lc_mono_family, size = 4.2, label.size = 0,
+               fill = "white", color = upwr_secondary) +
+      geom_text(data = regions, aes(x, y, label = lab, color = col), parse = TRUE,
+                size = 9) +
+      scale_color_identity() +
+      scale_x_continuous(breaks = c(-crit, 0, crit), labels = c("-1.96", "0", "1.96"),
+                         expand = c(0, 0)) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.04))) +
       labs(x = "Statystyka testowa", y = NULL) +
-      theme(legend.position = "top", axis.text.y = element_blank(),
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
             panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
   }))
 
