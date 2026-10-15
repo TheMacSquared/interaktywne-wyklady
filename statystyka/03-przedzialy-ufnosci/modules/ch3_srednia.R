@@ -2,97 +2,6 @@
 # CHAPTER 3: Przedział dla średniej
 # ============================================================================
 
-# PROTOTYP pitagoras: SE różnicy jako przeciwprostokątna (Ryc. 3.2a)
-# Skala: 1 cm błędu standardowego = 120 px. Wartości z panelu wzrostu (Ryc. 3.2).
-ch3_se_triangle <- function(se1 = 1.4, se2 = 1.2) {
-  k <- 120; x0 <- 40; y0 <- 210
-  a <- se1 * k; b <- se2 * k; se_d <- sqrt(se1^2 + se2^2)
-  num <- function(v) formatC(v, format = "f", digits = 2, drop0trailing = TRUE)
-  bx <- 330; by1 <- 120; by2 <- 175
-  tags$div(class = "ch3-pyth", role = "img",
-    `aria-label` = paste0("Trójkąt prostokątny: przyprostokątne SE1 = ", num(se1),
-      " i SE2 = ", num(se2), ", przeciwprostokątna SE różnicy = ", num(se_d),
-      ". Obok odcinek SE1 + SE2 = ", num(se1 + se2), " dłuższy niż SE różnicy."),
-    HTML(sprintf('
-<svg viewBox="0 0 660 250" xmlns="http://www.w3.org/2000/svg">
-  <path class="p-right" d="M%1$.0f %2$.0f h-14 v-14 h14" />
-  <line class="p-se1" x1="%3$.0f" y1="%2$.0f" x2="%1$.0f" y2="%2$.0f" />
-  <line class="p-se2" x1="%1$.0f" y1="%2$.0f" x2="%1$.0f" y2="%4$.0f" />
-  <line class="p-sed" x1="%3$.0f" y1="%2$.0f" x2="%1$.0f" y2="%4$.0f" />
-  <text class="p-t p-c1" x="%5$.0f" y="%6$.0f" text-anchor="middle">SE₁ <tspan class="p-n">%7$s</tspan></text>
-  <text class="p-t p-c2" x="%8$.0f" y="%9$.0f" text-anchor="start">SE₂ <tspan class="p-n">%10$s</tspan></text>
-  <text class="p-t p-cd" x="%11$.0f" y="%12$.0f" text-anchor="end">SE różnicy <tspan class="p-n">%13$s</tspan></text>
-
-  <line class="p-se1" x1="%14$.0f" y1="%15$.0f" x2="%16$.0f" y2="%15$.0f" />
-  <line class="p-se2" x1="%16$.0f" y1="%15$.0f" x2="%17$.0f" y2="%15$.0f" />
-  <line class="p-sed" x1="%14$.0f" y1="%18$.0f" x2="%19$.0f" y2="%18$.0f" />
-  <line class="p-tick" x1="%14$.0f" y1="%20$.0f" x2="%14$.0f" y2="%21$.0f" />
-  <text class="p-t" x="%17$.0f" y="%22$.0f" text-anchor="end">SE₁ + SE₂ <tspan class="p-n">%23$s</tspan></text>
-  <text class="p-t p-cd" x="%19$.0f" y="%24$.0f" text-anchor="end">SE różnicy <tspan class="p-n">%13$s</tspan></text>
-</svg>',
-      x0 + a, y0, x0, y0 - b,
-      x0 + a / 2, y0 + 26, num(se1),
-      x0 + a + 12, y0 - b / 2 + 5, num(se2),
-      x0 + a / 2 - 10, y0 - b / 2 - 12, num(se_d),
-      bx, by1, bx + a, bx + a + b, by2, bx + se_d * k,
-      by1 - 30, by2 + 12, by1 - 14, num(se1 + se2), by2 + 30))
-  )
-}
-
-ch3_pyth_css <- "
-.ch3-pyth svg { display: block; width: 100%; height: auto; max-width: 660px; margin: 0 auto; }
-.ch3-pyth line { stroke-width: 6; stroke-linecap: round; }
-.ch3-pyth .p-se1 { stroke: var(--upwr-cat-niebo); }
-.ch3-pyth .p-se2 { stroke: var(--upwr-cat-bursztyn); }
-.ch3-pyth .p-sed { stroke: var(--upwr-cat-indygo); }
-.ch3-pyth .p-tick { stroke: var(--upwr-rule); stroke-width: 1.5; stroke-dasharray: 3 3; }
-.ch3-pyth .p-right { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
-.ch3-pyth .p-t { font: 600 15px var(--upwr-sans); fill: var(--upwr-ink-soft); }
-.ch3-pyth .p-c1 { fill: var(--upwr-cat-niebo); }
-.ch3-pyth .p-c2 { fill: var(--upwr-cat-bursztyn); }
-.ch3-pyth .p-cd { fill: var(--upwr-cat-indygo); }
-.ch3-pyth .p-n { font: 500 14px var(--upwr-mono); fill: var(--upwr-ink-soft); }
-"
-
-# PROTOTYP progi: trzy położenia przedziału względem progu hipotezy (Ryc. 3.2b)
-ch3_threshold_diagram <- function() {
-  rows <- list(
-    list(lo = 380, hi = 560, cls = "is-yes", lab = "TAK"),
-    list(lo = 255, hi = 435, cls = "is-maybe", lab = "NIEPEWNE"),
-    list(lo = 90,  hi = 270, cls = "is-no", lab = "NIE")
-  )
-  thr <- 320; y0 <- 46; dy <- 58
-  bars <- vapply(seq_along(rows), function(i) {
-    r <- rows[[i]]; y <- y0 + (i - 1) * dy; mid <- (r$lo + r$hi) / 2
-    sprintf('<g class="%s"><line class="t-ci" x1="%d" y1="%d" x2="%d" y2="%d"/>
-      <line class="t-cap" x1="%d" y1="%d" x2="%d" y2="%d"/><line class="t-cap" x1="%d" y1="%d" x2="%d" y2="%d"/>
-      <circle class="t-est" cx="%d" cy="%d" r="6"/>
-      <text class="t-lab" x="700" y="%d" text-anchor="end">%s</text></g>',
-      r$cls, r$lo, y, r$hi, y, r$lo, y - 9, r$lo, y + 9, r$hi, y - 9, r$hi, y + 9,
-      mid, y, y + 5, r$lab)
-  }, character(1))
-  tags$div(class = "ch3-thr", role = "img",
-    `aria-label` = "Trzy przedziały względem progu hipotezy: cały po stronie hipotezy — TAK, przecina próg — NIEPEWNE, cały po drugiej stronie — NIE.",
-    HTML(sprintf('<svg viewBox="0 0 710 210" xmlns="http://www.w3.org/2000/svg">
-      <rect class="t-hyp" x="%d" y="10" width="%d" height="190"/>
-      <line class="t-thr" x1="%d" y1="10" x2="%d" y2="200"/>
-      %s</svg>', thr, 580 - thr, thr, thr, paste(bars, collapse = "\n")))
-  )
-}
-
-ch3_thr_css <- "
-.ch3-thr svg { display: block; width: 100%; height: auto; max-width: 710px; margin: 0 auto; }
-.ch3-thr .t-hyp { fill: var(--upwr-cat-wrzos); opacity: .16; }
-.ch3-thr .t-thr { stroke: var(--upwr-ink-soft); stroke-width: 1.5; stroke-dasharray: 5 4; }
-.ch3-thr .t-ci, .ch3-thr .t-cap { stroke: var(--upwr-cat-niebo); stroke-width: 5; stroke-linecap: round; }
-.ch3-thr .t-cap { stroke-width: 2.5; }
-.ch3-thr .t-est { fill: var(--upwr-cat-bursztyn); }
-.ch3-thr .t-lab { font: 700 14px var(--upwr-mono); letter-spacing: .04em; }
-.ch3-thr .is-yes .t-lab { fill: var(--upwr-cat-szalwia); }
-.ch3-thr .is-maybe .t-lab { fill: var(--upwr-cat-bursztyn); }
-.ch3-thr .is-no .t-lab { fill: var(--upwr-cat-terakota); }
-"
-
 ch3_ui <- list(
   id    = "ch-srednia",
   num   = "03",
@@ -250,14 +159,6 @@ ch3_ui <- list(
       przyprostokątnych. Ta własność ma praktyczne
       skutki przy porównywaniu przedziałów dwóch grup na wykresie."),
 
-    # PROTOTYP pitagoras: SE różnicy jako przeciwprostokątna
-    figure_panel(
-      label = "Ryc. 3.2a", title = "Dodają się wariancje, nie błędy standardowe",
-      width_mode = "text",
-      tags$style(HTML(ch3_pyth_css)),
-      ch3_se_triangle()
-    ),
-
     lc_h2("ch3-scenariusze", "Dwa CI grup czy CI różnicy? — trzy scenariusze"),
 
     lc_p("Wyniki dla dwóch grup można odczytać na dwa sposoby. Pierwszy to
@@ -353,14 +254,6 @@ ch3_ui <- list(
       rozstrzygają. Przed kliknięciem „Pokaż werdykt” warto odpowiedzieć samodzielnie.
       Przypadki A dotyczą jednej średniej, B różnicy dwóch średnich, a C
       wielu grup naraz."),
-
-    # PROTOTYP progi: przedział względem progu hipotezy
-    figure_panel(
-      label = "Ryc. 3.2b", title = "Przedział a obszar hipotezy",
-      width_mode = "text",
-      tags$style(HTML(ch3_thr_css)),
-      ch3_threshold_diagram()
-    ),
 
     lc_h3("Przedział dla jednej średniej", num = "A"),
 
