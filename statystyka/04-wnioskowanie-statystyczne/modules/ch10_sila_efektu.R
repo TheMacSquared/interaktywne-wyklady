@@ -2,6 +2,46 @@
 # CHAPTER 10: Siła efektu
 # ============================================================================
 
+# PROTOTYP mapa-testow: wiersz = test, kolumny = kroki schematu testu.
+# Kolory kolumn jak we wzorach: H₀ niebo, statystyka indygo, efekt wrzos.
+ch10_test_map <- function() {
+  tests <- list(
+    c("t jednej próby", "μ = μ₀",          "t",  "t(n − 1)",             "d"),
+    c("dwumianowy",     "p = p₀",          "k",  "B(n, p₀)",             "p̂ − p₀"),
+    c("korelacja",      "ρ = 0",           "t",  "t(n − 2)",             "r"),
+    c("χ²",             "niezależność",    "χ²", "χ²((r − 1)(c − 1))",   "V"),
+    c("t dwóch grup",   "μ₁ = μ₂",         "t",  "t (df Welcha)",        "d"),
+    c("ANOVA",          "μ₁ = … = μₖ",     "F",  "F(k − 1, n − k)",      "η²")
+  )
+  heads <- c("Test", "H₀", "Statystyka", "Rozkład przy H₀", "Siła efektu")
+  cls <- c("tm-name", "tm-h0", "tm-stat", "tm-dist", "tm-eff")
+  tags$div(class = "tm", role = "table",
+    `aria-label` = "Sześć testów: hipoteza zerowa, statystyka, jej rozkład przy H₀ i miara siły efektu.",
+    tags$style(HTML("
+      .tm { display: grid; grid-template-columns: 1.25fr 1.25fr .8fr 1.5fr .9fr;
+        gap: 6px 8px; max-width: 900px; margin: 8px auto 4px; font: 15px/1.3 var(--upwr-sans); }
+      .tm-head { font: 600 11px/1.2 var(--upwr-mono); letter-spacing: .06em; text-transform: uppercase;
+        color: var(--upwr-ink-soft); padding: 0 10px 4px; position: relative; }
+      .tm-head:not(:first-child):not(:last-child)::after { content: '→'; position: absolute;
+        right: -8px; top: -2px; font-size: 14px; color: var(--upwr-reference); }
+      .tm-cell { padding: 8px 10px; border-radius: 6px; background: var(--upwr-surface-sunken);
+        border-left: 4px solid var(--tm-c, var(--upwr-rule)); color: var(--upwr-ink); }
+      .tm-name { --tm-c: var(--upwr-rule); font-weight: 600; background: transparent; }
+      .tm-h0   { --tm-c: var(--upwr-cat-niebo); }
+      .tm-stat { --tm-c: var(--upwr-cat-indygo); font-weight: 600; text-align: center; }
+      .tm-dist { --tm-c: var(--upwr-cat-niebo); }
+      .tm-eff  { --tm-c: var(--upwr-cat-wrzos); font-weight: 600; text-align: center; }
+      @media (max-width: 640px) {
+        .tm { grid-template-columns: 1fr 1fr .6fr; font-size: 13px; }
+        .tm-head:nth-child(4), .tm-head:nth-child(5), .tm-dist, .tm-eff { display: none; }
+      }
+    ")),
+    lapply(seq_along(heads), function(j) tags$div(class = "tm-head", role = "columnheader", heads[j])),
+    lapply(tests, function(row) lapply(seq_along(row), function(j)
+      tags$div(class = paste("tm-cell", cls[j]), role = "cell", row[j])))
+  )
+}
+
 ch10_ui <- list(
   id = "ch-sila-efektu", num = "10", title = "Siła efektu",
   content = tagList(
@@ -45,9 +85,14 @@ ch10_ui <- list(
       o tym samym odchyleniu standardowym s statystykę t można zapisać przez
       różnicę wyrażoną w odchyleniach standardowych, którą oznaczymy d:"),
 
-    lc_formula_box(withMathJax(
-      "$$t = \\frac{\\bar{x}_1 - \\bar{x}_2}{s\\sqrt{2/n}} = d \\cdot \\sqrt{\\frac{n}{2}}, \\qquad d = \\frac{\\bar{x}_1 - \\bar{x}_2}{s}$$"
-    )),
+    # PROTOTYP wzory: t przez d ze znacznikami (d w kolorze efektu, jak odczyty rozdziału)
+    lc_formula_annotated(
+      "⟦1|t⟧ = \\frac{\\bar{x}_1 - \\bar{x}_2}{s\\sqrt{2/n}} = ⟦2|d⟧ \\cdot \\sqrt{\\frac{⟦3|n⟧}{2}}, \\qquad d = \\frac{⟦4|\\bar{x}_1 - \\bar{x}_2⟧}{⟦5|s⟧}",
+      notes  = list("statystyka t", "wielkość efektu", "liczebność grupy",
+                    "różnica średnich", "odchylenie standardowe"),
+      colors = c("indygo", "wrzos", "szalwia", "accent", "grafit"),
+      above  = c(4)
+    ),
 
     lc_p("Ten sam efekt d daje tym większe t i tym mniejszą ", gloss("p-wartość"), ", im
       większa jest próba. Przy dostatecznie dużym n każda niezerowa różnica
@@ -104,9 +149,14 @@ ch10_ui <- list(
       niezależnych z rozdziału 08 w mianowniku stoi odchylenie standardowe
       połączone z obu grup."),
 
-    lc_formula_box(withMathJax(
-      "$$d = \\frac{\\bar{x}_1 - \\bar{x}_2}{s_p}, \\qquad s_p = \\sqrt{\\frac{(n_1 - 1)\\,s_1^2 + (n_2 - 1)\\,s_2^2}{n_1 + n_2 - 2}}$$"
-    )),
+    # PROTOTYP wzory: d Cohena ze znacznikami
+    lc_formula_annotated(
+      "⟦1|d⟧ = \\frac{⟦2|\\bar{x}_1 - \\bar{x}_2⟧}{⟦3|s_p⟧}, \\qquad s_p = \\sqrt{\\frac{(⟦4|n_1⟧ - 1)\\,⟦5|s_1^2⟧ + (n_2 - 1)\\,s_2^2}{n_1 + n_2 - 2}}",
+      notes  = list("d Cohena", "różnica średnich", "połączone odchylenie standardowe",
+                    "liczebność grupy", "wariancja w grupie"),
+      colors = c("wrzos", "accent", "grafit", "szalwia", "terakota"),
+      above  = c(2, 4, 5)
+    ),
 
     lc_p("W teście t jednej próby z rozdziału 04 porównujemy średnią z wartością
       odniesienia \\(\\mu_0\\), a w teście dla ", gloss("próby zależne", "prób zależnych"), " z rozdziału 08
@@ -196,9 +246,8 @@ ch10_ui <- list(
       od -1 do +1. Test korelacji sprawdzał tylko, czy r z próby różni się od
       zera bardziej, niż wynikałoby z przypadku."),
 
-    lc_formula_box(withMathJax(
-      "$$r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum (x_i - \\bar{x})^2 \\cdot \\sum (y_i - \\bar{y})^2}}$$"
-    )),
+    # PROTOTYP wzory: ten sam wzór na r co w rozdziale 06
+    ch4_r_formula(),
 
     lc_p("Łatwiejszy do interpretacji jest często ",
       gloss("współczynnik determinacji", "kwadrat korelacji r²"), ". Mówi on,
@@ -280,9 +329,13 @@ ch10_ui <- list(
       i przez rozmiar tabeli, dzięki czemu przyjmuje wartości od 0 (brak
       związku) do 1 (pełna zależność)."),
 
-    lc_formula_box(withMathJax(
-      "$$V = \\sqrt{\\frac{\\chi^2}{n \\cdot (\\min(r, c) - 1)}}$$"
-    )),
+    # PROTOTYP wzory: V Cramera ze znacznikami
+    lc_formula_annotated(
+      "⟦1|V⟧ = \\sqrt{\\frac{⟦2|\\chi^2⟧}{⟦3|n⟧ \\cdot (⟦4|\\min(r, c)⟧ - 1)}}",
+      notes  = list("V Cramera", "statystyka χ²", "liczba obserwacji", "mniejszy wymiar tabeli"),
+      colors = c("wrzos", "indygo", "szalwia", "grafit"),
+      above  = c(2)
+    ),
 
     lc_p("We wzorze \\(r\\) i \\(c\\) oznaczają liczbę wierszy i kolumn tabeli.
       Dla tabeli 2×2 V jest równe współczynnikowi φ (fi). Gdy obie grupy są
@@ -351,9 +404,13 @@ ch10_ui <- list(
       zmienności wyników tłumaczy badany czynnik. To ta sama idea co r²
       w korelacji."),
 
-    lc_formula_box(withMathJax(
-      "$$\\eta^2 = \\frac{SS_{\\text{między}}}{SS_{\\text{całkowita}}}$$"
-    )),
+    # PROTOTYP wzory: η² ze znacznikami (bursztyn = między, jak w ANOVA)
+    lc_formula_annotated(
+      "⟦1|\\eta^2⟧ = \\frac{⟦2|SS_{\\text{między}}⟧}{⟦3|SS_{\\text{całkowita}}⟧}",
+      notes  = list("eta kwadrat", "zmienność między grupami", "zmienność całkowita"),
+      colors = c("wrzos", "bursztyn", "grafit"),
+      above  = c(2)
+    ),
 
     lc_p("Programy podają kilka wariantów tej miary: η² częściowe (ang. partial)
       i η² uogólnione. W jednoczynnikowej ANOVA dla grup
@@ -447,6 +504,14 @@ ch10_ui <- list(
       prawdziwa, a brak podstaw do odrzucenia H₀ nie dowodzi, że jest ona
       prawdziwa. Potem poznaliśmy sześć testów dla różnych typów zmiennych,
       a na koniec miary, które mówią, jak duży jest wykryty efekt."),
+
+    # PROTOTYP mapa-testow: sześć testów wykładu w jednym schemacie
+    figure_panel(
+      label = "Ryc. 10.6",
+      title = "Jeden schemat, sześć testów",
+      width_mode = "wide",
+      ch10_test_map()
+    ),
 
     lc_p("Pozostaje praktyczne pytanie: który test wybrać do konkretnych danych.
       Odpowiada na nie drzewo decyzyjne w następnym rozdziale. Prowadzi ono

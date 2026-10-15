@@ -205,13 +205,17 @@ ch1d_ui <- list(
       prawdopodobieństwo wykrycia efektu, który naprawdę istnieje, nazywamy ",
       gloss("moc testu", "mocą testu"), "."),
 
-    lc_formula_box(withMathJax(
-      "$$\\begin{aligned}
-      \\alpha &= P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ prawdziwa}) \\\\
-      \\beta &= P(\\text{nie odrzucamy } H_0 \\mid H_0 \\text{ fałszywa}) \\\\
-      \\text{moc} = 1 - \\beta &= P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ fałszywa})
-      \\end{aligned}$$"
-    )),
+    # PROTOTYP wzory: α, β i moc ze znacznikami (kolory jak na Ryc. 3.1)
+    lc_formula_annotated(
+      "\\begin{aligned}
+      P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ prawdziwa}) &= ⟦1|\\alpha⟧ \\\\
+      P(\\text{nie odrzucamy } H_0 \\mid H_0 \\text{ fałszywa}) &= ⟦2|\\beta⟧ \\\\
+      P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ fałszywa}) &= ⟦3|1 - \\beta⟧
+      \\end{aligned}",
+      notes  = list("błąd I rodzaju", "błąd II rodzaju", "moc testu"),
+      colors = c("accent", "grafit", "szalwia"),
+      side   = "right"
+    ),
 
     lc_p("Oba prawdopodobieństwa są warunkowe i opisują procedurę, a nie pojedynczy
       wynik, podobnie jak ", gloss("poziom ufności"), " w wykładzie 03. \\(\\alpha = 0.05\\)
@@ -306,9 +310,13 @@ ch1d_ui <- list(
       otrzymalibyśmy wynik co najmniej tak skrajny jak zaobserwowany. Dla różnicy
       średnich w eksperymencie z telefonem:"),
 
-    lc_formula_box(withMathJax(
-      "$$p = P\\left(|\\bar{X}_A - \\bar{X}_B| \\geq |d_{\\text{obs}}| \\;\\middle|\\; H_0\\right)$$"
-    )),
+    # PROTOTYP wzory: definicja p-wartości ze znacznikami
+    lc_formula_annotated(
+      "⟦1|p⟧ = P\\left(⟦2|\\left|\\bar{X}_A - \\bar{X}_B\\right|⟧ \\geq ⟦3|\\left|d_{\\text{obs}}\\right|⟧ \\;\\middle|\\; ⟦4|H_0⟧\\right)",
+      notes  = list("p-wartość", "różnica w powtórzeniu", "różnica z naszej próby", "założenie"),
+      colors = c("bursztyn", "niebo", "accent", "grafit"),
+      above  = c(2)
+    ),
 
     lc_p("gdzie \\(d_{\\text{obs}}\\) to różnica średnich zaobserwowana w naszej
       próbie. Wartość bezwzględna oznacza, że „co najmniej tak skrajny” liczymy
@@ -417,8 +425,22 @@ ch1d_ui <- list(
       \\(p \\geq \\alpha\\), nie mamy podstaw do jej odrzucenia. p-wartość spada
       poniżej \\(\\alpha\\) dokładnie wtedy, gdy wynik trafia do obszaru
       odrzucenia, więc ta reguła odrzuca prawdziwą H₀ z prawdopodobieństwem
-      \\(\\alpha\\). Werdykt formułuje się w ustalony sposób. Gdy
-      \\(p < \\alpha\\):"),
+      \\(\\alpha\\)."),
+
+    # PROTOTYP p-alfa: pole p-wartości na tle pola α, dwa wyniki obok siebie
+    figure_panel(
+      label = "Ryc. 3.4a",
+      title = "p-wartość a α",
+      width_mode = "wide",
+      lc_plot("ch1d_palpha_plot", ratio = "2.4/1", max_height = "320px")
+    ),
+
+    # PROTOTYP p-alfa: odczyt ryciny (nowy akapit, do akceptacji)
+    lc_p("Po lewej statystyka 2.17 leży dalej od zera niż wartość krytyczna
+      1.96, więc jej ogony są węższe niż pole α: p = 0.030 < 0.05. Po prawej
+      statystyka 1.50 nie dochodzi do wartości krytycznej, a jej ogony
+      obejmują całe pole α i więcej: p = 0.134. Werdykt formułuje się
+      w ustalony sposób. Gdy \\(p < \\alpha\\):"),
 
     lc_formula_box(
       tags$em("„Na przyjętym poziomie istotności α odrzucamy hipotezę zerową
@@ -492,6 +514,48 @@ ch1d_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
+
+  # PROTOTYP p-alfa: dwa wyniki (2.17 i 1.50) na rozkładzie N(0, 1) pod H₀.
+  # Pole pod krzywą = p-wartość; paski pod osią: zasięg α (burgund) i p (bursztyn).
+  zoom_plot_server("ch1d_palpha_plot", reactive({
+    crit <- qnorm(0.975)
+    stats <- c(2.17, 1.50)
+    lab <- factor(sprintf("wynik %.2f", stats), levels = sprintf("wynik %.2f", stats))
+    x <- seq(-4, 4, length.out = 801)
+    curve_df <- do.call(rbind, lapply(seq_along(stats), function(i)
+      data.frame(panel = lab[i], x = x, y = dnorm(x))))
+    p_df <- do.call(rbind, lapply(seq_along(stats), function(i) {
+      d <- data.frame(panel = lab[i], x = x, y = dnorm(x))
+      d <- d[abs(d$x) >= stats[i], ]
+      d$side <- ifelse(d$x < 0, "l", "r")
+      d
+    }))
+    bars <- rbind(
+      data.frame(panel = lab, what = "α", y = -0.03,
+                 x0 = crit, x1 = 4),
+      data.frame(panel = lab, what = "p", y = -0.06,
+                 x0 = stats, x1 = 4)
+    )
+    bars <- rbind(bars, transform(bars, x0 = -x1, x1 = -x0))
+    obs <- data.frame(panel = lab, x = stats)
+
+    ggplot() +
+      geom_area(data = p_df, aes(x, y, group = side), fill = col_pvalue, alpha = 0.55) +
+      geom_line(data = curve_df, aes(x, y), color = col_h0, linewidth = 1.1) +
+      geom_vline(xintercept = c(-crit, crit), linetype = "dashed", color = col_reject) +
+      geom_segment(data = obs, aes(x = x, xend = x, y = 0, yend = dnorm(x)),
+                   color = upwr_secondary, linewidth = 1) +
+      geom_segment(data = bars, aes(x = x0, xend = x1, y = y, yend = y, color = what),
+                   linewidth = 3, lineend = "butt") +
+      scale_color_manual(values = c("α" = col_reject, "p" = col_pvalue),
+                         labels = c("α" = "obszar odrzucenia (α = 0.05)", "p" = "p-wartość"),
+                         name = NULL) +
+      facet_wrap(~panel, nrow = 1) +
+      scale_x_continuous(breaks = c(-crit, 0, crit), labels = c("-1.96", "0", "1.96")) +
+      labs(x = "Statystyka testowa", y = NULL) +
+      theme(legend.position = "top", axis.text.y = element_blank(),
+            panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
+  }))
 
   observe({
     session$sendCustomMessage("ws_pvalue_chart", list(

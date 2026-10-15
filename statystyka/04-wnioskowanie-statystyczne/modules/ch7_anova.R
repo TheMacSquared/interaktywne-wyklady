@@ -104,9 +104,13 @@ ch7_ui <- list(
       jako niezależne, prawdopodobieństwo co najmniej jednego fałszywego alarmu
       w całej serii wynosi:"),
 
-    lc_formula_box(withMathJax(
-      "$$m = \\frac{k(k-1)}{2}, \\qquad P(\\text{co najmniej jeden fałszywy alarm}) = 1 - (1 - \\alpha)^m$$"
-    )),
+    # PROTOTYP wzory: liczba par i ryzyko serii testów ze znacznikami
+    lc_formula_annotated(
+      "⟦1|m⟧ = \\frac{⟦2|k⟧(k-1)}{2}, \\qquad ⟦3|P(\\text{co najmniej jeden fałszywy alarm})⟧ = 1 - (1 - ⟦4|\\alpha⟧)^m",
+      notes  = list("liczba par", "liczba grup", "ryzyko w całej serii", "poziom istotności"),
+      colors = c("indygo", "szalwia", "bursztyn", "accent"),
+      above  = c(3)
+    ),
 
     lc_p("Panel rysuje grupy jako wierzchołki, a każdą parę do porównania jako
       odcinek. Obok podaje liczbę testów i ryzyko obliczone z tego wzoru."),
@@ -166,9 +170,14 @@ ch7_ui <- list(
       leżą od średniej własnej grupy). ", gloss("statystyka F", "Statystyka F"),
       " to stosunek tych dwóch części:"),
 
-    lc_formula_box(withMathJax(
-      "$$F = \\frac{\\text{zmienność między grupami}}{\\text{zmienność wewnątrz grup}} = \\frac{\\sum_{j=1}^{k} n_j\\,(\\bar{x}_j - \\bar{x})^2 \\,/\\, (k-1)}{\\sum_{j=1}^{k} \\sum_{i=1}^{n_j} (x_{ij} - \\bar{x}_j)^2 \\,/\\, (n-k)}$$"
-    )),
+    # PROTOTYP wzory: statystyka F ze znacznikami. Licznik i mianownik w kolorach
+    # scen (bursztyn = między, niebo = wewnątrz); opisy zastępują słowny ułamek.
+    lc_formula_annotated(
+      "⟦1|F⟧ = \\frac{⟦2|\\sum_{j=1}^{k} n_j\\,(\\bar{x}_j - \\bar{x})^2 \\,/\\, (k-1)⟧}{⟦3|\\sum_{j=1}^{k} \\sum_{i=1}^{n_j} (x_{ij} - \\bar{x}_j)^2 \\,/\\, (n-k)⟧}",
+      notes  = list("statystyka F", "zmienność między grupami", "zmienność wewnątrz grup"),
+      colors = c("indygo", "bursztyn", "niebo"),
+      above  = c(2)
+    ),
 
     lc_p("Tu \\(\\bar{x}_j\\) i \\(n_j\\) to średnia i liczebność j-tej grupy,
       \\(\\bar{x}\\) — średnia wszystkich n obserwacji. Licznik i mianownik to ",

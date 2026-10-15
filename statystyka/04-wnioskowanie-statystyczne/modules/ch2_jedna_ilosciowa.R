@@ -75,8 +75,13 @@ ch2_ui <- list(
       t-Studenta"), " z \\(n - 1\\) ", gloss("stopnie swobody", "stopniami swobody"), ". Tak powstaje statystyka ",
       gloss("test t", "testu t"), " jednej próby:"),
 
-    lc_formula_box(
-      withMathJax("$$t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}, \\quad df = n - 1$$")
+    # PROTOTYP wzory: statystyka t jednej próby ze znacznikami
+    lc_formula_annotated(
+      "⟦1|t⟧ = \\frac{⟦2|\\bar{x}⟧ - ⟦3|\\mu_0⟧}{⟦4|s⟧ / \\sqrt{⟦5|n⟧}}, \\quad ⟦6|df⟧ = n - 1",
+      notes  = list("statystyka t", "średnia z próby", "wartość referencyjna",
+                    "odchylenie standardowe", "liczba obserwacji", "stopnie swobody"),
+      colors = c("indygo", "accent", "niebo", "wrzos", "szalwia", "kurkuma"),
+      above  = c(2, 3)
     ),
 
     lc_p("Licznik mówi, jak daleko średnia z próby leży od \\(\\mu_0\\)
@@ -177,8 +182,12 @@ ch2_ui <- list(
       p-wartość. W teście dwustronnym jest to pole obu ogonów rozkładu
       poza \\(\\pm|t|\\):"),
 
-    lc_formula_box(
-      withMathJax("$$p = P\\left(|T| \\geq |t| \\;\\middle|\\; H_0\\right), \\qquad T \\sim t_{n-1}$$")
+    # PROTOTYP wzory: dwustronna p-wartość testu t ze znacznikami
+    lc_formula_annotated(
+      "⟦1|p⟧ = P\\left(⟦2|\\left|T\\right|⟧ \\geq ⟦3|\\left|t\\right|⟧ \\;\\middle|\\; H_0\\right), \\qquad T \\sim ⟦4|t_{n-1}⟧",
+      notes  = list("p-wartość", "statystyka przy H₀", "statystyka z próby", "rozkład t-Studenta"),
+      colors = c("bursztyn", "niebo", "indygo", "kurkuma"),
+      above  = c(2)
     ),
 
     lc_p("Jak w rozdziale 03, p-wartość to prawdopodobieństwo, że przy
@@ -207,9 +216,26 @@ ch2_ui <- list(
       dalej od \\(\\bar{x}\\) niż \\(t^* \\cdot SE\\). To dwa zapisy tego
       samego warunku:"),
 
-    lc_formula_box(
-      withMathJax("$$|t| \\geq t^*_{\\alpha/2,\\, n-1} \\iff \\mu_0 \\notin \\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}$$")
+    # PROTOTYP wzory: równoważność testu i przedziału ze znacznikami
+    lc_formula_annotated(
+      "⟦1|\\left|t\\right|⟧ \\geq ⟦2|t^*_{\\alpha/2,\\, n-1}⟧ \\iff ⟦3|\\mu_0⟧ \\notin ⟦4|\\bar{x} \\pm t^*_{\\alpha/2,\\, n-1} \\cdot \\frac{s}{\\sqrt{n}}⟧",
+      notes  = list("statystyka z próby", "wartość krytyczna", "wartość referencyjna", "przedział ufności"),
+      colors = c("indygo", "terakota", "niebo", "accent"),
+      above  = c(1, 2)
     ),
+
+    # PROTOTYP ci-test: ta sama próba jako przedział, μ₀ w środku albo poza nim
+    figure_panel(
+      label = "Ryc. 4.1a",
+      title = "Test t a przedział ufności",
+      width_mode = "text",
+      lc_plot("ch2_ci_test_plot", ratio = "2.6/1", max_height = "240px")
+    ),
+
+    # PROTOTYP ci-test: odczyt ryciny (nowy akapit, do akceptacji)
+    lc_p("Przy n = 40 i s = 13 pkt przedział sięga około 4.2 pkt w każdą stronę
+      od \\(\\bar{x}\\). Średnia 72 pkt daje t = 0.97 i przedział, który obejmuje
+      70. Średnia 75 pkt daje t = 2.43, a przedział zaczyna się dopiero powyżej 70."),
 
     lc_p("Test dwustronny na poziomie \\(\\alpha\\) odrzuca H₀: μ = μ₀
       dokładnie wtedy, gdy ", gloss("przedział ufności"), " na poziomie
@@ -337,6 +363,28 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
+
+  # PROTOTYP ci-test: dwie próby (n = 40, s = 13) wokół μ₀ = 70. Przedział
+  # obejmuje μ₀ → szałwia (brak podstaw), nie obejmuje → burgund (odrzucamy).
+  zoom_plot_server("ch2_ci_test_plot", reactive({
+    mu0 <- 70; se <- 13 / sqrt(40); tcrit <- qt(0.975, 39)
+    d <- data.frame(xbar = c(72, 75))
+    d$lo <- d$xbar - tcrit * se
+    d$hi <- d$xbar + tcrit * se
+    d$row <- factor(sprintf("x̄ = %.0f", d$xbar), levels = rev(sprintf("x̄ = %.0f", d$xbar)))
+    d$hit <- ifelse(d$lo <= mu0 & d$hi >= mu0, "in", "out")
+    ggplot(d, aes(y = row)) +
+      geom_vline(xintercept = mu0, linetype = "dashed", color = upwr_secondary, linewidth = 0.8) +
+      geom_segment(aes(x = lo, xend = hi, yend = row, color = hit), linewidth = 3.2,
+                   lineend = "round") +
+      geom_point(aes(x = xbar, color = hit), size = 5, shape = 21, fill = upwr_panel, stroke = 2) +
+      scale_color_manual(values = c(`in` = col_accept, out = col_reject), guide = "none") +
+      scale_x_continuous(breaks = seq(64, 80, 2),
+                         labels = function(b) ifelse(b == mu0, "μ₀ = 70", b)) +
+      coord_cartesian(xlim = c(64, 80)) +
+      labs(x = "Średnia koncentracja (pkt)", y = NULL) +
+      theme(panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
+  }))
 
   # --- Dane scenariuszy ---
   scenario_params <- list(

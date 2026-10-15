@@ -2,6 +2,16 @@
 # CHAPTER 6: Dwie zmienne ilościowe (korelacja Pearsona)
 # ============================================================================
 
+# PROTOTYP wzory: wzór na r ze znacznikami (ten sam w rozdziałach 06 i 10).
+ch4_r_formula <- function() {
+  lc_formula_annotated(
+    "⟦1|r⟧ = \\frac{⟦2|\\sum⟧ (⟦3|x_i⟧ - \\bar{x})(⟦4|y_i⟧ - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}",
+    notes  = list("korelacja z próby", "suma", "i-ta obserwacja x", "i-ta obserwacja y"),
+    colors = c("accent", "bursztyn", "niebo", "wrzos"),
+    above  = c(2, 3, 4)
+  )
+}
+
 ch4_ui <- list(
   id = "ch-korelacja", num = "06", title = "Korelacja",
   content = tagList(
@@ -39,9 +49,8 @@ ch4_ui <- list(
       towarzyszą niskie wartości drugiej. Jedną liczbą opisuje to współczynnik ",
       gloss("korelacja Pearsona", "korelacji Pearsona"), " \\(r\\):"),
 
-    lc_formula_box(withMathJax(
-      "$$r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum(x_i-\\bar{x})^2 \\cdot \\sum(y_i-\\bar{y})^2}}$$"
-    )),
+    # PROTOTYP wzory: współczynnik Pearsona ze znacznikami
+    ch4_r_formula(),
 
     lc_p("Licznik sumuje iloczyny odchyleń od średnich. Punkt, który leży powyżej
       średniej w obu zmiennych albo poniżej w obu, dodaje do sumy wartość
@@ -123,6 +132,19 @@ ch4_ui <- list(
       w 95% prób. Test korelacji rozstrzyga, czy obserwowane \\(r\\) leży na tyle
       daleko od zera, że trudno je wytłumaczyć samym losowaniem próby."),
 
+    # PROTOTYP r-pod-h0: rozkład r z próby przy ρ = 0 dla trzech liczebności
+    figure_panel(
+      label = "Ryc. 6.3a",
+      title = "r z próby, gdy związku nie ma",
+      width_mode = "text",
+      lc_plot("ch4_r_null_plot", ratio = "1.5/1", max_height = "380px")
+    ),
+
+    # PROTOTYP r-pod-h0: odczyt ryciny (nowy akapit, do akceptacji)
+    lc_p("Przy 15 parach 95% prób daje \\(r\\) między -0.51 a 0.51, przy 40
+      parach między -0.31 a 0.31, przy 100 między -0.20 a 0.20. Burgundowe ogony
+      to wartości, które test dwustronny na poziomie 0.05 uzna za sygnał związku."),
+
     lc_p(gloss("hipoteza zerowa", "Hipoteza zerowa"), " mówi, że w populacji nie
       ma związku liniowego. ", gloss("hipoteza alternatywna", "Hipoteza alternatywna"),
       " zależy od pytania, tak samo jak w teście t i w teście proporcji:"),
@@ -141,9 +163,13 @@ ch4_ui <- list(
       gloss("statystyka testowa", "statystyka testowa"), " jest ta sama:
       \\(r\\) przeliczone na skalę rozkładu t."),
 
-    lc_formula_box(withMathJax(
-      "$$t = \\frac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}, \\qquad df = n - 2$$"
-    )),
+    # PROTOTYP wzory: statystyka t testu korelacji ze znacznikami
+    lc_formula_annotated(
+      "⟦1|t⟧ = \\frac{⟦2|r⟧\\sqrt{⟦3|n⟧-2}}{\\sqrt{1-r^2}}, \\qquad ⟦4|df⟧ = n - 2",
+      notes  = list("statystyka t", "korelacja z próby", "liczba par", "stopnie swobody"),
+      colors = c("indygo", "accent", "szalwia", "kurkuma"),
+      above  = c(2, 3)
+    ),
 
     lc_p("Gdy H₀: \\(\\rho = 0\\) jest prawdziwa, statystyka \\(t\\) ma ",
       gloss("rozkład t-Studenta"), " o \\(n - 2\\) ",
@@ -521,6 +547,33 @@ ch4_ui <- list(
 # ============================================================================
 
 ch4_server <- function(input, output, session) {
+
+  # PROTOTYP r-pod-h0: dokładna gęstość r przy ρ = 0,
+  # f(r) ∝ (1 - r²)^((n - 4) / 2); ogony poza krytycznym |r| (α = 0.05) w burgundzie.
+  zoom_plot_server("ch4_r_null_plot", reactive({
+    ns <- c(15, 40, 100)
+    lab <- factor(paste("n =", ns), levels = paste("n =", ns))
+    r <- seq(-0.999, 0.999, length.out = 999)
+    dens <- do.call(rbind, lapply(seq_along(ns), function(i) {
+      n <- ns[i]
+      y <- (1 - r^2)^((n - 4) / 2) / beta(0.5, (n - 2) / 2)
+      tc <- qt(0.975, n - 2)
+      rc <- tc / sqrt(tc^2 + n - 2)
+      data.frame(panel = lab[i], r = r, y = y, tail = abs(r) >= rc,
+                 side = ifelse(r < 0, "l", "r"))
+    }))
+    tails <- dens[dens$tail, ]
+    ggplot(dens, aes(r, y)) +
+      geom_area(data = tails, aes(group = side), fill = col_reject, alpha = 0.35) +
+      geom_line(color = col_h0, linewidth = 1.1) +
+      geom_vline(xintercept = 0, color = upwr_reference, linetype = "dashed") +
+      facet_wrap(~panel, ncol = 1, scales = "free_y", strip.position = "left") +
+      scale_x_continuous(breaks = seq(-1, 1, 0.25), limits = c(-1, 1)) +
+      labs(x = "r z próby", y = NULL) +
+      theme(axis.text.y = element_blank(), panel.grid.major.y = element_blank(),
+            panel.grid.minor = element_blank(), strip.placement = "outside",
+            strip.text.y.left = element_text(angle = 0))
+  }))
 
   # --- Parametry scenariuszy ---
   scenario_params <- list(
