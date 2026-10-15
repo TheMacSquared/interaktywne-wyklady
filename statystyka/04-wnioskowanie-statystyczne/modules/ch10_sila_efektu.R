@@ -2,46 +2,6 @@
 # CHAPTER 10: Siła efektu
 # ============================================================================
 
-# PROTOTYP mapa-testow: wiersz = test, kolumny = kroki schematu testu.
-# Kolory kolumn jak we wzorach: H₀ niebo, statystyka indygo, efekt wrzos.
-ch10_test_map <- function() {
-  tests <- list(
-    c("t jednej próby", "μ = μ₀",          "t",  "t(n − 1)",             "d"),
-    c("dwumianowy",     "p = p₀",          "k",  "B(n, p₀)",             "p̂ − p₀"),
-    c("korelacja",      "ρ = 0",           "t",  "t(n − 2)",             "r"),
-    c("χ²",             "niezależność",    "χ²", "χ²((r − 1)(c − 1))",   "V"),
-    c("t dwóch grup",   "μ₁ = μ₂",         "t",  "t (df Welcha)",        "d"),
-    c("ANOVA",          "μ₁ = … = μₖ",     "F",  "F(k − 1, n − k)",      "η²")
-  )
-  heads <- c("Test", "H₀", "Statystyka", "Rozkład przy H₀", "Siła efektu")
-  cls <- c("tm-name", "tm-h0", "tm-stat", "tm-dist", "tm-eff")
-  tags$div(class = "tm", role = "table",
-    `aria-label` = "Sześć testów: hipoteza zerowa, statystyka, jej rozkład przy H₀ i miara siły efektu.",
-    tags$style(HTML("
-      .tm { display: grid; grid-template-columns: 1.25fr 1.25fr .8fr 1.5fr .9fr;
-        gap: 6px 8px; max-width: 900px; margin: 8px auto 4px; font: 15px/1.3 var(--upwr-sans); }
-      .tm-head { font: 600 11px/1.2 var(--upwr-mono); letter-spacing: .06em; text-transform: uppercase;
-        color: var(--upwr-ink-soft); padding: 0 10px 4px; position: relative; }
-      .tm-head:not(:first-child):not(:last-child)::after { content: '→'; position: absolute;
-        right: -8px; top: -2px; font-size: 14px; color: var(--upwr-reference); }
-      .tm-cell { padding: 8px 10px; border-radius: 6px; background: var(--upwr-surface-sunken);
-        border-left: 4px solid var(--tm-c, var(--upwr-rule)); color: var(--upwr-ink); }
-      .tm-name { --tm-c: var(--upwr-rule); font-weight: 600; background: transparent; }
-      .tm-h0   { --tm-c: var(--upwr-cat-niebo); }
-      .tm-stat { --tm-c: var(--upwr-cat-indygo); font-weight: 600; text-align: center; }
-      .tm-dist { --tm-c: var(--upwr-cat-niebo); }
-      .tm-eff  { --tm-c: var(--upwr-cat-wrzos); font-weight: 600; text-align: center; }
-      @media (max-width: 640px) {
-        .tm { grid-template-columns: 1fr 1fr .6fr; font-size: 13px; }
-        .tm-head:nth-child(4), .tm-head:nth-child(5), .tm-dist, .tm-eff { display: none; }
-      }
-    ")),
-    lapply(seq_along(heads), function(j) tags$div(class = "tm-head", role = "columnheader", heads[j])),
-    lapply(tests, function(row) lapply(seq_along(row), function(j)
-      tags$div(class = paste("tm-cell", cls[j]), role = "cell", row[j])))
-  )
-}
-
 ch10_ui <- list(
   id = "ch-sila-efektu", num = "10", title = "Siła efektu",
   content = tagList(
@@ -504,14 +464,6 @@ ch10_ui <- list(
       prawdziwa, a brak podstaw do odrzucenia H₀ nie dowodzi, że jest ona
       prawdziwa. Potem poznaliśmy sześć testów dla różnych typów zmiennych,
       a na koniec miary, które mówią, jak duży jest wykryty efekt."),
-
-    # PROTOTYP mapa-testow: sześć testów wykładu w jednym schemacie
-    figure_panel(
-      label = "Ryc. 10.6",
-      title = "Jeden schemat, sześć testów",
-      width_mode = "wide",
-      ch10_test_map()
-    ),
 
     lc_p("Pozostaje praktyczne pytanie: który test wybrać do konkretnych danych.
       Odpowiada na nie drzewo decyzyjne w następnym rozdziale. Prowadzi ono
