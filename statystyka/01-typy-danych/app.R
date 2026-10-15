@@ -371,8 +371,8 @@ app_extras <- tagList(
 
   /* PROTOTYP mapa-narzedzi: siatka statystyk (Ryc. 5.3a) */
   .tmap {
-    display: grid; grid-template-columns: minmax(110px, 0.9fr) repeat(3, minmax(0, 1fr));
-    gap: 6px; max-width: 640px; margin: 8px auto 4px;
+    display: grid; grid-template-columns: minmax(110px, 0.9fr) repeat(2, minmax(0, 1fr));
+    gap: 6px; max-width: 520px; margin: 8px auto 4px;
   }
   .tmap-head {
     text-align: center; font-weight: 700; font-size: 14px; color: var(--upwr-ink);
@@ -395,7 +395,7 @@ app_extras <- tagList(
   }
   .tmap-none { color: var(--upwr-reference); font-size: 18px; }
   @media (max-width: 600px) {
-    .tmap { grid-template-columns: 78px repeat(3, minmax(0, 1fr)); gap: 4px; }
+    .tmap { grid-template-columns: 78px repeat(2, minmax(0, 1fr)); gap: 4px; }
     .tmap-row, .tmap-head { font-size: 11px; }
     .tmap-chip { font-size: 11px; padding: 2px 6px; }
   }

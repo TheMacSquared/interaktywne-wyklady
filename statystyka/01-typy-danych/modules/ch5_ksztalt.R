@@ -8,22 +8,18 @@ ch5_tools_map <- function() {
     tags$span(class = "tmap-chip",
       style = if (!is.null(color)) paste0("--tmap-c:", color, ";"), txt)
   }
-  none <- tags$span(class = "tmap-none", "—")
   cell <- function(...) tags$div(class = "tmap-cell", ...)
   tags$div(class = "tmap", role = "img",
-    `aria-label` = "Mapa narzędzi: położenie — średnia (wrażliwa), mediana i dominanta (odporne); rozrzut — odchylenie standardowe, wariancja, rozstęp (wrażliwe), IQR (odporny); kształt — skośność i kurtoza (wrażliwe).",
+    `aria-label` = "Mapa narzędzi: położenie — średnia (wrażliwa), mediana i dominanta (odporne); rozrzut — odchylenie standardowe, wariancja, rozstęp (wrażliwe), IQR (odporny).",
     tags$div(class = "tmap-corner"),
     tags$div(class = "tmap-head", "Położenie"),
     tags$div(class = "tmap-head", "Rozrzut"),
-    tags$div(class = "tmap-head", "Kształt"),
     tags$div(class = "tmap-row", "Wrażliwe na wartości skrajne"),
     cell(chip("średnia", "var(--upwr-accent)")),
     cell(chip("SD"), chip("wariancja"), chip("rozstęp")),
-    cell(chip("skośność"), chip("kurtoza")),
     tags$div(class = "tmap-row", "Odporne"),
     cell(chip("mediana", stat_colors[["Mediana"]]), chip("dominanta")),
-    cell(chip("IQR")),
-    cell(none)
+    cell(chip("IQR"))
   )
 }
 
@@ -235,7 +231,7 @@ ch5_ui <- list(
       Panel poniżej zestawia ", gloss("histogram"), ", ", gloss("wykres pudełkowy"), " i tabelę wszystkich
       omówionych statystyk dla wybranej zmiennej."),
 
-    # PROTOTYP mapa-narzedzi: położenie / rozrzut / kształt × wrażliwe / odporne
+    # PROTOTYP mapa-narzedzi: położenie / rozrzut × wrażliwe / odporne
     figure_panel(
       label = "Ryc. 5.3a",
       title = "Mapa narzędzi",
