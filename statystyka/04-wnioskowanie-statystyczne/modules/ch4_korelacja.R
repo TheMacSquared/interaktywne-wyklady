@@ -132,19 +132,6 @@ ch4_ui <- list(
       w 95% prób. Test korelacji rozstrzyga, czy obserwowane \\(r\\) leży na tyle
       daleko od zera, że trudno je wytłumaczyć samym losowaniem próby."),
 
-    # PROTOTYP r-pod-h0: rozkład r z próby przy ρ = 0 dla trzech liczebności
-    figure_panel(
-      label = "Ryc. 6.3a",
-      title = "r z próby, gdy związku nie ma",
-      width_mode = "text",
-      lc_plot("ch4_r_null_plot", ratio = "1.5/1", max_height = "380px")
-    ),
-
-    # PROTOTYP r-pod-h0: odczyt ryciny (nowy akapit, do akceptacji)
-    lc_p("Przy 15 parach 95% prób daje \\(r\\) między -0.51 a 0.51, przy 40
-      parach między -0.31 a 0.31, przy 100 między -0.20 a 0.20. Burgundowe ogony
-      to wartości, które test dwustronny na poziomie 0.05 uzna za sygnał związku."),
-
     lc_p(gloss("hipoteza zerowa", "Hipoteza zerowa"), " mówi, że w populacji nie
       ma związku liniowego. ", gloss("hipoteza alternatywna", "Hipoteza alternatywna"),
       " zależy od pytania, tak samo jak w teście t i w teście proporcji:"),
@@ -547,33 +534,6 @@ ch4_ui <- list(
 # ============================================================================
 
 ch4_server <- function(input, output, session) {
-
-  # PROTOTYP r-pod-h0: dokładna gęstość r przy ρ = 0,
-  # f(r) ∝ (1 - r²)^((n - 4) / 2); ogony poza krytycznym |r| (α = 0.05) w burgundzie.
-  zoom_plot_server("ch4_r_null_plot", reactive({
-    ns <- c(15, 40, 100)
-    lab <- factor(paste("n =", ns), levels = paste("n =", ns))
-    r <- seq(-0.999, 0.999, length.out = 999)
-    dens <- do.call(rbind, lapply(seq_along(ns), function(i) {
-      n <- ns[i]
-      y <- (1 - r^2)^((n - 4) / 2) / beta(0.5, (n - 2) / 2)
-      tc <- qt(0.975, n - 2)
-      rc <- tc / sqrt(tc^2 + n - 2)
-      data.frame(panel = lab[i], r = r, y = y, tail = abs(r) >= rc,
-                 side = ifelse(r < 0, "l", "r"))
-    }))
-    tails <- dens[dens$tail, ]
-    ggplot(dens, aes(r, y)) +
-      geom_area(data = tails, aes(group = side), fill = col_reject, alpha = 0.35) +
-      geom_line(color = col_h0, linewidth = 1.1) +
-      geom_vline(xintercept = 0, color = upwr_reference, linetype = "dashed") +
-      facet_wrap(~panel, ncol = 1, scales = "free_y", strip.position = "left") +
-      scale_x_continuous(breaks = seq(-1, 1, 0.25), limits = c(-1, 1)) +
-      labs(x = "r z próby", y = NULL) +
-      theme(axis.text.y = element_blank(), panel.grid.major.y = element_blank(),
-            panel.grid.minor = element_blank(), strip.placement = "outside",
-            strip.text.y.left = element_text(angle = 0))
-  }))
 
   # --- Parametry scenariuszy ---
   scenario_params <- list(

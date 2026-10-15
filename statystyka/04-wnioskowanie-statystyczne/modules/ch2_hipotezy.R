@@ -2,71 +2,6 @@
 # CHAPTER 2: Formułowanie hipotez statystycznych
 # ============================================================================
 
-# PROTOTYP hipotezy-os: podział osi parametru na część H₀ (niebo) i Hₐ (burgund).
-# Wiersz = para znaków; kropka = wartość odniesienia, należy zawsze do H₀.
-ch2h_hyp_axes <- function() {
-  rows <- list(
-    list(h0 = "=", ha = "≠", left = "ha", right = "ha"),
-    list(h0 = "≤", ha = ">", left = "h0", right = "ha"),
-    list(h0 = "≥", ha = "<", left = "ha", right = "h0")
-  )
-  row_ui <- function(r) {
-    tags$div(class = "hax-row",
-      tags$div(class = "hax-signs",
-        tags$span(class = "hax-h0", "H₀ ", r$h0),
-        tags$span(class = "hax-ha", "Hₐ ", r$ha)
-      ),
-      tags$div(class = "hax-track",
-        tags$span(class = paste("hax-seg hax-left", paste0("is-", r$left))),
-        tags$span(class = paste("hax-seg hax-right", paste0("is-", r$right))),
-        tags$span(class = "hax-dot")
-      )
-    )
-  }
-  tags$div(class = "hax", role = "img",
-    `aria-label` = "Trzy pary hipotez: przy = i ≠ H₀ to jeden punkt, a Hₐ obie strony; przy ≤ i > H₀ to punkt i wartości mniejsze, Hₐ wartości większe; przy ≥ i < odwrotnie.",
-    tags$style(HTML("
-      .hax { max-width: 560px; margin: 10px auto 4px; display: grid; gap: 14px; }
-      .hax-row { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 16px; }
-      .hax-signs { display: flex; flex-direction: column; gap: 2px;
-        font: 600 15px/1.25 var(--upwr-sans); }
-      .hax-h0 { color: var(--upwr-cat-niebo); }
-      .hax-ha { color: var(--upwr-accent); }
-      .hax-track { position: relative; height: 28px; }
-      .hax-seg { position: absolute; top: 11px; height: 6px; border-radius: 3px; }
-      .hax-left  { left: 0;   right: 50%; margin-right: 9px; }
-      .hax-right { left: 50%; right: 0;   margin-left: 9px; }
-      .hax-seg.is-h0 { background: var(--upwr-cat-niebo); }
-      .hax-seg.is-ha { background: var(--upwr-accent); }
-      .hax-left.is-h0  { margin-right: 0; }
-      .hax-right.is-h0 { margin-left: 0; }
-      .hax-dot { position: absolute; left: 50%; top: 14px; width: 16px; height: 16px;
-        transform: translate(-50%, -50%); border-radius: 50%;
-        background: var(--upwr-cat-niebo); border: 2px solid var(--upwr-surface); }
-      .hax-axis { display: grid; grid-template-columns: 112px 1fr; gap: 16px;
-        font: 13px/1.2 var(--upwr-sans); color: var(--upwr-ink-soft); }
-      .hax-axis-track { position: relative; border-top: 1px solid var(--upwr-rule);
-        padding-top: 6px; height: 22px; }
-      .hax-axis-ref { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; }
-      .hax-axis-ref::before { content: ''; position: absolute; left: 50%; top: -12px;
-        height: 6px; border-left: 1px solid var(--upwr-rule); }
-      .hax-axis-end { position: absolute; right: 0; }
-      @media (max-width: 600px) {
-        .hax-row, .hax-axis { grid-template-columns: 72px 1fr; gap: 10px; }
-        .hax-signs { font-size: 13px; }
-      }
-    ")),
-    lapply(rows, row_ui),
-    tags$div(class = "hax-axis",
-      tags$span(),
-      tags$div(class = "hax-axis-track",
-        tags$span(class = "hax-axis-ref", "wartość odniesienia"),
-        tags$span(class = "hax-axis-end", "parametr →")
-      )
-    )
-  )
-}
-
 ch2h_ui <- list(
   id = "ch-hipotezy", num = "02", title = "Od pytania do hipotezy",
   content = tagList(
@@ -192,14 +127,6 @@ ch2h_ui <- list(
     lc_p("Znaki łączą się w pary: równości w H₀ odpowiada „≠” w Hₐ, znakowi
       „≤” odpowiada „>”, a znakowi „≥” odpowiada „<”. W każdej parze dwa znaki
       razem pokrywają wszystkie możliwe wartości parametru."),
-
-    # PROTOTYP hipotezy-os: trzy pary znaków jako podział osi parametru
-    figure_panel(
-      label = "Ryc. 2.3a",
-      title = "Pary hipotez na osi parametru",
-      width_mode = "text",
-      ch2h_hyp_axes()
-    ),
 
     # ========================================================================
     # WIDGET 1: Galeria przykładów (język naturalny) — część dwustronna

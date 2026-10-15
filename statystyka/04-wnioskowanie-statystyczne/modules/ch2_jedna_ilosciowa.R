@@ -224,19 +224,6 @@ ch2_ui <- list(
       above  = c(1, 2)
     ),
 
-    # PROTOTYP ci-test: ta sama próba jako przedział, μ₀ w środku albo poza nim
-    figure_panel(
-      label = "Ryc. 4.1a",
-      title = "Test t a przedział ufności",
-      width_mode = "text",
-      lc_plot("ch2_ci_test_plot", ratio = "2.6/1", max_height = "240px")
-    ),
-
-    # PROTOTYP ci-test: odczyt ryciny (nowy akapit, do akceptacji)
-    lc_p("Przy n = 40 i s = 13 pkt przedział sięga około 4.2 pkt w każdą stronę
-      od \\(\\bar{x}\\). Średnia 72 pkt daje t = 0.97 i przedział, który obejmuje
-      70. Średnia 75 pkt daje t = 2.43, a przedział zaczyna się dopiero powyżej 70."),
-
     lc_p("Test dwustronny na poziomie \\(\\alpha\\) odrzuca H₀: μ = μ₀
       dokładnie wtedy, gdy ", gloss("przedział ufności"), " na poziomie
       \\(1 - \\alpha\\) nie obejmuje \\(\\mu_0\\). Przy α = 0.05 odpowiada mu
@@ -363,28 +350,6 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
-
-  # PROTOTYP ci-test: dwie próby (n = 40, s = 13) wokół μ₀ = 70. Przedział
-  # obejmuje μ₀ → szałwia (brak podstaw), nie obejmuje → burgund (odrzucamy).
-  zoom_plot_server("ch2_ci_test_plot", reactive({
-    mu0 <- 70; se <- 13 / sqrt(40); tcrit <- qt(0.975, 39)
-    d <- data.frame(xbar = c(72, 75))
-    d$lo <- d$xbar - tcrit * se
-    d$hi <- d$xbar + tcrit * se
-    d$row <- factor(sprintf("x̄ = %.0f", d$xbar), levels = rev(sprintf("x̄ = %.0f", d$xbar)))
-    d$hit <- ifelse(d$lo <= mu0 & d$hi >= mu0, "in", "out")
-    ggplot(d, aes(y = row)) +
-      geom_vline(xintercept = mu0, linetype = "dashed", color = upwr_secondary, linewidth = 0.8) +
-      geom_segment(aes(x = lo, xend = hi, yend = row, color = hit), linewidth = 3.2,
-                   lineend = "round") +
-      geom_point(aes(x = xbar, color = hit), size = 5, shape = 21, fill = upwr_panel, stroke = 2) +
-      scale_color_manual(values = c(`in` = col_accept, out = col_reject), guide = "none") +
-      scale_x_continuous(breaks = seq(64, 80, 2),
-                         labels = function(b) ifelse(b == mu0, "μ₀ = 70", b)) +
-      coord_cartesian(xlim = c(64, 80)) +
-      labs(x = "Średnia koncentracja (pkt)", y = NULL) +
-      theme(panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
-  }))
 
   # --- Dane scenariuszy ---
   scenario_params <- list(
