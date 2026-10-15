@@ -111,9 +111,19 @@ ch4_ui <- list(
       pierwiastek. Otrzymujemy ", gloss("odchylenie standardowe"), " \\(s\\),
       wyrażone w tych samych jednostkach co dane."),
 
-    lc_formula_box(withMathJax(
-      "$$s^2 = \\frac{1}{n-1} \\sum_{i=1}^{n} (x_i - \\bar{x})^2 \\qquad s = \\sqrt{s^2}$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|s^2⟧ = \\frac{1}{⟦2|n - 1⟧} ⟦3|\\sum_{i=1}^{n}⟧ (⟦4|x_i⟧ - ⟦5|\\bar{x}⟧)^2 \\qquad ⟦6|s⟧ = \\sqrt{s^2}",
+      notes = list(
+        "wariancja",
+        "liczba obserwacji minus 1",
+        "suma",
+        "i-ta obserwacja",
+        "średnia",
+        "odchylenie standardowe"
+      ),
+      colors = c("wrzos", "szalwia", "bursztyn", "niebo", "accent", "wrzos"),
+      above = c(3, 4, 6)
+    ),
 
     lc_p("Dzielimy przez \\(n - 1\\), a nie przez \\(n\\), bo odchylenia liczymy od
       średniej obliczonej z tej samej ", gloss("próba", "próby"), ". Średnia próby leży zawsze
@@ -211,9 +221,17 @@ ch4_ui <- list(
       1.5 IQR od pudełka. Punkty poza tymi granicami rysujemy osobno jako ",
       gloss("wartość odstająca", "wartości odstające"), "."),
 
-    lc_formula_box(withMathJax(
-      "$$\\text{IQR} = Q_3 - Q_1 \\qquad \\text{granice wąsów: } Q_1 - 1.5 \\cdot \\text{IQR}, \\;\\; Q_3 + 1.5 \\cdot \\text{IQR}$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|\\text{IQR}⟧ = ⟦2|Q_3⟧ - ⟦3|Q_1⟧ \\qquad \\text{granice wąsów: } Q_1 - ⟦4|1.5 \\cdot \\text{IQR}⟧, \\;\\; Q_3 + 1.5 \\cdot \\text{IQR}",
+      notes = list(
+        "rozstęp międzykwartylowy",
+        "trzeci kwartyl (75%)",
+        "pierwszy kwartyl (25%)",
+        "zasięg wąsów"
+      ),
+      colors = c("accent", "indygo", "indygo", "terakota"),
+      above = 2
+    ),
 
     lc_p("Panel buduje wykres krok po kroku na 30 pomiarach wzrostu. 27 z nich
       to losowe wartości wokół 170 cm, a trzy dodaliśmy celowo: 145, 198
@@ -348,9 +366,16 @@ ch4_ui <- list(
       gloss("współczynnik zmienności"), ". Wyraża on odchylenie standardowe
       jako procent średniej, więc nie ma jednostek."),
 
-    lc_formula_box(withMathJax(
-      "$$\\text{CV} = \\frac{s}{\\bar{x}} \\cdot 100\\%$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|\\text{CV}⟧ = ⟦2|s⟧ \\, / \\, ⟦3|\\bar{x}⟧ \\cdot 100\\%",
+      notes = list(
+        "współczynnik zmienności",
+        "odchylenie standardowe",
+        "średnia"
+      ),
+      colors = c("indygo", "wrzos", "accent"),
+      above = 2
+    ),
 
     lc_p("CV ma sens tylko dla zmiennych mierzonych na skali ilorazowej,
       z naturalnym zerem i wartościami dodatnimi, takich jak wzrost, waga

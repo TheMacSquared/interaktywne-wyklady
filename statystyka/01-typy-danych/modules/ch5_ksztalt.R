@@ -36,9 +36,18 @@ ch5_ui <- list(
       wyrażając jej odległość od średniej w ", gloss("odchylenie standardowe", "odchyleniach standardowych"), ",
       a następnie uśredniając trzecie potęgi tych odległości."),
 
-    lc_formula_box(withMathJax(
-      "$$g_1 = \\frac{1}{n} \\sum_{i=1}^{n} \\left( \\frac{x_i - \\bar{x}}{s} \\right)^3$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|g_1⟧ = \\frac{1}{⟦2|n⟧} ⟦3|\\sum_{i=1}^{n}⟧ \\left( ⟦4|\\frac{x_i - \\bar{x}}{s}⟧ \\right)^{⟦5|3⟧}",
+      notes = list(
+        "skośność",
+        "liczba obserwacji",
+        "suma",
+        "obserwacja standaryzowana",
+        "trzecia potęga"
+      ),
+      colors = c("indygo", "szalwia", "bursztyn", "niebo", "terakota"),
+      above = c(3, 4, 5)
+    ),
 
     lc_p("Trzecia potęga zachowuje znak, więc odchylenia w prawo i w lewo
       mogą się znosić. W rozkładzie symetrycznym znoszą się całkowicie
@@ -106,9 +115,17 @@ ch5_ui <- list(
       skośność, ale z czwartą potęgą. Od wyniku odejmujemy 3, czyli wartość
       dla ", gloss("rozkład normalny", "rozkładu normalnego"), ", i otrzymujemy kurtozę nadwyżkową."),
 
-    lc_formula_box(withMathJax(
-      "$$g_2 = \\frac{1}{n} \\sum_{i=1}^{n} \\left( \\frac{x_i - \\bar{x}}{s} \\right)^4 - 3$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|g_2⟧ = \\frac{1}{n} \\sum_{i=1}^{n} \\left( ⟦2|\\frac{x_i - \\bar{x}}{s}⟧ \\right)^{⟦3|4⟧} ⟦4|- 3⟧",
+      notes = list(
+        "kurtoza nadwyżkowa",
+        "obserwacja standaryzowana",
+        "czwarta potęga",
+        "kurtoza rozkładu normalnego"
+      ),
+      colors = c("indygo", "niebo", "terakota", "accent"),
+      above = 3
+    ),
 
     lc_p("Czwarta potęga jest zawsze dodatnia i bardzo silnie wzmacnia duże
       odległości: obserwacja odległa o 3 odchylenia standardowe wnosi 81,

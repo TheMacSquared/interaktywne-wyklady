@@ -38,9 +38,17 @@ ch2_ui <- list(
       kategorii w całej ", gloss("próba", "próbie"), " liczącej \\(n\\) obserwacji. Częstość względną
       podajemy jako ułamek albo jako procent."),
 
-    lc_formula_box(withMathJax(
-      "$$f_i = \\frac{n_i}{n}, \\qquad p_i = f_i \\cdot 100\\%$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|f_i⟧ = \\frac{⟦2|n_i⟧}{⟦3|n⟧}, \\qquad ⟦4|p_i⟧ = f_i \\cdot 100\\%",
+      notes = list(
+        "częstość względna",
+        "liczebność kategorii",
+        "liczba obserwacji",
+        "częstość w procentach"
+      ),
+      colors = c("accent", "niebo", "szalwia", "terakota"),
+      above = c(2, 4)
+    ),
 
     lc_p("Tabelę uzupełnia ", gloss("częstość skumulowana"), ": suma częstości
       od pierwszej kategorii do bieżącej, podawana zwykle w procentach. Panel poniżej buduje tabelę krok

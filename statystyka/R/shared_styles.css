@@ -2417,3 +2417,60 @@ mjx-container mjx-text {
   .lc-dm-card { transition: none; }
   .lc-dm-card.lc-dm-lifted { transform: none; }
 }
+
+/* Wzór ze znacznikami (lc_formula_annotated): kolorowe części, opisy pod
+   wzorem, strzałki rysuje R/lc_formula.js w warstwie .lc-fa-links */
+.lc-formula-box.lc-fa { position: relative; font-size: 1.3em; }
+.lc-fa-tex { position: relative; z-index: 1; }
+.lc-fa .lc-fa-p1 { color: var(--fa-1); }
+.lc-fa .lc-fa-p2 { color: var(--fa-2); }
+.lc-fa .lc-fa-p3 { color: var(--fa-3); }
+.lc-fa .lc-fa-p4 { color: var(--fa-4); }
+.lc-fa .lc-fa-p5 { color: var(--fa-5); }
+.lc-fa .lc-fa-p6 { color: var(--fa-6); }
+.lc-fa .lc-fa-p7 { color: var(--fa-7); }
+.lc-fa .lc-fa-p8 { color: var(--fa-8); }
+.lc-fa-notes {
+  position: relative; z-index: 1;
+  display: flex; justify-content: center; align-items: flex-start;
+  gap: .6em 1em; flex-wrap: wrap;
+  margin-top: 2.6em; font-size: .68em; line-height: 1.4;
+  font-family: var(--upwr-sans);
+}
+.lc-fa-note { flex: 1 1 0; min-width: 7.5em; max-width: 12em; text-align: center; color: var(--upwr-ink-soft); }
+.lc-fa-sym { color: var(--fa-c); font-size: 1.3em; margin-bottom: .25em; }
+.lc-fa-links {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; overflow: visible;
+}
+.lc-fa-links path { fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+/* Rząd opisów nad wzorem: symbol bliżej wzoru, czyli pod tekstem */
+.lc-fa-notes.lc-fa-above { margin-top: 0; margin-bottom: 2.6em; }
+.lc-fa-above .lc-fa-note { display: flex; flex-direction: column-reverse; }
+.lc-fa-above .lc-fa-sym { margin: .25em 0 0; }
+.lc-fa.is-wrapped .lc-fa-notes.lc-fa-above { margin: 0 0 1.2em; }
+/* Opisy ustawione przez JS pod swoimi częściami wzoru */
+.lc-fa.is-placed .lc-fa-notes { justify-content: flex-start; gap: 0; flex-wrap: nowrap; }
+.lc-fa.is-placed .lc-fa-note { flex: 0 0 auto; min-width: 0; max-width: none; }
+/* Opisy na prawo od wzoru (side = "right"); na wąskim ekranie pod wzorem */
+.lc-formula-box.lc-fa-right {
+  display: grid; grid-template-columns: auto minmax(9em, 13em);
+  column-gap: 3.5em; justify-content: center; align-items: start;
+}
+.lc-fa-right .lc-fa-notes {
+  margin-top: 0; flex-direction: column; flex-wrap: nowrap;
+  justify-content: flex-start; align-items: stretch; gap: .6em;
+}
+.lc-fa-right .lc-fa-note { flex: 0 0 auto; min-width: 0; max-width: none; text-align: left; }
+@media (max-width: 640px) {
+  .lc-formula-box.lc-fa-right { display: block; }
+  .lc-fa-right .lc-fa-notes { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .lc-fa-right .lc-fa-note { flex: 1 1 0; min-width: 7.5em; text-align: center; }
+}
+/* Opisy w kilku rzędach: zamiast strzałek kolorowa kropka przed opisem */
+.lc-fa.is-wrapped .lc-fa-links { display: none; }
+.lc-fa.is-wrapped .lc-fa-notes { margin-top: 1.2em; }
+.lc-fa.is-wrapped .lc-fa-note::before {
+  content: ""; display: block; width: .7em; height: .7em; margin: 0 auto .35em;
+  border-radius: 50%; background: var(--fa-c);
+}

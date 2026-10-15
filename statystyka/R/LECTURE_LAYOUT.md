@@ -254,6 +254,7 @@ Polskie cudzysłowy typograficzne `„..."` (U+201E/U+201D) mogą być **wewnąt
 | `margin_code_note(code, description, label)` | callout kodu (gold, `⌘`) |
 | `figure_panel(label, ..., title, full_width)` | ramka z plakietką; `full_width=TRUE` czyści floaty |
 | `lc_formula_box(...)` | blok wzoru lub krótkiego zapisu matematycznego |
+| `lc_formula_annotated(tex, notes, colors, side, above)` | wzór ze znacznikami: części `⟦k\|...⟧` w kolorach, krótkie opisy symboli („n: liczba obserwacji”) połączone strzałkami (`R/lc_formula.js`); `above` stawia wybrane opisy nad wzorem, `side = "right"` daje kolumnę opisów obok wzorów wielowierszowych |
 | `lc_stat_grid(..., columns)` | siatka metryk/statystyk |
 | `lc_stat_box(label, value, ..., caption, color)` | pojedyncza metryka z lewym akcentem |
 | `lc_feedback(..., type)` | przestarzały; komunikat widgetu: `lc_status()` + `lc_verdict(type = "ok" / "warning" / "danger" / "info")` albo jedno zdanie `lc_caption()` |

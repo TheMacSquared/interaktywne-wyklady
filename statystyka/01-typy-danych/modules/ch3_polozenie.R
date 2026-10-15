@@ -83,9 +83,17 @@ ch3_ui <- list(
       gloss("średnia", "średnia arytmetyczna"), ": sumujemy wszystkie wartości
       i dzielimy przez ich liczbę."),
 
-    lc_formula_box(withMathJax(
-      "$$\\bar{x} = \\frac{1}{n} \\sum_{i=1}^{n} x_i = \\frac{x_1 + x_2 + \\ldots + x_n}{n}$$"
-    )),
+    lc_formula_annotated(
+      "⟦1|\\bar{x}⟧ = \\frac{1}{⟦2|n⟧} ⟦3|\\sum_{i=1}^{n}⟧ ⟦4|x_i⟧ = \\frac{x_1 + x_2 + \\ldots + x_n}{n}",
+      notes = list(
+        "średnia",
+        "liczba obserwacji",
+        "suma",
+        "i-ta obserwacja"
+      ),
+      colors = c("accent", "szalwia", "bursztyn", "niebo"),
+      above = c(3, 4)
+    ),
 
     lc_p("Średnią można rozumieć jako punkt równowagi. Gdyby każdą obserwację
       położyć jako jednakowy ciężarek na linijce, linijka balansowałaby
@@ -120,9 +128,15 @@ ch3_ui <- list(
       liczbie obserwacji jest to środkowy element, przy parzystej — średnia
       z dwóch środkowych. Zapis \\(x_{(i)}\\) oznacza i-tą wartość po posortowaniu."),
 
-    lc_formula_box(withMathJax(
-      "$$\\text{Me} = \\begin{cases} x_{((n+1)/2)} & n \\text{ nieparzyste} \\\\[4pt] \\dfrac{x_{(n/2)} + x_{(n/2+1)}}{2} & n \\text{ parzyste} \\end{cases}$$"
-    )),
+    lc_formula_annotated(
+      "\\begin{aligned} n \\text{ nieparzyste:} \\quad \\text{Me} &= ⟦1|x_{((n+1)/2)}⟧ \\\\[10pt] n \\text{ parzyste:} \\quad \\text{Me} &= ⟦2|\\dfrac{x_{(n/2)} + x_{(n/2+1)}}{2}⟧ \\end{aligned}",
+      notes = list(
+        "środkowa obserwacja",
+        "średnia dwóch środkowych obserwacji"
+      ),
+      colors = c("wrzos", "indygo"),
+      side = "right"
+    ),
 
     lc_p("Mediana zależy tylko od kolejności obserwacji. Nie ma znaczenia, jak
       daleko od środka leżą wartości skrajne, liczy się tylko to, po której

@@ -53,6 +53,7 @@ Kanoniczne komponenty:
 | Siatka tekst + margines | `lc_grid()` |
 | Wykres, tabela, widget | `figure_panel()` |
 | Wzór | `lc_formula_box()` |
+| Wzór z opisem elementów | `lc_formula_annotated()` |
 | Metryki i statystyki | `lc_stat_grid()` + `lc_stat_box()` |
 | Dynamiczny feedback | `lc_status()` / `lc_caption()` w `renderUI()` |
 | Notka marginalna | `margin_callout()` albo `margin_note()` |
