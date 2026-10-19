@@ -290,7 +290,7 @@ kotwice sekcji to `blok-rozdział-sekcja` (`R/risk_block.R`, l. 420).
     Uruchomić całość przed i po zmianie (`Rscript analiza-ryzyka/tests/testthat.R`).
   - Razem z wykładem zmienić: przewodnik prowadzącego (sekcja 10), listę
     ćwiczeń tygodnia 11 (11.1–11.3, 11.a, 11.b) i `jrisk-pokrycie-zadan.md`
-    w `~/praca/dydaktyka/materialy/analiza-ryzyka/`; klucze 11.x liczyć z tych
+    w `~/praca/dydaktyka/przedmioty/analiza-ryzyka/`; klucze 11.x liczyć z tych
     samych zaokrąglonych parametrów co wykład.
   - Rozważony i odrzucony głębszy wariant (D z przeoczeń w `bananpol_alarmy`,
     S = 1 − R linii z `bananpol_system`): miesza jednostki zmiana/półrocze.
