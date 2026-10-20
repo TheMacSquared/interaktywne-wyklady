@@ -400,7 +400,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             "Powtórzenia", "Wiele partii przy tych samych parametrach",
             lc_slider("p4_batches", "Liczba partii", 50, 2000, 500, 50), "p4_batches_plot", "p4_batches_stats"
           ),
-          "Przy n = 100 i p = 0.02 (domyślne ustawienia) 500 symulowanych partii ma od 0 do 7 niesprawnych zaworów. Dokładnie dwie wady ma 156 partii, czyli około 31% — najczęstszy wynik, ale wciąż mniejszość. Zero wad ma 67 partii (około 13%), a średnia z symulacji wynosi 2.03, bardzo blisko linii. Środek histogramu jest więc stabilny, a pojedyncze partie rozrzucają się wokół niego szeroko.",
+          "Przy n = 100 i p = 0.02 (domyślne ustawienia) prawie wszystkie z 500 symulowanych partii mają od 0 do kilku niesprawnych zaworów. Najczęstszy wynik to dokładnie dwie wady: model daje mu około 27% partii, czyli wciąż mniejszość. Zero wad powinno mieć około 13% partii, a średnia z symulacji ląduje bardzo blisko linii E(X) = 2. Każde losowanie daje trochę inne liczby; stabilny jest środek histogramu, a pojedyncze partie rozrzucają się wokół niego szeroko.",
           "Środek tego histogramu i jego szerokość mają zwięzły zapis. Najpierw potrzebujemy ogólnej definicji średniej zmiennej losowej, a potem zastosujemy ją do sumy zer i jedynek.",
           risk_definition("4.7", "Wartość oczekiwana i wariancja", c(
             "Wartość oczekiwana zmiennej dyskretnej X to średnia jej wartości ważona prawdopodobieństwami: E(X) = Σ x · P(X = x). Wariancja to wartość oczekiwana kwadratu odchylenia od średniej: Var(X) = E[(X - E(X))²]. Pierwiastek z wariancji to odchylenie standardowe; mierzy typowy rozrzut w jednostkach X."
