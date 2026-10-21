@@ -46,6 +46,10 @@ source(file.path(app_dir, "modules", "stop_szanse.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_detektory.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_serwis.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_przyklady.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_zrodla.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_dwiehale.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_drugi.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_sygnaly.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_prog.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_serpuchow_case.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
@@ -69,6 +73,9 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "drzewo.js")),
     includeScript(file.path(app_dir, "modules", "serwis.js")),
     includeScript(file.path(app_dir, "modules", "przyklady.js")),
+    includeScript(file.path(app_dir, "modules", "dwiehale.js")),
+    includeScript(file.path(app_dir, "modules", "drugi.js")),
+    includeScript(file.path(app_dir, "modules", "sygnaly.js")),
     tags$style(HTML("
       .lc-pm { font-family: var(--upwr-mono); font-size: .9em; white-space: nowrap;
         padding: .08em .35em; border-radius: 4px;

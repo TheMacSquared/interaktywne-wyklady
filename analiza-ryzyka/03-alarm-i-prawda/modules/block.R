@@ -703,6 +703,8 @@ alarm_block <- list(
         list(
           id = "krzywa", title = "Pułapka częstości bazowej",
           body = list(
+            a3_stop_halls_ui,
+            "Czujnik w obu halach jest ten sam, zmieniła się tylko częstość awarii: z 1% na 5%. To wystarczyło, by wiarygodność alarmu wzrosła z 0.16 do 0.50. Krzywa poniżej pokazuje tę zależność dla każdej częstości bazowej; dwie hale to na niej dwa punkty, przy 0.01 i przy 0.05.",
             risk_try("odczytaj wartość w panelu dla częstości 0.01 (przerywana linia na wykresie). Potem zmniejsz FPR do 0.01 i sprawdź, jak zmienia się ta wartość i kształt krzywej przy lewej krawędzi. Na koniec przywróć FPR 0.05 i zmniejsz czułość do 0.80."),
             risk_widget_panel(
               "Krzywa", "P(awaria | alarm) a częstość bazowa",
@@ -723,6 +725,9 @@ alarm_block <- list(
             risk_formula("\\frac{P(A\\mid \\text{🚨})}{P(A^{c}\\mid \\text{🚨})}=\\frac{P(\\text{🚨}\\mid A)}{P(\\text{🚨}\\mid A^{c})}\\cdot\\frac{P(A)}{P(A^{c})}", num = "3.7",
               legend = c("\\frac{P(A)}{P(A^{c})}" = "szanse a priori", "\\frac{P(\\text{🚨}\\mid A)}{P(\\text{🚨}\\mid A^{c})}" = "iloraz wiarygodności LR₊", "\\frac{P(A\\mid \\text{🚨})}{P(A^{c}\\mid \\text{🚨})}" = "szanse a posteriori")),
             "Wzór (3.7) mówi: szanse po alarmie = szanse przed alarmem · LR₊. Czujnik Bananpolu ma LR₊ = 0.95/0.05 = 19 — każdy alarm mnoży szanse awarii przez 19, niezależnie od hali. Jeśli szanse wyjściowe są maleńkie, nawet dziewiętnastokrotny wzrost daje mało; stąd stromość krzywej po lewej stronie.",
+            "Wzór (3.7) działa tak samo dla każdej informacji: bierzemy szanse hali, 1 : 99, i mnożymy je przez iloraz wiarygodności tego, co właśnie zobaczyliśmy. Poniżej trzy różne sygnały z tej samej hali Bananpolu.",
+            a3_stop_signals_ui,
+            "Alarm mnoży szanse przez 19, dodatni odczyt termometru przez 8, a cisza czujnika dzieli je przez 19. Na osi logarytmicznej to trzy strzałki z tego samego punktu, o długości log LR. Ile sygnał zmienia ocenę, zależy od jego LR, a skąd startujemy, zależy od hali. Dlatego w przykładzie 3.5 ten sam czujnik da w dwóch halach różne wyniki.",
             risk_example("3.5", "Ten sam czujnik w dwóch halach",
               problem = "Czujnik (czułość 0.95, FPR 0.05) pracuje w hali A, gdzie awaria zdarza się na 0.01 zmian, i w hali B ze starszym sprzętem, gdzie awaria zdarza się na 0.05 zmian. Oblicz wiarygodność alarmu w obu halach metodą szans.",
               steps = c(
@@ -773,6 +778,8 @@ alarm_block <- list(
             "Cały zysk wisi jednak na słowie „niezależna”. Dwa identyczne czujniki obok siebie mogą reagować na to samo zakłócenie elektromagnetyczne, ten sam kurz i tę samą wilgoć. W modelu poniżej drugi czujnik z prawdopodobieństwem zadanym suwakiem kopiuje wynik pierwszego; w pozostałych przypadkach działa niezależnie warunkowo przy ustalonym stanie instalacji. Kopiowanie dotyczy zarówno awarii, jak i jej braku. Oba czujniki zachowują tę samą czułość i FPR."
           ),
           body = list(
+            a3_stop_second_ui,
+            "Drugi czujnik przepuszcza prawie wszystkie prawdziwe alarmy i tylko co dwudziesty fałszywy, dlatego wiarygodność alarmu rośnie z 0.16 do 0.78. Rachunek działa tylko wtedy, gdy przy ustalonym stanie hali drugi czujnik nie wie, co pokazał pierwszy: tę własność nazywa definicja 3.6, a wzór 3.8 zapisuje ten sam przesiew w szansach.",
             risk_definition("3.6", "Warunkowa niezależność dwóch detektorów", c(
               "Wyniki dwóch detektorów są warunkowo niezależne przy danym stanie, jeśli zarówno przy zdarzeniu, jak i przy jego braku prawdopodobieństwo wspólnego wyniku jest iloczynem prawdopodobieństw pojedynczych wyników: P(🚨₁ ∩ 🚨₂ | A) = P(🚨₁ | A) · P(🚨₂ | A) oraz P(🚨₁ ∩ 🚨₂ | Aᶜ) = P(🚨₁ | Aᶜ) · P(🚨₂ | Aᶜ)."
             )),
@@ -822,7 +829,9 @@ alarm_block <- list(
                 indep = "Wzór (3.8) zakłada warunkową niezależność. Czy wspólne drgania ją naruszają?",
                 lower = "Skrajny przypadek zależności to pełne kopiowanie. Jaki posterior daje wtedy drugi alarm?"
               )
-            )
+            ),
+            a3_stop_sources_ui,
+            "Liczba źródeł niczego jeszcze nie przesądza: o wartości drugiego źródła decyduje mechanizm, czyli to, czy oba mylą się z tego samego powodu. Pietrow ufał milczeniu radarów właśnie dlatego, że odblask słońca od chmur mógł oszukać satelitę, ale nie radar; dwa czujniki na jednym wsporniku albo na jednym przewodzie takiej pewności nie dają."
           ),
           extension = TRUE
         )
