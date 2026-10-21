@@ -671,11 +671,11 @@ alarm_block <- list(
           id = "przyczyny", title = "Więcej niż dwa stany",
           body = list(
             c(
-              "Alarm rozdzielał świat na dwa stany: awaria albo jej brak. Często stanów jest więcej. Po incydencie w Bananpolu inspektor pyta, w którym trybie pracy przebiegała zmiana; po alarmie serwis pyta, który z kilku podzespołów zawiódł. Schemat rachunku się nie zmienia: licznik to jedna droga drzewa, mianownik — suma wszystkich dróg kończących się tą samą obserwacją.",
-              "Zapiszmy to ogólnie. Ukryte stany A₁, …, Aₖ tworzą układ zupełny (definicja 2.2 z wykładu 02), a O oznacza obserwację: alarm, incydent, otwartą bramkę. Mianownik to wzór na prawdopodobieństwo całkowite (2.4) zastosowany do O."
+              "Alarm rozdzielał świat na dwa stany: awaria albo jej brak. Często stanów jest więcej. Po incydencie w Bananpolu inspektor pyta, w którym trybie pracy przebiegała zmiana; po alarmie serwis pyta, który z kilku podzespołów zawiódł. Schemat rachunku się nie zmienia: licznik to jedna droga drzewa, mianownik — suma wszystkich dróg kończących się tą samą obserwacją."
             ),
             a3_stop_service_ui,
             "Serwisant nie liczył niczego nowego: każdy słupek po obserwacji to udział podzespołu w rejestrze razy częstość objawu przy jego awarii, a mianownik 35 to wszystkie awarie z tym objawem. Obserwacja przesuwa ocenę w stronę przyczyny, przy której jest ona częstsza — nawet jeśli ta przyczyna jest rzadka. Ogólnie zapisuje to wzór (3.6).",
+            "Zapiszmy to ogólnie. Ukryte stany A₁, …, Aₖ tworzą układ zupełny (definicja 2.2 z wykładu 02) — tu sterownik, sprężarka i wentylator — a O oznacza obserwację: alarm, incydent, objaw. Mianownik to wzór na prawdopodobieństwo całkowite (2.4) zastosowany do O.",
             risk_formula("P(A_j\\mid O)=\\frac{P(O\\mid A_j)\\,P(A_j)}{\\sum_{i=1}^{k} P(O\\mid A_i)\\,P(A_i)}", num = "3.6",
               legend = c("A_j" = "stan, o który pytamy", "P(A_j)" = "udział stanu przed obserwacją", "P(O\\mid A_j)" = "prawdopodobieństwo obserwacji w tym stanie", "\\sum_i" = "prawdopodobieństwo całkowite obserwacji, wzór (2.4)")),
             "Wzór (3.4) jest przypadkiem k = 2: stanami są A i Aᶜ, a obserwacją alarm 🚨. Ogólna postać przydaje się wszędzie tam, gdzie po fakcie pytamy o źródło.",

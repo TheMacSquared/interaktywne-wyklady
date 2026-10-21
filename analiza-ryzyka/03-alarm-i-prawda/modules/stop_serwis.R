@@ -31,7 +31,7 @@ a3_service_frames <- local({
     list(name = "Po obserwacji", step = 4L,
       read = sprintf("P(wentylator | objaw) = %d/%d ≈ %s · sprężarka %d/%d ≈ %s · sterownik %d/%d ≈ %s",
         g$sym[3], sym_total, g$post[3], g$sym[2], sym_total, g$post[2], g$sym[1], sym_total, g$post[1]),
-      text = sprintf("Serwisant odkłada awarie bez tego objawu. Z %d podobnych przypadków %d to wentylator: najrzadszy podejrzany jest teraz najbardziej prawdopodobny.", sym_total, g$sym[3]))
+      text = sprintf("Serwisant zostawia tylko dawne awarie z takim samym objawem jak dziś. Kontury pokazują, ile ich było, pełne pola, ile zostało. Z %d takich przypadków %d to wentylator: najrzadszy podejrzany jest teraz najbardziej prawdopodobny.", sym_total, g$sym[3]))
   )
 })
 
@@ -40,6 +40,8 @@ a3_stop_service_css <- "
 .lc-sw-cell { fill: var(--sw-c); transition: transform .9s ease, opacity .5s ease, fill .4s ease; }
 .lc-sw-cell.is-dim { fill: color-mix(in srgb, var(--sw-c) 20%, var(--upwr-surface)); }
 .lc-sw-cell.is-gone { opacity: 0; }
+.lc-sw-ghost { fill: none; stroke: color-mix(in srgb, var(--sw-c) 40%, var(--upwr-surface)); stroke-width: 1.2; opacity: 0; transition: opacity .6s ease .3s; }
+.lc-sw-svg.is-final .lc-sw-ghost { opacity: 1; }
 .lc-sw-box { fill: color-mix(in srgb, var(--sw-c) 12%, transparent); stroke: var(--sw-c); stroke-width: 2;
   opacity: 0; transition: opacity .4s ease; }
 .lc-sw-box.is-on { opacity: 1; }

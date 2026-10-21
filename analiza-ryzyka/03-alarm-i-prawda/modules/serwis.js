@@ -5,7 +5,8 @@
 // sym z nich z dzisiejszym objawem. Kadry (cfg.frames) mają pole step:
 //   1 — rejestr (pola w grupach), 2 — udziały przed obserwacją,
 //   3 — pola z objawem pełne, reszta przygaszona,
-//   4 — zostają pola z objawem i zjeżdżają w słupki, udziały po obserwacji.
+//   4 — pola bez objawu zostają jako blade kontury (ile było), pola z objawem
+//       układają się od podstawy w tej samej siatce (ile zostało), udziały po obserwacji.
 // Przyciski [data-sw="prev|next"], odczyt kadru w .lc-sw-readout.
 //
 // Rozmieszczenie objawów w grupie losuje deterministyczny generator, więc
@@ -14,7 +15,6 @@
   var NS = "http://www.w3.org/2000/svg";
   var VW = 760, VH = 222;
   var COLS = 10, PITCH = 22, SIZE = 18;   // siatka grupy
-  var BAR_COLS = 5;                       // szerokość słupka po obserwacji
   var GX0 = 20, GW = COLS * PITCH, GAP = 30;
   var BASE = 130;                         // wspólna podstawa grup i słupków
 
@@ -59,15 +59,21 @@
       var sym = new Array(G.n).fill(false);
       order.slice(0, G.sym).forEach(function (k) { sym[k] = true; });
 
-      var bx = gx + (GW - BAR_COLS * PITCH) / 2, k = 0;
+      // Pełne kontury grupy (kadr 4): ile było awarii, zanim zostały tylko te z objawem.
+      for (i = 0; i < G.n; i++) {
+        svg("rect", { x: gx + (i % COLS) * PITCH, y: BASE - (Math.floor(i / COLS) + 1) * PITCH + (PITCH - SIZE),
+          width: SIZE, height: SIZE, rx: 3, class: "lc-sw-ghost" }, g);
+      }
+      var k = 0;
       for (i = 0; i < G.n; i++) {
         // Pola rosną od podstawy w górę, wiersz po wierszu.
         var x = gx + (i % COLS) * PITCH, y = BASE - (Math.floor(i / COLS) + 1) * PITCH + (PITCH - SIZE);
         var r = svg("rect", { x: x, y: y, width: SIZE, height: SIZE, rx: 3, class: "lc-sw-cell" }, g);
         var c = { el: r, sym: sym[i], x: x, y: y };
         if (c.sym) {
-          c.px = bx + (k % BAR_COLS) * PITCH;
-          c.py = BASE - (Math.floor(k / BAR_COLS) + 1) * PITCH + (PITCH - SIZE);
+          // Ta sama siatka co rejestr, żeby wysokości po obserwacji porównywać z grupą.
+          c.px = gx + (k % COLS) * PITCH;
+          c.py = BASE - (Math.floor(k / COLS) + 1) * PITCH + (PITCH - SIZE);
           k++;
         }
         cells.push(c);
@@ -97,6 +103,7 @@
         c.el.setAttribute("class", cls);
         c.el.style.transform = step >= 4 && c.sym ? "translate(" + (c.px - c.x) + "px," + (c.py - c.y) + "px)" : "";
       });
+      s.classList.toggle("is-final", step >= 4);
       gEls.forEach(function (E) {
         E.box.setAttribute("class", "lc-sw-box" + (step === 2 ? " is-on" : ""));
         var txt = "", cls = "lc-sw-num";
