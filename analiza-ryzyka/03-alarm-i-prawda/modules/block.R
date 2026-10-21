@@ -93,6 +93,82 @@ alarm_terms_table <- figure_panel(
   )
 )
 
+# Scena „Telefon o trzeciej”: panel czujnika w dojrzewalni i karty z założeniami
+# liczbowymi, bliźniacza z „Serpuchów, 1983”. Rysunek i kadry działają
+# w przeglądarce (modules/telefon.js).
+alarm_telefon_cards <- list(
+  list(key = "base", tone = "base", num = "1", unit = "na 100", text = "zmian kończy się awarią", term = "częstość bazowa"),
+  list(key = "sens", tone = "sens", num = "95", unit = "na 100", text = "awarii czujnik wykrywa", term = "czułość"),
+  list(key = "fpr", tone = "fpr", num = "5", unit = "na 100", text = "spokojnych zmian alarmuje", term = "odsetek fałszywych alarmów"),
+  list(key = "ask", tone = "ask", num = "?", unit = "na 100", text = "alarmów jest prawdziwych", term = "o to pyta dyżurny")
+)
+alarm_telefon_frames <- list(
+  list(name = "Telefon", cards = list(),
+    text = "Trzecia w nocy. Panel dojrzewalni 3 pokazuje przegrzanie i dzwoni do dyżurnego. Wysyłać ekipę?"),
+  list(name = "Hala", cards = list("base"),
+    text = "Dyżurny zna swoją halę: awaria zdarza się średnio na jednej zmianie na sto."),
+  list(name = "Czujnik przy awarii", cards = list("base", "sens"),
+    text = "Zna też czujnik. Producent podaje, że wykrywa 95 awarii na 100."),
+  list(name = "Czujnik bez awarii", cards = list("base", "sens", "fpr"),
+    text = "Czujnik myli się także w drugą stronę: alarmuje na 5 spokojnych zmianach na 100."),
+  list(name = "Pytanie", cards = list("base", "sens", "fpr", "ask"),
+    text = "Dyżurny ma trzy liczby, ale potrzebuje czwartej: ile alarmów takich jak ten kończy się prawdziwą awarią?")
+)
+alarm_telefon_widget <- figure_panel(
+  label = "Scena",
+  title = "Telefon o trzeciej: trzy liczby i jedno pytanie",
+  full_width = TRUE,
+  tags$div(class = "lc-tf",
+    `data-config` = jsonlite::toJSON(list(cards = alarm_telefon_cards, frames = alarm_telefon_frames), auto_unbox = TRUE),
+    tags$div(class = "lc-sp-head",
+      tags$span(class = "lc-sp-name", `data-tf-out` = "name", "Telefon"),
+      tags$span(class = "lc-sp-step", `data-tf-out` = "step", "Kadr 1 z 5")
+    ),
+    tags$div(class = "lc-tf-stage", role = "img"),
+    tags$p(class = "lc-sp-caption lc-tf-caption", `aria-live` = "polite"),
+    tags$div(class = "lc-sp-nav",
+      tags$button(type = "button", class = "lc-action is-outline", `data-tf` = "prev", lc_icon("prev"), tags$span("Wstecz")),
+      tags$button(type = "button", class = "lc-action is-solid", `data-tf` = "next", tags$span("Dalej"), lc_icon("next"))
+    )
+  )
+)
+
+# Scena „Dziennik dyżurnego”: 2000 zmian z czterech lat, w nich awarie, alarmy
+# przy awarii i fałszywe alarmy; w ostatnim kadrze telefony zjeżdżają w dwa stosy.
+# Rysunek i kadry działają w przeglądarce (modules/dziennik.js).
+alarm_dziennik_frames <- list(
+  list(name = "Dziennik", step = 1L, read = "Zmian: 2000",
+    text = "Dyżurny przegląda dziennik z czterech lat pracy dojrzewalni: 2000 zmian, każde pole to jedna zmiana."),
+  list(name = "Awarie", step = 2L, read = "Awarie: 20",
+    text = "Awaria zdarza się na jednej zmianie na sto. W czterech latach to 20 zmian."),
+  list(name = "Alarm przy awarii", step = 3L, read = "Prawdziwe alarmy: 19 · przeoczona awaria: 1",
+    text = "Czujnik wykrywa 95% awarii: alarmuje na 19 z tych 20 zmian. Jedna awaria przechodzi po cichu."),
+  list(name = "Alarm bez awarii", step = 4L, read = "Fałszywe alarmy: 99",
+    text = "Na 5% spokojnych zmian czujnik też alarmuje. Spokojnych zmian jest 1980, więc fałszywych telefonów jest 99."),
+  list(name = "Telefony", step = 5L, read = "P(awaria | alarm) = 19/118 ≈ 0.16",
+    text = "Dyżurny nie widzi awarii, widzi tylko telefony. Ze 118 telefonów prawdziwych było 19.")
+)
+alarm_dziennik_widget <- figure_panel(
+  label = "Scena",
+  title = "Dziennik dyżurnego: 2000 zmian, 118 telefonów",
+  full_width = TRUE,
+  tags$div(class = "lc-dz",
+    `data-config` = jsonlite::toJSON(list(cols = 50L, rows = 40L, events = 20L, hits = 19L, false = 99L,
+      frames = alarm_dziennik_frames), auto_unbox = TRUE),
+    tags$div(class = "lc-sp-head",
+      tags$span(class = "lc-sp-name", `data-dz-out` = "name", "Dziennik"),
+      tags$span(class = "lc-sp-step", `data-dz-out` = "step", "Kadr 1 z 5")
+    ),
+    tags$div(class = "lc-dz-stage", role = "img"),
+    tags$p(class = "lc-sp-caption lc-dz-caption", `aria-live` = "polite"),
+    tags$p(class = "lc-dz-readout"),
+    tags$div(class = "lc-sp-nav",
+      tags$button(type = "button", class = "lc-action is-outline", `data-dz` = "prev", lc_icon("prev"), tags$span("Wstecz")),
+      tags$button(type = "button", class = "lc-action is-solid", `data-dz` = "next", tags$span("Dalej"), lc_icon("next"))
+    )
+  )
+)
+
 # Scena „Serpuchów, 1983”: ekran systemu Oko i karty z tym, co wie dyżurny.
 # Rysunek i kadry działają w przeglądarce (modules/serpuchow.js).
 alarm_serpuchow_frames <- list(
@@ -183,6 +259,7 @@ alarm_paths_widget <- figure_panel(
   label = "Pojęcie",
   title = "Dwie drogi do alarmu na 10 000 zmian",
   full_width = TRUE,
+  lc_toolbar(lc_readouts(uiOutput("a3_counts"))),
   uiOutput("a3_tree"),
   lc_caption("Parametry są wspólne z tablicą 2×2. Liczby we wzorze to zmiany na 10 000; ich iloraz jest równy ilorazowi prawdopodobieństw.")
 )
@@ -243,6 +320,7 @@ alarm_block <- list(
             color = "uwaga"
           ),
           body = list(
+            alarm_telefon_widget,
             c(
               "Awaria zdarza się średnio na 1 zmianie na 100. Czujnik wykrywa 95% awarii, ale w 5% zmian bez awarii alarmuje fałszywie. Najpierw oszacuj wiarygodność alarmu bez rachunku — zapisz swoją liczbę, zanim klikniesz dalej.",
               "To pytanie ma długą historię błędnych odpowiedzi: w badaniach z udziałem lekarzy interpretujących wyniki testów przesiewowych większość podawała wartości bliskie „około 95%”, choć poprawna odpowiedź wynosiła kilka procent — liczbę opisującą test brano za wiarygodność wyniku dodatniego. Zaraz sprawdzisz, po której stronie tej statystyki jesteś."
@@ -254,9 +332,11 @@ alarm_block <- list(
               c("Około 95%" = "95", "Około 16%" = "16", "Nie da się określić bez częstości bazowej" = "base"),
               correct = "16"
             ),
+            "Sprawdźmy zakład na dzienniku dyżurnego. Przejdź kadry i policz telefony, zanim zobaczysz jakikolwiek wzór.",
+            alarm_dziennik_widget,
             c(
               "Odpowiedź „około 95%” jest kusząca, bo 95 to jedyna duża liczba w opisie czujnika i brzmi jak jego „skuteczność”. Ale 95% opisuje zachowanie czujnika w świecie, w którym awaria już nastąpiła. Dyżurny nie wie, w którym świecie jest — wie tylko, że zadzwonił telefon. Liczba, której potrzebuje, musi uwzględniać oba światy naraz: ten z awarią i ten, w którym awarii nie ma, a czujnik i tak alarmuje.",
-              "Poprawny wynik — około 16% — zaskakuje niemal każdego, kto widzi go pierwszy raz. W tym wykładzie wyprowadzimy go trzema drogami: z tablicy 2×2, z naturalnych częstości i ze wzoru Bayesa. Wszystkie trzy dają tę samą liczbę, bo opisują ten sam rachunek w różnym zapisie."
+              "Poprawny wynik — około 16% — zaskakuje niemal każdego, kto widzi go pierwszy raz. Scena pokazała go na 2000 zmian dziennika. W tym wykładzie wyprowadzimy go jeszcze trzema drogami: z tablicy 2×2, z naturalnych częstości i ze wzoru Bayesa. Wszystkie trzy dają tę samą liczbę, bo opisują ten sam rachunek w różnym zapisie."
             )
           )
         ),
@@ -397,7 +477,7 @@ alarm_block <- list(
       lead = "Zamiast trzech procentów śledzimy konkretne zmiany produkcyjne; wzór porządkuje ten rachunek na końcu.",
       intro = c(
         "Trzy procenty naraz — częstość bazowa, czułość, FPR — przeciążają intuicję, bo każdy odnosi się do innego mianownika. Naturalne częstości rozbrajają problem: zamiast ułamków wyobrażamy sobie 10 000 konkretnych zmian i śledzimy, ile z nich trafia do każdej grupy.",
-        "Na siatce poniżej każde pole to jeden alarm z 10 000 zmian. Widać od razu to, co ukrywają procenty: zmian bez awarii jest tak dużo, że nawet rzadkie fałszywe alarmy tworzą tłum liczniejszy niż wszystkie prawdziwe alarmy razem wzięte."
+        "Dziennik dyżurnego pokazał to na 2000 zmian: 19 prawdziwych i 99 fałszywych telefonów. Zmian bez awarii jest tak dużo, że nawet rzadkie fałszywe alarmy tworzą tłum liczniejszy niż wszystkie prawdziwe alarmy razem wzięte. Teraz ten sam rachunek zapiszemy dla 10 000 zmian i dowolnych parametrów detektora."
       ),
       sections = list(
         list(
@@ -408,15 +488,10 @@ alarm_block <- list(
               "Wartość predykcyjna dodatnia PPV (ang. positive predictive value) to P(A | +): prawdopodobieństwo, że zdarzenie zachodzi, gdy detektor alarmuje. W tym wykładzie nazywamy ją też wiarygodnością alarmu lub posteriorem po alarmie.",
               "Wartość predykcyjna ujemna NPV (ang. negative predictive value) to P(Aᶜ | -): prawdopodobieństwo, że zdarzenia nie ma, gdy detektor milczy. W przeciwieństwie do czułości i swoistości obie wartości predykcyjne zależą od częstości bazowej."
             )),
-            "W tablicy 2×2 wartości predykcyjne to ilorazy w kolumnach: PPV = TP/(TP + FP), NPV = TN/(TN + FN). Czułość i swoistość czytamy wierszami, wartości predykcyjne — kolumnami. Siatka poniżej pokazuje, dlaczego kolumna alarmów wygląda tak niekorzystnie.",
-            risk_try("odczytaj liczbę prawdziwych i fałszywych alarmów przy ustawieniach domyślnych i znajdź je na siatce. Potem w tablicy 2×2 z poprzedniego rozdziału zmniejsz FPR do 0.01 i wróć tutaj — parametry obu widoków są wspólne."),
-            risk_widget_panel("Symulacja", "10 000 zmian Bananpolu", NULL,
-              plot_id = "a3_grid", stats_id = "a3_counts",
-              note = "Każde pole to jeden alarm. Parametry detektora są wspólne z tablicą 2×2.",
-              ratio = "1.9/1", max_height = "470px"
-            ),
+            "W tablicy 2×2 wartości predykcyjne to ilorazy w kolumnach: PPV = TP/(TP + FP), NPV = TN/(TN + FN). Czułość i swoistość czytamy wierszami, wartości predykcyjne — kolumnami. W dzienniku dyżurnego kolumna alarmów to 118 telefonów, z których prawdziwych było 19.",
+            risk_try("w tablicy 2×2 z poprzedniego rozdziału odczytaj kolumnę alarmów przy ustawieniach domyślnych. Potem zmniejsz FPR do 0.01 i porównaj liczbę prawdziwych i fałszywych alarmów. Drzewo dróg w następnej sekcji korzysta z tych samych parametrów."),
             c(
-              "Przy ustawieniach domyślnych panel pokazuje 95 prawdziwych i 495 fałszywych alarmów, a P(awaria | alarm) = 0.161. Na siatce prawdziwe alarmy to niewielka grupa pól, a fałszywe — obszar pięć razy większy. Pozostałe zmiany, bez alarmu, leżą poza siatką. Przy FPR = 0.01 fałszywych alarmów jest 99, prawdziwych nadal 95, a wiarygodność alarmu rośnie do 0.490.",
+              "Przy ustawieniach domyślnych kolumna alarmów ma 95 prawdziwych i 495 fałszywych alarmów, a P(awaria | alarm) = 0.161 — dokładnie ta sama proporcja co 19 do 99 w dzienniku dyżurnego. Przy FPR = 0.01 fałszywych alarmów jest 99, prawdziwych nadal 95, a wiarygodność alarmu rośnie do 0.490.",
               "Wniosek jest praktyczny: przy rzadkich awariach o wiarygodności alarmu decyduje przede wszystkim FPR, a nie czułość. Podniesienie czułości z 0.95 do 1 dodałoby pięć prawdziwych alarmów; obniżenie FPR o jeden punkt procentowy usuwa 99 fałszywych."
             ),
             risk_check("d3_chk_ppv",
@@ -807,48 +882,13 @@ alarm_server <- function(input, output, session) {
   })
   output$a3_counts <- renderUI({
     d <- detector()
-    # Kolory jak pola siatki: odczyty pełnią rolę legendy.
+    # Kolory jak gałęzie drzewa: odczyty pełnią rolę legendy.
     tagList(
       lc_readout("Prawdziwe alarmy", d$alarm[1], color = upwr_accent, swatch = TRUE),
       lc_readout("Fałszywe alarmy", d$alarm[2], color = upwr_single_alt, swatch = TRUE),
       lc_readout("P(awaria | alarm)", risk_fmt_p(posterior()), color = upwr_secondary)
     )
   })
-  # Siatka pokazuje tylko alarmy (prawdziwe i fałszywe): 10 000 pól byłoby
-  # nieczytelne, a proporcja alarmów to właśnie wiarygodność alarmu.
-  grid_plot <- reactive({
-    d <- detector()
-    tp <- d$alarm[1]
-    fp <- d$alarm[2]
-    outside <- paste0(
-      "Poza siatką: ", format(d$no_alarm[1], big.mark = " ", trim = TRUE),
-      " awarii bez alarmu i ", format(d$no_alarm[2], big.mark = " ", trim = TRUE),
-      " zmian bez awarii i bez alarmu."
-    )
-    n <- tp + fp
-    if (n == 0) {
-      return(ggplot() + annotate("text", x = 0, y = 0, label = "Brak alarmów") +
-        labs(caption = outside) + theme_void())
-    }
-    labels <- c("Prawdziwy alarm", "Fałszywy alarm")
-    dat <- data.frame(type = factor(rep(labels, c(tp, fp)), levels = labels))
-    ncol <- max(5L, round(sqrt(n) * 1.2))
-    dat$x <- (seq_len(n) - 1L) %% ncol
-    dat$y <- (seq_len(n) - 1L) %/% ncol
-    ggplot(dat, aes(x, y, fill = type)) +
-      geom_tile(colour = if (n <= 1500) "white" else NA, linewidth = 0.3) +
-      scale_y_reverse() +
-      coord_equal(expand = FALSE) +
-      scale_fill_manual(values = c(upwr_accent, upwr_single_alt), drop = FALSE) +
-      labs(caption = outside, x = NULL, y = NULL, fill = NULL) +
-      theme_upwr() +
-      theme(
-        axis.text = element_blank(), axis.ticks = element_blank(),
-        axis.line = element_blank(), panel.grid = element_blank(),
-        legend.position = "none"
-      )
-  })
-  zoom_plot_server("a3_grid", grid_plot, alt = "Siatka wszystkich alarmów w dziesięciu tysiącach zmian: prawdziwe i fałszywe alarmy jako pola dwóch kolorów.")
   curve_plot <- reactive({
     prevalence <- seq(.0001, .2, length.out = 300)
     dat <- data.frame(prevalence, posterior = vapply(prevalence, risk_bayes, numeric(1),

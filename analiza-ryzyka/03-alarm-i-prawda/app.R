@@ -60,6 +60,8 @@ ui <- lecture_page(
   header_extras = tagList(
     includeScript(file.path(app_dir, "modules", "serpuchow.js")),
     includeScript(file.path(app_dir, "modules", "notacja.js")),
+    includeScript(file.path(app_dir, "modules", "dziennik.js")),
+    includeScript(file.path(app_dir, "modules", "telefon.js")),
     tags$style(HTML("
       .lc-pm { font-family: var(--upwr-mono); font-size: .9em; white-space: nowrap;
         padding: .08em .35em; border-radius: 4px;
@@ -69,6 +71,41 @@ ui <- lecture_page(
       .lc-pm-ev { color: var(--upwr-ink); font-weight: 600; }
       .lc-pm-bar { color: var(--upwr-accent); font-weight: 700; padding: 0 .3em; }
       .lc-pm-cond { color: var(--upwr-cat-indygo); font-weight: 600; }
+      .lc-tf-clock { font: 700 34px var(--upwr-mono); fill: #7fc98f; letter-spacing: .06em; }
+      .lc-tf-limit { stroke: #e4573d; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .lc-tf-axis { font: 12px var(--upwr-mono); fill: #e4573d; }
+      .lc-tf-line { fill: none; stroke: #7fc98f; stroke-width: 2.5; }
+      .lc-tf-dot { fill: #e4573d; }
+      .lc-tf-phone { fill: var(--upwr-ink-soft); }
+      .lc-tf-card { opacity: 0; transition: opacity .5s ease; }
+      .lc-tf-card.is-on { opacity: 1; }
+      .lc-tf-card rect { fill: var(--upwr-surface); stroke-width: 2; }
+      .lc-tf-num { font: 700 24px var(--upwr-mono); }
+      .lc-tf-unit { font: 11px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+      .lc-tf-text { font: 600 12.5px var(--upwr-sans); fill: var(--upwr-ink); }
+      .lc-tf-term { font: 12px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+      .lc-tf-card.is-base rect { stroke: var(--upwr-accent); fill: var(--upwr-accent-tint); }
+      .lc-tf-card.is-base .lc-tf-num { fill: var(--upwr-accent); }
+      .lc-tf-card.is-sens rect { stroke: var(--upwr-accent); }
+      .lc-tf-card.is-sens .lc-tf-num { fill: var(--upwr-accent); }
+      .lc-tf-card.is-fpr rect { stroke: var(--upwr-single-alt); }
+      .lc-tf-card.is-fpr .lc-tf-num { fill: var(--upwr-single-alt); }
+      .lc-tf-card.is-ask rect { stroke: var(--upwr-ink); stroke-dasharray: 6 4; }
+      .lc-tf-card.is-ask .lc-tf-num { fill: var(--upwr-ink); }
+      .lc-dz-svg { display: block; width: 100%; max-width: 820px; height: auto; margin: 0 auto; }
+      .lc-dz-book { fill: var(--upwr-surface); stroke: var(--upwr-rule); stroke-width: 1.5; }
+      .lc-dz-cell { fill: color-mix(in srgb, var(--upwr-ink-subtle) 22%, var(--upwr-surface));
+        transition: transform 1.1s cubic-bezier(.2, .7, .2, 1), opacity .6s ease, fill .4s ease; }
+      .lc-dz-cell.is-event { fill: var(--upwr-accent-tint); stroke: var(--upwr-accent); stroke-width: 1.2; }
+      .lc-dz-cell.is-hit { fill: var(--upwr-accent); }
+      .lc-dz-cell.is-false { fill: var(--upwr-single-alt); }
+      .lc-dz-cell.is-faded { opacity: .12; }
+      .lc-dz-pile { font: 600 15px var(--upwr-sans); opacity: 0; transition: opacity .5s ease .7s; }
+      .lc-dz-pile.is-true { fill: var(--upwr-accent); }
+      .lc-dz-pile.is-false { fill: var(--upwr-single-alt); }
+      .lc-dz-svg.is-piles .lc-dz-pile { opacity: 1; }
+      .lc-dz-readout { font: 600 15px var(--upwr-mono); color: var(--upwr-ink); margin: .2em 0 .6em; min-height: 1.4em; }
+      @media (prefers-reduced-motion: reduce) { .lc-dz-svg * { transition: none !important; } }
       .lc-sp-head { display: flex; justify-content: space-between; align-items: baseline; margin: .2em 0 .3em; }
       .lc-sp-name { font: 600 1.02em var(--upwr-sans); color: var(--upwr-ink); }
       .lc-sp-step { font: .8em var(--upwr-mono); color: var(--upwr-ink-subtle); }

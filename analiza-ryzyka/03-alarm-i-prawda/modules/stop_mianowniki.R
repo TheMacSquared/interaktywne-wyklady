@@ -2,7 +2,7 @@
 #
 # Oba obrazy są statyczne: SVG generowane w R, style w tags$style dołączonym do
 # obiektu UI. Kolory wyłącznie przez tokeny --upwr-*, więc działają w trybie
-# ciemnym. Prawdziwe alarmy = akcent, fałszywe = złoto (jak siatka alarmów).
+# ciemnym. Prawdziwe alarmy = akcent, fałszywe = złoto (jak drzewo dróg i dziennik dyżurnego).
 
 .a3_num <- function(n) format(n, big.mark = " ", trim = TRUE, scientific = FALSE)
 .a3_p2 <- function(p) formatC(p, format = "f", digits = 2)
