@@ -500,7 +500,7 @@ alarm_block <- list(
               ),
               steps = c(
                 "Ze wzoru (3.1): czułość = 57/60 = 0.95; swoistość = (400 - 20)/400 = 380/400 = 0.95. Ze wzoru (3.2): FPR = 20/400 = 0.05.",
-                "Iloraz 57/77 ≈ 0.74 jest liczony w kolumnie „alarm”. Jego wartość zależy od tego, ile awarii było w teście: 60 na 460 zmian, czyli około 0.13. W hali Bananpolu awarie zdarzają się na 0.01 zmian — trzynaście razy rzadziej niż w teście. Fałszywych alarmów będzie więc proporcjonalnie znacznie więcej; w sekcji o tablicy 2×2 dla 10 000 zmian porównamy obie tablice obok siebie: udział trafnych alarmów wynosi w hali około 0.16."
+                "Iloraz 57/77 ≈ 0.74 jest liczony w kolumnie „alarm”. Jego wartość zależy od tego, ile awarii było w teście: 60 na 460 zmian, czyli około 0.13. W hali Bananpolu awarie zdarzają się na 0.01 zmian — trzynaście razy rzadziej niż w teście. Fałszywych alarmów będzie więc proporcjonalnie znacznie więcej; w sekcji o tablicy 2×2 dla 10 000 zmian porównamy obie tablice obok siebie: wiarygodność alarmu wynosi w hali około 0.16."
               ),
               steps_type = "a",
               answer = "(a) Czułość 0.95, swoistość 0.95, FPR 0.05. (b) Nie. Liczba 0.74 opisuje kampanię testową, w której awarie wywołano sztucznie często; w hali trzeba ją przeliczyć z częstością bazową 0.01."
@@ -542,9 +542,9 @@ alarm_block <- list(
               "Przy ustawieniach domyślnych wiersz awarii ma 100 zmian: 95 z alarmem i 5 bez. Wiersz bez awarii ma 9900 zmian: 495 z alarmem i 9405 bez. Kolumna alarmów zawiera więc 95 + 495 = 590 zmian, z których prawdziwych jest mniej niż jedna szósta. Czujnik jest dobry w obu wierszach — myli się w 5% przypadków — a mimo to w kolumnie alarmów przeważają pomyłki, bo wiersz bez awarii jest 99 razy liczniejszy.",
               "Przy częstości awarii 0.05 tablica zmienia się zasadniczo: 475 prawdziwych i 475 fałszywych alarmów, czyli dokładnie pół na pół. Detektor się nie zmienił; zmieniła się proporcja wierszy. Zmniejszanie FPR działa w tym samym kierunku: każdy punkt procentowy FPR to w tej hali 99 fałszywych alarmów na 10 000 zmian."
             ),
-            "Wróćmy do ulotki producenta z przykładu 3.2. Jego „74% trafności” to udział prawdziwych alarmów w kolumnie alarmów kampanii testowej. Policzmy tę samą liczbę dla hali, przy ustawieniach domyślnych tablicy, i postawmy obie tablice obok siebie.",
+            "Wróćmy do ulotki producenta z przykładu 3.2. Jego „74% trafności” to w rzeczywistości wiarygodność alarmu w kampanii testowej: udział prawdziwych alarmów w kolumnie alarmów. Policzmy tę samą liczbę dla hali, przy ustawieniach domyślnych tablicy, i postawmy obie tablice obok siebie.",
             a3_stop_campaign_ui,
-            "Ten sam czujnik: w kampanii 74% trafnych alarmów, w hali 16%. Ilorazy w wierszach są identyczne, 0.95 i 0.05, bo opisują czujnik. Różni się tylko pasek nad tablicami: w kampanii awarie to 13% zmian, w hali 1%. Od tego udziału zależy kolumna alarmów. Wiersze te same, kolumny inne — dlatego liczby z ulotki nie przenosimy do hali."
+            "Ten sam czujnik: wiarygodność alarmu w kampanii wynosi 0.74, w hali 0.16. Ilorazy w wierszach są identyczne, 0.95 i 0.05, bo opisują czujnik. Różni się tylko pasek nad tablicami: w kampanii awarie to 13% zmian, w hali 1%. Od tego udziału zależy kolumna alarmów. Wiersze te same, kolumny inne — dlatego liczby z ulotki nie przenosimy do hali."
           )
         )
       ),
@@ -586,7 +586,7 @@ alarm_block <- list(
               )
             ),
             a3_stop_detectors_ui,
-            "Detektor C łapie każdą awarię, a mimo to jego alarm jest trafny tylko w 17 przypadkach na 100. Przy 9900 sprawnych zmianach nawet 5% fałszywych alarmów daje 495 pomyłek, więc wiarygodność alarmu podnosi dopiero niższy FPR detektora B — za cenę 20 przeoczonych awarii zamiast 5. Wybór detektora to kompromis między fałszywymi alarmami a przeoczeniami, a nie ranking: który jest lepszy, zależy od tego, co w tej hali kosztuje więcej."
+            "Detektor C łapie każdą awarię, a mimo to wiarygodność jego alarmu wynosi tylko 0.17. Przy 9900 sprawnych zmianach nawet 5% fałszywych alarmów daje 495 pomyłek, więc wiarygodność alarmu podnosi dopiero niższy FPR detektora B — za cenę 20 przeoczonych awarii zamiast 5. Wybór detektora to kompromis między fałszywymi alarmami a przeoczeniami, a nie ranking: który jest lepszy, zależy od tego, co w tej hali kosztuje więcej."
           )
         ),
         list(

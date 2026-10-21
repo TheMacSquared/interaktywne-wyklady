@@ -6,7 +6,7 @@
 // Kadry (cfg.frames) mają pole step:
 //   1 — stosy po pierwszym alarmie, 2 — pojawia się sito,
 //   3 — przesiew: potwierdzone pola przechodzą na prawo, reszta gaśnie,
-//   4 — po dwóch alarmach: zostają stosy po prawej i liczby trafnych.
+//   4 — po dwóch alarmach: zostają stosy po prawej i wiarygodność alarmu.
 // Przyciski [data-dt="prev|next"], odczyt kadru w .lc-dt-readout.
 //
 // To, które pola przechodzą przez sito, losuje deterministyczny generator
@@ -73,12 +73,12 @@
     svg("text", { x: SX + SW + 10, y: TY + 20, class: "lc-dt-rate is-true" }, sieve, Math.round(cfg.sens * 100) + "%");
     svg("text", { x: SX + SW + 10, y: FY + 84, class: "lc-dt-rate is-false" }, sieve, Math.round(cfg.fpr * 100) + "%");
 
-    // Liczby trafnych pod stosami (kadr 4).
+    // Wiarygodność alarmu pod stosami (kadr 4).
     var yHit = FY + 10 * PITCH + 34;
     svg("text", { x: LX, y: yHit, class: "lc-dt-hit is-before" }, s,
-      "trafne: " + cfg.ppv1);
+      "P(A | 🚨) = " + cfg.ppv1);
     svg("text", { x: RX, y: yHit + 4, class: "lc-dt-hit is-after" }, s,
-      "trafne: " + cfg.ppv2);
+      "P(A | 🚨🚨) = " + cfg.ppv2);
 
     // Pola: lewe miejsce, a dla przepuszczonych miejsce w prawym stosie.
     var cells = [];

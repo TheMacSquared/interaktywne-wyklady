@@ -32,7 +32,7 @@ a3_second_frames <- list(
     text = sprintf("Ekipa jedzie tylko wtedy, gdy drugi czujnik też alarmuje. Przy awarii potwierdza prawie zawsze: zostaje %d z %d. Fałszywy alarm potwierdza rzadko: zostaje %d z %d.",
       a3_second_tp2, a3_second_tp1, a3_second_fp2, a3_second_fp1)),
   list(name = "Po dwóch alarmach", step = 4L,
-    read = sprintf("trafne po dwóch alarmach: %d/%d ≈ %s · po jednym: %d/%d ≈ %s",
+    read = sprintf("P(awaria | 🚨🚨) = %d/%d ≈ %s · po jednym alarmie P(awaria | 🚨) = %d/%d ≈ %s",
       a3_second_tp2, a3_second_tp2 + a3_second_fp2, a3_second_ppv2,
       a3_second_tp1, a3_second_tp1 + a3_second_fp1, a3_second_ppv1),
     text = sprintf("Prawdziwych telefonów ubyło niewiele, fałszywych prawie wszystkie. Z %d podwójnych alarmów %d to awarie.",
@@ -64,7 +64,7 @@ a3_stop_second_css <- "
 .lc-dt-rate.is-false { fill: color-mix(in srgb, var(--upwr-single-alt) 70%, var(--upwr-ink)); }
 .lc-dt-hit { opacity: 0; transition: opacity .6s ease; font-family: var(--upwr-mono); }
 .lc-dt-hit.is-before { font-size: 15px; fill: var(--upwr-ink-subtle); }
-.lc-dt-hit.is-after { font-size: 24px; font-weight: 700; fill: var(--upwr-ink); }
+.lc-dt-hit.is-after { font-size: 18px; font-weight: 700; fill: var(--upwr-ink); }
 .lc-dt-svg.is-final .lc-dt-hit { opacity: 1; }
 .lc-dt-readout { font: 600 15px var(--upwr-mono); color: var(--upwr-ink); margin: .2em 0 .6em; min-height: 1.4em; }
 @media (prefers-reduced-motion: reduce) { .lc-dt-svg * { transition: none !important; } }

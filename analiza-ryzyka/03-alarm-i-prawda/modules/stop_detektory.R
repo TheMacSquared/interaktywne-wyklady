@@ -1,6 +1,6 @@
 # Punkt stop rozdziału „Częstości”:
 #   - galeria „Trzy detektory w tej samej hali” (alarmy prawdziwe i fałszywe,
-#     odsetek trafnych alarmów i przeoczone awarie na 10 000 zmian).
+#     wiarygodność alarmu i przeoczone awarie na 10 000 zmian).
 # Wymaga: palette.R, theme_upwr.R, shared.R, lecture_layout.R, risk_math.R.
 
 # ============================================================================
@@ -57,7 +57,7 @@ a3_detectors_plot <- function() {
     geom_text(aes(x = x_missed, y = y, label = missed), size = 5,
               colour = upwr_reference, family = lc_mono_family) +
     annotate("text", x = c(x_ppv, x_missed), y = head_y,
-             label = c("trafne", "przeoczone"), size = 4,
+             label = c("wiarygodność\nalarmu", "przeoczone"), size = 4,
              colour = upwr_ink_soft) +
     scale_x_continuous(breaks = seq(0, 600, 200), limits = c(0, 880),
                        expand = expansion(mult = c(0, .02))) +
@@ -76,7 +76,7 @@ a3_stop_detectors_ui <- figure_panel(
   lc_plot("a3_detectors", ratio = "2.4/1", ratio_narrow = "1.3/1", max_height = "400px"),
   lc_caption(
     "Hala z awarią na 1 zmianie na 100, 10 000 zmian. Burgund: alarmy prawdziwe,",
-    "złoto: fałszywe. Trafne: P(awaria | 🚨). Przeoczone: awarie z wynikiem 🔕."
+    "złoto: fałszywe. Wiarygodność alarmu: P(awaria | 🚨). Przeoczone: awarie z wynikiem 🔕."
   )
 )
 
@@ -88,7 +88,7 @@ a3_stop_detektory_server <- function(input, output, session) {
   zoom_plot_server("a3_detectors", function() a3_detectors_plot(),
     alt = paste(
       "Trzy poziome słupki alarmów na 10 000 zmian. Detektor A: 95 prawdziwych",
-      "i 495 fałszywych, trafne 0.16, przeoczone 5. Detektor B: 80 i 99,",
-      "trafne 0.45, przeoczone 20. Detektor C: 100 i 495, trafne 0.17, przeoczone 0."
+      "i 495 fałszywych, wiarygodność alarmu 0.16, przeoczone 5. Detektor B: 80 i 99,",
+      "wiarygodność 0.45, przeoczone 20. Detektor C: 100 i 495, wiarygodność 0.17, przeoczone 0."
     ))
 }

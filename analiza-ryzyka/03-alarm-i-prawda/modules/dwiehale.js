@@ -7,7 +7,7 @@
 // mają pole step:
 //   1 — dwa szare dzienniki, 2 — awarie, 3 — alarmy prawdziwe i fałszywe,
 //   4 — reszta gaśnie, alarmy zjeżdżają w stosy pod każdą halą, przy hali
-//       jedna liczba: odsetek trafnych alarmów.
+//       jedna liczba: wiarygodność alarmu P(A | 🚨).
 // Przyciski [data-dh="prev|next"], odczyt kadru w .lc-dh-readout.
 //
 // Rozmieszczenie losuje deterministyczny generator (ziarno na halę), więc dzienniki
@@ -69,7 +69,7 @@
       svg("text", { x: gx - 4, y: yTrue - 6, class: "lc-dh-late lc-dh-pile is-true" }, s, "🚨 prawdziwe · " + h.hits);
       svg("text", { x: gx - 4, y: yFalse - 6, class: "lc-dh-late lc-dh-pile is-false" }, s, "🚨 fałszywe · " + h.false);
       var cx = gx + PCOLS * PITCH_P + (cols * PITCH - PCOLS * PITCH_P) / 2 + 2;
-      svg("text", { x: cx, y: PY + 14, class: "lc-dh-late lc-dh-ppv-label" }, s, "trafne");
+      svg("text", { x: cx, y: PY + 14, class: "lc-dh-late lc-dh-ppv-label" }, s, "P(A | 🚨)");
       svg("text", { x: cx, y: PY + 56, class: "lc-dh-late lc-dh-ppv" }, s, h.ppv);
 
       var hitIdx = 0, falseIdx = 0;
