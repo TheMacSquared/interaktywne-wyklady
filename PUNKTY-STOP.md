@@ -17,27 +17,35 @@ do narzucania stałej struktury. Kolejność i proporcje zależą od tematu.
 
 **Scena.** Sytuacja, wymyślona albo prawdziwa, w której ktoś albo coś działa,
 zanim padnie pojęcie. Puentą jest intuicja, którą pojęcie potem nazwie.
-Prowadzący opowiada historię. Nie jest sceną abstrakcyjny eksperyment
-przebrany za postacie. Szczegóły w `SCENY.md`.
+Prowadzący opowiada historię. Scena może powtarzać zdarzenie (grupka za
+grupką), jeśli puentę niesie perspektywa kogoś z historii i stoi przed
+pojęciem. Nie jest sceną abstrakcyjny eksperyment przebrany za postacie.
+Szczegóły w `SCENY.md`.
 
-**Piaskownica.** Obraz, w którym coś zmienia się płynnie, a odpowiedź na
-„a gdyby…?” przychodzi z obserwacji. Puentą jest to, od czego zależy zjawisko.
-Prowadzący pyta i przesuwa. Nie jest piaskownicą wybór spośród kilku gotowych
-ustawień.
+**Piaskownica.** Obraz, w którym prowadzący zmienia warunek, płynnie (suwak)
+albo skokowo (dodaj punkt, dołącz predyktor), a odpowiedź na „a gdyby…?”
+przychodzi z obserwacji. Puentą jest to, od czego zależy zjawisko. Prowadzący
+pyta i zmienia. Nie jest piaskownicą przełączanie kilku gotowych wariantów: to
+galeria.
 
-**Galeria.** Kilka znaczących wariantów pokazanych obok siebie. Puentą jest
-różnica między nimi albo kształt całej rodziny. Prowadzący oprowadza po
-wariantach. Nie jest galerią zbiór przypadkowych ustawień parametru: każdy
-wariant ma swój powód.
+**Galeria.** Kilka znaczących wariantów pokazanych obok siebie albo po kolei
+w przełączniku. Puentą jest różnica między nimi albo kształt całej rodziny.
+Prowadzący oprowadza po wariantach. Nie jest galerią zbiór przypadkowych
+ustawień parametru ani lista zmiennych do wyboru: każdy wariant ma swój powód.
 
 **Symulacja.** Powtarzanie losowego eksperymentu, w którym wynik wyłania się
 dopiero przy wielu powtórzeniach. Puentą jest regularność, której nie widać
 w pojedynczym wyniku. Prowadzący uruchamia eksperyment i buduje oczekiwanie.
-Symulacja z historią i postacią to już scena.
+Symulacja musi zbierać powtórzenia (licznik, stos, odsetek); obraz jednego
+losowania z częstością podaną w tekście nie jest symulacją. Ta sama mechanika
+z historią przed pojęciem to scena, a po wzorze to symulacja, i oba miejsca są
+poprawne.
 
 **Przypadek.** Droga od pytania do wniosku z danymi i metodą, już po pojęciu.
 Puentą jest to, jak metoda wygląda w praktyce. Prowadzący prowadzi śledztwo
-razem z salą. Nie jest przypadkiem pojedyncza przykładowa liczba ani prawdziwa
+razem z salą. Przypadek zwykle trwa kilka punktów stop: obrazy w środku są
+jego krokami (każdy z jednym odczytanym faktem) i nie potrzebują osobnego
+rodzaju. Nie jest przypadkiem pojedyncza przykładowa liczba ani prawdziwa
 historia opowiedziana przed pojęciem: to scena. Pietrow i fałszywy alarm
 z 1983 roku otwiera wykład jako scena („dlaczego nie uwierzył?”), a może
 wrócić jako przypadek, gdy sala policzy, co wyczuł.
@@ -57,12 +65,19 @@ obrazem albo przełącznikiem w istniejącym obrazie, byle w opowieści był oso
 przystankiem.
 
 **Domknięcie.** Zebranie rozdziału w jeden obraz: mapa, zestawienie, galeria
-całości.
+całości. Mapa postawiona na otwarciu (spis kroków, schemat etapów) to
+nawigacja, nie punkt stop; jeśli ma być przystankiem, wraca na końcu jako
+domknięcie, np. z wynikiem każdego kroku.
 
 ## Poza punktami stop
 
-Kalkulatory, quizy, ćwiczenia i filmy to **materiały**: służą pracy własnej
-i sprawdzaniu, nie są częścią opowieści. Słownik ich nie klasyfikuje.
+**Materiały** służą pracy własnej i sprawdzaniu, nie są częścią opowieści.
+Słownik ich nie klasyfikuje. Należą do nich: kalkulatory, quizy, ćwiczenia,
+filmy, ściągi, eksploratory z listą zmiennych do wyboru, podglądy tabel
+danych, karty i schematy struktury zbioru oraz wzory dokumentów (konspekt,
+tablica tropów). Każdy z nich może stać się punktem stop, jeśli w opowieści
+prowadzący zatrzymuje się przy nim z jedną puentą (np. podgląd tabeli, w której
+widać, że wiersz to wizyta, a nie pacjent).
 
 ## Przykład: statystyka 02 (2026-10-21)
 

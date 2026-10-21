@@ -17,8 +17,12 @@ i wykładzie wskazanym w poleceniu.
 ## Co sceną nie jest
 
 - **Symulacja w kostiumie.** Abstrakcyjny eksperyment (losuj próbę z rozkładu,
-  licz odsetek odrzuceń) przebrany za postacie. Jeśli bez rysunku zostaje
-  zwykła symulacja, to nie jest scena.
+  licz odsetek odrzuceń) przebrany za postacie, w którym nikt w historii nie
+  ma powodu tego robić. Historia z powtórzeniem jest sceną, gdy puentę niesie
+  perspektywa kogoś z historii (prowadzący pyta grupkę za grupką, barista
+  zbiera sezon) i gdy stoi przed pojęciem. Ta sama mechanika po wzorze to
+  symulacja w rozumieniu `PUNKTY-STOP.md`: poprawny punkt stop, tylko nie
+  scena.
 - **Sztuczna perspektywa.** Sytuacja opowiedziana z miejsca, z którego nikt jej
   nie przeżywa (pasażer „przychodzi w losowej chwili”, choć z jego punktu
   widzenia losowy jest autobus).
