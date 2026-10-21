@@ -93,6 +93,59 @@ alarm_terms_table <- figure_panel(
   )
 )
 
+# Widget „Wzory na tablicy 2×2”: kolejne wzory rozdziału z zaznaczonymi komórkami
+# licznika (niebieskie) i mianownika (żółte). Działa w przeglądarce (modules/wzory.js).
+alarm_wzory_cells <- list(
+  list(key = "tp", abbr = "TP", n = 95L, desc = "awaria i alarm"),
+  list(key = "fn", abbr = "FN", n = 5L, desc = "awaria bez alarmu"),
+  list(key = "fp", abbr = "FP", n = 495L, desc = "alarm bez awarii"),
+  list(key = "tn", abbr = "TN", n = 9405L, desc = "spokój i cisza")
+)
+alarm_wzory_steps <- list(
+  list(name = "Częstość bazowa", symbol = "P(A)", num = list("tp", "fn"), den = list("tp", "fn", "fp", "tn"),
+    value = "0.01", note = "Wiersz awarii wśród wszystkich zmian. Opisuje halę, nie czujnik."),
+  list(name = "Czułość", symbol = "P(🚨 | A)", num = list("tp"), den = list("tp", "fn"),
+    value = "0.95", note = "Liczona w wierszu awarii: ile awarii czujnik złapał."),
+  list(name = "Swoistość", symbol = "P(🔕 | Aᶜ)", num = list("tn"), den = list("fp", "tn"),
+    value = "0.95", note = "Liczona w wierszu bez awarii: ile spokojnych zmian przeszło w ciszy."),
+  list(name = "Odsetek fałszywych alarmów", symbol = "P(🚨 | Aᶜ)", num = list("fp"), den = list("fp", "tn"),
+    value = "0.05", note = "Ten sam wiersz co swoistość, drugi licznik: FPR = 1 - swoistość."),
+  list(name = "Zapowiedź: wiarygodność alarmu", symbol = "P(A | 🚨)", num = list("tp"), den = list("tp", "fp"),
+    value = "0.16", note = "Tym razem kolumna, nie wiersz. Tej liczby potrzebuje dyżurny; wyprowadzimy ją w rozdziale „Wzór Bayesa”.")
+)
+alarm_wzory_widget <- local({
+  cell <- function(c) tags$div(class = "lc-wz-cell", `data-wz-cell` = c$key,
+    tags$div(class = "lc-wz-abbr", c$abbr),
+    tags$div(class = "lc-wz-n", format(c$n, big.mark = " ")),
+    tags$div(class = "lc-wz-desc", c$desc))
+  cl <- alarm_wzory_cells
+  figure_panel(
+    label = "Pojęcie",
+    title = "Wzory na tablicy 2×2: licznik i mianownik",
+    full_width = TRUE,
+    tags$div(class = "lc-wz",
+      `data-config` = jsonlite::toJSON(list(cells = cl, steps = alarm_wzory_steps), auto_unbox = TRUE),
+      tags$div(class = "lc-sp-head",
+        tags$span(class = "lc-sp-name", `data-wz-out` = "name", alarm_wzory_steps[[1]]$name),
+        tags$span(class = "lc-sp-step", `data-wz-out` = "step", "Wzór 1 z 5")
+      ),
+      tags$div(class = "lc-wz-body",
+        tags$div(class = "lc-wz-grid",
+          tags$div(), tags$div(class = "lc-wz-head", "Alarm 🚨"), tags$div(class = "lc-wz-head", "Brak alarmu 🔕"),
+          tags$div(class = "lc-wz-side", "Awaria A"), cell(cl[[1]]), cell(cl[[2]]),
+          tags$div(class = "lc-wz-side", "Brak awarii Aᶜ"), cell(cl[[3]]), cell(cl[[4]])
+        ),
+        tags$div(class = "lc-wz-formula", `aria-live` = "polite")
+      ),
+      tags$div(class = "lc-sp-nav",
+        tags$button(type = "button", class = "lc-action is-outline", `data-wz` = "prev", lc_icon("prev"), tags$span("Wstecz")),
+        tags$button(type = "button", class = "lc-action is-solid", `data-wz` = "next", tags$span("Dalej"), lc_icon("next"))
+      )
+    ),
+    lc_caption("Niebieskie: licznik. Żółte: mianownik. Liczby to oczekiwane zmiany na 10 000 w hali Bananpolu.")
+  )
+})
+
 # Scena „Telefon o trzeciej”: panel czujnika w dojrzewalni i karty z założeniami
 # liczbowymi, bliźniacza z „Serpuchów, 1983”. Rysunek i kadry działają
 # w przeglądarce (modules/telefon.js).
@@ -403,7 +456,9 @@ alarm_block <- list(
             ),
             risk_definition("3.3", "Częstość bazowa", c(
               "Częstość bazowa (prawdopodobieństwo a priori) to P(A): udział przypadków ze zdarzeniem w populacji, w której działa detektor, oceniony przed poznaniem wyniku detektora. W Bananpolu jest to udział zmian z awarią wśród wszystkich zmian danej hali."
-            ))
+            )),
+            "Wszystkie cztery liczby to ilorazy komórek tej samej tablicy. Różnią się tylko tym, które komórki trafiają do licznika, a które do mianownika.",
+            alarm_wzory_widget
           )
         ),
         list(
@@ -423,13 +478,11 @@ alarm_block <- list(
               ),
               steps = c(
                 "Ze wzoru (3.1): czułość = 57/60 = 0.95; swoistość = (400 - 20)/400 = 380/400 = 0.95. Ze wzoru (3.2): FPR = 20/400 = 0.05.",
-                "Iloraz 57/77 ≈ 0.74 jest liczony w kolumnie „alarm”. Jego wartość zależy od tego, ile awarii było w teście: 60 na 460 zmian, czyli około 0.13. W hali Bananpolu awarie zdarzają się na 0.01 zmian — trzynaście razy rzadziej niż w teście. Fałszywych alarmów będzie więc proporcjonalnie znacznie więcej; tablicę dla 10 000 zmian hali pokazuje rycina poniżej: wiarygodność alarmu wynosi tam około 0.16."
+                "Iloraz 57/77 ≈ 0.74 jest liczony w kolumnie „alarm”. Jego wartość zależy od tego, ile awarii było w teście: 60 na 460 zmian, czyli około 0.13. W hali Bananpolu awarie zdarzają się na 0.01 zmian — trzynaście razy rzadziej niż w teście. Fałszywych alarmów będzie więc proporcjonalnie znacznie więcej; w sekcji o tablicy 2×2 dla 10 000 zmian porównamy obie tablice obok siebie: udział trafnych alarmów wynosi w hali około 0.16."
               ),
               steps_type = "a",
               answer = "(a) Czułość 0.95, swoistość 0.95, FPR 0.05. (b) Nie. Liczba 0.74 opisuje kampanię testową, w której awarie wywołano sztucznie często; w hali trzeba ją przeliczyć z częstością bazową 0.01."
             ),
-            a3_stop_campaign_ui,
-            "Ten sam czujnik: w kampanii 74% trafnych alarmów, w hali 16%. Ilorazy w wierszach są identyczne, 0.95 i 0.05, bo opisują czujnik. Iloraz w kolumnie alarmów zależy od proporcji wierszy: w kampanii awarii było 60 na 460 zmian, w hali 100 na 10 000. Wiersze te same, kolumny inne.",
             risk_check("d3_chk_mianownik",
               "Serwis chce oszacować FPR czujnika z danych eksploatacyjnych. Który iloraz jest właściwy?",
               c(
@@ -466,7 +519,10 @@ alarm_block <- list(
             c(
               "Przy ustawieniach domyślnych wiersz awarii ma 100 zmian: 95 z alarmem i 5 bez. Wiersz bez awarii ma 9900 zmian: 495 z alarmem i 9405 bez. Kolumna alarmów zawiera więc 95 + 495 = 590 zmian, z których prawdziwych jest mniej niż jedna szósta. Czujnik jest dobry w obu wierszach — myli się w 5% przypadków — a mimo to w kolumnie alarmów przeważają pomyłki, bo wiersz bez awarii jest 99 razy liczniejszy.",
               "Przy częstości awarii 0.05 tablica zmienia się zasadniczo: 475 prawdziwych i 475 fałszywych alarmów, czyli dokładnie pół na pół. Detektor się nie zmienił; zmieniła się proporcja wierszy. Zmniejszanie FPR działa w tym samym kierunku: każdy punkt procentowy FPR to w tej hali 99 fałszywych alarmów na 10 000 zmian."
-            )
+            ),
+            "Wróćmy do ulotki producenta z przykładu 3.2. Jego „74% trafności” to udział prawdziwych alarmów w kolumnie alarmów kampanii testowej. Policzmy tę samą liczbę dla hali, przy ustawieniach domyślnych tablicy, i postawmy obie tablice obok siebie.",
+            a3_stop_campaign_ui,
+            "Ten sam czujnik: w kampanii 74% trafnych alarmów, w hali 16%. Ilorazy w wierszach są identyczne, 0.95 i 0.05, bo opisują czujnik. Różni się tylko pasek nad tablicami: w kampanii awarie to 13% zmian, w hali 1%. Od tego udziału zależy kolumna alarmów. Wiersze te same, kolumny inne — dlatego liczby z ulotki nie przenosimy do hali."
           )
         )
       ),

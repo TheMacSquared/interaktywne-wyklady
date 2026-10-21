@@ -132,6 +132,11 @@ a3_stop_campaign_css <- tags$style(HTML("
   .a3-kp-svg .a3-kp-bar { fill: var(--upwr-accent); }
   .a3-kp-svg .a3-kp-col { font: 700 24px var(--upwr-mono); fill: var(--upwr-accent); }
   .a3-kp-side .lc-reads { justify-content: center; margin-top: .4em; }
+  .a3-kp-share { margin: 0 auto .5em; max-width: 360px; }
+  .a3-kp-share-lab { font: 13px var(--upwr-mono); color: var(--upwr-ink-soft); text-align: center; margin-bottom: 4px; }
+  .a3-kp-share-lab b { color: var(--upwr-accent); }
+  .a3-kp-share-bar { height: 14px; border-radius: 3px; background: var(--upwr-surface-sunken); overflow: hidden; border: 1px solid var(--upwr-rule); }
+  .a3-kp-share-bar i { display: block; height: 100%; background: var(--upwr-accent); }
 "))
 
 # Tablica 2×2: pasma wierszy z ilorazem wierszowym po prawej (czytamy wzdłuż
@@ -179,10 +184,17 @@ a3_stop_campaign_ui <- local({
       "Czułość %s i FPR %s; wśród %s alarmów prawdziwych jest %s, czyli %s."),
       head, tp, fn, fp, tn, .a3_p2(tp / (tp + fn)), .a3_p2(fp / (fp + tn)),
       tp + fp, tp, .a3_p2(ppv))
+    events <- tp + fn; total <- tp + fn + fp + tn
     tags$div(class = "a3-kp-side",
       tags$p(class = "a3-kp-head", head),
+      # Udział awarii: jedyna różnica między tablicami, od niej zależy kolumna alarmów.
+      tags$div(class = "a3-kp-share",
+        tags$div(class = "a3-kp-share-lab", "awarie: ", .a3_num(events), " z ", .a3_num(total),
+          " zmian = ", tags$b(sprintf("%.0f%%", 100 * events / total))),
+        tags$div(class = "a3-kp-share-bar", tags$i(style = sprintf("width:%.1f%%", 100 * events / total)))
+      ),
       a3_campaign_svg(tp, fn, fp, tn, aria),
-      lc_readouts(lc_readout("P(awaria | alarm)",
+      lc_readouts(lc_readout("Trafne alarmy",
         sprintf("%s/%s", tp, .a3_num(tp + fp)), color = upwr_accent))
     )
   }
