@@ -1,6 +1,6 @@
 # Punkt stop: „Kiedy drugi alarm coś wnosi” (galeria, przypadek brzegowy) ----
 #
-# Stoi po pytaniu d3_chk_niezal w rozdziale „Założenie warunkowej
+# Stoi po piaskownicy z kopiowaniem w rozdziale „Założenie warunkowej
 # niezależności”. Trzy pary źródeł, każda z jednym mechanizmem pomyłki:
 # różne przyczyny (niezależne), wspólne drgania (częściowo), wspólny przewód
 # (pełna zależność). Liczby z risk_two_alarm_posterior() przy parametrach
@@ -26,12 +26,12 @@ a3_stop_sources_css <- tags$style(HTML("
   .a3-zr-svg .a3-zr-calm-fill { fill: var(--upwr-cat-szalwia); }
   .a3-zr-svg text { font: 13px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
   .a3-zr-mech { font: .95em/1.4 var(--upwr-sans); color: var(--upwr-ink-soft); margin: .2em 0 .8em; flex: 1 0 auto; }
-  .a3-zr-meter-lab { display: flex; justify-content: space-between; font: 12px var(--upwr-mono); color: var(--upwr-ink-subtle); margin-bottom: 4px; }
+  .a3-zr-meter-lab { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 .6em; font: 12px var(--upwr-mono); color: var(--upwr-ink-subtle); margin-bottom: 4px; }
   .a3-zr-meter { position: relative; height: 12px; border-radius: 6px; background: var(--upwr-surface-sunken); border: 1px solid var(--upwr-rule); }
   .a3-zr-meter i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px 0 0 6px; background: var(--upwr-cat-szalwia); }
   .a3-zr-meter b { position: absolute; top: -5px; width: 4px; height: 20px; margin-left: -2px; border-radius: 2px; background: var(--upwr-ink); }
   .a3-zr-gain { font: 12px var(--upwr-mono); color: var(--upwr-ink-soft); margin-top: 6px; }
-  .a3-zr-big { display: flex; align-items: baseline; gap: .5em; margin-top: .5em; }
+  .a3-zr-big { display: flex; flex-direction: column; align-items: flex-start; gap: .2em; margin-top: .6em; }
   .a3-zr-big strong { font: 700 2.2em/1 var(--upwr-mono); color: var(--upwr-accent); }
   .a3-zr-big span { font: 12px var(--upwr-mono); color: var(--upwr-ink-subtle); }
 "))
@@ -105,12 +105,12 @@ a3_stop_sources_ui <- local({
         aria, .a3_zr_drawing(kind))),
       tags$p(class = "a3-zr-mech", mech),
       tags$div(class = "a3-zr-meter-lab",
-        tags$span(paste("1 alarm", fmt(p_one))), tags$span(paste("2 niezależne", fmt(p_ind)))),
+        tags$span(paste("jeden:", fmt(p_one))), tags$span(paste("niezależne:", fmt(p_ind)))),
       tags$div(class = "a3-zr-meter", `aria-hidden` = "true",
         tags$i(style = sprintf("width:%s", pct)), tags$b(style = sprintf("left:%s", pct))),
       tags$div(class = "a3-zr-gain", sprintf("zysk z drugiego alarmu: %.0f%%", 100 * gain)),
       tags$div(class = "a3-zr-big",
-        tags$strong(fmt(post)), tags$span("P(awaria | dwa alarmy)"))
+        tags$span("P(A | 🚨🚨)"), tags$strong(fmt(post)))
     )
   }
 

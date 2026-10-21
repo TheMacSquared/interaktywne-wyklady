@@ -194,7 +194,7 @@ a3_stop_campaign_ui <- local({
         tags$div(class = "a3-kp-share-bar", tags$i(style = sprintf("width:%.1f%%", 100 * events / total)))
       ),
       a3_campaign_svg(tp, fn, fp, tn, aria),
-      lc_readouts(lc_readout("Wiarygodność alarmu",
+      lc_readouts(lc_readout("P(awaria | 🚨)",
         sprintf("%s/%s", tp, .a3_num(tp + fp)), color = upwr_accent))
     )
   }

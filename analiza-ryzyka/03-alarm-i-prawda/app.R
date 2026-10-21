@@ -50,6 +50,7 @@ source(file.path(app_dir, "modules", "stop_zrodla.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_dwiehale.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_drugi.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_sygnaly.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_calkowite.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_prog.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_serpuchow_case.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
@@ -76,6 +77,7 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "dwiehale.js")),
     includeScript(file.path(app_dir, "modules", "drugi.js")),
     includeScript(file.path(app_dir, "modules", "sygnaly.js")),
+    includeScript(file.path(app_dir, "modules", "calkowite.js")),
     tags$style(HTML("
       .lc-pm { font-family: var(--upwr-mono); font-size: .9em; white-space: nowrap;
         padding: .08em .35em; border-radius: 4px;

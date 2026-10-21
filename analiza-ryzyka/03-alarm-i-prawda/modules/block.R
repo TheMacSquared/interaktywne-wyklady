@@ -316,6 +316,20 @@ alarm_tree_svg <- function(d, prevalence, sensitivity, false_positive_rate) {
   ))
 }
 
+# Drzewo z podświetlonymi obiema drogami do alarmu (dla przykładu do wzoru 3.3).
+alarm_tree_lit <- function(prevalence, sensitivity, false_positive_rate) {
+  d <- risk_detector_counts(10000L, prevalence, sensitivity, false_positive_rate)
+  svg <- as.character(alarm_tree_svg(d, prevalence, sensitivity, false_positive_rate))
+  lit <- c("n-root", "e-a", "p-a", "n-a", "e-hit", "p-hit", "n-hit",
+           "e-n", "p-n", "n-n", "e-fa", "p-fa", "n-fa")
+  for (k in lit) svg <- sub(sprintf('class="([^"]*)" data-k="%s"', k),
+    sprintf('class="\\1 is-lit" data-k="%s"', k), svg)
+  svg <- sub('<g data-k="b-alarm">', '<g class="is-lit" data-k="b-alarm">', svg, fixed = TRUE)
+  HTML(sub('class="a3-tree-svg"', 'class="a3-tree-svg is-stepped"', svg, fixed = TRUE))
+}
+a3_stop_total_ui <- a3_stop_total_panel(lapply(a3_total_raw, function(s)
+  alarm_tree_lit(s$prevalence, s$sensitivity, s$fpr)))
+
 # Krokowe drzewo: wzór Bayesa składany z trzech narzędzi wykładu 02, a na koniec
 # ta sama konstrukcja dla ciszy (NPV). Drzewo rysuje serwer (reaguje na suwaki
 # tablicy 2×2), kroki i linijki wzoru dokłada modules/drzewo.js.
@@ -586,7 +600,7 @@ alarm_block <- list(
               )
             ),
             a3_stop_detectors_ui,
-            "Detektor C łapie każdą awarię, a mimo to wiarygodność jego alarmu wynosi tylko 0.17. Przy 9900 sprawnych zmianach nawet 5% fałszywych alarmów daje 495 pomyłek, więc wiarygodność alarmu podnosi dopiero niższy FPR detektora B — za cenę 20 przeoczonych awarii zamiast 5. Wybór detektora to kompromis między fałszywymi alarmami a przeoczeniami, a nie ranking: który jest lepszy, zależy od tego, co w tej hali kosztuje więcej."
+            "Detektor C łapie każdą awarię, a mimo to jego P(awaria | 🚨) wynosi tylko 0.17 — złoty stos jest taki sam jak u A. Przy 9900 sprawnych zmianach nawet 5% fałszywych alarmów daje 495 pomyłek, więc P(awaria | 🚨) podnosi dopiero niższy FPR detektora B — za cenę 20 przeoczonych awarii zamiast 5. Wybór detektora to kompromis między fałszywymi alarmami a przeoczeniami, a nie ranking: który jest lepszy, zależy od tego, co w tej hali kosztuje więcej."
           )
         ),
         list(
@@ -606,6 +620,8 @@ alarm_block <- list(
             risk_formula("P(\\text{🚨})=P(\\text{🚨}\\mid A)\\,P(A)+P(\\text{🚨}\\mid A^{c})\\,P(A^{c})", num = "3.3",
               legend = c("P(\\text{🚨})" = "prawdopodobieństwo alarmu na losowej zmianie", "P(\\text{🚨}\\mid A)" = "czułość", "P(\\text{🚨}\\mid A^{c})" = "FPR", "P(A)" = "częstość bazowa")),
             "W Bananpolu P(🚨) = 0.95 · 0.01 + 0.05 · 0.99 = 0.0095 + 0.0495 = 0.059, czyli 590 alarmów na 10 000 zmian. Podstawiając licznik z kroku drugiego i mianownik (3.3) do definicji, dostajemy wzór Bayesa.",
+            a3_stop_total_ui,
+            "Obie drogi do alarmu widać na drzewie: w hali B awarii jest pięć razy więcej, więc droga przez awarię zrównuje się z drogą przez fałszywe alarmy, a ostrożny detektor zwęża przede wszystkim drogę fałszywą, więc z 590 alarmów zostaje 179.",
             risk_formula("P(A\\mid \\text{🚨})=\\frac{P(\\text{🚨}\\mid A)\\,P(A)}{P(\\text{🚨}\\mid A)\\,P(A)+P(\\text{🚨}\\mid A^{c})\\,P(A^{c})}", num = "3.4",
               legend = c("P(A\\mid \\text{🚨})" = "wiarygodność alarmu (PPV, posterior)", "P(\\text{🚨}\\mid A)\\,P(A)" = "droga przez awarię — licznik", "P(\\text{🚨}\\mid A^{c})\\,P(A^{c})" = "droga przez fałszywe alarmy")),
             lc_p("Licznik jest drogą przez awarię; mianownik sumą obu dróg kończących się alarmem."),
@@ -816,20 +832,6 @@ alarm_block <- list(
               "Przy parametrach domyślnych i braku kopiowania panel pokazuje 0.785 — dokładnie wynik przykładu 3.7. Przy kopiowaniu 0.25 posterior po dwóch alarmach spada do 0.391, przy 0.5 do 0.263, a przy pełnym kopiowaniu wraca do 0.161, czyli do wartości po jednym alarmie. Nawet umiarkowana zależność zjada większość zysku z drugiego czujnika.",
               "Mechanizm widać na wykresie pod suwakiem. Słupek prawdziwych podwójnych alarmów prawie się nie zmienia (od 90 do 95 na 10 000 zmian), bo przy awarii oba czujniki i tak alarmują niemal zawsze. Słupek fałszywych rośnie od 25 do 495. Bez kopiowania podwójny fałszywy alarm wymaga dwóch niezależnych pomyłek (0.05² = 0.0025); przy kopiowaniu wystarczy jedna. Założenie (3.8) jest więc najbardziej optymistycznym wariantem — jeśli nie ma za nim mechanizmu, raport powinien pokazać też wariant z zależnością."
             ),
-            risk_check("d3_chk_niezal",
-              "Dwa czujniki wiszą na wspólnym wsporniku i reagują na te same drgania. Oba alarmują. Co wiemy o posteriorze po dwóch alarmach?",
-              c(
-                "Jest równy 0.785, bo są dwa alarmy" = "indep",
-                "Leży między 0.161 a 0.785, zależnie od siły wspólnej przyczyny" = "between",
-                "Jest niższy niż 0.161, bo czujniki są zależne" = "lower"
-              ),
-              correct = "between",
-              explanation = "0.785 wymaga warunkowej niezależności (definicja 3.6). Przy pełnym kopiowaniu drugi alarm nie wnosi informacji i posterior zostaje na 0.161. Częściowa zależność daje w tym modelu wynik pomiędzy: 0.391 przy kopiowaniu 0.25 i 0.263 przy 0.5. Zależność zmniejsza zysk z drugiego alarmu, ale nie zamienia go w dowód przeciwko awarii.",
-              hints = c(
-                indep = "Wzór (3.8) zakłada warunkową niezależność. Czy wspólne drgania ją naruszają?",
-                lower = "Skrajny przypadek zależności to pełne kopiowanie. Jaki posterior daje wtedy drugi alarm?"
-              )
-            ),
             a3_stop_sources_ui,
             "Liczba źródeł niczego jeszcze nie przesądza: o wartości drugiego źródła decyduje mechanizm, czyli to, czy oba mylą się z tego samego powodu. Pietrow ufał milczeniu radarów właśnie dlatego, że odblask słońca od chmur mógł oszukać satelitę, ale nie radar; dwa czujniki na jednym wsporniku albo na jednym przewodzie takiej pewności nie dają."
           ),
@@ -1017,7 +1019,6 @@ alarm_server <- function(input, output, session) {
     alarm_tree_svg(d, p$prevalence, p$sensitivity, p$false_positive_rate)
   })
   a3_stop_szanse_server(input, output, session, detector_parameters)
-  a3_stop_detektory_server(input, output, session)
   a3_stop_prog_server(input, output, session)
   a3_stop_serpuchow_case_server(input, output, session)
   risk_assessment_server("a3", alarm_quiz, input, output)
