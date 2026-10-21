@@ -229,7 +229,7 @@ Jednolinijkowy opis.
 
 Punkt stop to miejsce, w którym prowadzący zatrzymuje się przy obrazie
 i opowiada. Rodzaje (scena, piaskownica, galeria, symulacja, przypadek,
-pojęcie) i momenty (wprowadzenie, przypadek brzegowy, domknięcie) są
+pojęcie, przykłady) i momenty (wprowadzenie, przypadek brzegowy, domknięcie) są
 zdefiniowane w `PUNKTY-STOP.md`. Gdy polecenie mówi „tu potrzebuję
 piaskownicy” albo „galeria do …”, chodzi o te znaczenia.
 
