@@ -796,12 +796,13 @@ alarm_block <- list(
         list(
           id = "druga-informacja", title = "Druga informacja",
           text = c(
-            "Naturalny odruch po niepewnym alarmie to sięgnięcie po drugie źródło: drugi czujnik, odczyt ręczny, telefon do operatora. Rachunek jest optymistyczny — jeśli druga informacja jest warunkowo niezależna od pierwszej, posterior po pierwszym alarmie staje się częstością bazową dla drugiego i wiarygodność szybko rośnie.",
-            "Cały zysk wisi jednak na słowie „niezależna”. Dwa identyczne czujniki obok siebie mogą reagować na to samo zakłócenie elektromagnetyczne, ten sam kurz i tę samą wilgoć. W modelu poniżej drugi czujnik z prawdopodobieństwem zadanym suwakiem kopiuje wynik pierwszego; w pozostałych przypadkach działa niezależnie warunkowo przy ustalonym stanie instalacji. Kopiowanie dotyczy zarówno awarii, jak i jej braku. Oba czujniki zachowują tę samą czułość i FPR."
+            "Po jednym alarmie P(awaria | 🚨) = 0.16: pięć na sześć wyjazdów jest na próżno. Lepszy czujnik pomaga tylko wtedy, gdy ma niższy FPR, a to kosztuje. Co jeszcze może zrobić dyżurny, zanim wyśle ekipę?",
+            "Każdy z nas zna odpowiedź z życia. Pietrow czekał na radary. Lekarz po dodatnim teście przesiewowym zleca test potwierdzający, a nie od razu leczenie. Bank po podejrzanej transakcji prosi o potwierdzenie SMS-em. Jedna niepewna informacja, potem druga — z innego źródła."
           ),
           body = list(
             a3_stop_second_ui,
             "Drugi czujnik przepuszcza prawie wszystkie prawdziwe alarmy i tylko co dwudziesty fałszywy, dlatego wiarygodność alarmu rośnie z 0.16 do 0.78. Rachunek działa tylko wtedy, gdy przy ustalonym stanie hali drugi czujnik nie wie, co pokazał pierwszy: tę własność nazywa definicja 3.7, a wzór 3.8 zapisuje ten sam przesiew w szansach.",
+            "Scena pokazała też cenę. Procedura „jedź tylko po potwierdzeniu” przepuszcza więcej awarii: do 5 awarii, których pierwszy czujnik nie zauważył, dochodzi 5 odrzuconych przez drugi. Czułość całego układu spada z 0.95 do 0.95² ≈ 0.90. Drugi czujnik nie jest więc darmowy — przesuwa kompromis: mniej zbędnych wyjazdów za cenę większej liczby przeoczeń. Czy to się opłaca, rozstrzyga próg reakcji z rozdziału 5. Odwrotna procedura, „jedź, gdy alarmuje którykolwiek”, przesuwa kompromis w drugą stronę; obie wrócą jako układy szeregowe i równoległe w wykładzie 08.",
             risk_definition("3.7", "Warunkowa niezależność dwóch detektorów", c(
               "Wyniki dwóch detektorów są warunkowo niezależne przy danym stanie, jeśli zarówno przy zdarzeniu, jak i przy jego braku prawdopodobieństwo wspólnego wyniku jest iloczynem prawdopodobieństw pojedynczych wyników: P(🚨₁ ∩ 🚨₂ | A) = P(🚨₁ | A) · P(🚨₂ | A) oraz P(🚨₁ ∩ 🚨₂ | Aᶜ) = P(🚨₁ | Aᶜ) · P(🚨₂ | Aᶜ)."
             )),
@@ -821,7 +822,11 @@ alarm_block <- list(
         ),
         list(
           id = "niezaleznosc", title = "Założenie warunkowej niezależności",
-          text = "Dwa czujniki mogą reagować na to samo zakłócenie lub utracić wspólne zasilanie. Warunkowa niezależność oznacza, że przy ustalonym stanie instalacji (awaria albo jej brak) wynik jednego czujnika nie zmienia prawdopodobieństwa wyniku drugiego — i to założenie trzeba uzasadnić mechanizmem, tak jak w poprzednim wykładzie.",
+          text = c(
+            "Cały zysk z drugiego czujnika wisi na słowie „niezależny”. Gdy oba czujniki wiszą przy tej samej bramie, mają wspólne zasilanie albo pochodzą z jednej partii o tej samej kalibracji, te same zdarzenia oszukują oba naraz. Inżynierska odpowiedź to redundancja zróżnicowana: drugie źródło mierzy coś innego, inną metodą, w innym miejscu — na przykład prąd silnika wentylatora albo ciśnienie czynnika chłodniczego. Tak było w Serpuchowie: odblask słońca oszukał podczerwień satelity, ale nie radar.",
+            "Dwa czujniki mogą reagować na to samo zakłócenie lub utracić wspólne zasilanie. Warunkowa niezależność oznacza, że przy ustalonym stanie instalacji (awaria albo jej brak) wynik jednego czujnika nie zmienia prawdopodobieństwa wyniku drugiego — i to założenie trzeba uzasadnić mechanizmem, tak jak w poprzednim wykładzie.",
+            "W modelu poniżej drugi czujnik z prawdopodobieństwem zadanym suwakiem kopiuje wynik pierwszego; w pozostałych przypadkach działa niezależnie warunkowo przy ustalonym stanie instalacji. Kopiowanie dotyczy zarówno awarii, jak i jej braku. Oba czujniki zachowują tę samą czułość i FPR."
+          ),
           body = list(
             risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.7. Następnie ustaw 0.25, 0.5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale „Czułość i swoistość”. Obserwuj, który pełny słupek rośnie."),
             figure_panel(

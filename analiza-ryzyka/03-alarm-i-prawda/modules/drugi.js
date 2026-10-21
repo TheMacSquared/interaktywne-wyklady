@@ -6,7 +6,9 @@
 // Kadry (cfg.frames) mają pole step:
 //   1 — stosy po pierwszym alarmie, 2 — pojawia się sito,
 //   3 — przesiew: potwierdzone pola przechodzą na prawo, reszta gaśnie,
-//   4 — po dwóch alarmach: zostają stosy po prawej i wiarygodność alarmu.
+//   4 — po dwóch alarmach: zostają stosy po prawej i wiarygodność alarmu;
+// oraz flagi: events — obok stosów lista zdarzeń, które wywołują fałszywe
+// alarmy (cfg.events), missed — wyróżnione awarie odrzucone przez drugi czujnik.
 // Przyciski [data-dt="prev|next"], odczyt kadru w .lc-dt-readout.
 //
 // To, które pola przechodzą przez sito, losuje deterministyczny generator
@@ -73,6 +75,19 @@
     svg("text", { x: SX + SW + 10, y: TY + 20, class: "lc-dt-rate is-true" }, sieve, Math.round(cfg.sens * 100) + "%");
     svg("text", { x: SX + SW + 10, y: FY + 84, class: "lc-dt-rate is-false" }, sieve, Math.round(cfg.fpr * 100) + "%");
 
+    // Skąd fałszywe alarmy: karty zdarzeń po prawej (kadr z flagą events).
+    var ev = svg("g", { class: "lc-dt-events" }, s);
+    svg("text", { x: 400, y: 40, class: "lc-dt-ev-title" }, ev, "fałszywy alarm czujnika 1, gdy:");
+    (cfg.events || []).forEach(function (t, i) {
+      var g = svg("g", { transform: "translate(400 " + (54 + i * 46) + ")" }, ev);
+      svg("rect", { x: 0, y: 0, width: 300, height: 36, rx: 6, class: "lc-dt-ev-card" }, g);
+      svg("text", { x: 14, y: 23, class: "lc-dt-ev-text" }, g, t);
+    });
+
+    // Awarie odrzucone przez drugi czujnik (kadr z flagą missed).
+    svg("text", { x: LX, y: TY + 2 * PITCH + 14, class: "lc-dt-miss-lab" }, s,
+      "obrysowane: " + fmt(cfg.tp1 - cfg.tp2) + " awarii odrzuconych");
+
     // Wiarygodność alarmu pod stosami (kadr 4).
     var yHit = FY + 10 * PITCH + 34;
     svg("text", { x: LX, y: yHit, class: "lc-dt-hit is-before" }, s,
@@ -112,7 +127,7 @@
       cells.forEach(function (c) {
         var cls = "lc-dt-cell is-" + c.kind;
         if (step >= 3 && !c.keep) cls += " is-gone";
-        if (step >= 4 && !c.keep) cls += " is-out";
+        if (step >= 4 && !c.keep) cls += F.missed && c.kind === "true" ? " is-missed" : " is-out";
         c.el.setAttribute("class", cls);
         var moved = step >= 3 && c.keep;
         c.el.style.transitionDelay = moved && f > current ? (c.delay * 0.04) + "s" : "0s";
@@ -121,6 +136,8 @@
       s.classList.toggle("is-sieve", step >= 2);
       s.classList.toggle("is-passed", step >= 3);
       s.classList.toggle("is-final", step >= 4);
+      s.classList.toggle("is-events", !!F.events);
+      s.classList.toggle("is-missed", !!F.missed);
       if (nameEl) nameEl.textContent = F.name;
       if (stepEl) stepEl.textContent = "Kadr " + (f + 1) + " z " + frames.length;
       caption.textContent = F.text;

@@ -18,14 +18,25 @@ a3_second_fp2 <- round(a3_second_fp1 * a3_second_fpr)                          #
 a3_second_ppv1 <- sprintf("%.2f", a3_second_tp1 / (a3_second_tp1 + a3_second_fp1))  # 0.16
 a3_second_ppv2 <- sprintf("%.2f", a3_second_tp2 / (a3_second_tp2 + a3_second_fp2))  # 0.78
 
+a3_second_missed <- a3_second_tp1 - a3_second_tp2                             # 5
+a3_second_events <- c(
+  "otwarta brama: wpada ciepłe powietrze",
+  "parownik obok czujnika się odszrania",
+  "skok napięcia w zasilaniu czujnika",
+  "czujnik rozkalibrował się o 2 °C"
+)
+
 a3_second_frames <- list(
   list(name = "Pierwszy alarm", step = 1L,
     read = sprintf("1 pole = %d alarmów · prawdziwe %d · fałszywe %d", a3_second_scale, a3_second_tp1, a3_second_fp1),
     text = sprintf("Na 10 000 zmian pierwszy czujnik dzwoni %d razy. Prawdziwych telefonów jest %d, fałszywych %d.",
       a3_second_tp1 + a3_second_fp1, a3_second_tp1, a3_second_fp1)),
+  list(name = "Skąd fałszywe alarmy", step = 1L, events = TRUE,
+    read = "fałszywy alarm: 5 na 100 spokojnych zmian",
+    text = "Fałszywy alarm to nie przypadkowa liczba, tylko konkretne zdarzenie przy pierwszym czujniku: ciepłe powietrze z bramy, odszranianie parownika, skok napięcia, dryft kalibracji."),
   list(name = "Drugi czujnik", step = 2L,
     read = sprintf("drugi czujnik: czułość %.2f · FPR %.2f", a3_second_sens, a3_second_fpr),
-    text = "Zanim wyśle ekipę, dyżurny dzwoni do drugiego czujnika w tej samej dojrzewalni. Ma on te same parametry, ale mierzy osobno: o tym, czy zaalarmuje, decyduje tylko stan hali."),
+    text = "Zanim wyśle ekipę, dyżurny sprawdza drugi czujnik. Wisi w drugim końcu hali, ma osobne zasilanie i własną kalibrację, więc tamte zdarzenia go nie dotyczą: myli się z innych powodów. O tym, czy zaalarmuje, decyduje tylko stan hali."),
   list(name = "Przesiew", step = 3L,
     read = sprintf("1 pole = %d alarmów · prawdziwe %d → %d · fałszywe %d → %d",
       a3_second_scale, a3_second_tp1, a3_second_tp2, a3_second_fp1, a3_second_fp2),
@@ -36,7 +47,12 @@ a3_second_frames <- list(
       a3_second_tp2, a3_second_tp2 + a3_second_fp2, a3_second_ppv2,
       a3_second_tp1, a3_second_tp1 + a3_second_fp1, a3_second_ppv1),
     text = sprintf("Prawdziwych telefonów ubyło niewiele, fałszywych prawie wszystkie. Z %d podwójnych alarmów %d to awarie.",
-      a3_second_tp2 + a3_second_fp2, a3_second_tp2))
+      a3_second_tp2 + a3_second_fp2, a3_second_tp2)),
+  list(name = "Cena potwierdzenia", step = 4L, missed = TRUE,
+    read = sprintf("przeoczone awarie: %d (czujnik 1 milczał) + %d (czujnik 2 nie potwierdził) = %d zamiast %d",
+      a3_second_missed, a3_second_missed, 2L * a3_second_missed, a3_second_missed),
+    text = sprintf("Potwierdzenie nie jest darmowe. Przy %d awariach drugi czujnik zawiódł i dyżurny uzna je za fałszywy alarm. Czułość całego układu spada z 0.95 do 0.95 · 0.95 ≈ 0.90.",
+      a3_second_missed))
 )
 
 # Prawdziwe alarmy — akcent, fałszywe — złoto (--upwr-single-alt), jak w „Dzienniku dyżurnego”.
@@ -66,6 +82,14 @@ a3_stop_second_css <- "
 .lc-dt-hit.is-before { font-size: 15px; fill: var(--upwr-ink-subtle); }
 .lc-dt-hit.is-after { font-size: 18px; font-weight: 700; fill: var(--upwr-ink); }
 .lc-dt-svg.is-final .lc-dt-hit { opacity: 1; }
+.lc-dt-events { opacity: 0; transition: opacity .5s ease; }
+.lc-dt-svg.is-events .lc-dt-events { opacity: 1; }
+.lc-dt-ev-title { font: 600 14px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-dt-ev-card { fill: color-mix(in srgb, var(--upwr-single-alt) 12%, var(--upwr-surface)); stroke: var(--upwr-single-alt); stroke-width: 1.5; }
+.lc-dt-ev-text { font: 14px var(--upwr-sans); fill: var(--upwr-ink); }
+.lc-dt-cell.is-missed { opacity: 1; fill: none; stroke: var(--upwr-accent); stroke-width: 2.5; }
+.lc-dt-miss-lab { font: 600 14px var(--upwr-sans); fill: var(--upwr-accent); opacity: 0; transition: opacity .5s ease; }
+.lc-dt-svg.is-missed .lc-dt-miss-lab { opacity: 1; }
 .lc-dt-readout { font: 600 15px var(--upwr-mono); color: var(--upwr-ink); margin: .2em 0 .6em; min-height: 1.4em; }
 @media (prefers-reduced-motion: reduce) { .lc-dt-svg * { transition: none !important; } }
 "
@@ -77,7 +101,7 @@ a3_stop_second_ui <- figure_panel(
   tags$style(HTML(a3_stop_second_css)),
   tags$div(class = "lc-dt",
     `data-config` = jsonlite::toJSON(list(
-      scale = a3_second_scale, seed = 20261021L,
+      scale = a3_second_scale, seed = 20261021L, events = a3_second_events,
       tp1 = a3_second_tp1, fp1 = a3_second_fp1, tp2 = a3_second_tp2, fp2 = a3_second_fp2,
       sens = a3_second_sens, fpr = a3_second_fpr,
       ppv1 = a3_second_ppv1, ppv2 = a3_second_ppv2,
@@ -85,7 +109,7 @@ a3_stop_second_ui <- figure_panel(
       frames = a3_second_frames), auto_unbox = TRUE),
     tags$div(class = "lc-sp-head",
       tags$span(class = "lc-sp-name", `data-dt-out` = "name", "Pierwszy alarm"),
-      tags$span(class = "lc-sp-step", `data-dt-out` = "step", "Kadr 1 z 4")
+      tags$span(class = "lc-sp-step", `data-dt-out` = "step", sprintf("Kadr 1 z %d", length(a3_second_frames)))
     ),
     tags$div(class = "lc-dt-stage", role = "img"),
     tags$p(class = "lc-sp-caption lc-dt-caption", `aria-live` = "polite"),
