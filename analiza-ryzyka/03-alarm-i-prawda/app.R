@@ -59,7 +59,16 @@ ui <- lecture_page(
   chapters = .chapters,
   header_extras = tagList(
     includeScript(file.path(app_dir, "modules", "serpuchow.js")),
+    includeScript(file.path(app_dir, "modules", "notacja.js")),
     tags$style(HTML("
+      .lc-pm { font-family: var(--upwr-mono); font-size: .9em; white-space: nowrap;
+        padding: .08em .35em; border-radius: 4px;
+        background: color-mix(in srgb, var(--upwr-cat-indygo) 9%, var(--upwr-surface)); }
+      .lc-chapter :is(p, li):has(.lc-pm) { text-align: left; }
+      .lc-pm-p { color: var(--upwr-ink-subtle); }
+      .lc-pm-ev { color: var(--upwr-ink); font-weight: 600; }
+      .lc-pm-bar { color: var(--upwr-accent); font-weight: 700; padding: 0 .3em; }
+      .lc-pm-cond { color: var(--upwr-cat-indygo); font-weight: 600; }
       .lc-sp-head { display: flex; justify-content: space-between; align-items: baseline; margin: .2em 0 .3em; }
       .lc-sp-name { font: 600 1.02em var(--upwr-sans); color: var(--upwr-ink); }
       .lc-sp-step { font: .8em var(--upwr-mono); color: var(--upwr-ink-subtle); }
