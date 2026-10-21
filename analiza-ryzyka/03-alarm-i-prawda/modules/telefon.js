@@ -32,6 +32,19 @@
     svg("line", { x1: 30, y1: 52, x2: 422, y2: 52, class: "lc-sp-scanline" }, s);
     svg("text", { x: 226, y: 104, "text-anchor": "middle", class: "lc-tf-clock" }, s, "03:00");
 
+    // Kiście bananów w dojrzewalni: po obu stronach zegara
+    function bunch(x, y, scale, flip) {
+      var g = svg("g", { transform: "translate(" + x + " " + y + ") scale(" + (flip ? -scale : scale) + " " + scale + ")" }, s);
+      [-24, 0, 24].forEach(function (angle) {
+        var b = svg("g", { transform: "rotate(" + angle + ")" }, g);
+        svg("path", { d: "M0 0 C6 22 24 34 44 32 C30 26 14 16 6 0 Z", class: "lc-tf-banana" }, b);
+        svg("path", { d: "M41 30 l6 3 l-2 -5 z", class: "lc-tf-tip" }, b);
+      });
+      svg("rect", { x: -4, y: -9, width: 9, height: 11, rx: 2, class: "lc-tf-stem" }, g);
+    }
+    bunch(78, 68, 1, false);
+    bunch(374, 68, 1, true);
+
     // Wykres temperatury z progiem alarmu
     var x0 = 50, x1 = 410, yTop = 140, yBot = 280, tMin = 13, tMax = 17.5;
     function ty(t) { return yBot - (t - tMin) / (tMax - tMin) * (yBot - yTop); }

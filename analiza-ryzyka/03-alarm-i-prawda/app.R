@@ -76,6 +76,8 @@ ui <- lecture_page(
       .lc-tf-axis { font: 12px var(--upwr-mono); fill: #e4573d; }
       .lc-tf-line { fill: none; stroke: #7fc98f; stroke-width: 2.5; }
       .lc-tf-dot { fill: #e4573d; }
+      .lc-tf-banana { fill: #f2cf4a; stroke: #8a6d1a; stroke-width: 1.2; stroke-linejoin: round; }
+      .lc-tf-tip, .lc-tf-stem { fill: #5c4a1e; }
       .lc-tf-phone { fill: var(--upwr-ink-soft); }
       .lc-tf-card { opacity: 0; transition: opacity .5s ease; }
       .lc-tf-card.is-on { opacity: 1; }
