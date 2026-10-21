@@ -36,7 +36,7 @@ alarm_exercises <- list(
   list(
     task = "Diagnostyka: wyjaśnij, dlaczego dwóch czujników z tym samym zasilaniem nie wolno automatycznie traktować jako niezależnych.",
     answer = c(
-      "Wspólne zasilanie jest wspólną przyczyną wyników obu czujników. Spadek napięcia może wywołać fałszywy alarm na obu naraz, a utrata zasilania wycisza oba jednocześnie — także wtedy, gdy awaria trwa. Przy ustalonym stanie instalacji P(oba alarmy | stan) jest wtedy większe niż iloczyn P(alarm | stan) · P(alarm | stan), więc warunek z definicji 3.6 nie zachodzi.",
+      "Wspólne zasilanie jest wspólną przyczyną wyników obu czujników. Spadek napięcia może wywołać fałszywy alarm na obu naraz, a utrata zasilania wycisza oba jednocześnie — także wtedy, gdy awaria trwa. Przy ustalonym stanie instalacji P(oba alarmy | stan) jest wtedy większe niż iloczyn P(alarm | stan) · P(alarm | stan), więc warunek z definicji 3.7 nie zachodzi.",
       "Skutek rachunkowy: wzór (3.8) mnoży iloraz wiarygodności przez siebie i zawyża posterior. W skrajnym przypadku, gdy drugi czujnik tylko powtarza pierwszy, drugi alarm nie wnosi żadnej informacji i posterior zostaje na poziomie 0.161 zamiast 0.785."
     )
   ),
@@ -499,7 +499,8 @@ alarm_block <- list(
               "Trzecia potrzebna liczba nie dotyczy detektora, lecz miejsca, w którym go zamontowano. Ten sam czujnik w hali z nowymi wentylatorami i w hali ze sprzętem po dwudziestu latach eksploatacji będzie miał identyczną czułość i swoistość, ale zupełnie inną liczbę awarii do wykrycia."
             ),
             risk_definition("3.3", "Częstość bazowa", c(
-              "Częstość bazowa (prawdopodobieństwo a priori) to P(A): udział przypadków ze zdarzeniem w populacji, w której działa detektor, oceniony przed poznaniem wyniku detektora. W Bananpolu jest to udział zmian z awarią wśród wszystkich zmian danej hali."
+              "Częstość bazowa (prawdopodobieństwo a priori) to P(A): jak często zdarzenie występuje w danej populacji, zanim poznamy wynik detektora. W Bananpolu jest to udział zmian z awarią wśród wszystkich zmian danej hali.",
+              "Ten sam fakt można zapisać na trzy sposoby: jako prawdopodobieństwo (0.01), jako naturalną częstość (1 zmiana na 100) albo jako szanse a priori (1 : 99, czyli 1 zmiana z awarią na 99 spokojnych). Częstość bazowa opisuje miejsce — halę, populację badanych — a nie detektor."
             )),
             "Wszystkie cztery liczby to ilorazy komórek tej samej tablicy. Różnią się tylko tym, które komórki trafiają do licznika, a które do mianownika.",
             alarm_wzory_widget
@@ -722,7 +723,7 @@ alarm_block <- list(
       id = "baza", title = "Częstość bazowa", hook = "Ten sam alarm znaczy co innego w innej hali",
       lead = "Ten sam czujnik daje inną wiarygodność alarmu w innej populacji, a drugi alarm pomaga tylko o tyle, o ile wnosi nową informację.",
       intro = c(
-        "Wiarygodność alarmu nie jest cechą czujnika — jest cechą pary: czujnik plus populacja, w której pracuje. Ten sam model detektora zamontowany w hali o rzadkich awariach będzie „krzyczał wilk” znacznie częściej niż w hali, gdzie awarie są powszechne.",
+        "Częstość bazowa z definicji 3.3 to P(A): jak często awaria zdarza się w danej hali, zanim zadzwoni telefon — 0.01, czyli 1 zmiana na 100, czyli szanse 1 : 99. Wiarygodność alarmu nie jest cechą czujnika — jest cechą pary: czujnik plus populacja, w której pracuje. Ten sam model detektora zamontowany w hali o rzadkich awariach będzie „krzyczał wilk” znacznie częściej niż w hali, gdzie awarie są powszechne.",
         "Krzywa poniżej pokazuje tę zależność w całym zakresie. Zauważ, jak stromo rośnie na początku: przy bardzo rzadkich awariach niewielka zmiana częstości bazowej silnie zmienia sens alarmu. To dlatego przenoszenie parametrów detektora między instalacjami bez sprawdzenia częstości bazowej jest błędem, a nie oszczędnością."
       ),
       sections = list(
@@ -731,20 +732,18 @@ alarm_block <- list(
           body = list(
             a3_stop_halls_ui,
             "Czujnik w obu halach jest ten sam, zmieniła się tylko częstość awarii: z 1% na 5%. To wystarczyło, by wiarygodność alarmu wzrosła z 0.16 do 0.50. Krzywa poniżej pokazuje tę zależność dla każdej częstości bazowej; dwie hale to na niej dwa punkty, przy 0.01 i przy 0.05.",
-            risk_try("odczytaj wartość w panelu dla częstości 0.01 (przerywana linia na wykresie). Potem zmniejsz FPR do 0.01 i sprawdź, jak zmienia się ta wartość i kształt krzywej przy lewej krawędzi. Na koniec przywróć FPR 0.05 i zmniejsz czułość do 0.80."),
-            risk_widget_panel(
-              "Krzywa", "P(awaria | alarm) a częstość bazowa",
-              tagList(
-                lc_slider("a3_curve_sens", "Czułość", 0.5, 1, 0.95, 0.01),
-                lc_slider("a3_curve_fpr", "FPR", 0.001, 0.20, 0.05, 0.001)
-              ),
-              "a3_curve", "a3_posterior"
-            ),
+            risk_definition("3.5", "Pułapka częstości bazowej", c(
+              "Pułapka częstości bazowej (ang. base rate neglect) to ocena wyniku detektora bez uwzględnienia, jak często zdarzenie występuje w danej populacji. Najczęściej polega na utożsamieniu czułości P(🚨 | A) z wiarygodnością alarmu P(A | 🚨).",
+              "Pułapka jest najgroźniejsza, gdy zdarzenie jest rzadkie: wtedy nawet niewielki odsetek fałszywych alarmów daje ich więcej niż prawdziwych."
+            )),
+            risk_try("przy obecnym czujniku odczytaj P(awaria | 🚨) dla trzech hal. Potem włącz tańszy czujnik: o ile zmienia się wynik w nowej hali? Na koniec włącz ciche tło i porównaj."),
+            a3_stop_curve_ui,
             c(
-              "Przy czułości 0.95 i FPR 0.05 krzywa przechodzi przez około 0.019 dla częstości 0.001, przez 0.161 dla 0.01, przez 0.5 dla 0.05 i przez około 0.83 dla 0.2. Między częstością 0.001 a 0.01 posterior rośnie ponad ośmiokrotnie; między 0.1 a 0.2 — już tylko z 0.68 do 0.83. Przy FPR 0.01 wartość dla częstości 0.01 skacze do 0.490, a przy czułości 0.80 (i FPR 0.05) spada tylko do 0.139. Lewa część krzywej jest wrażliwa na FPR, prawie wcale na czułość.",
+              "Przy obecnym czujniku w nowej hali prawdziwy jest mniej więcej co szósty alarm (0.16), w starej co drugi (0.50), w lipcowy upał pięć na sześć (0.83). Ten sam czujnik w lipcu jest wiarygodniejszy niż w styczniu, bo w lipcu awarie są częstsze — tak jak test przesiewowy wykonany w grupie ryzyka daje wiarygodniejszy wynik dodatni niż ten sam test w całej populacji. Alarm to mieszanka dwóch strumieni: prawdziwe alarmy rosną razem z awaryjnością hali, a fałszywe są stałym tłem — około 5 na 100 spokojnych zmian. W hali, która rzadko się psuje, tło zagłusza sygnał.",
+              "Tańszy czujnik prawie nie zmienia P(awaria | 🚨) w nowej hali: 0.14 zamiast 0.16, bo fałszywych alarmów jest tyle samo, a prawdziwych ubyło niewiele. Jego cena jest gdzie indziej: przegapia 20 awarii na 100 zamiast 5. Ciche tło (FPR 0.01) podnosi wynik w nowej hali do 0.49 — prawie trzy razy. Przy rzadkich awariach o wiarygodności alarmu decyduje FPR, a nie czułość; dlatego badania przesiewowe kieruje się do grup ryzyka, czyli tam, gdzie częstość bazowa jest wyższa.",
               "Tę stromość najłatwiej zrozumieć, gdy zamiast prawdopodobieństw użyjemy szans. Szanse zdarzenia to iloraz P(A)/P(Aᶜ): częstość 0.01 odpowiada szansom 1 : 99, częstość 0.05 — szansom 1 : 19. Dzieląc wzór Bayesa (3.4) dla A przez ten sam wzór dla Aᶜ, skracamy wspólny mianownik P(🚨) i dostajemy bardzo prostą zależność."
             ),
-            risk_definition("3.5", "Iloraz wiarygodności", c(
+            risk_definition("3.6", "Iloraz wiarygodności", c(
               "Iloraz wiarygodności wyniku dodatniego to LR₊ = P(🚨 | A) / P(🚨 | Aᶜ) = czułość / FPR. Mówi, ile razy częściej alarm pojawia się przy awarii niż bez niej.",
               "Analogicznie iloraz wiarygodności wyniku ujemnego to LR₋ = P(🔕 | A) / P(🔕 | Aᶜ) = (1 - czułość) / swoistość. LR₊ > 1 podnosi przekonanie o zdarzeniu, LR₋ < 1 je obniża."
             )),
@@ -791,10 +790,7 @@ alarm_block <- list(
               ),
               answer = "Około 9 na 98 wyników dodatnich jest prawdziwych, czyli mniej więcej jeden na jedenaście. Opis „jeden na dziesięć” w tekście to zaokrąglenie tej samej liczby."
             ),
-            "Naturalne częstości mają jeszcze jedną zaletę dydaktyczną: pacjentowi łatwiej zrozumieć „9 z 98 osób z takim wynikiem jest chorych” niż „wartość predykcyjna dodatnia wynosi 9.2%”. Ta sama zasada dotyczy raportu dla kierownika zmiany w Bananpolu.",
-            "Zbierzmy oba przykłady na jednej osi szans.",
-            a3_stop_odds_gallery_ui,
-            "Strzałki hal A i B mają tę samą długość: czujnik mnoży szanse przez 19 w każdej hali. Różni je tylko punkt startu, 1 : 99 albo 1 : 19, i dlatego ten sam alarm daje 0.16 w hali A i 0.5 w hali B. Test przesiewowy startuje z tego samego miejsca co hala A, ale jego mnożnik to 10, więc kończy niżej, na około 0.09. Na skali logarytmicznej mnożenie jest przesunięciem o stałą odległość, a wynik zależy od tego, skąd się startuje."
+            "Naturalne częstości mają jeszcze jedną zaletę dydaktyczną: pacjentowi łatwiej zrozumieć „9 z 98 osób z takim wynikiem jest chorych” niż „wartość predykcyjna dodatnia wynosi 9.2%”. Ta sama zasada dotyczy raportu dla kierownika zmiany w Bananpolu."
           )
         ),
         list(
@@ -805,8 +801,8 @@ alarm_block <- list(
           ),
           body = list(
             a3_stop_second_ui,
-            "Drugi czujnik przepuszcza prawie wszystkie prawdziwe alarmy i tylko co dwudziesty fałszywy, dlatego wiarygodność alarmu rośnie z 0.16 do 0.78. Rachunek działa tylko wtedy, gdy przy ustalonym stanie hali drugi czujnik nie wie, co pokazał pierwszy: tę własność nazywa definicja 3.6, a wzór 3.8 zapisuje ten sam przesiew w szansach.",
-            risk_definition("3.6", "Warunkowa niezależność dwóch detektorów", c(
+            "Drugi czujnik przepuszcza prawie wszystkie prawdziwe alarmy i tylko co dwudziesty fałszywy, dlatego wiarygodność alarmu rośnie z 0.16 do 0.78. Rachunek działa tylko wtedy, gdy przy ustalonym stanie hali drugi czujnik nie wie, co pokazał pierwszy: tę własność nazywa definicja 3.7, a wzór 3.8 zapisuje ten sam przesiew w szansach.",
+            risk_definition("3.7", "Warunkowa niezależność dwóch detektorów", c(
               "Wyniki dwóch detektorów są warunkowo niezależne przy danym stanie, jeśli zarówno przy zdarzeniu, jak i przy jego braku prawdopodobieństwo wspólnego wyniku jest iloczynem prawdopodobieństw pojedynczych wyników: P(🚨₁ ∩ 🚨₂ | A) = P(🚨₁ | A) · P(🚨₂ | A) oraz P(🚨₁ ∩ 🚨₂ | Aᶜ) = P(🚨₁ | Aᶜ) · P(🚨₂ | Aᶜ)."
             )),
             "Przy warunkowej niezależności ilorazy wiarygodności się mnożą, a wzór (3.7) stosujemy dwa razy z rzędu. Posterior po pierwszej informacji staje się szansami a priori dla drugiej.",
@@ -868,20 +864,21 @@ alarm_block <- list(
         list(
           id = "rachunek", title = "Koszt reakcji a koszt zaniechania",
           body = list(
-            "Rozważamy wyłącznie szkodę materialną. Reakcja kosztuje 100 zł niezależnie od stanu i całkowicie zapobiega stracie; brak reakcji przy awarii kosztuje 2000 zł. Przy posteriorze q oczekiwany koszt reakcji to 100 zł, a oczekiwany koszt braku reakcji 2000q.",
-            lc_formula_box(withMathJax("$$E(\\text{koszt}\\mid\\text{reakcja})=100,\\qquad E(\\text{koszt}\\mid\\text{brak})=2000q$$")),
-            "Reagujemy, gdy q>0.05. Przy q≈0.161 koszt braku reakcji wynosi około 322 zł, więc reakcja jest uzasadniona mimo przewagi fałszywych alarmów.",
+            "Do rachunku potrzebujemy trzech liczb. Oznaczmy: q = P(awaria | 🚨) — posterior po alarmie, policzony w poprzednich rozdziałach (w Bananpolu 0.161); c — koszt reakcji, czyli wyjazdu ekipy (100 zł); L — strata, której reakcja zapobiega, czyli partia owoców (2000 zł). Rozważamy wyłącznie szkodę materialną i zakładamy, że reakcja kosztuje c niezależnie od stanu i całkowicie zapobiega stracie.",
+            "Jeśli reagujemy, płacimy c zawsze — przy awarii i bez niej. Jeśli nie reagujemy, płacimy L, ale tylko wtedy, gdy awaria rzeczywiście jest, czyli z prawdopodobieństwem q. Średnio, na wielu takich alarmach:",
+            lc_formula_box(withMathJax("$$\\begin{aligned}\\text{oczekiwany koszt reakcji} &= c = 100\\text{ zł}\\\\[0.4em] \\text{oczekiwany koszt braku reakcji} &= q\\cdot L = 2000\\,q\\end{aligned}$$")),
+            "Reagujemy, gdy q · L > c, czyli w Bananpolu gdy q > 0.05. Przy q = 0.161 brak reakcji kosztuje średnio około 322 zł, więc wyjazd za 100 zł jest uzasadniony, mimo że większość alarmów jest fałszywa.",
             risk_try("ustaw koszt reakcji c na 350 zł i obserwuj punkty na osi. Która z trzech sytuacji zmienia decyzję i dlaczego właśnie ta? Potem wróć do 100 zł i zwiększaj stratę L."),
             a3_stop_cost_ui,
             c(
-              "Rachunek z wykresu da się zapisać ogólnie. Niech c oznacza koszt reakcji, a L stratę, której reakcja w pełni zapobiega. Oczekiwany koszt reakcji to c, oczekiwany koszt jej braku to q · L. Reagujemy, gdy q · L > c, czyli gdy posterior przekracza iloraz kosztów."
+              "Na wykresie linia ciągła to c, a przerywana to q · L. Przecinają się tam, gdzie oba koszty są równe: q · L = c, czyli q = c / L. Na prawo od tego punktu reakcja jest tańsza."
             ),
-            risk_definition("3.7", "Próg reakcji", c(
+            risk_definition("3.8", "Próg reakcji", c(
               "Próg reakcji q* to wartość posterioru, przy której oczekiwany koszt reakcji i jej braku są równe. Przy posteriorze powyżej progu reakcja minimalizuje oczekiwany koszt; poniżej — nie. Próg zależy od kosztów i skuteczności reakcji, a nie od detektora."
             )),
-            risk_formula("q^{*}=\\frac{c}{L},\\qquad \\text{reaguj, gdy } P(A\\mid \\text{🚨})>q^{*}", num = "3.9",
-              legend = c("c" = "koszt reakcji", "L" = "strata, której reakcja zapobiega", "q^{*}" = "próg reakcji")),
-            "Jeśli reakcja ogranicza stratę tylko o połowę, jej koszt oczekiwany to 100+1000q; próg rośnie do q>0.10. Skuteczność działania jest osobnym założeniem. Urazów i pełnej oceny bezpieczeństwa nie sprowadzamy w tym przykładzie do jednej kwoty.",
+            risk_formula("q^{*}=\\frac{c}{L},\\qquad \\text{reaguj, gdy } q>q^{*}", num = "3.9",
+              legend = c("q" = "P(A | 🚨), posterior po alarmie", "c" = "koszt reakcji", "L" = "strata, której reakcja zapobiega", "q^{*}" = "próg reakcji")),
+            "Jeśli reakcja ogranicza stratę tylko o połowę, oczekiwany koszt reakcji to c + q · L/2 = 100 + 1000q; próg rośnie do q > 0.10. Skuteczność działania jest osobnym założeniem. Urazów i pełnej oceny bezpieczeństwa nie sprowadzamy w tym przykładzie do jednej kwoty.",
             "W Bananpolu q* = 100/2000 = 0.05. Łącząc wzór (3.9) z wzorem (3.7), można przełożyć próg na posteriorze na próg na częstości bazowej: reagujemy na alarm, gdy szanse a priori · 19 > 0.05/0.95 = 1/19, czyli gdy szanse a priori przekraczają 1/361. Odpowiada to częstości awarii około 0.0028. Poniżej tej częstości pojedynczy alarm tego czujnika nie uzasadnia wyjazdu przy tych kosztach.",
             "Zanim policzymy przykład 3.8, zobaczmy tę samą regułę w trzech firmach, z tym samym rodzajem alarmu, ale innymi kosztami.",
             a3_stop_examples_ui,
@@ -998,22 +995,6 @@ alarm_server <- function(input, output, session) {
       lc_readout("P(awaria | alarm)", risk_fmt_p(posterior()), color = upwr_secondary)
     )
   })
-  curve_plot <- reactive({
-    prevalence <- seq(.0001, .2, length.out = 300)
-    dat <- data.frame(prevalence, posterior = vapply(prevalence, risk_bayes, numeric(1),
-      sensitivity = input$a3_curve_sens, false_positive_rate = input$a3_curve_fpr
-    ))
-    ggplot(dat, aes(prevalence, posterior)) +
-      geom_line(colour = upwr_accent, linewidth = 1.1) +
-      geom_vline(xintercept = .01, linetype = 2, colour = upwr_reference) +
-      labs(x = "P(awarii)", y = "P(awarii | alarm)") +
-      theme_upwr()
-  })
-  zoom_plot_server("a3_curve", curve_plot, alt = "Rosnąca krzywa wiarygodności alarmu względem częstości bazowej awarii.")
-  output$a3_posterior <- renderUI(lc_readout("P(awaria | alarm) przy P(awarii) = 0.01",
-    risk_fmt_p(risk_bayes(.01, input$a3_curve_sens, input$a3_curve_fpr)),
-    color = upwr_accent
-  ))
   output$a3_second <- renderUI({
     p1 <- posterior()
     adjusted <- do.call(risk_two_alarm_posterior, c(detector_parameters(),

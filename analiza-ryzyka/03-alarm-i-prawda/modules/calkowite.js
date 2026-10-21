@@ -34,7 +34,7 @@
       var C = cases[i];
       if (!C) return;
       segBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(+b.dataset.pcGo === i)); });
-      var extra = { step: "Sytuacja " + (i + 1) + " z " + n };
+      var extra = { step: (root.dataset.stepLabel || "Sytuacja") + " " + (i + 1) + " z " + n };
       Object.keys(extra).forEach(function (k) { C[k] = extra[k]; });
       setAll("[data-pc-out]", "data-pc-out", C);
       root.querySelectorAll("[data-pc-tree]").forEach(function (t) { t.hidden = +t.dataset.pcTree !== i; });
