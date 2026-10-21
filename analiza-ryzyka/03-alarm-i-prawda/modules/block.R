@@ -93,24 +93,98 @@ alarm_terms_table <- figure_panel(
   )
 )
 
+# Scena „Serpuchów, 1983”: ekran systemu Oko i karty z tym, co wie dyżurny.
+# Rysunek i kadry działają w przeglądarce (modules/serpuchow.js).
+alarm_serpuchow_frames <- list(
+  list(name = "Alarm", missiles = 1L, status = "START", tone = "alarm", cards = list(),
+    text = "26 września 1983, tuż po północy, bunkier dowodzenia pod Moskwą. Satelitarny system ostrzegania Oko zgłasza start rakiety z bazy w USA."),
+  list(name = "Pięć rakiet", missiles = 5L, status = "START", tone = "alarm", cards = list("proc"),
+    text = "Po chwili system zgłasza kolejne starty, razem pięć, i ocenia wiarygodność jako wysoką. Procedura każe zameldować atak. Co robicie?"),
+  list(name = "Co wie dyżurny", missiles = 5L, status = "START", tone = "alarm", cards = list("proc", "nowy", "setki"),
+    text = "Dyżurny oficer Stanisław Pietrow wie, że system działa od niedawna. Wie też, że prawdziwy atak to setki rakiet naraz, nie pięć."),
+  list(name = "Radary milczą", missiles = 5L, status = "START", tone = "alarm", cards = list("proc", "nowy", "setki", "radar"),
+    text = "Radary naziemne patrzą inną metodą niż satelita. Mijają minuty, a żaden z nich nie potwierdza startu."),
+  list(name = "Decyzja", missiles = 5L, status = "FAŁSZYWY ALARM", tone = "calm", reveal = TRUE,
+    cards = list("proc", "nowy", "setki", "radar", "decyzja"), dim = list("proc"),
+    text = "Pietrow melduje awarię systemu. Rakiety nie nadlatują. Później okazuje się, że satelita wziął odbicie słońca od wysokich chmur za starty.")
+)
+alarm_serpuchow_widget <- figure_panel(
+  label = "Scena",
+  title = "Serpuchów, 1983: pięć rakiet na ekranie",
+  full_width = TRUE,
+  tags$div(class = "lc-sp",
+    `data-config` = jsonlite::toJSON(list(frames = alarm_serpuchow_frames), auto_unbox = TRUE),
+    tags$div(class = "lc-sp-head",
+      tags$span(class = "lc-sp-name", `data-sp-out` = "name", "Alarm"),
+      tags$span(class = "lc-sp-step", `data-sp-out` = "step", "Kadr 1 z 5")
+    ),
+    tags$div(class = "lc-sp-stage", role = "img"),
+    tags$p(class = "lc-sp-caption", `aria-live` = "polite"),
+    tags$div(class = "lc-sp-nav",
+      tags$button(type = "button", class = "lc-action is-outline", `data-sp` = "prev", lc_icon("prev"), tags$span("Wstecz")),
+      tags$button(type = "button", class = "lc-action is-solid", `data-sp` = "next", tags$span("Dalej"), lc_icon("next"))
+    )
+  )
+)
+
+# Drzewo dwóch dróg do alarmu na 10 000 zmian. Grubość gałęzi kończących się
+# alarmem jest proporcjonalna do liczby zmian; pozostałe gałęzie są przygaszone.
+alarm_tree_svg <- function(d, prevalence, sensitivity, false_positive_rate) {
+  tp <- d$alarm[1]; fp <- d$alarm[2]
+  width <- function(n) 3 + 21 * n / max(1, tp, fp)
+  num <- function(n) format(n, big.mark = " ", trim = TRUE)
+  node <- function(x, y, label, n, color = NULL, dim = FALSE) sprintf(
+    '<g class="a3-tree-node%s"><rect x="%g" y="%g" width="150" height="36" rx="18"%s/><text x="%g" y="%g" text-anchor="middle"%s>%s · %s</text></g>',
+    if (dim) " is-dim" else "", x - 75, y - 18,
+    if (!is.null(color)) sprintf(' style="stroke:%s;stroke-width:2.5"', color) else "",
+    x, y + 5, if (!is.null(color)) sprintf(' style="fill:%s"', color) else "", label, num(n))
+  edge <- function(x1, y1, x2, y2, w = 2, color = NULL, dim = FALSE) sprintf(
+    '<path class="a3-tree-edge%s" d="M%g %g C%g %g %g %g %g %g" style="stroke-width:%.1f%s"/>',
+    if (dim) " is-dim" else "", x1, y1, (x1 + x2) / 2, y1, (x1 + x2) / 2, y2, x2, y2, w,
+    if (!is.null(color)) paste0(";stroke:", color) else "")
+  prob <- function(x, y, p) sprintf('<text class="a3-tree-p" x="%g" y="%g" text-anchor="middle">%s</text>', x, y, risk_fmt_p(p, 2L))
+  HTML(paste0(
+    '<svg class="a3-tree-svg" viewBox="0 0 760 300" role="img" aria-label="Drzewo: ',
+    num(sum(d$total)), ' zmian dzieli się na awarie i brak awarii, a każda grupa na alarm i brak alarmu. Prawdziwych alarmów jest ',
+    num(tp), ', fałszywych ', num(fp), '.">',
+    edge(150, 150, 245, 70), edge(150, 150, 245, 230),
+    edge(395, 70, 485, 30, width(tp), upwr_accent), edge(395, 70, 485, 110, dim = TRUE),
+    edge(395, 230, 485, 190, width(fp), upwr_single_alt), edge(395, 230, 485, 270, dim = TRUE),
+    prob(186, 96, prevalence), prob(186, 218, 1 - prevalence),
+    prob(440, 26, sensitivity), prob(440, 118, 1 - sensitivity),
+    prob(440, 174, false_positive_rate), prob(440, 278, 1 - false_positive_rate),
+    node(75, 150, "Zmiany", sum(d$total)),
+    node(320, 70, "Awaria", d$total[1]), node(320, 230, "Brak awarii", d$total[2]),
+    node(560, 30, "Alarm", tp, upwr_accent), node(560, 110, "Bez alarmu", d$no_alarm[1], dim = TRUE),
+    node(560, 190, "Alarm", fp, upwr_single_alt), node(560, 270, "Bez alarmu", d$no_alarm[2], dim = TRUE),
+    '<path class="a3-tree-brace" d="M642 30 h14 v160 h-14 M656 110 h10"/>',
+    sprintf('<text class="a3-tree-sum" x="672" y="106">%s</text><text class="a3-tree-sum" x="672" y="126">alarmów</text>', num(tp + fp)),
+    '</svg>'
+  ))
+}
+
+alarm_tree_formula <- function(d, posterior) {
+  colored <- function(x, color) tags$span(style = paste0("color:", color), x)
+  risk_annotated_formula(
+    items = list(
+      list(symbol = "P(A | +)", value = risk_fmt_p(posterior),
+        note = "wiarygodność alarmu", color = upwr_secondary),
+      list(symbol = "P(+ | A)·P(A)", value = d$alarm[1],
+        note = "droga przez awarię", color = upwr_accent),
+      list(symbol = "P(+)",
+        value = tagList(colored(d$alarm[1], upwr_accent), " + ", colored(d$alarm[2], upwr_single_alt)),
+        note = "obie drogi kończące się alarmem, wzór (3.3)", color = upwr_single_alt)
+    ),
+    ops = c("=", "÷")
+  )
+}
+
 alarm_paths_widget <- figure_panel(
-  label = "Przykład liczbowy",
+  label = "Pojęcie",
   title = "Dwie drogi do alarmu na 10 000 zmian",
   full_width = TRUE,
-  lc_readouts(
-    lc_readout("Awarie", "100", color = upwr_cat[["terakota"]]),
-    lc_readout("Prawdziwe alarmy", "95", color = upwr_cat[["niebo"]]),
-    lc_readout("Fałszywe alarmy", "495", color = upwr_cat[["bursztyn"]])
-  ),
-  lc_caption("Na 10 000 zmian: awarii jest 100 (P = 0.01), detektor łapie 95 z nich
-    (czułość 0.95) i alarmuje fałszywie w 495 z 9900 zmian bez awarii (FPR 0.05)."),
-  lc_formula_box(withMathJax("$$P(\\text{awaria}\\mid\\text{alarm})=\\frac{95}{95+495}\\approx 0.16$$")),
-  lc_status(
-    tags$strong("Czytaj mianownik:"),
-    " licznik to jedna droga (awaria i alarm), a mianownik to wszystkie zmiany
-      kończące się alarmem — z awarią i bez niej. Fałszywych alarmów jest pięć
-      razy więcej niż prawdziwych, bo zmian bez awarii jest aż 99 razy więcej."
-  )
+  uiOutput("a3_tree"),
+  lc_caption("Parametry są wspólne z tablicą 2×2. Liczby we wzorze to zmiany na 10 000; ich iloraz jest równy ilorazowi prawdopodobieństw.")
 )
 
 alarm_sciaga_widget <- tagList(
@@ -145,18 +219,29 @@ alarm_block <- list(
     list(
       id = "intuicja", title = "Kierunek warunku", hook = "Dobry czujnik nie znaczy pewny alarm",
       lead = "Odwrócenie warunku potrafi całkowicie zmienić odpowiedź.",
-      intro = c(
-        "Trzecia w nocy, telefon z chłodni Bananpolu: czujnik przegrzania znowu alarmuje. Wysyłać ekipę? Odpowiedź zależy od liczby, o którą mało kto pyta w środku nocy — od tego, jak często awaria zdarza się w ogóle.",
-        "W poprzednim wykładzie liczyliśmy w przód: znając okoliczność zmiany, pytaliśmy o ryzyko skutku. Dyżurny jest w odwrotnej sytuacji — stanu urządzenia nie widzi, widzi tylko sygnał, i z niego musi wnioskować o tym, czego nie widać. To najtrudniejszy manewr tego kursu: odwrócenie kierunku warunku. Producent czujnika podaje P(alarm | awaria); dyżurny przy telefonie potrzebuje P(awaria | alarm). To nie są te same liczby — a różnica między nimi bywa dziesięciokrotna."
-      ),
-      callout = list(
-        label = "Dane Bananpolu",
-        text = "Detektor przegrzania w dojrzewalni: częstość awarii 0.01 na zmianę, czułość 0.95, fałszywe alarmy w 0.05 zmian bez awarii. Jednostka: zmiana pracy dojrzewalni; horyzont: 10 000 porównywalnych zmian. Liczby są fikcyjne.",
-        color = "uwaga"
-      ),
+      intro = "Każdy system ostrzegawczy kończy się na człowieku, który dostaje sygnał i musi zdecydować, czy mu wierzyć. Zaczniemy od najsłynniejszego takiego człowieka, a potem wrócimy do chłodni Bananpolu.",
       sections = list(
         list(
+          id = "serpuchow", title = "Noc w Serpuchowie",
+          body = list(
+            alarm_serpuchow_widget,
+            c(
+              "Pietrow nie miał wzoru ani tablicy. Kierował się trzema pytaniami, które w tym wykładzie dostaną nazwy: jak często taki atak w ogóle się zdarza, jak bardzo można ufać nowemu systemowi i co mówi drugie, niezależne źródło.",
+              "Zanim pójdziesz dalej, odpowiedz sobie: dlaczego nie uwierzył? Do tej nocy wrócimy na końcu wykładu i policzymy to, co Pietrow wyczuł."
+            )
+          )
+        ),
+        list(
           id = "pytanie", title = "Alarm na zmianie",
+          text = c(
+        "Ta sama sytuacja, mniejsza stawka. Trzecia w nocy, telefon z chłodni Bananpolu: czujnik przegrzania znowu alarmuje. Wysyłać ekipę? Odpowiedź zależy od liczby, o którą mało kto pyta w środku nocy — od tego, jak często awaria zdarza się w ogóle.",
+        "W poprzednim wykładzie liczyliśmy w przód: znając okoliczność zmiany, pytaliśmy o ryzyko skutku. Dyżurny jest w odwrotnej sytuacji — stanu urządzenia nie widzi, widzi tylko sygnał, i z niego musi wnioskować o tym, czego nie widać. To najtrudniejszy manewr tego kursu: odwrócenie kierunku warunku. Producent czujnika podaje P(alarm | awaria); dyżurny przy telefonie potrzebuje P(awaria | alarm). To nie są te same liczby — a różnica między nimi bywa dziesięciokrotna."
+          ),
+          callout = list(
+            label = "Dane Bananpolu",
+            text = "Detektor przegrzania w dojrzewalni: częstość awarii 0.01 na zmianę, czułość 0.95, fałszywe alarmy w 0.05 zmian bez awarii. Jednostka: zmiana pracy dojrzewalni; horyzont: 10 000 porównywalnych zmian. Liczby są fikcyjne.",
+            color = "uwaga"
+          ),
           body = list(
             c(
               "Awaria zdarza się średnio na 1 zmianie na 100. Czujnik wykrywa 95% awarii, ale w 5% zmian bez awarii alarmuje fałszywie. Najpierw oszacuj wiarygodność alarmu bez rachunku — zapisz swoją liczbę, zanim klikniesz dalej.",
@@ -182,6 +267,8 @@ alarm_block <- list(
               "W wykładzie 02 warunek był okolicznością, którą znamy — przegrzanie, lato, tryb pracy — a liczby przychodziły w kierunku drzewa: od okoliczności do skutku. Tam też pierwszy raz zobaczyliśmy, że odwrócenie kreski zmienia liczbę: P(incydent | przegrzanie) = 0.12, a P(przegrzanie | incydent) ≈ 0.71 (scena „Odprawa”). Zapis P(A | B) czytamy: prawdopodobieństwo A wśród przypadków, w których zaszło B. Warunek wskazuje mianownik. Jeśli zamienimy miejscami A i B, zmieni się mianownik — a wraz z nim cała liczba. P(alarm | awaria) liczymy wśród zmian z awarią; P(awaria | alarm) liczymy wśród zmian z alarmem. Obie liczby mają ten sam licznik: zmiany, na których wystąpiły jednocześnie awaria i alarm.",
               "Różnica jest łatwa do zobaczenia na przykładzie spoza przemysłu. Prawie każdy zawodowy koszykarz jest wysoki, ale wśród wysokich ludzi koszykarzy jest znikomy odsetek. P(wysoki | koszykarz) jest bliskie 1, a P(koszykarz | wysoki) bliskie 0. Nikt nie pomyli tych liczb w przypadku koszykarzy; przy czujnikach i testach mylimy je nagminnie, bo obie brzmią jak „skuteczność”."
             ),
+            a3_stop_denominators_ui,
+            "Oba panele pokazują te same 1000 zmian. Licznik jest wspólny: 19 zmian z awarią i alarmem. Zmienia się tylko obrys, czyli mianownik: wiersz 20 zmian z awarią albo kolumna 68 zmian z alarmem. Warunek wskazuje mianownik: 19/20 to nie to samo co 19/68.",
             risk_example("3.1", "Ten sam licznik, dwa mianowniki",
               problem = "W dzienniku starszej dojrzewalni Bananpolu z 1000 zmian zanotowano 20 awarii. Czujnik alarmował w 19 z nich oraz w 49 z 980 zmian bez awarii. Oblicz P(alarm | awaria) i P(awaria | alarm).",
               steps = c(
@@ -256,11 +343,13 @@ alarm_block <- list(
               ),
               steps = c(
                 "Ze wzoru (3.1): czułość = 57/60 = 0.95; swoistość = (400 - 20)/400 = 380/400 = 0.95. Ze wzoru (3.2): FPR = 20/400 = 0.05.",
-                "Iloraz 57/77 ≈ 0.74 jest liczony w kolumnie „alarm”. Jego wartość zależy od tego, ile awarii było w teście: 60 na 460 zmian, czyli około 0.13. W hali Bananpolu awarie zdarzają się na 0.01 zmian — trzynaście razy rzadziej niż w teście. Fałszywych alarmów będzie więc proporcjonalnie znacznie więcej; w rozdziale 3 policzymy, że wiarygodność alarmu wynosi tam około 0.16."
+                "Iloraz 57/77 ≈ 0.74 jest liczony w kolumnie „alarm”. Jego wartość zależy od tego, ile awarii było w teście: 60 na 460 zmian, czyli około 0.13. W hali Bananpolu awarie zdarzają się na 0.01 zmian — trzynaście razy rzadziej niż w teście. Fałszywych alarmów będzie więc proporcjonalnie znacznie więcej; tablicę dla 10 000 zmian hali pokazuje rycina poniżej: wiarygodność alarmu wynosi tam około 0.16."
               ),
               steps_type = "a",
               answer = "(a) Czułość 0.95, swoistość 0.95, FPR 0.05. (b) Nie. Liczba 0.74 opisuje kampanię testową, w której awarie wywołano sztucznie często; w hali trzeba ją przeliczyć z częstością bazową 0.01."
             ),
+            a3_stop_campaign_ui,
+            "Ten sam czujnik: w kampanii 74% trafnych alarmów, w hali 16%. Ilorazy w wierszach są identyczne, 0.95 i 0.05, bo opisują czujnik. Iloraz w kolumnie alarmów zależy od proporcji wierszy: w kampanii awarii było 60 na 460 zmian, w hali 100 na 10 000. Wiersze te same, kolumny inne.",
             risk_check("d3_chk_mianownik",
               "Serwis chce oszacować FPR czujnika z danych eksploatacyjnych. Który iloraz jest właściwy?",
               c(
@@ -511,7 +600,10 @@ alarm_block <- list(
               ),
               answer = "Około 9 na 98 wyników dodatnich jest prawdziwych, czyli mniej więcej jeden na jedenaście. Opis „jeden na dziesięć” w tekście to zaokrąglenie tej samej liczby."
             ),
-            "Naturalne częstości mają jeszcze jedną zaletę dydaktyczną: pacjentowi łatwiej zrozumieć „9 z 98 osób z takim wynikiem jest chorych” niż „wartość predykcyjna dodatnia wynosi 9.2%”. Ta sama zasada dotyczy raportu dla kierownika zmiany w Bananpolu."
+            "Naturalne częstości mają jeszcze jedną zaletę dydaktyczną: pacjentowi łatwiej zrozumieć „9 z 98 osób z takim wynikiem jest chorych” niż „wartość predykcyjna dodatnia wynosi 9.2%”. Ta sama zasada dotyczy raportu dla kierownika zmiany w Bananpolu.",
+            "Zbierzmy oba przykłady na jednej osi szans.",
+            a3_stop_odds_gallery_ui,
+            "Strzałki hal A i B mają tę samą długość: czujnik mnoży szanse przez 19 w każdej hali. Różni je tylko punkt startu, 1 : 99 albo 1 : 19, i dlatego ten sam alarm daje 0.16 w hali A i 0.5 w hali B. Test przesiewowy startuje z tego samego miejsca co hala A, ale jego mnożnik to 10, więc kończy niżej, na około 0.09. Na skali logarytmicznej mnożenie jest przesunięciem o stałą odległość, a wynik zależy od tego, skąd się startuje."
           )
         ),
         list(
@@ -542,18 +634,20 @@ alarm_block <- list(
           id = "niezaleznosc", title = "Założenie warunkowej niezależności",
           text = "Dwa czujniki mogą reagować na to samo zakłócenie lub utracić wspólne zasilanie. Warunkowa niezależność oznacza, że przy ustalonym stanie instalacji (awaria albo jej brak) wynik jednego czujnika nie zmienia prawdopodobieństwa wyniku drugiego — i to założenie trzeba uzasadnić mechanizmem, tak jak w poprzednim wykładzie.",
           body = list(
-            risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.7. Następnie ustaw 0.25, 0.5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale „Czułość i swoistość”."),
+            risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.7. Następnie ustaw 0.25, 0.5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale „Czułość i swoistość”. Obserwuj, który pełny słupek rośnie."),
             figure_panel(
               label = "Porównanie", title = "Dwa alarmy",
               lc_toolbar(
                 lc_slider("a3_dependence", "Prawdopodobieństwo skopiowania pierwszego alarmu", 0, 1, 0, 0.05),
                 lc_readouts(uiOutput("a3_second"))
               ),
+              a3_stop_double_plot_ui,
+              lc_caption("Przerywany kontur: czujniki niezależne. Pełny słupek: bieżące kopiowanie."),
               full_width = TRUE
             ),
             c(
               "Przy parametrach domyślnych i braku kopiowania panel pokazuje 0.785 — dokładnie wynik przykładu 3.7. Przy kopiowaniu 0.25 posterior po dwóch alarmach spada do 0.391, przy 0.5 do 0.263, a przy pełnym kopiowaniu wraca do 0.161, czyli do wartości po jednym alarmie. Nawet umiarkowana zależność zjada większość zysku z drugiego czujnika.",
-              "Mechanizm widać w naturalnych częstościach: kopiowanie najbardziej zwiększa liczbę podwójnych fałszywych alarmów. Bez kopiowania podwójny fałszywy alarm wymaga dwóch niezależnych pomyłek (0.05² = 0.0025); przy kopiowaniu wystarczy jedna. Założenie (3.8) jest więc najbardziej optymistycznym wariantem — jeśli nie ma za nim mechanizmu, raport powinien pokazać też wariant z zależnością."
+              "Mechanizm widać na wykresie pod suwakiem. Słupek prawdziwych podwójnych alarmów prawie się nie zmienia (od 90 do 95 na 10 000 zmian), bo przy awarii oba czujniki i tak alarmują niemal zawsze. Słupek fałszywych rośnie od 25 do 495. Bez kopiowania podwójny fałszywy alarm wymaga dwóch niezależnych pomyłek (0.05² = 0.0025); przy kopiowaniu wystarczy jedna. Założenie (3.8) jest więc najbardziej optymistycznym wariantem — jeśli nie ma za nim mechanizmu, raport powinien pokazać też wariant z zależnością."
             ),
             risk_check("d3_chk_niezal",
               "Dwa czujniki wiszą na wspólnym wsporniku i reagują na te same drgania. Oba alarmują. Co wiemy o posteriorze po dwóch alarmach?",
@@ -584,8 +678,8 @@ alarm_block <- list(
       sections = list(
         list(
           id = "macierz", title = "Macierz konsekwencji",
-          bullets = c("alarmuj przy awarii — uniknięta szkoda", "alarmuj bez awarii — koszt postoju", "nie alarmuj przy awarii — możliwa katastrofa", "nie alarmuj bez awarii — brak działania"),
-          body = c(
+          body = list(
+            a3_stop_matrix_ui,
             "Macierz konsekwencji ma ten sam kształt co tablica wyników detektora, ale zamiast liczebności zawiera koszty. Wiersze to znów stan instalacji, kolumny — tym razem nie wynik czujnika, lecz decyzja dyżurnego: reagować albo nie. Posterior mówi, jak prawdopodobny jest każdy wiersz; macierz mówi, ile kosztuje każda komórka. Decyzja wymaga obu.",
             "Oddzielenie tych dwóch warstw jest ważne organizacyjnie. Posterior powinien policzyć analityk na podstawie danych o detektorze i hali. Koszty i akceptowalne ryzyko ustala kierownictwo i służby bezpieczeństwa. Gdy obie rzeczy mieszają się w jednej liczbie („alarm jest ważny w 16%, więc go ignorujemy”), nikt nie wie, czy spór dotyczy faktów, czy wartości."
           )
@@ -593,19 +687,20 @@ alarm_block <- list(
         list(
           id = "rachunek", title = "Koszt reakcji a koszt zaniechania",
           body = list(
-            figure_panel(label = "Decyzja", title = "Jeden rachunek kosztów", full_width = TRUE,
-              lc_p("Rozważamy wyłącznie szkodę materialną. Reakcja kosztuje 100 zł niezależnie od stanu i całkowicie zapobiega stracie; brak reakcji przy awarii kosztuje 2000 zł. Przy posteriorze q oczekiwany koszt braku reakcji to 2000q. Reagujemy, gdy q>0.05. Przy q≈0.161 koszt braku reakcji wynosi około 322 zł, więc reakcja jest uzasadniona mimo przewagi fałszywych alarmów."),
-              lc_formula_box(withMathJax("$$L(\\text{reakcja})=100,\\qquad L(\\text{brak})=2000q$$")),
-              lc_p("Jeśli reakcja ogranicza stratę tylko o połowę, jej koszt oczekiwany to 100+1000q; próg rośnie do q>0.10. Skuteczność działania jest osobnym założeniem. Urazów i pełnej oceny bezpieczeństwa nie sprowadzamy w tym przykładzie do jednej kwoty.")
-            ),
+            "Rozważamy wyłącznie szkodę materialną. Reakcja kosztuje 100 zł niezależnie od stanu i całkowicie zapobiega stracie; brak reakcji przy awarii kosztuje 2000 zł. Przy posteriorze q oczekiwany koszt reakcji to 100 zł, a oczekiwany koszt braku reakcji 2000q.",
+            lc_formula_box(withMathJax("$$E(\\text{koszt}\\mid\\text{reakcja})=100,\\qquad E(\\text{koszt}\\mid\\text{brak})=2000q$$")),
+            "Reagujemy, gdy q>0.05. Przy q≈0.161 koszt braku reakcji wynosi około 322 zł, więc reakcja jest uzasadniona mimo przewagi fałszywych alarmów.",
+            risk_try("ustaw koszt reakcji c na 350 zł i obserwuj punkty na osi. Która z trzech sytuacji zmienia decyzję i dlaczego właśnie ta? Potem wróć do 100 zł i zwiększaj stratę L."),
+            a3_stop_cost_ui,
             c(
-              "Rachunek z ramki da się zapisać ogólnie. Niech c oznacza koszt reakcji, a L stratę, której reakcja w pełni zapobiega. Oczekiwany koszt reakcji to c, oczekiwany koszt jej braku to q · L. Reagujemy, gdy q · L > c, czyli gdy posterior przekracza iloraz kosztów."
+              "Rachunek z wykresu da się zapisać ogólnie. Niech c oznacza koszt reakcji, a L stratę, której reakcja w pełni zapobiega. Oczekiwany koszt reakcji to c, oczekiwany koszt jej braku to q · L. Reagujemy, gdy q · L > c, czyli gdy posterior przekracza iloraz kosztów."
             ),
             risk_definition("3.7", "Próg reakcji", c(
               "Próg reakcji q* to wartość posterioru, przy której oczekiwany koszt reakcji i jej braku są równe. Przy posteriorze powyżej progu reakcja minimalizuje oczekiwany koszt; poniżej — nie. Próg zależy od kosztów i skuteczności reakcji, a nie od detektora."
             )),
             risk_formula("q^{*}=\\frac{c}{L},\\qquad \\text{reaguj, gdy } P(A\\mid +)>q^{*}", num = "3.9",
               legend = c("c" = "koszt reakcji", "L" = "strata, której reakcja zapobiega", "q^{*}" = "próg reakcji")),
+            "Jeśli reakcja ogranicza stratę tylko o połowę, jej koszt oczekiwany to 100+1000q; próg rośnie do q>0.10. Skuteczność działania jest osobnym założeniem. Urazów i pełnej oceny bezpieczeństwa nie sprowadzamy w tym przykładzie do jednej kwoty.",
             "W Bananpolu q* = 100/2000 = 0.05. Łącząc wzór (3.9) z wzorem (3.7), można przełożyć próg na posteriorze na próg na częstości bazowej: reagujemy na alarm, gdy szanse a priori · 19 > 0.05/0.95 = 1/19, czyli gdy szanse a priori przekraczają 1/361. Odpowiada to częstości awarii około 0.0028. Poniżej tej częstości pojedynczy alarm tego czujnika nie uzasadnia wyjazdu przy tych kosztach.",
             risk_example("3.8", "Jedna reguła, trzy sytuacje",
               problem = list(
@@ -645,6 +740,9 @@ alarm_block <- list(
       lead = "Pytanie → populacja → detektor → posterior → konsekwencje.",
       intro = "Największym ryzykiem tego wykładu nie jest błąd rachunkowy, lecz odpowiedź na niewłaściwe pytanie. Ściąga porządkuje audyt alarmu od pytania do decyzji; quiz i ćwiczenia sprawdzają, czy odróżniasz kierunki warunkowania bez podpowiedzi.",
       sections = list(list(
+        id = "serpuchow-policzony", title = "Serpuchów, policzony",
+        body = list(a3_stop_serpuchow_case_ui)
+      ), list(
         id = "podsumowanie", title = "Podsumowanie",
         text = c(
           "Wykład zaczął się od pytania dyżurnego: co oznacza alarm? Odpowiedź wymaga odwrócenia warunku. Detektor opisujemy liczbami liczonymi w wierszach tablicy 2×2 — czułością i swoistością (3.1) oraz odsetkiem fałszywych alarmów (3.2) — natomiast dyżurnego interesuje liczba z kolumny: wartość predykcyjna dodatnia P(awaria | alarm). Most między nimi buduje wzór Bayesa (3.4), który jest tylko definicją prawdopodobieństwa warunkowego (2.1) z mianownikiem rozpisanym wzorem na prawdopodobieństwo całkowite (3.3). Ta sama konstrukcja dla wielu stanów (3.6) wskazuje najbardziej prawdopodobne źródło incydentu — i rozstrzyga zagadkę Monty’ego Halla z wykładu 02.",
@@ -776,5 +874,16 @@ alarm_server <- function(input, output, session) {
       lc_readout("Po dwóch alarmach", risk_fmt_p(adjusted), color = upwr_accent)
     )
   })
+  output$a3_tree <- renderUI({
+    p <- detector_parameters()
+    d <- detector()
+    tagList(
+      alarm_tree_svg(d, p$prevalence, p$sensitivity, p$false_positive_rate),
+      alarm_tree_formula(d, posterior())
+    )
+  })
+  a3_stop_szanse_server(input, output, session, detector_parameters)
+  a3_stop_prog_server(input, output, session)
+  a3_stop_serpuchow_case_server(input, output, session)
   risk_assessment_server("a3", alarm_quiz, input, output)
 }
