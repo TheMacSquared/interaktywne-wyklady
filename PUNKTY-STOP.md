@@ -7,17 +7,18 @@ studenta, który wraca do wykładu sam.
 
 Każdy punkt stop ma **jedną puentę**, którą prowadzący umie wypowiedzieć jednym
 zdaniem. Każdy ma też **rodzaj** (co robi obraz) i **moment** (gdzie stoi
-w opowieści).
+w opowieści). Rodzaj wynika z puenty i miejsca w opowieści, nie z materiału:
+ta sama historia może być sceną na otwarcie i przypadkiem na końcu.
 
 Słownik służy do planowania („tu potrzebuję piaskownicy, tam galerii”), a nie
 do narzucania stałej struktury. Kolejność i proporcje zależą od tematu.
 
 ## Rodzaje
 
-**Scena.** Sytuacja ze świata wykładu, w której ktoś albo coś działa, zanim
-padnie pojęcie. Puentą jest intuicja, którą pojęcie potem nazwie. Prowadzący
-opowiada historię. Nie jest sceną abstrakcyjny eksperyment przebrany za
-postacie. Szczegóły w `SCENY.md`.
+**Scena.** Sytuacja, wymyślona albo prawdziwa, w której ktoś albo coś działa,
+zanim padnie pojęcie. Puentą jest intuicja, którą pojęcie potem nazwie.
+Prowadzący opowiada historię. Nie jest sceną abstrakcyjny eksperyment
+przebrany za postacie. Szczegóły w `SCENY.md`.
 
 **Piaskownica.** Obraz, w którym coś zmienia się płynnie, a odpowiedź na
 „a gdyby…?” przychodzi z obserwacji. Puentą jest to, od czego zależy zjawisko.
@@ -34,9 +35,12 @@ dopiero przy wielu powtórzeniach. Puentą jest regularność, której nie wida�
 w pojedynczym wyniku. Prowadzący uruchamia eksperyment i buduje oczekiwanie.
 Symulacja z historią i postacią to już scena.
 
-**Przypadek.** Prawdziwe dane przechodzące całą drogę od pytania do wniosku.
+**Przypadek.** Droga od pytania do wniosku z danymi i metodą, już po pojęciu.
 Puentą jest to, jak metoda wygląda w praktyce. Prowadzący prowadzi śledztwo
-razem z salą. Nie jest przypadkiem pojedyncza przykładowa liczba.
+razem z salą. Nie jest przypadkiem pojedyncza przykładowa liczba ani prawdziwa
+historia opowiedziana przed pojęciem: to scena. Pietrow i fałszywy alarm
+z 1983 roku otwiera wykład jako scena („dlaczego nie uwierzył?”), a może
+wrócić jako przypadek, gdy sala policzy, co wyczuł.
 
 **Pojęcie.** Nazwa i wzór razem z obrazem, który pokazuje definicję. Puentą jest
 forma dla tego, co sala już widziała. Prowadzący nazywa. Obraz pojęcia może być

@@ -235,7 +235,7 @@ piaskownicy” albo „galeria do …”, chodzi o te znaczenia.
 
 ## Sceny
 
-Scena to widget, który opowiada sytuację ze świata wykładu, zanim padnie
+Scena to widget, który opowiada intuicyjną i realną sytuację, zanim padnie
 pojęcie; nie musi być krokowa ani losowa. Polecenie „zrób scenę do …”
 realizuj według `SCENY.md` (formy, zasady wspólne, brief do akceptacji przed
 kodem).
