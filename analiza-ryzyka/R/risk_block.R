@@ -178,7 +178,8 @@ risk_script_dependency <- function() {
 
 # Tablica wyników detektora 2×2: wiersze to stan rzeczywisty, kolumny wynik
 # detektora; trafienia (TP, TN) zielone, pomyłki (FN, FP) czerwone.
-risk_confusion_matrix <- function() {
+# alarm, no_alarm: nagłówki kolumn wyniku detektora.
+risk_confusion_matrix <- function(alarm = "Alarm (+)", no_alarm = "Brak alarmu (-)") {
   cell <- function(kind, name, abbr, desc) {
     tags$div(
       class = paste("lc-cm-cell", paste0("lc-cm-", kind)),
@@ -192,8 +193,8 @@ risk_confusion_matrix <- function() {
     role = "table",
     `aria-label` = "Tablica wyników detektora: cztery wyniki",
     tags$div(class = "lc-cm-corner"),
-    tags$div(class = "lc-cm-head", "Alarm (+)"),
-    tags$div(class = "lc-cm-head", "Brak alarmu (-)"),
+    tags$div(class = "lc-cm-head", alarm),
+    tags$div(class = "lc-cm-head", no_alarm),
     tags$div(class = "lc-cm-side", "Awaria (A)"),
     cell("ok", "prawdziwie dodatni", "TP", "awaria i alarm"),
     cell("bad", "fałszywie ujemny", "FN", "awaria bez alarmu"),
