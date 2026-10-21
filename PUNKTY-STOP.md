@@ -54,6 +54,15 @@ wrócić jako przypadek, gdy sala policzy, co wyczuł.
 forma dla tego, co sala już widziała. Prowadzący nazywa. Obraz pojęcia może być
 ruchomy albo krokowy, ale niczego nie odkrywa ani nie opowiada.
 
+**Przykłady.** Seria gotowych realizacji wzoru albo pojęcia, po jednej na
+slajd: sytuacja, liczby, wynik i decyzja. Puentą jest przekład: jak z opisu
+sytuacji dojść do liczb we wzorze i co z wyniku wynika. Prowadzący przeprowadza
+salę przez kolejne realizacje. Stoją po pojęciu. Nie są przykładami ćwiczenia
+do samodzielnego rozwiązania (to materiały) ani warianty, których puentą jest
+porównanie (to galeria). Przykład: firmy z różnymi kosztami reakcji c i stratą
+L, każda z progiem q* = c/L i werdyktem „reaguj” albo „nie reaguj”; ostatni
+slajd może zestawić progi na jednej osi jako domknięcie.
+
 ## Momenty
 
 **Wprowadzenie.** Pojęcie pojawia się po raz pierwszy, zwykle przez scenę,
