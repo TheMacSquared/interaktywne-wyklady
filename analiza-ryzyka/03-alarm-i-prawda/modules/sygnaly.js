@@ -2,9 +2,9 @@
 // „Pułapka częstości bazowej”, wzór 3.7).
 //
 // Kontener .lc-sg[data-config]: cfg.signals to sygnały {key, name, sym, text, lr,
-// logLr, postOdds, p, up, lrName, lrWords, lrCalc, lrText, postText, pText,
+// logLr, postOdds, p, up, lrName, lrWords, lrNote, lrCalc, lrText, postText, pText,
 // postCalc, pCalc, arrowText}; cfg.prior to szanse a priori {odds, text,
-// frac, calc}; cfg.summary to slajd zbiorczy {name, title, text}; cfg.logMin i
+// frac, calc, note}; cfg.summary to slajd zbiorczy {name, title, text}; cfg.logMin i
 // cfg.logMax to zakres osi szans w log10.
 // Slajdy 0..n-1 pokazują jeden sygnał jako łańcuch kroków 1–4 (szanse przed × LR
 // = szanse po → prawdopodobieństwo) i oś logarytmiczną ze strzałką o długości
@@ -129,17 +129,21 @@
         out("step").textContent = "Sygnał " + (i + 1) + " z " + n;
         out("text").textContent = S.text;
         out("prior").textContent = prior.text;
-        out("priorSub").textContent = "hala: " + prior.calc;
+        out("priorSub").textContent = prior.calc;
+        out("priorNote").textContent = prior.note;
         out("lrLabel").textContent = S.lrName;
         out("lr").textContent = S.lrText;
-        out("lrSub").textContent = S.lrCalc;
         out("lrSub2").textContent = S.lrWords;
+        out("lrSub").textContent = "= " + S.lrCalc;
+        out("lrNote").textContent = S.lrNote;
         out("postLabel").textContent = "szanse po " + S.sym;
         out("post").textContent = S.postText;
         out("postSub").textContent = S.postCalc;
+        out("postNote").textContent = "szanse przed × LR";
         out("pLabel").textContent = "P(A | " + S.sym + ")";
         out("p").textContent = "≈ " + S.pText;
         out("pSub").textContent = S.pCalc;
+        out("pNote").textContent = "z szans a : b prawdopodobieństwo to a / (a + b)";
         drawArrow(xr, dir);
         headG.style.transform = "translate(" + (xr - dir * 9) + "px,0)";
         headIn.setAttribute("transform", "translate(0," + RY + ") scale(" + dir + ",1)");

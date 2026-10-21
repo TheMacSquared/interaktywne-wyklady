@@ -5,12 +5,12 @@
 # dlatego panel składa block.R po zdefiniowaniu drzewa.
 # Trzy realizacje wzoru (3.3) P(🚨) = P(🚨 | A) P(A) + P(🚨 | Aᶜ) P(Aᶜ):
 # hala A z obecnym czujnikiem, hala B ze starszym sprzętem i hala A
-# z detektorem ostrożnym. Każda sytuacja to tablica krzyżowa na 10 000 zmian
-# (kolumna 🚨 obrysowana) i wzór rozpisany w trzech linijkach; składniki
-# w kolorach swoich komórek (prawdziwe alarmy — akcent, fałszywe — złoto).
+# z innym czujnikiem. Każda sytuacja to drzewo na 10 000 zmian z podświetlonymi
+# drogami do alarmu i wzór rozpisany w trzech linijkach; składniki w kolorach
+# swoich dróg (prawdziwe alarmy — akcent, fałszywe — złoto).
 # Przełączanie działa w przeglądarce (modules/calkowite.js); bez serwera.
-# Liczby: czujnik 0.95/0.05 z rozdziału „Czułość i swoistość”, detektor
-# ostrożny 0.80/0.01 (detektor B z rozdziału „Częstość bazowa”).
+# Liczby: czujnik 0.95/0.05 z rozdziału „Czułość i swoistość”, inny czujnik
+# 0.80/0.01 (detektor B z galerii „Trzy detektory w tej samej hali”).
 
 a3_total_population <- 10000
 
@@ -35,7 +35,7 @@ a3_total_raw <- list(
   list(key = "b", short = "Hala B", name = "Hala B ze starszym sprzętem",
     prevalence = 0.05, sensitivity = 0.95, fpr = 0.05,
     text = "Ten sam czujnik, ale awarie zdarzają się pięć razy częściej: na 5% zmian."),
-  list(key = "c", short = "Detektor ostrożny", name = "Hala A, detektor ostrożny",
+  list(key = "c", short = "Inny czujnik", name = "Hala A, inny czujnik",
     prevalence = 0.01, sensitivity = 0.80, fpr = 0.01,
     text = "Hala A z innym detektorem: łapie tylko 80% awarii, ale alarmuje fałszywie na 1% zmian bez awarii.")
 )

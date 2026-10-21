@@ -20,13 +20,13 @@ a3_signals_fmt_int <- function(x) format(round(x), scientific = FALSE, trim = TR
 
 a3_signals_raw <- list(
   list(key = "alarm", name = "🚨 Alarm", sym = "🚨", lrName = "LR alarmu",
-    lrWords = "P(🚨 | A) / P(🚨 | Aᶜ)", pA = 0.95, pAc = 0.05,
+    lrWords = "P(🚨 | A) / P(🚨 | Aᶜ)", lrNote = "alarm jest 19 razy częstszy przy awarii niż bez niej", pA = 0.95, pAc = 0.05,
     text = "Trzecia w nocy, czujnik w dojrzewalni zgłasza przegrzanie 🚨. Alarm pojawia się przy 95% awarii i przy 5% zmian bez awarii."),
-  list(key = "thermo", name = "🌡️ Termometr", sym = "🌡️", lrName = "LR odczytu",
+  list(key = "thermo", name = "🌡️ Termometr", sym = "🌡️", lrName = "LR odczytu", lrNote = "taki odczyt jest 8 razy częstszy przy awarii niż bez niej",
     lrWords = "P(🌡️ | A) / P(🌡️ | Aᶜ)", pA = 0.80, pAc = 0.10,
     text = "Zamiast czujnika operator idzie z termometrem i odczyt pokazuje przegrzanie. Taki odczyt zdarza się przy 80% awarii i przy 10% zmian bez awarii."),
   list(key = "silence", name = "🔕 Cisza", sym = "🔕", lrName = "LR ciszy",
-    lrWords = "P(🔕 | A) / P(🔕 | Aᶜ)", pA = 0.05, pAc = 0.95,
+    lrWords = "P(🔕 | A) / P(🔕 | Aᶜ)", lrNote = "cisza jest 19 razy rzadsza przy awarii niż bez niej", pA = 0.05, pAc = 0.95,
     text = "Czujnik milczy 🔕 przez całą zmianę. Przy awarii milczy tylko w 5% przypadków, bez awarii w 95%.")
 )
 
@@ -46,11 +46,11 @@ a3_signals <- lapply(a3_signals_raw, function(s) {
   list(
     key = s$key, name = s$name, sym = s$sym, text = s$text,
     lr = lr, logLr = log10(lr), postOdds = post_odds, p = p, up = up,
-    lrName = s$lrName, lrWords = s$lrWords,
+    lrName = s$lrName, lrWords = s$lrWords, lrNote = s$lrNote,
     lrCalc = paste(a3_signals_fmt_num(s$pA), "/", a3_signals_fmt_num(s$pAc)),
     lrText = lrText,
-    postCalc = paste("1/99 ·", lrText),
-    pCalc = sprintf("%s / (%s + %s)", num, num, a3_signals_fmt_int(den)),
+    postCalc = sprintf("1/99 · %s = %s/%s", lrText, num, a3_signals_fmt_int(den)),
+    pCalc = sprintf("%s / (%s + %s) = %s/%s", num, num, a3_signals_fmt_int(den), num, a3_signals_fmt_int(num + den)),
     postText = paste(num, ":", a3_signals_fmt_int(den)),
     pText = a3_signals_fmt_p(p),
     arrowText = paste("×", lrText)
@@ -67,12 +67,13 @@ a3_stop_signals_css <- "
 .lc-sg-top { display: flex; flex-wrap: wrap; gap: .5em; margin: .1em 0 .7em; }
 .lc-sg .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
 .lc-sg-text { font-size: 1.05em; color: var(--upwr-ink-soft); min-height: 3em; margin: 0 0 .6em; max-width: 52em; }
-.lc-sg-chain { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1.15fr); align-items: start; gap: 0 .5em; margin: .2em 0 .4em; }
+.lc-sg-chain { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.2fr) auto minmax(0, 1fr) auto minmax(0, 1.1fr); align-items: start; gap: 0 .5em; margin: .2em 0 .4em; }
 .lc-sg-step { text-align: center; border-top: 4px solid var(--sg-c); padding-top: .35em; }
 .lc-sg-step-label { font: 600 .85em var(--upwr-sans); color: var(--upwr-ink-soft); }
 .lc-sg-step-label b { display: inline-block; min-width: 1.5em; color: var(--upwr-surface); background: var(--sg-c); border-radius: 999px; margin-right: .3em; font-family: var(--upwr-mono); }
-.lc-sg-step-num { font: 700 1.9em/1.25 var(--upwr-mono); color: var(--sg-c); white-space: nowrap; }
-.lc-sg-step-sub { font: .82em var(--upwr-mono); color: var(--upwr-ink-subtle); line-height: 1.35; }
+.lc-sg-step-num { font: 700 1.6em/1.25 var(--upwr-mono); color: var(--sg-c); white-space: nowrap; }
+.lc-sg-step-sub { font: .82em var(--upwr-mono); color: var(--upwr-ink-soft); line-height: 1.45; }
+.lc-sg-step-note { font: .8em/1.35 var(--upwr-sans); color: var(--upwr-ink-subtle); margin-top: .35em; padding: 0 .2em; }
 .lc-sg-op-big { font: 600 1.7em var(--upwr-mono); color: var(--upwr-ink-subtle); padding-top: .95em; }
 .lc-sg-is-prior { --sg-c: var(--upwr-cat-indygo); }
 .lc-sg-is-lr { --sg-c: var(--upwr-single-alt); }
@@ -110,11 +111,13 @@ a3_stop_signals_css <- "
 "
 
 # Krok łańcucha: numer z nazwą, duża liczba, pod nią „skąd ta liczba”.
-a3_signals_step <- function(num, label_key, label, cls, keys) {
+# keys: liczba, potem linijki rachunku; note: klucz zdania słowami pod rachunkiem.
+a3_signals_step <- function(num, label_key, label, cls, keys, note) {
   tags$div(class = paste("lc-sg-step", cls),
     tags$div(class = "lc-sg-step-label", tags$b(num), tags$span(`data-sg-out` = label_key, label)),
     tags$div(class = "lc-sg-step-num", `data-sg-out` = keys[1]),
-    lapply(keys[-1], function(k) tags$div(class = "lc-sg-step-sub", `data-sg-out` = k))
+    lapply(keys[-1], function(k) tags$div(class = "lc-sg-step-sub", `data-sg-out` = k)),
+    tags$div(class = "lc-sg-step-note", `data-sg-out` = note)
   )
 }
 a3_signals_op <- function(x, arrow = FALSE) tags$div(class = paste("lc-sg-op-big", if (arrow) "is-arrow"), x)
@@ -128,7 +131,8 @@ a3_stop_signals_ui <- figure_panel(
     `data-config` = jsonlite::toJSON(list(
       signals = a3_signals,
       summary = a3_signals_summary,
-      prior = list(odds = a3_signals_prior_odds, text = "1 : 99", frac = "1/99", calc = "0.01 / 0.99"),
+      prior = list(odds = a3_signals_prior_odds, text = "1 : 99", frac = "1/99",
+        calc = "P(A) : P(Aᶜ) = 0.01 : 0.99", note = "na 100 zmian: 1 z awarią, 99 spokojnych"),
       logMin = -4, logMax = 0
     ), auto_unbox = TRUE, digits = NA),
     tags$div(class = "lc-sg-top",
@@ -147,13 +151,13 @@ a3_stop_signals_ui <- figure_panel(
     tags$p(class = "lc-sg-text", `data-sg-out` = "text", `aria-live` = "polite", a3_signals[[1]]$text),
     tags$div(class = "lc-sg-one",
       tags$div(class = "lc-sg-chain",
-        a3_signals_step("1", "priorLabel", "szanse przed", "lc-sg-is-prior", c("prior", "priorSub")),
+        a3_signals_step("1", "priorLabel", "szanse przed", "lc-sg-is-prior", c("prior", "priorSub"), "priorNote"),
         a3_signals_op("×"),
-        a3_signals_step("2", "lrLabel", "LR", "lc-sg-is-lr", c("lr", "lrSub", "lrSub2")),
+        a3_signals_step("2", "lrLabel", "LR", "lc-sg-is-lr", c("lr", "lrSub2", "lrSub"), "lrNote"),
         a3_signals_op("="),
-        a3_signals_step("3", "postLabel", "szanse po", "lc-sg-is-post", c("post", "postSub")),
+        a3_signals_step("3", "postLabel", "szanse po", "lc-sg-is-post", c("post", "postSub"), "postNote"),
         a3_signals_op("→", arrow = TRUE),
-        a3_signals_step("4", "pLabel", "prawdopodobieństwo", "lc-sg-is-p", c("p", "pSub"))
+        a3_signals_step("4", "pLabel", "prawdopodobieństwo", "lc-sg-is-p", c("p", "pSub"), "pNote")
       )
     ),
     tags$div(class = "lc-sg-stage", role = "img",

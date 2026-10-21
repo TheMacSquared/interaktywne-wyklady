@@ -317,18 +317,26 @@ alarm_tree_svg <- function(d, prevalence, sensitivity, false_positive_rate) {
 }
 
 # Drzewo z podświetlonymi obiema drogami do alarmu (dla przykładu do wzoru 3.3).
-alarm_tree_lit <- function(prevalence, sensitivity, false_positive_rate) {
+# quiet = TRUE: podświetlone drogi kończące się ciszą (wzór 3.5).
+alarm_tree_lit <- function(prevalence, sensitivity, false_positive_rate, quiet = FALSE) {
   d <- risk_detector_counts(10000L, prevalence, sensitivity, false_positive_rate)
   svg <- as.character(alarm_tree_svg(d, prevalence, sensitivity, false_positive_rate))
-  lit <- c("n-root", "e-a", "p-a", "n-a", "e-hit", "p-hit", "n-hit",
-           "e-n", "p-n", "n-n", "e-fa", "p-fa", "n-fa")
+  lit <- c("n-root", "e-a", "p-a", "n-a", "e-n", "p-n", "n-n",
+    if (quiet) c("e-miss", "p-miss", "n-miss", "e-tn", "p-tn", "n-tn")
+    else c("e-hit", "p-hit", "n-hit", "e-fa", "p-fa", "n-fa"))
   for (k in lit) svg <- sub(sprintf('class="([^"]*)" data-k="%s"', k),
     sprintf('class="\\1 is-lit" data-k="%s"', k), svg)
-  svg <- sub('<g data-k="b-alarm">', '<g class="is-lit" data-k="b-alarm">', svg, fixed = TRUE)
-  HTML(sub('class="a3-tree-svg"', 'class="a3-tree-svg is-stepped"', svg, fixed = TRUE))
+  brace <- if (quiet) "b-quiet" else "b-alarm"
+  svg <- sub(sprintf('<g data-k="%s">', brace), sprintf('<g class="is-lit" data-k="%s">', brace), svg, fixed = TRUE)
+  HTML(sub('class="a3-tree-svg"',
+    paste0('class="a3-tree-svg is-stepped', if (quiet) " is-quiet", '"'), svg, fixed = TRUE))
 }
 a3_stop_total_ui <- a3_stop_total_panel(lapply(a3_total_raw, function(s)
   alarm_tree_lit(s$prevalence, s$sensitivity, s$fpr)))
+a3_stop_ppv_ui <- a3_stop_bayes_panel("ppv", lapply(a3_total_raw, function(s)
+  alarm_tree_lit(s$prevalence, s$sensitivity, s$fpr)))
+a3_stop_npv_ui <- a3_stop_bayes_panel("npv", lapply(a3_total_raw, function(s)
+  alarm_tree_lit(s$prevalence, s$sensitivity, s$fpr, quiet = TRUE)))
 
 # Krokowe drzewo: wzór Bayesa składany z trzech narzędzi wykładu 02, a na koniec
 # ta sama konstrukcja dla ciszy (NPV). Drzewo rysuje serwer (reaguje na suwaki
@@ -621,10 +629,11 @@ alarm_block <- list(
               legend = c("P(\\text{🚨})" = "prawdopodobieństwo alarmu na losowej zmianie", "P(\\text{🚨}\\mid A)" = "czułość", "P(\\text{🚨}\\mid A^{c})" = "FPR", "P(A)" = "częstość bazowa")),
             "W Bananpolu P(🚨) = 0.95 · 0.01 + 0.05 · 0.99 = 0.0095 + 0.0495 = 0.059, czyli 590 alarmów na 10 000 zmian. Podstawiając licznik z kroku drugiego i mianownik (3.3) do definicji, dostajemy wzór Bayesa.",
             a3_stop_total_ui,
-            "Obie drogi do alarmu widać na drzewie: w hali B awarii jest pięć razy więcej, więc droga przez awarię zrównuje się z drogą przez fałszywe alarmy, a ostrożny detektor zwęża przede wszystkim drogę fałszywą, więc z 590 alarmów zostaje 179.",
+            "Obie drogi do alarmu widać na drzewie: w hali B awarii jest pięć razy więcej, więc droga przez awarię zrównuje się z drogą przez fałszywe alarmy, a inny czujnik zwęża przede wszystkim drogę fałszywą, więc z 590 alarmów zostaje 179.",
             risk_formula("P(A\\mid \\text{🚨})=\\frac{P(\\text{🚨}\\mid A)\\,P(A)}{P(\\text{🚨}\\mid A)\\,P(A)+P(\\text{🚨}\\mid A^{c})\\,P(A^{c})}", num = "3.4",
               legend = c("P(A\\mid \\text{🚨})" = "wiarygodność alarmu (PPV, posterior)", "P(\\text{🚨}\\mid A)\\,P(A)" = "droga przez awarię — licznik", "P(\\text{🚨}\\mid A^{c})\\,P(A^{c})" = "droga przez fałszywe alarmy")),
             lc_p("Licznik jest drogą przez awarię; mianownik sumą obu dróg kończących się alarmem."),
+            a3_stop_ppv_ui,
             lc_p(
               "Wzór Bayesa nie wnosi nowej matematyki — porządkuje rachunek, który
                wykonaliśmy na zmianach. Warto rozpoznać w mianowniku starego znajomego:
@@ -644,6 +653,7 @@ alarm_block <- list(
             ),
             risk_formula("P(A^{c}\\mid \\text{🔕})=\\frac{P(\\text{🔕}\\mid A^{c})\\,P(A^{c})}{P(\\text{🔕}\\mid A^{c})\\,P(A^{c})+P(\\text{🔕}\\mid A)\\,P(A)}", num = "3.5",
               legend = c("P(\\text{🔕}\\mid A^{c})" = "swoistość", "P(\\text{🔕}\\mid A)" = "1 - czułość, czyli odsetek przeoczonych awarii")),
+            a3_stop_npv_ui,
             risk_example("3.3", "Czy cisza uspokaja?",
               problem = "Przy częstości awarii 0.01, czułości 0.95 i FPR 0.05 oblicz NPV oraz prawdopodobieństwo awarii na zmianie, na której czujnik milczał. Porównaj je z częstością bazową.",
               steps = c(
