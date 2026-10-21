@@ -2,12 +2,13 @@
 // „Pułapka częstości bazowej”, wzór 3.7).
 //
 // Kontener .lc-sg[data-config]: cfg.signals to sygnały {key, name, sym, text, lr,
-// logLr, postOdds, p, up, lrName, lrWords, lrCalc, lrText, postFrac, postText,
-// pText, cmp, verdict, arrowText, read}; cfg.prior to szanse a priori {odds, text,
+// logLr, postOdds, p, up, lrName, lrWords, lrCalc, lrText, postText, pText,
+// postCalc, pCalc, arrowText}; cfg.prior to szanse a priori {odds, text,
 // frac, calc}; cfg.summary to slajd zbiorczy {name, title, text}; cfg.logMin i
 // cfg.logMax to zakres osi szans w log10.
-// Slajdy 0..n-1 pokazują jeden sygnał (kafelki, wzór, oś logarytmiczna ze strzałką
-// o długości log LR, werdykt), slajd n zestawia wszystkie strzałki na jednej osi.
+// Slajdy 0..n-1 pokazują jeden sygnał jako łańcuch kroków 1–4 (szanse przed × LR
+// = szanse po → prawdopodobieństwo) i oś logarytmiczną ze strzałką o długości
+// log LR; slajd n zestawia wszystkie strzałki na jednej osi.
 // Przyciski [data-sg-go="i"] (segment) i [data-sg="prev|next"].
 //
 // Działa w przeglądarce, bez serwera.
@@ -28,7 +29,6 @@
     return e;
   }
   function txt(attrs, text, parent) { var t = svg("text", attrs, parent); t.textContent = text; return t; }
-  function span(cls, text) { return el("span", cls, text); }
   function reduced() {
     return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
@@ -103,11 +103,6 @@
     svg("line", { class: "lc-sg-axis", x1: X0, x2: X1, y1: tickY, y2: tickY }, all);
     ticks(all, tickY);
 
-    function fill(node, parts) {
-      node.innerHTML = "";
-      parts.forEach(function (p) { node.appendChild(p); });
-    }
-
     function drawArrow(xr, dir) {
       var x2 = xr - dir * 14, len = Math.abs(x2 - xs);
       arrow.setAttribute("x2", x2);
@@ -134,26 +129,17 @@
         out("step").textContent = "Sygnał " + (i + 1) + " z " + n;
         out("text").textContent = S.text;
         out("prior").textContent = prior.text;
-        out("priorSub").textContent = prior.calc;
+        out("priorSub").textContent = "hala: " + prior.calc;
         out("lrLabel").textContent = S.lrName;
         out("lr").textContent = S.lrText;
-        out("lrSub").textContent = S.lrWords + " = " + S.lrCalc;
+        out("lrSub").textContent = S.lrCalc;
+        out("lrSub2").textContent = S.lrWords;
         out("postLabel").textContent = "szanse po " + S.sym;
         out("post").textContent = S.postText;
-        out("postSub").textContent = "";
-        out("pLabel").textContent = "prawdopodobieństwo P(A | " + S.sym + ")";
+        out("postSub").textContent = S.postCalc;
+        out("pLabel").textContent = "P(A | " + S.sym + ")";
         out("p").textContent = "≈ " + S.pText;
-        out("pSub").textContent = "";
-        fill(out("formula"), [
-          span("lc-sg-is-post", "szanse po"), span("lc-sg-op", "="),
-          span("lc-sg-is-prior", prior.frac), span("lc-sg-op", "·"), span("lc-sg-is-lr", S.lrText),
-          span("lc-sg-op", "="), span("lc-sg-is-post", S.postFrac)
-        ]);
-        out("cmp").textContent = S.cmp;
-        var v = out("verdict");
-        v.textContent = S.verdict;
-        v.className = "lc-sg-verdict " + (S.up ? "is-up" : "is-down");
-        out("read").textContent = S.read;
+        out("pSub").textContent = S.pCalc;
         drawArrow(xr, dir);
         headG.style.transform = "translate(" + (xr - dir * 9) + "px,0)";
         headIn.setAttribute("transform", "translate(0," + RY + ") scale(" + dir + ",1)");
