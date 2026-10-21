@@ -43,6 +43,9 @@ source(file.path(project_root, "R", "risk_math.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_block.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_mianowniki.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_szanse.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_detektory.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_serwis.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_przyklady.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_prog.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_serpuchow_case.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
@@ -63,6 +66,9 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "dziennik.js")),
     includeScript(file.path(app_dir, "modules", "telefon.js")),
     includeScript(file.path(app_dir, "modules", "wzory.js")),
+    includeScript(file.path(app_dir, "modules", "drzewo.js")),
+    includeScript(file.path(app_dir, "modules", "serwis.js")),
+    includeScript(file.path(app_dir, "modules", "przyklady.js")),
     tags$style(HTML("
       .lc-pm { font-family: var(--upwr-mono); font-size: .9em; white-space: nowrap;
         padding: .08em .35em; border-radius: 4px;
@@ -134,6 +140,20 @@ ui <- lecture_page(
       .lc-dz-pile.is-false { fill: var(--upwr-single-alt); }
       .lc-dz-svg.is-piles .lc-dz-pile { opacity: 1; }
       .lc-dz-readout { font: 600 15px var(--upwr-mono); color: var(--upwr-ink); margin: .2em 0 .6em; min-height: 1.4em; }
+      .a3-tree-svg [data-k='b-quiet'] { display: none; }
+      .a3-tree-svg.is-quiet [data-k='b-quiet'] { display: inline; }
+      .a3-tree-svg [data-k] { transition: opacity .35s ease; }
+      .a3-tree-svg.is-stepped [data-k]:not(.is-lit) { opacity: .15; }
+      .a3-tree-svg.is-stepped [data-k].is-lit { opacity: 1; }
+      .a3-tree-svg.is-quiet .a3-tree-edge.is-lit[data-k='e-miss'],
+      .a3-tree-svg.is-quiet .a3-tree-edge.is-lit[data-k='e-tn'] { stroke: var(--upwr-cat-szalwia) !important; stroke-width: 8px !important; }
+      .a3-tree-svg.is-quiet .a3-tree-node.is-lit[data-k='n-miss'] rect,
+      .a3-tree-svg.is-quiet .a3-tree-node.is-lit[data-k='n-tn'] rect { stroke: var(--upwr-cat-szalwia); stroke-width: 2.5; }
+      .lc-tr-lines { display: flex; flex-direction: column; gap: 8px; margin: .3em 0 .8em; min-height: 6em; }
+      .lc-tr-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2em 1em; opacity: .5; }
+      .lc-tr-line.is-new { opacity: 1; }
+      .lc-tr-tex { font: 600 18px var(--upwr-mono); color: var(--upwr-ink); }
+      .lc-tr-note { color: var(--upwr-ink-subtle); font-size: .92em; }
       @media (prefers-reduced-motion: reduce) { .lc-dz-svg * { transition: none !important; } }
       .lc-sp-head { display: flex; justify-content: space-between; align-items: baseline; margin: .2em 0 .3em; }
       .lc-sp-name { font: 600 1.02em var(--upwr-sans); color: var(--upwr-ink); }

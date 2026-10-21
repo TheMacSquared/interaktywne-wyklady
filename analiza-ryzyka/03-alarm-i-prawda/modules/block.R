@@ -113,7 +113,9 @@ alarm_wzory_steps <- list(
   list(name = "Zapowiedź: wiarygodność alarmu", symbol = "P(A | 🚨)", num = list("tp"), den = list("tp", "fp"),
     value = "0.16", note = "Tym razem kolumna, nie wiersz. Tej liczby potrzebuje dyżurny; wyprowadzimy ją w rozdziale „Wzór Bayesa”.")
 )
-alarm_wzory_widget <- local({
+# Panel z tablicą i krokami; ten sam widget podsumowuje rozdział „Czułość
+# i swoistość” i pokazuje wartości predykcyjne w rozdziale „Wzór Bayesa”.
+alarm_wzory_panel <- function(steps, title, caption) {
   cell <- function(c) tags$div(class = "lc-wz-cell", `data-wz-cell` = c$key,
     tags$div(class = "lc-wz-abbr", c$abbr),
     tags$div(class = "lc-wz-n", format(c$n, big.mark = " ")),
@@ -121,13 +123,13 @@ alarm_wzory_widget <- local({
   cl <- alarm_wzory_cells
   figure_panel(
     label = "Pojęcie",
-    title = "Wzory na tablicy 2×2: licznik i mianownik",
+    title = title,
     full_width = TRUE,
     tags$div(class = "lc-wz",
-      `data-config` = jsonlite::toJSON(list(cells = cl, steps = alarm_wzory_steps), auto_unbox = TRUE),
+      `data-config` = jsonlite::toJSON(list(cells = cl, steps = steps), auto_unbox = TRUE),
       tags$div(class = "lc-sp-head",
-        tags$span(class = "lc-sp-name", `data-wz-out` = "name", alarm_wzory_steps[[1]]$name),
-        tags$span(class = "lc-sp-step", `data-wz-out` = "step", "Wzór 1 z 5")
+        tags$span(class = "lc-sp-name", `data-wz-out` = "name", steps[[1]]$name),
+        tags$span(class = "lc-sp-step", `data-wz-out` = "step", sprintf("Wzór 1 z %d", length(steps)))
       ),
       tags$div(class = "lc-wz-body",
         tags$div(class = "lc-wz-grid",
@@ -142,9 +144,27 @@ alarm_wzory_widget <- local({
         tags$button(type = "button", class = "lc-action is-solid", `data-wz` = "next", tags$span("Dalej"), lc_icon("next"))
       )
     ),
-    lc_caption("Niebieskie: licznik. Żółte: mianownik. Liczby to oczekiwane zmiany na 10 000 w hali Bananpolu.")
+    lc_caption(caption)
   )
-})
+}
+alarm_wzory_widget <- alarm_wzory_panel(alarm_wzory_steps,
+  "Wzory na tablicy 2×2: licznik i mianownik",
+  "Niebieskie: licznik. Żółte: mianownik. Liczby to oczekiwane zmiany na 10 000 w hali Bananpolu.")
+
+# Wartości predykcyjne obok czułości i swoistości: ten sam licznik, inny mianownik.
+alarm_ppv_steps <- list(
+  list(name = "Czułość: wiersz awarii", symbol = "P(🚨 | A)", num = list("tp"), den = list("tp", "fn"),
+    value = "0.95", note = "Przypomnienie z rozdziału 2: liczymy wśród awarii."),
+  list(name = "PPV: kolumna alarmów", symbol = "P(A | 🚨)", num = list("tp"), den = list("tp", "fp"),
+    value = "0.161", note = "Ten sam licznik TP, ale mianownik to wszystkie alarmy. Tego potrzebuje dyżurny po telefonie."),
+  list(name = "Swoistość: wiersz bez awarii", symbol = "P(🔕 | Aᶜ)", num = list("tn"), den = list("fp", "tn"),
+    value = "0.95", note = "Przypomnienie z rozdziału 2: liczymy wśród spokojnych zmian."),
+  list(name = "NPV: kolumna ciszy", symbol = "P(Aᶜ | 🔕)", num = list("tn"), den = list("fn", "tn"),
+    value = "0.9995", note = "Ten sam licznik TN, mianownik to wszystkie ciche zmiany. Cisza jest bardzo wiarygodna, alarm znacznie mniej.")
+)
+alarm_ppv_widget <- alarm_wzory_panel(alarm_ppv_steps,
+  "Wartości predykcyjne na tablicy 2×2: wiersze i kolumny",
+  "Niebieskie: licznik. Żółte: mianownik. Czułość i swoistość czytamy wierszami, PPV i NPV kolumnami.")
 
 # Scena „Telefon o trzeciej”: panel czujnika w dojrzewalni i karty z założeniami
 # liczbowymi, bliźniacza z „Serpuchów, 1983”. Rysunek i kadry działają
@@ -262,59 +282,61 @@ alarm_tree_svg <- function(d, prevalence, sensitivity, false_positive_rate) {
   tp <- d$alarm[1]; fp <- d$alarm[2]
   width <- function(n) 3 + 21 * n / max(1, tp, fp)
   num <- function(n) format(n, big.mark = " ", trim = TRUE)
-  node <- function(x, y, label, n, color = NULL, dim = FALSE) sprintf(
-    '<g class="a3-tree-node%s"><rect x="%g" y="%g" width="150" height="36" rx="18"%s/><text x="%g" y="%g" text-anchor="middle"%s>%s · %s</text></g>',
-    if (dim) " is-dim" else "", x - 75, y - 18,
+  # data-k: klucz elementu, który podświetla krokowy widget (modules/drzewo.js).
+  node <- function(k, x, y, label, n, color = NULL, dim = FALSE) sprintf(
+    '<g class="a3-tree-node%s" data-k="%s"><rect x="%g" y="%g" width="150" height="36" rx="18"%s/><text x="%g" y="%g" text-anchor="middle"%s>%s · %s</text></g>',
+    if (dim) " is-dim" else "", k, x - 75, y - 18,
     if (!is.null(color)) sprintf(' style="stroke:%s;stroke-width:2.5"', color) else "",
     x, y + 5, if (!is.null(color)) sprintf(' style="fill:%s"', color) else "", label, num(n))
-  edge <- function(x1, y1, x2, y2, w = 2, color = NULL, dim = FALSE) sprintf(
-    '<path class="a3-tree-edge%s" d="M%g %g C%g %g %g %g %g %g" style="stroke-width:%.1f%s"/>',
-    if (dim) " is-dim" else "", x1, y1, (x1 + x2) / 2, y1, (x1 + x2) / 2, y2, x2, y2, w,
+  edge <- function(k, x1, y1, x2, y2, w = 2, color = NULL, dim = FALSE) sprintf(
+    '<path class="a3-tree-edge%s" data-k="%s" d="M%g %g C%g %g %g %g %g %g" style="stroke-width:%.1f%s"/>',
+    if (dim) " is-dim" else "", k, x1, y1, (x1 + x2) / 2, y1, (x1 + x2) / 2, y2, x2, y2, w,
     if (!is.null(color)) paste0(";stroke:", color) else "")
-  prob <- function(x, y, p) sprintf('<text class="a3-tree-p" x="%g" y="%g" text-anchor="middle">%s</text>', x, y, risk_fmt_p(p, 2L))
+  prob <- function(k, x, y, p) sprintf('<text class="a3-tree-p" data-k="%s" x="%g" y="%g" text-anchor="middle">%s</text>', k, x, y, risk_fmt_p(p, 2L))
   HTML(paste0(
-    '<svg class="a3-tree-svg" viewBox="0 0 760 300" role="img" aria-label="Drzewo: ',
+    sprintf('<svg class="a3-tree-svg" viewBox="0 0 760 300" role="img" data-prev="%s" data-sens="%s" data-fpr="%s" data-tp="%d" data-fn="%d" data-fp="%d" data-tn="%d" aria-label="Drzewo: ',
+      prevalence, sensitivity, false_positive_rate, tp, d$no_alarm[1], fp, d$no_alarm[2]),
     num(sum(d$total)), ' zmian dzieli się na awarie i brak awarii, a każda grupa na alarm i brak alarmu. Prawdziwych alarmów jest ',
     num(tp), ', fałszywych ', num(fp), '.">',
-    edge(150, 150, 245, 70), edge(150, 150, 245, 230),
-    edge(395, 70, 485, 30, width(tp), upwr_accent), edge(395, 70, 485, 110, dim = TRUE),
-    edge(395, 230, 485, 190, width(fp), upwr_single_alt), edge(395, 230, 485, 270, dim = TRUE),
-    prob(186, 96, prevalence), prob(186, 218, 1 - prevalence),
-    prob(440, 26, sensitivity), prob(440, 118, 1 - sensitivity),
-    prob(440, 174, false_positive_rate), prob(440, 278, 1 - false_positive_rate),
-    node(75, 150, "Zmiany", sum(d$total)),
-    node(320, 70, "Awaria", d$total[1]), node(320, 230, "Brak awarii", d$total[2]),
-    node(560, 30, "Alarm", tp, upwr_accent), node(560, 110, "Bez alarmu", d$no_alarm[1], dim = TRUE),
-    node(560, 190, "Alarm", fp, upwr_single_alt), node(560, 270, "Bez alarmu", d$no_alarm[2], dim = TRUE),
-    '<path class="a3-tree-brace" d="M642 30 h14 v160 h-14 M656 110 h10"/>',
-    sprintf('<text class="a3-tree-sum" x="672" y="106">%s</text><text class="a3-tree-sum" x="672" y="126">alarmów</text>', num(tp + fp)),
+    edge("e-a", 150, 150, 245, 70), edge("e-n", 150, 150, 245, 230),
+    edge("e-hit", 395, 70, 485, 30, width(tp), upwr_accent), edge("e-miss", 395, 70, 485, 110, dim = TRUE),
+    edge("e-fa", 395, 230, 485, 190, width(fp), upwr_single_alt), edge("e-tn", 395, 230, 485, 270, dim = TRUE),
+    prob("p-a", 186, 96, prevalence), prob("p-n", 186, 218, 1 - prevalence),
+    prob("p-hit", 440, 26, sensitivity), prob("p-miss", 440, 118, 1 - sensitivity),
+    prob("p-fa", 440, 174, false_positive_rate), prob("p-tn", 440, 278, 1 - false_positive_rate),
+    node("n-root", 75, 150, "Zmiany", sum(d$total)),
+    node("n-a", 320, 70, "Awaria", d$total[1]), node("n-n", 320, 230, "Brak awarii", d$total[2]),
+    node("n-hit", 560, 30, "Alarm", tp, upwr_accent), node("n-miss", 560, 110, "Bez alarmu", d$no_alarm[1], dim = TRUE),
+    node("n-fa", 560, 190, "Alarm", fp, upwr_single_alt), node("n-tn", 560, 270, "Bez alarmu", d$no_alarm[2], dim = TRUE),
+    '<g data-k="b-alarm"><path class="a3-tree-brace" d="M642 30 h14 v160 h-14 M656 110 h10"/>',
+    sprintf('<text class="a3-tree-sum" x="672" y="106">%s</text><text class="a3-tree-sum" x="672" y="126">alarmów</text></g>', num(tp + fp)),
+    sprintf('<g data-k="b-quiet"><path class="a3-tree-brace" d="M642 110 h14 v160 h-14 M656 190 h10"/><text class="a3-tree-sum" x="672" y="186">%s</text><text class="a3-tree-sum" x="672" y="206">cichych</text></g>',
+      num(d$no_alarm[1] + d$no_alarm[2])),
     '</svg>'
   ))
 }
 
-alarm_tree_formula <- function(d, posterior) {
-  colored <- function(x, color) tags$span(style = paste0("color:", color), x)
-  risk_annotated_formula(
-    items = list(
-      list(symbol = "P(A | 🚨)", value = risk_fmt_p(posterior),
-        note = "wiarygodność alarmu", color = upwr_secondary),
-      list(symbol = "P(🚨 | A)·P(A)", value = d$alarm[1],
-        note = "droga przez awarię", color = upwr_accent),
-      list(symbol = "P(🚨)",
-        value = tagList(colored(d$alarm[1], upwr_accent), " + ", colored(d$alarm[2], upwr_single_alt)),
-        note = "obie drogi kończące się alarmem, wzór (3.3)", color = upwr_single_alt)
-    ),
-    ops = c("=", "÷")
-  )
-}
-
+# Krokowe drzewo: wzór Bayesa składany z trzech narzędzi wykładu 02, a na koniec
+# ta sama konstrukcja dla ciszy (NPV). Drzewo rysuje serwer (reaguje na suwaki
+# tablicy 2×2), kroki i linijki wzoru dokłada modules/drzewo.js.
 alarm_paths_widget <- figure_panel(
   label = "Pojęcie",
-  title = "Dwie drogi do alarmu na 10 000 zmian",
+  title = "Wzór Bayesa na drzewie: dwie drogi do alarmu",
   full_width = TRUE,
-  lc_toolbar(lc_readouts(uiOutput("a3_counts"))),
-  uiOutput("a3_tree"),
-  lc_caption("Parametry są wspólne z tablicą 2×2. Liczby we wzorze to zmiany na 10 000; ich iloraz jest równy ilorazowi prawdopodobieństw.")
+  tags$div(class = "lc-tr",
+    tags$div(class = "lc-sp-head",
+      tags$span(class = "lc-sp-name", `data-tr-out` = "name", "Drzewo"),
+      tags$span(class = "lc-sp-step", `data-tr-out` = "step", "Krok 1 z 6")
+    ),
+    lc_toolbar(lc_readouts(uiOutput("a3_counts"))),
+    uiOutput("a3_tree"),
+    tags$div(class = "lc-tr-lines", `aria-live` = "polite"),
+    tags$div(class = "lc-sp-nav",
+      tags$button(type = "button", class = "lc-action is-outline", `data-tr` = "prev", lc_icon("prev"), tags$span("Wstecz")),
+      tags$button(type = "button", class = "lc-action is-solid", `data-tr` = "next", tags$span("Dalej"), lc_icon("next"))
+    )
+  ),
+  lc_caption("Parametry są wspólne z tablicą 2×2. Liczby w drzewie to zmiany na 10 000; prawdopodobieństwa liczymy z parametrów.")
 )
 
 alarm_sciaga_widget <- tagList(
@@ -511,7 +533,7 @@ alarm_block <- list(
               lc_toolbar(
                 lc_slider("a3_prev", "Częstość awarii", 0.001, 0.10, 0.01, 0.001),
                 lc_slider("a3_sens", "Czułość", 0.50, 1, 0.95, 0.01),
-                lc_slider("a3_fpr", "Fałszywie dodatnie", 0, 0.30, 0.05, 0.01)
+                lc_slider("a3_fpr", "FPR (fałszywe alarmy)", 0, 0.30, 0.05, 0.01)
               ),
               uiOutput("a3_table"),
               full_width = TRUE
@@ -545,6 +567,9 @@ alarm_block <- list(
               "Wartość predykcyjna ujemna NPV (ang. negative predictive value) to P(Aᶜ | 🔕): prawdopodobieństwo, że zdarzenia nie ma, gdy detektor milczy. W przeciwieństwie do czułości i swoistości obie wartości predykcyjne zależą od częstości bazowej."
             )),
             "W tablicy 2×2 wartości predykcyjne to ilorazy w kolumnach: PPV = TP/(TP + FP), NPV = TN/(TN + FN). Czułość i swoistość czytamy wierszami, wartości predykcyjne — kolumnami. W dzienniku dyżurnego kolumna alarmów to 118 telefonów, z których prawdziwych było 19.",
+            risk_formula("\\begin{aligned}\\text{PPV} &= P(A\\mid \\text{🚨})=\\frac{TP}{TP+FP},\\\\[0.6em] \\text{NPV} &= P(A^{c}\\mid \\text{🔕})=\\frac{TN}{TN+FN}\\end{aligned}",
+              legend = c("TP + FP" = "wszystkie alarmy (kolumna 🚨)", "TN + FN" = "wszystkie zmiany bez alarmu (kolumna 🔕)")),
+            alarm_ppv_widget,
             risk_try("w tablicy 2×2 z poprzedniego rozdziału odczytaj kolumnę alarmów przy ustawieniach domyślnych. Potem zmniejsz FPR do 0.01 i porównaj liczbę prawdziwych i fałszywych alarmów. Drzewo dróg w następnej sekcji korzysta z tych samych parametrów."),
             c(
               "Przy ustawieniach domyślnych kolumna alarmów ma 95 prawdziwych i 495 fałszywych alarmów, a P(awaria | alarm) = 0.161 — dokładnie ta sama proporcja co 19 do 99 w dzienniku dyżurnego. Przy FPR = 0.01 fałszywych alarmów jest 99, prawdziwych nadal 95, a wiarygodność alarmu rośnie do 0.490.",
@@ -559,7 +584,9 @@ alarm_block <- list(
                 a = "Policz fałszywe alarmy obu detektorów wśród 9900 zmian bez awarii.",
                 same = "Ta sama hala oznacza tę samą częstość bazową, ale detektory mają różne FPR."
               )
-            )
+            ),
+            a3_stop_detectors_ui,
+            "Detektor C łapie każdą awarię, a mimo to jego alarm jest trafny tylko w 17 przypadkach na 100. Przy 9900 sprawnych zmianach nawet 5% fałszywych alarmów daje 495 pomyłek, więc wiarygodność alarmu podnosi dopiero niższy FPR detektora B — za cenę 20 przeoczonych awarii zamiast 5. Wybór detektora to kompromis między fałszywymi alarmami a przeoczeniami, a nie ranking: który jest lepszy, zależy od tego, co w tej hali kosztuje więcej."
           )
         ),
         list(
@@ -621,6 +648,8 @@ alarm_block <- list(
               "Alarm rozdzielał świat na dwa stany: awaria albo jej brak. Często stanów jest więcej. Po incydencie w Bananpolu inspektor pyta, w którym trybie pracy przebiegała zmiana; po alarmie serwis pyta, który z kilku podzespołów zawiódł. Schemat rachunku się nie zmienia: licznik to jedna droga drzewa, mianownik — suma wszystkich dróg kończących się tą samą obserwacją.",
               "Zapiszmy to ogólnie. Ukryte stany A₁, …, Aₖ tworzą układ zupełny (definicja 2.2 z wykładu 02), a O oznacza obserwację: alarm, incydent, otwartą bramkę. Mianownik to wzór na prawdopodobieństwo całkowite (2.4) zastosowany do O."
             ),
+            a3_stop_service_ui,
+            "Serwisant nie liczył niczego nowego: każdy słupek po obserwacji to udział podzespołu w rejestrze razy częstość objawu przy jego awarii, a mianownik 35 to wszystkie awarie z tym objawem. Obserwacja przesuwa ocenę w stronę przyczyny, przy której jest ona częstsza — nawet jeśli ta przyczyna jest rzadka. Ogólnie zapisuje to wzór (3.6).",
             risk_formula("P(A_j\\mid O)=\\frac{P(O\\mid A_j)\\,P(A_j)}{\\sum_{i=1}^{k} P(O\\mid A_i)\\,P(A_i)}", num = "3.6",
               legend = c("A_j" = "stan, o który pytamy", "P(A_j)" = "udział stanu przed obserwacją", "P(O\\mid A_j)" = "prawdopodobieństwo obserwacji w tym stanie", "\\sum_i" = "prawdopodobieństwo całkowite obserwacji, wzór (2.4)")),
             "Wzór (3.4) jest przypadkiem k = 2: stanami są A i Aᶜ, a obserwacją alarm 🚨. Ogólna postać przydaje się wszędzie tam, gdzie po fakcie pytamy o źródło.",
@@ -833,6 +862,9 @@ alarm_block <- list(
               legend = c("c" = "koszt reakcji", "L" = "strata, której reakcja zapobiega", "q^{*}" = "próg reakcji")),
             "Jeśli reakcja ogranicza stratę tylko o połowę, jej koszt oczekiwany to 100+1000q; próg rośnie do q>0.10. Skuteczność działania jest osobnym założeniem. Urazów i pełnej oceny bezpieczeństwa nie sprowadzamy w tym przykładzie do jednej kwoty.",
             "W Bananpolu q* = 100/2000 = 0.05. Łącząc wzór (3.9) z wzorem (3.7), można przełożyć próg na posteriorze na próg na częstości bazowej: reagujemy na alarm, gdy szanse a priori · 19 > 0.05/0.95 = 1/19, czyli gdy szanse a priori przekraczają 1/361. Odpowiada to częstości awarii około 0.0028. Poniżej tej częstości pojedynczy alarm tego czujnika nie uzasadnia wyjazdu przy tych kosztach.",
+            "Zanim policzymy przykład 3.8, zobaczmy tę samą regułę w trzech firmach, z tym samym rodzajem alarmu, ale innymi kosztami.",
+            a3_stop_examples_ui,
+            "Posterior opisuje czujnik i halę, próg — pieniądze i skutki. Dopiero ich porównanie jest decyzją.",
             risk_example("3.8", "Jedna reguła, trzy sytuacje",
               problem = list(
                 "Reakcja kosztuje 100 zł, brak reakcji przy awarii 2000 zł, a reakcja w pełni zapobiega stracie. Czujnik ma czułość 0.95 i FPR 0.05. Rozstrzygnij, czy reagować:",
@@ -973,12 +1005,10 @@ alarm_server <- function(input, output, session) {
   output$a3_tree <- renderUI({
     p <- detector_parameters()
     d <- detector()
-    tagList(
-      alarm_tree_svg(d, p$prevalence, p$sensitivity, p$false_positive_rate),
-      alarm_tree_formula(d, posterior())
-    )
+    alarm_tree_svg(d, p$prevalence, p$sensitivity, p$false_positive_rate)
   })
   a3_stop_szanse_server(input, output, session, detector_parameters)
+  a3_stop_detektory_server(input, output, session)
   a3_stop_prog_server(input, output, session)
   a3_stop_serpuchow_case_server(input, output, session)
   risk_assessment_server("a3", alarm_quiz, input, output)
