@@ -9,8 +9,9 @@ window.__off = (function () {
 
   function busy() {
     if (document.documentElement.classList.contains('shiny-busy')) return true;
-    if (document.querySelector('.recalculating')) return true;
-    return false;
+    // Ukryte rozdziały (analiza ryzyka) mogą wisieć w stanie .recalculating.
+    return Array.prototype.some.call(document.querySelectorAll('.recalculating'),
+      function (e) { return e.offsetParent !== null; });
   }
 
   async function idle(quiet, timeout) {
@@ -51,8 +52,11 @@ window.__off = (function () {
     return true;
   }
 
+  // Analiza ryzyka montuje wszystkie rozdziały naraz i ukrywa nieaktywne,
+  // więc liczy się tylko widoczna sekcja.
   function currentSection() {
-    return document.querySelector('section[data-lc-chapter-content]');
+    return Array.prototype.find.call(document.querySelectorAll('section[data-lc-chapter-content]'),
+      function (s) { return s.offsetParent !== null; }) || null;
   }
 
   async function blobToDataURL(blob) {
@@ -146,6 +150,14 @@ window.__off = (function () {
       try { imgs[i].src = await blobToDataURL(await (await fetch(u)).blob()); }
       catch (e) { errors.push('img ' + u.pathname + ': ' + e); }
     }
+
+    // Przycisk powiększenia wykresu otwiera w pliku offline powiększenie po stronie
+    // przeglądarki (shared_toc.js, obrazki w .lc-zoomable) zamiast modala z R.
+    sec.querySelectorAll('.lc-zoom-plot-wrap').forEach(function (w) {
+      w.classList.add('lc-zoomable');
+      var b = w.querySelector('.lc-zoom-btn');
+      if (b) { b.classList.remove('action-button', 'shiny-bound-input'); b.removeAttribute('id'); }
+    });
 
     // Kontrolki liczone w R nie działają bez serwera: zamrażamy je w stanie domyślnym.
     sec.querySelectorAll('.shiny-bound-input').forEach(function (el) {

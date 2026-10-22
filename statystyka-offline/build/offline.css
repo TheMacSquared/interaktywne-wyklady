@@ -25,6 +25,11 @@
 
 img.lc-off-canvas { display: block; margin: 0 auto; }
 
+/* Wykresy R zrzucone przy szerokości 1440 px: na telefonie zwężają się do ekranu */
+.lc-off-chapter .shiny-plot-output { max-width: 100%; height: auto !important; }
+.lc-off-chapter .shiny-plot-output img { max-width: 100%; height: auto !important; }
+.lc-off-chapter .lc-zoom-plot-wrap img { cursor: zoom-in; }
+
 /* visNetwork zamieniony na obraz: kontenery dopasowane do szerokości panelu */
 .visNetwork.html-widget,
 .visNetwork.html-widget .vis-network,

@@ -48,6 +48,14 @@
     }
   };
 
+  // Przycisk powiększenia → klik w obrazek wykresu (powiększenie z shared_toc.js).
+  document.addEventListener('click', function (e) {
+    var zb = e.target.closest && e.target.closest('.lc-zoom-btn');
+    if (!zb) return;
+    var img = zb.closest('.lc-zoom-plot-wrap').querySelector('img');
+    if (img) img.click();
+  });
+
   document.addEventListener('click', function (e) {
     var btn = e.target.closest && e.target.closest('.lc-nav-chapter-btn');
     if (!btn) return;

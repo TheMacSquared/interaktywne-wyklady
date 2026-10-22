@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Statyczny zrzut wykładów Statystyki do plików HTML działających offline.
+# Statyczny zrzut wykładów (Statystyka, Analiza ryzyka) do plików HTML działających offline.
 #
 # Każdy wykład jest uruchamiany lokalnie, przeglądarka bez okna (chromote)
 # przechodzi przez rozdziały, a wynik trafia do jednego pliku HTML z wykresami
@@ -9,10 +9,12 @@
 # Użycie (z katalogu głównego repozytorium):
 #   Rscript statystyka-offline/build/build_offline.R
 #   Rscript statystyka-offline/build/build_offline.R --src=/kopia/statystyki --only=01,03
+#   Rscript statystyka-offline/build/build_offline.R --course=analiza-ryzyka
 #
 # Opcje:
-#   --src=DIR    katalog przedmiotu (domyślnie ../statystyka względem statystyka-offline)
-#   --out=DIR    katalog wynikowy (domyślnie statystyka-offline/wyklady)
+#   --course=X   przedmiot: statystyka (domyślnie) albo analiza-ryzyka
+#   --src=DIR    katalog przedmiotu (domyślnie ../<course> względem statystyka-offline)
+#   --out=DIR    katalog wynikowy (domyślnie <course>-offline/wyklady)
 #   --only=NN,.. tylko wybrane wykłady (numery z nazw folderów)
 #   --port=N     port startowy aplikacji (domyślnie 7951)
 #   --scale=N    gęstość pikseli wykresów (domyślnie 1.5)
@@ -41,15 +43,17 @@ arg <- function(name, default = NULL) {
   if (length(hit)) sub(paste0("^--", name, "="), "", hit[[1]]) else default
 }
 
-src_dir  <- normalizePath(arg("src", file.path(dirname(offline_root), "statystyka")), mustWork = TRUE)
-out_dir  <- arg("out", file.path(offline_root, "wyklady"))
+course   <- arg("course", "statystyka")
+course_name <- c(statystyka = "Statystyka", "analiza-ryzyka" = "Analiza ryzyka")[[course]]
+src_dir  <- normalizePath(arg("src", file.path(dirname(offline_root), course)), mustWork = TRUE)
+out_dir  <- arg("out", file.path(dirname(offline_root), paste0(course, "-offline"), "wyklady"))
 only     <- arg("only")
 port0    <- as.integer(arg("port", "7951"))
 px_scale <- as.numeric(arg("scale", "1.5"))
 
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 out_dir <- normalizePath(out_dir)
-log_dir <- file.path(tempdir(), "statystyka-offline-logs")
+log_dir <- file.path(tempdir(), paste0(course, "-offline-logs"))
 dir.create(log_dir, showWarnings = FALSE)
 
 lectures <- sort(list.dirs(src_dir, recursive = FALSE, full.names = FALSE))
@@ -139,7 +143,8 @@ build_head <- function(items, title) {
   for (it in items) {
     if (it$kind == "style") {
       parts <- c(parts, sprintf("<style>\n%s\n</style>", safe_style(it$text)))
-    } else if (it$kind == "script-src" && grepl("jquery", it$src, ignore.case = TRUE)) {
+    # risk_script.js: pytania kontrolne analizy ryzyka działają bez serwera.
+    } else if (it$kind == "script-src" && grepl("jquery|risk_script", it$src, ignore.case = TRUE)) {
       parts <- c(parts, sprintf("<script>\n%s\n</script>", safe_script(it$text)))
     } else if (it$kind == "script") {
       parts <- c(parts, sprintf("<script>\n%s\n</script>", safe_script(it$text)))
@@ -218,7 +223,7 @@ snapshot_lecture <- function(lecture, port) {
   body <- ev(sprintf("__off.shell(%s, %s)",
                      toJSON(keep_ids), toJSON(tab_hrefs)), timeout = 120)
 
-  title <- sprintf("%s · %s — Statystyka (offline)", substr(lecture, 1, 2), trimws(lecture_title))
+  title <- sprintf("%s · %s — %s (offline)", substr(lecture, 1, 2), trimws(lecture_title), course_name)
   head <- build_head(head_items, title)
 
   html <- paste0(
@@ -246,19 +251,19 @@ write_index <- function() {
   titles <- vapply(files, function(f) {
     x <- readLines(file.path(out_dir, f), n = 6, warn = FALSE, encoding = "UTF-8")
     t <- sub(".*<title>(.*)</title>.*", "\\1", grep("<title>", x, value = TRUE)[1])
-    sub(" — Statystyka \\(offline\\)$", "", t)
+    sub(paste0(" — ", course_name, " \\(offline\\)$"), "", t)
   }, "")
   items <- sprintf('<li><a href="%s">%s</a></li>', files, titles)
   html <- c(
     "<!DOCTYPE html>", '<html lang="pl">', "<head>", '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
-    "<title>Statystyka — wykłady offline</title>",
+    sprintf("<title>%s — wykłady offline</title>", course_name),
     "<style>", fonts_css,
     "body{font-family:'IBM Plex Sans',sans-serif;max-width:40rem;margin:3rem auto;padding:0 1rem;color:#2b2b2b;background:#fbfaf7;line-height:1.5}",
     "h1{font-size:1.6rem;margin-bottom:.25rem}p{color:#666}ol{padding:0;list-style:none}",
     "li{margin:.4rem 0}a{color:#6b1a26;text-decoration:none;font-size:1.1rem}a:hover{text-decoration:underline}",
     "</style>", "</head>", "<body>",
-    "<h1>Statystyka — wykłady</h1>",
+    sprintf("<h1>%s — wykłady</h1>", course_name),
     "<p>Wersja offline. Otwórz wykład w przeglądarce; nie trzeba nic instalować. Wykresy pokazują ustawienia domyślne.</p>",
     "<ol>", items, "</ol>", "</body>", "</html>"
   )
