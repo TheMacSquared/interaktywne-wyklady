@@ -117,13 +117,13 @@ ch5_ui <- list(
     lc_h2("ch5-mapa", "Mapa kursu"),
 
     lc_p("Tabela pokazuje, gdzie w kursie wracają pojęcia z tego wykładu.
-      Wykłady 01 i 07 dotyczą głównie opisu i jakości danych, wykłady
-      od 02 do 06 wnioskowania, a 08 i 09 łączą jedno z drugim
+      Wykłady 01 i 08 dotyczą głównie opisu i jakości danych, wykłady
+      od 03 do 07 wnioskowania, a 09 i 10 łączą jedno z drugim
       w pełnej analizie."),
 
     lc_table(
       data.frame(
-        num   = c("01", "02", "03", "04", "05", "06", "07", "08–09"),
+        num   = c("01", "03", "04", "05", "06", "07", "08", "09–10"),
         title = c("Statystyka opisowa", "Rozkłady prawdopodobieństwa",
                   "Przedziały ufności", "Testowanie hipotez",
                   "Założenia testów", "Regresja", "Dobre dane",

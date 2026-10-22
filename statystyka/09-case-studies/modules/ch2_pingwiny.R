@@ -29,7 +29,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
   lc_h2("ch2-sytuacja", "Sytuacja wyjściowa"),
 
   lc_p("Drugie studium dotyczy porównania kilku grup. Narzędzia pochodzą
-    z wykładów 01, 04 i 05: opis grup, sprawdzenie założeń, ",
+    z wykładów 01, 05 i 06: opis grup, sprawdzenie założeń, ",
     gloss("ANOVA"), " i porównania par. W rozdziale 01 wystarczyła klasyczna
     ANOVA z testem Tukeya. Tu dane same podpowiedzą, że lepiej sięgnąć po
     jej odporną wersję."),

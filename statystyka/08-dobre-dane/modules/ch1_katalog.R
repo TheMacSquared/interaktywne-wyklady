@@ -13,7 +13,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
 
   lc_h2("sec-01", "Katalog problemów w danych"),
 
-  lc_p("Metody z wykładów 01–06 zakładały milcząco, że dane są w porządku:
+  lc_p("Metody z wykładów 01–07 zakładały milcząco, że dane są w porządku:
     obserwacji jest dość, zmienne mają ustalone znaczenie, wartości są
     wpisane poprawnie, a każdy wiersz to osobna, niezależna obserwacja.
     W prawdziwych zbiorach każde z tych założeń może zawieść. Ten rozdział

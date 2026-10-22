@@ -31,7 +31,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
 
   lc_p("Ten wykład nie wprowadza nowych metod. Każdy jego rozdział przechodzi
     jedną analizę od pytania do decyzji. Pierwsza sięga po kolei po narzędzia
-    z wykładów 01–06:
+    z wykładów 01–07:
     opis danych, korelację, ANOVA, regresję prostą i wieloraką, ocenę
     ", gloss("reszta", "reszt"), " i porównanie modeli. Celem jest zobaczyć, jak te narzędzia
     składają się w całość i jak każde z nich zmienia odpowiedź."),

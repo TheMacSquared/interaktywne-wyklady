@@ -77,7 +77,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
 
   lc_p("Ta ankieta pokazuje, jak wyglądają dane zaprojektowane z myślą
     o analizie: zamknięte pytania, spójne skale, jedna osoba w jednym wierszu.
-    Mają tu sens narzędzia z wykładów 01–06: ", gloss("statystyka opisowa", "statystyki opisowe"), ", ", gloss("przedział ufności", "przedziały ufności"), " dla średniej, ", gloss("test t", "test t"), " dla porównania płci, ", gloss("ANOVA", "ANOVA"), " dla kierunków, ",
+    Mają tu sens narzędzia z wykładów 01–07: ", gloss("statystyka opisowa", "statystyki opisowe"), ", ", gloss("przedział ufności", "przedziały ufności"), " dla średniej, ", gloss("test t", "test t"), " dla porównania płci, ", gloss("ANOVA", "ANOVA"), " dla kierunków, ",
     gloss("test chi-kwadrat"), " dla płci i kierunku oraz korelacja i regresja
     dla godzin nauki i średniej ocen. Jedyną decyzją do podjęcia jest
     sposób traktowania stresu: skalę od 1 do 10 można liczyć jak liczby, ale

@@ -32,7 +32,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
   lc_h2("ch3-sytuacja", "Sytuacja wyjściowa"),
 
   lc_p("Trzecie studium dotyczy wyniku, który przyjmuje tylko dwie wartości:
-    przeżył albo nie. Narzędzia pochodzą z wykładów 01, 04 i 06: ",
+    przeżył albo nie. Narzędzia pochodzą z wykładów 01, 05 i 07: ",
     gloss("tabela kontyngencji"), ", ", gloss("test chi-kwadrat", "test χ²"),
     " niezależności i ", gloss("regresja logistyczna"), "."),
 
