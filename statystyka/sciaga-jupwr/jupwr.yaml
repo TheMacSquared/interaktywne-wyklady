@@ -12,7 +12,7 @@
 #
 # Pola wpisu:
 #   id       — klucz, po którym wykład wywołuje pole: jupwr_box("t-dwie-grupy")
-#   wyklady  — numery wykładów, w których temat występuje ("01".."09")
+#   wyklady  — numery wykładów, w których temat występuje ("01".."10")
 #   temat    — nagłówek wpisu
 #   pytanie  — (opcjonalnie) pytanie studenta do tabeli „pytanie → analiza”
 #   grupa    — sekcja tabeli pytań: dane | opis | rozklady | estymacja |
@@ -28,14 +28,14 @@ wersja_jupwr: "1.0.6"
 
 wyklady:
   "01": Statystyka opisowa
-  "02": Rozkłady prawdopodobieństwa
-  "03": Przedziały ufności
-  "04": Testowanie hipotez
-  "05": Założenia testów
-  "06": Regresja
-  "07": Dobre dane
-  "08": Case study — szkoły w Kalifornii
-  "09": Projekt badawczy
+  "03": Rozkłady prawdopodobieństwa
+  "04": Przedziały ufności
+  "05": Testowanie hipotez
+  "06": Założenia testów
+  "07": Regresja
+  "08": Dobre dane
+  "09": Case study — szkoły w Kalifornii
+  "10": Projekt badawczy
 
 grupy:
   dane: Przygotowanie danych
@@ -51,7 +51,7 @@ wpisy:
   # ---------------------------------------------------------------- dane -----
 
   - id: otworz-plik
-    wyklady: ["01", "07", "09"]
+    wyklady: ["01", "08", "10"]
     temat: Otwarcie pliku z danymi
     pytanie: Jak wczytać dane (CSV, Excel, .omv)?
     grupa: dane
@@ -62,7 +62,7 @@ wpisy:
     wynik: "Dane pojawiają się w arkuszu na zakładce Dane."
 
   - id: poziom-pomiaru
-    wyklady: ["01", "07"]
+    wyklady: ["01", "08"]
     temat: Typ zmiennej (poziom pomiaru)
     pytanie: Jak ustawić, czy zmienna jest jakościowa czy ilościowa?
     grupa: dane
@@ -75,7 +75,7 @@ wpisy:
     uwaga: "Liczby zapisane jako tekst (np. „3-4h”, przecinek dziesiętny) trafiają jako Nominalna — popraw dane, zanim zmienisz typ."
 
   - id: oblicz-zmienna
-    wyklady: ["04", "06", "07", "09"]
+    wyklady: ["05", "07", "08", "10"]
     temat: Nowa zmienna z formuły
     pytanie: Jak utworzyć zmienną, np. „czy english > 20”, średnią dwóch kolumn albo z-score?
     grupa: dane
@@ -87,7 +87,7 @@ wpisy:
     wynik: "Nowa kolumna na końcu arkusza (lub obok zaznaczonej), przelicza się sama po zmianie danych."
 
   - id: filtry
-    wyklady: ["07", "09"]
+    wyklady: ["08", "10"]
     temat: Wykluczenie obserwacji (filtr)
     pytanie: Jak pominąć część obserwacji, np. błędne wartości albo jedną grupę?
     grupa: dane
@@ -98,7 +98,7 @@ wpisy:
     wynik: "Odfiltrowane wiersze są wyszarzone i znikają ze wszystkich analiz."
 
   - id: opis-metod
-    wyklady: ["09"]
+    wyklady: ["10"]
     temat: Opis metod do raportu
     pytanie: Jak opisać w raporcie, co zostało policzone?
     grupa: dane
@@ -136,7 +136,7 @@ wpisy:
     uwaga: "Test χ²: Częstości → Tabela kontyngencji. Wykres: Wykresy → Zależności → Wykres mozaikowy."
 
   - id: statystyki-opisowe
-    wyklady: ["01", "07", "08", "09"]
+    wyklady: ["01", "08", "09", "10"]
     temat: Średnia, mediana, kwartyle, odchylenie standardowe
     pytanie: Jak opisać zmienną ilościową (położenie i rozrzut)?
     grupa: opis
@@ -150,7 +150,7 @@ wpisy:
     wynik: "Tabela statystyk; Układ tabeli przełącza zmienne w wierszach / w kolumnach."
 
   - id: porownanie-grup-opis
-    wyklady: ["01", "09"]
+    wyklady: ["01", "10"]
     temat: Statystyki opisowe osobno w grupach
     pytanie: Jak porównać opis zmiennej ilościowej między grupami?
     grupa: opis
@@ -185,7 +185,7 @@ wpisy:
     wynik: "Tabela klas z licznościami i częstościami skumulowanymi; miary z szeregu obok wartości z danych."
 
   - id: braki-odstajace
-    wyklady: ["07"]
+    wyklady: ["08"]
     temat: Braki danych i wartości skrajne
     pytanie: Czy w danych są braki albo podejrzane wartości?
     grupa: dane
@@ -201,7 +201,7 @@ wpisy:
   # ------------------------------------------------------------- wykresy -----
 
   - id: w-histogram
-    wyklady: ["01", "05", "08"]
+    wyklady: ["01", "06", "09"]
     temat: Histogram
     pytanie: Jaki kształt ma rozkład zmiennej ilościowej?
     grupa: wykresy
@@ -215,7 +215,7 @@ wpisy:
     wynik: "Histogram; przy grupach — nałożone albo w osobnych panelach."
 
   - id: w-skrzynkowy
-    wyklady: ["01", "07", "08"]
+    wyklady: ["01", "08", "09"]
     temat: Wykres skrzynkowy (pudełkowy)
     pytanie: Gdzie są mediana, kwartyle i wartości odstające? Jak porównać grupy?
     grupa: wykresy
@@ -246,7 +246,7 @@ wpisy:
     uwaga: "Typ zmiennej Ciągła: słupki średnich ze słupkami błędów."
 
   - id: w-mozaikowy
-    wyklady: ["01", "04"]
+    wyklady: ["01", "05"]
     temat: Wykres mozaikowy
     pytanie: Jak pokazać zależność dwóch zmiennych jakościowych?
     grupa: wykresy
@@ -259,7 +259,7 @@ wpisy:
     wynik: "Szerokość kolumny = udział kategorii X, wysokość pola = udział Y w tej kategorii."
 
   - id: w-rozrzutu
-    wyklady: ["04", "06", "08"]
+    wyklady: ["05", "07", "09"]
     temat: Wykres rozrzutu
     pytanie: Jak pokazać zależność dwóch zmiennych ilościowych?
     grupa: wykresy
@@ -273,7 +273,7 @@ wpisy:
     wynik: "Punkty z linią trendu (przy grupie — osobna linia dla każdej grupy)."
 
   - id: w-qq
-    wyklady: ["05"]
+    wyklady: ["06"]
     temat: Wykres Q-Q
     pytanie: Czy rozkład jest zbliżony do normalnego (na wykresie)?
     grupa: wykresy
@@ -289,7 +289,7 @@ wpisy:
   # ------------------------------------------------------------ rozkłady -----
 
   - id: rozklad-normalny
-    wyklady: ["02"]
+    wyklady: ["03"]
     temat: Prawdopodobieństwo i kwantyl w rozkładzie normalnym
     pytanie: Ile wynosi P(X < a) albo P(a < X < b) dla rozkładu normalnego?
     grupa: rozklady
@@ -301,7 +301,7 @@ wpisy:
     wynik: "Tabela z prawdopodobieństwem / kwantylem i wykres gęstości z zakreślonym obszarem."
 
   - id: rozklady-dyskretne
-    wyklady: ["02"]
+    wyklady: ["03"]
     temat: Rozkład dwumianowy, Poissona, geometryczny
     pytanie: Ile wynosi P(X = k) albo P(X ≤ k) w rozkładzie dyskretnym?
     grupa: rozklady
@@ -313,7 +313,7 @@ wpisy:
     wynik: "Tabela z prawdopodobieństwem i wykres funkcji prawdopodobieństwa."
 
   - id: rozklady-ciagle
-    wyklady: ["02", "04"]
+    wyklady: ["03", "05"]
     temat: Rozkłady t, χ², F, wykładniczy
     grupa: rozklady
     menu: ["Analizy", "Rozkłady", "Rozkład t / χ² / F / wykładniczy"]
@@ -323,7 +323,7 @@ wpisy:
     wynik: "Tabela z prawdopodobieństwem / kwantylem i wykres gęstości."
 
   - id: normalnosc
-    wyklady: ["05"]
+    wyklady: ["06"]
     temat: Test normalności (Shapiro-Wilk)
     pytanie: Czy rozkład zmiennej jest zbliżony do normalnego?
     grupa: rozklady
@@ -339,7 +339,7 @@ wpisy:
   # ----------------------------------------------------------- estymacja -----
 
   - id: ci-srednia
-    wyklady: ["03"]
+    wyklady: ["04"]
     temat: Przedział ufności dla średniej
     pytanie: Jaka jest średnia w populacji (z niepewnością)?
     grupa: estymacja
@@ -353,7 +353,7 @@ wpisy:
     wynik: "Tabela: średnia i granice przedziału; wykres przedziału."
 
   - id: ci-roznica-srednich
-    wyklady: ["03", "04"]
+    wyklady: ["04", "05"]
     temat: Przedział ufności dla różnicy średnich (dwie grupy)
     pytanie: O ile różnią się średnie dwóch grup (z niepewnością)?
     grupa: estymacja
@@ -367,7 +367,7 @@ wpisy:
     wynik: "Tabela: różnica średnich z przedziałem (i d Cohena z przedziałem); wykres różnicy."
 
   - id: ci-srednia-roznic
-    wyklady: ["03", "04"]
+    wyklady: ["04", "05"]
     temat: Przedział ufności dla średniej różnic (pomiary sparowane)
     grupa: estymacja
     menu: ["Analizy", "Przedziały ufności", "Średnie", "Średnia różnic"]
@@ -379,7 +379,7 @@ wpisy:
     wynik: "Tabela: średnia różnic z przedziałem."
 
   - id: ci-proporcja
-    wyklady: ["03", "04"]
+    wyklady: ["04", "05"]
     temat: Przedział ufności dla proporcji
     pytanie: Jaki jest udział kategorii w populacji (z niepewnością)?
     grupa: estymacja
@@ -393,7 +393,7 @@ wpisy:
     uwaga: "Przedział Walda przy małym n lub proporcji blisko 0 albo 1 bywa za wąski albo wychodzi poza [0, 1]."
 
   - id: ci-roznica-proporcji
-    wyklady: ["03"]
+    wyklady: ["04"]
     temat: Przedział ufności dla różnicy proporcji
     grupa: estymacja
     menu: ["Analizy", "Przedziały ufności", "Proporcje", "Różnica proporcji"]
@@ -406,7 +406,7 @@ wpisy:
     wynik: "Tabela: różnica proporcji z przedziałem; wykres."
 
   - id: ci-korelacja-regresja
-    wyklady: ["06"]
+    wyklady: ["07"]
     temat: Przedział ufności dla korelacji i nachylenia regresji
     grupa: estymacja
     menu: ["Analizy", "Przedziały ufności", "Korelacja i regresja", "Korelacja / Regresja liniowa"]
@@ -419,7 +419,7 @@ wpisy:
     wynik: "Tabela z przedziałem dla r albo dla wyrazu wolnego i nachylenia; wykres z pasmem."
 
   - id: bootstrap
-    wyklady: ["03"]
+    wyklady: ["04"]
     temat: Przedział bootstrapowy
     grupa: estymacja
     menu: ["Analizy", "Przedziały ufności", "(dowolna analiza)"]
@@ -432,7 +432,7 @@ wpisy:
   # ---------------------------------------------------------------- testy ----
 
   - id: t-jedna-proba
-    wyklady: ["04"]
+    wyklady: ["05"]
     temat: Test t dla jednej próby
     pytanie: Czy średnia różni się od zadanej wartości (np. 650)?
     grupa: testy
@@ -447,7 +447,7 @@ wpisy:
     uwaga: "Przedział ufności dla średniej: Przedziały ufności → Średnie → Średnia."
 
   - id: test-proporcji
-    wyklady: ["04"]
+    wyklady: ["05"]
     temat: Test dla jednej proporcji (dwumianowy)
     pytanie: Czy udział kategorii różni się od zadanej wartości (np. 50%)?
     grupa: testy
@@ -462,7 +462,7 @@ wpisy:
     uwaga: "Przedział ufności dla proporcji: Przedziały ufności → Proporcje → Proporcja (Cloppera-Pearsona = dokładny)."
 
   - id: chi2-zgodnosc
-    wyklady: ["04"]
+    wyklady: ["05"]
     temat: Test χ² zgodności
     pytanie: Czy rozkład kategorii zgadza się z oczekiwanym (np. równe udziały)?
     grupa: testy
@@ -476,7 +476,7 @@ wpisy:
     wynik: "Tabela testu χ² (χ², df, p) i w Cohena."
 
   - id: chi2-niezaleznosc
-    wyklady: ["04", "05"]
+    wyklady: ["05", "06"]
     temat: Test χ² niezależności (tabela kontyngencji)
     pytanie: Czy dwie zmienne jakościowe są powiązane?
     grupa: testy
@@ -492,7 +492,7 @@ wpisy:
     wynik: "Tabela liczności z procentami, tabela testu (χ², df, p) i V Craméra."
 
   - id: fisher
-    wyklady: ["04", "05"]
+    wyklady: ["05", "06"]
     temat: Mała tabela — liczebności oczekiwane i test Fishera
     pytanie: Co zrobić, gdy liczebności w tabeli są małe?
     grupa: testy
@@ -507,7 +507,7 @@ wpisy:
     wynik: "Gdy liczebności oczekiwane są za małe (E < 5), pod tabelą testu pojawia się ostrzeżenie; wynik Fishera jest w tabeli testów."
 
   - id: t-dwie-grupy
-    wyklady: ["04", "05", "09"]
+    wyklady: ["05", "06", "10"]
     temat: Test t dla dwóch grup niezależnych
     pytanie: Czy średnie w dwóch grupach się różnią?
     grupa: testy
@@ -523,7 +523,7 @@ wpisy:
     uwaga: "Przedział ufności dla różnicy średnich i d Cohena z przedziałem: Przedziały ufności → Średnie → Różnica średnich."
 
   - id: t-sparowane
-    wyklady: ["04"]
+    wyklady: ["05"]
     temat: Test t dla prób sparowanych
     pytanie: Czy wynik zmienił się między dwoma pomiarami tych samych osób?
     grupa: testy
@@ -537,7 +537,7 @@ wpisy:
     uwaga: "Dane muszą być w formacie szerokim: jeden wiersz = jedna osoba, dwa pomiary w dwóch kolumnach."
 
   - id: anova
-    wyklady: ["04", "05"]
+    wyklady: ["05", "06"]
     temat: ANOVA jednoczynnikowa i porównania post-hoc
     pytanie: Czy średnie w trzech lub więcej grupach się różnią — i które?
     grupa: testy
@@ -553,7 +553,7 @@ wpisy:
     wynik: "Tabela ANOVA (F, df, p, η²p); wykres średnich z literami — grupy z tą samą literą nie różnią się istotnie."
 
   - id: nieparametryczne
-    wyklady: ["05", "09"]
+    wyklady: ["06", "10"]
     temat: Testy nieparametryczne (rangowe)
     pytanie: Czego użyć, gdy założenia testu t / ANOVA nie są spełnione?
     grupa: testy
@@ -566,7 +566,7 @@ wpisy:
     wynik: "Dodatkowy wiersz albo tabela testu rangowego obok wersji parametrycznej."
 
   - id: wariancje
-    wyklady: ["05"]
+    wyklady: ["06"]
     temat: Jednorodność wariancji (Levene, Bartlett)
     pytanie: Czy wariancje w grupach są podobne?
     grupa: testy
@@ -578,7 +578,7 @@ wpisy:
     wynik: "Tabela testu z F i p."
 
   - id: sila-efektu
-    wyklady: ["04"]
+    wyklady: ["05"]
     temat: Gdzie są wielkości efektu
     pytanie: "Jak duży jest efekt (a nie tylko: czy istotny)?"
     grupa: testy
@@ -593,7 +593,7 @@ wpisy:
   # ----------------------------------------------------------- zależności ----
 
   - id: korelacja
-    wyklady: ["04", "05", "08", "09"]
+    wyklady: ["05", "06", "09", "10"]
     temat: Korelacja (Pearson, Spearman) i macierz korelacji
     pytanie: Czy dwie zmienne ilościowe są powiązane — jak silnie i w którą stronę?
     grupa: zaleznosci
@@ -609,7 +609,7 @@ wpisy:
     uwaga: "Korelacja nie mówi o przyczynie — sprawdź, czy związek nie wynika z trzeciej zmiennej."
 
   - id: regresja-prosta
-    wyklady: ["06", "08"]
+    wyklady: ["07", "09"]
     temat: Regresja liniowa prosta
     pytanie: Jak zmienia się Y, gdy X rośnie o jednostkę? Jak przewidzieć Y?
     grupa: zaleznosci
@@ -623,7 +623,7 @@ wpisy:
     wynik: "Dopasowanie modelu: R², R² skoryg., F, p, RMSE. Współczynniki: b (nachylenie), SE, t, p, przedział ufności."
 
   - id: jakosc-modelu
-    wyklady: ["05", "06"]
+    wyklady: ["06", "07"]
     temat: Diagnostyka regresji (reszty, VIF)
     pytanie: Czy model regresji jest poprawny?
     grupa: zaleznosci
@@ -635,7 +635,7 @@ wpisy:
     uwaga: "Testu Breuscha-Pagana w jUPWR nie ma — niejednorodność wariancji ocenia się z wykresu Reszty vs dopasowane."
 
   - id: regresja-wieloraka
-    wyklady: ["06", "08", "09"]
+    wyklady: ["07", "09", "10"]
     temat: Regresja wieloraka (także z predyktorem jakościowym)
     pytanie: Jak kilka zmiennych naraz wpływa na Y?
     grupa: zaleznosci
@@ -651,7 +651,7 @@ wpisy:
     wynik: "Współczynniki: każdy b = zmiana Y przy wzroście predyktora o 1, gdy pozostałe są stałe; R² skoryg. do porównania modeli."
 
   - id: logistyczna
-    wyklady: ["06"]
+    wyklady: ["07"]
     temat: Regresja logistyczna
     pytanie: Od czego zależy szansa zdarzenia (zmienna tak/nie)?
     grupa: zaleznosci

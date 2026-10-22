@@ -142,7 +142,7 @@ entry_tex <- function(w) {
 ```
 
 ```{r wersja, results='asis'}
-cat(sprintf("\\begingroup\\small\\color{soft}Stan na jUPWR %s. Część A idzie za wykładami 01–09: każdy temat opisany jest raz, przy pierwszym wykładzie, na którym się pojawia; dalej są odsyłacze do strony. Część B to tabela „pytanie → gdzie kliknąć”.\\par\\endgroup\n\n",
+cat(sprintf("\\begingroup\\small\\color{soft}Stan na jUPWR %s. Część A idzie za wykładami 01–10: każdy temat opisany jest raz, przy pierwszym wykładzie, na którym się pojawia; dalej są odsyłacze do strony. Część B to tabela „pytanie → gdzie kliknąć”.\\par\\endgroup\n\n",
             tex(d$wersja_jupwr)))
 ```
 

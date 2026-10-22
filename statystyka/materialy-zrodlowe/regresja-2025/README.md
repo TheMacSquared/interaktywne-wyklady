@@ -10,7 +10,7 @@ ograniczonym czasie zajęć w poprzednim semestrze:
 
 Nie są to aktywne aplikacje kursu i nie powinny być rozwijane równolegle.
 Najlepsze elementy obu eksperymentów zostały przeniesione do kanonicznej
-aplikacji `statystyka/06-regresja/`:
+aplikacji `statystyka/07-regresja/`:
 
 - rytm i mapa selektywnego prowadzenia z materiału `light`;
 - paradoks Simpsona, predyktory jakościowe, interakcje i ćwiczenia z materiału

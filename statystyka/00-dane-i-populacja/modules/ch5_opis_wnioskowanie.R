@@ -133,7 +133,7 @@ ch5_ui <- list(
           "Dlaczego statystyki zmieniają się od próby do próby i jak bardzo.",
           "Zakres, w którym prawdopodobnie leży parametr, policzony z jednej próby.",
           "Czy różnica w próbie świadczy o różnicy w populacji.",
-          "Kiedy przybliżenia z wykładów 03 i 04 przestają działać.",
+          "Kiedy przybliżenia z wykładów 04 i 05 przestają działać.",
           "Parametry modelu opisującego związek zmiennych.",
           "Jednostka obserwacji, operat i dobór próby w prawdziwych danych.",
           "Cała droga: od pytania o populację do wniosku z próby."

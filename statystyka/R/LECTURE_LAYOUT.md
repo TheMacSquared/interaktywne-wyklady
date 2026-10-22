@@ -32,7 +32,7 @@ lc_apply_ggplot_defaults()   # motyw upwr + IBM Plex Sans dla wszystkich geom-ó
 
 ui <- lecture_page(
   lecture_id    = "nazwa-wykladu",   # slug wykładu, np. "rozklady-prawdopodobienstwa"
-  lecture_num   = "02",
+  lecture_num   = "03",
   lecture_title = "Tytuł wykładu",
   module_label  = "Moduł II",
   chapters      = .chapters

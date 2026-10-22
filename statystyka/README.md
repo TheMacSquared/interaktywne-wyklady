@@ -14,16 +14,16 @@ Symulacje, Bayes, rozszerzenia kierunkowe i szeregi czasowe należą do oddzieln
 |---|---|---|
 | 00 | [Dane i populacja](00-dane-i-populacja/) | Odróżnić obserwację od zmiennej, populację od próby i parametr od statystyki. |
 | 01 | [Typy danych](01-typy-danych/) | Rozpoznać zmienne, dobrać opis i wykres. |
-| 02 | [Rozkłady prawdopodobieństwa](02-rozklady-prawdopodobienstwa/) | Zrozumieć losowość, wartość oczekiwaną i rozkład średniej. |
-| 03 | [Przedziały ufności](03-przedzialy-ufnosci/) | Odczytać oszacowanie i jego niepewność. |
-| 04 | [Wnioskowanie statystyczne](04-wnioskowanie-statystyczne/) | Przejść od pytania i hipotezy do testu, siły efektu i wniosku. |
-| 05 | [Założenia testów](05-zalozenia-testow/) | Rozpoznać sytuacje wymagające zmiany metody. |
-| 06 | [Regresja](06-regresja/) | Opisać związek i zobaczyć, jak uwzględnienie kontekstu zmienia interpretację. |
-| 07 | [Dobre dane](07-dobre-dane/) | Ocenić, czy dane odpowiadają na pytanie. |
-| 08 | [Case studies](08-case-studies/) | Prześledzić pełne analizy od pytania do wniosku: szkoły w Kalifornii (regresja), pingwiny (porównanie grup), Titanic (wynik 0/1). |
-| 09 | [Projekt badawczy](09-projekt-badawczy/) | Sformułować własne pytanie, zaplanować analizę i przedstawić wniosek. |
+| 03 | [Rozkłady prawdopodobieństwa](03-rozklady-prawdopodobienstwa/) | Zrozumieć losowość, wartość oczekiwaną i rozkład średniej. |
+| 04 | [Przedziały ufności](04-przedzialy-ufnosci/) | Odczytać oszacowanie i jego niepewność. |
+| 05 | [Wnioskowanie statystyczne](05-wnioskowanie-statystyczne/) | Przejść od pytania i hipotezy do testu, siły efektu i wniosku. |
+| 06 | [Założenia testów](06-zalozenia-testow/) | Rozpoznać sytuacje wymagające zmiany metody. |
+| 07 | [Regresja](07-regresja/) | Opisać związek i zobaczyć, jak uwzględnienie kontekstu zmienia interpretację. |
+| 08 | [Dobre dane](08-dobre-dane/) | Ocenić, czy dane odpowiadają na pytanie. |
+| 09 | [Case studies](09-case-studies/) | Prześledzić pełne analizy od pytania do wniosku: szkoły w Kalifornii (regresja), pingwiny (porównanie grup), Titanic (wynik 0/1). |
+| 10 | [Projekt badawczy](10-projekt-badawczy/) | Sformułować własne pytanie, zaplanować analizę i przedstawić wniosek. |
 
-Numeracja porządkuje materiały, nie narzuca dziesięciu osobnych spotkań. Przy ograniczonej liczbie godzin fragmenty „Dobrych danych” i „Projektu badawczego” można wplatać we wcześniejsze przykłady. Rozbudowane aplikacje są także materiałem do pracy własnej.
+Numeracja porządkuje materiały, nie narzuca jedenastu osobnych spotkań. Przy ograniczonej liczbie godzin fragmenty „Dobrych danych” i „Projektu badawczego” można wplatać we wcześniejsze przykłady. Rozbudowane aplikacje są także materiałem do pracy własnej.
 
 ## Jak używać na zajęciach
 
@@ -67,10 +67,10 @@ Rscript statystyka/scripts/run_tests.R
 Rscript statystyka/scripts/run_tests.R --quick
 ```
 
-Pełna kontrola obejmuje zależności, design, testy i wczytanie dziesięciu aplikacji. Tryb `--quick` pomija wczytywanie aplikacji.
+Pełna kontrola obejmuje zależności, design, testy i wczytanie jedenastu aplikacji. Tryb `--quick` pomija wczytywanie aplikacji.
 
 ## Organizacja kodu
 
 Każdy katalog wykładu zawiera `app.R` i moduły rozdziałów. Wspólne komponenty są w `R/`, narzędzia w `scripts/`, testy w `tests/`. Reguły wyglądu określa [kontrakt designu](R/DESIGN_CONTRACT.md).
 
-Po podziale kursu dawne wykłady 09, 10 i 12 mają numery 07, 08 i 09. Pozostałe cztery bloki przeniesiono do `statystyka-2/`; treść ćwiczeń kierunkowych wewnątrz podstawowych wykładów pozostaje częścią kursu podstawowego.
+Po podziale kursu dawne wykłady 09, 10 i 12 dostały numery 07, 08 i 09; po dodaniu wykładu o związkach dwóch zmiennych (02) są to 08, 09 i 10. Pozostałe cztery bloki przeniesiono do `statystyka-2/`; treść ćwiczeń kierunkowych wewnątrz podstawowych wykładów pozostaje częścią kursu podstawowego.

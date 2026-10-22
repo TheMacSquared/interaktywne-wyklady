@@ -83,7 +83,7 @@ ch2_ui <- list(
       przede wszystkim od n, a prawie nie zależy od N. Tysiąc losowo
       wybranych osób mówi o kraju liczącym 38 milionów mieszkańców niemal
       tyle samo, co tysiąc osób o mieście liczącym 200 tysięcy. Dlaczego tak
-      jest, zobaczymy w wykładach 02 i 03. Najpierw musimy rozróżnić liczbę,
+      jest, zobaczymy w wykładach 03 i 04. Najpierw musimy rozróżnić liczbę,
       której szukamy w populacji, od liczby, którą liczymy z próby."),
 
     lc_chapter_next(

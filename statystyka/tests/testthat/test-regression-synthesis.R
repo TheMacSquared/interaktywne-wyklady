@@ -1,11 +1,11 @@
 testthat::test_that("kanoniczny wykład regresji zawiera mapę i przypadek pingwinów", {
   helpers <- readLines(
-    file.path(stat_root, "06-regresja", "modules", "helpers.R"),
+    file.path(stat_root, "07-regresja", "modules", "helpers.R"),
     warn = FALSE,
     encoding = "UTF-8"
   )
   app <- readLines(
-    file.path(stat_root, "06-regresja", "app.R"),
+    file.path(stat_root, "07-regresja", "app.R"),
     warn = FALSE,
     encoding = "UTF-8"
   )
@@ -21,9 +21,9 @@ testthat::test_that("dane pingwinów są kompletne dla modeli dydaktycznych", {
   testthat::skip_if_not_installed("palmerpenguins")
 
   env <- new.env(parent = globalenv())
-  env$app_dir <- file.path(stat_root, "06-regresja")
+  env$app_dir <- file.path(stat_root, "07-regresja")
   sys.source(
-    file.path(stat_root, "06-regresja", "modules", "helpers.R"),
+    file.path(stat_root, "07-regresja", "modules", "helpers.R"),
     envir = env
   )
 
@@ -42,7 +42,7 @@ testthat::test_that("dane pingwinów są kompletne dla modeli dydaktycznych", {
 testthat::test_that("synteza zachowuje dwanaście jawnych tematów", {
   env <- new.env(parent = globalenv())
   expressions <- parse(file.path(
-    stat_root, "06-regresja", "modules", "ch0_mapa.R"
+    stat_root, "07-regresja", "modules", "ch0_mapa.R"
   ))
   eval(expressions[[1]], envir = env)
 

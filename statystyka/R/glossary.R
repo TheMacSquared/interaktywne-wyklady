@@ -104,7 +104,7 @@
   "odporność" =
     "Cecha miary lub metody, której wynik niewiele się zmienia pod wpływem wartości odstających lub naruszeń założeń.",
 
-  # Rozkłady prawdopodobieństwa (W02) -----------------------------------------
+  # Rozkłady prawdopodobieństwa (W03) -----------------------------------------
   "zmienna losowa" =
     "Zmienna, której wartość jest wynikiem zjawiska losowego; opisuje ją rozkład prawdopodobieństwa.",
   "rozkład prawdopodobieństwa" =
@@ -148,7 +148,7 @@
   "standardowy rozkład normalny" =
     "Rozkład normalny o średniej 0 i odchyleniu standardowym 1, oznaczany N(0, 1).",
 
-  # Estymacja (W03) -----------------------------------------------------------
+  # Estymacja (W04) -----------------------------------------------------------
   "estymata" =
     "Konkretna wartość estymatora obliczona z danej próby (np. x̄ = 172.3 cm).",
   "nieobciążoność" =
@@ -174,7 +174,7 @@
   "wielkość próby" =
     "Liczba obserwacji n; planuje się ją tak, by uzyskać zakładany margines błędu lub moc testu.",
 
-  # Testowanie hipotez (W04) --------------------------------------------------
+  # Testowanie hipotez (W05) --------------------------------------------------
   "błąd pierwszego rodzaju" =
     "Odrzucenie prawdziwej H₀ („fałszywy alarm”); jego prawdopodobieństwo to α.",
   "błąd drugiego rodzaju" =
@@ -212,7 +212,7 @@
   "korelacja pozorna" =
     "Związek dwóch zmiennych, który nie wynika z ich wzajemnej zależności, lecz np. ze wspólnej zmiennej zakłócającej.",
 
-  # Założenia i testy nieparametryczne (W05) ----------------------------------
+  # Założenia i testy nieparametryczne (W06) ----------------------------------
   "wykres kwantyl-kwantyl" =
     "Q-Q plot — zestawia kwantyle danych z kwantylami rozkładu normalnego; punkty blisko prostej oznaczają zgodność z normalnością.",
   "test Shapiro-Wilka" =
@@ -244,7 +244,7 @@
   "niezależność obserwacji" =
     "Założenie, że wartość jednej obserwacji nie niesie informacji o innej; naruszają je np. powtarzane pomiary i szeregi czasowe.",
 
-  # Regresja (W06) ------------------------------------------------------------
+  # Regresja (W07) ------------------------------------------------------------
   "zmienna zależna" =
     "Zmienna objaśniana (Y) — wynik, który model przewiduje lub wyjaśnia.",
   "predyktor" =
@@ -290,7 +290,7 @@
   "log-szanse" =
     "Logarytm ilorazu szans; skala, na której regresja logistyczna jest liniowa.",
 
-  # Dane i metodologia badań (W07–W09) ----------------------------------------
+  # Dane i metodologia badań (W08–W10) ----------------------------------------
   "jednostka obserwacji" =
     "To, czego dotyczy jeden wiersz danych — osoba, firma, dzień; od niej zależy, czym jest n.",
   "braki danych" =

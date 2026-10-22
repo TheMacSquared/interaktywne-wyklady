@@ -14,12 +14,12 @@ load_module_helpers <- function(relative_path) {
 expected_apps <- c(
   "00-dane-i-populacja",
   "01-typy-danych",
-  "02-rozklady-prawdopodobienstwa",
-  "03-przedzialy-ufnosci",
-  "04-wnioskowanie-statystyczne",
-  "05-zalozenia-testow",
-  "06-regresja",
-  "07-dobre-dane",
-  "08-case-studies",
-  "09-projekt-badawczy"
+  "03-rozklady-prawdopodobienstwa",
+  "04-przedzialy-ufnosci",
+  "05-wnioskowanie-statystyczne",
+  "06-zalozenia-testow",
+  "07-regresja",
+  "08-dobre-dane",
+  "09-case-studies",
+  "10-projekt-badawczy"
 )

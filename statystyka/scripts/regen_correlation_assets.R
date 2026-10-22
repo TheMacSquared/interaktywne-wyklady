@@ -1,5 +1,5 @@
 # Regeneruje statyczne PNG-i dla rozdzialu o korelacji
-# (04-wnioskowanie-statystyczne/assets/correlation-*.png).
+# (05-wnioskowanie-statystyczne/assets/correlation-*.png).
 #
 # Uruchom z roota repo:
 #   Rscript statystyka/scripts/regen_correlation_assets.R
@@ -35,7 +35,7 @@ source(file.path(project_root, "R", "theme_upwr.R"))
 
 ggplot2::theme_set(theme_upwr())
 
-assets_dir <- file.path(project_root, "04-wnioskowanie-statystyczne", "assets")
+assets_dir <- file.path(project_root, "05-wnioskowanie-statystyczne", "assets")
 stopifnot(dir.exists(assets_dir))
 
 W <- 15

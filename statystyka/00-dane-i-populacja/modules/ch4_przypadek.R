@@ -62,9 +62,9 @@ ch4_ui <- list(
       Jeśli rzadko, wygodniej uznać, że pani coś potrafi. Jeśli często,
       wynik niczego nie dowodzi."),
 
-    lc_p("Wykład 04 rozwija ten pomysł i zastępuje tłum zgadujących jedną
+    lc_p("Wykład 05 rozwija ten pomysł i zastępuje tłum zgadujących jedną
       liczbą: prawdopodobieństwem, że sam przypadek dałby wynik równie dobry
-      jak ten, który mamy. Przedziały ufności z wykładu 03 odpowiadają na
+      jak ten, który mamy. Przedziały ufności z wykładu 04 odpowiadają na
       pokrewne pytanie z drugiej strony: w jakim zakresie może leżeć prawdziwa
       wartość parametru."),
 

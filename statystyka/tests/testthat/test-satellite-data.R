@@ -42,10 +42,10 @@ testthat::test_that("zbiór niesie zaplanowane sygnały dydaktyczne", {
 testthat::test_that("wariant satelitarny jest podłączony do rdzenia kursu", {
   files <- c(
     "01-typy-danych/modules/ch8_cwiczenia.R",
-    "02-rozklady-prawdopodobienstwa/modules/ch9_cwiczenia.R",
-    "03-przedzialy-ufnosci/modules/ch7_cwiczenia.R",
-    "04-wnioskowanie-statystyczne/modules/ch9_cwiczenia.R",
-    "06-regresja/modules/ch7_cwiczenia.R"
+    "03-rozklady-prawdopodobienstwa/modules/ch9_cwiczenia.R",
+    "04-przedzialy-ufnosci/modules/ch7_cwiczenia.R",
+    "05-wnioskowanie-statystyczne/modules/ch9_cwiczenia.R",
+    "07-regresja/modules/ch7_cwiczenia.R"
   )
   text <- vapply(files, function(file) {
     paste(readLines(file.path(stat_root, file), warn = FALSE, encoding = "UTF-8"),

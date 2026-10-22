@@ -109,7 +109,7 @@ ch3_ui <- list(
     lc_p("Większa grupka nie usuwa zmienności próbkowej, ale ją zmniejsza.
       Wiedząc, jak duża jest ta zmienność, można z jednej próby powiedzieć,
       w jakim zakresie prawdopodobnie leży parametr. Na tym pomyśle zbudowane
-      są przedziały ufności z wykładu 03."),
+      są przedziały ufności z wykładu 04."),
 
     lc_note("Zasada", rule = TRUE,
       "Parametr opisuje populację, jest stały i zwykle nieznany. Statystyka
@@ -154,7 +154,7 @@ ch3_ui <- list(
        zmienność próbkową. Jedno nie zastąpi drugiego."
     ),
 
-    lc_p("Do tego, jak próby bywają zniekształcone, wracamy w wykładzie 07.
+    lc_p("Do tego, jak próby bywają zniekształcone, wracamy w wykładzie 08.
       Teraz zobaczymy, że nawet uczciwie wylosowana próba potrafi
       pokazać wzorzec, którego w populacji nie ma."),
 

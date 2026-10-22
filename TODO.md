@@ -186,7 +186,7 @@ to stosują.
 - [x] Wdrożyć `gloss()` we wszystkich wykładach: owijać pierwsze
   wprowadzenie kluczowego terminu w rozdziale, nie każde wystąpienie. Nowe
   hasła dopisywać do `statystyka/R/glossary.R`. Wzorzec:
-  `03-przedzialy-ufnosci/modules/ch1_estymacja.R`.
+  `04-przedzialy-ufnosci/modules/ch1_estymacja.R`.
 
 ### 01 — typy danych
 

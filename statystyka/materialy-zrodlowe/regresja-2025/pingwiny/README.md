@@ -1,7 +1,7 @@
 # Regresja — pingwiny
 
 Wariant wykładu o regresji na danych palmerpenguins, dobranych pod kątem wyraźnych
-interakcji i paradoksu Simpsona. Te same widgety i struktura co w `06-regresja/`,
+interakcji i paradoksu Simpsona. Te same widgety i struktura co w `07-regresja/`,
 inny zbiór danych.
 
 ## Wymagania
@@ -53,7 +53,7 @@ kroki widgetów, powiększanie wykresów, ujawnianie rozwiązań ćwiczeń — i
 
 - Aplikacja korzysta ze współdzielonego systemu layoutu w `statystyka/R/`
   (`palette.R`, `theme_upwr.R`, `shared.R`, `lecture_layout.R`) — `lecture_id = "regresja"`.
-- Moduły w `modules/` są adaptacją modułów z `06-regresja/`; identyfikator danych `.cas_data`
+- Moduły w `modules/` są adaptacją modułów z `07-regresja/`; identyfikator danych `.cas_data`
   jest wspólny dla wszystkich rozdziałów i wskazuje `dane/penguins.csv`.
 - Rozdziały ch4 (porównanie modeli) i ch6 (ściąga) używają danych generowanych/statycznych
   i są identyczne jak w wykładzie bazowym.
