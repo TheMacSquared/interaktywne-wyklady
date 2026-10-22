@@ -28,6 +28,7 @@ wersja_jupwr: "1.0.6"
 
 wyklady:
   "01": Statystyka opisowa
+  "02": Związki dwóch zmiennych
   "03": Rozkłady prawdopodobieństwa
   "04": Przedziały ufności
   "05": Testowanie hipotez
@@ -123,7 +124,7 @@ wpisy:
     uwaga: "Wykres: Wykresy → Ranking → Wykres słupkowy. Kołowego w jUPWR nie ma celowo."
 
   - id: tabela-krzyzowa-opis
-    wyklady: ["01"]
+    wyklady: ["02"]
     temat: Tabela krzyżowa (opis dwóch zmiennych jakościowych)
     grupa: opis
     menu: ["Analizy", "Eksploracja", "Zmienne jakościowe"]
@@ -150,7 +151,7 @@ wpisy:
     wynik: "Tabela statystyk; Układ tabeli przełącza zmienne w wierszach / w kolumnach."
 
   - id: porownanie-grup-opis
-    wyklady: ["01", "10"]
+    wyklady: ["01", "02", "10"]
     temat: Statystyki opisowe osobno w grupach
     pytanie: Jak porównać opis zmiennej ilościowej między grupami?
     grupa: opis
@@ -215,7 +216,7 @@ wpisy:
     wynik: "Histogram; przy grupach — nałożone albo w osobnych panelach."
 
   - id: w-skrzynkowy
-    wyklady: ["01", "08", "09"]
+    wyklady: ["01", "02", "08", "09"]
     temat: Wykres skrzynkowy (pudełkowy)
     pytanie: Gdzie są mediana, kwartyle i wartości odstające? Jak porównać grupy?
     grupa: wykresy
@@ -246,7 +247,7 @@ wpisy:
     uwaga: "Typ zmiennej Ciągła: słupki średnich ze słupkami błędów."
 
   - id: w-mozaikowy
-    wyklady: ["01", "05"]
+    wyklady: ["02", "05"]
     temat: Wykres mozaikowy
     pytanie: Jak pokazać zależność dwóch zmiennych jakościowych?
     grupa: wykresy
@@ -259,7 +260,7 @@ wpisy:
     wynik: "Szerokość kolumny = udział kategorii X, wysokość pola = udział Y w tej kategorii."
 
   - id: w-rozrzutu
-    wyklady: ["05", "07", "09"]
+    wyklady: ["02", "05", "07", "09"]
     temat: Wykres rozrzutu
     pytanie: Jak pokazać zależność dwóch zmiennych ilościowych?
     grupa: wykresy
@@ -593,7 +594,7 @@ wpisy:
   # ----------------------------------------------------------- zależności ----
 
   - id: korelacja
-    wyklady: ["05", "06", "09", "10"]
+    wyklady: ["02", "05", "06", "09", "10"]
     temat: Korelacja (Pearson, Spearman) i macierz korelacji
     pytanie: Czy dwie zmienne ilościowe są powiązane — jak silnie i w którą stronę?
     grupa: zaleznosci

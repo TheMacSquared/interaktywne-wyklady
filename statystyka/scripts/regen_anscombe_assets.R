@@ -1,5 +1,5 @@
 # Regeneruje statyczne PNG-i do pułapek korelacji
-# (05-wnioskowanie-statystyczne/assets/).
+# (02-zwiazki-zmiennych/assets/).
 #
 # Uruchom z roota repo:
 #   Rscript statystyka/scripts/regen_anscombe_assets.R
@@ -32,7 +32,7 @@ source(file.path(project_root, "R", "theme_upwr.R"))
 source(file.path(project_root, "R", "shared.R"))
 lc_apply_ggplot_defaults()
 
-assets_dir <- file.path(project_root, "05-wnioskowanie-statystyczne", "assets")
+assets_dir <- file.path(project_root, "02-zwiazki-zmiennych", "assets")
 stopifnot(dir.exists(assets_dir))
 
 DPI <- 100

@@ -21,7 +21,11 @@ ch6_ui <- list(
       \\(\\mu_0\\). W poprzednim rozdziale badaliśmy związek dwóch zmiennych
       jakościowych. Teraz łączymy oba wątki: mamy ", gloss("zmienna ilościowa", "zmienną ilościową"), ", na przykład
       wzrost, i ", gloss("zmienna jakościowa", "zmienną jakościową"), " z dwiema kategoriami, na przykład płeć.
-      Pytanie brzmi, czy średnia zmiennej ilościowej jest taka sama w obu grupach."),
+      Pytanie brzmi, czy średnia zmiennej ilościowej jest taka sama w obu grupach.
+      W wykładzie 02 taki związek opisywaliśmy pudełkami obok siebie i różnicą
+      średnich lub median w próbie: wzrost kobiet i mężczyzn w ankiecie różnił
+      się o ponad 10 cm. Test t sprawdza, czy różnica średnich w próbie świadczy
+      o różnicy w populacji."),
 
     lc_h2("ch6-intro", "Test t dla dwóch prób niezależnych"),
 

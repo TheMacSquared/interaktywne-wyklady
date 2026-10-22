@@ -86,11 +86,11 @@ ch3b_ui <- list(
 
     lc_h2("ch3b-simpson", "Pominięta zmienna i paradoks Simpsona"),
 
-    lc_p("W wykładzie 05 przy ", gloss("korelacja", "korelacji"), " widzieliśmy ",
-      gloss("paradoks Simpsona", "paradoks Simpsona"), " na danych uczniów
-      z trzech szkół. W danych połączonych korelacja czasu nauki z wynikiem
-      wynosiła -0.49, a w każdej szkole osobno była dodatnia. Odwrócenie
-      brało się z różnic między szkołami. Regresja dziedziczy ten problem:
+    lc_p("W wykładzie 02 przy ", gloss("korelacja", "korelacji"), " widzieliśmy ",
+      gloss("paradoks Simpsona", "paradoks Simpsona"), " na danych pracowników
+      z trzech branż. W danych połączonych korelacja stażu z pensją
+      wynosiła -0.42, a w każdej branży osobno była dodatnia. Odwrócenie
+      brało się z różnic między branżami. Regresja dziedziczy ten problem:
       jeśli w modelu brakuje zmiennej, która różnicuje grupy, nachylenie
       prostej miesza dwie rzeczy. Jedna to różnice między grupami, druga to
       związek wewnątrz grupy. Taką brakującą zmienną nazywamy ",

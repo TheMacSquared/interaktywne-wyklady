@@ -14,6 +14,7 @@ Symulacje, Bayes, rozszerzenia kierunkowe i szeregi czasowe należą do oddzieln
 |---|---|---|
 | 00 | [Dane i populacja](00-dane-i-populacja/) | Odróżnić obserwację od zmiennej, populację od próby i parametr od statystyki. |
 | 01 | [Typy danych](01-typy-danych/) | Rozpoznać zmienne, dobrać opis i wykres. |
+| 02 | [Związki dwóch zmiennych](02-zwiazki-zmiennych/) | Opisać związek dwóch zmiennych według ich typów: tabela krzyżowa, porównanie grup, korelacja i jej pułapki. |
 | 03 | [Rozkłady prawdopodobieństwa](03-rozklady-prawdopodobienstwa/) | Zrozumieć losowość, wartość oczekiwaną i rozkład średniej. |
 | 04 | [Przedziały ufności](04-przedzialy-ufnosci/) | Odczytać oszacowanie i jego niepewność. |
 | 05 | [Wnioskowanie statystyczne](05-wnioskowanie-statystyczne/) | Przejść od pytania i hipotezy do testu, siły efektu i wniosku. |

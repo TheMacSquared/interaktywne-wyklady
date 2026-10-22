@@ -30,11 +30,11 @@ ch5_ui <- list(
     # ========================================================================
     lc_h2("ch5-intro", "Tabela kontyngencji i test χ²"),
 
-    lc_p("Taką tabelę znamy z wykładu 01. ",
+    lc_p("Taką tabelę znamy z wykładu 02. ",
       gloss("tabela kontyngencji", "Tabela kontyngencji"), " (krzyżowa) płci
       i kierunku studiów w ankiecie 200 studentów pokazała, że rozkłady kierunków
       u kobiet i mężczyzn są podobne, choć nie identyczne: Informatykę studiuje
-      30.3% kobiet i 29.7% mężczyzn, Psychologię 18.3% kobiet i 22.0% mężczyzn.
+      31.3% kobiet i 31.7% mężczyzn, Psychologię 19.2% kobiet i 20.7% mężczyzn.
       Wtedy wystarczyło stwierdzić, że w tej próbie wybór kierunku niewiele zależy
       od płci. Teraz pytamy o populację: czy takie różnice mogły powstać przez
       przypadek przy losowaniu próby, czy świadczą o rzeczywistym związku."),

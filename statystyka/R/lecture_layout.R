@@ -24,20 +24,22 @@
 .LC_MODULES <- list(
   list(num = "0",    slug = "wstep",      title = "Dane i populacja",            short = "Wstęp",        href = "#"),
   list(num = "I",    slug = "opisowa",    title = "Statystyka opisowa",          short = "Opisowa",      href = "#"),
-  list(num = "II",   slug = "rozklady",   title = "Rozkłady prawdopodobieństwa", short = "Rozkłady",     href = "#"),
-  list(num = "III",  slug = "przedzialy", title = "Przedziały ufności",          short = "Przedziały",   href = "#"),
-  list(num = "IV",   slug = "testowanie", title = "Testowanie",                  short = "Testowanie",   href = "#"),
-  list(num = "V",    slug = "zalozenia",  title = "Założenia testów",            short = "Założenia",    href = "#"),
-  list(num = "VI",   slug = "regresja",   title = "Regresja",                    short = "Regresja",     href = "#"),
-  list(num = "VII",   slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
-  list(num = "VIII",    slug = "case",       title = "Case studies",                short = "Case studies", href = "#"),
-  list(num = "IX",  slug = "projekt",    title = "Projekt badawczy",            short = "Projekt",      href = "#")
+  list(num = "II",   slug = "zwiazki",    title = "Związki dwóch zmiennych",     short = "Związki",      href = "#"),
+  list(num = "III",  slug = "rozklady",   title = "Rozkłady prawdopodobieństwa", short = "Rozkłady",     href = "#"),
+  list(num = "IV",   slug = "przedzialy", title = "Przedziały ufności",          short = "Przedziały",   href = "#"),
+  list(num = "V",    slug = "testowanie", title = "Testowanie",                  short = "Testowanie",   href = "#"),
+  list(num = "VI",   slug = "zalozenia",  title = "Założenia testów",            short = "Założenia",    href = "#"),
+  list(num = "VII",  slug = "regresja",   title = "Regresja",                    short = "Regresja",     href = "#"),
+  list(num = "VIII", slug = "dane",       title = "Dobre dane",                  short = "Dane",         href = "#"),
+  list(num = "IX",   slug = "case",       title = "Case studies",                short = "Case studies", href = "#"),
+  list(num = "X",    slug = "projekt",    title = "Projekt badawczy",            short = "Projekt",      href = "#")
 )
 
 # Mapowanie lecture_id → slug modułu
 .LC_LECTURE_MODULE <- list(
   "dane-i-populacja"            = "wstep",
   "typy-danych"                 = "opisowa",
+  "zwiazki-zmiennych"           = "zwiazki",
   "rozklady-prawdopodobienstwa" = "rozklady",
   "przedzialy-ufnosci"          = "przedzialy",
   "wnioskowanie-statystyczne"   = "testowanie",

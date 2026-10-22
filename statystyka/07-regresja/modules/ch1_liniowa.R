@@ -102,10 +102,10 @@ ch1_ui <- list(
     # ========================================================================
     lc_h2("ch1-od-korelacji", "Od korelacji do regresji"),
 
-    lc_p("W wykładzie 05 (rozdział 06) związek dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"), "
+    lc_p("W wykładzie 02 związek dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"), "
       opisywaliśmy współczynnikiem ", gloss("korelacja", "korelacji"), " \\(r\\). Mówił on o kierunku i sile
-      związku liniowego, a test korelacji sprawdzał, czy \\(r\\) da się odróżnić
-      od zera. Jedno pytanie zostało tam bez odpowiedzi: o ile zmienia się
+      związku liniowego, a test korelacji z wykładu 05 sprawdzał, czy \\(r\\) da się odróżnić
+      od zera. Jedno pytanie zostało bez odpowiedzi: o ile zmienia się
       \\(Y\\), gdy \\(X\\) rośnie o jednostkę. Trzy chmury punktów o nachyleniach
       0.4, 0.8 i 1.6 miały prawie to samo \\(r \\approx 0.96\\). Pytanie
       „o ile?” należy do regresji."),

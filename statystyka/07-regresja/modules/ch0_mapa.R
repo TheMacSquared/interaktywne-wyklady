@@ -47,7 +47,7 @@ ch0_map_ui <- list(
 
     lc_h2("mapa-zaczep", "Skąd przychodzimy"),
 
-    lc_p("W wykładzie 05 ", gloss("korelacja"), " opisywała siłę i kierunek
+    lc_p("W wykładzie 02 ", gloss("korelacja"), " opisywała siłę i kierunek
       liniowego związku dwóch zmiennych jedną liczbą r. Ta liczba nie mówi
       jednak, o ile średnio wzrośnie wynik ucznia, gdy dochód okręgu wzrośnie
       o tysiąc dolarów, ani jakiego wyniku spodziewać się w okręgu, którego nie

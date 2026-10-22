@@ -189,7 +189,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
 
   lc_p("Takie błędy psują wszystko, co liczy się z sumy wartości: średnią
     i odchylenie standardowe (wykład 01), korelację i regresję (wykłady
-    05 i 07). Pojedynczy punkt daleko od reszty potrafi odwrócić kierunek
+    02 i 07). Pojedynczy punkt daleko od reszty potrafi odwrócić kierunek
     prostej. Błąd można poprawić tylko wtedy, gdy wiadomo, jaka jest
     prawdziwa wartość, na przykład ze źródła danych. W przeciwnym razie
     bezpieczniej oznaczyć ją jako brak. Każdą poprawkę warto zapisać, żeby

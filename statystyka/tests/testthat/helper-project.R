@@ -14,6 +14,7 @@ load_module_helpers <- function(relative_path) {
 expected_apps <- c(
   "00-dane-i-populacja",
   "01-typy-danych",
+  "02-zwiazki-zmiennych",
   "03-rozklady-prawdopodobienstwa",
   "04-przedzialy-ufnosci",
   "05-wnioskowanie-statystyczne",

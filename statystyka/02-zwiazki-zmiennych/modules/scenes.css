@@ -1,0 +1,47 @@
+/* Sceny wykładu 02 (scenes.js): kontrola drogowa, pensje w branżach, staż a pensja */
+.lc-sc-svg { display: block; width: 100%; height: auto; }
+.lc-sc-axis { stroke: var(--upwr-ink-subtle); }
+.lc-sc-base { stroke: var(--upwr-rule); }
+.lc-sc-tick { font: 12px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-axtitle { font: 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-n { font: 13px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-n .is-hit, .lc-sc-count.is-hit { fill: var(--upwr-accent); font-weight: 600; }
+.lc-sc-count { font: 600 14px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.lc-sc-count.is-ok { fill: var(--upwr-sage); }
+.lc-sc-head { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.lc-sc-row { font: 600 14px var(--upwr-sans); }
+
+/* kontrola drogowa: płeć = niebo / bursztyn, mandat = akcent, pouczenie = szałwia */
+.lc-sc-person.is-k, .lc-sc-row.is-k, .lc-sc-sw.is-k { fill: var(--upwr-cat-niebo); }
+.lc-sc-person.is-m, .lc-sc-row.is-m, .lc-sc-sw.is-m { fill: var(--upwr-cat-bursztyn); }
+.lc-sc-ticket { stroke-width: 1.4; }
+.lc-sc-ticket.is-fine { fill: var(--upwr-accent); stroke: var(--upwr-surface); }
+.lc-sc-ticket.is-warn { fill: var(--upwr-surface); stroke: var(--upwr-sage); }
+.lc-sc-sw.is-fine { fill: var(--upwr-accent); }
+.lc-sc-sw.is-warn { fill: var(--upwr-sage); }
+.lc-sc-cell { fill: var(--upwr-surface-sunken); stroke: var(--upwr-rule); }
+.lc-sc-bar.is-fine { fill: var(--upwr-accent); }
+.lc-sc-bar.is-warn { fill: var(--upwr-sage-tint); stroke: var(--upwr-sage); stroke-width: 1; }
+
+/* pensje w branżach: rolnicza = bursztyn, biotech = wrzos, kosmiczna = indygo */
+.lc-sc-dot { stroke: var(--upwr-surface); stroke-width: 1; }
+.lc-sc-dot.is-all { fill: var(--upwr-ink-subtle); }
+.lc-sc-dot.is-b0, .lc-sc-row.is-b0 { fill: var(--upwr-cat-bursztyn); }
+.lc-sc-dot.is-b1, .lc-sc-row.is-b1 { fill: var(--upwr-cat-wrzos); }
+.lc-sc-dot.is-b2, .lc-sc-row.is-b2 { fill: var(--upwr-cat-indygo); }
+.lc-sc-med { stroke: var(--upwr-accent); stroke-width: 2.5; }
+.lc-sc-box { fill: none; stroke: var(--upwr-ink); stroke-width: 1.4; }
+.lc-sc-whisk { stroke: var(--upwr-ink); stroke-width: 1.2; }
+
+/* staż a pensja: punkt, karta osoby, krzyż średnich */
+.lc-sc-dot.is-pt { fill: var(--upwr-cat-wrzos); }
+.lc-sc-dot.is-focus { fill: var(--upwr-accent); }
+.lc-sc-dot.is-con { fill: var(--upwr-accent); }
+.lc-sc-dot.is-dis { fill: var(--upwr-sage); }
+.lc-sc-person.is-staz { fill: var(--upwr-cat-wrzos); }
+.lc-sc-card { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.lc-sc-card-t { font: 500 16px var(--upwr-mono); fill: var(--upwr-ink); }
+.lc-sc-guide { stroke: var(--upwr-accent); stroke-width: 1.2; stroke-dasharray: 4 4; }
+.lc-sc-mean { stroke: var(--upwr-ink); stroke-width: 1.6; stroke-dasharray: 6 5; }
+.lc-sc-quad.is-con { fill: var(--upwr-accent-tint); opacity: .5; }
+.lc-sc-quad.is-dis { fill: var(--upwr-sage-tint); opacity: .5; }

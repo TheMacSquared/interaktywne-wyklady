@@ -104,6 +104,16 @@
   "odporność" =
     "Cecha miary lub metody, której wynik niewiele się zmienia pod wpływem wartości odstających lub naruszeń założeń.",
 
+  # Związki dwóch zmiennych (W02) ---------------------------------------------
+  "związek zmiennych" =
+    "Sytuacja, w której znajomość wartości jednej zmiennej mówi coś o wartościach drugiej: rozkład drugiej zmiennej zmienia się razem z pierwszą.",
+  "rozkład warunkowy" =
+    "Rozkład zmiennej w grupie obserwacji o ustalonej wartości innej zmiennej, np. rozkład pensji wśród osób z jednej branży.",
+  "procenty wierszowe" =
+    "Procenty w tabeli krzyżowej liczone osobno w każdym wierszu; każdy wiersz sumuje się do 100%.",
+  "wykres rozrzutu" =
+    "Wykres dwóch zmiennych ilościowych, na którym każda obserwacja jest punktem o współrzędnych (x, y).",
+
   # Rozkłady prawdopodobieństwa (W03) -----------------------------------------
   "zmienna losowa" =
     "Zmienna, której wartość jest wynikiem zjawiska losowego; opisuje ją rozkład prawdopodobieństwa.",

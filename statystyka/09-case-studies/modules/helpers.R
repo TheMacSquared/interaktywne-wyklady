@@ -77,16 +77,16 @@ case_pipeline <- function(steps, current = NULL) {
 }
 
 case_steps_ch1 <- list(
-  list(name = "Poznanie danych",   tools = "histogram, korelacje", ref = "w. 01, 08", kind = "explore"),
+  list(name = "Poznanie danych",   tools = "histogram, korelacje", ref = "w. 01, 02, 08", kind = "explore"),
   list(name = "Prosty związek",    tools = "test r, regresja prosta", ref = "w. 05, 07", kind = "test"),
-  list(name = "Zmienna zakłócająca", tools = "korelacje, ANOVA",   ref = "w. 05", kind = "test"),
+  list(name = "Zmienna zakłócająca", tools = "korelacje, ANOVA",   ref = "w. 02, 05", kind = "test"),
   list(name = "Kontrola zmiennych", tools = "regresja wieloraka",  ref = "w. 07", kind = "model"),
   list(name = "Wybrany model",     tools = "przedziały, reszty",   ref = "w. 06, 07", kind = "model"),
   list(name = "Decyzja",           tools = "skala efektu, ograniczenia", ref = NULL, kind = "conclude")
 )
 
 case_steps_ch2 <- list(
-  list(name = "Opis grup",   tools = "wykres pudełkowy, średnie", ref = "w. 01", kind = "explore"),
+  list(name = "Opis grup",   tools = "wykres pudełkowy, średnie", ref = "w. 02", kind = "explore"),
   list(name = "Założenia",   tools = "wykresy Q-Q, test Levene'a", ref = "w. 06", kind = "test"),
   list(name = "Test i pary", tools = "ANOVA Welcha, Games-Howell", ref = "w. 05", kind = "test"),
   list(name = "Podział na płeć", tools = "porównanie w podgrupach", ref = NULL, kind = "model"),
@@ -94,7 +94,7 @@ case_steps_ch2 <- list(
 )
 
 case_steps_ch3 <- list(
-  list(name = "Kto przeżył",    tools = "odsetki w grupach", ref = "w. 01", kind = "explore"),
+  list(name = "Kto przeżył",    tools = "odsetki w grupach", ref = "w. 02", kind = "explore"),
   list(name = "Test χ²",        tools = "tabela kontyngencji, V Cramera", ref = "w. 05", kind = "test"),
   list(name = "Skład klas",     tools = "odsetki w podgrupach płci", ref = NULL, kind = "test"),
   list(name = "Model",          tools = "regresja logistyczna", ref = "w. 07", kind = "model"),

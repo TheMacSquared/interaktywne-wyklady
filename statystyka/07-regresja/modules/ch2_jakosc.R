@@ -327,7 +327,7 @@ ch2_ui <- list(
     lc_p("\\(R^2\\) przyjmuje wartości od 0 do 1. Zero oznacza, że model
       przewiduje nie lepiej niż średnia, jedynka, że wszystkie punkty leżą
       dokładnie na prostej. W regresji prostej \\(R^2\\) jest równe kwadratowi
-      współczynnika ", gloss("korelacja Pearsona", "korelacji Pearsona"), " z wykładu 05, który już tam nazwaliśmy
+      współczynnika ", gloss("korelacja Pearsona", "korelacji Pearsona"), " z wykładu 02, który już tam nazwaliśmy
       współczynnikiem determinacji. Dla czytania i odsetka uczniów
       z dotacją do obiadu \\(r = -0.88\\), więc \\(R^2 = 0.77\\): model
       wyjaśnia 77% zmienności wyników czytania między okręgami."),

@@ -22,10 +22,9 @@ ch4_ui <- list(
       num    = "06",
       title  = "Korelacja.",
       lead   = "Więcej snu, lepsza ocena; cieplejszy dzień, więcej sprzedanych lodów.
-                Współczynnik korelacji streszcza taki związek dwóch zmiennych
-                ilościowych jedną liczbą, a test mówi, czy da się go odróżnić
-                od przypadku. Ta sama liczba łatwo jednak wprowadza w błąd, jeśli
-                nie spojrzy się na wykres."
+                Współczynnik korelacji z wykładu 02 streszcza taki związek
+                w próbie jedną liczbą. Test mówi, czy da się go odróżnić
+                od przypadku."
     ),
 
     lc_p("Dotąd każdy test dotyczył jednej zmiennej: w rozdziale 4 średniej,
@@ -34,90 +33,26 @@ ch4_ui <- list(
       pytamy o związek dwóch zmiennych mierzonych na tych samych obiektach:
       czy studenci, którzy śpią dłużej, mają lepsze oceny, czy plon rośnie
       z ilością nawadniania. Zaczynamy od sytuacji, w której obie zmienne
-      są ilościowe."),
+      są ilościowe. Jak taki związek opisać, wiemy z wykładu 02; tutaj pytamy,
+      co opis z próby mówi o populacji."),
 
     # ========================================================================
-    # Wprowadzenie: współczynnik korelacji
+    # Przypomnienie: współczynnik korelacji (wykład 02)
     # ========================================================================
     lc_h2("ch4-pearson", "Współczynnik korelacji Pearsona"),
 
     lc_p("Związek dwóch ", gloss("zmienna ilościowa", "zmiennych ilościowych"),
-      " najpierw się rysuje. Na wykresie rozrzutu każdy punkt to jedna
-      obserwacja: współrzędna pozioma to wartość pierwszej zmiennej, pionowa
-      wartość drugiej. Jeśli punkty układają się wzdłuż rosnącej prostej,
-      zmienne rosną razem. Jeśli wzdłuż malejącej, wysokim wartościom jednej
-      towarzyszą niskie wartości drugiej. Jedną liczbą opisuje to współczynnik ",
-      gloss("korelacja Pearsona", "korelacji Pearsona"), " \\(r\\):"),
+      " opisuje współczynnik ", gloss("korelacja Pearsona", "korelacji Pearsona"),
+      " \\(r\\), który poznaliśmy w wykładzie 02:"),
 
-    # Współczynnik Pearsona ze znacznikami
     ch4_r_formula(),
 
-    lc_p("Licznik sumuje iloczyny odchyleń od średnich. Punkt, który leży powyżej
-      średniej w obu zmiennych albo poniżej w obu, dodaje do sumy wartość
-      dodatnią. Punkt, który w jednej zmiennej leży powyżej średniej, a w drugiej
-      poniżej, dodaje wartość ujemną. Mianownik sprowadza wynik do skali
-      niezależnej od jednostek, dlatego \\(r\\) zawsze leży między -1 a +1
-      i nie zmienia się, gdy wzrost zapiszemy w metrach zamiast w centymetrach.
-      Wartość +1 oznacza, że wszystkie punkty leżą dokładnie na rosnącej prostej,
-      -1 że na malejącej, a 0 brak związku liniowego."),
-
-    lc_p("Znak \\(r\\) mówi o kierunku związku. Trzy panele poniżej pokazują
-      po 90 punktów o korelacji -0.6, 0 i +0.6."),
-
-    figure_panel(
-      label = "Ryc. 6.1",
-      title = "Kierunek korelacji",
-      tags$img(src = "assets/correlation-direction.png",
-               alt = "Trzy wykresy punktowe pokazujące korelację dodatnią, brak korelacji liniowej i korelację ujemną.",
-               tabindex = "0", role = "button")
-    ),
-
-    lc_p("Przy \\(r = 0\\) prosta dopasowana do punktów jest pozioma: znajomość
-      \\(x\\) nic nie mówi o tym, czy \\(y\\) wypadnie powyżej, czy poniżej
-      średniej. Przy -0.6 i +0.6 trend widać wyraźnie, choć punkty wciąż
-      rozpraszają się szeroko wokół prostej. Ten rozrzut opisuje druga
-      informacja zawarta w \\(r\\)."),
-
-    lc_p("Wartość bezwzględna \\(|r|\\) mówi o sile związku liniowego, czyli
-      o tym, jak ciasno punkty skupiają się wokół prostej. Trzy panele poniżej
-      mają ten sam trend i różnią się tylko rozrzutem punktów."),
-
-    figure_panel(
-      label = "Ryc. 6.2",
-      title = "Siła korelacji",
-      tags$img(src = "assets/correlation-scatter.png",
-               alt = "Trzy chmury punktów o rosnącej sile korelacji liniowej.",
-               tabindex = "0", role = "button")
-    ),
-
-    lc_p("Przy \\(r = 0.31\\) trend ledwie widać w chmurze punktów, przy 0.69
-      jest wyraźny, a przy 0.94 punkty prawie układają się w linię. Kwadrat
-      współczynnika ma prostą interpretację: \\(r^2\\) to część zmienności
-      \\(y\\), którą da się przypisać liniowemu związkowi z \\(x\\). Nazywa się go ",
-      gloss("współczynnik determinacji", "współczynnikiem determinacji"),
-      ". Dla \\(r = 0.31\\) to około 10%, dla 0.69 około 48%, a dla 0.94 około
-      88%. Wrócimy do niego w wykładzie 07 o regresji."),
-
-    lc_p("Siła związku to jednak nie to samo co nachylenie prostej. Trzy panele
-      poniżej mają nachylenia 0.4, 0.8 i 1.6, a punkty w każdym równie ciasno
-      trzymają się prostej."),
-
-    figure_panel(
-      label = "Ryc. 6.3",
-      title = "r nie zależy od nachylenia",
-      tags$img(src = "assets/correlation-strength.png",
-               alt = "Trzy zależności liniowe o różnych nachyleniach, ale podobnej sile korelacji.",
-               tabindex = "0", role = "button")
-    ),
-
-    lc_p("Mimo czterokrotnej różnicy nachyleń \\(r\\) wynosi w panelach 0.96, 0.96
-      i 0.95. Współczynnik korelacji nie mówi, o ile wzrośnie \\(y\\), gdy \\(x\\)
-      wzrośnie o jednostkę. Mówi tylko, jak ściśle punkty trzymają się prostej.
-      Pytanie „o ile?” należy do regresji."),
-
-    lc_p("Wszystkie dotychczasowe wartości \\(r\\) policzono z próby. Następne
-      pytanie jest takie samo jak w poprzednich rozdziałach: co wynik z próby
-      mówi o populacji."),
+    lc_p("Znak \\(r\\) mówi o kierunku związku liniowego, a \\(|r|\\) o tym,
+      jak ciasno punkty na wykresie rozrzutu trzymają się prostej. Wartości
+      leżą między -1 a +1, a 0 oznacza brak związku liniowego. Wszystkie
+      wartości \\(r\\) w wykładzie 02 opisywały próbę. Następne pytanie jest
+      takie samo jak w poprzednich rozdziałach: co wynik z próby mówi
+      o populacji."),
 
     # ========================================================================
     # Od współczynnika do testu
@@ -183,7 +118,11 @@ ch4_ui <- list(
       wartości odstających. Sprawdzaniem założeń zajmuje się wykład 06. Pojawi
       się tam też ", gloss("korelacja Spearmana"), ", stosowana, gdy te warunki
       nie są spełnione. Co się dzieje przy związku nieliniowym albo przy
-      wartości odstającej, zobaczymy w sekcji o pułapkach korelacji."),
+      wartości odstającej, widzieliśmy w pułapkach korelacji w wykładzie 02.
+      Test ich nie wykrywa: 50 punktów bez żadnego związku z jedną dopisaną
+      wartością odstającą daje typowo \\(r \\approx 0.52\\) i p-wartość około
+      0.0001, więc test wskazuje związek, którego w populacji nie ma. Przed
+      testem trzeba obejrzeć wykres rozrzutu."),
 
     # ========================================================================
     # Ćwiczenie: sformułuj hipotezy
@@ -235,7 +174,7 @@ ch4_ui <- list(
       i statystykę \\(t\\) do decyzji."),
 
     figure_panel(
-      label = "Ryc. 6.4",
+      label = "Ryc. 6.1",
       title = "Test korelacji — krok po kroku",
       uiOutput("ch4_hypothesis_panel"),
       lc_step_widget("ch4_test",
@@ -289,7 +228,7 @@ ch4_ui <- list(
       zmienia się tylko para hipotez."),
 
     figure_panel(
-      label = "Ryc. 6.5",
+      label = "Ryc. 6.2",
       title = "Test korelacji jednostronny",
       uiOutput("ch4b_hypothesis_panel"),
       lc_step_widget("ch4b_test",
@@ -313,155 +252,6 @@ ch4_ui <- list(
       i H₀ nie odrzucimy. Dlatego kierunek wybiera się przed zebraniem danych,
       na podstawie pytania badawczego. Wybranie go po obejrzeniu wykresu
       dzieliłoby p-wartość na pół bez żadnego uzasadnienia."),
-
-    # ========================================================================
-    # Pułapki korelacji
-    # ========================================================================
-    lc_h2("ch4-pulapki", "Pułapki korelacji"),
-
-    lc_p("Istotny test mówi tylko tyle, że \\(r\\) z próby trudno wytłumaczyć
-      przypadkiem. Nie mówi, jaki kształt ma związek, czy nie zależy od
-      pojedynczego punktu ani czy jedna zmienna wpływa na drugą. Te pytania
-      trzeba rozstrzygnąć poza testem: patrząc na wykres i zastanawiając się,
-      skąd pochodzą dane. Poniżej pięć klasycznych sytuacji, w których \\(r\\)
-      wprowadza w błąd."),
-
-    # --- 1. Kwartet Anscombe'a ---
-    lc_p("Pierwszą pokazał statystyk Francis Anscombe w 1973 roku. Zbudował cztery
-      zbiory po 11 punktów o niemal identycznych statystykach. W każdym średnia
-      \\(x\\) wynosi 9, średnia \\(y\\) 7.50, ", gloss("wariancja"), " \\(x\\) 11, wariancja
-      \\(y\\) 4.12–4.13, korelacja 0.816–0.817, a prosta regresji to
-      \\(y = 3 + 0.5x\\)."),
-
-    figure_panel(
-      label = "Ryc. 6.6",
-      title = "Kwartet Anscombe’a",
-      tags$img(src = "assets/anscombe-quartet.png",
-               alt = "Kwartet Anscombe’a: cztery bardzo różne chmury punktów o niemal identycznych statystykach opisowych i korelacji.",
-               tabindex = "0", role = "button")
-    ),
-
-    lc_p("Tylko zbiór 1 wygląda tak, jak sugeruje \\(r \\approx 0.82\\): chmura
-      punktów rozproszona wokół prostej. W zbiorze 2 punkty leżą na gładkim łuku,
-      związek jest więc niemal doskonały, ale nie liniowy. W zbiorze 3 dziesięć
-      punktów leży na jednej prostej (bez jedenastego punktu \\(r\\) wynosiłoby
-      1.000), a jeden punkt odstaje i obniża korelację. W zbiorze 4 dziesięć
-      punktów ma to samo \\(x = 8\\), a całą korelację tworzy jedenasty punkt
-      z \\(x = 19\\). ", gloss("statystyka opisowa", "Statystyki opisowe"), " i test korelacji nie odróżnią tych
-      sytuacji, wykres odróżnia je od razu."),
-
-    lc_note("Zasada", rule = TRUE,
-      "Przed interpretacją r albo wyniku testu korelacji obejrzyj wykres
-       rozrzutu."
-    ),
-
-    # --- 2. Nieliniowość przy r ≈ 0 ---
-    lc_p("Zbiór 2 prowadzi do drugiej pułapki. Współczynnik Pearsona mierzy tylko
-      związek liniowy, więc związek silny, ale zakrzywiony, może dać \\(r\\)
-      bliskie zeru. Na wykresie poniżej \\(y\\) zależy od \\(x\\) kwadratowo:
-      punkty układają się w literę U."),
-
-    figure_panel(
-      label = "Ryc. 6.7",
-      title = "Nieliniowość przy r ≈ 0",
-      tags$img(src = "assets/correlation-nonlinear.png",
-               alt = "Silna zależność w kształcie litery U, dla której korelacja liniowa jest bliska zeru.",
-               tabindex = "0", role = "button")
-    ),
-
-    lc_p("Choć \\(y\\) jest niemal wyznaczone przez \\(x\\), \\(r\\) wynosi -0.004.
-      Lewa połowa wykresu ma trend malejący, prawa rosnący, a iloczyny odchyleń
-      w liczniku \\(r\\) z obu połówek wzajemnie się znoszą. Test korelacji nie
-      odrzuciłby tu H₀, choć zależność jest bardzo silna. Wartość \\(r\\) bliska
-      zeru oznacza brak związku liniowego, a nie brak związku."),
-
-    # --- 3. Wartość odstająca (widget interaktywny) ---
-    lc_p("Zbiory 3 i 4 pokazały, że pojedynczy punkt potrafi wyraźnie zmienić
-      \\(r\\). ", gloss("wartość odstająca", "Wartość odstająca"), " ma tak duży
-      wpływ, bo jej odchylenia od średnich są duże w obu zmiennych naraz, a ich
-      iloczyn może przeważyć całą resztę sumy w liczniku. Panel losuje 50 punktów
-      z dwóch niezależnych zmiennych, czyli z populacji, w której \\(\\rho = 0\\).
-      Drugi przycisk dopisuje punkt leżący o 15 jednostek dalej niż największe
-      \\(x\\) i największe \\(y\\) w danych."),
-
-    figure_panel(
-      label = "Ryc. 6.8",
-      title = "Wpływ wartości odstającej na r",
-      lc_toolbar(
-        lc_action("ch4_gen_outlier", "Nowe dane (brak korelacji)", variant = "solid"),
-        lc_action("ch4_add_outlier", "Dodaj wartość odstającą", variant = "solid"),
-        lc_readouts(uiOutput("ch4_outlier_r"))
-      ),
-      lc_plot("ch4_outlier_plot", max_height = "300px")
-    ),
-
-    lc_p("Bez dodatkowego punktu \\(r\\) z 50 obserwacji leży zwykle blisko zera:
-      w 90% losowań między -0.23 a 0.23. Jeden dopisany punkt podnosi je typowo
-      do około 0.52, a w 90% losowań do wartości między 0.39 a 0.63. Drugi taki
-      punkt, położony jeszcze dalej, podnosi \\(r\\) do około 0.8. Przy
-      51 obserwacjach \\(r = 0.52\\) daje p-wartość około 0.0001, więc test
-      wskazuje związek, którego w populacji nie ma. Wartości odstającej nie
-      usuwa się jednak automatycznie. Najpierw trzeba ustalić, czy to błąd
-      pomiaru, czy prawdziwa, nietypowa obserwacja. Bezpieczną praktyką jest
-      podanie wyniku z tym punktem i bez niego."),
-
-    # --- 4. Korelacja pozorna ---
-    lc_p("Ostatnie dwie pułapki dotyczą interpretacji, a nie liczenia. Nawet silna,
-      liniowa i istotna korelacja nie mówi, czy jedna zmienna wpływa na drugą.
-      Klasyczny przykład: w dni, gdy sprzedaje się więcej lodów, dochodzi też
-      do większej liczby utonięć. Lody nie powodują utonięć. Obie liczby rosną,
-      gdy jest ciepło, bo wtedy więcej osób kupuje lody i więcej osób się kąpie.
-      Temperatura jest tu ", gloss("zmienna zakłócająca", "zmienną zakłócającą"),
-      ": wpływa na obie zmienne i wytwarza między nimi ",
-      gloss("korelacja pozorna", "korelację pozorną"), ". Wniosek
-      o ", gloss("przyczynowość", "przyczynowości"), " wymaga eksperymentu albo
-      kontroli zmiennych zakłócających, a sam współczynnik korelacji nie zapewnia
-      żadnego z nich. Wiele absurdalnych, a przy tym silnych korelacji zebrał
-      Tyler Vigen: ",
-      tags$a(href = "https://www.tylervigen.com/spurious-correlations",
-             target = "_blank",
-             "Spurious Correlations →"), "."),
-
-    # --- 5. Paradoks Simpsona ---
-    lc_p("Zmienna zakłócająca potrafi nawet odwrócić kierunek związku. Takie
-      odwrócenie nazywa się ", gloss("paradoks Simpsona", "paradoksem Simpsona"),
-      ". Panel pokazuje symulowane dane 210 uczniów z trzech szkół, po 70
-      z każdej: liczbę godzin nauki w tygodniu i wynik egzaminu. W widoku
-      globalnym wszystkie punkty analizujemy razem, w drugim widoku osobno
-      w każdej szkole."),
-
-    figure_panel(
-      label = "Ryc. 6.9",
-      title = "Paradoks Simpsona",
-      div(class = "step-buttons",
-        lc_action("ch4_simpson_global", "Spojrzenie globalne", variant = "outline"),
-        lc_action("ch4_simpson_groups", "Paradoks", variant = "outline")
-      ),
-      lc_plot("ch4_simpson_plot", ratio = "1.5/1", max_height = "420px"),
-      uiOutput("ch4_simpson_caption")
-    ),
-
-    lc_p("W danych połączonych \\(r = -0.49\\): wygląda na to, że im więcej
-      nauki, tym gorszy wynik. W każdej szkole osobno korelacja jest jednak
-      dodatnia: 0.78 w szkole słabej, 0.62 w średniej i 0.57 w silnej.
-      Odwrócenie bierze się z różnic między szkołami. Uczniowie szkoły słabej
-      uczą się średnio 24 godziny tygodniowo i zdobywają średnio 47 punktów,
-      uczniowie szkoły silnej uczą się 9 godzin i zdobywają 82 punkty, bo
-      materiał przychodzi im łatwiej. Po połączeniu grup, czyli ",
-      gloss("agregacja", "agregacji"), ", korelacja porównuje głównie szkoły
-      między sobą, a nie uczniów w obrębie szkoły. Poziom szkoły jest tu zmienną
-      zakłócającą. Pytanie, czy dodatkowa godzina nauki pomaga uczniowi,
-      dotyczy związku w obrębie szkoły. Więcej o paradoksie: ",
-      tags$a(href = "https://en.wikipedia.org/wiki/Simpson%27s_paradox",
-             target = "_blank", "Wikipedia →"), ", ",
-      tags$a(href = "https://www.youtube.com/watch?v=ebEkn-BiW5k",
-             target = "_blank", "film TED-Ed →"), "."),
-
-    lc_p("Pięć pułapek układa się w dwie grupy. Kwartet Anscombe’a, nieliniowość
-      i wartości odstające pokazują, że \\(r\\) może źle opisywać dane, a chroni
-      przed tym wykres rozrzutu. Korelacja pozorna i paradoks Simpsona pokazują,
-      że nawet trafnie policzone \\(r\\) może źle opisywać mechanizm. Przed tym
-      chroni dopiero wiedza o tym, jak powstały dane i jakie zmienne pominięto."),
 
     lc_h2("ch4-cas", "Ćwiczenia", "CASchools — korelacja Pearsona"),
 
@@ -795,55 +585,6 @@ ch4_server <- function(input, output, session) {
     )
   })
 
-  # =============================================
-  # Pułapka: wartość odstająca
-  # =============================================
-  ch4_outlier_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch4_gen_outlier, {
-    ch4_outlier_data(generate_correlation_data(50, 0, "none"))
-  })
-
-  observeEvent(input$ch4_add_outlier, {
-    df <- ch4_outlier_data()
-    if (is.null(df)) return()
-    outlier <- data.frame(x = max(df$x) + 15, y = max(df$y) + 15)
-    ch4_outlier_data(rbind(df, outlier))
-  })
-
-  zoom_plot_server("ch4_outlier_plot", reactive({
-    df <- ch4_outlier_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Nowe dane”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      n_base <- 50
-      r_val <- cor(df$x, df$y)
-
-      ggplot(df, aes(x = x, y = y)) +
-        geom_point(color = ifelse(seq_len(nrow(df)) > n_base, col_reject, col_h0),
-                   size = ifelse(seq_len(nrow(df)) > n_base, 4, 2.5),
-                   alpha = 0.7) +
-        geom_smooth(method = "lm", se = FALSE, color = col_reject, alpha = 0.5) +
-        labs(
-             x = "X", y = "Y") +
-        theme()
-    }
-  }))
-
-  output$ch4_outlier_r <- renderUI({
-    df <- ch4_outlier_data()
-    if (is.null(df)) return(NULL)
-    r_val <- cor(df$x, df$y)
-    n_outliers <- max(0, nrow(df) - 50)
-    tagList(
-      lc_readout("r", round(r_val, 3), color = col_h0),
-      lc_readout("Wartości odstające", n_outliers, color = col_reject)
-    )
-  })
-
   # --- Ćwiczenia CASchools ---
 
   .cas_cor <- function(x, y) {
@@ -913,95 +654,5 @@ ch4_server <- function(input, output, session) {
           być zmienną zakłócającą tej zależności.",
           r$r, 100 * r$r2))
     )
-  })
-
-  # ---- Widget Paradoks Simpsona ----
-  ch4_simpson_data <- local({
-    set.seed(42)
-    schools <- c("Szkoła słaba", "Szkoła średnia", "Szkoła silna")
-    school_levels <- c(slaba = 48, srednia = 65, silna = 82)
-    study_means   <- c(slaba = 24, srednia = 17, silna =  9)
-    study_sd <- 4.5
-    within_slope <- 1.4
-    within_noise <- 7
-    n_per_group <- 70
-
-    rows <- lapply(seq_along(school_levels), function(i) {
-      key <- names(school_levels)[i]
-      study <- pmax(0.5, rnorm(n_per_group, mean = study_means[key], sd = study_sd))
-      score <- school_levels[key] +
-               within_slope * (study - mean(study)) +
-               rnorm(n_per_group, 0, within_noise)
-      data.frame(
-        szkola  = factor(schools[i], levels = schools),
-        godziny = study,
-        wynik   = score
-      )
-    })
-    do.call(rbind, rows)
-  })
-
-  ch4_simpson_view <- reactiveVal("global")
-  observeEvent(input$ch4_simpson_global, ch4_simpson_view("global"))
-  observeEvent(input$ch4_simpson_groups, ch4_simpson_view("groups"))
-
-  zoom_plot_server("ch4_simpson_plot", reactive({
-    df <- ch4_simpson_data
-    view <- ch4_simpson_view()
-
-    school_colors <- c(
-      "Szkoła słaba"   = unname(upwr_cat["terakota"]),
-      "Szkoła średnia" = unname(upwr_cat["bursztyn"]),
-      "Szkoła silna"   = unname(upwr_cat["niebo"])
-    )
-
-    if (view == "global") {
-      ggplot(df, aes(x = godziny, y = wynik)) +
-        geom_point(color = "grey75", size = 2.4, alpha = 0.85) +
-        geom_smooth(method = "lm", se = FALSE,
-                    color = upwr_secondary, linewidth = 1.4) +
-        labs(x = "Godziny nauki / tydzień", y = "Wynik z egzaminu") +
-        theme_upwr()
-    } else {
-      ggplot(df, aes(x = godziny, y = wynik, color = szkola)) +
-        geom_smooth(method = "lm", se = FALSE,
-                    color = upwr_secondary, linewidth = 1.0,
-                    linetype = "dashed", alpha = 0.5,
-                    aes(group = 1)) +
-        geom_point(size = 2.4, alpha = 0.85) +
-        geom_smooth(method = "lm", se = FALSE, linewidth = 1.2,
-                    aes(group = szkola)) +
-        scale_color_manual(values = school_colors, name = NULL) +
-        labs(x = "Godziny nauki / tydzień", y = "Wynik z egzaminu") +
-        theme_upwr() +
-        theme(legend.position = "top")
-    }
-  }))
-
-  output$ch4_simpson_caption <- renderUI({
-    df <- ch4_simpson_data
-    view <- ch4_simpson_view()
-    r_global <- round(cor(df$godziny, df$wynik), 2)
-
-    if (view == "global") {
-      lc_status(
-        lc_verdict(tags$strong("Spojrzenie globalne:"), type = "warning"),
-        sprintf(" r = %s. Więcej godzin nauki → niższy wynik z egzaminu?",
-                format(r_global, nsmall = 2))
-      )
-    } else {
-      r_per_school <- df %>%
-        group_by(szkola) %>%
-        summarise(r = cor(godziny, wynik), .groups = "drop")
-      r_text <- paste0(r_per_school$szkola, ": r = ", round(r_per_school$r, 2),
-                       collapse = "; ")
-
-      lc_status(
-        lc_verdict(tags$strong("Podział na szkoły:"), type = "ok"),
-        " w każdej szkole z osobna więcej nauki → wyższy wynik (",
-        r_text,
-        ")."
-      )
-    }
   })
 }

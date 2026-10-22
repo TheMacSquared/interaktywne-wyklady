@@ -117,19 +117,21 @@ ch5_ui <- list(
     lc_h2("ch5-mapa", "Mapa kursu"),
 
     lc_p("Tabela pokazuje, gdzie w kursie wracają pojęcia z tego wykładu.
-      Wykłady 01 i 08 dotyczą głównie opisu i jakości danych, wykłady
+      Wykłady 01, 02 i 08 dotyczą głównie opisu i jakości danych, wykłady
       od 03 do 07 wnioskowania, a 09 i 10 łączą jedno z drugim
       w pełnej analizie."),
 
     lc_table(
       data.frame(
-        num   = c("01", "03", "04", "05", "06", "07", "08", "09–10"),
-        title = c("Statystyka opisowa", "Rozkłady prawdopodobieństwa",
+        num   = c("01", "02", "03", "04", "05", "06", "07", "08", "09–10"),
+        title = c("Statystyka opisowa", "Związki dwóch zmiennych",
+                  "Rozkłady prawdopodobieństwa",
                   "Przedziały ufności", "Testowanie hipotez",
                   "Założenia testów", "Regresja", "Dobre dane",
                   "Case studies, projekt badawczy"),
         link  = c(
           "Rodzaje zmiennych i statystyki opisujące próbę: x̄, s, p̂.",
+          "Opis związku dwóch zmiennych w próbie: tabela krzyżowa, grupy, r.",
           "Dlaczego statystyki zmieniają się od próby do próby i jak bardzo.",
           "Zakres, w którym prawdopodobnie leży parametr, policzony z jednej próby.",
           "Czy różnica w próbie świadczy o różnicy w populacji.",
