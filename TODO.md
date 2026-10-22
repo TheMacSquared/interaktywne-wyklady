@@ -25,7 +25,7 @@ Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
 1. [ ] Przegląd wykład po wykładzie: widgety (układy kolumn, odczyty, podpisy,
    tabele) i bloki tekstu (notki, pułapki, podsumowania, statusy).
-   Widgety: statystyka 00–09 i analiza ryzyka gotowe (audyt 3 października
+   Widgety: statystyka 00–01, 03–10 i analiza ryzyka gotowe (audyt 3 października
    2026: 510 paneli, 0 przelewów, 0 błędów). Zostały statystyka 2 (niski
    priorytet) i bloki tekstu — lista w „Migracja widgetów do v2”. Świadome
    wyjątki w statystyce: quizy z długimi etykietami na radio (02, 04 Ryc. 3.4),
@@ -64,7 +64,7 @@ układ kolumn / pudełka statystyk / wykres o stałej wysokości / `lc_feedback`
 | statystyka-2 04-szeregi-czasowe | 41 | 4 | 37 | 4 | 35 | 21 |
 
 W statystyce i analizie ryzyka został tylko jeden wykres z kliknięciem
-na `zoom_plot_ui` (statystyka 06, ćwiczenie z prostą).
+na `zoom_plot_ui` (statystyka 07, ćwiczenie z prostą).
 
 Zostało:
 
@@ -124,7 +124,7 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 - [ ] (Niezobowiązująco, osobna sesja) Więcej wykresów w Chart.js: przejrzeć
   wykłady i wskazać wykresy/widgety, które zyskałyby na reakcji po stronie
   przeglądarki (kursor zamiast suwaka, bez czekania na serwer). Wzorce:
-  statystyka 02 Ryc. 4.3 (`modules/cdf_chart.js`: kolory z tokenów motywu,
+  statystyka 03 Ryc. 4.3 (`modules/cdf_chart.js`: kolory z tokenów motywu,
   tryb ciemny, `locale: "en-US"`, start po pojawieniu się w DOM) i statystyka
   01 Ryc. 2.x (kołowy vs słupkowy). Przy kilku użyciach rozważyć wspólny
   helper w `R/`.
@@ -141,7 +141,7 @@ to stosują.
 - [ ] Przejrzeć teksty wykładów we wszystkich kursach i zamienić przecinek
   dziesiętny na kropkę (np. „p = 0,10” w analizie ryzyka 05 obok widgetu
   pokazującego 0.1). Zmieniać osobnymi commitami per wykład. Zrobione:
-  statystyka 01–09 i słownik statystyki (także minus przed liczbą).
+  statystyka 01, 03–10 i słownik statystyki (także minus przed liczbą).
   Analiza ryzyka 01–10 zrobiona (z odczytami, 3 października 2026; zbiory
   {1,2} zostają z przecinkiem, N(82, 3) ze spacją).
   Zostało: statystyka 2.

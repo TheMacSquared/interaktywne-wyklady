@@ -39,7 +39,7 @@ Formę dobiera się do puenty. Przykłady to sceny, które już działają.
 | **Kadry historii** | pojęcie wynika z kolejnych zdarzeń albo z budowy czegoś; bez losowania | student wchodzi do tabeli i jego cechy stają się wierszem (statystyka 00, `ch1_tabela`) |
 | **Jeden obraz z „co, jeśli”** | pojęcie to struktura sytuacji; interakcja zmienia jej warunek | plac z paletami: Ω, A, Aᶜ, losowanie a wybór „na oko” (analiza ryzyka 01, `omega.js`); macierz ryzyka z przełącznikiem horyzontu (`riskmatrix.js`) |
 | **Dwa światy obok siebie** | puentą jest różnica między dwoma sposobami albo dwoma sytuacjami | telefon do losowych osób a ankieta w bibliotece (statystyka 00, `ch3_latarka`); linie autobusowe A i K: ta sama średnia, inne ryzyko (statystyka 01) |
-| **Historia z powtórzeniem** | puentą naprawdę jest to, co wychodzi przy wielu powtórzeniach | grupki zza drzwi EGZAMIN i p̂ (statystyka 00, `ch3_worek`); herbata z mlekiem (`ch4_herbata`); eksperymenty z kostkami, deszczem, wagą (statystyka 02, `experiment.js`); zdrapka; ocena prowadzącego i CTG; grupki z miarką i siatki przedziałów (statystyka 03) |
+| **Historia z powtórzeniem** | puentą naprawdę jest to, co wychodzi przy wielu powtórzeniach | grupki zza drzwi EGZAMIN i p̂ (statystyka 00, `ch3_worek`); herbata z mlekiem (`ch4_herbata`); eksperymenty z kostkami, deszczem, wagą (statystyka 03, `experiment.js`); zdrapka; ocena prowadzącego i CTG; grupki z miarką i siatki przedziałów (statystyka 04) |
 
 Możliwa jest też forma bez żadnej interakcji (animowany ciąg kadrów), jeśli
 historia tego nie potrzebuje.
@@ -66,7 +66,7 @@ historia tego nie potrzebuje.
    i interpretacji, a nie uzasadnia wzoru (bez n − 1, momentów, porównań 1.96
    z t*, wyprowadzeń).
 7. **Bez dublowania.** Scena nie powtarza widgetu, który już stoi w wykładzie.
-   Jeśli robi to samo lepiej, zastępuje go (statystyka 03: sceny z grupką
+   Jeśli robi to samo lepiej, zastępuje go (statystyka 04: sceny z grupką
    i siatką zastąpiły Ryc. 1.1, 1.2 i 2.1). Jedna historia może iść przez kilka
    rozdziałów, każdy fragment z jedną puentą.
 8. **Kolor niesie znaczenie.** Akcent dla zdarzenia lub trafienia, szałwia dla
@@ -92,14 +92,14 @@ historia tego nie potrzebuje.
 
 To narzędzia, nie wymóg. Nową scenę buduje się tym, co pasuje do formy.
 
-- **Silnik scen krokowych** (statystyka 00–03, 05–07): `modules/scenes.js`
+- **Silnik scen krokowych** (statystyka 00–01, 03–04, 06–08): `modules/scenes.js`
   z obiektami `KINDS[kind] = function (cfg, api) { return { render, reset,
   opt, go, many } }`, warstwy SVG `stage` / `low` / `fly`, krok czytany
   z `data-lc-step` widgetu `lc_step_widget()`. Po stronie R `scene_widget()`
   i `scene_texts()` w `modules/helpers.R` danego wykładu; konfiguracja trafia
   do JS jako JSON (`data-config`), żeby scena i tekst liczyły z tych samych
   danych. Wspólne funkcje odczytu: `readout()`, `markDash()`.
-- **Eksperyment → rozkład** (statystyka 02): `experiment.js` i `exp_widget()`.
+- **Eksperyment → rozkład** (statystyka 03): `experiment.js` i `exp_widget()`.
 - **Jeden obraz z przełącznikami** (analiza ryzyka 01): `omega.js`,
   `riskmatrix.js`, widget w `figure_panel()` z `lc_toolbar()`, `lc_readouts()`
   i jednym zdaniem statusu (`aria-live`).
@@ -135,6 +135,6 @@ przejść scenę w przeglądarce, obejrzeć zrzuty.
 - **Porównaj wszystkie pary** — istniejąca Ryc. 9.1 jest prostsza w śledzeniu.
 - **Za mała siatka** (1.96 a t*) — techniczny szczegół, nie dla inżynierów.
 
-Prototypy jeszcze do oceny: hala i Welch (statystyka 05), drugie kolokwium
-i rozkład b₁ (statystyka 06), sezon w kawiarni (statystyka 07). Wszystkie
+Prototypy jeszcze do oceny: hala i Welch (statystyka 06), drugie kolokwium
+i rozkład b₁ (statystyka 07), sezon w kawiarni (statystyka 08). Wszystkie
 prototypy mają w kodzie komentarz `# PROTOTYP SCENY` i panel „Prototyp sceny”.

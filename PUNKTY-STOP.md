@@ -88,7 +88,7 @@ tablica tropów). Każdy z nich może stać się punktem stop, jeśli w opowieś
 prowadzący zatrzymuje się przy nim z jedną puentą (np. podgląd tabeli, w której
 widać, że wiersz to wizyta, a nie pacjent).
 
-## Przykład: statystyka 02 (2026-10-21)
+## Przykład: statystyka 03 (2026-10-21)
 
 Pierwsza klasyfikacja, na której powstał ten słownik.
 
