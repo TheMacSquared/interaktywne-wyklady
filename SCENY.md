@@ -1,7 +1,7 @@
 # Sceny — historia przed pojęciem
 
 Scena to widget, który **opowiada sytuację, zanim padnie pojęcie**. Na scenie
-jest postać albo obiekt ze świata wykładu i coś się dzieje: ktoś coś robi, coś
+jest postać albo obiekt z rozpoznawalnej sytuacji i coś się dzieje: ktoś coś robi, coś
 z czegoś wynika, coś się zmienia. Pojęcie formalne (definicja, wzór, „Zasada”)
 przychodzi w tekście po scenie i nazywa to, co student już zobaczył, tymi
 samymi słowami.
@@ -17,8 +17,12 @@ i wykładzie wskazanym w poleceniu.
 ## Co sceną nie jest
 
 - **Symulacja w kostiumie.** Abstrakcyjny eksperyment (losuj próbę z rozkładu,
-  licz odsetek odrzuceń) przebrany za postacie. Jeśli bez rysunku zostaje
-  zwykła symulacja, to nie jest scena.
+  licz odsetek odrzuceń) przebrany za postacie, w którym nikt w historii nie
+  ma powodu tego robić. Historia z powtórzeniem jest sceną, gdy puentę niesie
+  perspektywa kogoś z historii (prowadzący pyta grupkę za grupką, barista
+  zbiera sezon) i gdy stoi przed pojęciem. Ta sama mechanika po wzorze to
+  symulacja w rozumieniu `PUNKTY-STOP.md`: poprawny punkt stop, tylko nie
+  scena.
 - **Sztuczna perspektywa.** Sytuacja opowiedziana z miejsca, z którego nikt jej
   nie przeżywa (pasażer „przychodzi w losowej chwili”, choć z jego punktu
   widzenia losowy jest autobus).
@@ -42,9 +46,10 @@ historia tego nie potrzebuje.
 
 ## Zasady wspólne
 
-1. **Świat wykładu.** Scena korzysta z ludzi, danych i miejsc, które już są
-   w wykładzie (wydział i egzamin, ankieta studentów, Bananpol). Sytuacja ma być
-   z życia studenta albo inżyniera.
+1. **Intuicyjna i realna.** Sytuacja ma być prawdziwa albo prawdopodobna
+   i od razu zrozumiała bez wyjaśnień. Intuicja może pochodzić z życia studenta
+   lub inżyniera, ze świata wykładu (wydział i egzamin, ankieta studentów,
+   Bananpol), z historii (Pietrow i fałszywy alarm w 1983) albo z popkultury.
 2. **Ktoś albo coś działa.** Postać lub obiekt, który robi coś rozpoznawalnego.
    Przycisk, jeśli jest, nazywa tę czynność („Zapytaj grupkę”, „Kup i zdrap los”).
 3. **Interakcja służy historii.** Przesuwa ją albo zmienia jej warunek. Nie
@@ -108,7 +113,8 @@ konfigurację i teksty).
 Przed kodem ustalam i pokazuję do akceptacji:
 
 1. **Puenta** — co student ma zobaczyć i jakie pojęcie nazwie potem tekst.
-2. **Sytuacja** — dwie–trzy propozycje ze świata wykładu: kto, co robi, co
+2. **Sytuacja** — dwie–trzy propozycje (ze świata wykładu, z życia, z historii
+   albo popkultury): kto, co robi, co
    z tego wynika.
 3. **Forma** — kadry, obraz z „co, jeśli”, dwa światy, powtórzenie albo bez
    interakcji; z jednym zdaniem, dlaczego ta.
