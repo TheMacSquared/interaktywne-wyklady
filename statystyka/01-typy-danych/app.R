@@ -89,6 +89,24 @@ app_extras <- tagList(
     .lc-stepper-head .lc-toolbar:has([data-sc-act]) .lc-seg { flex-wrap: nowrap; }
     .lc-seg button[data-sc-opt][aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
   ")),
+  # Szósta obserwacja we wzorach (rozdz. 3, Ryc. 3.5)
+  tags$style(HTML("
+    .ch3-six-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .ch3-six-cell { display: flex; flex-direction: column; align-items: center; gap: 2px;
+      min-width: 76px; padding: 6px 10px; border: 1px solid var(--upwr-rule);
+      background: var(--upwr-surface); }
+    .ch3-six-idx { font: 12px var(--upwr-mono); color: var(--upwr-ink-subtle); }
+    .ch3-six-val { font: 600 16px var(--upwr-mono); color: var(--upwr-ink); }
+    .ch3-six-cell.is-input { border-style: dashed; border-color: var(--upwr-accent); }
+    .ch3-six-cell.is-input .form-control { width: 96px; padding: 2px 6px; text-align: center;
+      font: 600 16px var(--upwr-mono); }
+    .ch3-six-cell.is-mid { border-color: var(--upwr-cat-indygo); border-width: 2px;
+      background: color-mix(in srgb, var(--upwr-cat-indygo) 12%, var(--upwr-surface)); }
+    .ch3-six-cell.is-new .ch3-six-val, .ch3-six-new { color: var(--upwr-accent); }
+    .ch3-six-label { margin-top: 14px; font-size: 14px; color: var(--upwr-ink-soft); }
+    .ch3-six-label + .lc-formula-box { overflow-x: auto; }
+    .ch3-six-row.is-sorted + .lc-formula-box { overflow-x: auto; }
+  ")),
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
   tags$script(HTML("
     var pieChartJS = null, barChartJS = null;

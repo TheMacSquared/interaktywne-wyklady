@@ -2,13 +2,17 @@
 # CHAPTER 3: Statystyki położenia
 # ============================================================================
 
-# Drabina operacji (Ryc. 3.10): każdy typ dziedziczy operacje typów niższych
+# Drabina operacji (Ryc. 3.11): każdy typ dziedziczy operacje typów niższych
 # i dokłada własne. Klocki od dołu; kolor klocka to typ, który go wnosi.
 ch3_ops_levels <- list(
   list(sym = "= ≠", stat = "liczebność, dominanta", color = type_colors[["nominalna"]]),
   list(sym = "< >", stat = "mediana, percentyle",  color = type_colors[["porzadkowa"]]),
   list(sym = "+ −", stat = "średnia",              color = NA)
 )
+
+# Pięć pensji do Ryc. 3.5, celowo nieposortowanych: sortowanie to pierwszy
+# krok mediany. Średnia 5 200 zł, mediana 5 100 zł.
+ch3_six_base <- c(5100, 4200, 6300, 4800, 5600)
 
 ch3_ops_ladder <- function() {
   cols <- list(
@@ -237,6 +241,47 @@ ch3_ui <- list(
       o wynagrodzeniach obok średniej podaje się medianę."),
 
     # ========================================================================
+    # WIDGET 1b: Sixth observation -- formulas step by step
+    # ========================================================================
+    lc_p("Ten sam mechanizm widać w samych wzorach. Poniżej jest pięć pensji
+      z małego zespołu i puste miejsce na szóstą. Wpisz dowolną kwotę i porównaj,
+      co zmienia się w rachunku średniej, a co w rachunku mediany."),
+
+    figure_panel(
+      label = "Ryc. 3.5",
+      title = "Szósta obserwacja we wzorach",
+
+      lc_toolbar(
+        lc_action("ch3_six_low", "Praktykant: 800 zł", variant = "outline"),
+        lc_action("ch3_six_ceo", "Prezes: 60 000 zł", variant = "outline"),
+        lc_action("ch3_six_clear", icon = "reset", variant = "ghost", aria_label = "Wyczyść"),
+        lc_readouts(uiOutput("ch3_six_stats"))
+      ),
+
+      tags$div(class = "ch3-six-row", role = "group", `aria-label` = "Obserwacje",
+        lapply(seq_along(ch3_six_base), function(i) {
+          tags$div(class = "ch3-six-cell",
+            tags$span(class = "ch3-six-idx", paste0("x", i)),
+            tags$span(class = "ch3-six-val", lc_fmt(ch3_six_base[i], 0, big_mark = " "))
+          )
+        }),
+        tags$div(class = "ch3-six-cell is-input",
+          tags$label(class = "ch3-six-idx", `for` = "ch3_six_x", "x6"),
+          tags$input(id = "ch3_six_x", type = "number", class = "form-control",
+                     min = 0, step = 100, placeholder = "wpisz")
+        )
+      ),
+
+      uiOutput("ch3_six_formulas")
+    ),
+
+    lc_p("W liczniku średniej stoi suma, więc szósta pensja wchodzi do niej całą
+      swoją wartością: im dalej od reszty, tym mocniej przesuwa wynik. Do mediany
+      trafiają tylko dwie środkowe wartości po posortowaniu. Nowa obserwacja
+      decyduje jedynie o tym, które to będą, a jej wielkość nie ma znaczenia.
+      Dlatego 60 000 zł i 7 000 zł dają tę samą medianę."),
+
+    # ========================================================================
     # WIDGET 2: Robustness mini-demo
     # ========================================================================
     lc_h2("ch3-odpornosc", "Odporność miar na wartości odstające"),
@@ -252,7 +297,7 @@ ch3_ui <- list(
       odpadają cztery najniższe i cztery najwyższe."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.6",
       title = "Odporność: średnia vs mediana vs średnia ucięta",
 
       lc_toolbar(
@@ -291,7 +336,7 @@ ch3_ui <- list(
       i medianę liczymy dla nich tak samo, ale wykres trzeba wybrać ostrożniej."),
 
     figure_panel(
-      label = "Ryc. 3.6",
+      label = "Ryc. 3.7",
       title = "Dyskretna vs ciągła — porównanie wizualizacji",
       lc_toolbar(
         lc_segmented("ch3_disc_var", "Zmienna dyskretna",
@@ -338,7 +383,7 @@ ch3_ui <- list(
       mieć jeden szczyt (unimodalny), dwa (bimodalny) albo więcej (wielomodalny)."),
 
     figure_panel(
-      label = "Ryc. 3.7",
+      label = "Ryc. 3.8",
       title = "Unimodalny vs bimodalny vs wielomodalny",
       lc_toolbar(
         lc_segmented("ch3_modal_scenario", "Scenariusz",
@@ -375,7 +420,7 @@ ch3_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 3.8",
+      label = "Ryc. 3.9",
       title = "Percentyle wzrostu studentów",
 
       lc_toolbar(
@@ -410,7 +455,7 @@ ch3_ui <- list(
       leżeć średnia."),
 
     figure_panel(
-      label = "Ryc. 3.9",
+      label = "Ryc. 3.10",
       title = "Kliknij na wykres, aby umieścić średnią i medianę",
       lc_toolbar(
         lc_action("ch3_game_new", "Nowa runda", variant = "solid"),
@@ -436,7 +481,7 @@ ch3_ui <- list(
       między nimi zależy od kształtu rozkładu."),
 
     figure_panel(
-      label = "Ryc. 3.10",
+      label = "Ryc. 3.11",
       title = "Drabina operacji",
       ch3_ops_ladder()
     ),
@@ -908,6 +953,95 @@ ch3_server <- function(input, output, session) {
       lc_readout("Średnia", paste0(lc_fmt(m, 0, big_mark = " "), " zł"), color = upwr_accent),
       lc_readout("Mediana", paste0(lc_fmt(med, 0, big_mark = " "), " zł"), color = upwr_cat[["niebo"]]),
       lc_readout("Różnica", paste0(lc_fmt(diff_val, 0, big_mark = " "), " zł"), color = unname(diff_color))
+    )
+  })
+
+  # --------------------------------------------------------------------------
+  # Widget 1b: Sixth observation -- formulas step by step
+  # --------------------------------------------------------------------------
+
+  observeEvent(input$ch3_six_low, {
+    session$sendInputMessage("ch3_six_x", list(value = 800))
+  })
+
+  observeEvent(input$ch3_six_ceo, {
+    session$sendInputMessage("ch3_six_x", list(value = 60000))
+  })
+
+  observeEvent(input$ch3_six_clear, {
+    session$sendInputMessage("ch3_six_x", list(value = ""))
+  })
+
+  # Szósta wartość albo NULL, gdy pole jest puste lub niepoprawne
+  ch3_six_new <- reactive({
+    v <- input$ch3_six_x
+    if (is.null(v) || !is.numeric(v) || !is.finite(v)) NULL else v
+  })
+
+  ch3_six_values <- reactive(c(ch3_six_base, ch3_six_new()))
+
+  # Liczba w TeX-u: spacja tysięcy jako \, , najwyżej jedno miejsce po przecinku
+  ch3_six_tex <- function(v) gsub(" ", "\\\\,", lc_fmt(v, 1, big_mark = " "))
+
+  output$ch3_six_stats <- renderUI({
+    x <- ch3_six_values()
+    tagList(
+      lc_readout("Średnia", paste0(lc_fmt(mean(x), 0, big_mark = " "), " zł"), color = upwr_accent),
+      lc_readout("Mediana", paste0(lc_fmt(median(x), 0, big_mark = " "), " zł"), color = upwr_cat[["niebo"]])
+    )
+  })
+
+  output$ch3_six_formulas <- renderUI({
+    x <- ch3_six_values()
+    n <- length(x)
+    has_new <- n > length(ch3_six_base)
+    m <- mean(x)
+    med <- median(x)
+
+    # Licznik średniej w kolejności wpisania; szósta wartość wyróżniona
+    terms <- ch3_six_tex(x)
+    if (has_new) terms[n] <- paste0("\\class{ch3-six-new}{", terms[n], "}")
+    m_eq <- if (abs(round(m, 1) - m) > 1e-9) "\\approx" else "="
+    # Dwie linie: przy sześciu dużych kwotach jedna nie mieści się w ramce
+    mean_tex <- paste0(
+      "\\begin{aligned} \\bar{x} &= \\frac{", paste(terms, collapse = " + "), "}{", n, "} \\\\[6pt]",
+      " &= \\frac{", ch3_six_tex(sum(x)), "}{", n, "} ", m_eq, " ", ch3_six_tex(m), " \\end{aligned}"
+    )
+
+    # Posortowane obserwacje; środkowe pozycje i nowa wartość wyróżnione
+    ord <- order(x)
+    mid <- if (n %% 2 == 1) (n + 1) / 2 else c(n / 2, n / 2 + 1)
+    sorted_cells <- lapply(seq_len(n), function(i) {
+      tags$div(
+        class = paste("ch3-six-cell", if (i %in% mid) "is-mid", if (has_new && ord[i] == n) "is-new"),
+        tags$span(class = "ch3-six-idx", paste0("x(", i, ")")),
+        tags$span(class = "ch3-six-val", lc_fmt(x[ord][i], 1, big_mark = " "))
+      )
+    })
+    xs <- ch3_six_tex(x[ord])
+    median_tex <- if (n %% 2 == 1) {
+      paste0("n = ", n, " \\text{ (nieparzyste):} \\quad \\text{Me} = x_{(", mid, ")} = ", xs[mid])
+    } else {
+      paste0("n = ", n, " \\text{ (parzyste):} \\quad \\text{Me} = \\frac{x_{(", mid[1], ")} + x_{(", mid[2],
+             ")}}{2} = \\frac{", xs[mid[1]], " + ", xs[mid[2]], "}{2} = ", ch3_six_tex(med))
+    }
+
+    base_m <- mean(ch3_six_base)
+    base_med <- median(ch3_six_base)
+    signed <- function(d) paste0(if (d > 0) "+" else if (d < 0) "−", lc_fmt(abs(d), 0, big_mark = " "), " zł")
+
+    tagList(
+      tags$div(class = "ch3-six-label", "Średnia: suma wszystkich wartości przez ich liczbę"),
+      lc_formula_box(withMathJax(paste0("$$", mean_tex, "$$"))),
+      tags$div(class = "ch3-six-label", "Mediana: najpierw sortujemy, potem bierzemy środek"),
+      tags$div(class = "ch3-six-row is-sorted", sorted_cells),
+      lc_formula_box(withMathJax(paste0("$$", median_tex, "$$"))),
+      if (has_new) {
+        lc_caption(paste0("Względem pięciu pensji średnia zmieniła się o ", signed(m - base_m),
+                          ", a mediana o ", signed(med - base_med), "."))
+      } else {
+        lc_caption("Pole x6 jest puste: liczymy z pięciu obserwacji.")
+      }
     )
   })
 
