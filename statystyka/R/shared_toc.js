@@ -345,7 +345,7 @@
   "use strict";
 
   var storageKey = "lc-theme";
-  var allowed = { light: true, dark: true };
+  var allowed = { light: true, dark: true, halloween: true };
 
   function getStoredTheme() {
     try {
@@ -377,7 +377,7 @@
   }
 
   function initThemeSwitcher() {
-    setTheme(getStoredTheme() || "light", false);
+    setTheme(getStoredTheme() || (window.lcDomyslnyTryb ? window.lcDomyslnyTryb() : "light"), false);
 
     document.addEventListener("click", function (event) {
       var button = event.target.closest(".lc-theme-option[data-lc-theme]");

@@ -1,0 +1,95 @@
+/* ============================================================================
+   Tryb halloweenowy (H) — trzeci tryb obok jasnego i ciemnego, tylko jasny.
+   Ładowany po .lc_palette_css(); selektor html[data-lc-theme="halloween"]
+   ma wyższą specyficzność niż :root, więc nadpisuje tokeny --upwr-*.
+   Ten sam zestaw kolorów co w listach zadań (buduj-listy-html.py).
+   ============================================================================ */
+
+html[data-lc-theme="halloween"] {
+  color-scheme: light;
+  --upwr-bg:                #fcd9ae;
+  --upwr-panel:             #f9c98f;
+  --upwr-surface:           #fff1df;
+  --upwr-surface-sunken:    #f4c08a;
+  --upwr-ink:               #1f1023;
+  --upwr-ink-soft:          #3d2340;
+  --upwr-ink-subtle:        #6a4a5c;
+  --upwr-reference:         #6e4e5e;
+  --upwr-rule:              #e8ad6a;
+  --upwr-rule-soft:         #f2c28a;
+  --upwr-accent:            #b8360a;
+  --upwr-accent-hover:      #8f2a08;
+  --upwr-accent-tint:       #ffe9cc;
+  --upwr-single-alt:        #6b21a8;
+  --upwr-single-alt-tint:   #efdcfb;
+  --upwr-sage:              #4d7c0f;
+  --upwr-sage-tint:         #e6f2cf;
+  --upwr-warning:           #8f3b07;
+  --upwr-secondary:         #4a3a4f;
+  /* serie danych: przyciemnione, żeby były widoczne na pomarańczowym tle */
+  --upwr-cat-grafit:        #3a3346;
+  --upwr-cat-bursztyn:      #9a4a0b;
+  --upwr-cat-niebo:         #1d5f9e;
+  --upwr-cat-szalwia:       #3f6e1a;
+  --upwr-cat-kurkuma:       #7a6200;
+  --upwr-cat-indygo:        #4b2a86;
+  --upwr-cat-terakota:      #9a2f14;
+  --upwr-cat-wrzos:         #8a2a6a;
+}
+
+.lc-theme-options:has(> :nth-child(3)) {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Wzorek w tle: cukierek, kukurydzka, nietoperz. Leży na html (płótno strony),
+   body i .lc-main są przezroczyste, żeby ozdoby z z-index:-1 były pod treścią,
+   ale nad tłem. Karty, panel boczny i pasek górny mają własne tła. */
+html[data-lc-theme="halloween"] body,
+html[data-lc-theme="halloween"] .lc-main {
+  background: transparent;
+}
+html[data-lc-theme="halloween"] {
+  background-color: var(--upwr-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cg opacity='.16'%3E%3Ccircle cx='60' cy='60' r='9' fill='%23a855f7'/%3E%3Cpath d='M49 60l-10-8 2 8-2 8zM71 60l10-8-2 8 2 8z' fill='%23a855f7'/%3E%3Cpath d='M180 150c3 0 10 22 9 26-3 2-15 2-18 0-1-4 6-26 9-26z' fill='%23b8360a'/%3E%3Cpath d='M190 60c-2-5-6-4-7-2-4-6-12-7-20-4 5 2 6 7 5 11 3-2 7-1 9 2 2-2 5-2 6 0 2-2 5-2 6 0 2-3 6-4 9-2-1-4 0-9 5-11-8-3-16-2-20 4-1-2-5-3-7 2z' fill='%231f1023'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+/* === Ozdoby (wstawiane przez halloween.js) === */
+.lc-deko { display: none; }
+html[data-lc-theme="halloween"] .lc-deko { display: block; }
+
+.lc-deko-el {
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  display: block;
+  line-height: 0;
+}
+.lc-deko-el svg { width: 100%; height: auto; display: block; }
+
+/* Nietoperze pod paskiem rozdziałów, dynie i cukierki w prawym dolnym rogu
+   (na marginesie obok treści, która ma max ok. 820 px szerokości) */
+.lc-deko .n1, .lc-deko .n2, .lc-deko .n3 { color: #1f1023; }
+.lc-deko .n1 { top: 66px;  right: 34px;  width: 60px; }
+.lc-deko .n2 { top: 118px; right: 92px;  width: 38px; }
+.lc-deko .n3 { top: 166px; right: 20px;  width: 32px; }
+.lc-deko .d1 { bottom: 8px; right: 14px;  width: 76px; }
+.lc-deko .d2 { bottom: 4px; right: 94px;  width: 50px; }
+.lc-deko .c1 { bottom: 88px; right: 26px; width: 42px; transform: rotate(-18deg); }
+.lc-deko .c2 { bottom: 58px; right: 104px; width: 34px; transform: rotate(14deg); }
+.lc-deko .k1 { bottom: 96px; right: 84px; width: 20px; transform: rotate(-10deg); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .lc-deko .n1 svg { animation: lc-lot 2.6s ease-in-out infinite; }
+  .lc-deko .n2 svg { animation: lc-lot 2.1s ease-in-out infinite .4s; }
+  .lc-deko .n3 svg { animation: lc-lot 2.9s ease-in-out infinite .9s; }
+}
+@keyframes lc-lot {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50%      { transform: translateY(-6px) scaleY(.82); }
+}
+
+/* Węższe okna: margines się kurczy, więc najpierw znikają dynie i cukierki,
+   potem nietoperze; zostaje wzorek w tle */
+@media (max-width: 1399px) { .lc-deko .d1, .lc-deko .d2, .lc-deko .c1, .lc-deko .c2, .lc-deko .k1 { display: none; } }
+@media (max-width: 1099px) { .lc-deko { display: none !important; } }
