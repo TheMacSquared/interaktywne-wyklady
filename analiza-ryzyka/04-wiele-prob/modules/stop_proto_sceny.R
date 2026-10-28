@@ -4,7 +4,7 @@
 # Jeśli scena przejdzie przegląd, docelowo trafi do JS jak sceny z wykładu 03.
 #   p4_proto_bananas_ui   — Scena „Pająk w kiści” (kadry historii) (1a): wynik 0/1 wprost
 #   p4_proto_threshold_ui — Scena „Kontroler i próg” (kadry historii) (1b): 0/1 z liczby i normy
-#   (1a, 1b, 2 i 9 zaakceptowane 2026-10-28: plakietka „Scena” zamiast „Prototyp”)
+#   (1a, 1b, 2, 9 i 11 zaakceptowane 2026-10-28: plakietka „Scena” zamiast „Prototyp”)
 #   p4_proto_pallet_ui    — Scena „Partia na palecie” (historia z powtórzeniem) (2)
 #   p4_proto_drivers_ui   — Scena „Hala, 100 kierowców” (historia z powtórzeniem) (9)
 #   p4_proto_receipt_ui   — Scena „Odbiór dostawy” (historia z powtórzeniem) (11)
@@ -364,7 +364,7 @@ p4_receipt_svg <- function(d) {
     '<text x="25" y="22" font-size="14" font-weight="600">Próbka 50 zaworów z palety</text>', cells, stamp)
 }
 
-p4_proto_receipt_ui <- p4_scene_shell("p4s_rcp", "Scena", "Odbiór dostawy: plan (50, 1)",
+p4_proto_receipt_ui <- p4_scene_shell("p4s_rcp", "Scena", "Odbiór dostawy: plan (50, 1)", proto = FALSE,
   tagList(lc_action("p4s_rcp_one", "Kolejna dostawa", variant = "solid"),
     lc_action("p4s_rcp_twenty", "+20 dostaw"), lc_action("p4s_rcp_hund", "+100 dostaw"),
     lc_action("p4s_rcp_reset", icon = "reset", variant = "ghost", aria_label = "Wyzeruj dostawy")))

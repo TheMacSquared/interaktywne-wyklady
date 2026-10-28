@@ -7,9 +7,9 @@
 #   p4_proto_binom_gallery_ui — Galeria „Rozkład dwumianowy B(n, p)” (Ryc. 3.4 ze statystyki 03), zaakceptowana 2026-10-28
 #   p4_proto_np_ui          — Przypadek brzegowy „Skrót n · p” (7), zaakceptowany 2026-10-28
 #   p4_proto_examples_ui    — Przykłady „Ten sam wzór w trzech sytuacjach” (8), zaakceptowany 2026-10-28
-#   p4_proto_oc_ui          — Piaskownica „Krzywa operacyjna planu (n, c)” (10)
-#   p4_proto_zero_ui        — Galeria „Trzech dostawców bez wad” (12)
-#   p4_proto_closing_ui     — Domknięcie „Jeden rozkład, pięć pytań” (13)
+#   p4_proto_oc_ui          — Piaskownica „Krzywa operacyjna planu (n, c)” (10), zaakceptowany 2026-10-28
+#   p4_proto_zero_ui        — Galeria „Trzech dostawców bez wad” (12), zaakceptowany 2026-10-28
+#   p4_proto_closing_ui     — Domknięcie „Jeden rozkład, pięć pytań” (13), zaakceptowany 2026-10-28
 # Serwer: p4_proto_charts_server(input, output, session).
 # Wymaga: palette.R, theme_upwr.R, shared.R, lecture_layout.R, risk_math.R, risk_block.R.
 
@@ -261,7 +261,7 @@ p4_examples_axis_svg <- function(d = p4_examples) {
 p4_oc_good <- 0.02
 p4_oc_bad <- 0.08
 
-p4_proto_oc_ui <- p4_proto_panel("Piaskownica", "Krzywa operacyjna planu (n, c)",
+p4_proto_oc_ui <- p4_proto_panel("Piaskownica", "Krzywa operacyjna planu (n, c)", proto = FALSE,
   lc_toolbar(
     lc_slider("p4p_oc_n", "Liczba kontrolowanych n", 20, 200, 50, 10),
     lc_slider("p4p_oc_c", "Liczba akceptacji c", 0, 6, 1, 1),
@@ -313,7 +313,7 @@ p4_zero_plot <- function() {
     theme_upwr()
 }
 
-p4_proto_zero_ui <- p4_proto_panel("Galeria", "Trzech dostawców bez wad",
+p4_proto_zero_ui <- p4_proto_panel("Galeria", "Trzech dostawców bez wad", proto = FALSE,
   lc_plot("p4p_zero_plot", ratio = "2.1/1"),
   lc_caption("Krzywe (1 - p)ⁿ dla 30, 100 i 300 czystych kontroli. Pozioma linia: 5%. Przerywana pionowa: przeciętna jakość Bananpolu, p = 0.02.")
 )
@@ -350,7 +350,7 @@ p4_closing_plot <- function() {
     theme_upwr(grid = "y")
 }
 
-p4_proto_closing_ui <- p4_proto_panel("Domknięcie", "Jeden rozkład, pięć pytań: B(100, 0.02)",
+p4_proto_closing_ui <- p4_proto_panel("Domknięcie", "Jeden rozkład, pięć pytań: B(100, 0.02)", proto = FALSE,
   lc_plot("p4p_closing_plot", ratio = "2/1")
 )
 
