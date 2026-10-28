@@ -228,7 +228,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             )
           )),
           "Z niezależności wynika reguła mnożenia z wykładu 02: prawdopodobieństwo, że kolejne próby dadzą określone wyniki, jest iloczynem prawdopodobieństw tych wyników — tak jak iloczyn wzdłuż jednej drogi w drzewie zdarzeń. Każdy sukces wnosi do iloczynu czynnik \\(p\\), każda porażka czynnik \\(1 - p\\). Kolejność czynników nie ma znaczenia, więc liczy się tylko to, ile było sukcesów.",
-          risk_formula("P(\\text{konkretny ciąg z } k \\text{ sukcesami})=⟦1|p^{k}⟧\\,⟦2|(1-p)^{n-k}⟧", num = "4.1",
+          risk_formula("P(k\\text{ sukcesów w ciągu})=⟦1|p^{k}⟧\\,⟦2|(1-p)^{n-k}⟧", num = "4.1",
             notes = list("k sukcesów, każdy z szansą p", "n − k porażek, każda z szansą 1 − p"),
             note_colors = c("terakota", "indygo")),
           risk_example("4.2", "Konkretny ciąg kontroli",
@@ -381,7 +381,7 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             "Zmienna \\(X\\) ma rozkład dwumianowy z parametrami \\(n\\) (liczba całkowita, \\(n \\ge 1\\)) i \\(p\\) (\\(0 \\le p \\le 1\\)), co zapisujemy \\(X \\sim B(n, p)\\), jeśli przyjmuje wartości \\(0, 1, \\ldots, n\\) z prawdopodobieństwami danymi wzorem (4.3). \\(X\\) to liczba sukcesów w schemacie Bernoulliego z \\(n\\) próbami."
           )),
           risk_formula("X\\sim B(n,p),\\quad P(X=k)=⟦1|{n\\choose k}⟧\\,⟦2|p^k⟧\\,⟦3|(1-p)^{n-k}⟧,\\qquad k=0,1,\\ldots,n", num = "4.3",
-            notes = list("liczba ułożeń: na ile sposobów k sukcesów trafia wśród n prób", "k sukcesów", "n − k porażek"),
+            notes = list("liczba ułożeń: na ile sposobów k sukcesów trafia wśród n prób", "k sukcesów w ciągu", "n − k porażek w ciągu"),
             note_colors = c("szalwia", "terakota", "indygo"), above = 2),
           "Kształt rozkładu zależy od obu parametrów. Przy \\(p = 0.5\\) jest symetryczny, przy małym \\(p\\) przykleja się do zera i ciągnie w prawo, a przy dużym \\(p\\) — jak u koszykarza, który trafia 80% rzutów wolnych — przykleja się do \\(n\\) i ciągnie w lewo. Moneta i egzamin mają tę samą wartość oczekiwaną 5, a mimo to wyglądają inaczej; banany i zawory to małe \\(p\\) z Bananpolu.",
           p4_proto_binom_gallery_ui,
