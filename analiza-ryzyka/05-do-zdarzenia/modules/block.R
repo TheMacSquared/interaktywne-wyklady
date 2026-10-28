@@ -24,7 +24,7 @@ dozd_exercises <- list(
     task = "Bananpol: przy p=0.10 wyznacz średnią liczbę kontroli do znalezienia trzech wadliwych zabezpieczeń i P(ukończenia do 40. kontroli).",
     answer = c(
       "E(X) = r/p = 3/0.10 = 30 kontroli.",
-      "Audyt kończy się do 40. kontroli wtedy i tylko wtedy, gdy w 40 kontrolach znajdziemy co najmniej 3 wady: P(X ≤ 40) = P(B ≥ 3) dla B ~ Bin(40; 0.10) = 1 - [P(B=0) + P(B=1) + P(B=2)] ≈ 0.777. Mimo limitu o jedną trzecią wyższego od średniej mniej więcej co piąta seria go przekroczy."
+      "Audyt kończy się do 40. kontroli wtedy i tylko wtedy, gdy w 40 kontrolach znajdziemy co najmniej 3 wady: P(X ≤ 40) = P(Y ≥ 3) dla Y ~ B(40, 0.10) = 1 - [P(Y=0) + P(Y=1) + P(Y=2)] ≈ 0.777. Mimo limitu o jedną trzecią wyższego od średniej mniej więcej co piąta seria go przekroczy."
     )
   ),
   list(
@@ -126,7 +126,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
               )
             ),
             steps = c(
-              "Stała jest liczba prób n = 40; losowa liczba wad. Rozkład dwumianowy Bin(40; p).",
+              "Stała jest liczba prób n = 40; losowa liczba wad. Rozkład dwumianowy B(40, p).",
               "Stały jest cel: jedna wada; losowa liczba kontroli. Rozkład geometryczny z parametrem p.",
               "Stały jest cel: r = 5 wad; losowa liczba kontroli. Rozkład ujemny dwumianowy z parametrami r = 5 i p."
             ),
@@ -332,15 +332,15 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Pytanie planisty brzmi: jakie jest prawdopodobieństwo, że audyt skończy się najpóźniej w n-tej kontroli? Można by sumować wzór (5.6) od r do n, ale istnieje krótsza droga, która łączy ten wykład z poprzednim.",
             "Audyt kończy się najpóźniej w n-tej kontroli wtedy i tylko wtedy, gdy w pierwszych n kontrolach znaleziono co najmniej r wad. To dwa opisy tego samego zdarzenia: jeden w języku reguły „do r-tego sukcesu”, drugi w języku reguły „n prób”."
           ),
-          risk_formula("P(X\\le n)=P(B_n\\ge r),\\qquad B_n\\sim \\mathrm{Bin}(n,p)", num = "5.7",
-            legend = c("X" = "łączna liczba kontroli do r-tego wykrycia", "B_n" = "liczba wykryć w pierwszych n kontrolach")),
+          risk_formula("P(X\\le n)=P(Y_n\\ge r),\\qquad Y_n\\sim B(n,p)", num = "5.7",
+            legend = c("X" = "łączna liczba kontroli do r-tego wykrycia", "Y_n" = "liczba wykryć w pierwszych n kontrolach")),
           risk_example("5.6", "Czy średnia wystarczy jako limit?",
             problem = "Przy p = 0.10 i r = 3 oblicz prawdopodobieństwo ukończenia audytu w limicie 30 kontroli, czyli limicie równym średniej.",
             steps = c(
-              "Ze wzoru (5.7): P(X ≤ 30) = P(B ≥ 3) dla B ~ Bin(30; 0.1) = 1 - [P(B=0) + P(B=1) + P(B=2)].",
-              "P(B=0) = 0.9³⁰ ≈ 0.0424.",
-              "P(B=1) = 30 · 0.1 · 0.9²⁹ ≈ 0.1413.",
-              "P(B=2) = C(30, 2) · 0.1² · 0.9²⁸ = 435 · 0.01 · 0.0523 ≈ 0.2277.",
+              "Ze wzoru (5.7): P(X ≤ 30) = P(Y ≥ 3) dla Y ~ B(30, 0.1) = 1 - [P(Y=0) + P(Y=1) + P(Y=2)].",
+              "P(Y=0) = 0.9³⁰ ≈ 0.0424.",
+              "P(Y=1) = 30 · 0.1 · 0.9²⁹ ≈ 0.1413.",
+              "P(Y=2) = C(30, 2) · 0.1² · 0.9²⁸ = 435 · 0.01 · 0.0523 ≈ 0.2277.",
               "P(X ≤ 30) ≈ 1 - 0.4114 = 0.589."
             ),
             answer = "Około 0.59. Limit równy średniej zawodzi w ponad czterech audytach na dziesięć."

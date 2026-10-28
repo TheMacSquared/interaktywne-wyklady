@@ -401,6 +401,7 @@ lecture_page <- function(lecture_id      = NULL,
       ")),
       includeScript(file.path(proj_root, "R", "shared_toc.js")),
       includeScript(file.path(proj_root, "R", "lc_widgets.js")),
+      includeScript(file.path(proj_root, "R", "lc_formula.js")),
       includeScript(file.path(proj_root, "R", "lc_dragdrop.js")),
       tags$script(HTML("
 function lcUpdateTabsScrollState(list) {
@@ -738,6 +739,61 @@ lc_drop_match <- function(input_id, items, zones, colors = NULL,
 # Blok wzoru lub krótkiego zapisu matematycznego.
 lc_formula_box <- function(...) {
   tags$div(class = "lc-formula-box", ...)
+}
+
+# Wzór ze znacznikami: części wzoru w kolorach, pod wzorem opisy połączone
+# z nimi strzałkami (rysuje R/lc_formula.js). Część wzoru oznaczamy w TeX-u
+# jako ⟦k|...⟧, gdzie k to numer opisu w `notes`; części się nie zagnieżdżają.
+# Numeruj od lewej do prawej, żeby strzałki się nie krzyżowały.
+# notes: lista; element to tekst albo list(sym = "TeX", text = "opis").
+# colors: nazwy z upwr_cat, "accent" albo "param" (parametr populacji:
+# przyciemniona kurkuma); domyślnie kolejne kolory palety. Role kolorów
+# w całym kursie: n i df szałwia, Σ bursztyn, obserwacje niebo, estymator
+# accent, rozrzut i SE wrzos, wartość krytyczna terakota, statystyka testowa
+# i wynik miary indygo, parametr populacji "param".
+# side: "below" (opisy pod wzorem) albo "right" (kolumna opisów na prawo,
+# dla wzorów wielowierszowych; części numeruj wtedy od góry do dołu).
+# above: numery opisów stawianych nad wzorem (tylko side = "below"); przy
+# długich wzorach na przemian góra/dół daje opisom więcej miejsca.
+lc_formula_annotated <- function(tex, notes, colors = NULL,
+                                 side = c("below", "right"), above = NULL) {
+  side <- match.arg(side)
+  n <- length(notes)
+  stopifnot(all(above %in% seq_len(n)), side == "below" || is.null(above))
+  if (is.null(colors)) {
+    colors <- c("accent", "niebo", "bursztyn", "szalwia", "wrzos",
+                "terakota", "indygo", "kurkuma")[seq_len(n)]
+  }
+  stopifnot(length(colors) == n, n <= 8)
+  color_var <- ifelse(colors == "accent", "var(--upwr-accent)",
+                ifelse(colors == "param", "var(--fa-param)",
+                       paste0("var(--upwr-cat-", colors, ")")))
+  stopifnot(all(colors %in% c("accent", "param") | colors %in% names(upwr_cat)))
+
+  tex <- gsub("⟦([0-9]+)\\|(.*?)⟧", "\\\\class{lc-fa-p\\1}{\\2}", tex, perl = TRUE)
+  stopifnot(!grepl("⟦|⟧", tex))
+
+  note_tags <- lapply(seq_len(n), function(k) {
+    note <- notes[[k]]
+    if (!is.list(note) || inherits(note, "shiny.tag")) note <- list(text = note)
+    tags$div(
+      class = "lc-fa-note", `data-k` = k,
+      style = paste0("--fa-c:", color_var[k]),
+      if (!is.null(note$sym)) tags$div(class = "lc-fa-sym", paste0("\\(", note$sym, "\\)")),
+      tags$div(class = "lc-fa-text", note$text)
+    )
+  })
+
+  # withMathJax(): rozdziały trafiają do strony dopiero przy przełączeniu,
+  # a jego skrypt zleca złożenie wzorów po wstawieniu.
+  withMathJax(tags$div(
+    class = paste("lc-formula-box lc-fa", if (side == "right") "lc-fa-right"),
+    style = paste0("--fa-", seq_len(n), ":", color_var, collapse = ";"),
+    if (length(above)) tags$div(class = "lc-fa-notes lc-fa-above", note_tags[above]),
+    tags$div(class = "lc-fa-tex", paste0("$$", tex, "$$")),
+    tags$div(class = "lc-fa-notes", note_tags[setdiff(seq_len(n), above)]),
+    tags$svg(class = "lc-fa-links", `aria-hidden` = "true")
+  ))
 }
 
 # Pojedyncza metryka/statystyka. `color` steruje lewym akcentem.

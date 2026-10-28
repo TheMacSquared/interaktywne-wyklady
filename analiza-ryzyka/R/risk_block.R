@@ -269,7 +269,16 @@ risk_tex_colors <- function(tex, colors) {
   tex
 }
 
-risk_formula <- function(tex, num = NULL, legend = NULL, colors = NULL) {
+# notes: opisy części wzoru jak w lc_formula_annotated() (znaczniki ⟦k|...⟧ w tex);
+# note_colors i above przechodzą do niej bez zmian. Numer wzoru stoi wtedy
+# przy prawej krawędzi wiersza wzoru.
+risk_formula <- function(tex, num = NULL, legend = NULL, colors = NULL,
+                         notes = NULL, note_colors = NULL, above = NULL) {
+  if (!is.null(notes)) {
+    q <- htmltools::tagQuery(lc_formula_annotated(tex, notes, note_colors, above = above))
+    if (!is.null(num)) q$find(".lc-fa-tex")$append(tags$div(class = "lc-formula-num", paste0("(", num, ")")))
+    return(tagList(q$allTags(), if (!is.null(legend)) risk_formula_legend(legend)))
+  }
   if (!is.null(colors)) {
     tex <- risk_tex_colors(tex, colors)
     if (!is.null(legend)) names(legend) <- risk_tex_colors(names(legend), colors)
@@ -281,19 +290,21 @@ risk_formula <- function(tex, num = NULL, legend = NULL, colors = NULL) {
       tags$div(class = "lc-formula-tex", withMathJax(paste0("$$", tex, "$$"))),
       if (!is.null(num)) tags$div(class = "lc-formula-num", paste0("(", num, ")"))
     ),
-    if (!is.null(legend)) {
-      tags$div(
-        class = "lc-formula-legend",
-        "gdzie: ",
-        tagList(lapply(seq_along(legend), function(i) {
-          tagList(
-            if (i > 1) "; ",
-            paste0("\\(", names(legend)[i], "\\)"), " — ", legend[[i]]
-          )
-        })),
-        "."
+    if (!is.null(legend)) risk_formula_legend(legend)
+  )
+}
+
+risk_formula_legend <- function(legend) {
+  tags$div(
+    class = "lc-formula-legend",
+    "gdzie: ",
+    tagList(lapply(seq_along(legend), function(i) {
+      tagList(
+        if (i > 1) "; ",
+        paste0("\\(", names(legend)[i], "\\)"), " — ", legend[[i]]
       )
-    }
+    })),
+    "."
   )
 }
 

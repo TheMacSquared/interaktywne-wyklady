@@ -138,7 +138,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             legend = c("f(x)" = "gęstość zmiennej X", "a, b" = "granice przedziału", "\\int_a^b" = "pole pod gęstością między a i b")),
           c(
             "Z P(X = x) = 0 wynika praktyczna wygoda: dla zmiennej ciągłej nie ma znaczenia, czy piszemy X > 85, czy X ≥ 85, ani czy przedział jest domknięty, czy otwarty. W rozkładach dyskretnych z poprzednich wykładów ta różnica była istotna — P(X ≤ 3) i P(X < 3) różniły się o słupek P(X = 3).",
-            "Pola pod gęstością rzadko liczymy przez całkowanie. Wygodniej jest raz stablicować pole od lewego końca do każdego punktu — to funkcja zwana dystrybuantą. Każde pole przedziału to wtedy różnica dwóch jej wartości."
+            "Pola pod gęstością rzadko liczymy przez całkowanie. Wygodniej jest raz stablicować pole od lewego końca do każdego punktu — to dystrybuanta, znana z wykładu 04, tym razem dla zmiennej ciągłej. Każde pole przedziału to wtedy różnica dwóch jej wartości."
           ),
           risk_definition("6.2", "Dystrybuanta", c(
             "Dystrybuantą zmiennej X nazywamy funkcję F(x) = P(X ≤ x), czyli pole pod gęstością na lewo od punktu x. Dystrybuanta rośnie od 0 do 1; prawdopodobieństwo przekroczenia progu c to 1 - F(c)."

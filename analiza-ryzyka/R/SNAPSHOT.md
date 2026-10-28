@@ -11,3 +11,9 @@ każdą synchronizację należy wykonać jawnie i sprawdzić testami aplikacji.
 Synchronizacja 2 października 2026 r.: sekcja „WIDGETY V2 I TABELE V2”
 w `lecture_layout.R` i `shared_styles.css` oraz plik `lc_widgets.js` są
 identyczne we wszystkich kursach i zmieniane równolegle.
+
+Synchronizacja 28 października 2026 r.: `lc_formula_annotated()` (lecture_layout.R),
+sekcja „Wzór ze znacznikami” w `shared_styles.css` i plik `lc_formula.js`
+skopiowane ze `statystyka/R/` bez zmian. `risk_formula()` w `risk_block.R`
+przyjmuje `notes` / `note_colors` / `above` i wtedy rysuje wzór ze znacznikami
+z numerem przy prawej krawędzi (styl `.lc-fa-tex > .lc-formula-num`).
