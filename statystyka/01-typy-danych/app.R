@@ -108,6 +108,33 @@ app_extras <- tagList(
     .ch3-six-row.is-sorted + .lc-formula-box { overflow-x: auto; }
   ")),
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+  # Ryciny liczone w przeglądarce (Chart.js): Ryc. 3.4, 3.6, 3.9, 3.10, 5.5
+  includeScript(file.path(app_dir, "modules", "chart_utils.js")),
+  includeScript(file.path(app_dir, "modules", "salary_chart.js")),
+  includeScript(file.path(app_dir, "modules", "percentile_chart.js")),
+  includeScript(file.path(app_dir, "modules", "guess_chart.js")),
+  includeScript(file.path(app_dir, "modules", "kurtosis_chart.js")),
+  tags$style(HTML("
+    .lc-salary-hist, .lc-pctl-hist { position: relative; width: 100%; aspect-ratio: 2.6 / 1; max-height: 300px; touch-action: none; }
+    .lc-salary-strip, .lc-pctl-box { position: relative; width: 100%; aspect-ratio: 6 / 1; min-height: 92px; max-height: 130px; touch-action: none; }
+    .lc-guess-canvas { position: relative; width: 100%; aspect-ratio: 1.9 / 1; max-height: 360px; touch-action: none; margin-top: .4em; }
+    .lc-kurt-main { position: relative; width: 100%; aspect-ratio: 2 / 1; max-height: 340px; touch-action: none; }
+    .lc-kurt-tail { position: relative; width: 100%; aspect-ratio: 3 / 1; max-height: 210px; }
+    @media (max-width: 640px) {
+      .lc-salary-hist, .lc-pctl-hist { aspect-ratio: 1.7 / 1; }
+      .lc-salary-strip, .lc-pctl-box { aspect-ratio: 3.6 / 1; }
+      .lc-guess-canvas, .lc-kurt-main { aspect-ratio: 1.4 / 1; }
+      .lc-kurt-tail { aspect-ratio: 2 / 1; }
+    }
+    .lc-salary .lc-tbl-block { margin-top: 1em; }
+    .lc-salary .lc-action:disabled, .lc-guess .lc-action:disabled { opacity: .35; }
+    .lc-pctl .lc-seg button[aria-pressed='true'], .lc-kurt .lc-seg button[aria-pressed='true'] {
+      background: var(--upwr-accent); color: var(--upwr-surface); }
+    .lc01-line-sw { display: inline-block; width: 1.5em; height: 0; margin-right: .4em;
+      border-top: 3px solid var(--lc-sw); vertical-align: middle; }
+    .lc01-line-sw.is-dashed { border-top-style: dashed; }
+    .lc01-line-sw.is-dotted { border-top-style: dotted; }
+  ")),
   tags$script(HTML("
     var pieChartJS = null, barChartJS = null;
     var _pendingScenario = null;

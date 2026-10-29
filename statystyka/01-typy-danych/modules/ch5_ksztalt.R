@@ -194,16 +194,31 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.5",
       title = "Porównaj rozkłady o różnej kurtozie",
-      lc_toolbar(
-        lc_slider("ch5_kurt_val", "Nadwyżkowa kurtoza", -1.2, 6, 0, 0.2),
-        lc_action("ch5_kurt_platy", "Platykurtyczny", variant = "outline"),
-        lc_action("ch5_kurt_mezo", "Mezokurtyczny", variant = "outline"),
-        lc_action("ch5_kurt_lepto", "Leptokurtyczny", variant = "outline")
-      ),
-      lc_plot("ch5_kurt_plot", ratio = "1.8/1", max_height = "350px"),
-      tags$h4("Powiększenie prawego ogona (x > 2.5)"),
-      lc_plot("ch5_kurt_tails", ratio = "2.8/1", max_height = "220px"),
-      uiOutput("ch5_kurt_text")
+      tags$div(class = "lc-kurt", `data-ek` = "0",
+        lc_toolbar(
+          lc_group("Przykłady", tags$div(class = "lc-seg", role = "group", `aria-label` = "Przykłady",
+            tags$button(type = "button", `data-k-set` = "-1", `aria-pressed` = "false", "Platykurtyczny"),
+            tags$button(type = "button", `data-k-set` = "0", `aria-pressed` = "true", "Mezokurtyczny"),
+            tags$button(type = "button", `data-k-set` = "4", `aria-pressed` = "false", "Leptokurtyczny"))),
+          lc_readouts(
+            lc_readout(tags$span(`data-role` = "type", "Mezokurtyczny"),
+                       tags$span(`data-role` = "ek", "0.0"),
+                       color = "var(--upwr-cat-szalwia)", swatch = TRUE),
+            lc_readout(tagList(tags$i(class = "lc01-line-sw is-dashed", `aria-hidden` = "true",
+                                       style = "--lc-sw:var(--upwr-reference);"), "Rozkład normalny"), "0.0",
+                       color = "var(--upwr-reference)")
+          )
+        ),
+        tags$div(class = "lc-kurt-main",
+          tags$canvas(`data-role` = "main",
+            `aria-label` = "Gęstość rozkładu o wybranej kurtozie na tle rozkładu normalnego")),
+        lc_caption("Przeciągnij szczyt w górę lub w dół, aby zmienić kurtozę nadwyżkową (od -1.2 do 6)."),
+        tags$h4("Powiększenie prawego ogona (x > 2.5)"),
+        tags$div(class = "lc-kurt-tail",
+          tags$canvas(`data-role` = "tail",
+            `aria-label` = "Powiększenie prawego ogona obu gęstości dla x od 2.5 do 5")),
+        lc_status(tags$p(`data-role` = "text", ""))
+      )
     ),
 
     lc_p("Choć oba rozkłady mają to samo odchylenie standardowe, przy kurtozie
@@ -490,107 +505,6 @@ ch5_server <- function(input, output, session) {
       theme(legend.position = "top", legend.text = element_text(size = 13),
             panel.grid.major.x = element_blank())
   }))
-
-  # --------------------------------------------------------------------------
-  # Widget 2: Kurtosis (suwak kurtozy, bez t-rozkładu)
-  # --------------------------------------------------------------------------
-
-  observeEvent(input$ch5_kurt_platy, { updateSliderInput(session, "ch5_kurt_val", value = -1.0) })
-  observeEvent(input$ch5_kurt_mezo,  { updateSliderInput(session, "ch5_kurt_val", value = 0) })
-  observeEvent(input$ch5_kurt_lepto, { updateSliderInput(session, "ch5_kurt_val", value = 4) })
-
-  # Generate density with target excess kurtosis
-  # Leptokurtic: t-distribution scaled to sd=1 (higher peak, heavier tails)
-  # Platykurtic: beta(a,a) scaled to sd=1 (flatter peak, no tails)
-  ch5_kurt_density <- reactive({
-    ek <- input$ch5_kurt_val
-    req(!is.null(ek))
-    x_seq <- seq(-5, 5, length.out = 500)
-
-    if (ek < -0.01) {
-      # Platykurtyczny: beta(a,a) scaled to sd=1
-      # excess_kurt of beta(a,a) = -6/(2a+3)
-      # So a = -(6/ek + 3) / 2, but ek is negative
-      # ek = -6/(2a+3) -> 2a+3 = -6/ek -> a = (-6/ek - 3)/2
-      a <- max(1.01, (-6 / ek - 3) / 2)
-      scale_b <- sqrt(2 * a + 1)
-      # beta(a,a) on [0,1] mapped to [-scale_b, scale_b] for sd=1
-      dens <- dbeta((x_seq / scale_b + 1) / 2, a, a) / (2 * scale_b)
-      # Zero out beyond support
-      dens[abs(x_seq) > scale_b] <- 0
-    } else if (ek <= 0.01) {
-      dens <- dnorm(x_seq)
-    } else {
-      # Leptokurtyczny: t-distribution scaled to sd=1
-      # excess_kurt = 6 / (df - 4) -> df = 6/ek + 4
-      df_mapped <- max(4.5, 6 / ek + 4)
-      sd_t <- sqrt(df_mapped / (df_mapped - 2))
-      dens <- dt(x_seq * sd_t, df = df_mapped) * sd_t
-    }
-    data.frame(x = x_seq, dens = dens, norm = dnorm(x_seq))
-  })
-
-  zoom_plot_server("ch5_kurt_plot", reactive({
-    df <- ch5_kurt_density()
-    ek <- input$ch5_kurt_val
-
-    type_name <- if (ek < -0.1) "Platykurtyczny" else if (ek > 0.1) "Leptokurtyczny" else "Mezokurtyczny"
-    type_color <- if (ek < -0.1) upwr_cat["bursztyn"] else if (ek > 0.1) upwr_accent else upwr_cat["szalwia"]
-
-    ggplot(df, aes(x = x)) +
-      geom_line(aes(y = norm, linetype = "Rozkład normalny"),
-                color = upwr_reference, linewidth = 1) +
-      geom_area(aes(y = dens), fill = type_color, alpha = 0.35) +
-      geom_line(aes(y = dens, linetype = type_name), color = type_color, linewidth = 1.2) +
-      scale_linetype_manual(name = NULL,
-        values = setNames(c("dashed", "solid"), c("Rozkład normalny", type_name))) +
-      labs(x = "x", y = "Gęstość") +
-      theme(legend.position = "top")
-  }))
-
-  zoom_plot_server("ch5_kurt_tails", reactive({
-    df <- ch5_kurt_density()
-    ek <- input$ch5_kurt_val
-    type_color <- if (ek < -0.1) upwr_cat["bursztyn"] else if (ek > 0.1) upwr_accent else upwr_cat["szalwia"]
-
-    tail_df <- df[df$x >= 2.5, ]
-
-    ggplot(tail_df, aes(x = x)) +
-      geom_area(aes(y = norm), fill = upwr_reference, alpha = 0.15) +
-      geom_line(aes(y = norm), color = upwr_reference, linewidth = 1, linetype = "dashed") +
-      geom_area(aes(y = dens), fill = type_color, alpha = 0.3) +
-      geom_line(aes(y = dens), color = type_color, linewidth = 1.2) +
-      labs(x = "x", y = "Gęstość") +
-      theme()
-  }))
-
-  output$ch5_kurt_text <- renderUI({
-    ek <- input$ch5_kurt_val
-    req(!is.null(ek))
-
-    if (ek < -0.5) {
-      type_class <- "warning"
-      type_name <- "Platykurtyczny"
-      desc <- "Ogony lżejsze niż w rozkładzie normalnym — wartości skrajne
-               są rzadsze."
-    } else if (ek < 0.5) {
-      type_class <- "info"
-      type_name <- "Mezokurtyczny"
-      desc <- "Ogony zbliżone do rozkładu normalnego."
-    } else {
-      type_class <- "danger"
-      type_name <- "Leptokurtyczny"
-      desc <- "Ogony cięższe niż w rozkładzie normalnym — wartości skrajne
-               są częstsze."
-    }
-
-    lc_status(
-      lc_verdict(tags$strong(paste0(type_name, " (nadwyżkowa kurtoza = ",
-                         format(round(ek, 1)), "):")), type = type_class),
-      " ",
-      desc
-    )
-  })
 
   # --------------------------------------------------------------------------
   # Widget 3: Full picture (Capstone)

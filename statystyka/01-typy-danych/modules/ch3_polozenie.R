@@ -15,6 +15,48 @@ ch3_ops_levels <- list(
 # Średnia i mediana wynoszą 5.
 ch3_six_base <- c(5, 3, 6, 4, 7)
 
+# Ryc. 3.4 i 3.6 (salary_chart.js): pensje losowane w przeglądarce jak dawniej w R,
+# round(rgamma(n, shape = 3, scale = 1500) + 2000); oś do hi zł, do hi_wide po
+# pojawieniu się pensji powyżej hi.
+ch3_salary_config <- function(n, trim = 0, ceo = FALSE, hi, hi_wide = NULL,
+                              bin, bin_wide = NULL) {
+  jsonlite::toJSON(list(n = n, shape = 3, scale = 1500, shift = 2000, trim = trim,
+                        ceo = ceo, ceo_value = 50000, hi = hi, hi_wide = hi_wide,
+                        bin = bin, bin_wide = bin_wide, snap = 100),
+                   auto_unbox = TRUE, digits = NA)
+}
+
+ch3_reset_button <- function(label) {
+  tags$button(type = "button", class = "lc-action is-ghost is-icon", `data-s-act` = "reset",
+              `aria-label` = label, title = label, lc_icon("reset"))
+}
+
+# Etykieta z próbką linii (ciągła / przerywana / kropkowana) zamiast legendy wykresu.
+ch3_line_label <- function(label, color, style = NULL) {
+  col <- if (color == "accent") "var(--upwr-accent)" else paste0("var(--upwr-cat-", color, ")")
+  tagList(tags$i(class = paste("lc01-line-sw", style), `aria-hidden` = "true",
+                 style = paste0("--lc-sw:", col, ";")), label)
+}
+
+# Tabela Ryc. 3.6: wartości i zmiany wpisuje salary_chart.js.
+ch3_rob_table <- function() {
+  cell <- function(role) tags$span(`data-role` = role, "–")
+  df <- data.frame(stat = I(list(
+    ch3_line_label("Średnia", "accent"),
+    ch3_line_label("Mediana", "niebo", "is-dashed"),
+    ch3_line_label("Średnia ucięta (10%)", "szalwia", "is-dotted"))))
+  df$value <- I(list(cell("t-mean"), cell("t-median"), cell("t-trim")))
+  df$change <- I(list(cell("d-mean"), cell("d-median"), cell("d-trim")))
+  lc_table(df,
+    cols = list(
+      lc_col("stat", "Statystyka", "row"),
+      lc_col("value", "Wartość (zł)"),
+      lc_col("change", "Zmiana (zł)", short = "Zmiana",
+             desc = "różnica względem danych bez dodanych wartości")
+    ),
+    label = "Statystyki położenia po dodaniu wartości")
+}
+
 ch3_ops_ladder <- function() {
   cols <- list(
     list(label = "Nominalne",  level = 1, color = type_colors[["nominalna"]]),
@@ -195,7 +237,7 @@ ch3_ui <- list(
       uiOutput("ch3_median_text")
     ),
 
-    lc_p("Porównaj obie miary dla dwóch zmiennych. Dla wzrostu mediana (170.7 cm)
+    lc_p("Porównaj obie miary dla dwóch zmiennych. Dla wzrostu mediana (170.6 cm)
       i średnia (171.1 cm) prawie się pokrywają, bo rozkład jest w przybliżeniu
       symetryczny. Dla czasu dojazdu różnica jest wyraźniejsza: mediana wynosi
       32.9 min, a średnia 35.7 min. Rozkład czasu dojazdu ma długi prawy ogon:
@@ -218,16 +260,31 @@ ch3_ui <- list(
       label = "Ryc. 3.4",
       title = "Zarobki w firmie: średnia vs mediana",
 
-      lc_toolbar(
-        lc_slider("ch3_svm_new_value", "Nowa wartość", 2000, 25000, 5000, 500, suffix = " zł"),
-        lc_action("ch3_svm_add", "Dodaj wartość", variant = "solid"),
-        lc_action("ch3_svm_outlier", "Dodaj pensję prezesa", variant = "solid"),
-        lc_action("ch3_svm_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-        lc_readouts(uiOutput("ch3_svm_stats"))
-      ),
-
-      lc_plot("ch3_svm_hist", max_height = "280px"),
-      lc_plot("ch3_svm_strip", ratio = "5.2/1", max_height = "120px")
+      tags$div(class = "lc-salary",
+        `data-config` = ch3_salary_config(n = 30, ceo = TRUE, hi = 25000, hi_wide = 60000,
+                                          bin = 1000, bin_wide = 2000),
+        lc_toolbar(
+          tags$button(type = "button", class = "lc-action is-solid", `data-s-act` = "ceo",
+                      "Dodaj pensję prezesa"),
+          ch3_reset_button("Nowe losowanie 30 pensji"),
+          lc_readouts(
+            lc_readout("n", tags$span(`data-role` = "n", "30")),
+            lc_readout(ch3_line_label("Średnia", "accent"), tags$span(`data-role` = "mean", "–"),
+                       color = "var(--upwr-accent)"),
+            lc_readout(ch3_line_label("Mediana", "niebo", "is-dashed"), tags$span(`data-role` = "median", "–"),
+                       color = "var(--upwr-cat-niebo)"),
+            lc_readout("Różnica", tags$span(`data-role` = "diff", "–"), color = "var(--upwr-cat-szalwia)")
+          )
+        ),
+        tags$div(class = "lc-salary-hist",
+          tags$canvas(`data-role` = "hist",
+            `aria-label` = "Histogram zarobków z liniami średniej i mediany")),
+        tags$div(class = "lc-salary-strip",
+          tags$canvas(`data-role` = "strip",
+            `aria-label` = "Pensje jako punkty na osi zarobków; punkt prezesa można przeciągać")),
+        lc_caption("Kliknij na wykresie, aby dopisać pensję w tym miejscu. Pensję prezesa
+          (duży punkt) przeciągnij po pasku pod histogramem.")
+      )
     ),
 
     lc_p("Po dopisaniu pensji podobnych do pozostałych średnia i mediana
@@ -302,16 +359,29 @@ ch3_ui <- list(
       label = "Ryc. 3.6",
       title = "Odporność: średnia vs mediana vs średnia ucięta",
 
-      lc_toolbar(
-        lc_action("ch3_rob_add1", "Dodaj wartość odstającą (ok. 50 000 zł)", variant = "solid"),
-        lc_action("ch3_rob_add5", "Dodaj 5 wartości odstających", variant = "solid"),
-        lc_action("ch3_rob_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-        lc_readouts(uiOutput("ch3_rob_outliers_count"))
-      ),
-
-      lc_plot("ch3_rob_plot", ratio = "1.9/1", max_height = "320px"),
-
-      uiOutput("ch3_rob_table")
+      tags$div(class = "lc-salary",
+        `data-config` = ch3_salary_config(n = 40, trim = 0.1, hi = 60000, bin = 1500),
+        lc_toolbar(
+          tags$button(type = "button", class = "lc-action is-solid", `data-s-act` = "out1",
+                      "Dodaj wartość odstającą (ok. 50 000 zł)"),
+          tags$button(type = "button", class = "lc-action is-solid", `data-s-act` = "out5",
+                      "Dodaj 5 wartości odstających"),
+          ch3_reset_button("Nowe losowanie 40 pensji"),
+          lc_readouts(
+            lc_readout("Dodane wartości", tags$span(`data-role` = "count", "0"),
+                       color = "var(--upwr-secondary)")
+          )
+        ),
+        tags$div(class = "lc-salary-hist",
+          tags$canvas(`data-role` = "hist",
+            `aria-label` = "Histogram zarobków z liniami średniej, mediany i średniej uciętej")),
+        tags$div(class = "lc-salary-strip",
+          tags$canvas(`data-role` = "strip",
+            `aria-label` = "Pensje jako punkty; puste kółka to wartości odrzucone w średniej uciętej")),
+        lc_caption("Kliknij na wykresie, aby dopisać pensję w tym miejscu. Puste kółka
+          na pasku to pensje odrzucone przy liczeniu średniej uciętej."),
+        ch3_rob_table()
+      )
     ),
 
     lc_p("Pierwsza wartość odstająca wyraźnie podnosi średnią, a średnia ucięta
@@ -425,16 +495,30 @@ ch3_ui <- list(
       label = "Ryc. 3.9",
       title = "Percentyle wzrostu studentów",
 
-      lc_toolbar(
-        lc_slider("ch3_q_pct", "Percentyl", 0, 100, 50, 1, suffix = "%"),
-        lc_action("ch3_q_q1", "Q1 (25%)", variant = "outline"),
-        lc_action("ch3_q_med", "Mediana (50%)", variant = "outline"),
-        lc_action("ch3_q_q3", "Q3 (75%)", variant = "outline")
-      ),
-
-      lc_plot("ch3_q_hist", max_height = "280px"),
-      lc_plot("ch3_q_box", ratio = "5.2/1", max_height = "120px"),
-      uiOutput("ch3_q_text")
+      tags$div(class = "lc-pctl",
+        `data-config` = jsonlite::toJSON(list(values = student_data$wzrost, p = 50, bin = 2,
+                                              unit = "cm"), auto_unbox = TRUE, digits = NA),
+        lc_toolbar(
+          lc_group("Skróty", tags$div(class = "lc-seg", role = "group", `aria-label` = "Skróty",
+            tags$button(type = "button", `data-p-set` = 25, `aria-pressed` = "false", "Q1 (25%)"),
+            tags$button(type = "button", `data-p-set` = 50, `aria-pressed` = "true", "Mediana (50%)"),
+            tags$button(type = "button", `data-p-set` = 75, `aria-pressed` = "false", "Q3 (75%)"))),
+          lc_readouts(
+            lc_readout("Rząd", tags$span(`data-role` = "p", "50%")),
+            lc_readout("Percentyl", tags$span(`data-role` = "q", "–"), color = "var(--upwr-accent)"),
+            lc_readout("Obserwacje ≤", tags$span(`data-role` = "share", "–"),
+                       color = "var(--upwr-cat-niebo)")
+          )
+        ),
+        tags$div(class = "lc-pctl-hist",
+          tags$canvas(`data-role` = "hist",
+            `aria-label` = "Histogram wzrostu z przeciąganą linią percentyla")),
+        tags$div(class = "lc-pctl-box",
+          tags$canvas(`data-role` = "box",
+            `aria-label` = "Wykres pudełkowy wzrostu z zaznaczonym percentylem")),
+        lc_caption("Przeciągnij linię percentyla po histogramie."),
+        lc_status(p(`data-role` = "text", ""))
+      )
     ),
 
     lc_p("W naszej ankiecie Q1 wzrostu wynosi 165.5 cm, a Q3 177.0 cm, więc
@@ -459,14 +543,20 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.10",
       title = "Kliknij na wykres, aby umieścić średnią i medianę",
-      lc_toolbar(
-        lc_action("ch3_game_new", "Nowa runda", variant = "solid"),
-        lc_action("ch3_game_reveal", "Pokaż odpowiedź", variant = "outline")
-      ),
-      uiOutput("ch3_game_status_banner"),
-      lc_plot("ch3_game_plot", ratio = "1.8/1", max_height = "350px",
-              click = "ch3_game_click"),
-      uiOutput("ch3_game_feedback")
+      tags$div(class = "lc-guess",
+        lc_toolbar(
+          tags$button(type = "button", class = "lc-action is-solid", `data-g-act` = "new", "Nowa runda"),
+          tags$button(type = "button", class = "lc-action is-outline", `data-g-act` = "reveal",
+                      disabled = NA, "Pokaż odpowiedź")
+        ),
+        tags$div(`data-role` = "banner", class = "lc-caption", `data-tone` = "info",
+                 tags$div("Kliknij na wykresie w miejscu, gdzie powinna leżeć średnia.")),
+        tags$div(class = "lc-guess-canvas",
+          tags$canvas(`data-role` = "hist",
+            `aria-label` = "Histogram losowych danych; kliknięcia wskazują średnią i medianę")),
+        tags$div(`data-role` = "feedback", class = "lc-status", role = "status",
+                 `aria-live` = "polite", hidden = NA)
+      )
     ),
 
     # ====================================================================
@@ -870,95 +960,6 @@ ch3_server <- function(input, output, session) {
   })
 
   # --------------------------------------------------------------------------
-  # Widget 1: Mean vs Median comparison
-  # --------------------------------------------------------------------------
-
-  ch3_svm_generate <- function() {
-    round(rgamma(30, shape = 3, scale = 1500) + 2000)
-  }
-
-  ch3_svm_data <- reactiveVal(NULL)
-
-  observe({
-    if (is.null(ch3_svm_data())) {
-      set.seed(NULL)
-      ch3_svm_data(ch3_svm_generate())
-    }
-  })
-
-  observeEvent(input$ch3_svm_add, {
-    ch3_svm_data(c(ch3_svm_data(), input$ch3_svm_new_value))
-  })
-
-  observeEvent(input$ch3_svm_outlier, {
-    ch3_svm_data(c(ch3_svm_data(), 50000))
-  })
-
-  observeEvent(input$ch3_svm_reset, {
-    set.seed(NULL)
-    ch3_svm_data(ch3_svm_generate())
-  })
-
-  zoom_plot_server("ch3_svm_hist", reactive({
-    req(ch3_svm_data())
-    d <- data.frame(x = ch3_svm_data())
-    m <- mean(d$x)
-    med <- median(d$x)
-
-    ggplot(d, aes(x = x)) +
-      geom_histogram(fill = upwr_reference, color = "white", bins = 25) +
-      geom_vline(aes(xintercept = m, color = "Średnia"),
-                 linewidth = 1.2, linetype = "solid") +
-      geom_vline(aes(xintercept = med, color = "Mediana"),
-                 linewidth = 1.2, linetype = "dashed") +
-      scale_color_manual(
-        name = NULL,
-        breaks = c("Średnia", "Mediana"),
-        values = stat_colors[c("Średnia", "Mediana")]
-      ) +
-      scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      labs(x = "Zarobki (zł)", y = "Liczba osób") +
-      theme(legend.position = "top")
-  }))
-
-  zoom_plot_server("ch3_svm_strip", reactive({
-    req(ch3_svm_data())
-    d <- data.frame(x = ch3_svm_data())
-    m <- mean(d$x)
-    med <- median(d$x)
-
-    ggplot(d, aes(x = x, y = 0)) +
-      geom_jitter(height = 0.3, width = 0, size = 2.5,
-                  alpha = 0.6, color = upwr_secondary) +
-      geom_point(aes(x = m), y = 0, color = upwr_accent,
-                 size = 5, shape = 18) +
-      geom_point(aes(x = med), y = 0, color = upwr_cat["niebo"],
-                 size = 5, shape = 18) +
-      scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      labs(x = "Zarobki (zł)", y = NULL) +
-            theme(axis.text.y = element_blank(),
-            axis.ticks.y = element_blank(),
-            panel.grid.major.y = element_blank(),
-            panel.grid.minor.y = element_blank())
-  }))
-
-  output$ch3_svm_stats <- renderUI({
-    req(ch3_svm_data())
-    d <- ch3_svm_data()
-    m <- mean(d)
-    med <- median(d)
-    diff_val <- m - med
-
-    diff_color <- if (abs(diff_val) < 500) upwr_cat["szalwia"] else upwr_cat["bursztyn"]
-
-    tagList(
-      lc_readout("Średnia", paste0(lc_fmt(m, 0, big_mark = " "), " zł"), color = upwr_accent),
-      lc_readout("Mediana", paste0(lc_fmt(med, 0, big_mark = " "), " zł"), color = upwr_cat[["niebo"]]),
-      lc_readout("Różnica", paste0(lc_fmt(diff_val, 0, big_mark = " "), " zł"), color = unname(diff_color))
-    )
-  })
-
-  # --------------------------------------------------------------------------
   # Widget 1b: Sixth observation -- formulas step by step
   # --------------------------------------------------------------------------
 
@@ -1045,131 +1046,6 @@ ch3_server <- function(input, output, session) {
       }
     )
   })
-
-  # --------------------------------------------------------------------------
-  # Widget 2: Robustness mini-demo
-  # --------------------------------------------------------------------------
-
-  ch3_rob_generate <- function() {
-    round(rgamma(40, shape = 3, scale = 1500) + 2000)
-  }
-
-  ch3_rob_base <- reactiveVal(NULL)
-  ch3_rob_outliers <- reactiveVal(numeric(0))
-
-  observe({
-    if (is.null(ch3_rob_base())) {
-      set.seed(NULL)
-      ch3_rob_base(ch3_rob_generate())
-    }
-  })
-
-  ch3_rob_all <- reactive({
-    c(ch3_rob_base(), ch3_rob_outliers())
-  })
-
-  # Store baseline stats for comparison
-  ch3_rob_base_stats <- reactive({
-    req(ch3_rob_base())
-    d <- ch3_rob_base()
-    list(
-      mean = mean(d),
-      median = median(d),
-      trimmed = mean(d, trim = 0.1)
-    )
-  })
-
-  observeEvent(input$ch3_rob_add1, {
-    new_outlier <- 50000 + runif(1, -5000, 5000)
-    ch3_rob_outliers(c(ch3_rob_outliers(), round(new_outlier)))
-  })
-
-  observeEvent(input$ch3_rob_add5, {
-    new_outliers <- round(50000 + runif(5, -5000, 5000))
-    ch3_rob_outliers(c(ch3_rob_outliers(), new_outliers))
-  })
-
-  observeEvent(input$ch3_rob_reset, {
-    set.seed(NULL)
-    ch3_rob_base(ch3_rob_generate())
-    ch3_rob_outliers(numeric(0))
-  })
-
-  zoom_plot_server("ch3_rob_plot", reactive({
-    req(ch3_rob_all())
-    d <- data.frame(x = ch3_rob_all())
-    m <- mean(d$x)
-    med <- median(d$x)
-    tr <- mean(d$x, trim = 0.1)
-
-    line_data <- data.frame(
-      xval = c(m, med, tr),
-      Statystyka = factor(
-        c("Średnia", "Mediana", "Śr. ucięta (10%)"),
-        levels = c("Średnia", "Mediana", "Śr. ucięta (10%)")
-      ),
-      ltype = c("solid", "dashed", "dotted")
-    )
-
-    ggplot(d, aes(x = x)) +
-      geom_histogram(fill = upwr_reference, color = "white", bins = 30) +
-      geom_vline(data = line_data,
-                 aes(xintercept = xval, color = Statystyka,
-                     linetype = Statystyka),
-                 linewidth = 1.2) +
-      scale_color_manual(
-        name = NULL,
-        breaks = names(stat_colors),
-        values = stat_colors
-      ) +
-      scale_linetype_manual(
-        name = NULL,
-        breaks = c("Średnia", "Mediana", "Śr. ucięta (10%)"),
-        values = c("Średnia" = "solid",
-                   "Mediana" = "dashed",
-                   "Śr. ucięta (10%)" = "dotted")
-      ) +
-      scale_x_continuous(labels = function(x) format(x, big.mark = " ")) +
-      # Jedna legenda: style linii przeniesione do legendy koloru
-      guides(linetype = "none",
-             color = guide_legend(override.aes = list(
-               linetype = c("solid", "dashed", "dotted")))) +
-      labs(x = "Zarobki (zł)", y = "Liczba osób") +
-      theme(legend.position = "top", legend.key.width = unit(2.4, "lines"))
-  }))
-
-  output$ch3_rob_outliers_count <- renderUI({
-    n_outliers <- length(ch3_rob_outliers())
-    lc_readout("Dodane wartości odstające", n_outliers, color = upwr_secondary)
-  })
-
-  output$ch3_rob_table <- renderUI({
-    req(ch3_rob_all())
-    req(ch3_rob_base_stats())
-
-    d <- ch3_rob_all()
-    base <- ch3_rob_base_stats()
-
-    current_mean <- mean(d)
-    current_med <- median(d)
-    current_tr <- mean(d, trim = 0.1)
-
-    lc_table(
-      data.frame(
-        stat = c("Średnia", "Mediana", "Średnia ucięta (10%)"),
-        value = c(current_mean, current_med, current_tr),
-        change = c(current_mean - base$mean, current_med - base$median,
-                   current_tr - base$trimmed)
-      ),
-      cols = list(
-        lc_col("stat", "Statystyka", "row"),
-        lc_col("value", "Wartość (zł)", digits = 0),
-        lc_col("change", "Zmiana (zł)", digits = 0,
-           short = "Zmiana", desc = "różnica względem danych bez dodanych wartości odstających")
-      ),
-      label = "Statystyki położenia po dodaniu wartości odstających"
-    )
-    })
 
   # --------------------------------------------------------------------------
   # Widget 2b: Discrete variables
@@ -1293,223 +1169,6 @@ ch3_server <- function(input, output, session) {
         "ma własną typową wartość."
       )
     }
-  })
-
-  # Widget 3: Percentile explorer
-  # --------------------------------------------------------------------------
-
-  # Quick-select buttons
-  observeEvent(input$ch3_q_q1, {
-    updateSliderInput(session, "ch3_q_pct", value = 25)
-  })
-
-  observeEvent(input$ch3_q_med, {
-    updateSliderInput(session, "ch3_q_pct", value = 50)
-  })
-
-  observeEvent(input$ch3_q_q3, {
-    updateSliderInput(session, "ch3_q_pct", value = 75)
-  })
-
-  zoom_plot_server("ch3_q_hist", reactive({
-    pct <- input$ch3_q_pct / 100
-    wzrost <- student_data$wzrost
-    q_val <- quantile(wzrost, probs = pct)
-
-    d <- data.frame(x = wzrost)
-    d$below <- d$x <= q_val
-
-    ggplot(d, aes(x = x)) +
-      geom_histogram(aes(fill = below), color = "white", bins = 25,
-                     boundary = q_val, show.legend = FALSE) +
-      geom_vline(xintercept = q_val, color = upwr_secondary,
-                 linewidth = 1.2, linetype = "solid") +
-      annotate("text", x = q_val, y = Inf,
-               label = paste0(round(q_val, 1), " cm"),
-               vjust = -0.5, hjust = -0.1,
-               fontface = "bold", size = 5, color = upwr_secondary) +
-      scale_fill_manual(values = c("TRUE" = upwr_col("niebo"), "FALSE" = upwr_reference)) +
-      labs(x = "Wzrost (cm)", y = "Liczba studentów") +
-      theme()
-  }))
-
-  zoom_plot_server("ch3_q_box", reactive({
-    pct <- input$ch3_q_pct / 100
-    wzrost <- student_data$wzrost
-    q_val <- quantile(wzrost, probs = pct)
-
-    d <- data.frame(x = wzrost)
-
-    ggplot(d, aes(x = x, y = 0)) +
-      geom_boxplot(fill = upwr_rule, color = upwr_secondary,
-                   width = 0.5, outlier.alpha = 0.4) +
-      geom_point(aes(x = q_val), y = 0,
-                 color = upwr_accent, size = 5, shape = 18) +
-      annotate("text", x = q_val, y = 0.35,
-               label = paste0("P", input$ch3_q_pct),
-               fontface = "bold", size = 4.5, color = upwr_accent) +
-      labs(x = "Wzrost (cm)", y = NULL) +
-            theme(axis.text.y = element_blank(),
-            axis.ticks.y = element_blank(),
-            panel.grid.major.y = element_blank(),
-            panel.grid.minor.y = element_blank())
-  }))
-
-  output$ch3_q_text <- renderUI({
-    pct <- input$ch3_q_pct / 100
-    wzrost <- student_data$wzrost
-    q_val <- round(quantile(wzrost, probs = pct), 1)
-
-    actual_pct <- round(100 * mean(wzrost <= q_val), 1)
-
-    lc_status(
-      p(paste0(input$ch3_q_pct, "% studentów ma wzrost poniżej ", q_val, " cm.")),
-      lc_caption(paste0("Dokładnie ", actual_pct, "% obserwacji ≤ ", q_val, " cm."))
-    )
-  })
-
-  # ========================================================================
-  # Widget 4: Guess the statistic game
-  # ========================================================================
-
-  ch3_game_data <- reactiveVal(NULL)
-  ch3_game_guesses <- reactiveVal(list(mean = NULL, median = NULL))
-  ch3_game_revealed <- reactiveVal(FALSE)
-  ch3_game_round <- reactiveVal(0)
-  ch3_game_score <- reactiveVal(list(total = 0, good = 0))
-
-  generate_game_distribution <- function() {
-    type <- sample(c("symmetric", "right_skew", "left_skew"), 1)
-    n <- 200
-    if (type == "symmetric") {
-      vals <- rnorm(n, mean = sample(40:80, 1), sd = sample(8:15, 1))
-    } else if (type == "right_skew") {
-      vals <- rgamma(n, shape = sample(2:4, 1), scale = sample(5:12, 1)) + sample(10:30, 1)
-    } else {
-      vals <- 100 - rgamma(n, shape = sample(2:4, 1), scale = sample(5:12, 1))
-    }
-    round(vals, 1)
-  }
-
-  observe({
-    if (is.null(ch3_game_data())) {
-      ch3_game_data(generate_game_distribution())
-    }
-  })
-
-  observeEvent(input$ch3_game_new, {
-    ch3_game_data(generate_game_distribution())
-    ch3_game_guesses(list(mean = NULL, median = NULL))
-    ch3_game_revealed(FALSE)
-    ch3_game_round(ch3_game_round() + 1)
-  })
-
-  observeEvent(input$ch3_game_click, {
-    if (ch3_game_revealed()) return()
-    g <- ch3_game_guesses()
-    if (is.null(g$mean)) {
-      g$mean <- input$ch3_game_click$x
-    } else if (is.null(g$median)) {
-      g$median <- input$ch3_game_click$x
-    }
-    ch3_game_guesses(g)
-  })
-
-  observeEvent(input$ch3_game_reveal, {
-    g <- ch3_game_guesses()
-    req(g$mean, g$median)
-    ch3_game_revealed(TRUE)
-    vals <- ch3_game_data()
-    real_mean <- mean(vals)
-    real_med <- median(vals)
-    rng <- diff(range(vals))
-    mean_err <- abs(g$mean - real_mean) / rng
-    med_err <- abs(g$median - real_med) / rng
-    sc <- ch3_game_score()
-    sc$total <- sc$total + 1
-    if (mean_err < 0.08 && med_err < 0.08) sc$good <- sc$good + 1
-    ch3_game_score(sc)
-  })
-
-  output$ch3_game_status_banner <- renderUI({
-    g <- ch3_game_guesses()
-    if (is.null(g$mean)) {
-      lc_caption("Kliknij na wykresie w miejscu, gdzie powinna leżeć średnia.", tone = "info")
-    } else if (is.null(g$median)) {
-      lc_caption("Teraz kliknij, gdzie leży mediana.", tone = "info")
-    } else if (!ch3_game_revealed()) {
-      lc_caption("Gotowe. Kliknij „Pokaż odpowiedź”.", tone = "ok")
-    } else {
-      sc <- ch3_game_score()
-      lc_status(p(paste0("Trafione rundy: ", sc$good, " z ", sc$total, ".")))
-    }
-  })
-
-  zoom_plot_server("ch3_game_plot", reactive({
-    vals <- ch3_game_data()
-    req(vals)
-    g <- ch3_game_guesses()
-    revealed <- ch3_game_revealed()
-
-    p <- ggplot(data.frame(x = vals), aes(x = x)) +
-      geom_histogram(bins = 25, fill = "grey70", color = "white", alpha = 0.7) +
-      labs(x = "Wartość", y = "Liczebność")
-
-    if (!is.null(g$mean)) {
-      p <- p + geom_vline(xintercept = g$mean, color = upwr_accent,
-                          linewidth = 1.2, linetype = "dashed") +
-        annotate("text", x = g$mean, y = Inf, label = "Wskazana\nśrednia",
-                 vjust = 2, color = upwr_accent, fontface = "bold", size = 3.5)
-    }
-    if (!is.null(g$median)) {
-      p <- p + geom_vline(xintercept = g$median, color = upwr_cat["niebo"],
-                          linewidth = 1.2, linetype = "dashed") +
-        annotate("text", x = g$median, y = Inf, label = "Wskazana\nmediana",
-                 vjust = 3.5, color = upwr_cat["niebo"], fontface = "bold", size = 3.5)
-    }
-
-    if (revealed) {
-      real_mean <- mean(vals)
-      real_med <- median(vals)
-      p <- p +
-        geom_vline(xintercept = real_mean, color = upwr_accent, linewidth = 1.5) +
-        annotate("text", x = real_mean, y = Inf, label = paste0("Średnia\n", round(real_mean, 1)),
-                 vjust = 1, color = upwr_accent, fontface = "bold", size = 4) +
-        geom_vline(xintercept = real_med, color = upwr_cat["niebo"], linewidth = 1.5) +
-        annotate("text", x = real_med, y = Inf, label = paste0("Mediana\n", round(real_med, 1)),
-                 vjust = 2.5, color = upwr_cat["niebo"], fontface = "bold", size = 4)
-    }
-
-    p
-  }))
-
-  output$ch3_game_feedback <- renderUI({
-    if (!ch3_game_revealed()) return(NULL)
-    vals <- ch3_game_data()
-    g <- ch3_game_guesses()
-    real_mean <- mean(vals)
-    real_med <- median(vals)
-
-    mean_err <- round(abs(g$mean - real_mean), 1)
-    med_err <- round(abs(g$median - real_med), 1)
-    rng <- diff(range(vals))
-
-    overall_err <- (abs(g$mean - real_mean) + abs(g$median - real_med)) / rng
-    if (overall_err < 0.08) {
-      grade <- "Doskonale!"
-      cls <- "info"
-    } else if (overall_err < 0.15) {
-      grade <- "Nieźle!"
-      cls <- "warning"
-    } else {
-      grade <- "Można lepiej!"
-      cls <- "danger"
-    }
-
-    lc_status(
-      lc_verdict(tags$strong(paste0(grade, " ")), type = cls),
-      paste0("Błąd średniej: ", mean_err, ", błąd mediany: ", med_err, ".")
-    )
   })
 
 }
