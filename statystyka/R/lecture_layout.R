@@ -528,12 +528,13 @@ lecture_server <- function(chapters, input, output, session) {
   output$lc__chapter_content <- renderUI({
     idx <- lc_idx()
     ch  <- chs[[idx]]
-    tags$section(
+    # withMathJax(): wzory w rozdziale wstawianym przez renderUI trzeba złożyć po wstawieniu.
+    withMathJax(tags$section(
       id    = ch$id,
       class = "lc-chapter lc-content-wrap",
       `data-lc-chapter-content` = "true",
       ch$content
-    )
+    ))
   })
 
   # Powiadamiaj JS o zmianie aktywnego rozdziału (setActiveChapter → sidebar + TOC)
