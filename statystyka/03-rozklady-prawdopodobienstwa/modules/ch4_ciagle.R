@@ -2,7 +2,7 @@
 # CHAPTER 4: Rozkłady ciągłe
 # ============================================================================
 
-# Oś czasu z ustalonymi zdarzeniami (Ryc. 4.7).
+# Oś czasu z ustalonymi zdarzeniami (Ryc. 4.9).
 # Nad osią liczba zdarzeń w każdej godzinie (Poisson, col_poisson), pod osią
 # odstępy między kolejnymi zdarzeniami (wykładniczy, col_exponential).
 ch4_event_times <- c(0.18, 0.55, 0.62, 1.30, 1.71, 2.05, 2.12, 2.38, 2.90,
@@ -44,7 +44,7 @@ ch4_event_timeline <- function(t = ch4_event_times, hours = 4) {
 }
 
 # Pięć pytań i odpowiadające im rozkłady ciągłe
-# (Ryc. 4.11). Ten sam układ co mapa dyskretnych (Ryc. 3.10), ale miniatury
+# (Ryc. 4.16). Ten sam układ co mapa dyskretnych (Ryc. 3.13), ale miniatury
 # to gładkie krzywe gęstości, każda w swojej skali.
 ch4_continuous_map <- function() {
   items <- list(
@@ -187,36 +187,41 @@ ch4_ui <- list(
       na przedziale od 0 do 0.5 ma f(x) = 2 na całym przedziale, a mimo to pole
       pod nim wynosi 2 · 0.5 = 1."),
 
-    lc_p("Panel zacienia pole między granicami a i b dla trzech rozkładów,
-      które omówimy w tym i następnym rozdziale."),
+    # Ryc. 4.2: prototyp 4a (zaakceptowany 2026-10-29)
+    s3p_4a_ui,
+
+    lc_p("Wróćmy do wzrostu z Ryc. 4.2. Skoro pytanie o dokładnie 170 cm nie ma
+      sensu, trzeba ustalić, co znaczy „około 170 cm”, na przykład 170 ± 5 cm.
+      Panel zacienia pole pod krzywą ", gloss("rozkład normalny", "rozkładu normalnego"),
+      " N(170, 8) między granicami a i b, które przeciąga się po wykresie."),
 
     figure_panel(
-      label = "Ryc. 4.2",
-      title = "Zacieniuj przedział i odczytaj prawdopodobieństwo",
+      label = "Ryc. 4.3",
+      title = "Ile osób ma „około 170 cm”?",
       full_width = TRUE,
-      lc_toolbar(
-        selectInput("ch4_area_dist", "Rozkład",
-            choices = c("Normalny N(0, 1)" = "norm",
-                        "Wykładniczy Exp(1)" = "exp",
-                        "Jednostajny U(0, 10)" = "unif"),
-            selected = "norm"
-          ),
-        lc_slider("ch4_area_a", "Dolna granica (a)", -4, 4, -1, 0.1),
-        lc_slider("ch4_area_b", "Górna granica (b)", -4, 4, 1, 0.1),
-        lc_readouts(uiOutput("ch4_area_stats"))
-      ),
-      lc_plot("ch4_area_plot", max_height = "350px")
+      tags$div(class = "lc-area", `data-mu` = "170", `data-sd` = "8", `data-lo` = "140", `data-hi` = "200",
+        `data-a` = "165", `data-b` = "175",
+        lc_toolbar(
+          lc_caption("Przeciągnij jedną z granic po wykresie."),
+          lc_readouts(
+            lc_readout("a", tags$span(`data-role` = "a", "165.0")),
+            lc_readout("b", tags$span(`data-role` = "b", "175.0")),
+            lc_readout("P(a < X < b)", tags$span(`data-role` = "P", "0.468"),
+                       color = "var(--upwr-accent)")
+          )
+        ),
+        tags$div(class = "lc-area-canvas",
+          tags$canvas(`data-role` = "pdf",
+                      `aria-label` = "Gęstość wzrostu N(170, 8) z polem między granicami a i b"))
+      )
     ),
 
-    lc_p("Domyślnie panel pokazuje ", gloss("rozkład normalny"), " N(0, 1),
-      któremu poświęcimy cały następny rozdział. Pole między -1 a 1 wynosi
-      0.6827: około dwóch trzecich prawdopodobieństwa leży w tym przedziale.
-      Dla rozkładu wykładniczego Exp(1) domyślny przedział od 0 do 2 obejmuje
-      0.8647, a dla rozkładu jednostajnego U(0, 10) przedział od 2 do 7
-      obejmuje dokładnie 0.5. W tym ostatnim przypadku pole jest prostokątem
-      o szerokości 5 i wysokości 0.1. Zbliżaj suwaki a i b do siebie:
-      zacieniony pas zwęża się, a prawdopodobieństwo spada do zera, choć
-      krzywa nad tym miejscem ma dodatnią wysokość."),
+    lc_p("Przy granicach 165 i 175 cm pole wynosi 0.468: mniej więcej co druga
+      osoba ma „około 170 cm” w tym sensie. Węższy przedział, od 169 do 171 cm,
+      obejmuje już tylko 0.099, a przedział od 169.5 do 170.5 cm około 0.050.
+      Zbliżaj granice a i b do siebie: zacieniony pas zwęża się, a prawdopodobieństwo
+      spada do zera, choć krzywa nad tym miejscem ma dodatnią wysokość. To ten
+      sam efekt co na Ryc. 4.2, tylko odczytany jako pole."),
 
     # ========================================================================
     # Dystrybuanta (bez widgetu)
@@ -237,7 +242,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.3",
+      label = "Ryc. 4.4",
       title = "Pole na lewo od x to wartość dystrybuanty",
       full_width = TRUE,
       tags$div(class = "lc-cdf", `data-x` = "1",
@@ -267,7 +272,7 @@ ch4_ui <- list(
       gdzie gęstość jest prawie zerowa, F prawie się nie zmienia."),
 
     lc_p("Prawdopodobieństwo przedziału to różnica dwóch pól: pola na lewo
-      od b i pola na lewo od a. Dokładnie tak liczy je panel z Ryc. 4.2.
+      od b i pola na lewo od a. Dokładnie tak liczy je panel z Ryc. 4.3.
       Dla rozkładu N(0, 1) F(1) = 0.8413 i F(-1) = 0.1587, więc
       P(-1 < X ≤ 1) = 0.8413 - 0.1587 = 0.6827. Dystrybuanta rośnie od 0
       na lewym krańcu do 1 na prawym i nigdy nie maleje. Ma ją także każdy
@@ -278,6 +283,9 @@ ch4_ui <- list(
       poziom. Taka wartość to ", gloss("kwantyl"), " rzędu q, czyli x, dla którego F(x) = q.
       ", gloss("mediana", "Mediana"), " jest kwantylem rzędu 0.5, a ", gloss("percentyl", "percentyle"), " z wykładu 01 to kwantyle
       wyrażone w procentach."),
+
+    # Ryc. 4.5: prototyp 4b (zaakceptowany 2026-10-29)
+    s3p_4b_ui,
 
     # ========================================================================
     # WIDGET 3: Jednostajny ciągły — scenariusze overlay
@@ -313,7 +321,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.4",
+      label = "Ryc. 4.6",
       title = "Rozkład jednostajny U(a, b)",
       full_width = TRUE,
       lc_toolbar(
@@ -363,7 +371,7 @@ ch4_ui <- list(
       wartość dodatnią, więc jest zmienną ciągłą."),
 
     figure_panel(
-      label = "Ryc. 4.5",
+      label = "Ryc. 4.7",
       width_mode = "text",
       exp_widget("ch4_expo", "Od czekania na koniec deszczu do rozkładu wykładniczego", "Zacznij deszcz",
         list(kind = "expo", lambda = 4, window = 60, width = 5, unit = "deszcz",
@@ -390,7 +398,7 @@ ch4_ui <- list(
     lc_p("Scenariusze w panelu mają różne jednostki czasu, podane w etykietach."),
 
     figure_panel(
-      label = "Ryc. 4.6",
+      label = "Ryc. 4.8",
       title = "Rozkład wykładniczy Exp(λ)",
       full_width = TRUE,
       lc_toolbar(
@@ -432,7 +440,7 @@ ch4_ui <- list(
 
     # Te same zdarzenia jako zliczenia i jako odstępy
     figure_panel(
-      label = "Ryc. 4.7",
+      label = "Ryc. 4.9",
       title = "Jedna oś czasu, dwie zmienne losowe",
       width_mode = "wide",
       ch4_event_timeline()
@@ -443,6 +451,12 @@ ch4_ui <- list(
       zdarzeń wpadło do kolejnej godziny. Odcinki pod osią to wartości zmiennej
       o rozkładzie wykładniczym: ile czasu minęło od poprzedniego zdarzenia.
       Gdy zdarzeń w godzinie jest dużo, odstępy między nimi są krótkie."),
+
+    lc_p("Bezpamięciowość ma zaskakujący skutek na przystanku. Porównajmy dwie
+      linie, w których autobus odjeżdża średnio co 10 minut."),
+
+    # Ryc. 4.10: prototyp 4c (zaakceptowany 2026-10-29)
+    s3p_4c_ui,
 
     # ========================================================================
     # WIDGET 4: Rozkład t-Studenta — scenariusze overlay
@@ -472,7 +486,7 @@ ch4_ui <- list(
     )),
 
     figure_panel(
-      label = "Ryc. 4.8",
+      label = "Ryc. 4.11",
       title = "Rozkład t-Studenta t(df)",
       full_width = TRUE,
       lc_toolbar(
@@ -518,6 +532,11 @@ ch4_ui <- list(
       dla wartości ujemnych, a dla dodatnich ma długi prawy ogon. Liczba
       stopni swobody df mówi, ile kwadratów sumujemy."),
 
+    lc_p("Zobaczmy, jak zachowuje się taka suma, gdy losujemy ją wiele razy."),
+
+    # Ryc. 4.12: prototyp 4e (zaakceptowany 2026-10-29)
+    s3p_4e_ui,
+
     lc_formula_annotated(
       "X = ⟦1|Z_1^2 + Z_2^2 + \\ldots + Z_{df}^2⟧, \\; ⟦2|Z_i⟧ \\sim N(0, 1)",
       notes  = list("suma kwadratów", "zmienna N(0, 1)"),
@@ -530,7 +549,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.9",
+      label = "Ryc. 4.13",
       title = "Rozkład χ²(df)",
       full_width = TRUE,
       lc_toolbar(
@@ -578,6 +597,11 @@ ch4_ui <- list(
       i ma prawy ogon. Parametry μ i σ to średnia i odchylenie standardowe
       logarytmu, a nie samej zmiennej X."),
 
+    lc_p("Skąd bierze się taki ogon, widać na symulacji pensji."),
+
+    # Ryc. 4.14: prototyp 4f (zaakceptowany 2026-10-29)
+    s3p_4f_ui,
+
     lc_formula_annotated(
       "Me = e^{⟦1|\\mu⟧}, \\qquad E(X) = e^{⟦1|\\mu⟧ + ⟦2|\\sigma⟧^2/2}, \\qquad Var(X) = \\left(e^{\\sigma^2} - 1\\right) \\cdot e^{2\\mu + \\sigma^2}",
       notes  = list("średnia ln X", "odchylenie std. ln X"),
@@ -585,7 +609,7 @@ ch4_ui <- list(
     ),
 
     figure_panel(
-      label = "Ryc. 4.10",
+      label = "Ryc. 4.15",
       title = "Rozkład LogN(μ, σ)",
       full_width = TRUE,
       lc_toolbar(
@@ -621,14 +645,14 @@ ch4_ui <- list(
        jest dobrym kandydatem na model."
     ),
 
-    # Zamknięcie rozdziału, jak Ryc. 3.10 dla dyskretnych
+    # Zamknięcie rozdziału, jak Ryc. 3.13 dla dyskretnych
     lc_h2("ch4-porownanie", "Porównanie rozkładów ciągłych"),
 
     lc_p("Pięć rozkładów z tego rozdziału odpowiada na pięć różnych pytań
       o dane."),
 
     figure_panel(
-      label = "Ryc. 4.11",
+      label = "Ryc. 4.16",
       title = "Które pytanie, który rozkład",
       width_mode = "wide",
       ch4_continuous_map()
@@ -693,7 +717,7 @@ ch4_lnorm_defs <- list(
 
 ch4_server <- function(input, output, session) {
 
-  # --- Ryc. 4.5: czas oczekiwania → rozkład wykładniczy (experiment.js) ---
+  # --- Ryc. 4.7: czas oczekiwania → rozkład wykładniczy (experiment.js) ---
   X <- exp_X
   exp_texts(input, output, "ch4_expo", list(
     tagList("Zaczyna padać. Zegar rusza od zera i czekamy, aż deszcz się skończy: chmurka zamieni się
@@ -818,79 +842,6 @@ ch4_server <- function(input, output, session) {
       "Zostaje sama krzywa gęstości f(x). Pole pod nią wynosi 1."
     )
     texts[step]
-  })
-
-  # --- Widget 2: Prawdopodobieństwo = pole ---
-  observeEvent(input$ch4_area_dist, {
-    if (input$ch4_area_dist == "norm") {
-      updateSliderInput(session, "ch4_area_a", min = -4, max = 4, value = -1, step = 0.1)
-      updateSliderInput(session, "ch4_area_b", min = -4, max = 4, value = 1, step = 0.1)
-    } else if (input$ch4_area_dist == "exp") {
-      updateSliderInput(session, "ch4_area_a", min = 0, max = 8, value = 0, step = 0.1)
-      updateSliderInput(session, "ch4_area_b", min = 0, max = 8, value = 2, step = 0.1)
-    } else {
-      updateSliderInput(session, "ch4_area_a", min = 0, max = 10, value = 2, step = 0.1)
-      updateSliderInput(session, "ch4_area_b", min = 0, max = 10, value = 7, step = 0.1)
-    }
-  })
-
-  zoom_plot_server("ch4_area_plot", reactive({
-    dist <- input$ch4_area_dist
-    a <- input$ch4_area_a
-    b <- input$ch4_area_b
-
-    if (dist == "norm") {
-      x_range <- c(-4, 4)
-      dfn <- function(x) dnorm(x)
-      prob <- pnorm(b) - pnorm(a)
-    } else if (dist == "exp") {
-      x_range <- c(0, 8)
-      dfn <- function(x) dexp(x)
-      prob <- pexp(b) - pexp(a)
-    } else {
-      x_range <- c(0, 10)
-      dfn <- function(x) dunif(x, 0, 10)
-      prob <- punif(b, 0, 10) - punif(a, 0, 10)
-    }
-
-    x_seq <- seq(x_range[1], x_range[2], length.out = 500)
-    df_curve <- data.frame(x = x_seq, y = dfn(x_seq))
-
-    shade_x <- seq(max(a, x_range[1]), min(b, x_range[2]), length.out = 300)
-    shade_df <- data.frame(x = shade_x, y = dfn(shade_x))
-
-    ggplot() +
-      geom_area(data = shade_df, aes(x = x, y = y),
-                fill = unname(upwr_cat["niebo"]), alpha = 0.35) +
-      geom_line(data = df_curve, aes(x = x, y = y),
-                color = upwr_secondary, linewidth = 1.2) +
-      geom_vline(xintercept = a, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
-      geom_vline(xintercept = b, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
-      annotate("text", x = (a + b) / 2, y = max(dfn(x_seq)) * 0.5,
-               label = sprintf("P = %.4f", prob),
-               size = 6, fontface = "bold", color = upwr_secondary) +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr()
-  }))
-
-  output$ch4_area_stats <- renderUI({
-    dist <- input$ch4_area_dist
-    a <- input$ch4_area_a
-    b <- input$ch4_area_b
-
-    if (dist == "norm") {
-      prob <- pnorm(b) - pnorm(a)
-    } else if (dist == "exp") {
-      prob <- pexp(b) - pexp(a)
-    } else {
-      prob <- punif(b, 0, 10) - punif(a, 0, 10)
-    }
-
-    tagList(
-      lc_readout(paste0("P(", a, " < X < ", b, ")"), sprintf("%.4f", max(0, prob)), color = unname(upwr_cat["niebo"])),
-      lc_readout("Procent", paste0(sprintf("%.1f", max(0, prob) * 100), "%"), color = upwr_secondary)
-    )
   })
 
   # --- Widget 3: Jednostajny — scenariusze overlay ---
