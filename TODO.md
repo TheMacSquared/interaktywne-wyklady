@@ -121,13 +121,17 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 
 - [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
   wspólnym komponentem.
-- [ ] (Niezobowiązująco, osobna sesja) Więcej wykresów w Chart.js: przejrzeć
-  wykłady i wskazać wykresy/widgety, które zyskałyby na reakcji po stronie
-  przeglądarki (kursor zamiast suwaka, bez czekania na serwer). Wzorce:
-  statystyka 03 Ryc. 4.3 (`modules/cdf_chart.js`: kolory z tokenów motywu,
-  tryb ciemny, `locale: "en-US"`, start po pojawieniu się w DOM) i statystyka
-  01 Ryc. 2.x (kołowy vs słupkowy). Przy kilku użyciach rozważyć wspólny
-  helper w `R/`.
+- [ ] (Osobna sesja) Więcej wykresów w Chart.js: przejrzeć wszystkie wykłady
+  i wskazać wykresy/widgety ggplot + suwak, które można śmiało zastąpić
+  Chart.js (kursor albo przeciąganie zamiast suwaka, bez czekania na serwer).
+  Prowadzący potwierdził na zajęciach, że takie wykresy są wyraźnie bardziej
+  responsywne niż renderowane w Shiny (2026-10-29). Wzorce w statystyce 03:
+  Ryc. 4.3 (`modules/area_chart.js`: dwie granice przeciągane po wykresie,
+  pointer events z `setPointerCapture`, przyciąganie do siatki) i Ryc. 4.4
+  (`modules/cdf_chart.js`: kursor ustawia x na dwóch wykresach) — kolory
+  z tokenów motywu, tryb ciemny, `locale: "en-US"`, start po pojawieniu się
+  w DOM. Też statystyka 01 Ryc. 2.x (kołowy vs słupkowy). Przy kilku użyciach
+  rozważyć wspólny helper w `R/`.
 
 ### Zapis liczb: kropka dziesiętna i zwykły minus
 
