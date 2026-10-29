@@ -49,40 +49,27 @@ ch1_ui <- list(
       above  = 1
     ),
 
-    lc_p("Panel rzuca wirtualną kostką. Lewy wykres pokazuje częstości
-      względne wszystkich ścianek na tle linii 1/6, prawy — jak zmieniała
-      się częstość każdej ścianki w miarę dokładania rzutów."),
+    lc_p("Panel rzuca wirtualną kostką. Każdy rzut kładzie kafelek nad
+      wylosowaną ścianką, a przerywana linia pokazuje, ile kafelków
+      przypadałoby na ściankę, gdyby każda wypadała dokładnie w 1/6 rzutów.
+      Po 60 rzutach kafelki zastępują słupki częstości względnych."),
 
-    figure_panel(
-      label = "Ryc. 1.1",
-      title = "Rzuty kostką — stabilizacja częstości",
-      width_mode = "wide",
-      lc_toolbar(
-        lc_action_group(label = "Rzuć kostką",
-          ch1_roll_1 = "+1", ch1_roll_10 = "+10",
-          ch1_roll_100 = "+100", ch1_roll_1000 = "+1000"),
-        lc_action("ch1_roll_reset", icon = "reset", variant = "ghost",
-                  aria_label = "Wyzeruj rzuty"),
-        lc_readouts(uiOutput("ch1_roll_count"))
-      ),
-      conditionalPanel("!output.ch1_has_rolls",
-        lc_empty("Rzuć kostką, żeby zobaczyć częstości")),
-      conditionalPanel("output.ch1_has_rolls",
-        lc_plots(
-          lc_plot("ch1_freq_bar"),
-          lc_plot("ch1_conv_plot")
-        )
-      )
-    ),
+    s3p_11a_ui,
 
     lc_p("Po kilku rzutach częstości są chaotyczne: jedna ścianka może nie
-      wypaść ani razu, inna kilka razy z rzędu. Linie na prawym wykresie
-      skaczą najpierw gwałtownie, a potem coraz spokojniej zbliżają się do
-      1/6. Wielkość tych wahań da się policzyć. Przy 10 rzutach częstość
-      ścianki odchyla się od 1/6 typowo o około 0.12, czyli prawie o tyle,
-      ile wynosi samo prawdopodobieństwo. Przy 100 rzutach typowe odchylenie
-      spada do 0.037, przy 1000 do 0.012, a przy 10 000 do 0.004. Stukrotnie
-      więcej rzutów daje dziesięciokrotnie mniejszy błąd."),
+      wypaść ani razu, inna kilka razy z rzędu. Po kilkuset rzutach słupki
+      przylegają do linii 1/6. Jak szybko to następuje, sprawdza drugi panel.
+      Powtarza on serię 1000 rzutów wiele razy i w każdej serii śledzi
+      częstość szóstek. Żółty pas to zakres, w którym zgodnie z rachunkiem
+      prawdopodobieństwa mieści się około 95% serii."),
+
+    s3p_11c_ui,
+
+    lc_p("Każda seria błądzi inaczej, ale pas zwęża się w przewidywalnym tempie.
+      Przy 10 rzutach częstość szóstek odchyla się od 1/6 typowo o około 0.12,
+      czyli prawie o tyle, ile wynosi samo prawdopodobieństwo. Przy 100 rzutach
+      typowe odchylenie spada do 0.037, przy 1000 do 0.012, a przy 10 000
+      do 0.004. Stukrotnie więcej rzutów daje dziesięciokrotnie mniejszy błąd."),
 
     lc_p("Prawo wielkich liczb nie mówi, że kostka „wyrównuje” wyniki. Jeśli
       szóstka długo nie wypadała, w kolejnym rzucie nadal ma szansę 1/6.
@@ -117,7 +104,7 @@ ch1_ui <- list(
       histogram. Krzywą modelu można nałożyć na histogram."),
 
     figure_panel(
-      label = "Ryc. 1.2",
+      label = "Ryc. 1.3",
       title = "Histogram (dane) vs krzywa gęstości (model)",
       full_width = TRUE,
       lc_toolbar(
@@ -174,7 +161,7 @@ ch1_ui <- list(
       podaje największą różnicę między nimi."),
 
     figure_panel(
-      label = "Ryc. 1.3",
+      label = "Ryc. 1.4",
       title = "Porównanie: teoria vs obserwacja",
       full_width = TRUE,
       lc_toolbar(
@@ -223,31 +210,10 @@ ch1_ui <- list(
       colors = c("indygo", "bursztyn")
     ),
 
-    lc_p("Panel pozwala ustawić prawdopodobieństwa czterech wyników.
-      Słupki są zielone tylko wtedy, gdy suma wynosi 1."),
+    lc_p("Sprawdź, które z tabelek poniżej są rozkładami prawdopodobieństwa,
+      a potem odsłoń werdykty."),
 
-    figure_panel(
-      label = "Ryc. 1.4",
-      title = "Zbuduj własny rozkład",
-      full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch1_p1", "P(Wynik A)", 0, 1, 0.25, 0.01),
-        lc_slider("ch1_p2", "P(Wynik B)", 0, 1, 0.25, 0.01),
-        lc_slider("ch1_p3", "P(Wynik C)", 0, 1, 0.25, 0.01),
-        lc_slider("ch1_p4", "P(Wynik D)", 0, 1, 0.25, 0.01),
-        lc_readouts(uiOutput("ch1_sum_check"))
-      ),
-      lc_plot("ch1_custom_dist", max_height = "300px")
-    ),
-
-    lc_p("Ustawienie startowe, cztery razy 0.25, to rozkład, w którym każdy
-      wynik jest równie prawdopodobny, jak przy kostce z czterema ściankami.
-      Po zwiększeniu jednego prawdopodobieństwa suma przekroczy 1 i rozkład
-      przestanie być poprawny, dopóki inne nie zostanie zmniejszone. Prawdopodobieństwa
-      w rozkładzie konkurują ze sobą: pula wynosi zawsze 1 i można ją tylko
-      inaczej podzielić. Ten sam warunek obowiązuje dla zmiennych ciągłych.
-      Tam rolę sumy przejmuje pole pod krzywą gęstości, które również
-      wynosi 1."),
+    s3p_15b_ui,
 
     lc_note("Zasada", rule = TRUE,
       "Rozkład prawdopodobieństwa opisuje model, a nie dane. Częstości
@@ -372,85 +338,6 @@ ch1_server <- function(input, output, session) {
     theme_upwr()
   }))
 
-  # --- Widget 1: Rzuty kostką ---
-  dice_rolls <- reactiveVal(integer(0))
-
-  observeEvent(input$ch1_roll_1, {
-    dice_rolls(c(dice_rolls(), sample(1:6, 1)))
-  })
-  observeEvent(input$ch1_roll_10, {
-    dice_rolls(c(dice_rolls(), sample(1:6, 10, replace = TRUE)))
-  })
-  observeEvent(input$ch1_roll_100, {
-    dice_rolls(c(dice_rolls(), sample(1:6, 100, replace = TRUE)))
-  })
-  observeEvent(input$ch1_roll_1000, {
-    dice_rolls(c(dice_rolls(), sample(1:6, 1000, replace = TRUE)))
-  })
-  observeEvent(input$ch1_roll_reset, {
-    dice_rolls(integer(0))
-  })
-
-  output$ch1_roll_count <- renderUI({
-    n <- length(dice_rolls())
-    lc_readout("Rzutów", n, color = unname(upwr_cat["niebo"]))
-  })
-
-  output$ch1_has_rolls <- reactive(length(dice_rolls()) > 0)
-  outputOptions(output, "ch1_has_rolls", suspendWhenHidden = FALSE)
-
-  zoom_plot_server("ch1_freq_bar", reactive({
-    rolls <- dice_rolls()
-    if (length(rolls) == 0) {
-      NULL
-    } else {
-      df <- data.frame(face = factor(rolls, levels = 1:6))
-      freq_df <- df %>% count(face, .drop = FALSE) %>%
-        mutate(rel_freq = n / sum(n))
-      ggplot(freq_df, aes(x = face, y = rel_freq)) +
-        geom_col(fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.85) +
-        geom_hline(yintercept = 1/6, color = unname(upwr_cat["terakota"]), linewidth = 1, linetype = "dashed") +
-        geom_text(aes(label = sprintf("%.3f", rel_freq)), vjust = -0.5, size = 4) +
-        scale_y_continuous(limits = c(0, max(0.35, max(freq_df$rel_freq) * 1.15)),
-                           expand = expansion(mult = c(0, 0.05))) +
-        labs(x = "Ścianka", y = "Częstość względna") +
-        annotate("text", x = 6.3, y = 1/6, label = "1/6", color = unname(upwr_cat["terakota"]),
-                 fontface = "bold", size = 4, hjust = 0) +
-        theme_upwr()
-    }
-  }))
-
-  zoom_plot_server("ch1_conv_plot", reactive({
-    rolls <- dice_rolls()
-    if (length(rolls) < 2) return(NULL)
-
-    # Linia zbieżności dla każdej ścianki
-    n_total <- length(rolls)
-    # Wybierz punkty do wykreślenia (max 200 punktów dla wydajności)
-    if (n_total <= 200) {
-      indices <- seq_len(n_total)
-    } else {
-      indices <- unique(c(
-        seq(1, min(50, n_total)),
-        round(seq(51, n_total, length.out = 150))
-      ))
-    }
-
-    conv_data <- do.call(rbind, lapply(indices, function(i) {
-      tab <- table(factor(rolls[1:i], levels = 1:6)) / i
-      data.frame(n = i, face = factor(1:6), rel_freq = as.numeric(tab))
-    }))
-
-    ggplot(conv_data, aes(x = n, y = rel_freq, color = face)) +
-      geom_line(linewidth = 0.8, alpha = 0.7) +
-      geom_hline(yintercept = 1/6, color = "gray40", linewidth = 0.8, linetype = "dashed") +
-      scale_color_brewer(palette = "Set2", name = "Ścianka") +
-      labs(
-           x = "Liczba rzutów", y = "Częstość względna") +
-      theme_upwr() +
-      theme(legend.position = "right")
-  }))
-
   # --- Widget 2: Częstości vs prawdopodobieństwo ---
   freq_data <- reactive({
     input$ch1_resample
@@ -509,35 +396,5 @@ ch1_server <- function(input, output, session) {
              if (max_diff < 0.05) " — dobra zgodność" else " — słabsza zgodność")
     )
   })
-
-  # --- Widget 3: Zbuduj własny rozkład ---
-  output$ch1_sum_check <- renderUI({
-    s <- input$ch1_p1 + input$ch1_p2 + input$ch1_p3 + input$ch1_p4
-    if (abs(s - 1) < 0.005) {
-      lc_readout("∑", paste0(sprintf("%.2f", s), " ✔"), color = unname(upwr_cat["szalwia"]))
-    } else {
-      lc_readout("∑", paste0(sprintf("%.2f", s), " ≠ 1 ✘"), color = unname(upwr_cat["terakota"]))
-    }
-  })
-
-  zoom_plot_server("ch1_custom_dist", reactive({
-    probs <- c(input$ch1_p1, input$ch1_p2, input$ch1_p3, input$ch1_p4)
-    s <- sum(probs)
-    valid <- abs(s - 1) < 0.005
-
-    df <- data.frame(
-      outcome = c("A", "B", "C", "D"),
-      prob = probs
-    )
-
-    ggplot(df, aes(x = outcome, y = prob)) +
-      geom_col(fill = if (valid) unname(upwr_cat["szalwia"]) else upwr_reference,
-               color = "white", alpha = 0.85, width = 0.6) +
-      geom_text(aes(label = sprintf("%.2f", prob)), vjust = -0.5, size = 5) +
-      scale_y_continuous(limits = c(0, 1.1), expand = expansion(mult = c(0, 0))) +
-      labs(
-           x = "Wynik", y = "Prawdopodobieństwo") +
-      theme_upwr()
-  }))
 
 }
