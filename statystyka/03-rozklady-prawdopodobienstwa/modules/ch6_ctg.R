@@ -23,6 +23,9 @@ ch6_ui <- list(
       bardzo wiele zjawisk. W tym rozdziale zobaczymy, skąd się bierze: pojawia się
       za każdym razem, gdy uśredniamy lub sumujemy wiele niezależnych wartości."),
 
+    # PROTOTYP PUNKTU STOP (2026-10-29)
+    s3p_6a_ui,
+
     lc_h2("ch6-ctg", "Centralne Twierdzenie Graniczne (CTG)"),
 
     lc_p("W rozdziale 2 ", gloss("średnia"), " z próby x̄ była przybliżeniem ", gloss("wartość oczekiwana", "wartości oczekiwanej"), " E(X),
@@ -254,11 +257,25 @@ ch6_ui <- list(
       które się sumują. Żaden z tych wpływów nie musi mieć rozkładu normalnego,
       normalny jest dopiero ich łączny efekt."),
 
+    # PROTOTYP PUNKTU STOP (2026-10-29)
+    s3p_6d_ui,
+
+    s3p_6b_ui,
+
+    s3p_6c_ui,
+
     lc_p("W praktyce mamy zwykle jedną próbę i jedną średnią, a μ nie znamy. CTG mówi,
       jak daleko ta średnia może leżeć od μ: w około 95% prób nie dalej niż 1.96·SE.
       Odwrócenie tego zdania — od średniej z próby do zakresu wiarygodnych wartości μ —
       daje ", gloss("przedział ufności"), ", któremu poświęcony jest wykład 04.
       Zobaczymy tam też, co zrobić, gdy σ również trzeba oszacować z danych."),
+
+    # PROTOTYP PUNKTU STOP (2026-10-29)
+    lc_h2("ch6-domkniecie", "Domknięcie wykładu"),
+
+    s3p_d1_ui,
+
+    s3p_d2_ui,
 
     lc_chapter_next(
       num       = "07",

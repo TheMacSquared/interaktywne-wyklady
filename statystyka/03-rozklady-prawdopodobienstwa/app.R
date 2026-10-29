@@ -48,6 +48,10 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
+# Prototypy punktów stop (2026-10-29): przed rozdziałami, bo ich UI wstawiamy w tekst.
+for (.f in c("common", paste0("ch", 1:6), "ch2_var", "ch5_z", "ch5_calc")) {
+  source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
+}
 source(file.path(app_dir, "modules", "ch1_most.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch2_ev_var.R"),    local = TRUE)
 source(file.path(app_dir, "modules", "ch3_dyskretne.R"), local = TRUE)
@@ -70,14 +74,22 @@ ui <- lecture_page(
   lecture_title = "Rozkłady prawdopodobieństwa",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  # Chart.js do wykresu dystrybuanty (rozdz. 4, Ryc. 4.3); sceny w scenes.js / scenes.css
+  # Chart.js do pola pod krzywą i dystrybuanty (rozdz. 4, Ryc. 4.3 i 4.4); sceny w scenes.js / scenes.css
   header_extras = tagList(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
+    includeScript(file.path(app_dir, "modules", "area_chart.js")),
+    includeScript(file.path(app_dir, "modules", "quantile_chart.js")),
+    includeScript(file.path(app_dir, "modules", "normals_chart.js")),
+    includeScript(file.path(app_dir, "modules", "duel_chart.js")),
+    includeScript(file.path(app_dir, "modules", "zscore_chart.js")),
+    includeScript(file.path(app_dir, "modules", "cases_chart.js")),
+    s3p_54_css,
     includeScript(file.path(app_dir, "modules", "experiment.js")),
     # Sceny „od intuicji do formalizmu” (PROTOTYPY 2026-10-08)
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
+    s3p_css,
     tags$style(HTML("
       .lc-exp-svg { display: block; width: 100%; height: auto; }
       .lc-exp-die { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
@@ -124,6 +136,12 @@ ui <- lecture_page(
     # Dwa wykresy obok siebie, gdy panel ma miejsce; pod sobą na telefonie.
     tags$style(HTML("
       .lc-cdf { container-type: inline-size; }
+      .lc-area-canvas { position: relative; aspect-ratio: 2.2 / 1; touch-action: none; }
+      .lc-duel-top { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1em; }
+      @media (max-width: 640px) { .lc-duel-top { grid-template-columns: minmax(0, 1fr); } }
+      .lc-duel-small { position: relative; aspect-ratio: 1.7 / 1; }
+      .lc-duel-z { position: relative; aspect-ratio: 3 / 1; margin-top: .6em; }
+      .lc-duel [hidden] { display: none !important; }
       .lc-cdf-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2em; }
       .lc-cdf-canvas { position: relative; aspect-ratio: 1.5 / 1; }
       @container (min-width: 560px) {
@@ -197,6 +215,15 @@ server <- function(input, output, session) {
   ch6_server(input, output, session)
   ch8_server(input, output, session)
   ch9_server(input, output, session)
+
+  # Prototypy punktów stop (2026-10-29)
+  s3p_ch1_server(input, output, session)
+  s3p_ch2_server(input, output, session)
+  s3p_ch2_var_server(input, output, session)
+  s3p_ch3_server(input, output, session)
+  s3p_ch4_server(input, output, session)
+  s3p_ch5_server(input, output, session)
+  s3p_ch6_server(input, output, session)
 
 }
 
