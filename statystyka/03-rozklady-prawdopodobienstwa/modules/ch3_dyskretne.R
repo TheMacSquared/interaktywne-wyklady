@@ -60,7 +60,7 @@ ch3_binom_sequences <- function(n = 4) {
 }
 
 # Cztery pytania i odpowiadające im rozkłady
-# (Ryc. 3.10). Miniatury mają parametry z Ryc. 3.9, kolory z helpers.R.
+# (Ryc. 3.13). Miniatury mają parametry z Ryc. 3.12, kolory z helpers.R.
 ch3_discrete_map <- function() {
   items <- list(
     list(q = "Każdy wynik tak samo?", name = "jednostajny", par = "1, …, n",
@@ -272,6 +272,19 @@ ch3_ui <- list(
       pokazuje sytuację odwrotną: przy p powyżej 0.5 środek przesuwa się
       w prawo, do E(X) = 14, a dłuższy ogon pojawia się po lewej stronie."),
 
+    # Ryc. 3.5: przypadek „Spotkanie na szlaku” (prototyp 3g, zaakceptowany 2026-10-29)
+    lc_p("Na koniec historia z gór."),
+
+    s3p_3g_ui,
+
+    lc_p("Spotkanie jednej pary to próba Bernoulliego. Kolega z dołu musi trafić
+      na ten jeden szlak, który wybrał kolega ze szczytu, więc sukces ma
+      prawdopodobieństwo 1/5, a nie 1/25 ani 2/5. Pary wybierają szlaki
+      niezależnie i każda ma tę samą szansę, więc liczba spotkanych par ma
+      rozkład B(6, 0.2). Przeciętnie spotykają się 6 · 0.2 = 1.2 pary, a medale
+      da się rozdać z prawdopodobieństwem P(X ≥ 3) = 1 − P(X ≤ 2) ≈ 0.099,
+      czyli mniej więcej w co dziesiątych zawodach."),
+
     # ========================================================================
     # WIDGET 3: Rozkład Poissona — scenariusze overlay
     # ========================================================================
@@ -287,12 +300,18 @@ ch3_ui <- list(
       to liczba zdarzeń w ustalonym przedziale czasu lub przestrzeni ma ",
       gloss("rozkład Poissona", "rozkład Poissona"), " Pois(λ)."),
 
+    lc_p("Zanim przejdziemy do sklepu, prawdziwa historia: w 1944 roku ten rozkład
+      odpowiedział na pytanie, które niepokoiło cały Londyn."),
+
+    # Ryc. 3.6: prototyp 3a (2026-10-29)
+    s3p_3a_ui,
+
     lc_p("Zobaczmy to na przykładzie sklepu. Klienci wchodzą w losowych momentach,
       średnio czterech na godzinę. Obserwujemy kolejne godziny i liczymy, ilu
       klientów w nich weszło."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.7",
       width_mode = "text",
       exp_widget("ch3_exp_pois", "Od godziny w sklepie do rozkładu Poissona", "Obserwuj godzinę",
         list(kind = "poisson", lambda = 4, window = 60, kmax = 11, unit = "godzina",
@@ -317,7 +336,7 @@ ch3_ui <- list(
       tylko 0.053."),
 
     figure_panel(
-      label = "Ryc. 3.6",
+      label = "Ryc. 3.8",
       title = "Rozkład Poissona Pois(λ)",
       full_width = TRUE,
       lc_toolbar(
@@ -351,6 +370,12 @@ ch3_ui <- list(
       P(X = 5) wynosi 0.185 dla dwumianowego i 0.175 dla Poissona. Różnica
       zmaleje, jeśli przy tym samym np = 5 zwiększymy n i zmniejszymy p."),
 
+    lc_p("Model Poissona sprawdza się na prawdziwych danych. Klasyczny przykład
+      pochodzi z dziewiętnastowiecznej armii pruskiej."),
+
+    # Ryc. 3.9: prototyp 3b (2026-10-29)
+    s3p_3b_ui,
+
     # ========================================================================
     # WIDGET 4: Rozkład geometryczny — scenariusze overlay
     # ========================================================================
@@ -371,7 +396,7 @@ ch3_ui <- list(
       kilkanaście rzutów."),
 
     figure_panel(
-      label = "Ryc. 3.7",
+      label = "Ryc. 3.10",
       width_mode = "text",
       exp_widget("ch3_exp_geom", "Od rzutów do pierwszej szóstki do rozkładu geometrycznego", "Rzucaj do szóstki",
         list(kind = "geometric", faces = 6, hit = 6, kmax = 12, unit = "seria",
@@ -393,7 +418,7 @@ ch3_ui <- list(
       (5/6)¹⁰ ≈ 0.162."),
 
     figure_panel(
-      label = "Ryc. 3.8",
+      label = "Ryc. 3.11",
       title = "Rozkład geometryczny Geom(p)",
       full_width = TRUE,
       lc_toolbar(
@@ -437,7 +462,7 @@ ch3_ui <- list(
       i przedział ±1 SD można włączyć na wykresie."),
 
     figure_panel(
-      label = "Ryc. 3.9",
+      label = "Ryc. 3.12",
       title = "Cztery rozkłady obok siebie",
       full_width = TRUE,
       checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
@@ -457,7 +482,7 @@ ch3_ui <- list(
 
     # Pytanie → rozkład → kształt (wizualna wersja Zasady)
     figure_panel(
-      label = "Ryc. 3.10",
+      label = "Ryc. 3.13",
       title = "Które pytanie, który rozkład",
       width_mode = "wide",
       ch3_discrete_map()
@@ -511,7 +536,7 @@ ch3_geom_defs <- list(
 
 ch3_server <- function(input, output, session) {
 
-  # --- Ryc. 3.2, 3.4, 3.6: eksperyment → zmienna losowa → rozkład (experiment.js) ---
+  # --- Ryc. 3.2, 3.7, 3.10: eksperyment → zmienna losowa → rozkład (experiment.js) ---
   X <- exp_X
 
   exp_texts(input, output, "ch3_exp", list(

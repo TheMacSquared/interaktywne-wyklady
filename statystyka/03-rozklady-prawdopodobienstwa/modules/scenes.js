@@ -4,6 +4,7 @@
 // config.kind:
 //   "group"   ocena prowadzącego (1–10) od 5 losowych osób, X̄ grupki (rozkład średniej, CTG)
 //   "scratch" zdrapka z kiosku, X = wygrana (E(X) jako średnia na dłuższą metę, SD jako rozrzut)
+//   "trail"   spotkanie na szlaku: pary na 5 szlakach, X = liczba spotkanych par ~ B(6, 0.2)
 // Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
 //   [data-sc-opt]  "nazwa:wartość" (przełączniki opcji)
@@ -402,6 +403,218 @@
   };
 
   // =========================================================================
+  // TRAIL: góra z 5 szlakami; para (jeden na szczycie, drugi na dole) wybiera
+  // szlaki losowo i spotyka się, gdy wybierze ten sam. Krok 1: dwóch kolegów,
+  // od kroku 2: zawody par, X = liczba par, które się spotkały (Ryc. 3.5, zaakceptowana 2026-10-29)
+  // =========================================================================
+  KINDS.trail = function (cfg, api) {
+    var NT = cfg.trails || 5, NP = cfg.pairs || 6, MOUNT = cfg.mountain || "Ślęża";
+    var MARK = cfg.marks || ["czerwony", "niebieski", "zielony", "żółty", "czarny"];
+    var MARKC = { "czerwony": "#c8312b", "niebieski": "#2e6fb7", "zielony": "#2f8f4e", "żółty": "#e3b505", "czarny": "#222" };
+    var SHIRT = ["var(--upwr-cat-niebo)", "var(--upwr-cat-terakota)", "var(--upwr-cat-szalwia)",
+                 "var(--upwr-cat-wrzos)", "var(--upwr-cat-bursztyn)", "var(--upwr-cat-indygo)"];
+    // Wszystkie szlaki zaczynają się na parkingu (PX, BY) i kończą na szczycie (PX, PY).
+    var PX = 320, PY = 44, BY = 186, SPREAD = 140;
+    var BL = 120, BR = 520, PT = 236, PB = 372;
+    var MEDAL = cfg.medal || 3, P = 1 / NT;
+    var st;
+    var showP = false;
+    function fresh() { st = { log: [], clog: [], trip: null, comp: null, counts: new Array(NP + 1).fill(0), n: 0, medals: 0 }; }
+    fresh();
+
+    function rnd() { return Math.floor(Math.random() * NT); }
+    function compete() {
+      var c = [];
+      for (var k = 0; k < NP; k++) { var a = rnd(), b = rnd(); c.push({ a: a, b: b, meet: a === b }); }
+      c.x = c.filter(function (q) { return q.meet; }).length;
+      return c;
+    }
+    function add(c) { st.counts[c.x] += 1; st.n += 1; if (c.x >= MEDAL) st.medals += 1; }
+    // Log ostatnich zawodów (krok 2), najnowsze na górze.
+    function commit(c) { c.no = st.n; st.clog.unshift(c); if (st.clog.length > 6) st.clog.pop(); }
+    function binom(k) {
+      var c = 1;
+      for (var j = 0; j < k; j++) c = c * (NP - j) / (j + 1);
+      return c * Math.pow(P, k) * Math.pow(1 - P, NP - k);
+    }
+
+    // Punkt na szlaku: s = 0 u podnóża, s = 1 na szczycie.
+    function pt(t, s, off) {
+      var cx = PX + (t - (NT - 1) / 2) * SPREAD, cy = 115;
+      var u = s;
+      var x = u * u * PX + 2 * u * (1 - u) * cx + (1 - u) * (1 - u) * PX;
+      var y = u * u * PY + 2 * u * (1 - u) * cy + (1 - u) * (1 - u) * BY;
+      return [x + (off || 0), y];
+    }
+    function walker(g, x, y, color, s) {
+      s = s || 0.62;
+      svg("circle", { cx: x, cy: y - 22 * s, r: 7 * s, class: "lc-sc-trail-head" }, g);
+      svg("rect", { x: x - 8 * s, y: y - 13 * s, width: 16 * s, height: 20 * s, rx: 6 * s, fill: color, class: "lc-sc-trail-body" }, g);
+    }
+
+    function drawMountain(g, used) {
+      svg("path", { d: "M 0 " + (BY + 8) + " Q " + PX + " " + (PY - 165) + " 640 " + (BY + 8) + " Z", class: "lc-sc-mount" }, g);
+      svg("text", { x: PX + 22, y: PY - 14, "text-anchor": "start", class: "lc-sc-trail-peak" }, g, MOUNT);
+      for (var t = 0; t < NT; t++) {
+        var d = [];
+        for (var s = 0; s <= 1.0001; s += 0.05) d.push(pt(t, s).join(","));
+        svg("polyline", { points: d.join(" "), fill: "none", class: "lc-sc-trail" + (used && used[t] ? " is-used" : "") }, g);
+        sign(g, pt(t, 0.22)[0], pt(t, 0.22)[1], t);
+      }
+      // parking: znak „P” pod punktem startu
+      svg("rect", { x: PX - 9, y: BY + 6, width: 18, height: 18, rx: 3, class: "lc-sc-trail-park" }, g);
+      svg("text", { x: PX, y: BY + 20, "text-anchor": "middle", class: "lc-sc-trail-park-t" }, g, "P");
+    }
+    // znak szlaku PTTK: biały–kolor–biały
+    function sign(g, x, y, t) {
+      svg("rect", { x: x - 9, y: y - 6, width: 18, height: 12, class: "lc-sc-trail-sign" }, g);
+      svg("rect", { x: x - 9, y: y - 2, width: 18, height: 4, fill: MARKC[MARK[t]] || "#555" }, g);
+    }
+
+    // walkers: [{t, down, color, off}]; u = postęp marszu 0..1; para spotyka się w połowie drogi.
+    function drawStage(pairs, u) {
+      var g = api.stage;
+      g.textContent = "";
+      var used = {};
+      if (pairs) pairs.forEach(function (q) { used[q.a] = true; used[q.b] = true; });
+      drawMountain(g, pairs ? used : null);
+      if (!pairs) {
+        if (api.step() === 1) { walker(g, PX, PY + 2, "var(--upwr-ink-soft)", 0.75); walker(g, PX, BY + 2, "var(--upwr-ink-soft)", 0.75); }
+        return;
+      }
+      var one = pairs.length === 1;
+      pairs.forEach(function (q, k) {
+        var col = one ? "var(--upwr-ink-soft)" : SHIRT[k % SHIRT.length];
+        var off = one ? 0 : (k - (pairs.length - 1) / 2) * 3.5;
+        var v = q.meet ? Math.min(u, 0.5) : u;
+        var A = pt(q.a, 1 - v, off), B = pt(q.b, v, off);
+        walker(g, A[0], A[1], col, one ? 0.75 : 0.6);
+        walker(g, B[0], B[1], col, one ? 0.75 : 0.6);
+        if (q.meet && u >= 0.5) svg("circle", { cx: A[0], cy: A[1] - 10, r: one ? 22 : 15, class: "lc-sc-trail-meet" }, g);
+      });
+    }
+
+    function drawLog() {
+      var g = api.low, y0 = 240;
+      if (!st.log.length) { emptyNote(g, y0 + 50, "Koledzy czekają: jeden na szczycie, drugi na dole."); return; }
+      st.log.forEach(function (o, ri) {
+        var q = svg("g", { opacity: 1 - ri * 0.15 }, g), y = y0 + ri * 28;
+        svg("text", { x: 110, y: y, class: "lc-sc-log" }, q, "wycieczka " + o.no);
+        svg("text", { x: 250, y: y, class: "lc-sc-log" }, q, "↓ " + MARK[o.a] + "   ↑ " + MARK[o.b]);
+        svg("text", { x: 470, y: y, class: "lc-sc-log is-x" + (o.meet ? " is-hit" : "") }, q, o.meet ? "spotkali się" : "minęli się");
+      });
+    }
+
+    // Wszystkie pary szlaków: wiersz = szlak kolegi ze szczytu, kolumna = szlak kolegi z dołu.
+    function drawGrid() {
+      var g = api.low, C = 26, x0 = 170, y0 = 252;
+      svg("text", { x: x0 + NT * C / 2, y: y0 - 26, "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "↑ kolega z dołu");
+      yTitle(g, x0 - 40, y0, y0 + NT * C, "↓ kolega ze szczytu");
+      for (var r = 0; r < NT; r++) {
+        sign(g, x0 - 16, y0 + r * C + C / 2, r);
+        sign(g, x0 + r * C + C / 2, y0 - 12, r);
+        for (var c = 0; c < NT; c++) {
+          svg("rect", { x: x0 + c * C + 1, y: y0 + r * C + 1, width: C - 2, height: C - 2,
+            class: "lc-sc-trail-cell" + (r === c ? " is-hit" : "") }, g);
+        }
+      }
+      var o = st.trip;
+      if (o) svg("rect", { x: x0 + o.b * C - 1, y: y0 + o.a * C - 1, width: C + 2, height: C + 2, class: "lc-sc-trail-cellnow" }, g);
+      svg("text", { x: 470, y: y0 + 54, "text-anchor": "middle", class: "lc-sc-read" }, g, "p = 5/25 = 1/5 = 0.2");
+      svg("text", { x: 470, y: y0 + 82, "text-anchor": "middle", class: "lc-sc-sub" }, g, "25 równie możliwych par szlaków, 5 spotkań");
+    }
+
+    // Rząd koszulek z wynikiem ostatnich zawodów, duże X i obok X z poprzednich zawodów (zanikające).
+    function drawPairs() {
+      var g = api.low, y = 262, c = st.clog[0];
+      if (!c) { emptyNote(g, y + 30, "Sześć par w koszulkach czeka na start."); return; }
+      c.forEach(function (q, k) {
+        var x = 130 + k * 76;
+        svg("circle", { cx: x, cy: y, r: 16, fill: SHIRT[k % SHIRT.length], class: "lc-sc-trail-shirt" }, g);
+        svg("text", { x: x, y: y + 42, "text-anchor": "middle", class: "lc-sc-trail-res" + (q.meet ? " is-hit" : "") }, g,
+          q.meet ? "✓" : "–");
+      });
+      svg("text", { x: W / 2, y: y + 92, "text-anchor": "end", class: "lc-sc-read" }, g, "X = " + c.x);
+      st.clog.slice(1).forEach(function (o, i) {
+        svg("text", { x: W / 2 + 34 + i * 34, y: y + 92, "text-anchor": "middle", opacity: 0.7 - i * 0.12,
+          class: "lc-sc-read is-plain" }, g, String(o.x));
+      });
+    }
+
+    function drawHist() {
+      var g = api.low, rel = api.step() >= 4, n = st.n;
+      var vals = st.counts.map(function (c) { return rel ? (n ? c / n : 0) : c; });
+      var top = Math.max.apply(null, vals);
+      if (rel) for (var k = 0; k <= NP; k++) top = Math.max(top, binom(k));
+      var ax = rel ? niceAxis(Math.max(top * 1.08, 0.1), 4) : niceAxis(Math.max(top * 1.12, 5), 4);
+      var y = yGrid(g, BL, BR, PT, PB, ax), slot = (BR - BL) / (NP + 1), bw = Math.min(40, slot * 0.6);
+      vals.forEach(function (v, k) {
+        var cx = BL + slot * (k + 0.5);
+        if (v > 0) svg("rect", { x: cx - bw / 2, y: y(v), width: bw, height: PB - y(v), class: "lc-sc-bar" + (k >= MEDAL ? " is-hit" : "") }, g);
+        if (!rel && v > 0) svg("text", { x: cx, y: y(v) - 5, "text-anchor": "middle", class: "lc-sc-val" }, g, String(v));
+        if (rel) svg("circle", { cx: cx, cy: y(binom(k)), r: 5.5, class: "lc-sc-theory" }, g);
+        svg("text", { x: cx, y: PB + 18, "text-anchor": "middle", class: "lc-sc-tick is-x" }, g, String(k));
+      });
+      svg("text", { x: (BL + BR) / 2, y: PB + 38, "text-anchor": "middle", class: "lc-sc-axtitle" }, g, "X, liczba par, które się spotkały");
+      yTitle(g, BL - 46, PT, PB, rel ? "częstość względna" : "liczba zawodów");
+      svg("text", { x: BR, y: PT - 10, "text-anchor": "end", class: "lc-sc-n" }, g,
+        "zawodów: " + n + " · z medalami: " + (n ? fmt(100 * st.medals / n, 1) + "%" : "—"));
+      if (rel) {
+        var pm = 0;
+        for (k = MEDAL; k <= NP; k++) pm += binom(k);
+        readout(g, PB + 64, [
+          { mark: function (x, yy) { svg("circle", { cx: x + 11, cy: yy, r: 5.5, class: "lc-sc-theory" }, g); }, text: "P(X = k)" },
+          { text: "P(X ≥ " + MEDAL + ") = " + fmt(pm, 3) }
+        ]);
+      }
+    }
+
+    function render(u) {
+      api.low.textContent = "";
+      var s = api.step();
+      // przełącznik „Szansa spotkania” dotyczy tylko dwóch kolegów (krok 1)
+      api.stepper.querySelectorAll("[data-sc-opt^='p:']").forEach(function (bt) {
+        var grp = bt.closest(".lc-step-ctl"); if (grp) grp.hidden = s !== 1;
+      });
+      if (s === 1) { drawStage(st.trip ? [st.trip] : null, u === undefined ? 1 : u); if (showP) drawGrid(); else drawLog(); }
+      else { drawStage(st.comp, u === undefined ? 1 : u); if (s === 2) drawPairs(); else drawHist(); }
+    }
+
+    return {
+      render: function () { render(); },
+      reset: function () { fresh(); showP = false; render(); },
+      opt: function (name, v) { if (name === "p") { showP = v === "on"; render(); } },
+      label: function () { return api.step() === 1 ? "Ruszają" : "Rozegraj zawody"; },
+      go: function (done) {
+        if (api.step() === 1) {
+          var a = rnd(), b = rnd();
+          st.trip = { a: a, b: b, meet: a === b };
+          tween(1600, function (u) { drawStage([st.trip], u); }, function () {
+            st.trip.no = st.log.length ? st.log[0].no + 1 : 1;
+            st.log.unshift(st.trip); if (st.log.length > 6) st.log.pop();
+            render(); done();
+          });
+          return;
+        }
+        st.comp = compete();
+        var c = st.comp;
+        tween(1800, function (u) { drawStage(c, u); }, function () {
+          var land = function () { add(c); commit(c); render(); done(); };
+          if (api.step() >= 3) {
+            var slot = (BR - BL) / (NP + 1);
+            fly(api, W / 2, BY - 40, BL + slot * (c.x + 0.5), PB - 10, 380, land);
+          } else land();
+        });
+      },
+      many: function (m, done) {
+        var c;
+        for (var i = 0; i < m; i++) { c = compete(); add(c); }
+        commit(c); st.comp = c; render(); done();
+      }
+    };
+  };
+
+  // =========================================================================
   // widget
   // =========================================================================
   function init(root) {
@@ -414,7 +627,7 @@
     var s = svg("svg", { class: "lc-sc-svg", role: "img", viewBox: "0 0 " + W + " " + (cfg.height || 420),
       "aria-label": cfg.aria || "Scena doświadczenia i wykres wyników" }, root);
     var api = {
-      stage: svg("g", {}, s), low: svg("g", {}, s), fly: svg("g", {}, s),
+      stage: svg("g", {}, s), low: svg("g", {}, s), fly: svg("g", {}, s), stepper: stepper,
       step: function () { return Number(stepper.getAttribute("data-lc-step")) || 1; }
     };
     var scene = KINDS[cfg.kind](cfg, api), busy = false;

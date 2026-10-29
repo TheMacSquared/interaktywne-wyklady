@@ -56,3 +56,21 @@
 .lc-sc-val.is-in { fill: var(--upwr-surface); }
 /* przełączniki scen nie kurczą się (dłuższe podpisy niż same liczby) */
 .lc-stepper:has(.lc-sc) .lc-stepper-head .lc-toolbar > .lc-step-ctl:has([data-sc-opt]) { flex: 0 1 auto; }
+
+/* góra i szlaki (PROTOTYP 2026-10-29) */
+.lc-sc-mount { fill: var(--upwr-sage-tint); stroke: var(--upwr-rule); stroke-width: 1; }
+.lc-sc-trail { stroke: var(--upwr-ink-subtle); stroke-width: 2; stroke-dasharray: 4 4; opacity: .55; }
+.lc-sc-trail.is-used { stroke: var(--upwr-ink); opacity: .9; }
+.lc-sc-trail-sign { fill: #fff; stroke: var(--upwr-ink-subtle); stroke-width: .8; }
+.lc-sc-trail-peak { font: 700 15px var(--upwr-sans); fill: var(--upwr-ink); }
+.lc-sc-trail-head { fill: var(--upwr-ink); }
+.lc-sc-trail-body { stroke: var(--upwr-ink); stroke-width: .8; }
+.lc-sc-trail-meet { fill: none; stroke: var(--upwr-accent); stroke-width: 3; }
+.lc-sc-trail-shirt { stroke: var(--upwr-ink); stroke-width: 1; }
+.lc-sc-trail-res { font: 700 22px var(--upwr-mono); fill: var(--upwr-ink-subtle); }
+.lc-sc-trail-res.is-hit { fill: var(--upwr-accent); }
+.lc-sc-trail-park { fill: #2e6fb7; }
+.lc-sc-trail-park-t { font: 700 13px var(--upwr-sans); fill: #fff; }
+.lc-sc-trail-cell { fill: var(--upwr-surface); stroke: var(--upwr-rule); }
+.lc-sc-trail-cell.is-hit { fill: var(--upwr-accent); opacity: .75; }
+.lc-sc-trail-cellnow { fill: none; stroke: var(--upwr-ink); stroke-width: 2.5; }
