@@ -116,38 +116,38 @@ ch5_ui <- list(
 
     lc_p("Dwa parametry wystarczają też do porównania grup. W wykładzie 01
       ", gloss("wykres pudełkowy", "wykresy pudełkowe"), " wzrostu kobiet i mężczyzn się nie nakładały, a ", gloss("mediana", "mediany"), "
-      wynosiły 166.4 i 177.1 cm. Panel rysuje dwie krzywe normalne naraz;
-      przycisk ustawia modele zbliżone do tych danych: N(166, 6) dla kobiet
-      i N(178, 7) dla mężczyzn."),
+      wynosiły 166.4 i 177.1 cm. Panel rysuje dwa modele zbliżone do tych danych:
+      N(166, 6) dla kobiet i N(178, 7) dla mężczyzn. Uchwyt na szczycie krzywej
+      przesuwa ją w bok (zmienia μ) albo w górę i w dół (zmienia σ)."),
 
     figure_panel(
       label = "Ryc. 5.3",
       title = "Dwie krzywe normalne",
       full_width = TRUE,
-      lc_toolbar(
-        lc_group("Rozkład A",
-          lc_slider("ch5_cmp_mu1", "μ₁", -5, 15, 5, 0.5),
-          lc_slider("ch5_cmp_s1", "σ₁", 0.5, 5, 1.5, 0.1)
+      tags$div(class = "lc-normals", `data-mu1` = "166", `data-sd1` = "6", `data-mu2` = "178", `data-sd2` = "7",
+        `data-lo` = "130", `data-hi` = "215",
+        lc_toolbar(
+          tags$button(type = "button", class = "lc-action is-outline", `data-n-reset` = "1", tags$span("Od nowa")),
+          lc_readouts(
+            lc_readout("Kobiety", tags$span(`data-role` = "n1", "N(166.0, 6.0)"), color = "var(--upwr-cat-niebo)", swatch = TRUE),
+            lc_readout("Mężczyźni", tags$span(`data-role` = "n2", "N(178.0, 7.0)"), color = "var(--upwr-cat-terakota)", swatch = TRUE),
+            lc_readout("K > μ mężczyzn", tags$span(`data-role` = "a", "2.3%")),
+            lc_readout("M < μ kobiet", tags$span(`data-role` = "b", "4.3%"))
+          )
         ),
-        lc_group("Rozkład B",
-          lc_slider("ch5_cmp_mu2", "μ₂", -5, 15, 8, 0.5),
-          lc_slider("ch5_cmp_s2", "σ₂", 0.5, 5, 2, 0.1)
-        ),
-        lc_action("ch5_cmp_preset", "Mężczyźni vs kobiety (wzrost)", variant = "outline")
-      ),
-      lc_plot("ch5_compare_plot", max_height = "350px")
+        tags$div(class = "lc-area-canvas",
+          tags$canvas(`data-role` = "pdf", `aria-label` = "Gęstości wzrostu kobiet N(166, 6) i mężczyzn N(178, 7)"))
+      )
     ),
 
-    lc_p("Przy ustawieniach startowych rozkład B, N(8, 2), leży na prawo od A,
-      N(5, 1.5), i jest szerszy, więc jego szczyt jest niższy (0.199 wobec
-      0.266). Dla wzrostu krzywe wyraźnie się nakładają, choć środkowe
-      połowy grup są rozdzielone. Na wysokości 172 cm, w połowie między
-      średnimi, model daje 15.9% kobiet wyższych od tej wartości i 19.6%
-      mężczyzn niższych od niej. Kobiet wyższych niż średni mężczyzna
-      (178 cm) jest 2.3%, a mężczyzn niższych niż średnia kobieta (166 cm)
-      4.3%. Różnica średnich mówi, która grupa jest przeciętnie wyższa,
-      ale o tym, jak często pojedyncze osoby z obu grup się mijają, decyduje
-      także σ."),
+    lc_p("Krzywe wyraźnie się nakładają, choć środkowe połowy grup są rozdzielone.
+      Na wysokości 172 cm, w połowie między średnimi, model daje 15.9% kobiet
+      wyższych od tej wartości i 19.6% mężczyzn niższych od niej. Kobiet wyższych
+      niż średni mężczyzna (178 cm) jest 2.3%, a mężczyzn niższych niż średnia
+      kobieta (166 cm) 4.3%. Szersza krzywa mężczyzn ma niższy szczyt (0.057
+      wobec 0.066), bo pole pod każdą krzywą wynosi 1. Różnica średnich mówi,
+      która grupa jest przeciętnie wyższa, ale o tym, jak często pojedyncze
+      osoby z obu grup się mijają, decyduje także σ."),
 
     # ========================================================================
     # WIDGET 3: Standaryzacja (z-score)
@@ -176,20 +176,11 @@ ch5_ui <- list(
 
     lc_p("Panel standaryzuje jedną wartość. Górny wykres pokazuje ją na
       oryginalnej skali, dolny na skali z. Domyślnie jest to wynik egzaminu
-      80 punktów przy średniej 65 i SD 10."),
+      80 punktów przy średniej 65 i SD 10. Wartość x można też przeciągnąć
+      po górnym wykresie."),
 
-    figure_panel(
-      label = "Ryc. 5.4",
-      title = "Kalkulator z-score",
-      full_width = TRUE,
-      lc_toolbar(
-        numericInput("ch5_z_mu", "μ (np. średnia egzaminu)", value = 65),
-        numericInput("ch5_z_sigma", "σ (np. odch. std.)", value = 10, min = 0.1),
-        numericInput("ch5_z_x", "x (wartość do standaryzacji)", value = 80)
-      ),
-      lc_plot("ch5_z_plot", max_height = "350px"),
-      uiOutput("ch5_z_result")
-    ),
+    # Ryc. 5.4: prototyp 5.4-A (zaakceptowany 2026-10-29; Chart.js, zscore_chart.js)
+    s3p_54a_ui,
 
     lc_p("Wynik 80 punktów daje z = (80 - 65)/10 = 1.5: półtora odchylenia
       standardowego powyżej średniej. Oba wykresy mają identyczny kształt,
@@ -201,6 +192,23 @@ ch5_ui <- list(
       μ ± 2σ to przedział od -2 do 2. Każdy rozkład normalny przechodzi
       w ten sam rozkład N(0, 1), więc odsetki w pasach muszą być wszędzie
       takie same. Wystarczy je raz policzyć dla N(0, 1)."),
+
+    # Ryc. 5.5: prototyp 5c-C (zaakceptowany 2026-10-29)
+    lc_p("Standaryzacja pozwala porównywać wartości mierzone na różnych skalach.
+      Panel zestawia cztery takie pary. Przełącznik pokazuje je albo w ich
+      własnych skalach, albo na wspólnej skali z."),
+
+    s3p_5cc_ui,
+
+    lc_p("Kobieta o wzroście 180 cm ma z = (180 − 166)/6 = 2.33, a mężczyzna
+      o wzroście 190 cm z = (190 − 178)/7 = 1.71: mężczyzna jest wyższy
+      o 10 cm, ale to kobieta jest rzadsza w swojej grupie. Wynik 90 punktów
+      na egzaminie A (μ = 60, σ = 15) daje z = 2.00, a 680 punktów w teście B
+      (μ = 500, σ = 100) z = 1.80, więc lepszy jest wynik z egzaminu A.
+      Temperatura 37.4 °C i iloraz inteligencji 130 mają to samo z = 2,
+      więc są tak samo rzadkie: wyższą wartość ma po 2.3% populacji. Ten sam
+      koszykarz o wzroście 213 cm ma z = 5.00 wśród wszystkich mężczyzn, ale
+      tylko z = 1.44 wśród zawodników NBA (parametry NBA są orientacyjne)."),
 
     # ========================================================================
     # WIDGET 4: Obliczanie prawdopodobieństw
@@ -220,7 +228,7 @@ ch5_ui <- list(
     lc_p("Panel zaznacza szukane pole pod krzywą N(0, 1) i podaje wynik."),
 
     figure_panel(
-      label = "Ryc. 5.5",
+      label = "Ryc. 5.6",
       title = "Kalkulator prawdopodobieństw N(0, 1)",
       full_width = TRUE,
       lc_toolbar(
@@ -252,6 +260,19 @@ ch5_ui <- list(
       kobiet N(166, 6) percentyl rzędu 0.9 wynosi 173.7 cm,
       więc 10% kobiet jest wyższych. Wartość 1.96 wróci w kolejnych
       wykładach przy przedziałach ufności."),
+
+    lc_p("Rozkład normalny pracuje w wielu dziedzinach. Galeria zestawia sześć
+      przypadków z różnych kierunków studiów; próg można przesuwać po wykresie."),
+
+    # Ryc. 5.7: prototyp 5a (zaakceptowany 2026-10-29; Chart.js, cases_chart.js)
+    s3p_5a_ui,
+
+    lc_p("Nie każda zmienna ma jednak rozkład normalny. Galeria porównuje zmienne
+      z ankiety z krzywą normalną o tej samej średniej i tym samym odchyleniu
+      standardowym."),
+
+    # Ryc. 5.8: prototyp 5d (zaakceptowany 2026-10-29)
+    s3p_5d_ui,
 
     lc_chapter_next(
       num       = "06",
@@ -375,105 +396,6 @@ ch5_server <- function(input, output, session) {
                                 round(mu + sigma, 1), "]"), color = unname(upwr_cat["bursztyn"]))
     )
   })
-
-  # --- Widget 2: Porównanie ---
-  observeEvent(input$ch5_cmp_preset, {
-    updateSliderInput(session, "ch5_cmp_mu1", value = 166, min = 140, max = 200)
-    updateSliderInput(session, "ch5_cmp_s1", value = 6, min = 1, max = 15)
-    updateSliderInput(session, "ch5_cmp_mu2", value = 178, min = 140, max = 200)
-    updateSliderInput(session, "ch5_cmp_s2", value = 7, min = 1, max = 15)
-  })
-
-  zoom_plot_server("ch5_compare_plot", reactive({
-    mu1 <- input$ch5_cmp_mu1; s1 <- input$ch5_cmp_s1
-    mu2 <- input$ch5_cmp_mu2; s2 <- input$ch5_cmp_s2
-
-    x_min <- min(mu1 - 4*s1, mu2 - 4*s2)
-    x_max <- max(mu1 + 4*s1, mu2 + 4*s2)
-    x_seq <- seq(x_min, x_max, length.out = 500)
-
-    df <- data.frame(
-      x = rep(x_seq, 2),
-      y = c(dnorm(x_seq, mu1, s1), dnorm(x_seq, mu2, s2)),
-      group = rep(c("A", "B"), each = 500)
-    )
-
-    ggplot(df, aes(x = x, y = y, color = group, fill = group)) +
-      geom_line(linewidth = 1.2) +
-      geom_area(alpha = 0.15, position = "identity") +
-      scale_color_manual(values = c("A" = unname(upwr_cat["niebo"]), "B" = unname(upwr_cat["terakota"])),
-                         labels = c(paste0("A: N(", mu1, ", ", s1, ")"),
-                                    paste0("B: N(", mu2, ", ", s2, ")")),
-                         name = "") +
-      scale_fill_manual(values = c("A" = unname(upwr_cat["niebo"]), "B" = unname(upwr_cat["terakota"])),
-                        guide = "none") +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr() +
-      theme(legend.position = "top")
-  }))
-
-  # --- Widget 3: Z-score ---
-  output$ch5_z_result <- renderUI({
-    mu <- input$ch5_z_mu
-    sigma <- input$ch5_z_sigma
-    x <- input$ch5_z_x
-    req(sigma > 0)
-
-    z <- (x - mu) / sigma
-
-    tagList(
-      lc_readouts(lc_readout("z", lc_fmt(z, 2), color = col_normal)),
-      lc_caption(
-        paste0("z = (", x, " - ", mu, ") / ", sigma, ". Wartość ", x, " leży ", round(abs(z), 2),
-               " odchyleń standardowych ",
-               if (z >= 0) "powyżej" else "poniżej", " średniej."),
-        tone = "info"
-      )
-    )
-  })
-
-  zoom_plot_server("ch5_z_plot", reactive({
-    mu <- input$ch5_z_mu
-    sigma <- input$ch5_z_sigma
-    x <- input$ch5_z_x
-    req(sigma > 0)
-
-    z <- (x - mu) / sigma
-
-    # Górny wykres: oryginalna skala
-    x_seq <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 500)
-    df_orig <- data.frame(x = x_seq, y = dnorm(x_seq, mu, sigma))
-
-    # Dolny wykres: standaryzowana skala
-    z_seq <- seq(-4, 4, length.out = 500)
-    df_std <- data.frame(x = z_seq, y = dnorm(z_seq))
-
-    p1 <- ggplot(df_orig, aes(x = x, y = y)) +
-      geom_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      geom_vline(xintercept = x, color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
-      annotate("point", x = x, y = dnorm(x, mu, sigma),
-               color = unname(upwr_cat["terakota"]), size = 4) +
-      annotate("text", x = x, y = dnorm(x, mu, sigma) * 1.2,
-               label = paste0("x = ", x), color = unname(upwr_cat["terakota"]),
-               size = 4, fontface = "bold", vjust = -0.5) +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr(base_size = 12)
-
-    p2 <- ggplot(df_std, aes(x = x, y = y)) +
-      geom_line(color = col_normal, linewidth = 1.2) +
-      geom_vline(xintercept = z, color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
-      annotate("point", x = z, y = dnorm(z), color = unname(upwr_cat["terakota"]), size = 4) +
-      annotate("text", x = z, y = dnorm(z) * 1.2,
-               label = paste0("z = ", round(z, 2)), color = unname(upwr_cat["terakota"]),
-               size = 4, fontface = "bold", vjust = -0.5) +
-      labs(
-           x = "z", y = "f(z)") +
-      theme_upwr(base_size = 12)
-
-    gridExtra::arrangeGrob(p1, p2, ncol = 1)
-  }))
 
   # --- Widget 4: Kalkulator prawdopodobieństw ---
   zoom_plot_server("ch5_prob_plot", reactive({
