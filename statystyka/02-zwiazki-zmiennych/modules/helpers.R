@@ -82,11 +82,42 @@ scene_texts <- function(input, output, id, texts) {
 }
 
 # ============================================================================
-# Pułapki korelacji: dane bez związku (wartość odstająca, rozdz. 5)
+# Wykresy rozrzutu w Chart.js (scatter_charts.js): dane bazowe z R
 # ============================================================================
 
-# Dwie niezależne zmienne (ρ = 0), SD = 3; wartość odstająca leży o 15 dalej
-# niż największe x i y, więc jej wpływ na r jest taki jak opisany w tekście.
-generate_uncorrelated <- function(n) {
-  data.frame(x = round(rnorm(n, 0, 3), 2), y = round(rnorm(n, 0, 3), 2))
+# Konfiguracja dla kontenera: JSON w atrybucie data-config.
+scatter_config <- function(config) {
+  jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA)
 }
+
+# x i szum o średniej 0 i SD 1, szum nieskorelowany z x (jak make_xy()
+# w scripts/regen_correlation_assets.R). Dzięki temu y = b·x + s·e ma
+# dokładnie nachylenie MNK b i r = b / sqrt(b² + s²).
+corr_base <- function(n, seed) {
+  set.seed(seed)
+  x <- as.numeric(scale(rnorm(n)))
+  e <- rnorm(n)
+  e <- as.numeric(scale(residuals(lm(e ~ x))))
+  list(x = x, e = e)
+}
+
+# Ryc. 4.3: ten sam trend (nachylenie 1), rozrzut s dobrany tak,
+# żeby r = 0.31, 0.69 i 0.94 (s = sqrt(1 / r² − 1)).
+corr_strength <- c(corr_base(90, seed = 32),
+                   list(sigma = sqrt(1 / c(0.31, 0.69, 0.94)^2 - 1),
+                        labels = c("Słaba", "Średnia", "Silna"), start = 1L))
+
+# Ryc. 4.4: y = b · (x + 0.33 · e); rozrzut rośnie razem z nachyleniem,
+# więc r = 1 / sqrt(1 + 0.33²) ≈ 0.95 przy każdym b > 0.
+corr_slope <- c(corr_base(90, seed = 42),
+                list(rel = 0.33, slopes = c(0.4, 0.8, 1.6), start = 1L))
+
+# Ryc. 5.4 (paradoks Simpsona): te same dane co w scenie z rozdz. 4.
+# g to numer branży od 0, kolory branż jak w scenes.css.
+simpson_config <- list(
+  x = tenure_data$staz, y = tenure_data$pensja,
+  g = as.integer(tenure_data$branza) - 1L,
+  groups = branch_levels,
+  colors = c("--upwr-cat-bursztyn", "--upwr-cat-wrzos", "--upwr-cat-indygo"),
+  xlim = c(0, 30), ylim = c(2, 20)
+)

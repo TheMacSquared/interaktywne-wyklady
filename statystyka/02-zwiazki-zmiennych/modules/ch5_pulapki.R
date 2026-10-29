@@ -79,17 +79,30 @@ ch5_ui <- list(
       iloczyn może przeważyć całą resztę sumy w liczniku. Panel losuje 50 punktów
       z dwóch niezależnych zmiennych, czyli takich, między którymi związku nie ma.
       Drugi przycisk dopisuje punkt leżący o 15 jednostek dalej niż największe
-      \\(x\\) i największe \\(y\\) w danych."),
+      \\(x\\) i największe \\(y\\) w danych. Dopisany punkt można potem
+      przeciągać po wykresie."),
 
     figure_panel(
       label = "Ryc. 5.3",
       title = "Wpływ wartości odstającej na r",
-      lc_toolbar(
-        lc_action("ch5_gen_outlier", "Nowe dane (brak związku)", variant = "solid"),
-        lc_action("ch5_add_outlier", "Dodaj wartość odstającą", variant = "solid"),
-        lc_readouts(uiOutput("ch5_outlier_r"))
-      ),
-      lc_plot("ch5_outlier_plot", max_height = "300px")
+      tags$div(class = "lc-scat lc-outlier", `data-n` = "50", `data-sd` = "3", `data-shift` = "15",
+        lc_toolbar(
+          tags$button(type = "button", class = "lc-action is-solid", `data-o-new` = "1",
+                      tags$span("Nowe dane (brak związku)")),
+          tags$button(type = "button", class = "lc-action is-solid", `data-o-add` = "1",
+                      tags$span("Dodaj wartość odstającą")),
+          lc_readouts(
+            lc_readout("r", tags$span(`data-role` = "r", "–"), color = "var(--upwr-accent)"),
+            lc_readout("r bez odstających", tags$span(`data-role` = "r0", "–"),
+                       color = "var(--upwr-ink-subtle)"),
+            lc_readout("Wartości odstające", tags$span(`data-role` = "k", "0"))
+          )
+        ),
+        tags$div(class = "lc-scat-canvas",
+          tags$canvas(`data-role` = "plot",
+                      `aria-label` = "Wykres rozrzutu 50 punktów bez związku z prostą dopasowania; dopisane wartości odstające można przeciągać")),
+        lc_caption("Przeciągnij dopisany punkt. Przerywana prosta pokazuje dopasowanie bez wartości odstających.")
+      )
     ),
 
     lc_p("Bez dodatkowego punktu \\(r\\) z 50 obserwacji leży zwykle blisko zera:
@@ -125,18 +138,35 @@ ch5_ui <- list(
       odwrócenie nazywa się ", gloss("paradoks Simpsona", "paradoksem Simpsona"),
       ". Wracamy do stażu i pensji z rozdziału 4, ale tym razem z trzech branż,
       po 40 osób z każdej. Firma biotechnologiczna z wykresu rozrzutu to jedna
-      z nich. W widoku globalnym wszystkie punkty analizujemy razem, w drugim
-      widoku osobno w każdej branży."),
+      z nich. W widoku „Razem” wszystkie punkty analizujemy łącznie, w widoku
+      „Osobno” każdą branżę oddzielnie."),
 
     figure_panel(
       label = "Ryc. 5.4",
       title = "Paradoks Simpsona",
-      div(class = "step-buttons",
-        lc_action("ch5_simpson_global", "Spojrzenie globalne", variant = "outline"),
-        lc_action("ch5_simpson_groups", "Podział na branże", variant = "outline")
-      ),
-      lc_plot("ch5_simpson_plot", ratio = "1.5/1", max_height = "420px"),
-      uiOutput("ch5_simpson_caption")
+      tags$div(class = "lc-scat lc-simpson", `data-config` = scatter_config(simpson_config),
+        lc_toolbar(
+          lc_group("Widok", tags$div(class = "lc-seg", role = "group",
+            tags$button(type = "button", `data-s-view` = "all", `aria-pressed` = "true", "Razem"),
+            tags$button(type = "button", `data-s-view` = "split", `aria-pressed` = "false", "Osobno"))),
+          lc_readouts(
+            lc_readout("r razem", tags$span(`data-role` = "r", "-0.42"), color = "var(--upwr-secondary)"),
+            lapply(seq_along(branch_levels), function(i) {
+              tagAppendAttributes(
+                lc_readout(branch_levels[[i]], tags$span(`data-role` = paste0("r", i - 1L), ""),
+                           color = paste0("var(", simpson_config$colors[[i]], ")"), swatch = TRUE),
+                `data-s-group` = i - 1L, hidden = NA)
+            })
+          )
+        ),
+        tags$div(class = "lc-scat-canvas",
+          tags$canvas(`data-role` = "plot",
+                      `aria-label` = "Staż a pensja 120 pracowników trzech branż: prosta dla wszystkich razem albo osobna prosta dla każdej branży")),
+        lc_status(
+          tagAppendAttributes(lc_verdict(tags$strong("Razem:"), type = "warning"), `data-role` = "verdict"),
+          tags$span(`data-role` = "caption", " r = -0.42. Dłuższy staż, niższa pensja?")
+        )
+      )
     ),
 
     lc_p("W danych połączonych \\(r = -0.42\\): wygląda na to, że im dłuższy staż,
@@ -180,93 +210,7 @@ ch5_ui <- list(
   )
 )
 
+# Ryc. 5.3 i 5.4 liczą się w przeglądarce (scatter_charts.js); serwer bez wyjść.
 ch5_server <- function(input, output, session) {
-
-  # =============================================
-  # Wartość odstająca
-  # =============================================
-  ch5_outlier_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch5_gen_outlier, {
-    ch5_outlier_data(generate_uncorrelated(50))
-  })
-
-  observeEvent(input$ch5_add_outlier, {
-    df <- ch5_outlier_data()
-    if (is.null(df)) return()
-    outlier <- data.frame(x = max(df$x) + 15, y = max(df$y) + 15)
-    ch5_outlier_data(rbind(df, outlier))
-  })
-
-  zoom_plot_server("ch5_outlier_plot", reactive({
-    df <- ch5_outlier_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Nowe dane”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      is_out <- seq_len(nrow(df)) > 50
-      ggplot(df, aes(x = x, y = y)) +
-        geom_point(color = ifelse(is_out, upwr_accent, upwr_secondary),
-                   size = ifelse(is_out, 4, 2.5), alpha = 0.7) +
-        geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = upwr_accent) +
-        labs(x = "X", y = "Y")
-    }
-  }))
-
-  output$ch5_outlier_r <- renderUI({
-    df <- ch5_outlier_data()
-    if (is.null(df)) return(NULL)
-    tagList(
-      lc_readout("r", lc_fmt(cor(df$x, df$y), 3), color = upwr_secondary),
-      lc_readout("Wartości odstające", max(0, nrow(df) - 50), color = upwr_accent)
-    )
-  })
-
-  # =============================================
-  # Paradoks Simpsona: staż a pensja w trzech branżach
-  # =============================================
-  ch5_simpson_view <- reactiveVal("global")
-  observeEvent(input$ch5_simpson_global, ch5_simpson_view("global"))
-  observeEvent(input$ch5_simpson_groups, ch5_simpson_view("groups"))
-
-  zoom_plot_server("ch5_simpson_plot", reactive({
-    df <- tenure_data
-    if (ch5_simpson_view() == "global") {
-      ggplot(df, aes(x = staz, y = pensja)) +
-        geom_point(color = "grey75", size = 2.4, alpha = 0.85) +
-        geom_smooth(method = "lm", formula = y ~ x, se = FALSE,
-                    color = upwr_secondary, linewidth = 1.4) +
-        labs(x = "Staż (lata)", y = "Pensja (tys. zł)")
-    } else {
-      ggplot(df, aes(x = staz, y = pensja, color = branza)) +
-        geom_smooth(method = "lm", formula = y ~ x, se = FALSE,
-                    color = upwr_secondary, linewidth = 1.0,
-                    linetype = "dashed", aes(group = 1)) +
-        geom_point(size = 2.4, alpha = 0.85) +
-        geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 1.2,
-                    aes(group = branza)) +
-        scale_color_manual(values = branch_colors, name = NULL) +
-        labs(x = "Staż (lata)", y = "Pensja (tys. zł)") +
-        theme(legend.position = "top")
-    }
-  }))
-
-  output$ch5_simpson_caption <- renderUI({
-    df <- tenure_data
-    if (ch5_simpson_view() == "global") {
-      lc_status(
-        lc_verdict(tags$strong("Spojrzenie globalne:"), type = "warning"),
-        paste0(" r = ", lc_fmt(cor(df$staz, df$pensja), 2), ". Dłuższy staż, niższa pensja?")
-      )
-    } else {
-      r_b <- vapply(split(df, df$branza), function(d) cor(d$staz, d$pensja), numeric(1))
-      lc_status(
-        lc_verdict(tags$strong("Podział na branże:"), type = "ok"),
-        paste0(" w każdej branży dłuższy staż, wyższa pensja (",
-               paste0(names(r_b), ": r = ", lc_fmt(r_b, 2), collapse = "; "), ").")
-      )
-    }
-  })
+  invisible(NULL)
 }

@@ -96,15 +96,30 @@ ch4_ui <- list(
       informacja zawarta w \\(r\\)."),
 
     lc_p("Wartość bezwzględna \\(|r|\\) mówi o sile związku liniowego, czyli
-      o tym, jak ciasno punkty skupiają się wokół prostej. Trzy panele poniżej
-      mają ten sam trend i różnią się tylko rozrzutem punktów."),
+      o tym, jak ciasno punkty skupiają się wokół prostej. Na wykresie poniżej
+      trend jest stały, a zmienia się tylko rozrzut punktów."),
 
     figure_panel(
       label = "Ryc. 4.3",
       title = "Siła korelacji",
-      tags$img(src = "assets/correlation-scatter.png",
-               alt = "Trzy chmury punktów o rosnącej sile korelacji liniowej.",
-               tabindex = "0", role = "button")
+      tags$div(class = "lc-scat lc-strength", `data-config` = scatter_config(corr_strength),
+        lc_toolbar(
+          lc_group("Siła związku", tags$div(class = "lc-seg", role = "group",
+            lapply(seq_along(corr_strength$labels), function(i) {
+              tags$button(type = "button", `data-s-preset` = i - 1L,
+                          `aria-pressed` = if (i - 1L == corr_strength$start) "true" else "false",
+                          corr_strength$labels[[i]])
+            }))),
+          lc_readouts(
+            lc_readout("r", tags$span(`data-role` = "r", "0.69"), color = "var(--upwr-accent)"),
+            lc_readout("r²", tags$span(`data-role` = "r2", "48%"))
+          )
+        ),
+        tags$div(class = "lc-scat-canvas",
+          tags$canvas(`data-role` = "plot",
+                      `aria-label` = "Wykres rozrzutu 90 punktów wokół prostej o nachyleniu 1; rozrzut wokół prostej można zmieniać")),
+        lc_caption("Przeciągnij uchwyt na brzegu przerywanego pasa w górę lub w dół.")
+      )
     ),
 
     lc_p("Przy \\(r = 0.31\\) trend ledwie widać w chmurze punktów, przy 0.69
@@ -116,20 +131,36 @@ ch4_ui <- list(
       88%. W firmie biotechnologicznej staż odpowiada za około 44% zróżnicowania
       pensji. Wrócimy do tego w wykładzie 07 o regresji."),
 
-    lc_p("Siła związku to jednak nie to samo co nachylenie prostej. Trzy panele
-      poniżej mają nachylenia 0.4, 0.8 i 1.6, a punkty w każdym równie ciasno
-      trzymają się prostej."),
+    lc_p("Siła związku to jednak nie to samo co nachylenie prostej. Na wykresie
+      poniżej nachylenie zmienia się od 0.1 do 2, a rozrzut rośnie razem z nim,
+      więc punkty przy każdym nachyleniu równie ciasno trzymają się prostej."),
 
     figure_panel(
       label = "Ryc. 4.4",
       title = "r nie zależy od nachylenia",
-      tags$img(src = "assets/correlation-strength.png",
-               alt = "Trzy zależności liniowe o różnych nachyleniach, ale podobnej sile korelacji.",
-               tabindex = "0", role = "button")
+      tags$div(class = "lc-scat lc-slope", `data-config` = scatter_config(corr_slope),
+        lc_toolbar(
+          lc_group("Gotowe nachylenia", tags$div(class = "lc-seg", role = "group",
+            lapply(seq_along(corr_slope$slopes), function(i) {
+              tags$button(type = "button", `data-s-preset` = i - 1L,
+                          `aria-pressed` = if (i - 1L == corr_slope$start) "true" else "false",
+                          format(corr_slope$slopes[[i]], nsmall = 1))
+            }))),
+          lc_readouts(
+            lc_readout("Nachylenie", tags$span(`data-role` = "b", "0.80")),
+            lc_readout("SD reszt", tags$span(`data-role` = "sd", "0.26")),
+            lc_readout("r", tags$span(`data-role` = "r", "0.95"), color = "var(--upwr-accent)")
+          )
+        ),
+        tags$div(class = "lc-scat-canvas",
+          tags$canvas(`data-role` = "plot",
+                      `aria-label` = "Wykres rozrzutu 90 punktów wokół prostej; nachylenie prostej można zmieniać, korelacja pozostaje 0.95")),
+        lc_caption("Przeciągnij uchwyt na prostej w górę lub w dół.")
+      )
     ),
 
-    lc_p("Mimo czterokrotnej różnicy nachyleń \\(r\\) wynosi w panelach 0.96, 0.96
-      i 0.95. Współczynnik korelacji nie mówi, o ile wzrośnie \\(y\\), gdy \\(x\\)
+    lc_p("Przy nachyleniu 0.4, 0.8, 1.6 i każdym innym \\(r\\) wynosi 0.95.
+      Współczynnik korelacji nie mówi, o ile wzrośnie \\(y\\), gdy \\(x\\)
       wzrośnie o jednostkę, na przykład o ile złotych rośnie pensja z każdym
       rokiem stażu. Mówi tylko, jak ściśle punkty trzymają się prostej.
       Pytanie „o ile?” należy do regresji."),

@@ -69,10 +69,20 @@ ui <- lecture_page(
   lecture_title = "Związki dwóch zmiennych",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  # Sceny SVG (kontrola drogowa, pensje w branżach, staż a pensja): rozdz. 2–4
+  # Sceny SVG (kontrola drogowa, pensje w branżach, staż a pensja): rozdz. 2–4.
+  # Chart.js do wykresów rozrzutu (Ryc. 4.3, 4.4, 5.3, 5.4): scatter_charts.js.
   header_extras = tagList(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
-    includeScript(file.path(app_dir, "modules", "scenes.js"))
+    includeScript(file.path(app_dir, "modules", "scenes.js")),
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    includeScript(file.path(app_dir, "modules", "scatter_charts.js")),
+    tags$style(HTML("
+      .lc-scat-canvas { position: relative; aspect-ratio: 1.8 / 1; touch-action: none; }
+      .lc-outlier .lc-scat-canvas, .lc-simpson .lc-scat-canvas { aspect-ratio: 1.7 / 1; }
+      @media (max-width: 640px) { .lc-scat-canvas, .lc-outlier .lc-scat-canvas, .lc-simpson .lc-scat-canvas { aspect-ratio: 1.15 / 1; } }
+      .lc-scat .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+      .lc-scat [hidden] { display: none !important; }
+    "))
   )
 )
 
