@@ -78,6 +78,7 @@ ui <- lecture_page(
   header_extras = tagList(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
+    includeScript(file.path(app_dir, "modules", "lejek_chart.js")),
     includeScript(file.path(app_dir, "modules", "area_chart.js")),
     includeScript(file.path(app_dir, "modules", "quantile_chart.js")),
     includeScript(file.path(app_dir, "modules", "normals_chart.js")),

@@ -36,18 +36,11 @@ ch1_ui <- list(
       ścianka ma tę samą szansę, więc \\(P(X = k) = 1/6 \\approx 0.167\\)
       dla każdego \\(k\\). Po \\(n\\) rzutach możemy policzyć, ile razy wypadła
       ścianka \\(k\\), i obliczyć ",
-      gloss("częstość względna", "częstość względną"), " \\(n_k / n\\),
+      gloss("częstość względna", "częstość względną"), ",
       dokładnie tak jak w ", gloss("tabela częstości", "tabeli częstości"), " z poprzedniego wykładu.
       ", gloss("prawo wielkich liczb", "Prawo wielkich liczb"), " mówi, że
       wraz ze wzrostem liczby rzutów częstość względna zbliża się do
       prawdopodobieństwa."),
-
-    lc_formula_annotated(
-      "\\frac{⟦1|n_k⟧}{⟦2|n⟧} \\;\\longrightarrow\\; ⟦3|P(X = k)⟧ \\qquad \\text{gdy } n \\to \\infty",
-      notes  = list("liczba wyników k", "liczba rzutów", "prawdopodobieństwo"),
-      colors = c("niebo", "szalwia", "indygo"),
-      above  = 1
-    ),
 
     lc_p("Panel rzuca wirtualną kostką. Każdy rzut kładzie kafelek nad
       wylosowaną ścianką, a przerywana linia pokazuje, ile kafelków
@@ -100,8 +93,12 @@ ch1_ui <- list(
       nad dowolnym przedziałem odpowiada odsetkowi obserwacji w tym przedziale.
       Krzywym gęstości przyjrzymy się dokładniej w rozdziale 4."),
 
-    lc_p("Panel losuje próbę z jednego z trzech modeli i rysuje jej
-      histogram. Krzywą modelu można nałożyć na histogram."),
+    lc_p("Panel losuje próbę z jednego z czterech modeli. Dwa są ciągłe
+      i rysują histogram oraz krzywą gęstości. Dwa są dyskretne: liczby
+      książek przeczytanych w semestrze (rozkład Poissona) i liczby trafionych
+      pytań w teście (rozkład dwumianowy). Dla nich dane pokazują słupki
+      częstości, a model punkty z prawdopodobieństwami. Model można nałożyć
+      na dane."),
 
     figure_panel(
       label = "Ryc. 1.3",
@@ -110,17 +107,18 @@ ch1_ui <- list(
       lc_toolbar(
         selectInput("ch1_emp_dist", "Rozkład źródłowy",
             choices = c(
-              "Wzrost studentów (normalny)" = "normal",
-              "Czas dojazdu (skośny)"       = "skewed",
-              "Ocena losowa (jednostajny)"   = "uniform"
+              "Wzrost studentów (normalny, ciągła)"            = "normal",
+              "Czas dojazdu (skośny, ciągła)"                  = "skewed",
+              "Książki przeczytane w semestrze (Poissona, dyskretna)" = "poisson",
+              "Trafione pytania w teście (dwumianowy, dyskretna)"     = "binomial"
             ),
             selected = "normal"
           ),
         lc_slider("ch1_emp_n", "Wielkość próby", 20, 5000, 200, 20),
         lc_action("ch1_emp_resample", "Losuj nową próbę", icon = "shuffle", variant = "solid"),
         tags$div(class = "lc-checks",
-          checkboxInput("ch1_show_hist", "Histogram (dane empiryczne)", value = TRUE),
-          checkboxInput("ch1_show_density", "Krzywa gęstości (model teoretyczny)", value = FALSE)
+          checkboxInput("ch1_show_hist", "Dane z próby (histogram lub słupki)", value = TRUE),
+          checkboxInput("ch1_show_density", "Model (krzywa gęstości lub prawdopodobieństwa)", value = FALSE)
         )
       ),
       lc_plot("ch1_emp_vs_theo", max_height = "380px")
@@ -210,6 +208,28 @@ ch1_ui <- list(
       colors = c("indygo", "bursztyn")
     ),
 
+    lc_p("Przykład: uczciwa kostka sześcienna. Zmienna \\(X\\) przyjmuje wartości
+      od 1 do 6 i każda ma to samo prawdopodobieństwo. Tabela pokazuje cały
+      rozkład."),
+
+    tags$div(style = "max-width:600px; margin:0 auto;",
+      lc_table(
+        local({
+          df <- data.frame(matrix(c("P(X = k)", rep("1/6", 6)), nrow = 1),
+                           stringsAsFactors = FALSE)
+          names(df) <- c("k", as.character(1:6))
+          df
+        }),
+        cols = c(
+          list(lc_col("k", "k", "row")),
+          lapply(as.character(1:6), function(k) lc_col(k, k, "text"))
+        ),
+        prose = TRUE,
+        fit = TRUE,
+        label = "Rozkład prawdopodobieństwa uczciwej kostki"
+      )
+    ),
+
     lc_p("Sprawdź, które z tabelek poniżej są rozkładami prawdopodobieństwa,
       a potem odsłoń werdykty."),
 
@@ -239,6 +259,33 @@ ch1_ui <- list(
 # Chapter 1 Server
 # --------------------------------------------------------------------------
 
+# Zmienna dyskretna: słupki częstości z próby i prawdopodobieństwa modelu.
+ch1_emp_discrete_plot <- function(d, show_hist, show_dens) {
+  k <- switch(d$dist, poisson = 0:12, binomial = 0:10)
+  pmf <- switch(d$dist,
+    poisson  = dpois(k, lambda = 3),
+    binomial = dbinom(k, size = 10, prob = 0.6)
+  )
+  freq <- tabulate(d$data + 1, nbins = length(k)) / d$n
+  ymax <- max(c(freq, pmf)) * 1.12
+
+  p <- ggplot()
+  if (show_hist) {
+    p <- p + geom_col(data = data.frame(x = k, y = freq), aes(x, y),
+                      fill = unname(upwr_cat["niebo"]), alpha = 0.6, width = 0.8)
+  }
+  if (show_dens) {
+    model <- data.frame(x = k, y = pmf)
+    p <- p + geom_linerange(data = model, aes(x = x, ymin = 0, ymax = y),
+                            color = unname(upwr_cat["terakota"]), linewidth = 1) +
+      geom_point(data = model, aes(x, y), color = unname(upwr_cat["terakota"]), size = 3)
+  }
+  p + coord_cartesian(xlim = c(min(k) - 0.6, max(k) + 0.6), ylim = c(0, ymax)) +
+    scale_x_continuous(breaks = k) +
+    labs(x = "Wartość (liczba całkowita)", y = "Częstość względna") +
+    theme_upwr()
+}
+
 ch1_server <- function(input, output, session) {
 
   # --- Widget 0: Rozkład empiryczny vs teoretyczny ---
@@ -252,8 +299,9 @@ ch1_server <- function(input, output, session) {
     dist <- input$ch1_emp_dist
     data <- switch(dist,
       "normal"  = rnorm(n, mean = 170, sd = 8),
-      "skewed"  = rgamma(n, shape = 3, scale = 10) + 5,
-      "uniform" = runif(n, min = 1, max = 6)
+      "skewed"   = rgamma(n, shape = 3, scale = 10) + 5,
+      "poisson"  = rpois(n, lambda = 3),
+      "binomial" = rbinom(n, size = 10, prob = 0.6)
     )
     list(data = data, dist = dist, n = n)
   })
@@ -270,6 +318,10 @@ ch1_server <- function(input, output, session) {
                  label = "Włącz przynajmniej jedną warstwę",
                  size = 6, color = upwr_reference) +
         theme_void())
+    }
+
+    if (d$dist %in% c("poisson", "binomial")) {
+      return(ch1_emp_discrete_plot(d, show_hist, show_dens))
     }
 
     df <- data.frame(x = d$data)

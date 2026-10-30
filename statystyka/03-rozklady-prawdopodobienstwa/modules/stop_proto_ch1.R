@@ -27,6 +27,8 @@ s3p_11a_ui <- s3p_panel("1.1-A", "Ryc. 1.1", "Stos kostek", proto = FALSE,
 
 # (1.1-C) „Lejek”: częstość szóstki w wielu seriach na tle 1/6 ± 2·SE.
 s3p_11c_len <- 1000
+# Punkty na skali log, w których rysujemy serie (Chart.js, lejek_chart.js).
+s3p_11c_nn <- unique(round(exp(seq(0, log(s3p_11c_len), length.out = 200))))
 
 s3p_11c_ui <- s3p_panel("1.1-C", "Ryc. 1.2", "Lejek", proto = FALSE,
   lc_toolbar(
@@ -34,7 +36,9 @@ s3p_11c_ui <- s3p_panel("1.1-C", "Ryc. 1.2", "Lejek", proto = FALSE,
     lc_action("s3p_11c_reset", icon = "reset", variant = "ghost", aria_label = "Wyzeruj serie"),
     lc_readouts(uiOutput("s3p_11c_read"))
   ),
-  lc_plot("s3p_11c_plot", ratio = "2.2/1"),
+  tags$div(class = "lc-lejek", style = "position:relative; aspect-ratio:2.2/1;",
+    tags$canvas(`data-role` = "lejek",
+                `aria-label` = "Lejek: częstość szóstek w seriach rzutów na tle pasa 1/6")),
   uiOutput("s3p_11c_caption")
 )
 
@@ -132,8 +136,8 @@ s3p_ch1_server <- function(input, output, session) {
 
   output$s3p_11a_caption <- renderUI({
     n <- length(rolls_a())
-    lc_caption(if (n == 0) "Model mówi: każda ścianka 1/6. Sprawdzamy, co mówią dane."
-      else if (n <= 12) "Kilka rzutów: kolumny są nierówne, niektórych ścianek jeszcze nie ma. Z tak małej próby nie odgadniemy modelu."
+    if (n == 0) return(NULL)
+    lc_caption(if (n <= 12) "Kilka rzutów: kolumny są nierówne, niektórych ścianek jeszcze nie ma. Z tak małej próby nie odgadniemy modelu."
       else if (n <= s3p_11a_tiles_max) "Kolumny rosną w różnym tempie, ale wszystkie trzymają się blisko linii n/6. Bezwzględne różnice wysokości nie znikają, za to rosną wolniej niż same kolumny."
       else "W skali odsetków różnice topnieją: słupki przylegają do 1/6. Częstości z danych zbliżają się do rozkładu prawdopodobieństwa.")
   })
@@ -155,25 +159,14 @@ s3p_ch1_server <- function(input, output, session) {
             lc_readout("n = 1000", sd_at(1000), color = upwr_accent))
   })
 
-  zoom_plot_server("s3p_11c_plot", reactive({
-    s <- series_c(); p <- 1/6
-    nn <- unique(round(exp(seq(0, log(s3p_11c_len), length.out = 200))))
-    funnel <- data.frame(n = nn, lo = pmax(0, p - 2 * sqrt(p * (1 - p) / nn)), hi = p + 2 * sqrt(p * (1 - p) / nn))
-    g <- ggplot() +
-      geom_ribbon(data = funnel, aes(n, ymin = lo, ymax = hi), fill = upwr_cat[["kurkuma"]], alpha = 0.3) +
-      geom_hline(yintercept = p, linetype = "22", colour = upwr_ink)
-    if (length(s)) {
-      d <- do.call(rbind, lapply(seq_along(s), function(i) data.frame(n = nn, f = s[[i]][nn], id = i)))
-      g <- g + geom_line(data = d[d$id < length(s), ], aes(n, f, group = id), colour = upwr_secondary,
-                         alpha = 0.35, linewidth = 0.5) +
-        geom_line(data = d[d$id == length(s), ], aes(n, f), colour = upwr_accent, linewidth = 1)
-    }
-    g + scale_x_log10(breaks = c(1, 10, 100, 1000), labels = function(v) lc_fmt(v, 0, " ")) +
-      coord_cartesian(ylim = c(0, 0.6)) +
-      labs(x = "Liczba rzutów w serii (skala log.)", y = "Częstość szóstek",
-           subtitle = "Pas: 1/6 ± 2 · √(p(1 − p)/n) · burgundowa linia: ostatnia seria") +
-      theme_upwr(grid = "y")
-  }))
+  # Wykres rysuje lejek_chart.js; serwer wysyła punkty n i częstości każdej serii.
+  observe({
+    s <- series_c()
+    session$sendCustomMessage("lejek_series", list(
+      n      = s3p_11c_nn,
+      series = lapply(s, function(f) unname(f[s3p_11c_nn]))
+    ))
+  })
 
   output$s3p_11c_caption <- renderUI({
     lc_caption(if (length(series_c()) < 5)
