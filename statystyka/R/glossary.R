@@ -124,7 +124,7 @@
   "rozkład teoretyczny" =
     "Model rozkładu wynikający z reguły generującej dane, opisany wzorem i parametrami.",
   "prawo wielkich liczb" =
-    "Wraz ze wzrostem liczby prób częstość względna wyniku zbliża się do jego prawdopodobieństwa, a średnia z próby — do wartości oczekiwanej.",
+    "Wraz ze wzrostem liczby prób częstość względna wyniku zbliża się do jego prawdopodobieństwa, a średnia z próby — do wartości oczekiwanej, a ogólniej rozkład empiryczny — do teoretycznego.",
   "wartość oczekiwana" =
     "E(X) — średnia wartości zmiennej losowej ważona prawdopodobieństwami; „średnia w długim okresie”.",
   "funkcja prawdopodobieństwa" =
