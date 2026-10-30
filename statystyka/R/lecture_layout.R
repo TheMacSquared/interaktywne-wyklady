@@ -1200,7 +1200,10 @@ lc_plots <- function(..., pair = FALSE) {
 #   items  data.frame z kolumnami `id` i `text` (kolejność = kolejność w puli)
 #   zones  nazwany wektor `kod = "Etykieta"`
 #   colors wektor kolorów równoległy do `zones` (opcjonalny)
+#   item_colors wektor kolorów równoległy do wierszy `items` (opcjonalny);
+#          karta dostaje kolorowy pasek i lekkie tło, także po upuszczeniu
 lc_drop_match <- function(input_id, items, zones, colors = NULL,
+                          item_colors = NULL,
                           hint = paste(
                             "Przeciągnij kartę do właściwego pola.",
                             "Bez myszy: Enter podnosi kartę, strzałki wybierają pole,",
@@ -1211,6 +1214,7 @@ lc_drop_match <- function(input_id, items, zones, colors = NULL,
   stopifnot(all(c("id", "text") %in% names(items)), length(zones) > 0)
   if (is.null(colors)) colors <- rep(upwr_accent, length(zones))
   stopifnot(length(colors) == length(zones))
+  stopifnot(is.null(item_colors) || length(item_colors) == nrow(items))
 
   cards <- lapply(seq_len(nrow(items)), function(i) {
     tags$div(
@@ -1221,6 +1225,8 @@ lc_drop_match <- function(input_id, items, zones, colors = NULL,
       `aria-pressed` = "false",
       `data-lc-dm-item` = items$id[[i]],
       `data-lc-dm-order` = i,
+      style = if (!is.null(item_colors))
+        paste0("--lc-dm-item-color:", item_colors[[i]], ";"),
       items$text[[i]]
     )
   })

@@ -2287,7 +2287,7 @@ mjx-container mjx-text {
   background: var(--upwr-surface);
   color: var(--upwr-ink);
   border: 1px solid var(--upwr-rule);
-  border-left: 4px solid var(--upwr-reference);
+  border-left: 4px solid var(--lc-dm-item-color, var(--upwr-reference));
   border-radius: 2px;
   cursor: grab;
   user-select: none;
@@ -2295,7 +2295,7 @@ mjx-container mjx-text {
 }
 
 .lc-dm-card:hover {
-  border-left-color: var(--upwr-accent);
+  border-left-color: var(--lc-dm-item-color, var(--upwr-accent));
   box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
@@ -2310,14 +2310,20 @@ mjx-container mjx-text {
 }
 
 .lc-dm-card.lc-dm-lifted {
-  border-left-color: var(--upwr-accent);
+  border-left-color: var(--lc-dm-item-color, var(--upwr-accent));
   box-shadow: 0 4px 10px rgba(0,0,0,0.16);
   transform: translateY(-2px);
 }
 
 .lc-dm-card.lc-dm-card-placed {
   width: 100%;
-  border-left-color: var(--lc-dm-color, var(--upwr-accent));
+  border-left-color: var(--lc-dm-item-color, var(--lc-dm-color, var(--upwr-accent)));
+}
+
+/* Karta z własnym kolorem (item_colors): szerszy pasek i lekkie tło. */
+.lc-dm-card[style*="--lc-dm-item-color"] {
+  border-left-width: 8px;
+  background: color-mix(in srgb, var(--lc-dm-item-color) 14%, var(--upwr-surface));
 }
 
 .lc-dm-zones {

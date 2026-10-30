@@ -587,6 +587,8 @@ ch2_server <- function(input, output, session) {
       ),
       zones = ch2_position_zones,
       colors = rep(upwr_reference, length(ch2_position_zones)),
+      # Karty w kolorach wycinków — łatwiej powiązać produkt z kołem.
+      item_colors = s$colors[ch2_pool_order],
       hint = "Przeciągnijcie produkty na pozycje od najmniejszego udziału do największego.",
       actions = lc_action("ch2_reveal", "Odsłoń odpowiedź", variant = "solid")
     )
