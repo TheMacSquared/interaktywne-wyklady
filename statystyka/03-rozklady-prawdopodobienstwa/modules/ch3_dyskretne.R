@@ -134,7 +134,7 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 1: Rozkład jednostajny dyskretny
     # ========================================================================
-    lc_h2("ch3-jednostajny", "Rozkład jednostajny dyskretny"),
+    lc_h2("ch3-jednostajny", "Rozkład jednostajny dyskretny U{a, …, b}"),
 
     lc_p("Najprostsza sytuacja to taka, w której żaden wynik nie jest
       wyróżniony. Rzut symetryczną kostką, rzut monetą, losowanie numeru
@@ -185,7 +185,7 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 2: Rozkład dwumianowy — scenariusze overlay
     # ========================================================================
-    lc_h2("ch3-dwumianowy", "Rozkład dwumianowy (Binomial)"),
+    lc_h2("ch3-dwumianowy", "Rozkład dwumianowy (Binomial) B(n, p)"),
 
     lc_p("Rozkład jednostajny opisuje pojedynczy rzut. Częściej interesuje
       nas jednak wynik całej serii: ile orłów wypadnie w 10 rzutach monetą,
@@ -288,7 +288,7 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 3: Rozkład Poissona — scenariusze overlay
     # ========================================================================
-    lc_h2("ch3-poisson", "Rozkład Poissona"),
+    lc_h2("ch3-poisson", "Rozkład Poissona Pois(λ)"),
 
     lc_p("Rozkład dwumianowy wymaga, żebyśmy znali liczbę prób n. W wielu
       zliczeniach jej nie ma. Ilu klientów wejdzie do sklepu w ciągu godziny?
@@ -379,7 +379,7 @@ ch3_ui <- list(
     # ========================================================================
     # WIDGET 4: Rozkład geometryczny — scenariusze overlay
     # ========================================================================
-    lc_h2("ch3-geometryczny", "Rozkład geometryczny"),
+    lc_h2("ch3-geometryczny", "Rozkład geometryczny Geom(p)"),
 
     lc_p("Rozkład dwumianowy i rozkład Poissona odpowiadają na pytanie „ile
       sukcesów?”. Można zapytać odwrotnie: ile prób trzeba wykonać, żeby

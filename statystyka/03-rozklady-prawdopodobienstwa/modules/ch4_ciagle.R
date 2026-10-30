@@ -290,7 +290,7 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 3: Jednostajny ciągły — scenariusze overlay
     # ========================================================================
-    lc_h2("ch4-jednostajny", "Rozkład jednostajny ciągły"),
+    lc_h2("ch4-jednostajny", "Rozkład jednostajny ciągły U(a, b)"),
 
     lc_p("Mamy już wszystkie narzędzia, żeby opisywać konkretne rozkłady
       ciągłe. Każdy opiszemy tak samo jak dyskretne w rozdziale 3: sytuacja,
@@ -353,7 +353,7 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 3b: Wykładniczy — scenariusze overlay
     # ========================================================================
-    lc_h2("ch4-wykladniczy", "Rozkład wykładniczy"),
+    lc_h2("ch4-wykladniczy", "Rozkład wykładniczy Exp(λ)"),
 
     lc_p("W rozdziale 3 ", gloss("rozkład Poissona"), " liczył zdarzenia
       w ustalonym czasie, na przykład wiadomości w ciągu godziny. To samo
@@ -461,7 +461,7 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 4: Rozkład t-Studenta — scenariusze overlay
     # ========================================================================
-    lc_h2("ch4-t-studenta", "Rozkład t-Studenta"),
+    lc_h2("ch4-t-studenta", "Rozkład t-Studenta t(df)"),
 
     lc_p("Rozkłady jednostajny i wykładniczy opisują zjawiska: czas na
       przystanku, odstępy między wiadomościami. Trzy kolejne rozkłady służą
@@ -522,7 +522,7 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 5: Rozkład chi-kwadrat — scenariusze overlay
     # ========================================================================
-    lc_h2("ch4-chi-kwadrat", "Rozkład chi-kwadrat (χ²)"),
+    lc_h2("ch4-chi-kwadrat", "Rozkład chi-kwadrat χ²(df)"),
 
     lc_p("Rozkład t-Studenta opisuje statystyki, które mogą być ujemne lub
       dodatnie. Wiele statystyk mierzy jednak odległość, na przykład sumę
@@ -586,7 +586,7 @@ ch4_ui <- list(
     # ========================================================================
     # WIDGET 6: Rozkład log-normalny — scenariusze overlay
     # ========================================================================
-    lc_h2("ch4-lognormalny", "Rozkład log-normalny"),
+    lc_h2("ch4-lognormalny", "Rozkład log-normalny LogN(μ, σ)"),
 
     lc_p("Ostatni rozkład znów opisuje zjawiska. Wiele wielkości rośnie
       przez mnożenie, a nie dodawanie: pensja rośnie o kilka procent rocznie,

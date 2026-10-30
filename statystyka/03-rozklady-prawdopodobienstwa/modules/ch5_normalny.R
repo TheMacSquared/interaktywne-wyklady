@@ -16,7 +16,7 @@ ch5_ui <- list(
                 rozkładu wzorcowego N(0, 1)."
     ),
 
-    lc_h2("ch5-intro", "Rozkład normalny — królowa rozkładów"),
+    lc_h2("ch5-intro", "Rozkład normalny N(μ, σ) — królowa rozkładów"),
 
     lc_p("W poprzednim rozdziale poznaliśmy kilka rozkładów ciągłych
       i nauczyliśmy się czytać prawdopodobieństwo jako pole pod krzywą gęstości.
