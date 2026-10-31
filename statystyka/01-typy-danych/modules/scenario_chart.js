@@ -78,11 +78,27 @@
         }
       }
     });
+    paint(root, true);
+  }
+
+  // Zmiany wyglądu nie odtwarzają scenariusza ani nie odsłaniają odpowiedzi.
+  function paint(root, animate) {
+    if (!current || current.root !== root || !current.bar) return;
+    var ch = current.bar;
+    Charts.styleAxes(ch, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+    ch.options.scales.x.ticks.maxTicksLimit = 4;
+    ch.options.scales.y.grid.display = false;
+    ch.stop();
+    // Także późniejszy responsywny resize ma użyć gotowej geometrii słupków.
+    if (!animate) ch.options.animation = false;
+    ch.update(animate ? undefined : "none");
   }
 
   Charts.onReady(".lc-scenario", function (root) {
     if (!root.querySelector("#ch2_pie_canvas") || !root.querySelector("#ch2_bar_canvas")) return false;
     current = { root: root, pie: null, bar: null };
+    Charts.zoomControl(root);
+    Charts.onTheme(root, function () { paint(root); });
     Charts.onDispose(root, function () { current = null; });
     if (latest) render(root, latest);
   });

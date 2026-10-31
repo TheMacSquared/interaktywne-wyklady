@@ -44,6 +44,28 @@
       return wide ? cfg.hi_wide : cfg.hi;
     }
 
+    var layer = cfg.ceo ? Charts.handleLayer(root) : null, bossHandle = null;
+    if (layer) bossHandle = layer.add(cStrip, {
+      label: "Pensja prezesa",
+      hint: "Strzałki zmieniają pensję; Shift zwiększa krok dziesięciokrotnie. Home i End: krańce zakresu.",
+      onKey: function (event) {
+        var boss = ceo(); if (!boss) return false;
+        var value = Charts.keyValue(event, boss.v, SNAP, cfg.hi_wide || cfg.hi, SNAP, 10 * SNAP);
+        if (value === null) return false;
+        boss.v = value; refresh();
+        layer.announce("Pensja prezesa " + Charts.fmt(boss.v, 0, true) + " zł. Średnia " + Charts.fmt(root.lcState.mean, 0, true) + ", mediana " + Charts.fmt(root.lcState.median, 0, true) + " zł.");
+        return true;
+      },
+      onPointerDown: function (event) {
+        if (!ceo()) return;
+        dragging = ceo(); cStrip.setPointerCapture(event.pointerId); event.preventDefault();
+      }
+    });
+    if (bossHandle) bossHandle.element.hidden = true;
+    function positionBoss(ch) {
+      var boss = ceo(); if (!bossHandle || !boss) return;
+      bossHandle.position(ch.scales.x.getPixelForValue(boss.v), ch.scales.y.getPixelForValue(boss.j));
+    }
     var Y_W = 58;
     function lineDs(dash, width) {
       return { type: "scatter", data: [], showLine: true, pointRadius: 0, borderWidth: width, borderDash: dash };
@@ -65,10 +87,11 @@
     });
     var chStrip = Charts.create(cStrip, {
       type: "scatter",
+      plugins: [{ id: "bossHandle", afterRender: positionBoss }],
       data: { datasets: [
         { data: [], pointRadius: 4, borderWidth: 1.5 },
         { data: [], pointRadius: 4, borderWidth: 1.5 },
-        { data: [], pointRadius: 8, borderWidth: 2.5 },
+        { data: [], pointRadius: 8, borderWidth: 2.5, clip: false },
         lineDs([], 2.5), lineDs([7, 4], 2.5), lineDs([2, 3], 2.5)
       ] },
       options: {
@@ -86,10 +109,16 @@
     var P = null;
     function paint() {
       P = Charts.palette();
-      [chHist, chStrip].forEach(function (c) { Charts.styleAxes(c, P, { maxRotation: 0 }); });
+      var fontSize = Charts.axisFontSize(root);
+      [chHist, chStrip].forEach(function (c) {
+        Charts.styleAxes(c, P, { maxRotation: 0, fontSize: fontSize });
+        c.options.layout.padding.right = Math.ceil(fontSize * 1.6);
+        c.options.scales.x.ticks.maxTicksLimit = 6;
+        c.options.scales.y.afterFit = U.fixedWidth(Math.ceil(fontSize * 5));
+      });
       chStrip.options.scales.y.grid = { display: false };
       chStrip.options.scales.y.border = { display: false };
-      chHist.options.plugins.lcHist = Object.assign(chHist.options.plugins.lcHist || {},
+      chHist.options.plugins.lcHist = Object.assign({}, chHist.config.options.plugins.lcHist || {},
         { fill: Charts.alpha(P.ref, 0.55), gap: P.surface });
       var colors = [P.accent, P.niebo, P.szalwia];
       for (var k = 0; k < 3; k++) {
@@ -163,6 +192,13 @@
         set("d-trim", Charts.fmtSigned(tr - baseStats.trim, 0, true));
       }
       if (btn.ceo) btn.ceo.disabled = !!ceo();
+      if (bossHandle) {
+        var boss = ceo(); bossHandle.element.hidden = !boss;
+        if (boss) {
+          bossHandle.value(boss.v, SNAP, cfg.hi_wide || cfg.hi, Charts.fmt(boss.v, 0, true) + " zł");
+          positionBoss(chStrip);
+        }
+      }
       root.lcState = { values: x, mean: m, median: med, trim: tr, axisMax: hi };
     }
 
@@ -227,6 +263,7 @@
       refresh();
     });
 
+    Charts.zoomControl(root);
     generate();
     paint();
     refresh();

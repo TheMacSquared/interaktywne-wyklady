@@ -105,6 +105,7 @@ function environment(shiny = true) {
     }
     update() { assert.ok(!this.destroyed, "aktualizacja zniszczonego wykresu"); this.updates++; }
     resize() { assert.ok(!this.destroyed); }
+    stop() { assert.ok(!this.destroyed); }
     destroy() { assert.ok(!this.destroyed, "powtórne destroy()"); this.destroyed = true; live.delete(this); }
   }
   window.Chart = Chart;
@@ -471,4 +472,152 @@ test("wszystkie migrowane widgety inicjują się i wracają z nową instancją",
       assert.equal(env.live.size, 0);
     }
   }
+});
+
+test("pensja prezesa: uchwyt pojawia się po dodaniu i znika po nowym losowaniu", () => {
+  const env = environment(); env.load("01-typy-danych/modules/chart_utils.js"); env.load("01-typy-danych/modules/salary_chart.js");
+  const add = new Element("button", {"data-s-act":"ceo"}), reset = new Element("button", {"data-s-act":"reset"});
+  const el = root("lc-salary", [canvas("hist"),canvas("strip"),add,reset], {"data-config":JSON.stringify({n:30,shape:3,scale:1000,shift:2000,hi:25000,hi_wide:60000,bin:1000,bin_wide:2000,ceo:true,ceo_value:50000,snap:100})});
+  env.mount(el); const h = el.querySelector(".lc-chart-handle"); assert.equal(h.hidden,true);
+  el.emit("click",{target:add}); assert.equal(h.hidden,false); const oldMean=el.lcState.mean;
+  press(h,"ArrowRight",true); assert.equal(Number(h.getAttribute("aria-valuenow")),51000); assert.ok(el.lcState.mean>oldMean);
+  press(h,"Home"); assert.equal(el.lcState.axisMax,25000);
+  press(h,"End"); assert.equal(el.lcState.axisMax,60000);
+  el.emit("click",{target:reset}); assert.equal(h.hidden,true); assert.equal(el.lcState.values.length,30);
+  assert.equal(env.errors.length,0);
+});
+
+test("kurtoza: krok klawiatury i preset aktualizują jednocześnie szczyt i ogon", () => {
+  const env=environment(); env.load("01-typy-danych/modules/chart_utils.js");env.load("01-typy-danych/modules/kurtosis_chart.js");
+  const preset=new Element("button",{"data-k-set":"0"}); const el=root("lc-kurt",[canvas("main"),canvas("tail"),preset]); env.mount(el);
+  const h=el.querySelector(".lc-chart-handle"), tail=el.lcState.tail;
+  press(h,"ArrowUp"); assert.equal(el.lcState.ek,.2); assert.ok(el.lcState.tail>tail);
+  press(h,"ArrowUp",true);assert.equal(el.lcState.ek,1.2);
+  press(h,"Home");assert.equal(el.lcState.ek,-1.2);
+  el.emit("click",{target:preset});assert.equal(el.lcState.ek,0);assert.equal(Number(h.getAttribute("aria-valuenow")),0);
+  assert.equal(env.errors.length,0);
+});
+
+for (const [kind,config,start,end] of [
+  ["strength",{sigma:[.5,1,2]},.5,3.5], ["slope",{slopes:[.5,1,2],rel:.33},.5,2]
+]) test(kind+": klawiatura przerywa preset i zachowuje model korelacji",()=>{
+  const env=environment();env.load("02-zwiazki-zmiennych/modules/scatter_charts.js");
+  const preset=new Element("button",{"data-s-preset":"2"}),r=new Element("span",{"data-role":"r"});
+  const el=root("lc-scat lc-"+kind,[canvas("plot"),preset,r],{"data-config":JSON.stringify({x:[-1,0,1],e:[1,-2,1],...config})});env.mount(el);
+  const h=el.querySelector(".lc-chart-handle"),oldR=r.textContent;
+  assert.equal(Number(h.getAttribute("aria-valuenow")),start);
+  el.emit("click",{target:preset});assert.ok(env.frames.size>0);
+  press(h,"ArrowUp");assert.equal(env.frames.size,0);assert.equal(Number(h.getAttribute("aria-valuenow")),.55);
+  if(kind==="slope")assert.equal(r.textContent,oldR);else assert.notEqual(r.textContent,oldR);
+  press(h,"End");assert.equal(Number(h.getAttribute("aria-valuenow")),end);assert.equal(env.errors.length,0);
+});
+
+test("dwie krzywe: niezależne średnie, odwrotny kierunek odchylenia i reset",()=>{
+ const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/normals_chart.js");const reset=new Element("button",{"data-n-reset":"true"});
+ const el=root("lc-normals",[canvas("pdf"),reset],{"data-mu1":166,"data-sd1":6,"data-mu2":178,"data-sd2":7});env.mount(el);
+ const [a,b]=el.querySelectorAll(".lc-chart-handle"),ch=[...env.live][0],original=ch.data.datasets[2].data.map(p=>({...p}));
+ press(a,"ArrowRight",true);assert.equal(ch.data.datasets[2].data[0].x,171);assert.equal(ch.data.datasets[2].data[1].x,178);
+ press(a,"ArrowUp");assert.ok(ch.data.datasets[2].data[0].y>original[0].y);
+ assert.equal(b.getAttribute("role"),"button");el.emit("click",{target:reset});assert.equal(ch.data.datasets[2].data[0].x,166);assert.equal(ch.data.datasets[2].data[0].y,original[0].y);assert.equal(env.errors.length,0);
+});
+
+test("pojedynek: kroki w jednostkach, ukryte uchwyty w z i reset przy zmianie pary",()=>{
+ const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/duel_chart.js");
+ const group={mu:170,sd:8,x:178,step:.5,unit:"cm",grp:"Grupa",lab:"Osoba"};
+ const raw=new Element("button",{"data-d-view":"raw"}),z=new Element("button",{"data-d-view":"z"}),pair=new Element("button",{"data-d-pair":"1"});
+ const el=root("lc-duel",[root("lc-duel-top",[canvas("a"),canvas("b")]),root("lc-duel-z",[canvas("z")]),raw,z,pair],{"data-config":JSON.stringify([{a:group,b:group},{a:{...group,x:38,mu:36.6,sd:.5,step:.1,unit:"°C"},b:group}])});env.mount(el);
+ const [a,b]=el.querySelectorAll(".lc-chart-handle");press(a,"ArrowRight",true);assert.equal(Number(a.getAttribute("aria-valuenow")),183);assert.equal(Number(b.getAttribute("aria-valuenow")),178);
+ el.emit("click",{target:z});assert.equal(a.hidden,true);press(a,"ArrowLeft");assert.equal(Number(a.getAttribute("aria-valuenow")),183);
+ el.emit("click",{target:raw});assert.equal(a.hidden,false);assert.equal(Number(a.getAttribute("aria-valuenow")),183);
+ el.emit("click",{target:pair});press(a,"ArrowRight");assert.equal(a.getAttribute("aria-valuetext"),"38.1 °C");assert.equal(env.errors.length,0);
+});
+
+test("galeria: krok zależy od przypadku, prawdopodobieństwo dwóch ogonów jest symetryczne",()=>{
+ const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/cases_chart.js");
+ const item={mu:0,sd:1,t:1,step:.1,unit:"cm",axis:"Długa nazwa osi wymagająca zawijania",tail:"outside"},other=new Element("button",{"data-c-case":"1"}),p=new Element("span",{"data-role":"p"});
+ const el=root("lc-cases",[canvas("pdf"),other,p],{"data-config":JSON.stringify([item,{...item,t:0,step:5,mu:0,sd:10,unit:"pkt",tail:"lower"}])});env.mount(el);
+ const h=el.querySelector(".lc-chart-handle"),old=p.textContent;press(h,"ArrowLeft",true);assert.equal(p.textContent,"100.0%");press(h,"ArrowLeft",true);assert.equal(p.textContent,old);
+ el.emit("click",{target:other});press(h,"ArrowRight");assert.equal(h.getAttribute("aria-valuetext"),"5 pkt");press(h,"End");assert.equal(Number(h.getAttribute("aria-valuenow")),40);
+ const lines=env.window.lcCharts.axisTitle(item.axis,180,21);assert.ok(lines.length>1);assert.equal(lines.join(" "),item.axis);assert.equal(env.errors.length,0);
+});
+
+// Lupy paneli, w których interakcję zapewniają istniejące przyciski lub pola.
+function zoomWithoutChangingData(env, el) {
+  const charts = [...env.live];
+  const before = JSON.stringify(charts.map(ch => ch.data));
+  const size = charts.find(ch => ch.options.scales)?.options.scales.x.ticks.font.size;
+  el.querySelector("[data-lc-chart-zoom]").emit("click");
+  env.theme(el);
+  assert.equal(JSON.stringify(charts.map(ch => ch.data)), before);
+  assert.deepEqual([...env.live], charts, "lupa nie wymienia instancji wykresów");
+  if (size) {
+    const after = charts.find(ch => ch.options.scales).options.scales.x.ticks.font.size;
+    assert.ok(el.dataset.lcChartLarge === "true" ? after > size : after < size);
+  }
+  assert.equal(env.errors.length, 0);
+}
+const zoomButton = () => new Element("button", { "data-lc-chart-zoom": "true" });
+
+test("koło/słupki: lupa zachowuje ukrycie, odsłonięcie i paletę scenariusza", () => {
+  const env = environment();
+  env.load("01-typy-danych/modules/scenario_chart.js");
+  const el = root("lc-scenario", [zoomButton(), canvas("pie", {id:"ch2_pie_canvas"}), canvas("bar", {id:"ch2_bar_canvas"})]);
+  env.mount(el);
+  const message = env.handlers.get("render_scenario");
+  const data = {labels:["A","B"],data:[45,25],colors:["#aaa","#bbb"],reveal:false};
+  message(data);
+  zoomWithoutChangingData(env, el);
+  assert.equal(env.live.size, 1);
+  message({...data,reveal:true});
+  const bar = [...env.live][1], font = bar.options.scales.x.ticks.font.size;
+  zoomWithoutChangingData(env, el);
+  assert.ok(bar.options.scales.x.ticks.font.size < font, "wyłączenie lupy przywraca mniejszą czcionkę");
+  assert.equal(bar.data.datasets[0].backgroundColor.join(), data.colors.join());
+});
+
+test("odporność miar: lupa zachowuje pensje i średnią uciętą", () => {
+  const env=environment();
+  env.load("01-typy-danych/modules/chart_utils.js"); env.load("01-typy-danych/modules/salary_chart.js");
+  const add=new Element("button",{"data-s-act":"out5"});
+  const el=root("lc-salary",[zoomButton(),canvas("hist"),canvas("strip"),add],{"data-config":JSON.stringify({n:40,shape:3,scale:1000,shift:2000,trim:.1,hi:60000,bin:1500})});
+  env.mount(el); el.emit("click",{target:add});
+  const before=JSON.stringify(el.lcState);
+  zoomWithoutChangingData(env,el);
+  assert.equal(JSON.stringify(el.lcState),before);
+  assert.equal(el.lcState.values.length,45);
+  assert.equal(el.querySelectorAll(".lc-chart-handle").length,0);
+});
+
+test("Simpson: lupa zachowuje widok osobnych branż", () => {
+  const env=environment();env.load("02-zwiazki-zmiennych/modules/scatter_charts.js");
+  const split=new Element("button",{"data-s-view":"split"});
+  const el=root("lc-scat lc-simpson",[zoomButton(),canvas("plot"),split],{"data-config":JSON.stringify({x:[1,2,3,4,5,6],y:[3,2,1,6,5,4],g:[0,0,0,1,1,1],groups:["A","B"],colors:["--upwr-accent","--upwr-reference"],xlim:[0,10],ylim:[0,10]})});
+  env.mount(el);el.emit("click",{target:split});
+  const ch=[...env.live][0];assert.ok(ch.data.datasets[2].data.length);
+  zoomWithoutChangingData(env,el);
+  assert.ok(ch.data.datasets[2].data.length);assert.equal(ch.data.datasets[1].borderDash.join(),"6,4");
+});
+
+test("lejek: lupa nie kończy animacji, nie zmienia serii i zachowuje skalę log", () => {
+  const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/lejek_chart.js");
+  const el=root("lc-lejek",[zoomButton(),canvas("lejek")]);env.mount(el);
+  env.handlers.get("lejek_series")({series:[[.1,.2,.15]]});
+  assert.equal(env.timers.size,1);
+  zoomWithoutChangingData(env,el);
+  assert.equal(env.timers.size,1);
+  const ch=[...env.live][0];assert.equal(ch.options.scales.x.type,"logarithmic");
+  assert.equal(ch.data.datasets[3].data.length,1);
+  env.handlers.get("lejek_series")({series:[]});assert.equal(env.timers.size,0);assert.equal(ch.data.datasets.length,3);
+});
+
+test("kalkulator z: pola i wynik zostają po powiększeniu, niepoprawne σ nie psuje danych", () => {
+  const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/zscore_chart.js");
+  const fields=["mu","sd","x"].map((role,i)=>new Element("input",{"data-role":role,value:[65,10,80][i]}));
+  const z=new Element("span",{"data-role":"zval"});
+  const el=root("lc-zcalc",[zoomButton(),canvas("x"),canvas("z"),...fields,z]);env.mount(el);
+  fields[2].value="90";fields[2].emit("input");assert.equal(z.textContent,"2.50");
+  zoomWithoutChangingData(env,el);assert.equal(z.textContent,"2.50");assert.equal(fields[2].value,"90");
+  const before=JSON.stringify([...env.live].map(ch=>ch.data));
+  fields[1].value="0";fields[1].emit("input");
+  assert.equal(JSON.stringify([...env.live].map(ch=>ch.data)),before);
 });

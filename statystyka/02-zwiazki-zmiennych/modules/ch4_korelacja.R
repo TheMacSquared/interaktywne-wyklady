@@ -113,12 +113,13 @@ ch4_ui <- list(
           lc_readouts(
             lc_readout("r", tags$span(`data-role` = "r", "0.69"), color = "var(--upwr-accent)"),
             lc_readout("r²", tags$span(`data-role` = "r2", "48%"))
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-scat-canvas",
-          tags$canvas(`data-role` = "plot",
+          tags$canvas(role = "img", `data-role` = "plot",
                       `aria-label` = "Wykres rozrzutu 90 punktów wokół prostej o nachyleniu 1; rozrzut wokół prostej można zmieniać")),
-        lc_caption("Przeciągnij uchwyt na brzegu przerywanego pasa w górę lub w dół.")
+        lc_caption("Przeciągnij uchwyt na brzegu pasa lub wybierz go Tabem i użyj strzałek góra/dół.")
       )
     ),
 
@@ -150,12 +151,13 @@ ch4_ui <- list(
             lc_readout("Nachylenie", tags$span(`data-role` = "b", "0.80")),
             lc_readout("SD reszt", tags$span(`data-role` = "sd", "0.26")),
             lc_readout("r", tags$span(`data-role` = "r", "0.95"), color = "var(--upwr-accent)")
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-scat-canvas",
-          tags$canvas(`data-role` = "plot",
+          tags$canvas(role = "img", `data-role` = "plot",
                       `aria-label` = "Wykres rozrzutu 90 punktów wokół prostej; nachylenie prostej można zmieniać, korelacja pozostaje 0.95")),
-        lc_caption("Przeciągnij uchwyt na prostej w górę lub w dół.")
+        lc_caption("Przeciągnij uchwyt na prostej lub wybierz go Tabem i użyj strzałek góra/dół.")
       )
     ),
 

@@ -39,12 +39,13 @@ s3p_5cc_ui <- s3p_panel("5c-C", "Ryc. 5.5", "Kto bardziej wyjątkowy?", proto = 
                    color = "var(--upwr-accent)", swatch = TRUE),
         lc_readout(tags$span(`data-role` = "lb", "Mężczyzna"), tags$span(`data-role` = "zb", "190.0 cm"),
                    color = "var(--upwr-cat-indygo)", swatch = TRUE)
-      )
+      ),
+      lc_chart_zoom_button()
     ),
     tags$div(class = "lc-duel-top",
-      tags$div(class = "lc-duel-small", tags$canvas(`data-role` = "a")),
-      tags$div(class = "lc-duel-small", tags$canvas(`data-role` = "b"))),
-    tags$div(class = "lc-duel-z", tags$canvas(`data-role` = "z")),
+      tags$div(class = "lc-duel-small", tags$canvas(role = "img", `data-role` = "a", `aria-label` = "Pierwsza obserwacja w oryginalnej skali")),
+      tags$div(class = "lc-duel-small", tags$canvas(role = "img", `data-role` = "b", `aria-label` = "Druga obserwacja w oryginalnej skali"))),
+    tags$div(class = "lc-duel-z", tags$canvas(role = "img", `data-role` = "z", `aria-label` = "Porównanie obserwacji na wspólnej skali z")),
     lc_caption(tags$span(`data-role` = "q", s3p_z_pairs[[1]]$q))
   )
 )

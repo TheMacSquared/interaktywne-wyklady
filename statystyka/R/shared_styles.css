@@ -1775,6 +1775,58 @@ mjx-container mjx-text {
   .lc-guess[data-lc-chart-large="true"] .lc-guess-canvas,
   .lc-outlier[data-lc-chart-large="true"] .lc-scat-canvas { aspect-ratio: 1 / 1; }
 }
+/* Druga kolejka: istniejące punkty sterują także klawiaturą. */
+.lc-chart-handle[aria-orientation="vertical"] { cursor: ns-resize; }
+.lc-normals .lc-chart-handle { cursor: move; }
+.lc-salary-hist > canvas, .lc-salary-strip > canvas,
+.lc-kurt-main > canvas, .lc-kurt-tail > canvas,
+.lc-strength .lc-scat-canvas > canvas, .lc-slope .lc-scat-canvas > canvas,
+.lc-duel-small > canvas, .lc-duel-z > canvas { position: absolute; inset: 0; }
+.lc-salary[data-lc-chart-large="true"] .lc-salary-hist { aspect-ratio: 1.9 / 1; max-height: none; }
+.lc-salary[data-lc-chart-large="true"] .lc-salary-strip { aspect-ratio: 4.2 / 1; min-height: 8em; max-height: none; }
+.lc-kurt[data-lc-chart-large="true"] .lc-kurt-main { aspect-ratio: 1.5 / 1; max-height: none; }
+.lc-kurt[data-lc-chart-large="true"] .lc-kurt-tail { aspect-ratio: 2.2 / 1; max-height: none; }
+.lc-strength[data-lc-chart-large="true"] .lc-scat-canvas,
+.lc-slope[data-lc-chart-large="true"] .lc-scat-canvas { aspect-ratio: 1.3 / 1; }
+.lc-normals[data-lc-chart-large="true"] .lc-area-canvas,
+.lc-cases[data-lc-chart-large="true"] .lc-area-canvas { aspect-ratio: 1.65 / 1; }
+.lc-duel[data-lc-chart-large="true"] .lc-duel-top { grid-template-columns: minmax(0, 1fr); }
+.lc-duel[data-lc-chart-large="true"] .lc-duel-small,
+.lc-duel[data-lc-chart-large="true"] .lc-duel-z { aspect-ratio: 1.65 / 1; }
+.lc-duel-top[hidden], .lc-duel-z[hidden], .lc-chart-handle[hidden] { display: none; }
+@media (max-width: 640px) {
+  .lc-salary[data-lc-chart-large="true"] .lc-salary-hist,
+  .lc-kurt[data-lc-chart-large="true"] .lc-kurt-main,
+  .lc-strength[data-lc-chart-large="true"] .lc-scat-canvas,
+  .lc-slope[data-lc-chart-large="true"] .lc-scat-canvas,
+  .lc-normals[data-lc-chart-large="true"] .lc-area-canvas,
+  .lc-cases[data-lc-chart-large="true"] .lc-area-canvas,
+  .lc-duel[data-lc-chart-large="true"] .lc-duel-small,
+  .lc-duel[data-lc-chart-large="true"] .lc-duel-z { aspect-ratio: 1 / 1; }
+}
+
+/* Czytelność paneli sterowanych istniejącymi przyciskami i polami. */
+.lc-scenario-canvas { position: relative; width: 100%; height: 20em; }
+.lc-scenario-canvas > canvas { max-width: 100%; }
+.lc-scenario-canvas > canvas, .lc-lejek-canvas > canvas,
+.lc-simpson .lc-scat-canvas > canvas, .lc-zcalc .s3p-54-canvas > canvas {
+  position: absolute; inset: 0;
+}
+.lc-scenario[data-lc-chart-large="true"] .lc-plots { grid-template-columns: minmax(0, 1fr); }
+.lc-scenario[data-lc-chart-large="true"] .lc-scenario-canvas { height: 26em; }
+.lc-simpson[data-lc-chart-large="true"] .lc-scat-canvas { aspect-ratio: 1.3 / 1; }
+.lc-lejek-canvas { position: relative; aspect-ratio: 2.2 / 1; }
+.lc-lejek[data-lc-chart-large="true"] .lc-lejek-canvas { aspect-ratio: 1.5 / 1; }
+.lc-zcalc[data-lc-chart-large="true"] .s3p-54-canvas { aspect-ratio: 1.8 / 1; }
+.lc-zcalc .s3p-54-calc { overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .lc-lejek-canvas { aspect-ratio: 1.3 / 1; }
+  .lc-simpson[data-lc-chart-large="true"] .lc-scat-canvas,
+  .lc-lejek[data-lc-chart-large="true"] .lc-lejek-canvas { aspect-ratio: 1 / 1; }
+  .lc-zcalc .s3p-54-canvas { aspect-ratio: 1.8 / 1; }
+  .lc-zcalc[data-lc-chart-large="true"] .s3p-54-canvas { aspect-ratio: 1.3 / 1; }
+}
+
 .lc-chart-handle:focus-visible, .lc-chart-zoom:focus-visible {
   outline: .15em solid var(--upwr-accent);
   outline-offset: .1em;

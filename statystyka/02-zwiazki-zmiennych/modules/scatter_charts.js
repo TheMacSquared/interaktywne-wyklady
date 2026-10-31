@@ -45,10 +45,6 @@
     });
   }
 
-  function paintAxes(chart) {
-    Charts.styleAxes(chart);
-  }
-
   function pointer(canvas, e) {
     var rc = canvas.getBoundingClientRect();
     return { px: e.clientX - rc.left, py: e.clientY - rc.top };
@@ -78,17 +74,17 @@
     var drag = false;
     function near(p) { var h = handlePos(); return pixelDist(chart, p, h.x, h.y) < 40; }
     canvas.style.touchAction = "none";
-    Charts.listen(canvas, "pointerdown", function (e) {
-      var p = pointer(canvas, e);
-      if (!near(p)) return;
+    function start(e) {
       drag = true; canvas.setPointerCapture(e.pointerId); e.preventDefault();
-    });
+    }
+    Charts.listen(canvas, "pointerdown", function (e) { if (near(pointer(canvas, e))) start(e); });
     Charts.listen(canvas, "pointermove", function (e) {
       var p = pointer(canvas, e);
       if (drag) { onMove(valueAt(chart, p)); return; }
       canvas.style.cursor = near(p) ? "ns-resize" : "default";
     });
     ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = false; }); });
+    return start;
   }
 
   // ==========================================================================
@@ -100,6 +96,23 @@
     var sigma = C.sigma[C.start || 0], f = null;
     var R = reads(root, ["r", "r2"]);
 
+    var layer = Charts.handleLayer(root), startDrag;
+    var handle = layer.add(canvas, {
+      label: "Rozrzut wokół prostej", orientation: "vertical",
+      hint: "Strzałki zmieniają wartość, Shift zwiększa krok. Home i End wybierają granice.",
+      onKey: function (event) {
+        var value = Charts.keyValue(event, sigma, 0, SMAX, 0.05, 0.5);
+        if (value === null) return false;
+        Charts.cancelTween(root); sigma = +value.toFixed(2); draw();
+        layer.announce("Rozrzut wokół prostej: " + fmt(sigma, 2) + ". Korelacja " + fmt(f.r, 2)); return true;
+      },
+      onPointerDown: function (event) { startDrag(event); }
+    });
+    function syncHandle(ch) {
+      if (!f) return;
+      var h = hpos(); handle.position(ch.scales.x.getPixelForValue(h.x), ch.scales.y.getPixelForValue(h.y));
+      handle.value(sigma, 0, SMAX, fmt(sigma, 2));
+    }
     var chart = makeChart(canvas, [
       { data: [], pointRadius: 3.5, borderWidth: 0 },
       { data: [], showLine: true, pointRadius: 0, borderWidth: 1.5, borderDash: [5, 4] },
@@ -109,10 +122,12 @@
     ], {
       x: { min: XL[0], max: XL[1], ticks: { stepSize: 1 }, title: { display: true, text: "x" } },
       y: { min: YL[0], max: YL[1], ticks: { stepSize: 5 }, title: { display: true, text: "y" } }
-    });
+    }, [{ id: "parameterHandle", afterRender: syncHandle }]);
 
     function paint() {
-      paintAxes(chart);
+      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+      chart.options.scales.x.ticks.maxTicksLimit = 6;
+      chart.options.scales.y.ticks.maxTicksLimit = 6;
       var niebo = token("--upwr-cat-niebo") || "#1d5f9e", accent = token("--upwr-accent") || "#7a2e3b";
       var subtle = token("--upwr-ink-subtle") || "#888", surface = token("--upwr-surface") || "#fff";
       var ds = chart.data.datasets;
@@ -136,10 +151,11 @@
       chart.update("none");
       put(R.r, fmt(f.r, 2));
       put(R.r2, fmt(100 * f.r * f.r, 0) + "%");
+      syncHandle(chart);
       pressPresets(root, "data-s-preset", C.sigma, sigma);
     }
 
-    handleDrag(canvas, chart, hpos, function (v) {
+    startDrag = handleDrag(canvas, chart, hpos, function (v) {
       Charts.cancelTween(root);
       sigma = clamp(Math.round((v.y - (f.a + f.b * HX)) / 2 * 100) / 100, 0, SMAX);
       draw();
@@ -151,6 +167,7 @@
       Charts.tween(root, sigma, target, function (v) { sigma = v; draw(); }, function () { sigma = target; draw(); });
     });
 
+    Charts.zoomControl(root);
     paint(); draw(); Charts.onTheme(root, paint);
   }
 
@@ -163,6 +180,23 @@
     var slope = C.slopes[C.start || 0], f = null;
     var R = reads(root, ["b", "sd", "r"]);
 
+    var layer = Charts.handleLayer(root), startDrag;
+    var handle = layer.add(canvas, {
+      label: "Nachylenie", orientation: "vertical",
+      hint: "Strzałki zmieniają wartość, Shift zwiększa krok. Home i End wybierają granice.",
+      onKey: function (event) {
+        var value = Charts.keyValue(event, slope, BMIN, BMAX, 0.05, 0.5);
+        if (value === null) return false;
+        Charts.cancelTween(root); slope = +value.toFixed(2); draw();
+        layer.announce("Nachylenie: " + fmt(slope, 2) + ". Korelacja " + fmt(f.r, 2)); return true;
+      },
+      onPointerDown: function (event) { startDrag(event); }
+    });
+    function syncHandle(ch) {
+      if (!f) return;
+      var h = hpos(); handle.position(ch.scales.x.getPixelForValue(h.x), ch.scales.y.getPixelForValue(h.y));
+      handle.value(slope, BMIN, BMAX, fmt(slope, 2));
+    }
     var chart = makeChart(canvas, [
       { data: [], pointRadius: 3.5, borderWidth: 0 },
       { data: [], showLine: true, pointRadius: 0, borderWidth: 2.5 },
@@ -170,10 +204,12 @@
     ], {
       x: { min: XL[0], max: XL[1], ticks: { stepSize: 1 }, title: { display: true, text: "x" } },
       y: { min: YL[0], max: YL[1], ticks: { stepSize: 2 }, title: { display: true, text: "y" } }
-    });
+    }, [{ id: "parameterHandle", afterRender: syncHandle }]);
 
     function paint() {
-      paintAxes(chart);
+      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+      chart.options.scales.x.ticks.maxTicksLimit = 6;
+      chart.options.scales.y.ticks.maxTicksLimit = 6;
       var niebo = token("--upwr-cat-niebo") || "#1d5f9e", accent = token("--upwr-accent") || "#7a2e3b";
       var surface = token("--upwr-surface") || "#fff";
       var ds = chart.data.datasets;
@@ -194,10 +230,11 @@
       put(R.b, fmt(f.b, 2));
       put(R.sd, fmt(f.sd, 2));
       put(R.r, fmt(f.r, 2));
+      syncHandle(chart);
       pressPresets(root, "data-s-preset", C.slopes, slope);
     }
 
-    handleDrag(canvas, chart, hpos, function (v) {
+    startDrag = handleDrag(canvas, chart, hpos, function (v) {
       Charts.cancelTween(root);
       slope = clamp(Math.round((v.y - f.a) / HX * 20) / 20, BMIN, BMAX);
       draw();
@@ -209,6 +246,7 @@
       Charts.tween(root, slope, target, function (v) { slope = v; draw(); }, function () { slope = target; draw(); });
     });
 
+    Charts.zoomControl(root);
     paint(); draw(); Charts.onTheme(root, paint);
   }
 
@@ -398,7 +436,9 @@
     chart.data.datasets[0].data = X.map(function (x, i) { return { x: x, y: Y[i] }; });
 
     function paint() {
-      paintAxes(chart);
+      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+      chart.options.scales.x.ticks.maxTicksLimit = 5;
+      chart.options.scales.y.ticks.maxTicksLimit = 5;
       COLS = C.colors.map(function (t) { return token(t) || "#888"; });
       draw();
     }
@@ -441,6 +481,7 @@
       draw();
     });
 
+    Charts.zoomControl(root);
     paint(); Charts.onTheme(root, paint);
   }
 

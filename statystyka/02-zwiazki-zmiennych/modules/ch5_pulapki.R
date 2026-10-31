@@ -158,10 +158,11 @@ ch5_ui <- list(
                            color = paste0("var(", simpson_config$colors[[i]], ")"), swatch = TRUE),
                 `data-s-group` = i - 1L, hidden = NA)
             })
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-scat-canvas",
-          tags$canvas(`data-role` = "plot",
+          tags$canvas(role = "img", `data-role` = "plot",
                       `aria-label` = "Staż a pensja 120 pracowników trzech branż: prosta dla wszystkich razem albo osobna prosta dla każdej branży")),
         lc_status(
           tagAppendAttributes(lc_verdict(tags$strong("Razem:"), type = "warning"), `data-role` = "verdict"),

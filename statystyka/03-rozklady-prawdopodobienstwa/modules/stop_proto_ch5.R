@@ -42,9 +42,10 @@ s3p_5a_ui <- s3p_panel("5a", "Ryc. 5.7", "Rozkład normalny w sześciu kierunkac
         lc_readout("Model", tags$span(`data-role` = "model", "")),
         lc_readout("Próg", tags$span(`data-role` = "t", "")),
         lc_readout("P", tags$span(`data-role` = "p", ""), color = "var(--upwr-accent)")
-      )
+      ),
+      lc_chart_zoom_button()
     ),
-    tags$div(class = "lc-area-canvas", tags$canvas(`data-role` = "pdf", `aria-label` = "Gęstość rozkładu normalnego z zacienionym ogonem za progiem")),
+    tags$div(class = "lc-area-canvas", tags$canvas(role = "img", `data-role` = "pdf", `aria-label` = "Gęstość rozkładu normalnego z zacienionym ogonem za progiem")),
     lc_caption(tags$span(`data-role` = "story", s3p_5a_cases[[1]]$story), " ",
                tags$span(`data-role` = "q", s3p_5a_cases[[1]]$q))
   )

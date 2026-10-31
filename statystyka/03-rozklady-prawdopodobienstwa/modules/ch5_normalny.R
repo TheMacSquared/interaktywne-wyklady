@@ -118,7 +118,8 @@ ch5_ui <- list(
       ", gloss("wykres pudełkowy", "wykresy pudełkowe"), " wzrostu kobiet i mężczyzn się nie nakładały, a ", gloss("mediana", "mediany"), "
       wynosiły 166.4 i 177.1 cm. Panel rysuje dwa modele zbliżone do tych danych:
       N(166, 6) dla kobiet i N(178, 7) dla mężczyzn. Uchwyt na szczycie krzywej
-      przesuwa ją w bok (zmienia μ) albo w górę i w dół (zmienia σ)."),
+      przesuwa ją w bok (zmienia μ) albo w górę i w dół (zmienia σ).
+      Można też wybrać szczyt Tabem i użyć strzałek; góra zwęża krzywą i podnosi szczyt."),
 
     figure_panel(
       label = "Ryc. 5.3",
@@ -133,10 +134,11 @@ ch5_ui <- list(
             lc_readout("Mężczyźni", tags$span(`data-role` = "n2", "N(178.0, 7.0)"), color = "var(--upwr-cat-terakota)", swatch = TRUE),
             lc_readout("K > μ mężczyzn", tags$span(`data-role` = "a", "2.3%")),
             lc_readout("M < μ kobiet", tags$span(`data-role` = "b", "4.3%"))
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-area-canvas",
-          tags$canvas(`data-role` = "pdf", `aria-label` = "Gęstości wzrostu kobiet N(166, 6) i mężczyzn N(178, 7)"))
+          tags$canvas(role = "img", `data-role` = "pdf", `aria-label` = "Gęstości wzrostu kobiet i mężczyzn; parametry w odczytach nad wykresem"))
       )
     ),
 

@@ -29,9 +29,12 @@
     return f.map(function (y, j) { return { x: NS[j], y: y }; });
   }
 
-  function create(canvas) {
+  function create(canvas, root) {
     return Charts.create(canvas, {
       type: "line",
+      plugins: [{ id: "funnelTitle", beforeLayout: function (ch) {
+        ch.options.scales.x.title.text = Charts.axisTitle("Liczba rzutów w serii (skala log.)", ch.width, Charts.axisFontSize(root));
+      } }],
       data: { datasets: [
         { data: band(NS, -1), borderWidth: 0, pointRadius: 0 },
         { data: band(NS, 1), borderWidth: 0, pointRadius: 0, fill: "-1" },
@@ -66,7 +69,7 @@
     var accent = token("--upwr-accent") || "#7a2e3b";
     var secondary = token("--upwr-secondary") || "#6a9dc4";
     var ch = w.chart;
-    Charts.styleAxes(ch);
+    Charts.styleAxes(ch, null, { fontSize: Charts.axisFontSize(w.root), maxRotation: 0 });
     ch.data.datasets[0].backgroundColor = alpha("#cbb858", 0.3);
     ch.data.datasets[1].backgroundColor = alpha("#cbb858", 0.3);
     ch.data.datasets[2].borderColor = ink;
@@ -132,8 +135,9 @@
   Charts.onReady(".lc-lejek", function (root) {
     var canvas = root.querySelector('canvas[data-role="lejek"]');
     if (!canvas) return false;
-    var w = { chart: create(canvas), timer: null, pending: null };
+    var w = { root: root, chart: create(canvas, root), timer: null, pending: null };
     current = w;
+    Charts.zoomControl(root);
     Charts.onDispose(root, function () {
       finish(w);
       current = null;

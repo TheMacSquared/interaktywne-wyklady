@@ -18,8 +18,30 @@
     var read = {};
     ["model", "t", "p", "q", "story"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
 
+    var layer = Charts.handleLayer(root), lastP = 0;
+    var handle = layer.add(canvas, {
+      label: "Próg",
+      hint: "Strzałki przesuwają próg, Shift zwiększa krok dziesięciokrotnie. Home i End wybierają granice osi.",
+      onKey: function (event) {
+        var value = Charts.keyValue(event, t, LO, HI, C.step, 10 * C.step);
+        if (value === null) return false;
+        t = +value.toFixed(4); draw();
+        layer.announce(t.toFixed(decs(C.step)) + " " + C.unit + ". Prawdopodobieństwo " + (100 * lastP).toFixed(1) + "%"); return true;
+      },
+      onPointerDown: function (event) { drag = true; canvas.setPointerCapture(event.pointerId); event.preventDefault(); }
+    });
+    function syncHandle(ch) {
+      if (!C) return;
+      handle.position(ch.scales.x.getPixelForValue(t), ch.scales.y.getPixelForValue(pdf(C.mu, C.mu, C.sd) * 1.08));
+      handle.element.setAttribute("aria-label", (C.tail === "outside" ? "Granica" : "Próg") + ": " + C.axis);
+      handle.value(t, LO, HI, t.toFixed(decs(C.step)) + " " + C.unit);
+    }
     var chart = Charts.create(canvas, {
       type: "line",
+      plugins: [{ id: "caseHandle", afterRender: syncHandle, beforeLayout: function (ch) {
+        ch.options.scales.x.ticks.maxTicksLimit = Math.max(3, Math.min(6, Math.floor((ch.width || 640) / (Charts.axisFontSize(root) * 4.2))));
+        if (C) ch.options.scales.x.title.text = Charts.axisTitle(C.axis + " (" + C.unit + ")", ch.width, Charts.axisFontSize(root));
+      } }],
       data: { datasets: [
         { data: [], borderWidth: 2 },
         { data: [], fill: "origin", borderWidth: 0 },
@@ -41,7 +63,9 @@
       var ink = token("--upwr-ink-soft") || "#444";
       var accent = token("--upwr-accent") || "#7a2e3b";
       var surface = token("--upwr-surface") || "#fff";
-      Charts.styleAxes(chart, null, { includeBounds: false, titleSize: 13 });
+      Charts.styleAxes(chart, null, { includeBounds: false, fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+      chart.options.scales.x.ticks.maxTicksLimit = 6;
+      chart.options.layout.padding.left = chart.options.layout.padding.right = Math.ceil(Charts.axisFontSize(root) * 1.6);
       var ds = chart.data.datasets;
       ds[0].borderColor = ink;
       ds[1].backgroundColor = ds[2].backgroundColor = alpha(accent, 0.32);
@@ -82,7 +106,9 @@
       }
       ds[3].data = [{ x: t, y: 0 }, { x: t, y: top }];
       ds[5].data = [{ x: t, y: top }];
+      lastP = p;
       chart.update("none");
+      syncHandle(chart);
       if (read.model) read.model.textContent = "N(" + C.mu.toFixed(d) + ", " + C.sd.toFixed(d) + ") " + C.unit;
       if (read.t) read.t.textContent = (C.tail === "outside" ? "± " + Math.abs(t - C.mu).toFixed(d) : t.toFixed(d)) + " " + C.unit;
       if (read.p) read.p.textContent = (100 * p).toFixed(1) + "%";
@@ -108,6 +134,7 @@
       setCase(Number(b.getAttribute("data-c-case")));
     });
 
+    Charts.zoomControl(root);
     paint();
     setCase(0);
     Charts.onTheme(root, paint);

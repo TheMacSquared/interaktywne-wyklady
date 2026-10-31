@@ -144,8 +144,12 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   Ocena wykładów statystyki 00–04 jest w
   [OCENA-WIDGETOW-00-04.md](statystyka/OCENA-WIDGETOW-00-04.md): pierwsza kolejka
   to dystrybuanta, kwantyl, percentyle, zgadywanie średniej/mediany i wartość
-  odstająca. Pierwsza kolejka została wdrożona (2026-10-31); pozostają druga
-  kolejka z oceny i przegląd pozostałych aktywnych wykładów.
+  odstająca. Pierwsza i druga kolejka zostały wdrożone (2026-10-31).
+  Druga obejmuje pensję prezesa, kurtozę, siłę korelacji, nachylenie, dwie
+  krzywe normalne, porównanie wyjątkowości i galerię przypadków normalnych.
+  Trzecia kolejka (czytelność pozostałych pięciu widgetów Chart.js) również
+  wdrożona: koło/słupki, odporność miar, Simpson, lejek i kalkulator z-score.
+  Pozostają przegląd pozostałych aktywnych wykładów oraz ocena na zajęciach.
 
 ### Zapis liczb: kropka dziesiętna i zwykły minus
 

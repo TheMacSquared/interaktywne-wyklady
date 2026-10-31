@@ -31,15 +31,18 @@ s3p_11c_len <- 1000
 s3p_11c_nn <- unique(round(exp(seq(0, log(s3p_11c_len), length.out = 200))))
 
 s3p_11c_ui <- s3p_panel("1.1-C", "Ryc. 1.2", "Lejek", proto = FALSE,
-  lc_toolbar(
-    lc_action_group(label = "Seria 1000 rzutów", s3p_11c_s1 = "+1", s3p_11c_s10 = "+10"),
-    lc_action("s3p_11c_reset", icon = "reset", variant = "ghost", aria_label = "Wyzeruj serie"),
-    lc_readouts(uiOutput("s3p_11c_read"))
-  ),
-  tags$div(class = "lc-lejek", style = "position:relative; aspect-ratio:2.2/1;",
-    tags$canvas(`data-role` = "lejek",
-                `aria-label` = "Lejek: częstość szóstek w seriach rzutów na tle pasa 1/6")),
-  uiOutput("s3p_11c_caption")
+  tags$div(class = "lc-lejek",
+    lc_toolbar(
+      lc_action_group(label = "Seria 1000 rzutów", s3p_11c_s1 = "+1", s3p_11c_s10 = "+10"),
+      lc_action("s3p_11c_reset", icon = "reset", variant = "ghost", aria_label = "Wyzeruj serie"),
+      lc_readouts(uiOutput("s3p_11c_read")),
+      lc_chart_zoom_button()
+    ),
+    tags$div(class = "lc-lejek-canvas",
+      tags$canvas(role = "img", `data-role` = "lejek",
+                  `aria-label` = "Lejek: częstość szóstek w seriach rzutów na tle pasa 1/6")),
+    uiOutput("s3p_11c_caption")
+  )
 )
 
 # ============================================================================

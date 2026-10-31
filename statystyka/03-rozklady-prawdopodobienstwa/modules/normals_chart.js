@@ -30,8 +30,31 @@
     var read = {};
     ["n1", "n2", "a", "b"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
 
+    var layer = Charts.handleLayer(root);
+    var handles = G.map(function (g, i) {
+      return layer.add(canvas, {
+        role: "button", label: ["Kobiety", "Mężczyźni"][i],
+        hint: "Lewo i prawo zmieniają średnią. Góra zmniejsza odchylenie i podnosi szczyt, dół zwiększa odchylenie. Shift zwiększa krok dziesięciokrotnie.",
+        onKey: function (event) {
+          var horizontal = ["ArrowLeft", "ArrowRight"].indexOf(event.key) >= 0;
+          if (!horizontal && ["ArrowUp", "ArrowDown"].indexOf(event.key) < 0) return false;
+          var key = horizontal ? "mu" : "sd", step = (horizontal ? 0.5 : 0.1) * (event.shiftKey ? 10 : 1);
+          var direction = ["ArrowRight", "ArrowDown"].indexOf(event.key) >= 0 ? 1 : -1;
+          G[i][key] = +Math.max(horizontal ? LO + 5 : SD_MIN, Math.min(horizontal ? HI - 5 : SD_MAX, G[i][key] + direction * step)).toFixed(1);
+          draw(); layer.announce(handles[i].element.getAttribute("aria-label")); return true;
+        },
+        onPointerDown: function (event) { drag = i; canvas.setPointerCapture(event.pointerId); event.preventDefault(); }
+      });
+    });
+    function syncHandles(ch) {
+      handles.forEach(function (handle, i) {
+        var g = G[i]; handle.position(ch.scales.x.getPixelForValue(g.mu), ch.scales.y.getPixelForValue(pdf(g.mu, g.mu, g.sd)));
+        handle.element.setAttribute("aria-label", ["Kobiety", "Mężczyźni"][i] + ". Średnia " + num(g.mu) + " cm, odchylenie " + num(g.sd) + " cm");
+      });
+    }
     var chart = Charts.create(canvas, {
       type: "line",
+      plugins: [{ id: "normalHandles", afterRender: syncHandles }],
       data: { datasets: [
         { data: [], fill: "origin", borderWidth: 2.5 },
         { data: [], fill: "origin", borderWidth: 2.5 },
@@ -53,7 +76,9 @@
     function paint() {
       var surface = token("--upwr-surface") || "#fff";
       COLS = [token("--upwr-cat-niebo") || "#6a9dc4", token("--upwr-cat-terakota") || "#b25838"];
-      Charts.styleAxes(chart);
+      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+      chart.options.scales.x.ticks.maxTicksLimit = 6;
+      chart.options.scales.y.ticks.maxTicksLimit = 5;
       var ds = chart.data.datasets;
       [0, 1].forEach(function (i) { ds[i].borderColor = COLS[i]; ds[i].backgroundColor = alpha(COLS[i], 0.18); });
       ds[2].pointBackgroundColor = ds[2].pointHoverBackgroundColor = COLS;
@@ -70,6 +95,7 @@
       });
       ds[2].data = G.map(function (g) { return { x: g.mu, y: pdf(g.mu, g.mu, g.sd) }; });
       chart.update("none");
+      syncHandles(chart);
       if (read.n1) read.n1.textContent = "N(" + num(G[0].mu) + ", " + num(G[0].sd) + ")";
       if (read.n2) read.n2.textContent = "N(" + num(G[1].mu) + ", " + num(G[1].sd) + ")";
       // kobiety wyższe niż średni mężczyzna; mężczyźni niżsi niż średnia kobieta
@@ -118,6 +144,7 @@
       G = START.map(function (g) { return { mu: g.mu, sd: g.sd }; }); draw();
     });
 
+    Charts.zoomControl(root);
     paint();
     draw();
     Charts.onTheme(root, paint);

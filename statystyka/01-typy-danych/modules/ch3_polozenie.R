@@ -274,16 +274,17 @@ ch3_ui <- list(
             lc_readout(ch3_line_label("Mediana", "niebo", "is-dashed"), tags$span(`data-role` = "median", "–"),
                        color = "var(--upwr-cat-niebo)"),
             lc_readout("Różnica", tags$span(`data-role` = "diff", "–"), color = "var(--upwr-cat-szalwia)")
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-salary-hist",
-          tags$canvas(`data-role` = "hist",
+          tags$canvas(role = "img", `data-role` = "hist",
             `aria-label` = "Histogram zarobków z liniami średniej i mediany")),
         tags$div(class = "lc-salary-strip",
-          tags$canvas(`data-role` = "strip",
+          tags$canvas(role = "img", `data-role` = "strip",
             `aria-label` = "Pensje jako punkty na osi zarobków; punkt prezesa można przeciągać")),
         lc_caption("Kliknij na wykresie, aby dopisać pensję w tym miejscu. Pensję prezesa
-          (duży punkt) przeciągnij po pasku pod histogramem.")
+          (duży punkt) przeciągnij po pasku pod histogramem lub wybierz Tabem i przesuń strzałkami.")
       )
     ),
 
@@ -370,13 +371,14 @@ ch3_ui <- list(
           lc_readouts(
             lc_readout("Dodane wartości", tags$span(`data-role` = "count", "0"),
                        color = "var(--upwr-secondary)")
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-salary-hist",
-          tags$canvas(`data-role` = "hist",
+          tags$canvas(role = "img", `data-role` = "hist",
             `aria-label` = "Histogram zarobków z liniami średniej, mediany i średniej uciętej")),
         tags$div(class = "lc-salary-strip",
-          tags$canvas(`data-role` = "strip",
+          tags$canvas(role = "img", `data-role` = "strip",
             `aria-label` = "Pensje jako punkty; puste kółka to wartości odrzucone w średniej uciętej")),
         lc_caption("Kliknij na wykresie, aby dopisać pensję w tym miejscu. Puste kółka
           na pasku to pensje odrzucone przy liczeniu średniej uciętej."),

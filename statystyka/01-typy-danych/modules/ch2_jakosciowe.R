@@ -146,32 +146,35 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.3",
       title = "Wykres kołowy a słupkowy — trzy scenariusze",
-      lc_toolbar(
-        lc_segmented("ch2_scenario", "Scenariusz",
-          choices = c("Duże różnice" = "1", "Podobne" = "2", "Złe kolory" = "3"))
-      ),
-      tags$div(class = "lc-scenario", lc_plots(pair = TRUE,
-        tags$div(
-          tags$h4("Wykres kołowy"),
-          div(style = "position: relative; width: 100%; height: 320px;",
-            tags$canvas(id = "ch2_pie_canvas")
-          ),
-          uiOutput("ch2_scenario_pie_verdict")
+      tags$div(class = "lc-scenario",
+        lc_toolbar(
+          lc_segmented("ch2_scenario", "Scenariusz",
+            choices = c("Duże różnice" = "1", "Podobne" = "2", "Złe kolory" = "3")),
+          lc_chart_zoom_button()
         ),
-        tags$div(
-          tags$h4("Wykres słupkowy, te same dane"),
-          div(style = "position: relative; width: 100%; height: 320px;",
-            tags$canvas(id = "ch2_bar_canvas"),
-            uiOutput("ch2_bar_cover")
+        lc_plots(pair = TRUE,
+          tags$div(
+            tags$h4("Wykres kołowy"),
+            div(class = "lc-scenario-canvas",
+              tags$canvas(id = "ch2_pie_canvas", role = "img", `aria-label` = "Udziały produktów na wykresie kołowym")
+            ),
+            uiOutput("ch2_scenario_pie_verdict")
           ),
-          uiOutput("ch2_scenario_bar_verdict")
-        )
-      )),
-      tags$div(style = "margin-top: 1.6em; font-size: 1.15em;",
-        lc_readouts(uiOutput("ch2_scenario_legend"))
-      ),
-      uiOutput("ch2_order_widget"),
-      uiOutput("ch2_order_result")
+          tags$div(
+            tags$h4("Wykres słupkowy, te same dane"),
+            div(class = "lc-scenario-canvas",
+              tags$canvas(id = "ch2_bar_canvas", role = "img", `aria-label` = "Udziały tych samych produktów na wykresie słupkowym po odsłonięciu"),
+              uiOutput("ch2_bar_cover")
+            ),
+            uiOutput("ch2_scenario_bar_verdict")
+          )
+        ),
+        tags$div(style = "margin-top: 1.6em; font-size: 1.15em;",
+          lc_readouts(uiOutput("ch2_scenario_legend"))
+        ),
+        uiOutput("ch2_order_widget"),
+        uiOutput("ch2_order_result")
+      )
     ),
 
     lc_p("Przy dużych różnicach (45%, 25%, 15%, 10% i 5%) oba wykresy prowadzą

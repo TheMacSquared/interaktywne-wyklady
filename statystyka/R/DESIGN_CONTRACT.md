@@ -167,8 +167,9 @@ jest dostępne jako `window.lcCharts`:
   `styleAxes(chart, null, {fontSize: ...})`. Wspólny obserwator odświeża style
   po zmianie motywu, S/M/L i lokalnego powiększenia.
 - `handleLayer(root)` tworzy warstwę uchwytów oraz komunikat dla czytnika
-  ekranu. `layer.add(canvas, {label, hint, onKey, onPointerDown, role})`
-  zwraca uchwyt z metodami `position()`, `value()` i `remove()`.
+  ekranu. `layer.add(canvas, {label, hint, onKey, onPointerDown, role, orientation})`
+  ustawia `orientation` na `horizontal` domyślnie, a `vertical` dla pionowego
+  parametru. Zwraca uchwyt z metodami `position()`, `value()` i `remove()`.
   `onKey` zwraca `true` dla obsłużonych klawiszy; warstwa blokuje wtedy
   ich domyślne działanie i propagację do nawigacji krokowej. Usunięcie
   punktu zwalnia również jego kontrolkę i zdarzenia.
@@ -190,6 +191,25 @@ lewo/prawo zmienia X, góra/dół Y; tylko dopisane punkty trafiają do kolejno�
 Tab. Dystrybuanta zachowuje wybór klawiaturowy do świadomego kliknięcia
 wykresu. W kwantylu uchwyt jest ukryty w trybie „znam p”, a zmiana x ponownie
 chowa odpowiedź. Lupa i S/M/L nie zmieniają danych ani stanu odsłonięcia.
+
+Druga kolejka obejmuje 01 / Ryc. 3.4 i 5.5, 02 / Ryc. 4.3 i 4.4 oraz
+03 / Ryc. 5.3, 5.5 i 5.7. Pensja prezesa ma uchwyt dopiero po dodaniu.
+Kurtoza, rozrzut i nachylenie mają pionowe slidery; klawiatura przerywa
+animację presetów. Każda krzywa normalna ma uchwyt 2D: ←/→ zmieniają μ,
+↑ zmniejsza σ (podnosi szczyt), ↓ zwiększa σ. W porównaniu wyjątkowości
+uchwyty działają tylko w widoku oryginalnych skal; ukryty widok nie trafia
+do kolejności Tab. Kroki obserwacji i progu galerii pochodzą z konfiguracji,
+z zachowaniem jednostek i pytania o jeden lub oba ogony. Lupa zachowuje
+widok i parametry. `axisTitle(text, width, fontSize)` zawija długie tytuły osi
+w `beforeLayout`, zamiast zmniejszać napisy. Marginesy osi muszą pomieścić
+cały uchwyt również przy Home/End i dużej czcionce.
+
+Trzecia kolejka (01 / Ryc. 2.3 i 3.6, 02 / Ryc. 5.4, 03 / Ryc. 1.2 i 5.4)
+korzysta z istniejących kontrolek, bez nowych uchwytów. Lupa i S/M/L nie
+wymieniają instancji, nie losują danych ani nie odsłaniają odpowiedzi.
+Lejek zachowuje skalę logarytmiczną i trwającą animację, Simpson wybrany
+widok, a kalkulator z-score wartości pól i wynik. Pola kalkulatora mają
+widoczne etykiety `label` powiązane przez `for` z identyfikatorami wejść.
 
 Kontener i jego wykresy żyją tylko do zmiany rozdziału. Nie przechowujemy
 starego płótna jako singletonu ani nie tworzymy osobnych obserwatorów DOM

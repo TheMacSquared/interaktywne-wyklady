@@ -1,13 +1,13 @@
 # Klawiatura, powiększenie i czytelność widgetów 00–04
 
-Ocena z 2026-10-31, uzupełniona po wdrożeniu pierwszej kolejki klawiatury
-i małej lupy. To lista kandydatów do kolejnych zmian, a nie decyzja o migracji
+Ocena z 2026-10-31, uzupełniona po wdrożeniu trzech kolejek klawiatury,
+czytelności i małej lupy. To lista kandydatów do kolejnych zmian, a nie decyzja o migracji
 wszystkich wykresów do Chart.js.
 
 Przegląd obejmuje panele rzeczywiście podłączone do `.chapters` wykładów
 00–04, ich kontrolki i skrypty obsługujące interakcję. Uwzględnia również
 podłączone prototypy rozdziału 6 wykładu 03; nie obejmuje usuniętych wariantów.
-Ocena wynika z kodu i celu demonstracji. Pierwszą kolejkę sprawdzono w Chromium:
+Ocena wynika z kodu i celu demonstracji. Wdrożone kolejki sprawdzono w Chromium:
 klawiaturę, lupy, ukrywanie odpowiedzi, S/M/L, telefon i powroty do rozdziału.
 Czytelność na rzutniku oraz pozostałych kandydatów trzeba jeszcze potwierdzić
 na zajęciach i w przeglądarce.
@@ -20,9 +20,10 @@ Nie dodawać pól liczbowych do demonstracji pojęć. Zachować je w kalkulatora
 w których konkretny wynik i dokładnie zadane parametry są częścią zadania.
 
 W aktywnych panelach jest 18 widgetów Chart.js: 6 w wykładzie 01, 4 w 02
-i 8 w 03. Sześć ma wdrożony wzorzec: Ryc. 4.3 wykładu 03 oraz pięć widgetów
-z pierwszej kolejki. Siedem pozostaje w drugiej kolejce, a w pięciu ważniejsze
-są czytelność i istniejące kontrolki niż dodatkowe uchwyty klawiaturowe.
+i 8 w 03. Wszystkie mają wspólną lupę i skalowanie napisów. Trzynaście ma
+uchwyty klawiaturowe: Ryc. 4.3 wykładu 03 oraz dwanaście widgetów z pierwszej
+i drugiej kolejki. W pozostałych pięciu zachowano istniejące przyciski i pola;
+trzecia kolejka objęła ich czytelność.
 
 Pierwsza kolejka — wdrożona:
 
@@ -57,7 +58,21 @@ pozostają ukryte do odsłonięcia. Nie dodano pól liczbowych.
 [guess_chart.js](01-typy-danych/modules/guess_chart.js),
 [scatter_charts.js](02-zwiazki-zmiennych/modules/scatter_charts.js).
 
-## Druga kolejka: wartościowe uzupełnienie
+## Druga kolejka: wdrożona
+
+Wszystkie siedem paneli ma klawiaturę, lupę i skalowanie napisów. Pensja
+prezesa staje się dostępna Tabem po jej dodaniu, a po nowym losowaniu uchwyt
+znika. Kurtoza zmienia się co 0.2 (z Shiftem co 1), rozrzut i nachylenie co
+0.05 (z Shiftem co 0.5); klawiatura przerywa animację gotowego przypadku.
+Dwie krzywe mają niezależne uchwyty 2D: ←/→ zmieniają μ, ↑ zmniejsza σ,
+↓ zwiększa σ. Porównanie obserwacji i galeria używają kroków oraz jednostek
+z konfiguracji. W widoku z uchwyty oryginalnych osi są ukryte. Lupa zachowuje
+parametry i widok; długie tytuły osi zawijają się przy większej czcionce.
+Dodawanie dowolnej pensji kliknięciem pozostaje osobnym działaniem myszą.
+
+Testy: 22 scenariusze JS (w tym siedem nowych), pełne kontrole R oraz Chromium:
+klawiatura, lupy bez zmiany stanu, ukrywanie uchwytów, ciemny motyw i telefon.
+Tabela zachowuje uzasadnienie wyboru mechanizmów.
 
 | Wykład / rycina | Ocena klawiatury | Ocena lupy i skalowania |
 |---|---|---|
@@ -75,15 +90,19 @@ pozostają ukryte do odsłonięcia. Nie dodano pól liczbowych.
 [duel_chart.js](03-rozklady-prawdopodobienstwa/modules/duel_chart.js),
 [cases_chart.js](03-rozklady-prawdopodobienstwa/modules/cases_chart.js).
 
-## Pozostałe widgety Chart.js
+## Trzecia kolejka: czytelność — wdrożona
 
-| Wykład / rycina | Zalecenie |
+Wspólna lupa i S/M/L zmieniają wygląd bez wymiany instancji wykresu,
+ponownego losowania danych ani odsłaniania odpowiedzi. Pięć dodatkowych testów
+JS chroni te zachowania, w tym trwającą animację lejka i niepoprawne σ.
+
+| Wykład / rycina | Zrealizowane rozwiązanie |
 |---|---|
-| 01 / 2.3 — Wykres kołowy a słupkowy | Scenariusz i odsłonięcie mają kontrolki. Nowe uchwyty nie wnoszą wartości. Jeśli dodawać lupę, powiększać oba wykresy razem, z legendą i nadal ukrytą odpowiedzią. Warto ujednolicić rozmiar etykiet słupków. |
-| 01 / 3.6 — Odporność miar | Przyciski dodania jednej lub pięciu wartości skrajnych wystarczają do głównej narracji. Klawiaturowe dodawanie dowolnej obserwacji na osi to niższy priorytet. Większa korzyść ze wspólnej lupy i czytelnych linii trzech miar. |
-| 02 / 5.4 — Paradoks Simpsona | Przełącznik „Razem / Osobno” już realizuje istotną interakcję. Nie dodawać przeciągania punktów. Przydatne skalowanie napisów i ewentualnie lupa całego widgetu, zachowująca wybrany widok. |
-| 03 / 1.2 — Lejek | Serie i reset mają przyciski; nie ma parametru do przesuwania uchwytem. Lupa i czytelniejsze osie pomagają przy wielu seriach i skali logarytmicznej. Powiększenie nie może losować nowych serii ani resetować ich liczby. |
-| 03 / 5.4 — Kalkulator z-score | Pola μ, σ, x mają tu uzasadnienie: celem jest również policzenie konkretnego z. Pozostawić pola, powiązać ich etykiety z wejściami. Uchwyt x byłby wygodą dodatkową. Większy priorytet mają czytelne i wyrównane osie obu wykresów. |
+| 01 / 2.3 — Wykres kołowy a słupkowy | Wspólna lupa całego panelu z legendą. W powiększeniu wykresy są pod sobą, etykiety słupków rosną. Zmiana wyglądu zachowuje scenariusz i stan odsłonięcia; celowo zbliżone kolory pozostają częścią zadania. |
+| 01 / 3.6 — Odporność miar | Histogram i pasek powiększane razem. Osie skalują się z S/M/L, bez zmiany pensji ani trzech miar. Dotychczasowe przyciski dodania wartości skrajnych pozostają podstawą demonstracji. |
+| 02 / 5.4 — Paradoks Simpsona | Lupa i skalowane napisy zachowują widok „Razem / Osobno”, punkty i proste. Nie dodano uchwytów do punktów. |
+| 03 / 1.2 — Lejek | Lupa i skalowane osie zachowują serie i ich liczbę. Skala pozostaje logarytmiczna; długi tytuł osi zawija się. Zmiana wyglądu nie kończy trwającej animacji. |
+| 03 / 5.4 — Kalkulator z-score | Powiększenie obu wykresów i skalowanie osi bez zmiany μ, σ, x i wyniku. Widoczne etykiety są powiązane z polami przez label/for; pola pozostają właściwą obsługą dokładnych parametrów. |
 
 ## Wykłady 00 i 04 oraz pozostałe elementy 01–03
 

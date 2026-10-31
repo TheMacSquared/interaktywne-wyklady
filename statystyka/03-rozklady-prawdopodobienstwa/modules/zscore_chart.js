@@ -59,7 +59,10 @@
       var surface = token("--upwr-surface") || "#fff";
       var fill = alpha(token("--upwr-rule") || "#d9cfbc", 0.5);
       charts.forEach(function (c) {
-        Charts.styleAxes(c, null, { includeBounds: false, titleSize: 13 });
+        Charts.styleAxes(c, null, { includeBounds: false, fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+        c.options.scales.x.ticks.maxTicksLimit = 5;
+        // Jednakowe marginesy utrzymują wyrównanie osi x i z mimo różnych etykiet.
+        c.options.layout.padding.left = c.options.layout.padding.right = Math.ceil(Charts.axisFontSize(root) * 1.6);
         if (c.options.scales.xz) c.options.scales.xz.grid.display = false;
         var ds = c.data.datasets;
         ds[0].borderColor = ink; ds[0].backgroundColor = fill;
@@ -120,6 +123,7 @@
     Charts.listen(cvX, "pointermove", function (e) { if (drag) move(e); });
     ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(cvX, t, function () { drag = false; }); });
 
+    Charts.zoomControl(root);
     paint();
     draw();
     Charts.onTheme(root, paint);

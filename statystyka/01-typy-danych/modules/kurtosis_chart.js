@@ -91,6 +91,21 @@
     for (i = 0; i <= 125; i++) XT.push(TAIL + i * 0.02);
     var NORM_TAIL = upper(dnorm, TAIL);
 
+    var layer = Charts.handleLayer(root);
+    var handle = layer.add(cMain, {
+      label: "Kurtoza nadwyżkowa", orientation: "vertical",
+      hint: "Góra zwiększa kurtozę, dół ją zmniejsza, co 0.2. Shift: krok 1. Home i End: krańce zakresu.",
+      onKey: function (event) {
+        var value = Charts.keyValue(event, ek, KMIN, KMAX, STEP, 1);
+        if (value === null) return false;
+        setEk(value); layer.announce("Kurtoza nadwyżkowa " + Charts.fmt(ek, 1) + ".");
+        return true;
+      },
+      onPointerDown: function (event) { startDrag(event); }
+    });
+    function positionHandle(ch) {
+      handle.position(ch.scales.x.getPixelForValue(0), ch.scales.y.getPixelForValue(density(ek)(0)));
+    }
     function ds(extra) {
       return Object.assign({ data: [], showLine: true, pointRadius: 0, borderWidth: 2 }, extra || {});
     }
@@ -100,6 +115,7 @@
     };
     var chMain = Charts.create(cMain, {
       type: "scatter",
+      plugins: [{ id: "kurtosisHandle", afterRender: positionHandle }],
       data: { datasets: [
         ds({ fill: "origin", borderWidth: 2.5 }),
         ds({ borderDash: [6, 4] }),
@@ -130,7 +146,11 @@
     var P = null;
     function paint() {
       P = Charts.palette();
-      Charts.styleAxes(chMain, P, { maxRotation: 0 }); Charts.styleAxes(chTail, P, { maxRotation: 0 });
+      [chMain, chTail].forEach(function (ch) {
+        Charts.styleAxes(ch, P, { maxRotation: 0, fontSize: Charts.axisFontSize(root) });
+        ch.options.scales.x.ticks.maxTicksLimit = 6;
+        ch.options.scales.y.ticks.maxTicksLimit = 5;
+      });
       chMain.data.datasets[1].borderColor = P.ref;
       chTail.data.datasets[1].borderColor = P.ref;
       chTail.data.datasets[1].backgroundColor = Charts.alpha(P.ref, 0.15);
@@ -168,6 +188,8 @@
       root.querySelectorAll("[data-k-set]").forEach(function (b) {
         b.setAttribute("aria-pressed", String(Math.abs(+b.dataset.kSet - ek) < 1e-9));
       });
+      handle.value(ek, KMIN, KMAX, "Kurtoza nadwyżkowa " + Charts.fmt(ek, 1));
+      positionHandle(chMain);
       root.lcState = { ek: ek, peak: f(0), tail: pt, normTail: NORM_TAIL, f: f };
     }
 
@@ -181,11 +203,12 @@
     var drag = null;
     cMain.style.touchAction = "none";
     cMain.style.cursor = "ns-resize";
-    Charts.listen(cMain, "pointerdown", function (e) {
+    function startDrag(e) {
       drag = { y: e.clientY, ek: ek };
       cMain.setPointerCapture(e.pointerId);
       e.preventDefault();
-    });
+    }
+    Charts.listen(cMain, "pointerdown", startDrag);
     Charts.listen(cMain, "pointermove", function (e) {
       if (!drag) return;
       setEk(drag.ek + Math.round((drag.y - e.clientY) / PX_PER_STEP) * STEP);
@@ -199,6 +222,7 @@
       setEk(+b.dataset.kSet);
     });
 
+    Charts.zoomControl(root);
     paint();
     draw();
     Charts.onTheme(root, function () { paint(); draw(); });

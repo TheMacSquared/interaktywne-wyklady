@@ -218,7 +218,7 @@
         element.setAttribute("role", options.role || "slider");
         element.setAttribute("aria-label", options.label);
         element.setAttribute("aria-describedby", hint.id);
-        if (options.role !== "button") element.setAttribute("aria-orientation", "horizontal");
+        if (options.role !== "button") element.setAttribute("aria-orientation", options.orientation || "horizontal");
         canvas.parentElement.appendChild(element);
         root.appendChild(hint);
         function keydown(event) {
@@ -262,6 +262,19 @@
     if (event.key === "ArrowRight" || event.key === "ArrowUp") return Math.min(max, value + delta);
     if (event.key === "ArrowLeft" || event.key === "ArrowDown") return Math.max(min, value - delta);
     return null;
+  }
+
+  // Długie nazwy osi pozostają czytelne po powiększeniu: zawijamy słowa,
+  // zamiast zmniejszać krój. Szerokość jest podawana w pikselach CSS.
+  function axisTitle(text, width, fontSize) {
+    var limit = Math.max(10, Math.floor(((width || 640) - 24) / (fontSize * 0.62)));
+    var lines = [], line = "";
+    text.split(/\s+/).forEach(function (word) {
+      if (line && line.length + word.length + 1 > limit) { lines.push(line); line = ""; }
+      line += (line ? " " : "") + word;
+    });
+    if (line) lines.push(line);
+    return lines;
   }
 
   // To samo przybliżenie Abramowitza–Steguna co w dotychczasowych widgetach.
@@ -332,6 +345,7 @@
     linearFit: fit, normalQuantile: normalQuantile,
     axisFontSize: axisFontSize, zoomControl: zoomControl,
     handleLayer: handleLayer, keyValue: keyValue,
+    axisTitle: axisTitle,
     fmt: fmt, fmtSigned: fmtSigned, round: round
   };
 })();
