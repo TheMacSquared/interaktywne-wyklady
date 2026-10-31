@@ -67,6 +67,8 @@ ch1_ui <- list(
                       aria = "Student z miarką mierzy grupkę osób wychodzących z sali; średnia grupki x̄ spada żetonem na stos pod osią wzrostu, a w ostatnim kroku widać μ i odchylenie standardowe średnich"))
     ),
 
+    visual_scenes_ui,
+
     lc_p("Pojedyncze estymaty rozrzucają się po obu stronach μ, ale stos układa
       się wokół μ. Przy n = 25 ", gloss("błąd standardowy"), " wynosi
       σ/√n = 10/√25 = 2 cm, więc około 95% średnich grupek wypada między 166.1
@@ -143,6 +145,7 @@ ch1_ui <- list(
       pomiar wychodzi o 2 cm za duży."),
 
     s4p("1a"),
+    bb("measures"),
 
     lc_p("Po tysiącu grupek trzy pierwsze stosy stoją wokół μ = 170 cm, więc
       wszystkie trzy estymatory są nieobciążone. Różnią się jednak szerokością:
@@ -209,6 +212,7 @@ ch1_ui <- list(
       centymetrów od μ, a sama liczba nie zdradza, jak daleko."),
 
     s4p("1d"),
+    bb("pizza"),
 
     lc_p("Ta sama sytuacja zdarza się poza salą wykładową. Na Ryc. 1.4 dwie
       pizzerie miały wczoraj tę samą średnią ocen, 4.4 ★. U Gośki oceniło

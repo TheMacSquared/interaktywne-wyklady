@@ -241,6 +241,7 @@ ch3_ui <- list(
     ),
 
     s4p("3a"),
+    bb("difference"),
     s4p("3b"),
 
     lc_h2("ch3-case-studies", "Case studies — jak interpretować CI w praktyce"),
@@ -348,6 +349,7 @@ ch3_ui <- list(
       gloss("istotność praktyczna", "istotności praktycznej"), "."),
 
     s4p("3c"),
+    bb("useful"),
 
     lc_p("Przy wielu grupach przedziały zestawia się na jednej osi w ",
       gloss("forest plot", "forest plocie"), ". Taki wykres to szybka mapa:

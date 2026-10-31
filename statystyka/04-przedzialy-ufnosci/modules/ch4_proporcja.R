@@ -87,6 +87,7 @@ ch4_ui <- list(
       albo porażek jest niewiele i tam przedziały są tylko przybliżone."),
 
     s4p("4a"),
+    bb("defects"),
     s4p("4b"),
 
     lc_p("Programy statystyczne często nie podają przedziału Walda, tylko ",

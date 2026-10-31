@@ -118,6 +118,7 @@ ch2_ui <- list(
 
     s4p("2b"),
     s4p("2c"),
+    bb("coverage"),
 
     lc_h2("ch2-jak-interpretowac", "Jak (nie) interpretować przedział ufności"),
 
@@ -153,6 +154,7 @@ ch2_ui <- list(
       jest środkiem przedziału, więc leży w nim zawsze."),
 
     s4p("2d"),
+    bb("people"),
 
     lc_note("Zasada", rule = TRUE,
       tagList(

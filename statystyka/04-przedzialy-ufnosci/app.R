@@ -54,6 +54,8 @@ for (.f in c("common", paste0("ch", 1:5))) {
   .p <- file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R"))
   if (file.exists(.p)) source(.p, local = TRUE)
 }
+source(file.path(app_dir, "modules", "brainstorm.R"), local = TRUE)
+source(file.path(app_dir, "modules", "visual_scenes.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_estymacja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_idea.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch3_srednia.R"),   local = TRUE)
@@ -79,6 +81,11 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "scenes.js")),
     # Prototypy punktów stop: Chart.js i własne skrypty s4p_*.js
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "brainstorm.css"), warn = FALSE), collapse = "\n"))),
+    includeScript(file.path(app_dir, "modules", "brainstorm.js")),
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "visual_scenes.css"), warn = FALSE), collapse = "\n"))),
+    includeScript(file.path(app_dir, "modules", "visual_scenes.js")),
     lapply(sort(list.files(file.path(app_dir, "modules"), pattern = "^s4p_.*\\.js$", full.names = TRUE)),
            includeScript),
     tags$style(HTML("

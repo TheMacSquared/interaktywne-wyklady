@@ -1,0 +1,17 @@
+/* Lokalne szkice do porównania, wspólne komponenty lc-* pozostają bez zmian. */
+.bb-widget { margin-block: 1.2em 2em; }
+.bb-widget .bb-chart { position: relative; width: 100%; min-height: 15em; }
+.bb-widget canvas { display: block; width: 100%; height: 100%; }
+.bb-widget[data-lc-chart-large="true"] .bb-chart { min-height: 25em; }
+.bb-widget .bb-read { margin-top: .8em; min-height: 2em; font-family: var(--upwr-mono); font-size: .9em; line-height: 1.7; color: var(--upwr-ink); }
+.bb-widget .bb-slider { min-width: min(100%, 15em); flex: 1 1 15em; }
+.bb-widget .bb-slider label { display: flex; justify-content: space-between; gap: 1em; font-size: .85em; }
+.bb-widget .bb-slider output { font-family: var(--upwr-mono); }
+.bb-widget input[type="range"] { width: 100%; accent-color: var(--upwr-accent); cursor: pointer; }
+.bb-widget .bb-map, .bb-widget .bb-products { display: grid; grid-template-columns: repeat(10, 1fr); gap: .3em; max-width: 30em; margin: 1em auto; }
+.bb-widget .bb-map span { aspect-ratio: 2.2; border-radius: .15em; background: var(--upwr-cat-szalwia); }
+.bb-widget .bb-map span.is-miss { background: var(--upwr-cat-terakota); }
+.bb-widget .bb-products button { aspect-ratio: 1.4; border: 1px solid var(--upwr-rule); border-radius: .2em; background: var(--upwr-surface); color: var(--upwr-ink-subtle); cursor: pointer; font-family: var(--upwr-mono); }
+.bb-widget .bb-products button[aria-pressed="true"] { background: var(--upwr-cat-terakota); color: var(--upwr-surface); }
+.bb-widget button:focus-visible, .bb-widget input:focus-visible { outline: 2px solid var(--upwr-accent); outline-offset: 3px; }
+.bb-widget .bb-products button { min-width: 0; padding: .3em .05em; font-size: .8em; }

@@ -260,6 +260,7 @@ ch5_ui <- list(
       wniosek wychodzi „po jego myśli”, przestaje mierzyć siłę dowodów."),
 
     s4p("5c"),
+    bb("publish"),
 
     lc_note("Zasada", rule = TRUE,
       "Poziom ufności ustal przed analizą danych i zawsze podawaj go w raporcie
