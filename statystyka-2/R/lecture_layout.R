@@ -349,10 +349,12 @@ lecture_page <- function(lecture_id      = NULL,
       ),
       # Tekst wewnątrz \text{...} dziedziczy krój interfejsu. Domyślny font
       # MathJax nie składa polskich znaków spójnie z resztą wykładu.
+      # Font TeX zamiast lokalnego STIX (macOS): STIX przesuwa akcenty \hat i \bar w prawo.
       tags$script(
         type = "text/x-mathjax-config",
         HTML("MathJax.Hub.Config({
-          'HTML-CSS': { mtextFontInherit: true },
+          'HTML-CSS': { mtextFontInherit: true, availableFonts: ['TeX'],
+                        preferredFont: 'TeX', webFont: 'TeX' },
           CommonHTML: { mtextFontInherit: true }
         });")
       ),
