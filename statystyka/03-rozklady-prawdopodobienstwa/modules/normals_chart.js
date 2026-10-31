@@ -6,28 +6,17 @@
 // [data-role="n1"], [data-role="n2"], [data-role="a"], [data-role="b"].
 // Wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
+  var Charts = window.lcCharts;
+  var token = Charts.token, alpha = Charts.alpha;
   var SD_MIN = 4, SD_MAX = 20;
 
-  function phi(z) {
-    var x = Math.abs(z) / Math.SQRT2, t = 1 / (1 + 0.3275911 * x);
-    var erf = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 +
-      t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-x * x);
-    return z >= 0 ? (1 + erf) / 2 : (1 - erf) / 2;
-  }
-  function token(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-  function alpha(hex, a) {
-    var h = hex.replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
+  var phi = Charts.normalCdf;
+
   function pdf(v, mu, sd) { var z = (v - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); }
 
   function init(root) {
-    if (root.dataset.ready || typeof Chart === "undefined") return;
     var canvas = root.querySelector('canvas[data-role="pdf"]');
-    if (!canvas) return;
-    root.dataset.ready = "1";
+    if (!canvas) return false;
 
     var START = [
       { mu: parseFloat(root.dataset.mu1), sd: parseFloat(root.dataset.sd1) },
@@ -41,7 +30,7 @@
     var read = {};
     ["n1", "n2", "a", "b"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
 
-    var chart = new Chart(canvas, {
+    var chart = Charts.create(canvas, {
       type: "line",
       data: { datasets: [
         { data: [], fill: "origin", borderWidth: 2.5 },
@@ -62,15 +51,9 @@
 
     var COLS = [];
     function paint() {
-      var subtle = token("--upwr-ink-subtle") || "#888", rule = token("--upwr-rule-soft") || "#ddd";
-      var surface = token("--upwr-surface") || "#fff", font = token("--upwr-mono") || "monospace";
+      var surface = token("--upwr-surface") || "#fff";
       COLS = [token("--upwr-cat-niebo") || "#6a9dc4", token("--upwr-cat-terakota") || "#b25838"];
-      ["x", "y"].forEach(function (k) {
-        var s = chart.options.scales[k];
-        s.grid = { color: rule }; s.border = { color: rule };
-        s.ticks = Object.assign(s.ticks || {}, { color: subtle, font: { family: font, size: 12 } });
-        s.title.color = subtle; s.title.font = { family: font, size: 12 };
-      });
+      Charts.styleAxes(chart);
       var ds = chart.data.datasets;
       [0, 1].forEach(function (i) { ds[i].borderColor = COLS[i]; ds[i].backgroundColor = alpha(COLS[i], 0.18); });
       ds[2].pointBackgroundColor = ds[2].pointHoverBackgroundColor = COLS;
@@ -110,7 +93,7 @@
       draw();
     }
     canvas.style.touchAction = "none";
-    canvas.addEventListener("pointerdown", function (e) {
+    Charts.listen(canvas, "pointerdown", function (e) {
       var p = at(e), best = -1, bd = Infinity;
       G.forEach(function (g, i) {
         var dx = chart.scales.x.getPixelForValue(g.mu) - p.px, dy = chart.scales.y.getPixelForValue(pdf(g.mu, g.mu, g.sd)) - p.py;
@@ -120,7 +103,7 @@
       if (best < 0 || bd > 60) return;
       drag = best; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault();
     });
-    canvas.addEventListener("pointermove", function (e) {
+    Charts.listen(canvas, "pointermove", function (e) {
       if (drag >= 0) { move(e); return; }
       var p = at(e), near = G.some(function (g) {
         var dx = chart.scales.x.getPixelForValue(g.mu) - p.px, dy = chart.scales.y.getPixelForValue(pdf(g.mu, g.mu, g.sd)) - p.py;
@@ -128,20 +111,17 @@
       });
       canvas.style.cursor = near ? "move" : "default";
     });
-    ["pointerup", "pointercancel"].forEach(function (t) { canvas.addEventListener(t, function () { drag = -1; }); });
+    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = -1; }); });
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       if (!e.target.closest("[data-n-reset]")) return;
       G = START.map(function (g) { return { mu: g.mu, sd: g.sd }; }); draw();
     });
 
     paint();
     draw();
-    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lc-theme"] });
+    Charts.onTheme(root, paint);
   }
 
-  function scan() { document.querySelectorAll(".lc-normals:not([data-ready])").forEach(init); }
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", scan);
-  window.addEventListener("load", scan);
+  Charts.onReady(".lc-normals", init);
 })();

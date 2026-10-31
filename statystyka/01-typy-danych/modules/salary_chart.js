@@ -6,6 +6,7 @@
 // data-config (JSON z R): {n, shape, scale, shift, trim, ceo, ceo_value, hi, hi_wide,
 // bin, bin_wide, snap}. Wymaga chart_utils.js (window.lc01).
 (function () {
+  var Charts = window.lcCharts;
   var U = window.lc01;
   if (!U) return;
 
@@ -13,7 +14,7 @@
     var cfg = JSON.parse(root.dataset.config || "{}");
     var cHist = root.querySelector('canvas[data-role="hist"]');
     var cStrip = root.querySelector('canvas[data-role="strip"]');
-    if (!cHist || !cStrip) return;
+    if (!cHist || !cStrip) return false;
     var TRIM = cfg.trim || 0, SNAP = cfg.snap || 100;
     var read = {};
     ["mean", "median", "diff", "n", "trim", "count",
@@ -47,14 +48,14 @@
     function lineDs(dash, width) {
       return { type: "scatter", data: [], showLine: true, pointRadius: 0, borderWidth: width, borderDash: dash };
     }
-    var chHist = new Chart(cHist, {
+    var chHist = Charts.create(cHist, {
       type: "scatter",
       data: { datasets: [lineDs([], 2.5), lineDs([7, 4], 2.5), lineDs([2, 3], 2.5)] },
       options: {
         responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
         layout: { padding: { top: 8, right: 12 } },
         scales: {
-          x: { type: "linear", min: 0, max: hi, ticks: { callback: function (v) { return U.fmt(v, 0, true); } } },
+          x: { type: "linear", min: 0, max: hi, ticks: { callback: function (v) { return Charts.fmt(v, 0, true); } } },
           y: { min: 0, max: 5, ticks: { precision: 0 }, afterFit: U.fixedWidth(Y_W),
                title: { display: true, text: "Liczba osób" } }
         },
@@ -62,7 +63,7 @@
       },
       plugins: [U.histPlugin]
     });
-    var chStrip = new Chart(cStrip, {
+    var chStrip = Charts.create(cStrip, {
       type: "scatter",
       data: { datasets: [
         { data: [], pointRadius: 4, borderWidth: 1.5 },
@@ -74,7 +75,7 @@
         responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
         layout: { padding: { right: 12 } },
         scales: {
-          x: { type: "linear", min: 0, max: hi, ticks: { callback: function (v) { return U.fmt(v, 0, true); } },
+          x: { type: "linear", min: 0, max: hi, ticks: { callback: function (v) { return Charts.fmt(v, 0, true); } },
                title: { display: true, text: "Zarobki (zł)" } },
           y: { min: -1, max: 1, ticks: { display: false }, grid: { display: false }, afterFit: U.fixedWidth(Y_W) }
         },
@@ -84,19 +85,19 @@
 
     var P = null;
     function paint() {
-      P = U.palette();
-      [chHist, chStrip].forEach(function (c) { U.styleAxes(c, P); });
+      P = Charts.palette();
+      [chHist, chStrip].forEach(function (c) { Charts.styleAxes(c, P, { maxRotation: 0 }); });
       chStrip.options.scales.y.grid = { display: false };
       chStrip.options.scales.y.border = { display: false };
       chHist.options.plugins.lcHist = Object.assign(chHist.options.plugins.lcHist || {},
-        { fill: U.alpha(P.ref, 0.55), gap: P.surface });
+        { fill: Charts.alpha(P.ref, 0.55), gap: P.surface });
       var colors = [P.accent, P.niebo, P.szalwia];
       for (var k = 0; k < 3; k++) {
         chHist.data.datasets[k].borderColor = colors[k];
         chStrip.data.datasets[3 + k].borderColor = colors[k];
       }
       var s = chStrip.data.datasets;
-      s[0].pointBackgroundColor = function (c) { return c.raw && c.raw.added ? U.alpha(P.terakota, 0.8) : U.alpha(P.secondary, 0.55); };
+      s[0].pointBackgroundColor = function (c) { return c.raw && c.raw.added ? Charts.alpha(P.terakota, 0.8) : Charts.alpha(P.secondary, 0.55); };
       s[0].pointBorderColor = function (c) { return c.raw && c.raw.added ? P.terakota : P.secondary; };
       s[1].pointBackgroundColor = "transparent";
       s[1].pointBorderColor = function (c) { return c.raw && c.raw.added ? P.terakota : P.subtle; };
@@ -146,20 +147,20 @@
       chHist.update("none"); chStrip.update("none");
 
       function set(k, t) { if (read[k]) read[k].textContent = t; }
-      set("mean", U.fmt(m, 0, true) + " zł");
-      set("median", U.fmt(med, 0, true) + " zł");
-      set("trim", U.fmt(tr, 0, true) + " zł");
+      set("mean", Charts.fmt(m, 0, true) + " zł");
+      set("median", Charts.fmt(med, 0, true) + " zł");
+      set("trim", Charts.fmt(tr, 0, true) + " zł");
       set("n", String(n));
       var d = m - med;
-      set("diff", U.fmt(d, 0, true) + " zł");
+      set("diff", Charts.fmt(d, 0, true) + " zł");
       if (read.diff) read.diff.closest(".lc-read").style.setProperty("--lc-read-color",
         Math.abs(d) < 500 ? "var(--upwr-cat-szalwia)" : "var(--upwr-cat-bursztyn)");
       set("count", String(items.filter(function (it) { return it.kind !== "base"; }).length));
-      set("t-mean", U.fmt(m, 0, true)); set("t-median", U.fmt(med, 0, true)); set("t-trim", U.fmt(tr, 0, true));
+      set("t-mean", Charts.fmt(m, 0, true)); set("t-median", Charts.fmt(med, 0, true)); set("t-trim", Charts.fmt(tr, 0, true));
       if (baseStats) {
-        set("d-mean", U.fmtSigned(m - baseStats.mean, 0, true));
-        set("d-median", U.fmtSigned(med - baseStats.median, 0, true));
-        set("d-trim", U.fmtSigned(tr - baseStats.trim, 0, true));
+        set("d-mean", Charts.fmtSigned(m - baseStats.mean, 0, true));
+        set("d-median", Charts.fmtSigned(med - baseStats.median, 0, true));
+        set("d-trim", Charts.fmtSigned(tr - baseStats.trim, 0, true));
       }
       if (btn.ceo) btn.ceo.disabled = !!ceo();
       root.lcState = { values: x, mean: m, median: med, trim: tr, axisMax: hi };
@@ -180,7 +181,7 @@
     function attach(canvas, chart) {
       canvas.style.touchAction = "none";
       canvas.style.cursor = "copy";
-      canvas.addEventListener("pointerdown", function (e) {
+      Charts.listen(canvas, "pointerdown", function (e) {
         var v = snap(U.valueAtX(chart, e));
         if (nearCeo(chart, e)) {
           dragging = ceo();
@@ -192,7 +193,7 @@
         }
         e.preventDefault();
       });
-      canvas.addEventListener("pointermove", function (e) {
+      Charts.listen(canvas, "pointermove", function (e) {
         if (dragging) {
           dragging.v = snap(U.valueAtX(chart, e));
           draw();
@@ -201,7 +202,7 @@
         }
       });
       ["pointerup", "pointercancel"].forEach(function (t) {
-        canvas.addEventListener(t, function () {
+        Charts.listen(canvas, t, function () {
           if (!dragging) return;
           dragging = null;
           canvas.style.cursor = "copy";
@@ -212,7 +213,7 @@
     attach(cHist, chHist);
     attach(cStrip, chStrip);
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-s-act]");
       if (!b || !root.contains(b)) return;
       var act = b.dataset.sAct;
@@ -229,8 +230,8 @@
     generate();
     paint();
     refresh();
-    U.onTheme(function () { paint(); draw(); });
+    Charts.onTheme(root, function () { paint(); draw(); });
   }
 
-  U.onReady(".lc-salary", init);
+  Charts.onReady(".lc-salary", init);
 })();

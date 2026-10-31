@@ -5,6 +5,7 @@
 // <canvas data-role="hist">, <canvas data-role="box">, przyciskami [data-p-set]
 // i odczytami [data-role="p|q|share|text"]. data-config: {values, p, bin, unit}.
 (function () {
+  var Charts = window.lcCharts;
   var U = window.lc01;
   if (!U) return;
 
@@ -52,7 +53,7 @@
     var cfg = JSON.parse(root.dataset.config || "{}");
     var cHist = root.querySelector('canvas[data-role="hist"]');
     var cBox = root.querySelector('canvas[data-role="box"]');
-    if (!cHist || !cBox) return;
+    if (!cHist || !cBox) return false;
     var S = U.sorted(cfg.values), N = S.length, BIN = cfg.bin || 2, UNIT = cfg.unit || "cm";
     var LO = Math.floor(S[0] / 5) * 5, HI = Math.ceil(S[N - 1] / 5) * 5;
     var Q = []; for (var i = 0; i <= 100; i++) Q.push(U.quantile7(S, i / 100, true));
@@ -69,7 +70,7 @@
     ["p", "q", "share", "text"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
     var Y_W = 58;
 
-    var chHist = new Chart(cHist, {
+    var chHist = Charts.create(cHist, {
       type: "scatter",
       data: { datasets: [
         { data: [], showLine: true, pointRadius: 0, borderWidth: 2.5 },
@@ -88,7 +89,7 @@
       },
       plugins: [U.histPlugin, U.labelPlugin]
     });
-    var chBox = new Chart(cBox, {
+    var chBox = Charts.create(cBox, {
       type: "scatter",
       data: { datasets: [] },
       options: {
@@ -106,13 +107,13 @@
 
     var P = null;
     function paint() {
-      P = U.palette();
-      U.styleAxes(chHist, P); U.styleAxes(chBox, P);
+      P = Charts.palette();
+      Charts.styleAxes(chHist, P, { maxRotation: 0 }); Charts.styleAxes(chBox, P, { maxRotation: 0 });
       chBox.options.scales.y.grid = { display: false };
       chBox.options.scales.y.border = { display: false };
-      Object.assign(chHist.options.plugins.lcHist, { fill: U.alpha(P.ref, 0.45), fillLeft: U.alpha(P.niebo, 0.7), gap: P.surface });
-      Object.assign(chHist.options.plugins.lcLabels, { font: P.mono, halo: U.alpha(P.surface, 0.85) });
-      Object.assign(chBox.options.plugins.lcBox, { ink: P.soft, fill: U.alpha(P.ref, 0.25), outlier: U.alpha(P.soft, 0.5),
+      Object.assign(chHist.options.plugins.lcHist, { fill: Charts.alpha(P.ref, 0.45), fillLeft: Charts.alpha(P.niebo, 0.7), gap: P.surface });
+      Object.assign(chHist.options.plugins.lcLabels, { font: P.mono, halo: Charts.alpha(P.surface, 0.85) });
+      Object.assign(chBox.options.plugins.lcBox, { ink: P.soft, fill: Charts.alpha(P.ref, 0.25), outlier: Charts.alpha(P.soft, 0.5),
         accent: P.accent, surface: P.surface, font: P.mono });
       var ds = chHist.data.datasets;
       ds[0].borderColor = P.accent;
@@ -121,21 +122,21 @@
     }
 
     function draw() {
-      var q = Q[p], qr = U.round(q, 1);
+      var q = Q[p], qr = Charts.round(q, 1);
       var share = 100 * S.filter(function (v) { return v <= qr; }).length / N;
       var hy = TOP * 0.9;
       chHist.data.datasets[0].data = [{ x: q, y: 0 }, { x: q, y: hy }];
       chHist.data.datasets[1].data = [{ x: q, y: hy }];
       chHist.options.plugins.lcHist.split = q;
-      chHist.options.plugins.lcLabels.items = [{ x: q, text: U.fmt(q, 1) + " " + UNIT, color: P.accent, row: 0 }];
+      chHist.options.plugins.lcLabels.items = [{ x: q, text: Charts.fmt(q, 1) + " " + UNIT, color: P.accent, row: 0 }];
       chBox.options.plugins.lcBox.mark = q;
       chBox.options.plugins.lcBox.markText = "P" + p;
       chHist.update("none"); chBox.update("none");
       if (read.p) read.p.textContent = p + "%";
-      if (read.q) read.q.textContent = U.fmt(q, 1) + " " + UNIT;
-      if (read.share) read.share.textContent = U.fmt(share, 1) + "%";
-      if (read.text) read.text.textContent = p + "% studentów ma wzrost poniżej " + U.fmt(qr, 1) + " " + UNIT +
-        ". Dokładnie " + U.fmt(share, 1) + "% obserwacji ≤ " + U.fmt(qr, 1) + " " + UNIT + ".";
+      if (read.q) read.q.textContent = Charts.fmt(q, 1) + " " + UNIT;
+      if (read.share) read.share.textContent = Charts.fmt(share, 1) + "%";
+      if (read.text) read.text.textContent = p + "% studentów ma wzrost poniżej " + Charts.fmt(qr, 1) + " " + UNIT +
+        ". Dokładnie " + Charts.fmt(share, 1) + "% obserwacji ≤ " + Charts.fmt(qr, 1) + " " + UNIT + ".";
       root.querySelectorAll("[data-p-set]").forEach(function (b) {
         b.setAttribute("aria-pressed", String(+b.dataset.pSet === p));
       });
@@ -154,23 +155,23 @@
       var canvas = pair[0], chart = pair[1];
       canvas.style.touchAction = "none";
       canvas.style.cursor = "ew-resize";
-      canvas.addEventListener("pointerdown", function (e) {
+      Charts.listen(canvas, "pointerdown", function (e) {
         drag = true;
         canvas.setPointerCapture(e.pointerId);
         p = nearestP(U.valueAtX(chart, e)); draw();
         e.preventDefault();
       });
-      canvas.addEventListener("pointermove", function (e) {
+      Charts.listen(canvas, "pointermove", function (e) {
         if (!drag) return;
         var np = nearestP(U.valueAtX(chart, e));
         if (np !== p) { p = np; draw(); }
       });
       ["pointerup", "pointercancel"].forEach(function (t) {
-        canvas.addEventListener(t, function () { drag = false; });
+        Charts.listen(canvas, t, function () { drag = false; });
       });
     });
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-p-set]");
       if (!b || !root.contains(b)) return;
       p = +b.dataset.pSet; draw();
@@ -178,8 +179,8 @@
 
     paint();
     draw();
-    U.onTheme(function () { paint(); draw(); });
+    Charts.onTheme(root, function () { paint(); draw(); });
   }
 
-  U.onReady(".lc-pctl", init);
+  Charts.onReady(".lc-pctl", init);
 })();

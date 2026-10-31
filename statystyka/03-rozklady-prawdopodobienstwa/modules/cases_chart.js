@@ -4,32 +4,21 @@
 // | "outside" (oba ogony dalej niż |t − μ| od μ). Kontener .lc-cases z <canvas data-role="pdf">,
 // przyciskami [data-c-case] i odczytami [data-role="model|t|p|q"]. Wzorzec jak area_chart.js.
 (function () {
-  function phi(z) {
-    var x = Math.abs(z) / Math.SQRT2, t = 1 / (1 + 0.3275911 * x);
-    var erf = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 +
-      t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-x * x);
-    return z >= 0 ? (1 + erf) / 2 : (1 - erf) / 2;
-  }
-  function token(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-  function alpha(hex, a) {
-    var h = hex.replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
+  var Charts = window.lcCharts;
+  var token = Charts.token, alpha = Charts.alpha;
+  var phi = Charts.normalCdf;
+
   function pdf(v, mu, sd) { var z = (v - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); }
   function decs(step) { return step >= 1 ? 0 : step >= 0.1 ? 1 : 2; }
 
   function init(root) {
-    if (root.dataset.ready || typeof Chart === "undefined") return;
     var canvas = root.querySelector('canvas[data-role="pdf"]');
-    if (!canvas) return;
-    root.dataset.ready = "1";
+    if (!canvas) return false;
     var CASES = JSON.parse(root.dataset.config || "[]"), C = null, t = 0, LO = 0, HI = 1, XS = [];
     var read = {};
     ["model", "t", "p", "q", "story"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
 
-    var chart = new Chart(canvas, {
+    var chart = Charts.create(canvas, {
       type: "line",
       data: { datasets: [
         { data: [], borderWidth: 2 },
@@ -49,13 +38,10 @@
     });
 
     function paint() {
-      var ink = token("--upwr-ink-soft") || "#444", subtle = token("--upwr-ink-subtle") || "#888";
-      var rule = token("--upwr-rule-soft") || "#ddd", accent = token("--upwr-accent") || "#7a2e3b";
-      var surface = token("--upwr-surface") || "#fff", font = token("--upwr-mono") || "monospace";
-      var s = chart.options.scales.x;
-      s.grid = { color: rule }; s.border = { color: rule };
-      s.ticks = { color: subtle, font: { family: font, size: 12 }, includeBounds: false };
-      s.title.color = subtle; s.title.font = { family: font, size: 13 };
+      var ink = token("--upwr-ink-soft") || "#444";
+      var accent = token("--upwr-accent") || "#7a2e3b";
+      var surface = token("--upwr-surface") || "#fff";
+      Charts.styleAxes(chart, null, { includeBounds: false, titleSize: 13 });
       var ds = chart.data.datasets;
       ds[0].borderColor = ink;
       ds[1].backgroundColor = ds[2].backgroundColor = alpha(accent, 0.32);
@@ -111,11 +97,11 @@
       draw();
     }
     canvas.style.touchAction = "none"; canvas.style.cursor = "ew-resize";
-    canvas.addEventListener("pointerdown", function (e) { drag = true; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
-    canvas.addEventListener("pointermove", function (e) { if (drag) move(e); });
-    ["pointerup", "pointercancel"].forEach(function (k) { canvas.addEventListener(k, function () { drag = false; }); });
+    Charts.listen(canvas, "pointerdown", function (e) { drag = true; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
+    Charts.listen(canvas, "pointermove", function (e) { if (drag) move(e); });
+    ["pointerup", "pointercancel"].forEach(function (k) { Charts.listen(canvas, k, function () { drag = false; }); });
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-c-case]");
       if (!b) return;
       root.querySelectorAll("[data-c-case]").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
@@ -124,11 +110,8 @@
 
     paint();
     setCase(0);
-    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lc-theme"] });
+    Charts.onTheme(root, paint);
   }
 
-  function scan() { document.querySelectorAll(".lc-cases:not([data-ready])").forEach(init); }
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", scan);
-  window.addEventListener("load", scan);
+  Charts.onReady(".lc-cases", init);
 })();

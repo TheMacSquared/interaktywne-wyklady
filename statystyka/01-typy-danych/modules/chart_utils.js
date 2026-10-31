@@ -1,7 +1,7 @@
 // Wspólne narzędzia rycin Chart.js wykładu 01 (Ryc. 3.4, 3.6, 3.9, 3.10, 5.5):
-// statystyki liczone jak w R, losowanie, kolory z tokenów CSS, histogram
-// i podpisy linii rysowane wtyczkami, start po pojawieniu się kontenera w DOM
-// (rozdziały renderują się przez renderUI). Eksport: window.lc01.
+// statystyki liczone jak w R, losowanie, histogram i podpisy linii rysowane
+// wtyczkami. Cykl życia, kolory i formatowanie: R/lc_charts.js.
+// Eksport: window.lc01.
 (function () {
   // ---- Statystyki (zgodne z R) -------------------------------------------
   function sorted(x) { return x.slice().sort(function (a, b) { return a - b; }); }
@@ -53,61 +53,6 @@
     return s * scale;
   }
 
-  // ---- Liczby jako tekst: kropka dziesiętna, zwykły minus, opcjonalnie spacja tysięcy
-  // toFixed zaokrągla dokładną wartość binarną, jak round() i sprintf() w R:
-  // mediana (170.6 + 170.7) / 2 = 170.64999999999998 daje 170.6 w obu.
-  function fmt(v, d, big) {
-    if (!isFinite(v)) return "–";
-    var s = Math.abs(v).toFixed(d || 0);
-    if (big) {
-      var parts = s.split(".");
-      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-      s = parts.join(".");
-    }
-    var neg = v < 0 && parseFloat(Math.abs(v).toFixed(d || 0)) !== 0;
-    return (neg ? "-" : "") + s;
-  }
-  function round(v, d) { return parseFloat(v.toFixed(d || 0)); }
-  function fmtSigned(v, d, big) {
-    var r = parseFloat(Math.abs(v).toFixed(d || 0));
-    return (v > 0 && r !== 0 ? "+" : "") + fmt(v, d, big);
-  }
-
-  // ---- Kolory --------------------------------------------------------------
-  function token(name, fallback) {
-    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    return v || fallback || "#888";
-  }
-  function alpha(hex, a) {
-    var h = String(hex).replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    if (!/^[0-9a-f]{6}$/i.test(h)) return hex;
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
-  function palette() {
-    return {
-      ink: token("--upwr-ink", "#222"), soft: token("--upwr-ink-soft", "#444"),
-      subtle: token("--upwr-ink-subtle", "#888"), rule: token("--upwr-rule", "#ccc"),
-      ruleSoft: token("--upwr-rule-soft", "#ddd"), surface: token("--upwr-surface", "#fff"),
-      ref: token("--upwr-reference", "#8b8175"), accent: token("--upwr-accent", "#7a2e3b"),
-      niebo: token("--upwr-cat-niebo", "#2f6fa8"), szalwia: token("--upwr-cat-szalwia", "#5b7f3a"),
-      bursztyn: token("--upwr-cat-bursztyn", "#b06a12"), terakota: token("--upwr-cat-terakota", "#a4472b"),
-      secondary: token("--upwr-secondary", "#555"), mono: token("--upwr-mono", "monospace")
-    };
-  }
-  // Osie: siatka, ramka, podziałki i tytuły w kolorach motywu, czcionka mono.
-  function styleAxes(chart, P) {
-    Object.keys(chart.options.scales).forEach(function (k) {
-      var s = chart.options.scales[k];
-      s.grid = Object.assign(s.grid || {}, { color: P.ruleSoft });
-      s.border = Object.assign(s.border || {}, { color: P.rule });
-      s.ticks = Object.assign(s.ticks || {}, { color: P.subtle, font: { family: P.mono, size: 12 } });
-      // Na wąskim ekranie podziałki X są pomijane, a nie obracane.
-      if (k === "x") s.ticks.maxRotation = 0;
-      if (s.title) { s.title.color = P.subtle; s.title.font = { family: P.mono, size: 12 }; }
-    });
-  }
   // Stała szerokość osi Y: wykresy jeden pod drugim mają wtedy wspólną skalę X w pikselach.
   function fixedWidth(w) { return function (scale) { scale.width = w; }; }
 
@@ -195,32 +140,10 @@
   }
   function pixelX(chart, e) { return e.clientX - chart.canvas.getBoundingClientRect().left; }
 
-  // Start widgetów: init(root) dla każdego nowego kontenera pasującego do selektora.
-  function onReady(selector, init) {
-    function scan() {
-      if (typeof Chart === "undefined") return;
-      document.querySelectorAll(selector + ":not([data-ready])").forEach(function (root) {
-        root.dataset.ready = "1";
-        try { init(root); } catch (err) { console.error(selector, err); }
-      });
-    }
-    new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-    document.addEventListener("DOMContentLoaded", scan);
-    window.addEventListener("load", scan);
-    scan();
-  }
-  // Przemalowanie przy zmianie motywu (jasny / ciemny / halloweenowy).
-  function onTheme(fn) {
-    new MutationObserver(fn).observe(document.documentElement,
-      { attributes: true, attributeFilter: ["data-lc-theme"] });
-  }
-
   window.lc01 = {
     sorted: sorted, mean: mean, median: median, quantile7: quantile7, trimMean: trimMean,
     runif: runif, sampleInt: sampleInt, rnorm: rnorm, rgammaInt: rgammaInt,
-    fmt: fmt, fmtSigned: fmtSigned, round: round, token: token, alpha: alpha, palette: palette,
-    styleAxes: styleAxes, fixedWidth: fixedWidth, histPlugin: histPlugin, labelPlugin: labelPlugin,
-    bins: bins, valueAtX: valueAtX, valueAtY: valueAtY, pixelX: pixelX,
-    onReady: onReady, onTheme: onTheme
+    fixedWidth: fixedWidth, histPlugin: histPlugin, labelPlugin: labelPlugin,
+    bins: bins, valueAtX: valueAtX, valueAtY: valueAtY, pixelX: pixelX
   };
 })();

@@ -75,6 +75,7 @@ ui <- lecture_page(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
     includeScript(file.path(app_dir, "modules", "scatter_charts.js")),
     tags$style(HTML("
       .lc-scat-canvas { position: relative; aspect-ratio: 1.8 / 1; touch-action: none; }

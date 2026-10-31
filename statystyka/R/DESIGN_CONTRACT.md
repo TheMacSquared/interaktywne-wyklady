@@ -134,6 +134,40 @@ Semantyczne kolory domenowe są dopuszczalne, jeśli realnie poprawiają czyteln
 
 Reaktywna przekazana do `zoom_plot_server()` musi zwracać obiekt (ggplot, patchwork, grob/gtable), nigdy rysować przez efekt uboczny. Ta sama reaktywna obsługuje mały wykres i modal powiększenia, a modal dostaje wynik z cache. Do składania paneli używaj `patchwork` albo `gridExtra::arrangeGrob()`, nie `gridExtra::grid.arrange()`.
 
+### Interaktywne wykresy Chart.js
+
+Wykłady używające Chart.js ładują `R/lc_charts.js` w `header_extras`, po
+bibliotece Chart.js i przed skryptami poszczególnych widgetów. Wspólne API
+jest dostępne jako `window.lcCharts`:
+
+- `onReady(selector, init)` inicjuje kontener po wstawieniu rozdziału przez
+  `renderUI()`. `init(root)` zwraca `false`, jeśli brakuje wymaganych elementów;
+  inicjalizacja będzie ponowiona po zmianie DOM.
+- `create(canvas, config)` tworzy wykres należący do kontenera; `destroy(chart)`
+  usuwa go wcześniej, gdy widget wymienia wykres w tym samym kontenerze.
+- `listen(element, event, callback)` rejestruje zdarzenie usuwane z kontenerem;
+  `onTheme(root, callback)` obsługuje zmianę motywu przez jeden wspólny obserwator.
+- `onDispose(root, callback)` sprząta pozostałe zasoby, np. timery.
+  Biblioteka niszczy wykresy i anuluje animacje po usunięciu kontenera.
+- `tween(root, from, to, step, done)` animuje zmianę wartości; nowa animacja
+  zastępuje poprzednią. `cancelTween(root)` przerywa ją np. po złapaniu uchwytu.
+- `onMessage(name, callback)` rejestruje kanał sesji Shiny. Ostatnie dane
+  przechowuje skrypt widgetu i odtwarza je w `onReady()`, niezależnie od tego,
+  czy wiadomość dotarła przed wstawieniem kontenera, czy po nim.
+- `token`, `alpha`, `palette`, `styleAxes`, `fmt`, `fmtSigned`, `round` i
+  `normalCdf` zawierają wspólne kolory, style osi, formatowanie liczb oraz
+  dotychczasowe przybliżenie dystrybuanty normalnej. Specyficzne opcje osi
+  pozostają w skrypcie widgetu.
+
+Kontener i jego wykresy żyją tylko do zmiany rozdziału. Nie przechowujemy
+starego płótna jako singletonu ani nie tworzymy osobnych obserwatorów DOM
+i motywu w każdym widgecie. Lokalna logika dydaktyczna, generowanie danych
+i specjalne wtyczki rysujące pozostają w plikach wykładu.
+
+Regresje cyklu życia sprawdza `node statystyka/tests/js/lc_charts.test.js`.
+Testy są też uruchamiane przez testthat, jeśli Node.js jest dostępny;
+Node.js nie jest zależnością uruchomieniową wykładów.
+
 ## CSS
 
 `R/shared_styles.css` jest CSS-em nowego systemu. Nie dodajemy do niego fallbacków dla starych klas.

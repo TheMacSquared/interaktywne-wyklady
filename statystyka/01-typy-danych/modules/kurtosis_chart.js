@@ -7,6 +7,7 @@
 // i przyciski [data-k-set]. Kontener .lc-kurt z <canvas data-role="main">,
 // <canvas data-role="tail"> i polami [data-role="type|ek|text"].
 (function () {
+  var Charts = window.lcCharts;
   var U = window.lc01;
   if (!U) return;
   var KMIN = -1.2, KMAX = 6, STEP = 0.2, PX_PER_STEP = 6, TAIL = 2.5;
@@ -75,7 +76,7 @@
   function init(root) {
     var cMain = root.querySelector('canvas[data-role="main"]');
     var cTail = root.querySelector('canvas[data-role="tail"]');
-    if (!cMain || !cTail) return;
+    if (!cMain || !cTail) return false;
     var read = {};
     ["type", "ek", "text", "swatch"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
     var ek = parseFloat(root.dataset.ek || "0");
@@ -91,7 +92,7 @@
       responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
       plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } }
     };
-    var chMain = new Chart(cMain, {
+    var chMain = Charts.create(cMain, {
       type: "scatter",
       data: { datasets: [
         ds({ fill: "origin", borderWidth: 2.5 }),
@@ -107,7 +108,7 @@
         }
       })
     });
-    var chTail = new Chart(cTail, {
+    var chTail = Charts.create(cTail, {
       type: "scatter",
       data: { datasets: [ds({ fill: "origin", borderWidth: 2.5 }), ds({ fill: "origin", borderDash: [6, 4] })] },
       options: Object.assign({}, common, {
@@ -122,11 +123,11 @@
 
     var P = null;
     function paint() {
-      P = U.palette();
-      U.styleAxes(chMain, P); U.styleAxes(chTail, P);
+      P = Charts.palette();
+      Charts.styleAxes(chMain, P, { maxRotation: 0 }); Charts.styleAxes(chTail, P, { maxRotation: 0 });
       chMain.data.datasets[1].borderColor = P.ref;
       chTail.data.datasets[1].borderColor = P.ref;
-      chTail.data.datasets[1].backgroundColor = U.alpha(P.ref, 0.15);
+      chTail.data.datasets[1].backgroundColor = Charts.alpha(P.ref, 0.15);
       chMain.update(); chTail.update();
     }
 
@@ -136,27 +137,27 @@
       m[0].data = XS.map(function (x) { return { x: x, y: f(x) }; });
       m[1].data = XS.map(function (x) { return { x: x, y: dnorm(x) }; });
       m[2].data = [{ x: 0, y: f(0) }];
-      m[0].borderColor = col; m[0].backgroundColor = U.alpha(col, 0.3);
+      m[0].borderColor = col; m[0].backgroundColor = Charts.alpha(col, 0.3);
       m[2].pointBackgroundColor = col; m[2].pointBorderColor = P.surface;
       t[0].data = XT.map(function (x) { return { x: x, y: f(x) }; });
       t[1].data = XT.map(function (x) { return { x: x, y: dnorm(x) }; });
-      t[0].borderColor = col; t[0].backgroundColor = U.alpha(col, 0.3);
+      t[0].borderColor = col; t[0].backgroundColor = Charts.alpha(col, 0.3);
       chMain.update("none"); chTail.update("none");
 
       var pt = upper(f, TAIL), v = verdict(ek);
       if (read.type) read.type.textContent = k.name;
-      if (read.ek) read.ek.textContent = U.fmt(ek, 1);
+      if (read.ek) read.ek.textContent = Charts.fmt(ek, 1);
       var box = read.ek && read.ek.closest(".lc-read");
       if (box) box.style.setProperty("--lc-read-color", k.color === "accent" ? "var(--upwr-accent)" : "var(--upwr-cat-" + k.color + ")");
       if (read.text) {
         read.text.innerHTML = "";
         var sp = document.createElement("span"); sp.className = "lc-status-" + v[1];
         var st = document.createElement("strong");
-        st.textContent = v[0] + " (nadwyżkowa kurtoza = " + U.fmt(ek, 1) + "):";
+        st.textContent = v[0] + " (nadwyżkowa kurtoza = " + Charts.fmt(ek, 1) + "):";
         sp.appendChild(st);
         read.text.appendChild(sp);
-        read.text.appendChild(document.createTextNode(" " + v[2] + " P(X > 2.5) = " + U.fmt(100 * pt, 2) +
-          "%, w rozkładzie normalnym " + U.fmt(100 * NORM_TAIL, 2) + "%."));
+        read.text.appendChild(document.createTextNode(" " + v[2] + " P(X > 2.5) = " + Charts.fmt(100 * pt, 2) +
+          "%, w rozkładzie normalnym " + Charts.fmt(100 * NORM_TAIL, 2) + "%."));
       }
       root.querySelectorAll("[data-k-set]").forEach(function (b) {
         b.setAttribute("aria-pressed", String(Math.abs(+b.dataset.kSet - ek) < 1e-9));
@@ -174,19 +175,19 @@
     var drag = null;
     cMain.style.touchAction = "none";
     cMain.style.cursor = "ns-resize";
-    cMain.addEventListener("pointerdown", function (e) {
+    Charts.listen(cMain, "pointerdown", function (e) {
       drag = { y: e.clientY, ek: ek };
       cMain.setPointerCapture(e.pointerId);
       e.preventDefault();
     });
-    cMain.addEventListener("pointermove", function (e) {
+    Charts.listen(cMain, "pointermove", function (e) {
       if (!drag) return;
       setEk(drag.ek + Math.round((drag.y - e.clientY) / PX_PER_STEP) * STEP);
     });
     ["pointerup", "pointercancel"].forEach(function (tp) {
-      cMain.addEventListener(tp, function () { drag = null; });
+      Charts.listen(cMain, tp, function () { drag = null; });
     });
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-k-set]");
       if (!b || !root.contains(b)) return;
       setEk(+b.dataset.kSet);
@@ -194,10 +195,10 @@
 
     paint();
     draw();
-    U.onTheme(function () { paint(); draw(); });
+    Charts.onTheme(root, function () { paint(); draw(); });
   }
 
   window.lc01.kurtDensity = density;
   window.lc01.kurtUpper = upper;
-  U.onReady(".lc-kurt", init);
+  Charts.onReady(".lc-kurt", init);
 })();

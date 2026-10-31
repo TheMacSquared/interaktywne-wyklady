@@ -5,28 +5,14 @@
 // Rozdział renderuje się przez renderUI, więc wykresy startują, gdy
 // kontener pojawi się w DOM.
 (function () {
+  var Charts = window.lcCharts;
+  var token = Charts.token, alpha = Charts.alpha;
   var X_MIN = -4, X_MAX = 4, STEP = 0.025;
 
   function pdf(x) { return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI); }
 
   // Abramowitz–Stegun 7.1.26 (błąd < 1.5e-7) — wystarcza do 4 miejsc.
-  function cdf(x) {
-    var z = Math.abs(x) / Math.SQRT2, t = 1 / (1 + 0.3275911 * z);
-    var erf = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 +
-      t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-z * z);
-    return x >= 0 ? (1 + erf) / 2 : (1 - erf) / 2;
-  }
-
-  function token(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  }
-
-  function alpha(hex, a) {
-    var h = hex.replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
+  var cdf = Charts.normalCdf;
 
   function fmt(v, d) { return v.toFixed(d); }
 
@@ -55,17 +41,15 @@
   }
 
   function init(root) {
-    if (root.dataset.ready || typeof Chart === "undefined") return;
     var pdfCanvas = root.querySelector('canvas[data-role="pdf"]');
     var cdfCanvas = root.querySelector('canvas[data-role="cdf"]');
-    if (!pdfCanvas || !cdfCanvas) return;
-    root.dataset.ready = "1";
+    if (!pdfCanvas || !cdfCanvas) return false;
 
     var x0 = parseFloat(root.dataset.x || "1");
     var readX = root.querySelector('[data-role="x"]');
     var readF = root.querySelector('[data-role="F"]');
 
-    var pdfChart = new Chart(pdfCanvas, {
+    var pdfChart = Charts.create(pdfCanvas, {
       type: "line",
       data: { datasets: [
         { data: XS.map(function (x) { return { x: x, y: pdf(x) }; }), borderWidth: 2 },
@@ -75,7 +59,7 @@
       options: baseOptions(0.45, "Gęstość f(x)")
     });
 
-    var cdfChart = new Chart(cdfCanvas, {
+    var cdfChart = Charts.create(cdfCanvas, {
       type: "line",
       data: { datasets: [
         { data: XS.map(function (x) { return { x: x, y: cdf(x) }; }), borderWidth: 2 },
@@ -90,19 +74,9 @@
 
     function paint() {
       var ink = token("--upwr-ink-soft") || "#444";
-      var subtle = token("--upwr-ink-subtle") || "#888";
-      var rule = token("--upwr-rule-soft") || "#ddd";
       var accent = token("--upwr-accent") || "#7a2e3b";
-      var font = token("--upwr-mono") || "monospace";
       [pdfChart, cdfChart].forEach(function (ch) {
-        ["x", "y"].forEach(function (k) {
-          var s = ch.options.scales[k];
-          s.grid = { color: rule };
-          s.border = { color: rule };
-          s.ticks = Object.assign(s.ticks || {}, { color: subtle, font: { family: font, size: 12 } });
-          s.title.color = subtle;
-          s.title.font = { family: font, size: 12 };
-        });
+        Charts.styleAxes(ch);
         ch.data.datasets[0].borderColor = ink;
       });
       pdfChart.data.datasets[1].backgroundColor = alpha(accent, 0.28);
@@ -149,15 +123,8 @@
     setX(x0);
 
     // Przełącznik jasny/ciemny zmienia tokeny CSS — przemaluj wykresy.
-    new MutationObserver(paint).observe(document.documentElement,
-      { attributes: true, attributeFilter: ["data-lc-theme"] });
+    Charts.onTheme(root, paint);
   }
 
-  function scan() {
-    document.querySelectorAll(".lc-cdf:not([data-ready])").forEach(init);
-  }
-
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", scan);
-  window.addEventListener("load", scan);
+  Charts.onReady(".lc-cdf", init);
 })();

@@ -5,6 +5,7 @@
 // typy można przeciągać. Kontener .lc-guess z <canvas data-role="hist">, przyciskami
 // [data-g-act="new|reveal"] i polami [data-role="banner|feedback"].
 (function () {
+  var Charts = window.lcCharts;
   var U = window.lc01;
   if (!U) return;
 
@@ -25,14 +26,14 @@
 
   function init(root) {
     var canvas = root.querySelector('canvas[data-role="hist"]');
-    if (!canvas) return;
+    if (!canvas) return false;
     var banner = root.querySelector('[data-role="banner"]');
     var feedback = root.querySelector('[data-role="feedback"]');
     var btnReveal = root.querySelector('[data-g-act="reveal"]');
     var round = null, guess = { mean: null, median: null }, revealed = false;
     var score = { total: 0, good: 0 }, LO = 0, HI = 1, drag = null;
 
-    var chart = new Chart(canvas, {
+    var chart = Charts.create(canvas, {
       type: "scatter",
       data: { datasets: [0, 1, 2, 3].map(function (k) {
         return { data: [], showLine: true, pointRadius: 0, borderWidth: k < 2 ? 2 : 3, borderDash: k < 2 ? [6, 4] : [] };
@@ -52,10 +53,10 @@
 
     var P = null;
     function paint() {
-      P = U.palette();
-      U.styleAxes(chart, P);
-      Object.assign(chart.options.plugins.lcHist, { fill: U.alpha(P.ref, 0.5), gap: P.surface });
-      Object.assign(chart.options.plugins.lcLabels, { font: P.mono, halo: U.alpha(P.surface, 0.85) });
+      P = Charts.palette();
+      Charts.styleAxes(chart, P, { maxRotation: 0 });
+      Object.assign(chart.options.plugins.lcHist, { fill: Charts.alpha(P.ref, 0.5), gap: P.surface });
+      Object.assign(chart.options.plugins.lcLabels, { font: P.mono, halo: Charts.alpha(P.surface, 0.85) });
       var ds = chart.data.datasets;
       ds[0].borderColor = ds[2].borderColor = P.accent;
       ds[1].borderColor = ds[3].borderColor = P.niebo;
@@ -84,8 +85,8 @@
       if (guess.mean != null) labels.push({ x: guess.mean, text: "Wskazana średnia", color: P.accent, row: 0 });
       if (guess.median != null) labels.push({ x: guess.median, text: "Wskazana mediana", color: P.niebo, row: 1 });
       if (revealed) {
-        labels.push({ x: m, text: "Średnia " + U.fmt(m, 1), color: P.accent, row: 2 });
-        labels.push({ x: med, text: "Mediana " + U.fmt(med, 1), color: P.niebo, row: 3 });
+        labels.push({ x: m, text: "Średnia " + Charts.fmt(m, 1), color: P.accent, row: 2 });
+        labels.push({ x: med, text: "Mediana " + Charts.fmt(med, 1), color: P.niebo, row: 3 });
       }
       chart.options.plugins.lcLabels.items = labels;
       chart.update("none");
@@ -113,8 +114,8 @@
           var st = document.createElement("strong"); st.textContent = grade[0] + " ";
           v.appendChild(st);
           feedback.appendChild(v);
-          feedback.appendChild(document.createTextNode("Błąd średniej: " + U.fmt(Math.abs(guess.mean - m), 1) +
-            ", błąd mediany: " + U.fmt(Math.abs(guess.median - med), 1) + "."));
+          feedback.appendChild(document.createTextNode("Błąd średniej: " + Charts.fmt(Math.abs(guess.mean - m), 1) +
+            ", błąd mediany: " + Charts.fmt(Math.abs(guess.median - med), 1) + "."));
         }
       }
       root.lcState = { type: round.type, values: x, mean: m, median: med, guess: guess, revealed: revealed, score: score };
@@ -134,7 +135,7 @@
     function px(v) { return chart.scales.x.getPixelForValue(v); }
     canvas.style.touchAction = "none";
     canvas.style.cursor = "crosshair";
-    canvas.addEventListener("pointerdown", function (e) {
+    Charts.listen(canvas, "pointerdown", function (e) {
       if (revealed) return;
       var x = U.pixelX(chart, e), v = at(e), near = null, best = 12;
       ["mean", "median"].forEach(function (k) {
@@ -148,7 +149,7 @@
       draw();
       e.preventDefault();
     });
-    canvas.addEventListener("pointermove", function (e) {
+    Charts.listen(canvas, "pointermove", function (e) {
       if (drag) { guess[drag] = at(e); draw(); return; }
       if (revealed) { canvas.style.cursor = "default"; return; }
       var x = U.pixelX(chart, e), near = ["mean", "median"].some(function (k) {
@@ -157,10 +158,10 @@
       canvas.style.cursor = near ? "ew-resize" : (guess.median == null ? "crosshair" : "default");
     });
     ["pointerup", "pointercancel"].forEach(function (t) {
-      canvas.addEventListener(t, function () { drag = null; });
+      Charts.listen(canvas, t, function () { drag = null; });
     });
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-g-act]");
       if (!b || !root.contains(b)) return;
       if (b.dataset.gAct === "new") newRound();
@@ -169,8 +170,8 @@
 
     paint();
     newRound();
-    U.onTheme(function () { paint(); draw(); });
+    Charts.onTheme(root, function () { paint(); draw(); });
   }
 
-  U.onReady(".lc-guess", init);
+  Charts.onReady(".lc-guess", init);
 })();

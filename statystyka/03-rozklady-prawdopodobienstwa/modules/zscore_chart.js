@@ -5,18 +5,14 @@
 // Odczyty: [data-role="z"] i [data-role="calc"] (jedna linia wzoru).
 // Wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
-  function token(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-  function alpha(hex, a) {
-    var h = hex.replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
+  var Charts = window.lcCharts;
+  var token = Charts.token, alpha = Charts.alpha;
+
   function pdf(v, mu, sd) { var z = (v - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); }
   function num(v) { return String(+(+v).toFixed(2)); }
 
   function chart(canvas, scales) {
-    return new Chart(canvas, {
+    return Charts.create(canvas, {
       type: "line",
       data: { datasets: [
         { data: [], fill: "origin", borderWidth: 2.5 },
@@ -33,11 +29,9 @@
   }
 
   function init(root) {
-    if (root.dataset.ready || typeof Chart === "undefined") return;
     var mode = root.dataset.mode || "two";
     var cvX = root.querySelector('canvas[data-role="x"]'), cvZ = root.querySelector('canvas[data-role="z"]');
-    if (!cvX || (mode === "two" && !cvZ)) return;
-    root.dataset.ready = "1";
+    if (!cvX || (mode === "two" && !cvZ)) return false;
     var inp = {};
     ["mu", "sd", "x"].forEach(function (k) { inp[k] = root.querySelector('input[data-role="' + k + '"]'); });
     var readZ = root.querySelector('[data-role="zval"]'), readC = root.querySelector('[data-role="calc"]');
@@ -61,18 +55,12 @@
     }
 
     function paint() {
-      var subtle = token("--upwr-ink-subtle") || "#888", rule = token("--upwr-rule-soft") || "#ddd";
       var ink = token("--upwr-ink-soft") || "#444", accent = token("--upwr-accent") || "#7a2e3b";
-      var surface = token("--upwr-surface") || "#fff", font = token("--upwr-mono") || "monospace";
+      var surface = token("--upwr-surface") || "#fff";
       var fill = alpha(token("--upwr-rule") || "#d9cfbc", 0.5);
       charts.forEach(function (c) {
-        Object.keys(c.options.scales).forEach(function (k) {
-          var s = c.options.scales[k];
-          if (s.display === false) return;
-          s.grid = { color: rule, display: k !== "xz" }; s.border = { color: rule };
-          s.ticks = Object.assign(s.ticks || {}, { color: subtle, font: { family: font, size: 12 }, includeBounds: false });
-          s.title.color = subtle; s.title.font = { family: font, size: 13 };
-        });
+        Charts.styleAxes(c, null, { includeBounds: false, titleSize: 13 });
+        if (c.options.scales.xz) c.options.scales.xz.grid.display = false;
         var ds = c.data.datasets;
         ds[0].borderColor = ink; ds[0].backgroundColor = fill;
         ds[1].borderColor = accent;
@@ -110,7 +98,7 @@
 
     ["mu", "sd", "x"].forEach(function (k) {
       if (!inp[k]) return;
-      inp[k].addEventListener("input", function () {
+      Charts.listen(inp[k], "input", function () {
         var v = parseFloat(inp[k].value);
         if (isFinite(v) && (k !== "sd" || v > 0)) { P[k] = v; draw(); }
       });
@@ -128,17 +116,14 @@
       draw();
     }
     cvX.style.touchAction = "none"; cvX.style.cursor = "ew-resize";
-    cvX.addEventListener("pointerdown", function (e) { drag = true; cvX.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
-    cvX.addEventListener("pointermove", function (e) { if (drag) move(e); });
-    ["pointerup", "pointercancel"].forEach(function (t) { cvX.addEventListener(t, function () { drag = false; }); });
+    Charts.listen(cvX, "pointerdown", function (e) { drag = true; cvX.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
+    Charts.listen(cvX, "pointermove", function (e) { if (drag) move(e); });
+    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(cvX, t, function () { drag = false; }); });
 
     paint();
     draw();
-    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lc-theme"] });
+    Charts.onTheme(root, paint);
   }
 
-  function scan() { document.querySelectorAll(".lc-zcalc:not([data-ready])").forEach(init); }
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", scan);
-  window.addEventListener("load", scan);
+  Charts.onReady(".lc-zcalc", init);
 })();

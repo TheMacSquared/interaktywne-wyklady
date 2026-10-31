@@ -5,8 +5,8 @@ load_v2_env <- function() {
   env <- new.env(parent = asNamespace("shiny"))
   sys.source(file.path(course_root, "R", "palette.R"), env)
   sys.source(file.path(course_root, "R", "lecture_layout.R"), env)
-  env$zoom_plot_ui <- function(id, height = "300px") {
-    shiny::plotOutput(id, height = height)
+  env$zoom_plot_ui <- function(id, height = "300px", click = NULL) {
+    shiny::plotOutput(id, height = height, click = click)
   }
   env
 }

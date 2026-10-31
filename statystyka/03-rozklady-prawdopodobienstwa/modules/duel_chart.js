@@ -5,20 +5,15 @@
 // data-role="a" | "b" | "z">, przyciskami [data-d-pair] i odczytami [data-role="la|lb|za|zb|q"].
 // Wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
+  var Charts = window.lcCharts;
+  var token = Charts.token, alpha = Charts.alpha;
   var Z_LO = -4, Z_HI = 7;
 
-  function token(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-  function alpha(hex, a) {
-    var h = hex.replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
   function pdf(v, mu, sd) { var z = (v - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); }
   function decs(step) { return step >= 1 ? 0 : step >= 0.1 ? 1 : 2; }
 
   function baseChart(canvas, title) {
-    return new Chart(canvas, {
+    return Charts.create(canvas, {
       type: "line",
       data: { datasets: [
         { data: [], fill: "origin", borderWidth: 2 },
@@ -37,11 +32,9 @@
   }
 
   function init(root) {
-    if (root.dataset.ready || typeof Chart === "undefined") return;
     var cv = { a: root.querySelector('canvas[data-role="a"]'), b: root.querySelector('canvas[data-role="b"]'),
                z: root.querySelector('canvas[data-role="z"]') };
-    if (!cv.a || !cv.b || !cv.z) return;
-    root.dataset.ready = "1";
+    if (!cv.a || !cv.b || !cv.z) return false;
     var PAIRS = JSON.parse(root.dataset.config || "[]"), cur = 0, S = {}, view = "raw";
     var boxTop = root.querySelector(".lc-duel-top"), boxZ = root.querySelector(".lc-duel-z");
     var ch = { a: baseChart(cv.a, ""), b: baseChart(cv.b, ""), z: baseChart(cv.z, "Wspólna skala: z") };
@@ -50,15 +43,10 @@
     var COL = {};
 
     function paint() {
-      var subtle = token("--upwr-ink-subtle") || "#888", rule = token("--upwr-rule-soft") || "#ddd";
       var ink = token("--upwr-ink-soft") || "#444", surface = token("--upwr-surface") || "#fff";
-      var font = token("--upwr-mono") || "monospace";
       COL = { a: token("--upwr-accent") || "#6b1a2a", b: token("--upwr-cat-indygo") || "#3a5a8a" };
       Object.keys(ch).forEach(function (k) {
-        var s = ch[k].options.scales.x;
-        s.grid = { color: rule }; s.border = { color: rule };
-        s.ticks = Object.assign(s.ticks || {}, { color: subtle, font: { family: font, size: 12 }, includeBounds: false });
-        s.title.color = subtle; s.title.font = { family: font, size: 12 };
+        Charts.styleAxes(ch[k], null, { includeBounds: false });
         var ds = ch[k].data.datasets;
         ds[0].borderColor = ink; ds[0].backgroundColor = alpha(token("--upwr-rule") || "#d9cfbc", 0.5);
         ds[3].pointBorderColor = ds[3].pointHoverBorderColor = surface;
@@ -128,9 +116,9 @@
         s.x = Math.max(s.lo, Math.min(s.hi, v)); draw();
       }
       canvas.style.touchAction = "none"; canvas.style.cursor = "ew-resize";
-      canvas.addEventListener("pointerdown", function (e) { drag = true; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
-      canvas.addEventListener("pointermove", function (e) { if (drag) move(e); });
-      ["pointerup", "pointercancel"].forEach(function (t) { canvas.addEventListener(t, function () { drag = false; }); });
+      Charts.listen(canvas, "pointerdown", function (e) { drag = true; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
+      Charts.listen(canvas, "pointermove", function (e) { if (drag) move(e); });
+      ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = false; }); });
     });
 
     // Widok: dwie skale oryginalne albo jedna skala z.
@@ -142,7 +130,7 @@
       draw();
     }
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var w = e.target.closest("[data-d-view]");
       if (w) {
         root.querySelectorAll("[data-d-view]").forEach(function (x) { x.setAttribute("aria-pressed", x === w ? "true" : "false"); });
@@ -158,11 +146,8 @@
     paint();
     setPair(0);
     setView("raw");
-    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lc-theme"] });
+    Charts.onTheme(root, paint);
   }
 
-  function scan() { document.querySelectorAll(".lc-duel:not([data-ready])").forEach(init); }
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", scan);
-  window.addEventListener("load", scan);
+  Charts.onReady(".lc-duel", init);
 })();

@@ -108,6 +108,7 @@ app_extras <- tagList(
     .ch3-six-row.is-sorted + .lc-formula-box { overflow-x: auto; }
   ")),
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+  includeScript(file.path(project_root, "R", "lc_charts.js")),
   # Ryciny liczone w przeglądarce (Chart.js): Ryc. 3.4, 3.6, 3.9, 3.10, 5.5
   includeScript(file.path(app_dir, "modules", "chart_utils.js")),
   includeScript(file.path(app_dir, "modules", "salary_chart.js")),
@@ -135,104 +136,7 @@ app_extras <- tagList(
     .lc01-line-sw.is-dashed { border-top-style: dashed; }
     .lc01-line-sw.is-dotted { border-top-style: dotted; }
   ")),
-  tags$script(HTML("
-    var pieChartJS = null, barChartJS = null;
-    var _pendingScenario = null;
-
-    function _doRenderScenario(msg) {
-      if (pieChartJS) pieChartJS.destroy();
-      if (barChartJS) barChartJS.destroy();
-
-      var pieCtx = document.getElementById('ch2_pie_canvas');
-      var barCtx = document.getElementById('ch2_bar_canvas');
-
-      if (!pieCtx || !barCtx) {
-        _pendingScenario = msg;
-        return;
-      }
-      _pendingScenario = null;
-
-      pieChartJS = new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-          labels: msg.labels,
-          datasets: [{
-            data: msg.data,
-            backgroundColor: msg.colors,
-            borderWidth: 1,
-            borderColor: 'rgba(255,255,255,0.6)'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: { duration: 500 },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              enabled: !!msg.reveal,
-              callbacks: {
-                label: function(ctx) { return ctx.label + ': ' + ctx.parsed + '%'; }
-              }
-            }
-          }
-        }
-      });
-
-      // Słupki (i ich wartości) rysujemy dopiero po odsłonięciu.
-      if (msg.reveal) barChartJS = new Chart(barCtx, {
-        type: 'bar',
-        data: {
-          labels: msg.labels,
-          datasets: [{
-            data: msg.data,
-            backgroundColor: msg.colors,
-            borderRadius: 4,
-            barPercentage: 0.7
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          indexAxis: 'y',
-          animation: { duration: 500 },
-          scales: {
-            x: {
-              min: 0, max: 50,
-              grid: { color: 'rgba(128,128,128,0.1)' },
-              ticks: {
-                callback: function(v) { return v + '%'; },
-                color: 'rgba(128,128,128,0.5)',
-                font: { size: 12 }
-              }
-            },
-            y: {
-              grid: { display: false },
-              ticks: { color: 'rgba(128,128,128,0.6)', font: { size: 13 } }
-            }
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: function(ctx) { return ctx.parsed.x + '%'; }
-              }
-            }
-          }
-        }
-      });
-    }
-
-    Shiny.addCustomMessageHandler('render_scenario', function(msg) {
-      _doRenderScenario(msg);
-    });
-
-    $(document).on('shown.bs.tab', function(e) {
-      if (_pendingScenario) {
-        setTimeout(function() { _doRenderScenario(_pendingScenario); }, 100);
-      }
-    });
-  ")),
+  includeScript(file.path(app_dir, "modules", "scenario_chart.js")),
   tags$style(HTML("
 
   /* Taxonomy tree (HTML/CSS) */

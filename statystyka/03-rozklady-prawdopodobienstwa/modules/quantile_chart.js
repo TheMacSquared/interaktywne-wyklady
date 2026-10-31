@@ -5,27 +5,15 @@
 // z <canvas data-role="pdf">, przyciskami [data-q-mode], [data-q-p], [data-q-reveal]
 // i odczytami [data-role="x"] / [data-role="p"]. Wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
+  var Charts = window.lcCharts;
+  var token = Charts.token, alpha = Charts.alpha;
   var SNAP = 0.5;
 
-  function phi(z) {
-    var x = Math.abs(z) / Math.SQRT2, t = 1 / (1 + 0.3275911 * x);
-    var erf = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 +
-      t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-x * x);
-    return z >= 0 ? (1 + erf) / 2 : (1 - erf) / 2;
-  }
-  function token(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-  function alpha(hex, a) {
-    var h = hex.replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
+  var phi = Charts.normalCdf;
 
   function init(root) {
-    if (root.dataset.ready || typeof Chart === "undefined") return;
     var canvas = root.querySelector('canvas[data-role="pdf"]');
-    if (!canvas) return;
-    root.dataset.ready = "1";
+    if (!canvas) return false;
 
     var MU = parseFloat(root.dataset.mu || "0"), SD = parseFloat(root.dataset.sd || "1");
     var LO = parseFloat(root.dataset.lo || String(MU - 4 * SD)), HI = parseFloat(root.dataset.hi || String(MU + 4 * SD));
@@ -62,7 +50,7 @@
       }
     };
 
-    var chart = new Chart(canvas, {
+    var chart = Charts.create(canvas, {
       type: "line",
       data: { datasets: [
         { data: XS.map(function (v) { return { x: v, y: pdf(v) }; }), borderWidth: 2 },
@@ -84,15 +72,10 @@
     });
 
     function paint() {
-      var ink = token("--upwr-ink-soft") || "#444", subtle = token("--upwr-ink-subtle") || "#888";
-      var rule = token("--upwr-rule-soft") || "#ddd", accent = token("--upwr-accent") || "#7a2e3b";
-      var surface = token("--upwr-surface") || "#fff", font = token("--upwr-mono") || "monospace";
-      ["x", "y"].forEach(function (k) {
-        var s = chart.options.scales[k];
-        s.grid = { color: rule }; s.border = { color: rule };
-        s.ticks = Object.assign(s.ticks || {}, { color: subtle, font: { family: font, size: 12 } });
-        s.title.color = subtle; s.title.font = { family: font, size: 12 };
-      });
+      var ink = token("--upwr-ink-soft") || "#444";
+      var accent = token("--upwr-accent") || "#7a2e3b";
+      var surface = token("--upwr-surface") || "#fff";
+      Charts.styleAxes(chart);
       var ds = chart.data.datasets;
       ds[0].borderColor = ink;
       ds[1].backgroundColor = alpha(accent, 0.28);
@@ -120,7 +103,7 @@
       root.querySelectorAll(group).forEach(function (b) { b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
     }
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var m = e.target.closest("[data-q-mode]"), q = e.target.closest("[data-q-p]"), r = e.target.closest("[data-q-reveal]");
       if (m) {
         mode = m.getAttribute("data-q-mode"); press("[data-q-mode]", m); shown = false;
@@ -145,20 +128,17 @@
     }
     function move(e) { x = valueAt(e); p = phi((x - MU) / SD); shown = false; draw(); }
     canvas.style.touchAction = "none";
-    canvas.addEventListener("pointerdown", function (e) {
+    Charts.listen(canvas, "pointerdown", function (e) {
       if (mode !== "x") return;
       drag = true; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault();
     });
-    canvas.addEventListener("pointermove", function (e) { if (drag) move(e); });
-    ["pointerup", "pointercancel"].forEach(function (t) { canvas.addEventListener(t, function () { drag = false; }); });
+    Charts.listen(canvas, "pointermove", function (e) { if (drag) move(e); });
+    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = false; }); });
 
     paint();
     draw();
-    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lc-theme"] });
+    Charts.onTheme(root, paint);
   }
 
-  function scan() { document.querySelectorAll(".lc-quant:not([data-ready])").forEach(init); }
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", scan);
-  window.addEventListener("load", scan);
+  Charts.onReady(".lc-quant", init);
 })();

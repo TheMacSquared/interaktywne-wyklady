@@ -150,7 +150,7 @@ ch2_ui <- list(
         lc_segmented("ch2_scenario", "Scenariusz",
           choices = c("Duże różnice" = "1", "Podobne" = "2", "Złe kolory" = "3"))
       ),
-      lc_plots(pair = TRUE,
+      tags$div(class = "lc-scenario", lc_plots(pair = TRUE,
         tags$div(
           tags$h4("Wykres kołowy"),
           div(style = "position: relative; width: 100%; height: 320px;",
@@ -166,7 +166,7 @@ ch2_ui <- list(
           ),
           uiOutput("ch2_scenario_bar_verdict")
         )
-      ),
+      )),
       tags$div(style = "margin-top: 1.6em; font-size: 1.15em;",
         lc_readouts(uiOutput("ch2_scenario_legend"))
       ),

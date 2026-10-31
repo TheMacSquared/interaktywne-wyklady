@@ -11,13 +11,9 @@
 // Odczyty w [data-role]. Start po pojawieniu się kontenera w DOM (rozdziały
 // renderują się przez renderUI), przemalowanie przy zmianie data-lc-theme.
 (function () {
-  function token(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-  function alpha(hex, a) {
-    var h = hex.replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
+  var Charts = window.lcCharts;
+  var token = Charts.token, alpha = Charts.alpha;
+
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
   // Prosta MNK y = a + b·x, r Pearsona i SD reszt (jak sd(residuals(lm(y ~ x))) w R).
@@ -43,7 +39,7 @@
   function put(el, s) { if (el) el.textContent = s; }
 
   function makeChart(canvas, datasets, scales) {
-    return new Chart(canvas, {
+    return Charts.create(canvas, {
       type: "scatter",
       data: { datasets: datasets },
       options: {
@@ -60,14 +56,7 @@
   }
 
   function paintAxes(chart) {
-    var subtle = token("--upwr-ink-subtle") || "#888", rule = token("--upwr-rule-soft") || "#ddd";
-    var font = token("--upwr-mono") || "monospace";
-    ["x", "y"].forEach(function (k) {
-      var s = chart.options.scales[k];
-      s.grid = { color: rule }; s.border = { color: rule };
-      s.ticks = Object.assign(s.ticks || {}, { color: subtle, font: { family: font, size: 12 } });
-      s.title.color = subtle; s.title.font = { family: font, size: 12 };
-    });
+    Charts.styleAxes(chart);
   }
 
   function pointer(canvas, e) {
@@ -86,18 +75,6 @@
     };
   }
 
-  // Płynne przejście wartości (przyciski z gotowymi stanami).
-  function tween(from, to, step, done) {
-    var t0 = null, ms = 380;
-    function frame(ts) {
-      if (t0 === null) t0 = ts;
-      var u = Math.min(1, (ts - t0) / ms), k = 1 - Math.pow(1 - u, 3);
-      step(from + (to - from) * k);
-      if (u < 1) requestAnimationFrame(frame); else if (done) done();
-    }
-    requestAnimationFrame(frame);
-  }
-
   function pressPresets(root, attr, values, cur) {
     root.querySelectorAll("[" + attr + "]").forEach(function (btn) {
       var v = values[Number(btn.getAttribute(attr))];
@@ -105,26 +82,23 @@
     });
   }
 
-  function onTheme(fn) {
-    new MutationObserver(fn).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lc-theme"] });
-  }
 
   // Zbiór punktów (x, e) i uchwyt przeciągany w pionie: wspólne dla Ryc. 4.3 i 4.4.
   function handleDrag(canvas, chart, handlePos, onMove) {
     var drag = false;
     function near(p) { var h = handlePos(); return pixelDist(chart, p, h.x, h.y) < 40; }
     canvas.style.touchAction = "none";
-    canvas.addEventListener("pointerdown", function (e) {
+    Charts.listen(canvas, "pointerdown", function (e) {
       var p = pointer(canvas, e);
       if (!near(p)) return;
       drag = true; canvas.setPointerCapture(e.pointerId); e.preventDefault();
     });
-    canvas.addEventListener("pointermove", function (e) {
+    Charts.listen(canvas, "pointermove", function (e) {
       var p = pointer(canvas, e);
       if (drag) { onMove(valueAt(chart, p)); return; }
       canvas.style.cursor = near(p) ? "ns-resize" : "default";
     });
-    ["pointerup", "pointercancel"].forEach(function (t) { canvas.addEventListener(t, function () { drag = false; }); });
+    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = false; }); });
   }
 
   // ==========================================================================
@@ -176,17 +150,18 @@
     }
 
     handleDrag(canvas, chart, hpos, function (v) {
+      Charts.cancelTween(root);
       sigma = clamp(Math.round((v.y - (f.a + f.b * HX)) / 2 * 100) / 100, 0, SMAX);
       draw();
     });
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-s-preset]");
       if (!b) return;
       var target = C.sigma[Number(b.getAttribute("data-s-preset"))];
-      tween(sigma, target, function (v) { sigma = v; draw(); }, function () { sigma = target; draw(); });
+      Charts.tween(root, sigma, target, function (v) { sigma = v; draw(); }, function () { sigma = target; draw(); });
     });
 
-    paint(); draw(); onTheme(paint);
+    paint(); draw(); Charts.onTheme(root, paint);
   }
 
   // ==========================================================================
@@ -233,17 +208,18 @@
     }
 
     handleDrag(canvas, chart, hpos, function (v) {
+      Charts.cancelTween(root);
       slope = clamp(Math.round((v.y - f.a) / HX * 20) / 20, BMIN, BMAX);
       draw();
     });
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-s-preset]");
       if (!b) return;
       var target = C.slopes[Number(b.getAttribute("data-s-preset"))];
-      tween(slope, target, function (v) { slope = v; draw(); }, function () { slope = target; draw(); });
+      Charts.tween(root, slope, target, function (v) { slope = v; draw(); }, function () { slope = target; draw(); });
     });
 
-    paint(); draw(); onTheme(paint);
+    paint(); draw(); Charts.onTheme(root, paint);
   }
 
   // ==========================================================================
@@ -336,12 +312,12 @@
       return best;
     }
     canvas.style.touchAction = "none";
-    canvas.addEventListener("pointerdown", function (e) {
+    Charts.listen(canvas, "pointerdown", function (e) {
       var i = nearest(pointer(canvas, e));
       if (i < 0) return;
       drag = i; canvas.setPointerCapture(e.pointerId); e.preventDefault();
     });
-    canvas.addEventListener("pointermove", function (e) {
+    Charts.listen(canvas, "pointermove", function (e) {
       var p = pointer(canvas, e);
       if (drag >= 0) {
         var v = valueAt(chart, p);
@@ -351,15 +327,15 @@
       canvas.style.cursor = nearest(p) >= 0 ? "move" : "default";
     });
     ["pointerup", "pointercancel"].forEach(function (t) {
-      canvas.addEventListener(t, function () { if (drag >= 0) { drag = -1; rescale(); draw(); } });
+      Charts.listen(canvas, t, function () { if (drag >= 0) { drag = -1; rescale(); draw(); } });
     });
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       if (e.target.closest("[data-o-new]")) fresh();
       else if (e.target.closest("[data-o-add]")) add();
     });
 
-    paint(); fresh(); onTheme(paint);
+    paint(); fresh(); Charts.onTheme(root, paint);
   }
 
   // ==========================================================================
@@ -431,29 +407,24 @@
       });
     }
 
-    root.addEventListener("click", function (e) {
+    Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-s-view]");
       if (!b) return;
       view = b.getAttribute("data-s-view");
       draw();
     });
 
-    paint(); onTheme(paint);
+    paint(); Charts.onTheme(root, paint);
   }
 
   // ==========================================================================
   var KINDS = { "lc-strength": initStrength, "lc-slope": initSlope, "lc-outlier": initOutlier, "lc-simpson": initSimpson };
 
   function init(root) {
-    if (root.dataset.ready || typeof Chart === "undefined") return;
     var canvas = root.querySelector('canvas[data-role="plot"]');
-    if (!canvas) return;
-    root.dataset.ready = "1";
+    if (!canvas) return false;
     for (var cls in KINDS) if (root.classList.contains(cls)) { KINDS[cls](root, canvas); return; }
   }
 
-  function scan() { document.querySelectorAll(".lc-scat:not([data-ready])").forEach(init); }
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", scan);
-  window.addEventListener("load", scan);
+  Charts.onReady(".lc-scat", init);
 })();

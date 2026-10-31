@@ -5,32 +5,16 @@
 // [data-role="P"]. Wzorzec jak cdf_chart.js (Ryc. 4.4): Chart.js, start po
 // pojawieniu się kontenera w DOM (rozdział renderuje się przez renderUI).
 (function () {
+  var Charts = window.lcCharts;
+  var token = Charts.token, alpha = Charts.alpha;
   var SNAP = 0.5;
 
   // Abramowitz–Stegun 7.1.26 (błąd < 1.5e-7).
-  function phi(z) {
-    var x = Math.abs(z) / Math.SQRT2, t = 1 / (1 + 0.3275911 * x);
-    var erf = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 +
-      t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-x * x);
-    return z >= 0 ? (1 + erf) / 2 : (1 - erf) / 2;
-  }
-
-  function token(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  }
-
-  function alpha(hex, a) {
-    var h = hex.replace("#", "");
-    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
-    var n = parseInt(h, 16);
-    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
+  var phi = Charts.normalCdf;
 
   function init(root) {
-    if (root.dataset.ready || typeof Chart === "undefined") return;
     var canvas = root.querySelector('canvas[data-role="pdf"]');
-    if (!canvas) return;
-    root.dataset.ready = "1";
+    if (!canvas) return false;
 
     var MU = parseFloat(root.dataset.mu || "0"), SD = parseFloat(root.dataset.sd || "1");
     var LO = parseFloat(root.dataset.lo || String(MU - 4 * SD));
@@ -46,7 +30,7 @@
     var XS = [];
     for (var x = LO; x <= HI + 1e-9; x += (HI - LO) / 480) XS.push(+x.toFixed(4));
 
-    var chart = new Chart(canvas, {
+    var chart = Charts.create(canvas, {
       type: "line",
       data: { datasets: [
         { data: XS.map(function (x) { return { x: x, y: pdf(x) }; }), borderWidth: 2 },
@@ -72,19 +56,9 @@
 
     function paint() {
       var ink = token("--upwr-ink-soft") || "#444";
-      var subtle = token("--upwr-ink-subtle") || "#888";
-      var rule = token("--upwr-rule-soft") || "#ddd";
       var accent = token("--upwr-accent") || "#7a2e3b";
       var surface = token("--upwr-surface") || "#fff";
-      var font = token("--upwr-mono") || "monospace";
-      ["x", "y"].forEach(function (k) {
-        var s = chart.options.scales[k];
-        s.grid = { color: rule };
-        s.border = { color: rule };
-        s.ticks = Object.assign(s.ticks || {}, { color: subtle, font: { family: font, size: 12 } });
-        s.title.color = subtle;
-        s.title.font = { family: font, size: 12 };
-      });
+      Charts.styleAxes(chart);
       var ds = chart.data.datasets;
       ds[0].borderColor = ink;
       ds[1].backgroundColor = alpha(accent, 0.28);
@@ -125,30 +99,23 @@
     }
     canvas.style.touchAction = "none";
     canvas.style.cursor = "ew-resize";
-    canvas.addEventListener("pointerdown", function (e) {
+    Charts.listen(canvas, "pointerdown", function (e) {
       var v = valueAt(e);
       drag = Math.abs(v - a) <= Math.abs(v - b) ? "a" : "b";
       canvas.setPointerCapture(e.pointerId);
       move(e);
       e.preventDefault();
     });
-    canvas.addEventListener("pointermove", function (e) { if (drag) move(e); });
+    Charts.listen(canvas, "pointermove", function (e) { if (drag) move(e); });
     ["pointerup", "pointercancel"].forEach(function (t) {
-      canvas.addEventListener(t, function () { drag = null; });
+      Charts.listen(canvas, t, function () { drag = null; });
     });
 
     paint();
     draw();
 
-    new MutationObserver(paint).observe(document.documentElement,
-      { attributes: true, attributeFilter: ["data-lc-theme"] });
+    Charts.onTheme(root, paint);
   }
 
-  function scan() {
-    document.querySelectorAll(".lc-area:not([data-ready])").forEach(init);
-  }
-
-  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", scan);
-  window.addEventListener("load", scan);
+  Charts.onReady(".lc-area", init);
 })();

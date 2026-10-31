@@ -77,6 +77,7 @@ ui <- lecture_page(
   # Chart.js do pola pod krzywą i dystrybuanty (rozdz. 4, Ryc. 4.3 i 4.4); sceny w scenes.js / scenes.css
   header_extras = tagList(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
     includeScript(file.path(app_dir, "modules", "lejek_chart.js")),
     includeScript(file.path(app_dir, "modules", "area_chart.js")),
