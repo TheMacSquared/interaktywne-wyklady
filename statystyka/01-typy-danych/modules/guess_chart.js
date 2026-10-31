@@ -33,6 +33,40 @@
     var round = null, guess = { mean: null, median: null }, revealed = false;
     var score = { total: 0, good: 0 }, LO = 0, HI = 1, drag = null;
 
+    var layer = Charts.handleLayer(root), guessHandles = {};
+    ["mean", "median"].forEach(function (key) {
+      var handle = layer.add(canvas, {
+        label: key === "mean" ? "Typowana średnia" : "Typowana mediana",
+        hint: "Strzałki ustawiają i przesuwają odpowiedź. Shift zwiększa krok dziesięciokrotnie. Enter ustawia znacznik w środku osi. Odpowiedź odsłania osobny przycisk.",
+        onKey: function (event) {
+          if (revealed) return false;
+          var current = guess[key] == null ? (LO + HI) / 2 : guess[key];
+          var step = Math.max(0.1, Math.round((HI - LO) / 100 * 10) / 10);
+          var value = Charts.keyValue(event, current, LO, HI, step, step * 10);
+          if (value === null && (event.key === "Enter" || event.key === " ")) value = current;
+          if (value === null) return false;
+          guess[key] = Math.max(LO, Math.min(HI, Math.round(value * 10) / 10)); draw();
+          layer.announce((key === "mean" ? "Typowana średnia " : "Typowana mediana ") + Charts.fmt(guess[key], 1) + ". Odpowiedź ukryta.");
+          return true;
+        },
+        onPointerDown: function (event) {
+          if (revealed) return;
+          drag = key; guess[key] = at(event);
+          canvas.setPointerCapture(event.pointerId); draw(); event.preventDefault();
+        }
+      });
+      handle.element.setAttribute("data-boundary", key === "mean" ? "Śr." : "Me.");
+      handle.element.setAttribute("data-guess", key);
+      handle.element.setAttribute("class", "lc-chart-handle has-dot is-unset");
+      guessHandles[key] = handle;
+    });
+    function syncHandles(ch) {
+      if (!round) return;
+      ["mean", "median"].forEach(function (key, i) {
+        var value = guess[key] == null ? (LO + HI) / 2 : guess[key];
+        guessHandles[key].position(ch.scales.x.getPixelForValue(value), ch.scales.y.getPixelForValue(ch.options.scales.y.max * (i ? 0.72 : 0.9)));
+      });
+    }
     var chart = Charts.create(canvas, {
       type: "scatter",
       data: { datasets: [0, 1, 2, 3].map(function (k) {
@@ -48,15 +82,16 @@
         plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false },
                    lcHist: { bins: [] }, lcLabels: { items: [] } }
       },
-      plugins: [U.histPlugin, U.labelPlugin]
+      plugins: [U.histPlugin, U.labelPlugin, { id: "guessHandles", afterRender: syncHandles }]
     });
 
     var P = null;
     function paint() {
       P = Charts.palette();
-      Charts.styleAxes(chart, P, { maxRotation: 0 });
+      Charts.styleAxes(chart, P, { maxRotation: 0, fontSize: Charts.axisFontSize(root) });
+      chart.options.scales.x.ticks.maxTicksLimit = 6;
       Object.assign(chart.options.plugins.lcHist, { fill: Charts.alpha(P.ref, 0.5), gap: P.surface });
-      Object.assign(chart.options.plugins.lcLabels, { font: P.mono, halo: Charts.alpha(P.surface, 0.85) });
+      Object.assign(chart.options.plugins.lcLabels, { font: P.mono, fontSize: Charts.axisFontSize(root), halo: Charts.alpha(P.surface, 0.85) });
       var ds = chart.data.datasets;
       ds[0].borderColor = ds[2].borderColor = P.accent;
       ds[1].borderColor = ds[3].borderColor = P.niebo;
@@ -92,8 +127,8 @@
       chart.update("none");
 
       var tone = "info", msg;
-      if (guess.mean == null) msg = "Kliknij na wykresie w miejscu, gdzie powinna leżeć średnia.";
-      else if (guess.median == null) msg = "Teraz kliknij, gdzie leży mediana.";
+      if (guess.mean == null) msg = "Wskaż średnią: kliknij na wykresie lub użyj Tab i strzałek.";
+      else if (guess.median == null) msg = "Teraz wskaż medianę: kliknij lub użyj klawiatury.";
       else if (!revealed) { msg = "Gotowe. Kliknij „Pokaż odpowiedź”. Linie można jeszcze przeciągnąć."; tone = "ok"; }
       else msg = "Trafione rundy: " + score.good + " z " + score.total + ".";
       if (banner) {
@@ -118,6 +153,14 @@
             ", błąd mediany: " + Charts.fmt(Math.abs(guess.median - med), 1) + "."));
         }
       }
+      ["mean", "median"].forEach(function (key) {
+        var handle = guessHandles[key], unset = guess[key] == null;
+        handle.element.hidden = revealed;
+        handle.element.setAttribute("class", "lc-chart-handle has-dot" + (unset ? " is-unset" : ""));
+        handle.value(unset ? (LO + HI) / 2 : guess[key], LO, HI,
+          unset ? "Nie wskazano odpowiedzi. Enter ustawia znacznik w środku osi." : "Twój typ: " + Charts.fmt(guess[key], 1));
+      });
+      syncHandles(chart);
       root.lcState = { type: round.type, values: x, mean: m, median: med, guess: guess, revealed: revealed, score: score };
     }
 
@@ -168,6 +211,7 @@
       if (b.dataset.gAct === "reveal") reveal();
     });
 
+    Charts.zoomControl(root);
     paint();
     newRound();
     Charts.onTheme(root, function () { paint(); draw(); });

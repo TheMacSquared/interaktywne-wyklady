@@ -39,7 +39,7 @@
         ctx.beginPath();
         ctx.moveTo(mx, yM - r); ctx.lineTo(mx + r, yM); ctx.lineTo(mx, yM + r); ctx.lineTo(mx - r, yM);
         ctx.closePath(); ctx.fill(); ctx.stroke();
-        ctx.font = "700 12px " + o.font; ctx.textBaseline = "bottom";
+        ctx.font = "700 " + (o.fontSize || 12) + "px " + o.font; ctx.textBaseline = "bottom";
         var w = ctx.measureText(o.markText).width, a = chart.chartArea;
         var tx = Math.max(a.left, Math.min(a.right - w, mx - w / 2));
         ctx.fillStyle = o.accent;
@@ -69,6 +69,25 @@
     var read = {};
     ["p", "q", "share", "text"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
     var Y_W = 58;
+    var layer = Charts.handleLayer(root);
+    var handle = layer.add(cHist, {
+      label: "Rząd percentyla",
+      hint: "Strzałki zmieniają rząd percentyla o 1 punkt procentowy; Shift ze strzałką o 10. Home: 0, End: 100.",
+      onKey: function (event) {
+        var value = Charts.keyValue(event, p, 0, 100, 1, 10);
+        if (value === null) return false;
+        p = value; draw();
+        layer.announce("Percentyl " + p + ". Wzrost " + Charts.fmt(Q[p], 1) + " " + UNIT + ".");
+        return true;
+      },
+      onPointerDown: function (event) {
+        drag = true; cHist.setPointerCapture(event.pointerId);
+        p = nearestP(U.valueAtX(chHist, event)); draw(); event.preventDefault();
+      }
+    });
+    function positionHandle(ch) {
+      handle.position(ch.scales.x.getPixelForValue(Q[p]), ch.scales.y.getPixelForValue(TOP * 0.9));
+    }
 
     var chHist = Charts.create(cHist, {
       type: "scatter",
@@ -87,7 +106,7 @@
         plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false },
                    lcHist: { bins: BINS }, lcLabels: { items: [] } }
       },
-      plugins: [U.histPlugin, U.labelPlugin]
+      plugins: [U.histPlugin, U.labelPlugin, { id: "percentileHandle", afterRender: positionHandle }]
     });
     var chBox = Charts.create(cBox, {
       type: "scatter",
@@ -108,13 +127,18 @@
     var P = null;
     function paint() {
       P = Charts.palette();
-      Charts.styleAxes(chHist, P, { maxRotation: 0 }); Charts.styleAxes(chBox, P, { maxRotation: 0 });
+      var fontSize = Charts.axisFontSize(root);
+      [chHist, chBox].forEach(function (ch) {
+        Charts.styleAxes(ch, P, { maxRotation: 0, fontSize: fontSize });
+        ch.options.scales.y.afterFit = U.fixedWidth(Math.ceil(fontSize * 5));
+        ch.options.scales.x.ticks.maxTicksLimit = 6;
+      });
       chBox.options.scales.y.grid = { display: false };
       chBox.options.scales.y.border = { display: false };
       Object.assign(chHist.options.plugins.lcHist, { fill: Charts.alpha(P.ref, 0.45), fillLeft: Charts.alpha(P.niebo, 0.7), gap: P.surface });
-      Object.assign(chHist.options.plugins.lcLabels, { font: P.mono, halo: Charts.alpha(P.surface, 0.85) });
+      Object.assign(chHist.options.plugins.lcLabels, { font: P.mono, fontSize: fontSize, halo: Charts.alpha(P.surface, 0.85) });
       Object.assign(chBox.options.plugins.lcBox, { ink: P.soft, fill: Charts.alpha(P.ref, 0.25), outlier: Charts.alpha(P.soft, 0.5),
-        accent: P.accent, surface: P.surface, font: P.mono });
+        accent: P.accent, surface: P.surface, font: P.mono, fontSize: fontSize });
       var ds = chHist.data.datasets;
       ds[0].borderColor = P.accent;
       ds[1].pointBackgroundColor = P.accent; ds[1].pointBorderColor = P.surface;
@@ -140,6 +164,8 @@
       root.querySelectorAll("[data-p-set]").forEach(function (b) {
         b.setAttribute("aria-pressed", String(+b.dataset.pSet === p));
       });
+      handle.value(p, 0, 100, "Percentyl " + p + "; " + Charts.fmt(q, 1) + " " + UNIT);
+      positionHandle(chHist);
       root.lcState = { p: p, q: q, share: share };
     }
 
@@ -177,6 +203,7 @@
       p = +b.dataset.pSet; draw();
     });
 
+    Charts.zoomControl(root);
     paint();
     draw();
     Charts.onTheme(root, function () { paint(); draw(); });

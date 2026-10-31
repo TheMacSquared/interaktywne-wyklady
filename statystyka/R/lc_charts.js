@@ -158,13 +158,16 @@
 
   function styleAxes(chart, colors, options) {
     var P = colors || palette();
-    Object.keys(chart.options.scales).forEach(function (k) {
-      var s = chart.options.scales[k];
+    // chart.options zawiera resolvery Proxy. Przypisanie ich z powrotem do
+    // konfiguracji psuje m.in. skalę logarytmiczną; edytujemy surowe opcje.
+    var scales = chart.config.options.scales;
+    Object.keys(scales).forEach(function (k) {
+      var s = scales[k];
       if (s.display === false) return;
-      s.grid = Object.assign(s.grid || {}, { color: P.ruleSoft });
-      s.border = Object.assign(s.border || {}, { color: P.rule });
+      s.grid = Object.assign({}, s.grid || {}, { color: P.ruleSoft });
+      s.border = Object.assign({}, s.border || {}, { color: P.rule });
       var fontSize = options && options.fontSize || 12;
-      s.ticks = Object.assign(s.ticks || {}, { color: P.subtle, font: { family: P.mono, size: fontSize } });
+      s.ticks = Object.assign({}, s.ticks || {}, { color: P.subtle, font: { family: P.mono, size: fontSize } });
       if (options && options.includeBounds !== undefined) s.ticks.includeBounds = options.includeBounds;
       if (k === "x" && options && options.maxRotation !== undefined) s.ticks.maxRotation = options.maxRotation;
       if (s.title) { s.title.color = P.subtle; s.title.font = { family: P.mono, size: options && options.titleSize || fontSize }; }
@@ -187,6 +190,78 @@
       button.setAttribute("aria-label", label);
       button.setAttribute("title", label);
     });
+  }
+
+  var nextHandleId = 0;
+  // Warstwa kontrolek należy do widgetu; usunięcie punktu zwalnia również
+  // jego zdarzenia. onKey zwraca true tylko dla obsłużonego klawisza.
+  function handleLayer(root) {
+    var handles = new Set(), status = document.createElement("span");
+    status.setAttribute("class", "lc-chart-sr");
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-live", "polite");
+    status.setAttribute("aria-atomic", "true");
+    root.appendChild(status);
+    onDispose(root, function () {
+      handles.forEach(function (handle) { handle.remove(); });
+      status.remove();
+    });
+    return {
+      announce: function (text) { status.textContent = text; },
+      add: function (canvas, options) {
+        var element = document.createElement("button"), hint = document.createElement("span");
+        hint.id = "lc-chart-keys-" + (++nextHandleId);
+        hint.setAttribute("class", "lc-chart-sr");
+        hint.textContent = options.hint;
+        element.setAttribute("type", "button");
+        element.setAttribute("class", "lc-chart-handle");
+        element.setAttribute("role", options.role || "slider");
+        element.setAttribute("aria-label", options.label);
+        element.setAttribute("aria-describedby", hint.id);
+        if (options.role !== "button") element.setAttribute("aria-orientation", "horizontal");
+        canvas.parentElement.appendChild(element);
+        root.appendChild(hint);
+        function keydown(event) {
+          if (!options.onKey(event)) return;
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        function pointerdown(event) {
+          if (!options.onPointerDown) return;
+          element.focus();
+          options.onPointerDown(event);
+        }
+        element.addEventListener("keydown", keydown);
+        element.addEventListener("pointerdown", pointerdown);
+        var handle = {
+          element: element,
+          position: function (x, y) { element.style.left = x + "px"; element.style.top = y + "px"; },
+          value: function (value, min, max, text) {
+            element.setAttribute("aria-valuenow", value);
+            element.setAttribute("aria-valuemin", min);
+            element.setAttribute("aria-valuemax", max);
+            element.setAttribute("aria-valuetext", text);
+          },
+          remove: function () {
+            element.removeEventListener("keydown", keydown);
+            element.removeEventListener("pointerdown", pointerdown);
+            element.remove(); hint.remove(); handles.delete(handle);
+          }
+        };
+        handles.add(handle);
+        return handle;
+      }
+    };
+  }
+
+  // Wspólne klawisze jednowymiarowe; semantyka i krok należą do widgetu.
+  function keyValue(event, value, min, max, step, largeStep) {
+    var delta = event.shiftKey ? largeStep : step;
+    if (event.key === "Home") return min;
+    if (event.key === "End") return max;
+    if (event.key === "ArrowRight" || event.key === "ArrowUp") return Math.min(max, value + delta);
+    if (event.key === "ArrowLeft" || event.key === "ArrowDown") return Math.max(min, value - delta);
+    return null;
   }
 
   // To samo przybliżenie Abramowitza–Steguna co w dotychczasowych widgetach.
@@ -256,6 +331,7 @@
     token: token, alpha: alpha, palette: palette, styleAxes: styleAxes, normalCdf: normalCdf,
     linearFit: fit, normalQuantile: normalQuantile,
     axisFontSize: axisFontSize, zoomControl: zoomControl,
+    handleLayer: handleLayer, keyValue: keyValue,
     fmt: fmt, fmtSigned: fmtSigned, round: round
   };
 })();

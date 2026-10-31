@@ -249,19 +249,20 @@ ch4_ui <- list(
       full_width = TRUE,
       tags$div(class = "lc-cdf", `data-x` = "1",
         lc_toolbar(
-          lc_caption("Przesuń kursor lub palec po którymkolwiek wykresie."),
+          lc_caption("Przesuń kursor po wykresie lub użyj Tab i strzałek."),
           lc_readouts(
             lc_readout("x", tags$span(`data-role` = "x", "1.00")),
             lc_readout("F(x)", tags$span(`data-role` = "F", "0.8413"),
                        color = "var(--upwr-accent)")
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-cdf-grid",
           tags$div(class = "lc-cdf-canvas",
-            tags$canvas(`data-role` = "pdf",
+            tags$canvas(role = "img", `data-role` = "pdf",
                         `aria-label` = "Gęstość N(0, 1) z polem na lewo od x")),
           tags$div(class = "lc-cdf-canvas",
-            tags$canvas(`data-role` = "cdf",
+            tags$canvas(role = "img", `data-role` = "cdf",
                         `aria-label` = "Dystrybuanta N(0, 1) z punktem (x, F(x))"))
         )
       )

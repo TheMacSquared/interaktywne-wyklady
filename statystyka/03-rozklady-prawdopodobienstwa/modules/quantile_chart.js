@@ -21,6 +21,23 @@
     var readX = root.querySelector('[data-role="x"]'), readP = root.querySelector('[data-role="p"]');
     var pGroup = root.querySelector('[data-role="pgroup"]'), revealBtn = root.querySelector("[data-q-reveal]");
 
+    var layer = Charts.handleLayer(root);
+    var handle = layer.add(canvas, {
+      label: "Granica x w pytaniu o prawdopodobieństwo",
+      hint: "Strzałki przesuwają x o 0.5 cm; Shift ze strzałką o 5 cm. Odpowiedź odsłania osobny przycisk.",
+      onKey: function (event) {
+        if (mode !== "x") return false;
+        var value = Charts.keyValue(event, x, LO, HI, SNAP, 5);
+        if (value === null) return false;
+        x = value; p = phi((x - MU) / SD); shown = false; draw();
+        layer.announce("x = " + x.toFixed(1) + " cm. Odpowiedź ukryta.");
+        return true;
+      },
+      onPointerDown: function (event) { startDrag(event); }
+    });
+    function positionHandle(ch) {
+      handle.position(ch.scales.x.getPixelForValue(x), ch.scales.y.getPixelForValue(TOP * 0.82));
+    }
     function pdf(v) { var z = (v - MU) / SD; return Math.exp(-z * z / 2) / (SD * Math.sqrt(2 * Math.PI)); }
     function quant(q) {
       return Charts.normalQuantile(q, MU, SD, LO, HI);
@@ -39,11 +56,15 @@
         var xTxt = "x = " + ((mode === "p" && !shown) ? "?" : x.toFixed(1));
         c.save();
         c.fillStyle = accent; c.textAlign = "center";
-        c.font = "700 30px " + font;
+        c.font = "700 " + (Charts.axisFontSize(root) * 2.1) + "px " + font;
         var cx = sx.getPixelForValue(Math.max(LO + 4, Math.min(x - 6, (Math.max(LO, x - 3 * SD) + x) / 2)));
+        var half = c.measureText(pTxt).width / 2;
+        cx = Math.max(ch.chartArea.left + half, Math.min(ch.chartArea.right - half, cx));
         c.fillText(pTxt, cx, sy.getPixelForValue(TOP * 0.22));
-        c.font = "700 18px " + font;
-        c.fillText(xTxt, sx.getPixelForValue(x), sy.getPixelForValue(TOP * 0.93));
+        c.font = "700 " + (Charts.axisFontSize(root) * 1.3) + "px " + font;
+        half = c.measureText(xTxt).width / 2;
+        var tx = Math.max(ch.chartArea.left + half, Math.min(ch.chartArea.right - half, sx.getPixelForValue(x)));
+        c.fillText(xTxt, tx, sy.getPixelForValue(TOP * 0.93));
         c.restore();
       }
     };
@@ -66,14 +87,15 @@
         plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } },
         elements: { point: { radius: 0 }, line: { tension: 0 } }
       },
-      plugins: [labels]
+      plugins: [labels, { id: "quantHandle", afterRender: positionHandle }]
     });
 
     function paint() {
       var ink = token("--upwr-ink-soft") || "#444";
       var accent = token("--upwr-accent") || "#7a2e3b";
       var surface = token("--upwr-surface") || "#fff";
-      Charts.styleAxes(chart);
+      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+      chart.options.scales.x.ticks.maxTicksLimit = 5;
       var ds = chart.data.datasets;
       ds[0].borderColor = ink;
       ds[1].backgroundColor = alpha(accent, 0.28);
@@ -95,6 +117,9 @@
       if (pGroup) pGroup.hidden = mode !== "p";
       if (revealBtn) { var sp = revealBtn.querySelector("span") || revealBtn; sp.textContent = shown ? "Ukryj" : "Odsłoń"; }
       canvas.style.cursor = mode === "x" ? "ew-resize" : "default";
+      handle.element.hidden = mode !== "x";
+      handle.value(x, LO, HI, "x = " + x.toFixed(1) + " cm");
+      positionHandle(chart);
     }
 
     function press(group, btn) {
@@ -126,13 +151,15 @@
     }
     function move(e) { x = valueAt(e); p = phi((x - MU) / SD); shown = false; draw(); }
     canvas.style.touchAction = "none";
-    Charts.listen(canvas, "pointerdown", function (e) {
+    function startDrag(e) {
       if (mode !== "x") return;
       drag = true; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault();
-    });
+    }
+    Charts.listen(canvas, "pointerdown", startDrag);
     Charts.listen(canvas, "pointermove", function (e) { if (drag) move(e); });
     ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = false; }); });
 
+    Charts.zoomControl(root);
     paint();
     draw();
     Charts.onTheme(root, paint);

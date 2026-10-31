@@ -107,13 +107,14 @@
       if (!o || !o.items || !o.items.length) return;
       var ctx = chart.ctx, a = chart.chartArea, xs = chart.scales.x;
       ctx.save();
-      ctx.font = "600 12px " + (o.font || "monospace");
+      var fontSize = o.fontSize || 12;
+      ctx.font = "600 " + fontSize + "px " + (o.font || "monospace");
       ctx.textBaseline = "top";
       o.items.forEach(function (it) {
         var px = xs.getPixelForValue(it.x), w = ctx.measureText(it.text).width;
         var right = px + 5 + w <= a.right;
-        var tx = right ? px + 5 : px - 5 - w, ty = a.top + 4 + (it.row || 0) * 16;
-        if (o.halo) { ctx.fillStyle = o.halo; ctx.fillRect(tx - 2, ty - 1, w + 4, 15); }
+        var tx = right ? px + 5 : px - 5 - w, ty = a.top + 4 + (it.row || 0) * fontSize * 4 / 3;
+        if (o.halo) { ctx.fillStyle = o.halo; ctx.fillRect(tx - 2, ty - 1, w + 4, fontSize * 1.25); }
         ctx.fillStyle = it.color;
         ctx.fillText(it.text, tx, ty);
       });

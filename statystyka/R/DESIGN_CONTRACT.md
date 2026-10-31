@@ -166,6 +166,14 @@ jest dostępne jako `window.lcCharts`:
   rozmiar napisów do tekstu i powiększenia; przekazujemy go do
   `styleAxes(chart, null, {fontSize: ...})`. Wspólny obserwator odświeża style
   po zmianie motywu, S/M/L i lokalnego powiększenia.
+- `handleLayer(root)` tworzy warstwę uchwytów oraz komunikat dla czytnika
+  ekranu. `layer.add(canvas, {label, hint, onKey, onPointerDown, role})`
+  zwraca uchwyt z metodami `position()`, `value()` i `remove()`.
+  `onKey` zwraca `true` dla obsłużonych klawiszy; warstwa blokuje wtedy
+  ich domyślne działanie i propagację do nawigacji krokowej. Usunięcie
+  punktu zwalnia również jego kontrolkę i zdarzenia.
+  `keyValue(event, value, min, max, step, largeStep)` obsługuje wspólne
+  klawisze jednowymiarowe; krok i ograniczenia określa widget.
 
 Wykres pola pod krzywą (03, Ryc. 4.3) ma uchwyty granic dostępne klawiszem
 Tab. Strzałki przesuwają granicę o 0.5 cm, Shift ze strzałką o 5 cm, Home/End
@@ -173,6 +181,15 @@ do krańca dostępnego zakresu. Granice zachowują kolejność a ≤ b. Obwódka
 uchwytu pojawia się przy obsłudze klawiaturą; nie dodajemy pól liczbowych do
 tej demonstracji pojęcia. Krótkie podsumowanie dla czytnika ekranu aktualizuje
 się po operacji klawiaturowej i po zakończeniu przeciągania, nie przy każdym ruchu.
+
+Pierwsza kolejka rozszerzeń obejmuje 01 / Ryc. 3.9 i 3.10, 02 / Ryc. 5.3
+oraz 03 / Ryc. 4.4 i 4.5. Percentyl steruje rzędem p (1 lub 10 punktów
+procentowych). Typy średniej i mediany są niezależne, mogą się przecinać
+i nie ujawniają wyniku przed odsłonięciem. Punkt odstający ma kontrolkę 2D:
+lewo/prawo zmienia X, góra/dół Y; tylko dopisane punkty trafiają do kolejności
+Tab. Dystrybuanta zachowuje wybór klawiaturowy do świadomego kliknięcia
+wykresu. W kwantylu uchwyt jest ukryty w trybie „znam p”, a zmiana x ponownie
+chowa odpowiedź. Lupa i S/M/L nie zmieniają danych ani stanu odsłonięcia.
 
 Kontener i jego wykresy żyją tylko do zmiany rozdziału. Nie przechowujemy
 starego płótna jako singletonu ani nie tworzymy osobnych obserwatorów DOM

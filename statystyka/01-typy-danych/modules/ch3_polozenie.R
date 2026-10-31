@@ -508,15 +508,16 @@ ch3_ui <- list(
             lc_readout("Percentyl", tags$span(`data-role` = "q", "–"), color = "var(--upwr-accent)"),
             lc_readout("Obserwacje ≤", tags$span(`data-role` = "share", "–"),
                        color = "var(--upwr-cat-niebo)")
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-pctl-hist",
-          tags$canvas(`data-role` = "hist",
+          tags$canvas(role = "img", `data-role` = "hist",
             `aria-label` = "Histogram wzrostu z przeciąganą linią percentyla")),
         tags$div(class = "lc-pctl-box",
-          tags$canvas(`data-role` = "box",
+          tags$canvas(role = "img", `data-role` = "box",
             `aria-label` = "Wykres pudełkowy wzrostu z zaznaczonym percentylem")),
-        lc_caption("Przeciągnij linię percentyla po histogramie."),
+        lc_caption("Przeciągnij linię percentyla lub użyj Tab i strzałek."),
         lc_status(p(`data-role` = "text", ""))
       )
     ),
@@ -535,25 +536,26 @@ ch3_ui <- list(
     lc_h2("ch3-gra", "Gra: zgadnij średnią i medianę"),
 
     lc_p("Na koniec ćwiczenie: odczytanie obu miar z samego
-      histogramu. Kliknij na wykres dwa razy: pierwszy punkt to typowana
-      średnia, drugi — mediana. Przed kliknięciem ustal, w którą stronę
+      histogramu. Wskaż dwie odpowiedzi: typowaną średnią i medianę. Możesz
+      kliknąć na wykresie lub użyć Tab i strzałek. Najpierw ustal, w którą stronę
       ciągnie ogon rozkładu i po której stronie mediany powinna wtedy
       leżeć średnia."),
 
     figure_panel(
       label = "Ryc. 3.10",
-      title = "Kliknij na wykres, aby umieścić średnią i medianę",
+      title = "Wskaż średnią i medianę",
       tags$div(class = "lc-guess",
         lc_toolbar(
           tags$button(type = "button", class = "lc-action is-solid", `data-g-act` = "new", "Nowa runda"),
           tags$button(type = "button", class = "lc-action is-outline", `data-g-act` = "reveal",
-                      disabled = NA, "Pokaż odpowiedź")
+                      disabled = NA, "Pokaż odpowiedź"),
+          lc_chart_zoom_button()
         ),
         tags$div(`data-role` = "banner", class = "lc-caption", `data-tone` = "info",
-                 tags$div("Kliknij na wykresie w miejscu, gdzie powinna leżeć średnia.")),
+                 tags$div("Wskaż średnią: kliknij na wykresie lub użyj Tab i strzałek.")),
         tags$div(class = "lc-guess-canvas",
-          tags$canvas(`data-role` = "hist",
-            `aria-label` = "Histogram losowych danych; kliknięcia wskazują średnią i medianę")),
+          tags$canvas(role = "img", `data-role` = "hist",
+            `aria-label` = "Histogram losowych danych; mysz lub klawiatura wskazują typowaną średnią i medianę")),
         tags$div(`data-role` = "feedback", class = "lc-status", role = "status",
                  `aria-live` = "polite", hidden = NA)
       )

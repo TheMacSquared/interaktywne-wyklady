@@ -84,6 +84,7 @@ function environment(shiny = true) {
   let sequence = 0, registrations = 0;
   class Chart {
     constructor(canvas, config) {
+      this.config = config;
       this.canvas = canvas;
       this.data = config.data;
       this.options = config.options;
@@ -142,6 +143,9 @@ function environment(shiny = true) {
 
 const canvas = (role, attrs = {}) => new Element("canvas", { "data-role": role, ...attrs });
 const root = (cls, children, attrs = {}) => new Element("div", { class: cls, ...attrs }, children);
+const press = (handle, key, shiftKey = false) => handle.emit("keydown", {
+  key, shiftKey, preventDefault() {}, stopPropagation() {}
+});
 
 test("usunięcie i powrót zwalniają wykresy, zdarzenia i callbacki motywu", () => {
   const env = environment(), C = env.window.lcCharts;
@@ -165,6 +169,21 @@ test("usunięcie i powrót zwalniają wykresy, zdarzenia i callbacki motywu", ()
   }
   assert.equal(env.observers.length, 2, "obserwatory nie przyrastają przy powrotach");
   assert.equal(env.errors.length, 0);
+});
+
+test("stylowanie osi edytuje konfigurację, zachowując funkcje skali logarytmicznej", () => {
+  const env = environment(), C = env.window.lcCharts;
+  const callback = value => String(value), afterBuildTicks = axis => axis;
+  const scales = { x: { type: "logarithmic", ticks: { callback }, afterBuildTicks }, y: { min: 0 } };
+  const chart = { config: { options: { scales } }, options: new Proxy({}, {
+    get() { throw new Error("Nie przypisuj resolvera Chart.js do surowej konfiguracji"); }
+  }) };
+  C.styleAxes(chart, null, { fontSize: 21 });
+  C.styleAxes(chart, null, { fontSize: 14 });
+  assert.equal(scales.x.ticks.callback, callback);
+  assert.equal(scales.x.afterBuildTicks, afterBuildTicks);
+  assert.equal(scales.x.type, "logarithmic");
+  assert.equal(scales.x.ticks.font.size, 14);
 });
 
 test("niekompletny lub błędny widget można zainicjować ponownie", () => {
@@ -298,6 +317,113 @@ test("granice obsługują klawiaturę, a lupa powiększa napisy bez zmiany przed
   assert.equal(el.querySelectorAll("input").length, 0);
   env.unmount(el);
   assert.equal(el.querySelectorAll("button[data-boundary]").length, 0);
+  assert.equal(env.errors.length, 0);
+});
+
+test("dystrybuanta łączy wykresy i chroni wybór klawiaturowy przed hoverem", () => {
+  const env = environment();
+  env.load("03-rozklady-prawdopodobienstwa/modules/cdf_chart.js");
+  const x = new Element("span", { "data-role": "x" });
+  const el = root("lc-cdf", [canvas("pdf"), canvas("cdf"), x]);
+  env.mount(el);
+  const handle = el.querySelector(".lc-chart-handle");
+  press(handle, "ArrowRight"); assert.equal(x.textContent, "1.05");
+  const pdf = [...env.live][0], cdf = [...env.live][1];
+  pdf.options.onHover({ x: 200 }); assert.equal(x.textContent, "1.05");
+  assert.equal(cdf.data.datasets[3].data[0].x, 1.05);
+  pdf.options.onClick({ x: 200 }); assert.equal(x.textContent, "2.00");
+  press(handle, "ArrowLeft", true); assert.equal(x.textContent, "1.50");
+  env.unmount(el); assert.equal(env.live.size, 0);
+  assert.equal(env.errors.length, 0);
+});
+
+test("kwantyl ukrywa odpowiedź po zmianie i wyłącza uchwyt w trybie p", () => {
+  const env = environment();
+  env.load("03-rozklady-prawdopodobienstwa/modules/quantile_chart.js");
+  const modeX = new Element("button", { "data-q-mode": "x" });
+  const modeP = new Element("button", { "data-q-mode": "p" });
+  const preset = new Element("button", { "data-q-p": "0.5", "aria-pressed": "true" });
+  const reveal = new Element("button", { "data-q-reveal": "true" });
+  const x = new Element("span", { "data-role": "x" }), p = new Element("span", { "data-role": "p" });
+  const el = root("lc-quant", [canvas("pdf"), modeX, modeP, preset, reveal, x, p]);
+  env.mount(el);
+  const handle = el.querySelector(".lc-chart-handle");
+  el.emit("click", { target: reveal }); assert.notEqual(p.textContent, "?");
+  press(handle, "ArrowRight"); assert.equal(p.textContent, "?");
+  assert.equal(x.textContent, "1.5");
+  assert.equal(handle.getAttribute("aria-valuetext"), "x = 1.5 cm");
+  el.emit("click", { target: modeP });
+  assert.equal(handle.hidden, true); assert.equal(x.textContent, "?");
+  const old = handle.getAttribute("aria-valuenow");
+  press(handle, "ArrowRight"); assert.equal(handle.getAttribute("aria-valuenow"), old);
+  el.emit("click", { target: modeX }); assert.equal(handle.hidden, false);
+  assert.equal(env.errors.length, 0);
+});
+
+test("percentyl przesuwa się według rzędu, z obiema wizualizacjami", () => {
+  const env = environment();
+  env.load("01-typy-danych/modules/chart_utils.js");
+  env.load("01-typy-danych/modules/percentile_chart.js");
+  const el = root("lc-pctl", [canvas("hist"), canvas("box")], {
+    "data-config": JSON.stringify({ values: [150, 160, 170, 180, 190], p: 50 })
+  });
+  env.mount(el);
+  const handle = el.querySelector(".lc-chart-handle");
+  press(handle, "ArrowRight"); assert.equal(el.lcState.p, 51);
+  press(handle, "ArrowLeft", true); assert.equal(el.lcState.p, 41);
+  press(handle, "Home"); assert.equal(el.lcState.p, 0);
+  press(handle, "End"); assert.equal(el.lcState.p, 100);
+  assert.equal([...env.live][0].data.datasets[1].data[0].x, 190);
+  assert.equal([...env.live][1].options.plugins.lcBox.mark, 190);
+  assert.equal(env.errors.length, 0);
+});
+
+test("odpowiedzi średnia/mediana są niezależne i odsłaniane tylko przyciskiem", () => {
+  const env = environment();
+  env.load("01-typy-danych/modules/chart_utils.js");
+  env.load("01-typy-danych/modules/guess_chart.js");
+  const reveal = new Element("button", { "data-g-act": "reveal" });
+  const fresh = new Element("button", { "data-g-act": "new" });
+  const zoom = new Element("button", { "data-lc-chart-zoom": "true" });
+  const el = root("lc-guess", [canvas("hist"), reveal, fresh, zoom]);
+  env.mount(el);
+  const mean = el.querySelector("[data-guess=\"mean\"]"), median = el.querySelector("[data-guess=\"median\"]");
+  assert.equal(el.lcState.guess.mean, null); assert.equal(el.lcState.guess.median, null);
+  assert.ok(mean.getAttribute("aria-valuetext").includes("Nie wskazano"));
+  press(mean, "End"); press(median, "Home");
+  assert.ok(el.lcState.guess.mean > el.lcState.guess.median, "brak ograniczenia a ≤ b dla typów");
+  assert.equal(el.lcState.revealed, false); assert.equal(reveal.disabled, false);
+  assert.equal([...env.live][0].data.datasets[2].data.length, 0);
+  const before = JSON.stringify(el.lcState);
+  zoom.emit("click"); env.theme(el); assert.equal(JSON.stringify(el.lcState), before);
+  el.emit("click", { target: reveal });
+  assert.equal(el.lcState.revealed, true); assert.equal(mean.hidden, true); assert.equal(median.hidden, true);
+  assert.ok([...env.live][0].data.datasets[2].data.length > 0);
+  for (let i = 0; i < 5; i++) el.emit("click", { target: fresh });
+  assert.equal(el.querySelectorAll(".lc-chart-handle").length, 2);
+  assert.equal(el.lcState.guess.mean, null); assert.equal(el.lcState.guess.median, null);
+  assert.equal(mean.hidden, false);
+  assert.equal(env.errors.length, 0);
+});
+
+test("punkty odstające mają osobne uchwyty 2D, zwalniane przy nowych danych", () => {
+  const env = environment();
+  env.load("02-zwiazki-zmiennych/modules/scatter_charts.js");
+  const add = new Element("button", { "data-o-add": "true" }), fresh = new Element("button", { "data-o-new": "true" });
+  const el = root("lc-scat lc-outlier", [canvas("plot"), add, fresh]);
+  env.mount(el);
+  assert.equal(el.querySelectorAll(".lc-chart-handle").length, 0);
+  el.emit("click", { target: add });
+  const ch = [...env.live][0], handle = el.querySelector(".lc-chart-handle");
+  const old = { ...ch.data.datasets[1].data[0] };
+  press(handle, "ArrowRight");
+  assert.ok(ch.data.datasets[1].data[0].x > old.x); assert.equal(ch.data.datasets[1].data[0].y, old.y);
+  press(handle, "ArrowUp", true); assert.ok(ch.data.datasets[1].data[0].y > old.y);
+  el.emit("click", { target: add }); assert.equal(el.querySelectorAll(".lc-chart-handle").length, 2);
+  el.emit("click", { target: fresh });
+  assert.equal(el.querySelectorAll(".lc-chart-handle").length, 0);
+  assert.equal(handle.listeners.get("keydown").size, 0);
+  assert.equal(ch.data.datasets[0].data.length, 50);
   assert.equal(env.errors.length, 0);
 });
 

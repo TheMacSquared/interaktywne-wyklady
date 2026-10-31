@@ -46,6 +46,28 @@
     if (!pdfCanvas || !cdfCanvas) return false;
 
     var x0 = parseFloat(root.dataset.x || "1");
+    var keyboard = false, dragging = false;
+    var layer = Charts.handleLayer(root);
+    var handle = layer.add(cdfCanvas, {
+      label: "Położenie x na dystrybuancie",
+      hint: "Strzałki zmieniają x o 0.05; Shift ze strzałką o 0.5. Home i End: krańce osi.",
+      onKey: function (event) {
+        var value = Charts.keyValue(event, x0, X_MIN, X_MAX, 0.05, 0.5);
+        if (value === null) return false;
+        keyboard = true; setX(value);
+        layer.announce("x = " + fmt(x0, 2) + ". F(x) = " + fmt(cdf(x0), 4) + ".");
+        return true;
+      },
+      onPointerDown: function (event) {
+        keyboard = false; dragging = true;
+        cdfCanvas.setPointerCapture(event.pointerId);
+        pointerX(event);
+        event.preventDefault();
+      }
+    });
+    function positionHandle(ch) {
+      handle.position(ch.scales.x.getPixelForValue(x0), ch.scales.y.getPixelForValue(cdf(x0)));
+    }
     var readX = root.querySelector('[data-role="x"]');
     var readF = root.querySelector('[data-role="F"]');
 
@@ -67,7 +89,8 @@
         { data: [], borderWidth: 1.5, borderDash: [5, 4] },
         { data: [], pointRadius: 6, pointHoverRadius: 6, borderWidth: 2, showLine: false }
       ] },
-      options: baseOptions(1.05, "F(x) = P(X ≤ x)")
+      options: baseOptions(1.05, "F(x) = P(X ≤ x)"),
+      plugins: [{ id: "cdfHandle", afterRender: positionHandle }]
     });
     cdfChart.options.scales.y.max = 1;
     cdfChart.options.scales.y.ticks = { stepSize: 0.2 };
@@ -76,7 +99,8 @@
       var ink = token("--upwr-ink-soft") || "#444";
       var accent = token("--upwr-accent") || "#7a2e3b";
       [pdfChart, cdfChart].forEach(function (ch) {
-        Charts.styleAxes(ch);
+        Charts.styleAxes(ch, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+        ch.options.scales.x.ticks.maxTicksLimit = 5;
         ch.data.datasets[0].borderColor = ink;
       });
       pdfChart.data.datasets[1].backgroundColor = alpha(accent, 0.28);
@@ -107,17 +131,33 @@
       cdfChart.update("none");
       if (readX) readX.textContent = fmt(x0, 2);
       if (readF) readF.textContent = fmt(F, 4);
+      handle.value(x0, X_MIN, X_MAX, "x = " + fmt(x0, 2) + "; F(x) = " + fmt(F, 4));
+      positionHandle(cdfChart);
     }
 
-    function follow(ch) {
-      ch.options.onHover = ch.options.onClick = function (e) {
-        var area = ch.chartArea;
-        if (e.x < area.left || e.x > area.right) return;
-        setX(ch.scales.x.getValueForPixel(e.x));
-      };
+    function pointerX(event) {
+      var rect = cdfCanvas.getBoundingClientRect(), axis = cdfChart.scales.x;
+      setX(axis.getValueForPixel(event.clientX - rect.left));
     }
-    follow(pdfChart);
-    follow(cdfChart);
+    function follow(ch) {
+      ch.options.onHover = function (event) {
+        if (keyboard) return;
+        var area = ch.chartArea;
+        if (event.x < area.left || event.x > area.right) return;
+        setX(ch.scales.x.getValueForPixel(event.x));
+      };
+      ch.options.onClick = function (event) {
+        keyboard = false;
+        setX(ch.scales.x.getValueForPixel(event.x));
+      };
+      Charts.listen(ch.canvas, "pointerdown", function () { keyboard = false; });
+    }
+    follow(pdfChart); follow(cdfChart);
+    Charts.listen(cdfCanvas, "pointermove", function (event) { if (dragging) pointerX(event); });
+    ["pointerup", "pointercancel"].forEach(function (type) {
+      Charts.listen(cdfCanvas, type, function () { dragging = false; });
+    });
+    Charts.zoomControl(root);
 
     paint();
     setX(x0);

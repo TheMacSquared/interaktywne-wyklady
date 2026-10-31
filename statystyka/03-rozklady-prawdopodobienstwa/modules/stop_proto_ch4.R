@@ -49,10 +49,11 @@ s3p_4b_ui <- s3p_panel("4b", "Ryc. 4.5", "Kwantyl: odwrotne pytanie", proto = FA
       lc_readouts(
         lc_readout("x", tags$span(`data-role` = "x", "178.0")),
         lc_readout("P(X ≤ x)", tags$span(`data-role` = "p", "?"), color = "var(--upwr-accent)")
-      )
+      ),
+      lc_chart_zoom_button()
     ),
     tags$div(class = "lc-area-canvas",
-      tags$canvas(`data-role` = "pdf", `aria-label` = "Gęstość wzrostu N(170, 8) z polem na lewo od x"))
+      tags$canvas(role = "img", `data-role` = "pdf", `aria-label` = "Gęstość wzrostu N(170, 8) z polem na lewo od x"))
   )
 )
 

@@ -1743,6 +1743,38 @@ mjx-container mjx-text {
   font-size: .75em;
 }
 .lc-chart-handle:focus-visible::after { opacity: 1; }
+.lc-chart-handle[data-guess="median"] { color: var(--upwr-cat-niebo); }
+.lc-chart-handle.has-dot::before {
+  content: "";
+  display: block;
+  width: .7em;
+  height: .7em;
+  margin: auto;
+  border: 2px solid var(--upwr-surface);
+  border-radius: 50%;
+  background: currentColor;
+}
+.lc-chart-handle.is-unset { pointer-events: none; }
+.lc-chart-handle.is-unset::before { opacity: 0; }
+.lc-chart-handle.is-unset:focus-visible::before { opacity: .6; }
+.lc-outlier .lc-chart-handle { cursor: move; }
+.lc-cdf-canvas > canvas, .lc-pctl-hist > canvas, .lc-pctl-box > canvas,
+.lc-guess-canvas > canvas, .lc-outlier .lc-scat-canvas > canvas {
+  position: absolute;
+  inset: 0;
+}
+.lc-cdf[data-lc-chart-large="true"] .lc-cdf-grid { grid-template-columns: minmax(0, 1fr); }
+.lc-quant[data-lc-chart-large="true"] .lc-area-canvas { aspect-ratio: 1.65 / 1; }
+.lc-pctl[data-lc-chart-large="true"] .lc-pctl-hist { aspect-ratio: 1.9 / 1; max-height: none; }
+.lc-pctl[data-lc-chart-large="true"] .lc-pctl-box { aspect-ratio: 4.2 / 1; min-height: 8em; max-height: none; }
+.lc-guess[data-lc-chart-large="true"] .lc-guess-canvas { aspect-ratio: 1.5 / 1; max-height: none; }
+.lc-outlier[data-lc-chart-large="true"] .lc-scat-canvas { aspect-ratio: 1.3 / 1; }
+@media (max-width: 640px) {
+  .lc-quant[data-lc-chart-large="true"] .lc-area-canvas,
+  .lc-pctl[data-lc-chart-large="true"] .lc-pctl-hist,
+  .lc-guess[data-lc-chart-large="true"] .lc-guess-canvas,
+  .lc-outlier[data-lc-chart-large="true"] .lc-scat-canvas { aspect-ratio: 1 / 1; }
+}
 .lc-chart-handle:focus-visible, .lc-chart-zoom:focus-visible {
   outline: .15em solid var(--upwr-accent);
   outline-offset: .1em;

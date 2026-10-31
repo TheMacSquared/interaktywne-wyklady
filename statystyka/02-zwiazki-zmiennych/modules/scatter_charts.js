@@ -27,9 +27,10 @@
   }
   function put(el, s) { if (el) el.textContent = s; }
 
-  function makeChart(canvas, datasets, scales) {
+  function makeChart(canvas, datasets, scales, plugins) {
     return Charts.create(canvas, {
       type: "scatter",
+      plugins: plugins || [],
       data: { datasets: datasets },
       options: {
         responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
@@ -229,6 +230,36 @@
     var base = [], outs = [], LO = -10, HI = 10;
     var R = reads(root, ["r", "r0", "k"]);
 
+    var layer = Charts.handleLayer(root), pointHandles = [], lastR = NaN;
+    function syncHandles(ch) {
+      pointHandles.forEach(function (handle, i) {
+        var point = outs[i];
+        handle.position(ch.scales.x.getPixelForValue(point.x), ch.scales.y.getPixelForValue(point.y));
+        handle.element.setAttribute("aria-label", "Wartość odstająca " + (i + 1) + ". X " + fmt(point.x, 1) + ", Y " + fmt(point.y, 1));
+      });
+    }
+    function makePointHandle(i) {
+      var handle = layer.add(canvas, {
+        role: "button", label: "Wartość odstająca " + (i + 1),
+        hint: "Lewo i prawo zmieniają X, góra i dół zmieniają Y. Shift zwiększa krok dziesięciokrotnie.",
+        onKey: function (event) {
+          var axis = ["ArrowLeft", "ArrowRight"].indexOf(event.key) >= 0 ? "x" :
+            (["ArrowUp", "ArrowDown"].indexOf(event.key) >= 0 ? "y" : null);
+          if (!axis) return false;
+          var step = Math.max(0.1, Math.round((HI - LO) / 100 * 10) / 10) * (event.shiftKey ? 10 : 1);
+          var direction = ["ArrowRight", "ArrowUp"].indexOf(event.key) >= 0 ? 1 : -1;
+          outs[i][axis] = r2(clamp(outs[i][axis] + direction * step, LO, HI));
+          rescale(); draw();
+          layer.announce("Punkt " + (i + 1) + ". X " + fmt(outs[i].x, 1) + ", Y " + fmt(outs[i].y, 1) + ". Korelacja " + fmt(lastR, 3));
+          return true;
+        },
+        onPointerDown: function (event) {
+          drag = i; canvas.setPointerCapture(event.pointerId); event.preventDefault();
+        }
+      });
+      handle.element.setAttribute("data-boundary", i + 1);
+      return handle;
+    }
     var chart = makeChart(canvas, [
       { data: [], pointRadius: 4, borderWidth: 0 },
       { data: [], pointRadius: 8, borderWidth: 2 },
@@ -237,10 +268,12 @@
     ], {
       x: { title: { display: true, text: "X" } },
       y: { title: { display: true, text: "Y" } }
-    });
+    }, [{ id: "outlierHandles", afterRender: syncHandles }]);
 
     function paint() {
-      paintAxes(chart);
+      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
+      chart.options.scales.x.ticks.maxTicksLimit = 6;
+      chart.options.scales.y.ticks.maxTicksLimit = 6;
       var niebo = token("--upwr-cat-niebo") || "#1d5f9e", accent = token("--upwr-accent") || "#7a2e3b";
       var subtle = token("--upwr-ink-subtle") || "#888", surface = token("--upwr-surface") || "#fff";
       var ds = chart.data.datasets;
@@ -273,12 +306,15 @@
       ds[2].data = outs.length ? line(f0, LO, HI) : [];
       ds[3].data = line(fa, LO, HI);
       chart.update("none");
+      lastR = fa.r;
+      syncHandles(chart);
       put(R.r, fmt(fa.r, 3));
       put(R.r0, fmt(f0.r, 3));
       put(R.k, String(outs.length));
     }
 
     function fresh() {
+      pointHandles.forEach(function (handle) { handle.remove(); }); pointHandles = [];
       base = [];
       for (var i = 0; i < N; i++) base.push({ x: r2(rnorm(SD)), y: r2(rnorm(SD)) });
       outs = [];
@@ -290,6 +326,7 @@
         x: r2(Math.max.apply(null, all.map(function (p) { return p.x; })) + SHIFT),
         y: r2(Math.max.apply(null, all.map(function (p) { return p.y; })) + SHIFT)
       });
+      pointHandles.push(makePointHandle(outs.length - 1));
       rescale(); draw();
     }
 
@@ -324,6 +361,7 @@
       else if (e.target.closest("[data-o-add]")) add();
     });
 
+    Charts.zoomControl(root);
     paint(); fresh(); Charts.onTheme(root, paint);
   }
 
