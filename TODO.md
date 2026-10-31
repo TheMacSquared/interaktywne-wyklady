@@ -141,6 +141,11 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   Dobierać mechanizmy do celu dydaktycznego; zachować minimalizm. Pola liczbowe
   dodawać tylko tam, gdzie dokładna wartość jest istotna, nie automatycznie
   w demonstracjach pojęć (zaakceptowane 2026-10-31).
+  Ocena wykładów statystyki 00–04 jest w
+  [OCENA-WIDGETOW-00-04.md](statystyka/OCENA-WIDGETOW-00-04.md): pierwsza kolejka
+  to dystrybuanta, kwantyl, percentyle, zgadywanie średniej/mediany i wartość
+  odstająca. Pierwsza kolejka została wdrożona (2026-10-31); pozostają druga
+  kolejka z oceny i przegląd pozostałych aktywnych wykładów.
 
 ### Zapis liczb: kropka dziesiętna i zwykły minus
 
