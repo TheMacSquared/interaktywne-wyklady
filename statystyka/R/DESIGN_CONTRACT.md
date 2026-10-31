@@ -159,6 +159,10 @@ jest dostępne jako `window.lcCharts`:
   dotychczasowe przybliżenie dystrybuanty normalnej. Specyficzne opcje osi
   pozostają w skrypcie widgetu.
 
+- `linearFit(x, y)` zwraca współczynniki prostej (`a`, `b`), korelację (`r`)
+  i SD reszt (`sd`). `normalQuantile(p, mu, sd, lo, hi)` odwraca dystrybuantę
+  w zadanym zakresie rysunku; wynik jest ograniczony do `[lo, hi]`.
+
 Kontener i jego wykresy żyją tylko do zmiany rozdziału. Nie przechowujemy
 starego płótna jako singletonu ani nie tworzymy osobnych obserwatorów DOM
 i motywu w każdym widgecie. Lokalna logika dydaktyczna, generowanie danych
@@ -167,6 +171,25 @@ i specjalne wtyczki rysujące pozostają w plikach wykładu.
 Regresje cyklu życia sprawdza `node statystyka/tests/js/lc_charts.test.js`.
 Testy są też uruchamiane przez testthat, jeśli Node.js jest dostępny;
 Node.js nie jest zależnością uruchomieniową wykładów.
+
+Zgodność obliczeń z R sprawdza `tests/testthat/test-chart-numerics.R`, uruchamiając
+produkcyjne funkcje JS przez `tests/js/chart_numerics.js`. Referencje powstają
+na bieżąco z `mean()`, `median()`, `quantile(type = 7)`, `lm()`, `cor()` oraz
+funkcji gęstości, dystrybuant i kwantyli R. Obowiązują jawne tolerancje:
+
+- dystrybuanta normalna: błąd bezwzględny ≤ 8·10⁻⁸; pole między granicami:
+  ≤ 1.6·10⁻⁷;
+- kwantyle normalne w dostępnym zakresie rysunku, dla przycisków p od 0.03
+  do 0.97: ≤ 2·10⁻⁶·σ; wartości p = 0 i p = 1 wskazują krańce rysunku;
+- gęstości widgetu kurtozy: 2·10⁻¹⁰ + 2·10⁻⁸·|wartość R|; całki ogonowe:
+  10⁻⁹ + 10⁻⁷·|wartość R|. Referencją są zdefiniowane w widgecie rodziny
+  beta i t z ich ograniczeniami parametrów, a nie dowolny rozkład o tej kurtozie.
+
+SD reszt porównujemy z `sd(residuals(lm(...)))` (mianownik n − 1), nie z błędem
+standardowym regresji z `summary(lm(...))` (n − 2). Testy obejmują też prawie
+idealną prostą, pojedynczą i pustą próbę, powtarzające się dane oraz wartości
+odstające. Dla generatorów porównujemy momenty i kwantyle rozkładu przy stałym
+strumieniu liczb losowych; nie wymagamy zgodności sekwencji z `set.seed()` w R.
 
 ## CSS
 

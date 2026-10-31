@@ -23,9 +23,7 @@
 
     function pdf(v) { var z = (v - MU) / SD; return Math.exp(-z * z / 2) / (SD * Math.sqrt(2 * Math.PI)); }
     function quant(q) {
-      var a = LO, b = HI;
-      for (var i = 0; i < 60; i++) { var m = (a + b) / 2; if (phi((m - MU) / SD) < q) a = m; else b = m; }
-      return (a + b) / 2;
+      return Charts.normalQuantile(q, MU, SD, LO, HI);
     }
     var TOP = pdf(MU) * 1.25;
     var XS = [];

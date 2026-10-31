@@ -16,18 +16,7 @@
 
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
-  // Prosta MNK y = a + b·x, r Pearsona i SD reszt (jak sd(residuals(lm(y ~ x))) w R).
-  function fit(xs, ys) {
-    var n = xs.length, mx = 0, my = 0, sxx = 0, syy = 0, sxy = 0, i;
-    for (i = 0; i < n; i++) { mx += xs[i]; my += ys[i]; }
-    mx /= n; my /= n;
-    for (i = 0; i < n; i++) {
-      var dx = xs[i] - mx, dy = ys[i] - my;
-      sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
-    }
-    var b = sxy / sxx, r = sxy / Math.sqrt(sxx * syy), sse = Math.max(0, syy - b * sxy);
-    return { a: my - b * mx, b: b, r: r, sd: Math.sqrt(sse / (n - 1)) };
-  }
+  var fit = Charts.linearFit;
   function line(f, x0, x1) { return [{ x: x0, y: f.a + f.b * x0 }, { x: x1, y: f.a + f.b * x1 }]; }
   function fmt(v, d) { return isFinite(v) ? v.toFixed(d) : "–"; }
 

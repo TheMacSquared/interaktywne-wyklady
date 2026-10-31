@@ -5,13 +5,19 @@
 (function () {
   // ---- Statystyki (zgodne z R) -------------------------------------------
   function sorted(x) { return x.slice().sort(function (a, b) { return a - b; }); }
-  function sum(x) { var s = 0; for (var i = 0; i < x.length; i++) s += x[i]; return s; }
-  // mean() w R: suma / n, potem poprawka o średnią reszt (jak w summary.c).
+  // Sumowanie Neumaiera zachowuje małe składniki przy znoszących się liczbach.
+  function sum(x) {
+    var s = 0, correction = 0;
+    for (var i = 0; i < x.length; i++) {
+      var next = s + x[i];
+      correction += Math.abs(s) >= Math.abs(x[i]) ? (s - next) + x[i] : (x[i] - next) + s;
+      s = next;
+    }
+    return s + correction;
+  }
   function mean(x) {
     var n = x.length; if (!n) return NaN;
-    var m = sum(x) / n, r = 0;
-    for (var i = 0; i < n; i++) r += x[i] - m;
-    return m + r / n;
+    return sum(x) / n;
   }
   function median(x) {
     var s = sorted(x), n = s.length; if (!n) return NaN;

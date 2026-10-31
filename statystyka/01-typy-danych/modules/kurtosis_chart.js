@@ -50,8 +50,14 @@
     if (end <= c) return 0;
     var n = 4000, h, s = 0, i, x;
     if (isFinite(end)) {
-      h = (end - c) / n;
-      for (i = 0; i <= n; i++) { x = c + i * h; s += (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * f(x); }
+      // x = end − (end − c)·u⁴ wygładza gęstość przy brzegu nośnika beta.
+      // Zwykła siatka x zaniżała całkę dla kształtu bliskiego rozkładowi jednostajnemu.
+      h = 1 / n;
+      for (i = 0; i <= n; i++) {
+        var u = i * h, u2 = u * u;
+        x = end - (end - c) * u2 * u2;
+        s += (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * f(x) * 4 * (end - c) * u2 * u;
+      }
       return s * h / 3;
     }
     var ue = 1 - 1e-6; h = ue / n;

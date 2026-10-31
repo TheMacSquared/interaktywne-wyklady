@@ -178,6 +178,35 @@
     return z >= 0 ? (1 + erf) / 2 : (1 - erf) / 2;
   }
 
+  // Prosta MNK y = a + b·x, r Pearsona i SD reszt (jak sd(residuals(lm(y ~ x))) w R).
+  function fit(xs, ys) {
+    var n = xs.length, mx = 0, my = 0, sxx = 0, syy = 0, sxy = 0, i;
+    for (i = 0; i < n; i++) { mx += xs[i]; my += ys[i]; }
+    mx /= n; my /= n;
+    for (i = 0; i < n; i++) {
+      var dx = xs[i] - mx, dy = ys[i] - my;
+      sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
+    }
+    var b = sxy / sxx, r = sxy / Math.sqrt(sxx * syy), sse = 0;
+    // Różnica syy − b·sxy traci małe reszty przy niemal idealnej prostej.
+    // Liczymy kwadraty reszt w układzie wycentrowanym, bez odejmowania dużych sum.
+    for (i = 0; i < n; i++) {
+      var residual = (ys[i] - my) - b * (xs[i] - mx);
+      sse += residual * residual;
+    }
+    r = Math.max(-1, Math.min(1, r));
+    return { a: my - b * mx, b: b, r: r, sd: Math.sqrt(sse / (n - 1)) };
+  }
+  // Kwantyl ograniczony do zakresu rysunku, jak w widgecie „Odwrotne pytanie”.
+  function normalQuantile(p, mu, sd, lo, hi) {
+    var a = lo, b = hi;
+    for (var i = 0; i < 60; i++) {
+      var m = (a + b) / 2;
+      if (normalCdf((m - mu) / sd) < p) a = m; else b = m;
+    }
+    return (a + b) / 2;
+  }
+
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
   new MutationObserver(function () {
     widgets.forEach(function (widget, root) {
@@ -200,6 +229,7 @@
     onTheme: onTheme, onDispose: onDispose, onMessage: onMessage,
     tween: tween, cancelTween: cancelTween,
     token: token, alpha: alpha, palette: palette, styleAxes: styleAxes, normalCdf: normalCdf,
+    linearFit: fit, normalQuantile: normalQuantile,
     fmt: fmt, fmtSigned: fmtSigned, round: round
   };
 })();
