@@ -133,6 +133,15 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   w DOM. Też statystyka 01 Ryc. 2.x (kołowy vs słupkowy). Przy kilku użyciach
   rozważyć wspólny helper w `R/`.
 
+- [ ] Przejrzeć widgety aktywnych wykładów i wskazać, które skorzystają na
+  sterowaniu klawiaturą (Tab, strzałki, większy krok z Shiftem, Home/End),
+  skalowaniu napisów wraz z S/M/L oraz lokalnym powiększeniu wykresu małą,
+  ujednoliconą lupą z boku. Wzorzec: statystyka 03, Ryc. 4.3
+  (`modules/area_chart.js`, `lc_chart_zoom_button()`, `R/lc_charts.js`).
+  Dobierać mechanizmy do celu dydaktycznego; zachować minimalizm. Pola liczbowe
+  dodawać tylko tam, gdzie dokładna wartość jest istotna, nie automatycznie
+  w demonstracjach pojęć (zaakceptowane 2026-10-31).
+
 ### Zapis liczb: kropka dziesiętna i zwykły minus
 
 Decyzja: wszędzie kropka dziesiętna i zwykły minus `-`, jak w R i jamovi.
