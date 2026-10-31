@@ -139,6 +139,12 @@ ui <- lecture_page(
     tags$style(HTML("
       .lc-cdf { container-type: inline-size; }
       .lc-area-canvas { position: relative; aspect-ratio: 2.2 / 1; touch-action: none; }
+      .lc-area-canvas > canvas { position: absolute; inset: 0; }
+      .lc-area[data-lc-chart-large='true'] .lc-area-canvas { aspect-ratio: 1.65 / 1; }
+      @media (max-width: 640px) {
+        .lc-area-canvas { aspect-ratio: 1.4 / 1; }
+        .lc-area[data-lc-chart-large='true'] .lc-area-canvas { aspect-ratio: 1 / 1; }
+      }
       .lc-duel-top { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1em; }
       @media (max-width: 640px) { .lc-duel-top { grid-template-columns: minmax(0, 1fr); } }
       .lc-duel-small { position: relative; aspect-ratio: 1.7 / 1; }

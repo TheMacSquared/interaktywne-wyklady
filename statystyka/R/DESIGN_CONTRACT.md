@@ -158,10 +158,21 @@ jest dostępne jako `window.lcCharts`:
   `normalCdf` zawierają wspólne kolory, style osi, formatowanie liczb oraz
   dotychczasowe przybliżenie dystrybuanty normalnej. Specyficzne opcje osi
   pozostają w skrypcie widgetu.
-
 - `linearFit(x, y)` zwraca współczynniki prostej (`a`, `b`), korelację (`r`)
   i SD reszt (`sd`). `normalQuantile(p, mu, sd, lo, hi)` odwraca dystrybuantę
   w zadanym zakresie rysunku; wynik jest ograniczony do `[lo, hi]`.
+- `lc_chart_zoom_button()` tworzy małą lupę w pasku widgetu, a
+  `lcCharts.zoomControl(root)` obsługuje jej stan. `axisFontSize(root)` dobiera
+  rozmiar napisów do tekstu i powiększenia; przekazujemy go do
+  `styleAxes(chart, null, {fontSize: ...})`. Wspólny obserwator odświeża style
+  po zmianie motywu, S/M/L i lokalnego powiększenia.
+
+Wykres pola pod krzywą (03, Ryc. 4.3) ma uchwyty granic dostępne klawiszem
+Tab. Strzałki przesuwają granicę o 0.5 cm, Shift ze strzałką o 5 cm, Home/End
+do krańca dostępnego zakresu. Granice zachowują kolejność a ≤ b. Obwódka
+uchwytu pojawia się przy obsłudze klawiaturą; nie dodajemy pól liczbowych do
+tej demonstracji pojęcia. Krótkie podsumowanie dla czytnika ekranu aktualizuje
+się po operacji klawiaturowej i po zakończeniu przeciągania, nie przy każdym ruchu.
 
 Kontener i jego wykresy żyją tylko do zmiany rozdziału. Nie przechowujemy
 starego płótna jako singletonu ani nie tworzymy osobnych obserwatorów DOM

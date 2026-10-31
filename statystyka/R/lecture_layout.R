@@ -672,6 +672,19 @@ lc_widget_layout <- function(controls, content, layout = c("above", "beside")) {
 }
 
 
+# Mała lupa Chart.js; stan i zdarzenia obsługuje lcCharts.zoomControl(root).
+lc_chart_zoom_button <- function() {
+  tags$button(type = "button", class = "lc-chart-zoom",
+    `data-lc-chart-zoom` = "true", `aria-pressed` = "false",
+    `aria-label` = "Powiększ wykres i napisy", title = "Powiększ wykres i napisy",
+    HTML(paste0(
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ',
+      'stroke-linecap="round" aria-hidden="true" focusable="false">',
+      '<circle cx="10" cy="10" r="6.5"></circle><path d="M15 15l5 5M7 10h6"></path>',
+      '<path class="lc-chart-zoom-plus" d="M10 7v6"></path></svg>'
+    )))
+}
+
 # Wykres z natywnym trybem pełnoekranowym.
 # UI-only wrapper wokół plotOutput(); server używa zwykłego output$... <- renderPlot().
 lc_plot_fullscreen <- function(outputId, height = "300px", width = "100%",

@@ -23,6 +23,12 @@ class Element {
     children.forEach(child => this.appendChild(child));
   }
   get isConnected() { return this.parent ? this.parent.isConnected : this.connected; }
+  get parentElement() { return this.parent; }
+  remove() {
+    if (this.parent) this.parent.children = this.parent.children.filter(child => child !== this);
+    this.parent = null;
+  }
+  focus() {}
   contains(node) { return this === node || this.children.some(child => child.contains(node)); }
   appendChild(child) { child.parent = this; this.children.push(child); return child; }
   setAttribute(key, value) {
@@ -120,7 +126,7 @@ function environment(shiny = true) {
   });
   function load(file) { vm.runInContext(fs.readFileSync(path.join(statRoot, file), "utf8"), context, { filename: file }); }
   function mutations() { observers.filter(o => o.options.childList).forEach(o => o.fn()); }
-  function theme() { observers.filter(o => o.options.attributes).forEach(o => o.fn()); }
+  function theme(target = documentElement) { observers.filter(o => o.options.attributes).forEach(o => o.fn([{ target }])); }
   function mount(root) { documentElement.appendChild(root); mutations(); }
   function unmount(root) {
     documentElement.children = documentElement.children.filter(child => child !== root);
@@ -266,6 +272,32 @@ test("pole pod krzywą niszczy obsługę przeciągania i poprawnie wraca", () =>
   env.mount(el); env.theme();
   assert.equal(env.live.size, 1);
   assert.notEqual([...env.live][0], first);
+  assert.equal(env.errors.length, 0);
+});
+
+test("granice obsługują klawiaturę, a lupa powiększa napisy bez zmiany przedziału", () => {
+  const env = environment();
+  env.load("03-rozklady-prawdopodobienstwa/modules/area_chart.js");
+  const zoom = new Element("button", { "data-lc-chart-zoom": "true", "aria-pressed": "false" });
+  const el = root("lc-area", [zoom, canvas("pdf")], { "data-a": 165, "data-b": 175, "data-mu": 170, "data-sd": 8 });
+  env.mount(el);
+  const a = el.querySelector("button[data-boundary=\"a\"]"), b = el.querySelector("button[data-boundary=\"b\"]");
+  const key = (handle, value, shiftKey = false) => handle.emit("keydown", { key: value, shiftKey, preventDefault() {} });
+  key(a, "ArrowRight"); assert.equal(a.getAttribute("aria-valuenow"), "165.5");
+  key(a, "ArrowRight", true); assert.equal(a.getAttribute("aria-valuenow"), "170.5");
+  key(a, "End"); assert.equal(a.getAttribute("aria-valuenow"), "175");
+  key(b, "ArrowLeft"); assert.equal(b.getAttribute("aria-valuenow"), "175", "granice nie zamieniają się rolami");
+  key(a, "Home"); assert.equal(a.getAttribute("aria-valuenow"), "138");
+  const ch = [...env.live][0], fontBefore = ch.options.scales.x.ticks.font.size;
+  zoom.emit("click"); env.theme(el);
+  assert.equal(zoom.getAttribute("aria-pressed"), "true");
+  assert.ok(ch.options.scales.x.ticks.font.size > fontBefore);
+  assert.equal(a.getAttribute("aria-valuenow"), "138");
+  zoom.emit("click"); env.theme(el);
+  assert.equal(ch.options.scales.x.ticks.font.size, fontBefore);
+  assert.equal(el.querySelectorAll("input").length, 0);
+  env.unmount(el);
+  assert.equal(el.querySelectorAll("button[data-boundary]").length, 0);
   assert.equal(env.errors.length, 0);
 });
 

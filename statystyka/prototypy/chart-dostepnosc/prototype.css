@@ -1,0 +1,11 @@
+.lc-area-canvas {
+  position: relative;
+  aspect-ratio: 2.2 / 1;
+  touch-action: none;
+}
+.lc-area[data-lc-chart-large="true"] .lc-area-canvas { aspect-ratio: 1.65 / 1; }
+.lc-area-canvas > canvas { position: absolute; inset: 0; }
+@media (max-width: 640px) {
+  .lc-area-canvas { aspect-ratio: 1.4 / 1; }
+  .lc-area[data-lc-chart-large="true"] .lc-area-canvas { aspect-ratio: 1 / 1; }
+}

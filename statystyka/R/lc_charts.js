@@ -163,10 +163,29 @@
       if (s.display === false) return;
       s.grid = Object.assign(s.grid || {}, { color: P.ruleSoft });
       s.border = Object.assign(s.border || {}, { color: P.rule });
-      s.ticks = Object.assign(s.ticks || {}, { color: P.subtle, font: { family: P.mono, size: 12 } });
+      var fontSize = options && options.fontSize || 12;
+      s.ticks = Object.assign(s.ticks || {}, { color: P.subtle, font: { family: P.mono, size: fontSize } });
       if (options && options.includeBounds !== undefined) s.ticks.includeBounds = options.includeBounds;
       if (k === "x" && options && options.maxRotation !== undefined) s.ticks.maxRotation = options.maxRotation;
-      if (s.title) { s.title.color = P.subtle; s.title.font = { family: P.mono, size: options && options.titleSize || 12 }; }
+      if (s.title) { s.title.color = P.subtle; s.title.font = { family: P.mono, size: options && options.titleSize || fontSize }; }
+    });
+  }
+
+  function axisFontSize(root) {
+    var size = parseFloat(getComputedStyle(root).fontSize) || 16;
+    return Math.max(12, size * 0.875) * (root.dataset.lcChartLarge === "true" ? 1.5 : 1);
+  }
+
+  function zoomControl(root) {
+    var button = root.querySelector("[data-lc-chart-zoom]");
+    if (!button) return;
+    listen(button, "click", function () {
+      var large = root.dataset.lcChartLarge !== "true";
+      root.setAttribute("data-lc-chart-large", String(large));
+      button.setAttribute("aria-pressed", String(large));
+      var label = large ? "Przywróć zwykły rozmiar wykresu" : "Powiększ wykres i napisy";
+      button.setAttribute("aria-label", label);
+      button.setAttribute("title", label);
     });
   }
 
@@ -208,11 +227,17 @@
   }
 
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
-  new MutationObserver(function () {
+  new MutationObserver(function (records) {
     widgets.forEach(function (widget, root) {
-      if (root.isConnected) widget.themes.forEach(function (fn) { fn(); });
+      var changed = records.some(function (record) {
+        return record.target === document.documentElement || record.target === root;
+      });
+      if (changed && root.isConnected) widget.themes.forEach(function (fn) { fn(); });
     });
-  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lc-theme"] });
+  }).observe(document.documentElement, {
+    attributes: true, subtree: true,
+    attributeFilter: ["data-lc-theme", "data-lc-font-size", "data-lc-chart-large"]
+  });
   document.addEventListener("DOMContentLoaded", scan);
   document.addEventListener("shiny:connected", scan);
   window.addEventListener("load", scan);
@@ -230,6 +255,7 @@
     tween: tween, cancelTween: cancelTween,
     token: token, alpha: alpha, palette: palette, styleAxes: styleAxes, normalCdf: normalCdf,
     linearFit: fit, normalQuantile: normalQuantile,
+    axisFontSize: axisFontSize, zoomControl: zoomControl,
     fmt: fmt, fmtSigned: fmtSigned, round: round
   };
 })();

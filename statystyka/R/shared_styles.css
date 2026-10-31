@@ -1699,6 +1699,62 @@ mjx-container mjx-text {
   letter-spacing: .04em;
 }
 
+/* Chart.js: dyskretne powiększenie i uchwyty dostępne z klawiatury. */
+.lc-chart-zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  width: 2em;
+  height: 2em;
+  padding: .4em;
+  border: 0;
+  border-radius: .25em;
+  background: transparent;
+  color: var(--upwr-ink-subtle);
+  font: inherit;
+  cursor: pointer;
+}
+.lc-chart-zoom svg { width: 1.1em; height: 1.1em; }
+.lc-chart-zoom:hover, .lc-chart-zoom[aria-pressed="true"] { color: var(--upwr-accent); }
+.lc-chart-zoom[aria-pressed="true"] .lc-chart-zoom-plus { display: none; }
+.lc-chart-handle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 2.75em;
+  height: 2.75em;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--upwr-accent);
+  font: inherit;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.lc-chart-handle::after {
+  content: attr(data-boundary);
+  position: absolute;
+  top: 1.7em;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  font-size: .75em;
+}
+.lc-chart-handle:focus-visible::after { opacity: 1; }
+.lc-chart-handle:focus-visible, .lc-chart-zoom:focus-visible {
+  outline: .15em solid var(--upwr-accent);
+  outline-offset: .1em;
+}
+.lc-chart-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
 /* === zoom_plot: przycisk powiększ + modal ================================= */
 .lc-zoom-plot-wrap { position: relative; }
 

@@ -202,16 +202,18 @@ ch4_ui <- list(
       tags$div(class = "lc-area", `data-mu` = "170", `data-sd` = "8", `data-lo` = "140", `data-hi` = "200",
         `data-a` = "165", `data-b` = "175",
         lc_toolbar(
-          lc_caption("Przeciągnij jedną z granic po wykresie."),
+          lc_caption("Przeciągnij granice lub użyj Tab i strzałek."),
           lc_readouts(
             lc_readout("a", tags$span(`data-role` = "a", "165.0")),
             lc_readout("b", tags$span(`data-role` = "b", "175.0")),
             lc_readout("P(a < X < b)", tags$span(`data-role` = "P", "0.468"),
                        color = "var(--upwr-accent)")
-          )
+          ),
+          lc_chart_zoom_button()
         ),
         tags$div(class = "lc-area-canvas",
           tags$canvas(`data-role` = "pdf",
+                      role = "img",
                       `aria-label` = "Gęstość wzrostu N(170, 8) z polem między granicami a i b"))
       )
     ),
