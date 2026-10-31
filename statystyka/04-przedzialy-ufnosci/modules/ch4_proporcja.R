@@ -86,6 +86,9 @@ ch4_ui <- list(
       najprościej pokazuje konstrukcję. W części przykładów poniżej sukcesów
       albo porażek jest niewiele i tam przedziały są tylko przybliżone."),
 
+    s4p("4a"),
+    s4p("4b"),
+
     lc_p("Programy statystyczne często nie podają przedziału Walda, tylko ",
       gloss("przedział Cloppera-Pearsona", "przedział Cloppera-Pearsona"),
       ", oparty bezpośrednio na rozkładzie dwumianowym i bezpieczniejszy przy

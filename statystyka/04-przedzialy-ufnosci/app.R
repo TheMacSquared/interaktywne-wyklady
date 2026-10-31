@@ -49,6 +49,11 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
+# Prototypy punktów stop (2026-10-30): przed rozdziałami, bo ich UI wstawiamy w tekst.
+for (.f in c("common", paste0("ch", 1:5))) {
+  .p <- file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R"))
+  if (file.exists(.p)) source(.p, local = TRUE)
+}
 source(file.path(app_dir, "modules", "ch1_estymacja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_idea.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch3_srednia.R"),   local = TRUE)
@@ -72,6 +77,10 @@ ui <- lecture_page(
   header_extras = tagList(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
+    # Prototypy punktów stop: Chart.js i własne skrypty s4p_*.js
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    lapply(sort(list.files(file.path(app_dir, "modules"), pattern = "^s4p_.*\\.js$", full.names = TRUE)),
+           includeScript),
     tags$style(HTML("
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
       .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
@@ -94,6 +103,12 @@ server <- function(input, output, session) {
   ch4_server(input, output, session)
   ch5_server(input, output, session)
   ch7_server(input, output, session)
+
+  # Prototypy punktów stop (2026-10-30)
+  for (.f in paste0("ch", 1:5)) {
+    .fn <- get0(paste0("s4p_", .f, "_server"))
+    if (is.function(.fn)) .fn(input, output, session)
+  }
 }
 
 shinyApp(ui = ui, server = server)

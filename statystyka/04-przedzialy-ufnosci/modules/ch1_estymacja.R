@@ -85,6 +85,15 @@ ch1_ui <- list(
       withMathJax("\\(\\hat{\\theta}\\)"), " oznacza estymator parametru ",
       withMathJax("\\(\\theta\\)"), "."),
 
+    s4p("1b"),
+
+    lc_p("Ryc. 1.1 pokazuje estymatory na tarczy. Środek tarczy to parametr,
+      a każdy strzał to estymata z jednej próby. Dwie górne tarcze celują
+      w środek: strzały rozkładają się wokół niego, raz ciasno, raz szeroko.
+      Dwie dolne celują obok, więc nawet ciasna chmura leży w złym miejscu.
+      Obciążenie mówi, gdzie leży chmura estymat, a rozrzut, jak jest szeroka.
+      To dwie osobne wady i estymator może mieć jedną bez drugiej."),
+
     lc_h3("Nieobciążoność", num = "1"),
 
     lc_p("Estymator jest nieobciążony, gdy jego ", gloss("wartość oczekiwana"), " jest równa
@@ -127,6 +136,23 @@ ch1_ui <- list(
       zdarzają się ", gloss("wartość odstająca", "wartości odstające"), ",
       średnia mocno na nie reaguje i mediana może okazać się efektywniejsza.")),
 
+    lc_p("Ryc. 1.2 porównuje cztery sposoby szacowania średniego wzrostu
+      z tej samej grupki 25 osób: średnią, medianę, środek rozstępu, czyli
+      połowę sumy najniższego i najwyższego pomiaru, oraz średnią z uszkodzonej
+      miarki. Uszkodzonej miarce brakuje pierwszych 2 cm taśmy, więc każdy
+      pomiar wychodzi o 2 cm za duży."),
+
+    s4p("1a"),
+
+    lc_p("Po tysiącu grupek trzy pierwsze stosy stoją wokół μ = 170 cm, więc
+      wszystkie trzy estymatory są nieobciążone. Różnią się jednak szerokością:
+      odchylenie standardowe estymat wynosi około 2.0 cm dla średniej, 2.4 cm
+      dla mediany i 3.6 cm dla środka rozstępu. Najefektywniejsza jest średnia.
+      Stos uszkodzonej miarki jest równie wąski jak stos średniej, ale stoi przy
+      172 cm. Po kształcie stosu obciążenia nie widać, widać je dopiero na tle μ,
+      a w prawdziwym badaniu μ nie znamy. Dlatego obciążenie trzeba wykluczyć
+      wcześniej, sprawdzając narzędzie i sposób pomiaru."),
+
     lc_h3("Zgodność", num = "3"),
 
     lc_p("Trzecia własność dotyczy tego, co dzieje się, gdy zbieramy więcej danych.
@@ -163,6 +189,14 @@ ch1_ui <- list(
        zwiększyć próbę."
     ),
 
+    s4p("1c"),
+
+    lc_p("Ryc. 1.3 pokazuje tę zasadę na stosach średnich. Przy n = 25 średnie
+      rozrzucają się z odchyleniem standardowym około 2 cm, przy n = 100 około
+      1 cm, a przy n = 400 około 0.5 cm. Każde czterokrotne powiększenie grupki
+      zwęża stos o połowę, a stos coraz ciaśniej otacza μ. Tak wygląda zgodność:
+      więcej danych przybliża estymatę do parametru, ale coraz wolniej."),
+
     lc_h2("ch1-punkt-nie-wystarczy", "Sam punkt nie wystarczy"),
 
     lc_p("Nawet najlepszy estymator daje w każdej próbie inną estymatę.
@@ -173,6 +207,17 @@ ch1_ui <- list(
       i w dół od μ. Czterokrotnie większa grupka zmniejszyłaby SE o połowę, ale
       skoki by nie zniknęły. Dowolna pojedyncza estymata może więc leżeć kilka
       centymetrów od μ, a sama liczba nie zdradza, jak daleko."),
+
+    s4p("1d"),
+
+    lc_p("Ta sama sytuacja zdarza się poza salą wykładową. Na Ryc. 1.4 dwie
+      pizzerie miały wczoraj tę samą średnią ocen, 4.4 ★. U Gośki oceniło
+      5 klientów, w Napoli 200. W scenie obie pizzerie są jednakowo dobre,
+      a mimo to średnia dnia U Gośki skacze mniej więcej od 3.5 do 5 ★
+      (odchylenie standardowe około 0.45 ★), a w Napoli prawie stoi w miejscu
+      (około 0.07 ★). W aplikacji obie średnie wyglądają tak samo, ale średnia
+      z pięciu opinii mówi niewiele, a z dwustu dużo. Sama liczba tego nie
+      zdradza: trzeba wiedzieć, z ilu obserwacji powstała."),
 
     lc_p("Dlatego oprócz estymaty podaje się zakres wartości, który uwzględnia
       tę niepewność: ", gloss("przedział ufności"), ". Punktem wyjścia jest

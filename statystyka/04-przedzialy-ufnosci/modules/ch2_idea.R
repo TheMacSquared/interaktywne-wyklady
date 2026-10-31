@@ -52,13 +52,8 @@ ch2_ui <- list(
       colors = c("accent", "param")
     ),
 
-    # Ta sama odległość czytana od μ i od x̄
-    figure_panel(
-      label = "Ryc. 2.1", title = "Odwrócenie: od μ do x̄ i z powrotem",
-      width_mode = "text",
-      lc_plot("ch2_flip_plot", ratio = "1.7/1", max_height = "420px"),
-      lc_caption("x̄ w pasie μ ± 1.96·SE ⇔ μ w przedziale x̄ ± 1.96·SE.")
-    ),
+    # Ta sama odległość czytana od μ i od x̄ (Ryc. 2.1, s4p_2a_ui w stop_proto_ch2.R)
+    s4p("2a"),
 
     lc_p("Przedział od x̄ - 1.96·SE do x̄ + 1.96·SE to 95% ",
       gloss("przedział ufności"), " dla μ (CI, od ang. ",
@@ -121,6 +116,9 @@ ch2_ui <- list(
       są wyraźnie szersze i chybia średnio jeden na sto. Przy 80% kwantyl spada
       do 1.32, przedziały się zwężają, a chybia średnio co piąty."),
 
+    s4p("2b"),
+    s4p("2c"),
+
     lc_h2("ch2-jak-interpretowac", "Jak (nie) interpretować przedział ufności"),
 
     lc_p("Scena pokazuje, co znaczy 95%, gdy przedziałów jest wiele.
@@ -154,6 +152,8 @@ ch2_ui <- list(
       ilu ludzi zmierzyliśmy. Zdanie D nie mówi nic: średnia z próby, 170 cm,
       jest środkiem przedziału, więc leży w nim zawsze."),
 
+    s4p("2d"),
+
     lc_note("Zasada", rule = TRUE,
       tagList(
         "95% to własność metody, nie konkretnego przedziału. O jednym przedziale
@@ -180,35 +180,6 @@ ch2_ui <- list(
 # ============================================================================
 
 ch2_server <- function(input, output, session) {
-
-  # Rozkład x̄ wokół μ (góra) i przedziały wokół x̄ (dół)
-  zoom_plot_server("ch2_flip_plot", reactive({
-    mu <- 170; se <- 2; me <- 1.96 * se
-    curve_df <- data.frame(x = seq(160, 180, length.out = 400))
-    curve_df$y <- dnorm(curve_df$x, mu, se) / dnorm(mu, mu, se)
-    band_df <- subset(curve_df, abs(x - mu) <= me)
-    xbars <- data.frame(xbar = c(168.4, 172.9, 175.2), y = c(-0.35, -0.6, -0.85))
-    xbars$col <- ifelse(abs(xbars$xbar - mu) <= me, col_hit, col_miss)
-
-    ggplot() +
-      geom_area(data = band_df, aes(x, y), fill = col_ci, alpha = 0.35) +
-      geom_line(data = curve_df, aes(x, y), colour = upwr_secondary, linewidth = 0.7) +
-      geom_vline(xintercept = mu, linetype = "22", colour = upwr_secondary, linewidth = 0.6) +
-      geom_segment(data = xbars, aes(x = xbar, xend = xbar, y = 0, yend = y),
-                   colour = upwr_reference, linetype = "dotted", linewidth = 0.4) +
-      geom_point(data = xbars, aes(x = xbar, y = 0), colour = col_estimate,
-                 shape = 18, size = 5) +
-      geom_errorbarh(data = xbars, aes(xmin = xbar - me, xmax = xbar + me, y = y),
-                     colour = xbars$col, height = 0.09, linewidth = 1.4) +
-      geom_point(data = xbars, aes(x = xbar, y = y), colour = col_estimate,
-                 shape = 18, size = 4.5) +
-      scale_x_continuous(breaks = c(mu - me, mu, mu + me),
-                         labels = c("μ - 1.96·SE", "μ", "μ + 1.96·SE")) +
-      labs(x = NULL, y = NULL) +
-      coord_cartesian(xlim = c(160, 180), ylim = c(-1, 1.08), expand = FALSE) +
-      theme(axis.text.y = element_blank(), panel.grid.major.y = element_blank(),
-            panel.grid.minor = element_blank(), axis.ticks.y = element_blank())
-  }), alt = "Rozkład średniej z próby wokół μ z zaznaczonym pasem ±1.96·SE oraz trzy przedziały x̄ ± 1.96·SE: dwa, których środek leży w pasie, obejmują μ, trzeci nie")
 
   # --- PROTOTYP SCENY (2026-10-08): Zarzuć siatkę ---
   scene_texts(input, output, "ch2_siatka", list(

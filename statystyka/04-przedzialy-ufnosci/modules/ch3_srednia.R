@@ -240,6 +240,9 @@ ch3_ui <- list(
        przedziałów grup nie dowodzi, że różnicy nie ma."
     ),
 
+    s4p("3a"),
+    s4p("3b"),
+
     lc_h2("ch3-case-studies", "Case studies — jak interpretować CI w praktyce"),
 
     lc_p("Na koniec kilka realistycznych sytuacji do samodzielnej analizy.
@@ -343,6 +346,8 @@ ch3_ui <- list(
       zawiera zera, ale różnica 0.4 punktu to około 0.03 odchylenia
       standardowego IQ. Wynik jest istotny statystycznie, ale nie ma ",
       gloss("istotność praktyczna", "istotności praktycznej"), "."),
+
+    s4p("3c"),
 
     lc_p("Przy wielu grupach przedziały zestawia się na jednej osi w ",
       gloss("forest plot", "forest plocie"), ". Taki wykres to szybka mapa:

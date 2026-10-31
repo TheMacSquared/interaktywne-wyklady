@@ -140,6 +140,9 @@ ch5_ui <- list(
       95% wymaga wtedy 1068 respondentów. Stąd biorą się typowe sondaże
       na około tysiącu osób."),
 
+    s4p("5a"),
+    s4p("5b"),
+
     lc_h2("ch5-porownanie", "Ten sam zbiór, trzy poziomy ufności"),
 
     lc_p("W kalkulatorze wybór poziomu ufności był częścią planu badania.
@@ -256,10 +259,14 @@ ch5_ui <- list(
       Kto najpierw patrzy na przedziały, a potem wybiera poziom, przy którym
       wniosek wychodzi „po jego myśli”, przestaje mierzyć siłę dowodów."),
 
+    s4p("5c"),
+
     lc_note("Zasada", rule = TRUE,
       "Poziom ufności ustal przed analizą danych i zawsze podawaj go w raporcie
        razem z przedziałem."
     ),
+
+    s4p("D1"),
 
     lc_p("Ten rozdział zamyka wykład o przedziałach ufności. Zaczęliśmy od
       pytania, jak z jednej próby powiedzieć coś o populacji, a skończyliśmy
