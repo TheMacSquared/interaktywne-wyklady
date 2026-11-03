@@ -345,7 +345,7 @@
   "use strict";
 
   var storageKey = "lc-theme";
-  var allowed = { light: true, dark: true, halloween: true };
+  var allowed = { light: true, dark: true };
 
   function getStoredTheme() {
     try {

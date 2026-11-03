@@ -344,14 +344,6 @@ lecture_page <- function(lecture_id      = NULL,
         title = "Ciemny tryb",
         `aria-label` = "Ciemny tryb",
         "C"
-      ),
-      tags$button(
-        class = "lc-theme-option",
-        type = "button",
-        `data-lc-theme` = "halloween",
-        title = "Tryb halloweenowy",
-        `aria-label` = "Tryb halloweenowy",
-        "H"
       )
     )
   )
@@ -386,7 +378,7 @@ lecture_page <- function(lecture_id      = NULL,
       # Wstrzyknięte po shared_styles.css, żeby wartości z palette.R miały
       # pierwszeństwo nad wartościami fallbackowymi w CSS.
       .lc_palette_css(),
-      # Tryb halloweenowy (H): paleta i ozdoby; JS ustawia też domyślny tryb wg daty.
+      # Tryb halloweenowy wyłączony (bez przycisku H, bez trybu wg daty); kod zostaje na przyszły rok.
       includeCSS(file.path(proj_root, "R", "halloween.css")),
       includeScript(file.path(proj_root, "R", "halloween.js")),
       tags$script(HTML("
@@ -397,7 +389,7 @@ lecture_page <- function(lecture_id      = NULL,
       document.documentElement.setAttribute('data-lc-font-size', size);
     }
     var theme = window.localStorage.getItem('lc-theme') || window.lcDomyslnyTryb();
-    if (theme === 'light' || theme === 'dark' || theme === 'halloween') {
+    if (theme === 'light' || theme === 'dark') {
       document.documentElement.setAttribute('data-lc-theme', theme);
     }
   } catch (e) {}

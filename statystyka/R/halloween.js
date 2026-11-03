@@ -10,7 +10,7 @@
   window.lcDomyslnyTryb = function () {
     var d = new Date();
     var md = (d.getMonth() + 1) * 100 + d.getDate();
-    return (md >= 1020 && md <= 1102) ? "halloween" : "light";
+    return "light"; // Halloween wyłączone; na przyszły rok: (md >= 1020 && md <= 1102) ? "halloween" : "light"
   };
 
   var NIETOPERZ =
