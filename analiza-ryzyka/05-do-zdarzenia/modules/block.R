@@ -100,6 +100,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Słowo „sukces” bywa w analizie ryzyka mylące, bo często oznacza zdarzenie niepożądane: wadę, awarię, wypadek. To tylko etykieta techniczna. Sukcesem nazywamy zdarzenie, które liczymy albo na które czekamy — niezależnie od tego, czy jest dla kogoś dobrą wiadomością.",
             "Sam schemat prób nie wystarcza jednak, żeby wskazać rozkład. Potrzebna jest jeszcze informacja, kiedy przestajemy wykonywać próby."
           ),
+          d5p_rule_ui,  # PROTOTYP P1
           risk_definition("5.1", "Reguła zatrzymania", c(
             "Reguła zatrzymania to zasada, która określa, po której próbie kończy się seria obserwacji.",
             "Przy regule „stała liczba prób” zatrzymujemy się po n-tej próbie, niezależnie od wyników; losowa jest wtedy liczba sukcesów. Przy regule „stała liczba sukcesów” zatrzymujemy się w chwili r-tego sukcesu, niezależnie od tego, ile prób to zajęło; losowa jest wtedy liczba prób."
@@ -156,6 +157,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         body = list(
           risk_try("zostaw p = 0.10 i kliknij „Losuj ponownie” kilka razy. Zapisz, gdzie leży najwyższy słupek i jak daleko sięga najdłuższa seria. Potem zmień p na 0.30 i na 0.03."),
           risk_widget_panel("Symulacja", "Ile kontroli do pierwszej wady?", tagList(lc_slider("d5_geo_p", "Prawdopodobieństwo wady p", .01, .5, .1, .01), lc_action("d5_geo_run", "Losuj ponownie", icon = "shuffle")), "d5_geo", "d5_geo_stats"),
+          d5p_geo_ui,  # PROTOTYP P2 (porównanie z widgetem wyżej)
           c(
             "Niezależnie od p najwyższy słupek stoi przy pierwszej kontroli. Kolejne słupki systematycznie maleją, ale bardzo powoli, gdy p jest małe. Pojedyncze serie ciągną się kilka razy dłużej niż średnia. Przy p = 0.03 średni czas oczekiwania to około 33 kontroli, a najdłuższe serie wychodzą poza prawą krawędź wykresu, czyli ponad 80 kontroli.",
             "Te obserwacje mają proste wyjaśnienie rachunkowe, które wyprowadzimy w następnej sekcji. Warto je jednak najpierw zobaczyć: w planowaniu zasobów to właśnie długi ogon, a nie średnia, sprawia kłopot."
@@ -219,6 +221,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Formalnie: jeśli wiemy, że pierwsze s kontroli nic nie wykryło, prawdopodobieństwo czekania jeszcze ponad t kontroli jest takie samo, jak prawdopodobieństwo czekania ponad t kontroli od początku."
           ),
           risk_formula("P(X>s+t\\mid X>s)=P(X>t)", num = "5.4"),
+          d5p_memory_ui,  # PROTOTYP P4
           "Dowód wymaga tylko definicji prawdopodobieństwa warunkowego z wykładu 02 i wzoru (5.2). Zdarzenie {X > s + t} zawiera się w {X > s}, więc ich iloczyn to po prostu {X > s + t}. Stąd P(X > s + t | X > s) = P(X > s + t) / P(X > s) = (1 - p)^(s+t) / (1 - p)^s = (1 - p)^t = P(X > t).",
           risk_example("5.3", "Dwadzieścia kontroli bez wykrycia",
             problem = "Audyt przy p = 0.10 trwa już 20 kontroli i nie wykrył żadnej wady. Jakie jest prawdopodobieństwo, że wada pojawi się w ciągu kolejnych 10 kontroli? Jak częsta jest w ogóle seria 20 kontroli bez wykrycia?",
@@ -249,6 +252,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Zacznijmy od obserwacji, która daje średnią bez żadnego nowego wzoru. Po pierwszym wykryciu, dzięki niezależności i stałemu p, audyt „zaczyna się od nowa”: liczba kontroli do drugiego wykrycia ma znów rozkład geometryczny, niezależny od tego, co było wcześniej. To samo dotyczy trzeciego wykrycia.",
             "Łączna liczba kontroli X jest więc sumą r niezależnych zmiennych geometrycznych G₁ + G₂ + … + G_r. Średnia sumy to suma średnich, a — dla niezależnych składników — wariancja sumy to suma wariancji. Ze wzoru (5.3) dostajemy od razu:"
           ),
+          d5p_sum_ui,  # PROTOTYP P5
           risk_formula("E(X)=\\frac{r}{p},\\qquad \\operatorname{Var}(X)=\\frac{r(1-p)}{p^{2}}", num = "5.5",
             legend = c("r" = "liczba wykryć, na którą czekamy", "p" = "prawdopodobieństwo wykrycia w jednej kontroli")),
           "Dla audytu Bananpolu (r = 3, p = 0.10): E(X) = 30 kontroli, Var(X) = 270, odchylenie standardowe około 16.4 kontroli. Rozrzut względem średniej jest mniejszy niż w rozkładzie geometrycznym — dodawanie niezależnych oczekiwań częściowo uśrednia pecha i szczęście — ale wciąż duży."
@@ -280,6 +284,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             steps_type = "a",
             answer = "(a) około 0.005; (b) około 0.024. Nawet wartość równa średniej ma małe prawdopodobieństwo — rozkład rozciąga się na kilkadziesiąt możliwych wartości."
           ),
+          d5p_arr_ui,  # PROTOTYP P6
           risk_try("ustaw r = 1 i porównaj wykres z histogramem z rozdziału o pierwszym wykryciu. Potem zwiększaj r do 10 przy stałym p i obserwuj, jak przesuwa się szczyt i zmienia symetria."),
           risk_widget_panel("Rozkład", "Łączna liczba kontroli", tagList(lc_slider("d5_p", "p wykrycia", .01, .5, .1, .01), lc_slider("d5_r", "r", 1, 10, 3, 1)), "d5_nb", "d5_nb_stats"),
           c(
@@ -328,12 +333,14 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         id = "limit", title = "Średnia a kwantyl",
         formula = "E(X)=\\frac{r}{p}",
         body = list(
+          d5p_branches_ui,  # PROTOTYP P8
           c(
             "Pytanie planisty brzmi: jakie jest prawdopodobieństwo, że audyt skończy się najpóźniej w n-tej kontroli? Można by sumować wzór (5.6) od r do n, ale istnieje krótsza droga, która łączy ten wykład z poprzednim.",
             "Audyt kończy się najpóźniej w n-tej kontroli wtedy i tylko wtedy, gdy w pierwszych n kontrolach znaleziono co najmniej r wad. To dwa opisy tego samego zdarzenia: jeden w języku reguły „do r-tego sukcesu”, drugi w języku reguły „n prób”."
           ),
           risk_formula("P(X\\le n)=P(Y_n\\ge r),\\qquad Y_n\\sim B(n,p)", num = "5.7",
             legend = c("X" = "łączna liczba kontroli do r-tego wykrycia", "Y_n" = "liczba wykryć w pierwszych n kontrolach")),
+          d5p_cut_ui,  # PROTOTYP P9
           risk_example("5.6", "Czy średnia wystarczy jako limit?",
             problem = "Przy p = 0.10 i r = 3 oblicz prawdopodobieństwo ukończenia audytu w limicie 30 kontroli, czyli limicie równym średniej.",
             steps = c(
@@ -367,7 +374,8 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         id = "plan", title = "Ile kontroli zaplanować?",
         text = "Wynik tego rachunku trafia do jednego dokumentu: planu audytu. Dobry plan nie obiecuje, że audyt się uda — podaje, z jakim prawdopodobieństwem uda się w ramach przyznanych zasobów, i co się stanie, jeśli limit zostanie osiągnięty bez ukończenia celu. Ta ostatnia pozycja jest najczęściej pomijana, a to ona decyduje, czy przekroczenie limitu będzie kontrolowaną decyzją, czy improwizacją.",
         bullets = c("cel r i definicja wykrycia", "p i jego źródło", "limit zasobów", "P(ukończenia przed limitem)", "reakcja, gdy limit zostanie przekroczony"),
-        body = "Wybór poziomu α nie jest decyzją statystyczną. Wyższy poziom kosztuje: z 90% na 95% limit rośnie z 52 do 61 kontroli, a z 95% na 99% — do 81. Rachunek pokazuje koszt każdego punktu procentowego pewności; to, ile pewności się opłaca, zależy od konsekwencji niedokończonego audytu.",
+        body = list("Wybór poziomu α nie jest decyzją statystyczną. Wyższy poziom kosztuje: z 90% na 95% limit rośnie z 52 do 61 kontroli, a z 95% na 99% — do 81. Rachunek pokazuje koszt każdego punktu procentowego pewności; to, ile pewności się opłaca, zależy od konsekwencji niedokończonego audytu.",
+          d5p_cost_ui),  # PROTOTYP P10
         decision = "Planuj na podstawie prawdopodobieństwa ukończenia lub kwantyla, a nie tylko średniej; oddziel oczekiwaną liczbę kontroli od bezpiecznego zapasu planistycznego."
       )
     )
@@ -396,6 +404,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           risk_widget_panel("Porównanie", "Stałe p kontra partie o różnej jakości", lc_slider("d5_variation", "Zmienność jakości partii (odchylenie p)", 0, .09, .04, .005), "d5_failure", "d5_failure_stats",
             note = "p każdej partii losujemy z rozkładu normalnego o tym odchyleniu i ograniczamy do przedziału [0.005; 0.95]."),
           "Przy rosnącym odchyleniu histogram „zmiennego p” wyraźnie wyciąga się w prawo, a średnia symulowana rośnie. Szczególnie groźne są partie o bardzo małym p: przy p = 0.02 średni czas do trzech wad to 150 kontroli. Kilka takich partii wystarczy, by plan oparty na stałym p stał się fikcją.",
+          d5p_suppliers_ui,  # PROTOTYP P11
           risk_check("d5_chk_mix",
             "Średnie p w dwóch rodzajach partii wynosi 0.10. Średni czas do trzeciej wady w mieszance jest…",
             c("równy 30, bo średnie p się nie zmieniło" = "equal", "większy niż 30" = "greater", "mniejszy niż 30" = "smaller"),
@@ -429,7 +438,8 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           "Wykład zaczął się od jednej obserwacji: te same próby Bernoulliego prowadzą do różnych rozkładów zależnie od reguły zatrzymania. Gdy czekamy na pierwsze zdarzenie, liczba prób ma rozkład geometryczny (5.1) o średniej 1/p i długim prawym ogonie. Rozkład ten nie ma pamięci (5.4): seria bez zdarzenia nie przybliża zdarzenia.",
           "Gdy czekamy na r-te zdarzenie, liczba prób jest sumą r niezależnych czasów geometrycznych i ma rozkład ujemny dwumianowy (5.6) o średniej r/p. Tożsamość (5.7) łączy go z rozkładem dwumianowym i pozwala policzyć prawdopodobieństwo ukończenia w limicie. Plan zasobów opieramy na kwantylu, a nie na średniej, i zawsze nazywamy parametryzację używaną w oprogramowaniu.",
           "Wszystkie te wyniki zależą od stałego p i niezależności prób. Zmienność p między partiami wydłuża średni czas i poszerza ogon — dokładnie tam, gdzie leży limit planistyczny."
-        )
+        ),
+        body = list(d5p_close_ui)  # PROTOTYP P12
       ),
       list(
         id = "sciaga", title = "Ściąga",
@@ -471,7 +481,8 @@ dozd_server <- function(input, output, session) {
   zoom_plot_server("d5_geo", geo_plot, alt = "Histogram liczby prób potrzebnych do pierwszego wykrycia.")
   output$d5_geo_stats <- renderUI(tagList(lc_readout("Średnia teoretyczna", lc_fmt(1 / input$d5_geo_p, 1)), lc_readout("90. percentyl", qgeom(.9, input$d5_geo_p) + 1, color = upwr_accent)))
   nb_plot <- reactive({
-    maxx <- max(input$d5_r + 10, qnbinom(.995, input$d5_r, input$d5_p) + input$d5_r)
+    # Oś zależy tylko od p (liczona dla największego r = 10), żeby przy zmianie r było widać przesuwanie szczytu.
+    maxx <- qnbinom(.995, 10, input$d5_p) + 10
     x <- input$d5_r:maxx
     ggplot(data.frame(x, p = vapply(x, risk_negative_binomial_total_pmf, numeric(1), r = input$d5_r, p = input$d5_p)), aes(x, p)) +
       geom_col(fill = upwr_accent) +
@@ -516,4 +527,10 @@ dozd_server <- function(input, output, session) {
     )
   })
   risk_assessment_server("d5", dozd_quiz, input, output)
+  # PROTOTYPY punktów stop (PUNKTY-STOP-PROPOZYCJA.md)
+  d5p_tasma_server(input, output, session)
+  d5p_geo_server(input, output, session)
+  d5p_suma_server(input, output, session)
+  d5p_oddzialy_server(input, output, session)
+  d5p_plan_server(input, output, session)
 }
