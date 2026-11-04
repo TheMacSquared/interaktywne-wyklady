@@ -7,13 +7,30 @@
 
   var SVG_NS = 'http://www.w3.org/2000/svg';
 
+  // Prostokąt elementu razem z potomkami: przy ułamku MathJax zgłasza ramkę
+  // bez mianownika, więc strzałka zaczynałaby się na nim.
+  function fullRect(el) {
+    var r = el.getBoundingClientRect();
+    var box = { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+    el.querySelectorAll('*').forEach(function(c) {
+      // Puste elementy MathJaxa (rozpórki) sięgają daleko poza znaki: pomijamy.
+      if (c.children.length || !c.textContent.trim()) return;
+      var cr = c.getBoundingClientRect();
+      if (!cr.width || !cr.height) return;
+      box.left = Math.min(box.left, cr.left); box.right = Math.max(box.right, cr.right);
+      box.top = Math.min(box.top, cr.top); box.bottom = Math.max(box.bottom, cr.bottom);
+    });
+    box.width = box.right - box.left; box.height = box.bottom - box.top;
+    return box;
+  }
+
   // MathJax 2 nadaje klasę także ukrytej kopii MathML (dla czytników ekranu);
   // ją pomijamy, a z widocznych bierzemy największy element.
   function partRect(box, k) {
     var best = null, bestArea = 0;
     box.querySelectorAll('.lc-fa-tex .lc-fa-p' + k).forEach(function(el) {
       if (el.closest('.MJX_Assistive_MathML, math')) return;
-      var r = el.getBoundingClientRect();
+      var r = fullRect(el);
       var area = r.width * r.height;
       if (area > bestArea) { best = r; bestArea = area; }
     });

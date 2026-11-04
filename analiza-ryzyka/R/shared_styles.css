@@ -1932,6 +1932,11 @@ mjx-container mjx-text {
 .lc-check p { margin: 0 0 0.6em; }
 
 @counter-style lc-alpha-paren { system: extends lower-alpha; suffix: ") "; }
+/* Przykład omawiany (risk_example(open = TRUE)): pełna szerokość, rozwiązanie widoczne. */
+.risk-case { margin: 1.6em 0; padding-top: .8em; border-top: 1px solid var(--upwr-rule); }
+.risk-case-l { font: 700 .64em/2 var(--upwr-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--upwr-ink-subtle); }
+.risk-case-t { font-weight: 700; font-size: 1.1em; color: var(--upwr-ink); margin: .1em 0 .5em; }
+.risk-case .lc-example-list li { margin-bottom: 8px; }
 .lc-example-list { margin: 8px 0 0; padding-left: 1.6em; list-style-type: lc-alpha-paren; }
 .lc-example-list li { margin-bottom: 6px; padding-left: 0.2em; }
 .lc-example-list li::marker { color: var(--upwr-single-alt); font-weight: 600; }
@@ -1966,6 +1971,23 @@ mjx-container mjx-text {
   line-height: 1.5;
   color: var(--upwr-ink-soft);
 }
+
+/* „W praktyce”: język inżyniera przy wzorze lub definicji (risk_practice()). */
+.risk-practice {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .2em .6em;
+  margin: 10px auto 18px; max-width: 46em; padding: 2px 0 2px 10px;
+  border-left: 3px solid var(--upwr-cat-kurkuma);
+  font-family: var(--upwr-serif);
+  font-size: calc(15.5px * var(--lc-font-scale)); line-height: 1.5;
+  color: var(--upwr-ink-soft);
+}
+.lc-note-b .risk-practice { margin: 10px 0 0; }
+.risk-practice-l {
+  font-family: var(--upwr-mono); font-size: .72em; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--upwr-ink-subtle);
+}
+.risk-practice-t { font-weight: 600; color: var(--upwr-ink); }
+.risk-practice-q { font-style: italic; }
 
 .lc-check-question { font-weight: 600; }
 .lc-check-options { display: flex; flex-direction: column; gap: 4px; }
@@ -2185,6 +2207,7 @@ mjx-container mjx-text {
 .lc-seg>:first-child{border-left:0}
 .lc-seg button:hover{background:var(--upwr-accent-tint);color:var(--upwr-accent)}
 .lc-seg button:active{background:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-seg button[aria-pressed="true"]{background:var(--upwr-accent);color:var(--upwr-surface)}
 .lc-seg button:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:-3px}
 .lc-seg label{position:relative;font-family:var(--upwr-sans);font-weight:400;max-width:none}
 .lc-seg input{position:absolute;opacity:0;pointer-events:none}
@@ -2625,4 +2648,75 @@ html[data-lc-theme="dark"] .lc-formula-box.lc-fa { --fa-param: var(--upwr-cat-ku
 .lc-fa-tex > .lc-formula-num {
   position: absolute; right: 0; top: 50%; transform: translateY(-50%);
   font-size: .77em; font-family: var(--upwr-sans);
+}
+
+/* Kopia ze statystyka/R/shared_styles.css (2026-11-04), dla widgetów Chart.js (R/lc_charts.js). */
+/* Chart.js: dyskretne powiększenie i uchwyty dostępne z klawiatury. */
+.lc-chart-zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  width: 2em;
+  height: 2em;
+  padding: .4em;
+  border: 0;
+  border-radius: .25em;
+  background: transparent;
+  color: var(--upwr-ink-subtle);
+  font: inherit;
+  cursor: pointer;
+}
+.lc-chart-zoom svg { width: 1.1em; height: 1.1em; }
+.lc-chart-zoom:hover, .lc-chart-zoom[aria-pressed="true"] { color: var(--upwr-accent); }
+.lc-chart-zoom[aria-pressed="true"] .lc-chart-zoom-plus { display: none; }
+.lc-chart-handle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 2.75em;
+  height: 2.75em;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--upwr-accent);
+  font: inherit;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.lc-chart-handle::after {
+  content: attr(data-boundary);
+  position: absolute;
+  top: 1.7em;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  font-size: .75em;
+}
+.lc-chart-handle:focus-visible::after { opacity: 1; }
+.lc-chart-handle[data-guess="median"] { color: var(--upwr-cat-niebo); }
+.lc-chart-handle.has-dot::before {
+  content: "";
+  display: block;
+  width: .7em;
+  height: .7em;
+  margin: auto;
+  border: 2px solid var(--upwr-surface);
+  border-radius: 50%;
+  background: currentColor;
+}
+.lc-chart-handle.is-unset { pointer-events: none; }
+.lc-chart-handle.is-unset::before { opacity: 0; }
+.lc-chart-handle.is-unset:focus-visible::before { opacity: .6; }
+.lc-chart-handle:focus-visible, .lc-chart-zoom:focus-visible {
+  outline: .15em solid var(--upwr-accent);
+  outline-offset: .1em;
+}
+.lc-chart-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }

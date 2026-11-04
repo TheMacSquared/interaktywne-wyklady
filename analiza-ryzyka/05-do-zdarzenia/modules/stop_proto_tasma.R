@@ -1,6 +1,6 @@
-# PROTOTYPY (2026-11-03) — taśma kontroli: dwaj audytorzy i trzy reguły ----------
+# PUNKTY STOP (2026-11-03) — taśma kontroli: dwaj audytorzy i trzy reguły ----------
 #
-# Prototypy rysowane po stronie serwera (SVG z R + renderUI), bez animacji.
+# Punkty stop rysowane po stronie serwera (SVG z R + renderUI), bez animacji.
 # Wspólna taśma d5p_shared_tape: 50 kontroli palet, wady w kontrolach 7, 15, 24, 38, 44.
 #   d5p_rule_ui   — Scena „Dwóch audytorów” (kadry historii) (P1): Wstecz / Dalej
 #   d5p_close_ui  — Domknięcie „Trzy reguły, jedna taśma” (P12): statyczne, bez przycisków
@@ -11,6 +11,9 @@
 # Stała taśma: TRUE = wada w tej kontroli (wpisana w kod, żeby narracja zgadzała się z obrazem).
 d5p_shared_tape <- seq_len(50) %in% c(7L, 15L, 24L, 38L, 44L)
 d5p_tape_n <- 50L
+# Kadr 5 sceny P1: ta sama taśma przedłużona do 60 kontroli, szósta wada w 57.
+d5p_long_tape <- seq_len(60) %in% c(7L, 15L, 24L, 38L, 44L, 57L)
+d5p_sixth_wad <- which(cumsum(d5p_long_tape) == 6L)[1]
 
 # Parametry świata: Bananpol, p = 0.10 wady na kontrolę, cel r = 3 wady.
 d5p_p <- 0.10
@@ -24,9 +27,10 @@ d5p_plan_95 <- qnbinom(0.95, size = d5p_r, prob = d5p_p) + d5p_r     # plan 95%:
 
 # Jeden wiersz taśmy ze zatrzymaniem po kontroli `stop`: kratki po zatrzymaniu
 # przygaszone, linia d5p-limit za zatrzymaniem z etykietą. stop = NULL — bez zatrzymania.
-d5p_stop_row <- function(y, stop = NULL, x0, pitch, size, n_cells = d5p_tape_n, limit_label = NULL) {
+d5p_stop_row <- function(y, stop = NULL, x0, pitch, size, n_cells = d5p_tape_n, limit_label = NULL,
+                         tape_outcomes = d5p_shared_tape) {
   dim <- if (is.null(stop)) NULL else seq_len(n_cells) > stop
-  tape <- d5p_tape(d5p_shared_tape, x0, y, pitch = pitch, size = size, n_cells = n_cells, dim = dim)
+  tape <- d5p_tape(tape_outcomes, x0, y, pitch = pitch, size = size, n_cells = n_cells, dim = dim)
   if (is.null(stop)) return(tape)
   xl <- x0 + stop * pitch - (pitch - size) / 2
   paste0(tape,
@@ -37,20 +41,21 @@ d5p_stop_row <- function(y, stop = NULL, x0, pitch, size, n_cells = d5p_tape_n, 
 
 # Scena: wiersz z etykietą po lewej (A, B) i podziałką numerów co 10 kontroli.
 d5p_rule_x0 <- 60
-d5p_rule_pitch <- 14
-d5p_rule_size <- 11
+d5p_rule_pitch <- 12  # 60 kratek kadru 5 mieści się w 800 px
+d5p_rule_size <- 10
 
-d5p_rule_row <- function(y, stop = NULL, label = NULL, limit_label = NULL) {
+d5p_rule_row <- function(y, stop = NULL, label = NULL, limit_label = NULL,
+                         n_cells = d5p_tape_n, tape_outcomes = d5p_shared_tape) {
   row <- d5p_stop_row(y, stop = stop, x0 = d5p_rule_x0, pitch = d5p_rule_pitch,
-    size = d5p_rule_size, limit_label = limit_label)
+    size = d5p_rule_size, n_cells = n_cells, limit_label = limit_label, tape_outcomes = tape_outcomes)
   lab <- if (is.null(label)) "" else sprintf(
     '<text x="0" y="%g" font-size="16" font-weight="700">%s</text>', y + d5p_rule_size - 1, label)
   paste0(lab, row)
 }
 
-d5p_rule_axis <- function(y) {
+d5p_rule_axis <- function(y, max_n = d5p_tape_n) {
   d5p_axis(function(i) d5p_rule_x0 + (i - 1) * d5p_rule_pitch + d5p_rule_size / 2,
-    y, seq(10, d5p_tape_n, 10))
+    y, seq(10, max_n, 10))
 }
 
 d5p_rule_frames <- list(
@@ -65,7 +70,10 @@ d5p_rule_frames <- list(
     read = sprintf("r = %d ustalone · kontroli: X = %d", d5p_r, d5p_third_wad)),
   list(name = "Co jest losowe",
     text = "Te same kontrole, inna chwila zatrzymania. A z góry zna liczbę kontroli, a liczbę wad pokaże dopiero protokół. B z góry zna liczbę wad, a nie wie, ile kontroli to zajmie.",
-    read = "A: losowa liczba wad · B: losowa liczba kontroli")
+    read = "A: losowa liczba wad · B: losowa liczba kontroli"),
+  list(name = "Gdy B potrzebuje więcej",
+    text = "Zmieńmy zlecenie B: sześć wad zamiast trzech. W 50 kontrolach A jest ich tylko pięć, więc B kontroluje dalej, niż sięga cały protokół A. Reguła „do r-tej wady” nie ma z góry ustalonej granicy liczby kontroli.",
+    read = sprintf("A: n = 50 · Y = %d · B: r = 6 · X = %d", d5p_wads_50, d5p_sixth_wad))
 )
 
 d5p_rule_svg <- function(step) {
@@ -76,13 +84,18 @@ d5p_rule_svg <- function(step) {
       d5p_rule_axis(111)),
     paste0(d5p_rule_row(60, stop = d5p_tape_n, label = "A", limit_label = "stop: 50"),
       d5p_rule_row(130, stop = d5p_third_wad, label = "B", limit_label = sprintf("stop: %d", d5p_third_wad)),
-      d5p_rule_axis(161))
+      d5p_rule_axis(161)),
+    paste0(d5p_rule_row(60, stop = d5p_tape_n, label = "A", limit_label = "stop: 50"),
+      d5p_rule_row(130, stop = d5p_sixth_wad, label = "B", n_cells = length(d5p_long_tape),
+        tape_outcomes = d5p_long_tape, limit_label = sprintf("stop: %d", d5p_sixth_wad)),
+      d5p_rule_axis(161, max_n = length(d5p_long_tape)))
   )
   aria <- switch(step,
     "Taśma 50 kontroli palet z pięcioma wadami, wspólna dla obu audytorów.",
     "Taśma 50 kontroli z pionową linią po pięćdziesiątej kontroli.",
     "Taśma kontroli zatrzymana po trzeciej wadzie, przy 24. kontroli.",
-    "Dwie taśmy: linia A po 50. kontroli, linia B po 24. kontroli.")
+    "Dwie taśmy: linia A po 50. kontroli, linia B po 24. kontroli.",
+    sprintf("Dwie taśmy: A kończy po 50. kontroli z pięcioma wadami, B czeka na szóstą wadę do %d. kontroli.", d5p_sixth_wad))
   d5p_svg(800, 185, aria, body)
 }
 

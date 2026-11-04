@@ -1,15 +1,17 @@
-# PROTOTYPY (2026-11-03) — wspólne narzędzia punktów stop wykładu 05 ----------
+# PUNKTY STOP (2026-11-03) — wspólne narzędzia punktów stop wykładu 05 ----------
 #
-# Prototypy rysowane po stronie serwera (SVG z R + renderUI), jak w wykładzie 04.
+# Punkty stop rysowane po stronie serwera (SVG z R + renderUI), jak w wykładzie 04.
 # Numery jak w PUNKTY-STOP-PROPOZYCJA.md. Każdy plik stop_proto_*.R definiuje
 # obiekty UI d5p_*_ui i funkcję serwera; wpięcie w block.R i app.R.
 #
 # Wspólny język wizualny: TAŚMA KONTROLI. Jedna kratka = kontrola jednej palety;
-# kratka z wadą w kolorze akcentu, bez wady szałwiowa (jasna), niewykonana pusta.
+# kratka z wadą w kolorze akcentu, bez wady kurkumowa (jasna, „bananowa”), niewykonana pusta.
 # Funkcja d5p_tape() rysuje jeden wiersz taśmy jako fragment SVG (string).
 
-# Panel z plakietką „Prototyp · <rodzaj>”; proto = FALSE po akceptacji.
-d5p_panel <- function(kind, title, ..., width_mode = "wide", proto = TRUE) {
+# Panel punktu stop. Wszystkie panele wykładu 05 są zaakceptowane i renderują
+# się jako zwykła figura (figure_panel). Gałąź proto = TRUE (plakietka „Prototyp ·”)
+# jest zachowana tylko na wypadek ponownego użycia; domyślnie proto = FALSE.
+d5p_panel <- function(kind, title, ..., width_mode = "wide", proto = FALSE) {
   if (!proto) return(figure_panel(label = kind, title = title, width_mode = width_mode, ...))
   figure_panel(label = paste("Prototyp ·", kind), title = title,
     color = upwr_single_alt, width_mode = width_mode, ...)
@@ -21,7 +23,7 @@ d5p_css <- tags$style(HTML("
   .d5p-svg text:not([fill]):not([style*='fill']) { fill: var(--upwr-ink); }
   .d5p-mono { font-family: var(--upwr-mono) !important; }
   .d5p-subtle { fill: var(--upwr-ink-subtle) !important; }
-  .d5p-cell-ok { fill: color-mix(in srgb, var(--upwr-sage) 30%, var(--upwr-surface)); stroke: var(--upwr-sage); stroke-width: 1; }
+  .d5p-cell-ok { fill: color-mix(in srgb, var(--upwr-cat-kurkuma) 60%, var(--upwr-surface)); stroke: var(--upwr-cat-kurkuma); stroke-width: 1; }
   .d5p-cell-bad { fill: var(--upwr-accent); stroke: var(--upwr-accent); stroke-width: 1; }
   .d5p-cell-idle { fill: var(--upwr-surface-sunken); stroke: var(--upwr-rule); stroke-width: 1; }
   .d5p-cell-dim { opacity: .3; }

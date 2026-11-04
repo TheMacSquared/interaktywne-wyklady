@@ -72,7 +72,7 @@ warunki_monty_server <- function(input, output, session) {
     tagList(
       tags$div(class = "lc-eyebrow", "Krok 3 z 3"),
       tags$h4("Sprawdź wynik i zagraj ponownie"),
-      lc_action("w2_monty_new", "Nowa gra", variant = "outline")
+      lc_action("w2_monty_new", icon = "reset", variant = "ghost", aria_label = "Nowa gra")
     )
   })
 

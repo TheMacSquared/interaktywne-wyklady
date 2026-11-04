@@ -447,10 +447,10 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
       list(
         id = "powtorzenia", title = "Średnia nie jest prognozą",
         body = list(
-          risk_try("odczytaj, jak wysoki jest słupek przy dwóch wadach w porównaniu z pozostałymi. Histogram pokazuje 500 partii po \\(n = 100\\) zaworów przy \\(p = 0.02\\), więc linia wartości oczekiwanej stoi przy 2. Potem kliknij „Wylosuj jeszcze raz” kilka razy: parametry się nie zmieniają, więc każda różnica między histogramami to sama losowość. Zwróć uwagę, co się przesuwa, a co zostaje."),
+          risk_try("odczytaj, jak wysoki jest słupek przy dwóch wadach w porównaniu z pozostałymi. Histogram pokazuje 500 partii po \\(n = 100\\) zaworów przy \\(p = 0.02\\), więc linia wartości oczekiwanej stoi przy 2. Potem kilka razy wylosuj partie od nowa ikoną ze strzałkami: parametry się nie zmieniają, więc każda różnica między histogramami to sama losowość. Zwróć uwagę, co się przesuwa, a co zostaje."),
           risk_widget_panel(
             "Powtórzenia", "500 partii przy tych samych parametrach",
-            lc_action("p4_batches_redraw", "Wylosuj jeszcze raz", variant = "solid"), "p4_batches_plot", "p4_batches_stats"
+            lc_action("p4_batches_redraw", icon = "shuffle", variant = "ghost", aria_label = "Wylosuj jeszcze raz"), "p4_batches_plot", "p4_batches_stats"
           ),
           "Przy \\(n = 100\\) i \\(p = 0.02\\) prawie wszystkie z 500 symulowanych partii mają od 0 do kilku niesprawnych zaworów. Najczęstszy wynik to dokładnie dwie wady: model daje mu około 27% partii, czyli wciąż mniejszość. Zero wad powinno mieć około 13% partii, a średnia z symulacji ląduje bardzo blisko linii \\(E(X) = 2\\). Każde losowanie daje trochę inne liczby; stabilny jest środek histogramu, a pojedyncze partie rozrzucają się wokół niego szeroko.",
           p4_proto_batches_ui,
@@ -503,7 +503,8 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           "Zdarzenie \\(\\{X = 0\\}\\) to jeden konkretny ciąg: wszystkie \\(n\\) prób kończy się porażką. Ze wzoru (4.1) z \\(k = 0\\) jego prawdopodobieństwo wynosi \\((1 - p)^{n}\\). Trik z dopełnieniem daje wtedy wzór, który w tym kursie wróci jeszcze wiele razy — w wykładzie 05 przy czasie oczekiwania na pierwsze zdarzenie, a w wykładzie 08 przy niezawodności systemów.",
           risk_formula("⟦1|P(X\\ge 1)⟧=1-P(X=0)=1-⟦2|(1-p)^n⟧", num = "4.6",
             notes = list("co najmniej jedno zdarzenie w n próbach", "wszystkie n prób bez zdarzenia"),
-            note_colors = c("accent", "indygo")),
+            note_colors = c("accent", "indygo"),
+            practice = c(term = "wykrywalność, szansa przeoczenia", question = "Ile kontroli muszę zrobić, żeby z 95% pewnością trafić choć na jedną wadę?")),
           risk_example("4.7", "Ile kontroli, żeby zobaczyć wadę?",
             problem = list(
               "Przy \\(p = 0.02\\) oblicz:",

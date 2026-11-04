@@ -689,7 +689,7 @@ jezyk_block <- list(
               kilka razy „+1” i zapisz częstość po 10 zmianach. Potem dodawaj po
               100 i po 1000 i obserwuj, jak zmienia się zakres wahań linii. Gdy
               uznasz, że danych jest dość, popraw oszacowanie i kliknij „Odsłoń
-              i porównaj”. Na koniec kliknij „Nowa seria” i porównaj początek nowej
+              i porównaj”. Na koniec wylosuj nową serię ikoną ze strzałkami i porównaj początek nowej
               linii z poprzednią."),
             figure_panel(
               label = "Ćwiczenie 2",
@@ -701,7 +701,7 @@ jezyk_block <- list(
                                 label = "Dodaj zmiany"),
                 lc_slider("ch2_guess", "Twoje oszacowanie P", 0, 0.30, 0.15, 0.01),
                 lc_action("ch2_reveal", "Odsłoń i porównaj", variant = "outline"),
-                lc_action("ch2_reset", "Nowa seria", variant = "outline"),
+                lc_action("ch2_reset", icon = "shuffle", variant = "ghost", aria_label = "Nowa seria"),
                 lc_readouts(uiOutput("ch2_stats"))
               ),
               lc_plots(

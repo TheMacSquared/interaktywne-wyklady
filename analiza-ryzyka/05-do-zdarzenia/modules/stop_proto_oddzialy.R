@@ -1,6 +1,6 @@
-# PROTOTYPY (2026-11-03) — oddziały i taśma przecięta na n, wykład 05 ----------
+# PUNKTY STOP (2026-11-03) — oddziały i taśma przecięta na n, wykład 05 ----------
 #
-# Prototypy rysowane po stronie serwera (SVG z R + renderUI), jak w stop_proto_sceny.R.
+# Punkty stop rysowane po stronie serwera (SVG z R + renderUI), jak w stop_proto_sceny.R.
 #   d5p_branches_ui — Scena „Dwadzieścia oddziałów” (historia z powtórzeniem) (P8)
 #   d5p_cut_ui      — Pojęcie „Taśma przecięta na n” (wzór 5.7) (P9)
 # Serwer: d5p_oddzialy_server(input, output, session).
@@ -34,7 +34,7 @@ d5p_or <- function(x, y) if (is.null(x)) y else x
 # (P8) DWADZIEŚCIE ODDZIAŁÓW — taśmy do 20 audytów, potem histogram końców X
 # ============================================================================
 
-# Wiersze taśm (n <= 20) albo histogram końców X (n > 20) na tej samej osi 0–120.
+# Kafelki oddziałów (n <= 20) albo histogram końców X (n > 20) na osi 0–120.
 #   xs    — wektor liczb kontroli X do trzeciej wady, po jednej na audyt
 #   tapes — listy taśm (logical) dla pierwszych audytów
 d5p_branches_svg <- function(xs, tapes) {
@@ -46,30 +46,37 @@ d5p_branches_svg <- function(xs, tapes) {
   aria <- sprintf("Oddziały: %d audytów, pionowa kreska budżetu na %d kontrolach.", n, budget)
 
   if (n <= d5p_br_rows) {
-    H <- top + d5p_br_rows * rowh + 46
-    axis_y <- top + d5p_br_rows * rowh + 6
-    rows <- vapply(seq_len(d5p_br_rows), function(i) {
-      y <- top + (i - 1) * rowh
-      label <- sprintf('<text class="d5p-mono d5p-subtle" x="4" y="%g" font-size="10">O%d</text>', y + 9, i)
-      if (i > n) return(paste0(label, d5p_tape(logical(0), x0, y, pitch = p, size = s, n_cells = budget)))
-      tape <- tapes[[i]]
-      X <- length(tape)
-      ok <- X <= budget
-      end_x <- if (X > 120) x_of(120) + 16 else x_of(X - 1) + s + 6
-      paste0(label,
-        d5p_tape(tape, x0, y, pitch = p, size = s, max_cells = 120),
-        sprintf('<circle class="%s" cx="%g" cy="%g" r="3"/>', if (ok) "d5p-ok" else "d5p-bad", end_x, y + s / 2),
-        sprintf('<text class="d5p-mono" style="fill:%s" x="%g" y="%g" font-size="11">%d</text>',
-          if (ok) "var(--upwr-sage)" else "var(--upwr-accent)", end_x + 6, y + 9, X))
+    # Siatka 4 × 5 kafelków: numer oddziału, liczba kontroli, ✓/× i pasek
+    # długości audytu z kreską budżetu (pasek do 90 kontroli, dalej „→”).
+    cols <- 5L; tw <- 144; th <- 84; gap <- 12; gx <- (W - cols * tw - (cols - 1) * gap) / 2
+    tiles <- vapply(seq_len(d5p_br_rows), function(i) {
+      cx <- gx + ((i - 1) %% cols) * (tw + gap); cy <- 8 + ((i - 1) %/% cols) * (th + gap)
+      name <- sprintf('<text class="d5p-mono" x="%g" y="%g" font-size="11" style="fill:%s">Oddział %d</text>',
+        cx + 10, cy + 17, if (i <= n && xs[i] > budget) "var(--upwr-surface)" else "var(--upwr-ink-subtle)", i)
+      if (i > n) return(paste0(
+        sprintf('<rect class="d5p-cell-idle" x="%g" y="%g" width="%g" height="%g" rx="6"/>', cx, cy, tw, th), name))
+      X <- xs[i]; ok <- X <= budget
+      ink <- if (ok) "var(--upwr-ink)" else "var(--upwr-surface)"
+      bx <- cx + 10; bw <- tw - 20; by <- cy + th - 14; bmax <- 90
+      fill_w <- min(X, bmax) / bmax * bw
+      paste0(
+        sprintf('<rect class="%s" x="%g" y="%g" width="%g" height="%g" rx="6"/>',
+          if (ok) "d5p-cell-ok" else "d5p-cell-bad", cx, cy, tw, th),
+        name,
+        sprintf('<text class="d5p-mono" x="%g" y="%g" font-size="28" font-weight="700" style="fill:%s">%d</text>',
+          cx + 10, cy + 52, ink, X),
+        sprintf('<text x="%g" y="%g" font-size="24" font-weight="700" text-anchor="end" style="fill:%s">%s</text>',
+          cx + tw - 12, cy + 50, ink, if (ok) "✓" else "×"),
+        sprintf('<rect x="%g" y="%g" width="%g" height="5" rx="2" style="fill:%s;opacity:.25"/>', bx, by, bw, ink),
+        sprintf('<rect x="%g" y="%g" width="%g" height="5" rx="2" style="fill:%s"/>', bx, by, fill_w, ink),
+        sprintf('<line x1="%g" x2="%g" y1="%g" y2="%g" style="stroke:%s" stroke-width="1.5"/>',
+          bx + budget / bmax * bw, bx + budget / bmax * bw, by - 3, by + 8, ink),
+        if (X > bmax) sprintf('<text x="%g" y="%g" font-size="11" style="fill:%s">→</text>', bx + bw + 1, by + 6, ink) else ""
+      )
     }, character(1))
-    band <- sprintf('<rect x="%g" y="%g" width="%g" height="%g" style="fill:var(--upwr-accent);fill-opacity:.07"/>',
-      budget_x, top - 4, x_of(120) - budget_x, d5p_br_rows * rowh + 4)
-    line <- sprintf('<line class="d5p-limit" x1="%g" x2="%g" y1="%g" y2="%g"/>',
-      budget_x, budget_x, top - 8, top + d5p_br_rows * rowh)
-    body <- paste0(band, paste(rows, collapse = ""), line,
-      sprintf('<text class="d5p-subtle" x="%g" y="%g" font-size="12">budżet %d</text>', budget_x + 6, top - 12, budget),
-      d5p_axis(x_of, axis_y, c(0, 30, 60, 90, 120), label = "kontrola nr"))
-    return(d5p_svg(W, H, aria, body))
+    legend <- sprintf('<text class="d5p-subtle" x="%g" y="%g" font-size="12">pasek: długość audytu (do 90 kontroli), kreska: budżet %d</text>',
+      gx, 8 + 4 * (th + gap) + 8, budget)
+    return(d5p_svg(W, 8 + 4 * (th + gap) + 16, aria, paste(tiles, collapse = ""), legend))
   }
 
   # Histogram końców X: słupki co 3 kontrole; X > 120 wpada do ostatniego słupka.
@@ -131,59 +138,104 @@ d5p_branches_ui <- d5p_panel("Scena", "Dwadzieścia oddziałów",
     lc_action("d5p_br_one", "Audyt w kolejnym oddziale", variant = "solid"),
     lc_action("d5p_br_all", "Wszystkie oddziały"),
     lc_action("d5p_br_sez", "Sto sezonów"),
-    lc_action("d5p_br_reset", "Od nowa", icon = "reset", variant = "ghost")))
+    lc_action("d5p_br_reset", icon = "reset", variant = "ghost", aria_label = "Od nowa")))
 
 # ============================================================================
 # (P9) TAŚMA PRZECIĘTA NA n — wzór (5.7): P(X ≤ n) = P(Y_n ≥ r)
 # ============================================================================
 
+# Kolory jak we wzorze (5.7): X i reguła „do trzeciej wady” w kolorze akcentu,
+# Y_n i reguła „n prób” w kolorze nieba.
+d5p_cut_col_x <- "var(--upwr-accent)"
+d5p_cut_col_y <- "var(--upwr-cat-niebo)"
+
+d5p_cut_css <- tags$style(HTML("
+  .d5p-cut-two { display: grid; grid-template-columns: 1fr 1fr; gap: .9em 1.6em; margin: .4em 0 .4em; }
+  .d5p-cut-eq { font-size: 1.15em; margin: .2em 0 .2em; }
+  @media (max-width: 640px) { .d5p-cut-two { grid-template-columns: 1fr; } }
+  .d5p-cut-col { padding-left: .8em; border-left: 3px solid var(--c); }
+  .d5p-cut-rule { font-family: var(--upwr-mono); font-size: .8em; color: var(--upwr-ink-subtle); }
+  .d5p-cut-val { font-family: var(--upwr-mono); font-weight: 700; font-size: 1.2em; color: var(--c); margin: .1em 0 .3em; }
+  .d5p-cut-verdict { font-weight: 600; margin: .2em 0 .6em; }
+"))
+
 # Taśma 80 kontroli (rysowana także za trzecią wadą), cięcie za n-tą kratką.
+# Nad taśmą klamra X (do trzeciej wady), pod taśmą klamra Y_n (pierwsze n kontroli);
+# wady w pierwszych n kontrolach obrysowane kolorem Y.
 d5p_cut_svg <- function(outcomes, n) {
-  W <- 780; x0 <- 30; p <- 9; s <- 7; y <- 62
+  W <- 780; x0 <- 30; p <- 9; s <- 7; y <- 78
   x_of <- function(t) x0 + t * p
   len <- length(outcomes)
   X <- which(cumsum(outcomes) >= 3)[1]
+  Y <- sum(outcomes[seq_len(n)])
   cells <- d5p_tape(outcomes, x0, y, pitch = p, size = s, dim = seq_len(len) > n)
-  mark <- if (!is.na(X)) paste0(
-    sprintf('<rect x="%g" y="%g" width="%g" height="%g" rx="2" style="fill:none;stroke:var(--upwr-ink);stroke-width:2"/>',
-      x0 + (X - 1) * p - 1, y - 1, s + 2, s + 2),
-    sprintf('<text class="d5p-mono" x="%g" y="%g" font-size="11" text-anchor="middle">X</text>',
-      x0 + (X - 1) * p + s / 2, y - 6)) else ""
+  bracket <- function(i1, i2, yb, dir, col) sprintf(
+    '<path d="M %g %g V %g H %g V %g" fill="none" style="stroke:%s" stroke-width="1.8"/>',
+    x_of(i1 - 1), yb + 5 * dir, yb, x_of(i2) - 2, yb + 5 * dir, col)
+  # X: klamra nad taśmą od pierwszej kontroli do trzeciej wady
+  xend <- if (is.na(X)) len else X
+  xpart <- paste0(
+    bracket(1, xend, y - 10, 1, d5p_cut_col_x),
+    if (!is.na(X)) sprintf('<rect x="%g" y="%g" width="%g" height="%g" rx="2" style="fill:none;stroke:%s;stroke-width:2.2"/>',
+      x0 + (X - 1) * p - 1.5, y - 1.5, s + 3, s + 3, d5p_cut_col_x) else "",
+    sprintf('<text class="d5p-mono" x="%g" y="%g" font-size="13" font-weight="700" style="fill:%s">%s</text>',
+      x_of(0), y - 18, d5p_cut_col_x,
+      if (is.na(X)) "X > 80: trzecia wada poza taśmą" else sprintf("X = %d: kontrola z trzecią wadą", X)))
+  # Y_n: klamra pod taśmą od pierwszej kontroli do cięcia; wady w niej obrysowane
+  ydef <- which(outcomes[seq_len(n)])
+  ypart <- paste0(
+    bracket(1, n, y + s + 10, -1, d5p_cut_col_y),
+    paste(sprintf('<circle cx="%g" cy="%g" r="2.6" style="fill:%s"/>', x0 + (ydef - 1) * p + s / 2, y + s + 4, d5p_cut_col_y), collapse = ""),
+    sprintf('<text class="d5p-mono" x="%g" y="%g" font-size="13" font-weight="700" style="fill:%s">Y%s = %d: wady w pierwszych %d kontrolach</text>',
+      x_of(0), y + s + 28, d5p_cut_col_y, d5p_sub(n), Y, n))
   cut_x <- x_of(n) - 1
-  right <- n > 60
   cut <- paste0(
-    sprintf('<line class="d5p-limit" x1="%g" x2="%g" y1="%g" y2="%g"/>', cut_x, cut_x, y - 14, y + s + 6),
-    sprintf('<text class="d5p-mono" x="%g" y="%g" font-size="12" text-anchor="%s">n = %d</text>',
-      if (right) cut_x - 4 else cut_x + 4, y - 18, if (right) "end" else "start", n))
-  d5p_svg(W, 130, sprintf("Taśma %d kontroli z trzecią wadą; cięcie po kontroli %d.", len, n),
-    cells, mark, cut, d5p_axis(x_of, y + s + 14, c(0, 20, 40, 60, 80), label = "numer kontroli"))
+    sprintf('<line class="d5p-limit" x1="%g" x2="%g" y1="%g" y2="%g"/>', cut_x, cut_x, y - 6, y + s + 14),
+    sprintf('<text class="d5p-mono" x="%g" y="%g" font-size="12" text-anchor="start">n = %d</text>', cut_x + 4, y - 38, n))
+  d5p_svg(W, 178, sprintf("Taśma %d kontroli: klamra X do trzeciej wady nad taśmą, klamra pierwszych %d kontroli pod taśmą.", len, n),
+    cells, xpart, ypart, cut, d5p_axis(x_of, y + s + 42, c(0, 20, 40, 60, 80), label = "numer kontroli"))
 }
 
-# Dwa odczyty obok siebie; oba mają zawsze tę samą wartość logiczną.
+# Indeks dolny cyframi Unicode (Y₃₀).
+d5p_sub <- function(n) chartr("0123456789", "₀₁₂₃₄₅₆₇₈₉", as.character(n))
+
+# Dwa odczyty obok siebie (ta sama seria w dwóch językach) i jedna linijka
+# P(X ≤ n) = … = P(Y_n ≥ 3): wspólny wynik obu reguł.
 d5p_cut_read <- function(outcomes, n) {
   X <- which(cumsum(outcomes) >= 3)[1]
   Y <- sum(outcomes[seq_len(n)])
-  ok1 <- !is.na(X) && X <= n
-  ok2 <- Y >= 3
-  col <- function(ok) paste0("color:", if (ok) "var(--upwr-sage)" else "var(--upwr-accent)")
-  tags$div(class = "d5p-nav d5p-read", style = "gap: 1.2em",
-    tags$span(style = col(ok1), sprintf("%s %s n = %d",
-      if (is.na(X)) "X > 80" else sprintf("X = %d", X), if (ok1) "≤" else ">", n)),
-    tags$span(class = "d5p-subtle", "⇔"),
-    tags$span(style = col(ok2), sprintf("w pierwszych %d kontrolach: Y = %d %s 3",
-      n, Y, if (ok2) "≥" else "<")))
+  okx <- !is.na(X) && X <= n
+  prob <- pnbinom(n - 3, 3, 0.1)
+  sx <- function(t) sprintf("\\style{color:%s}{%s}", d5p_cut_col_x, t)
+  sy <- function(t) sprintf("\\style{color:%s}{%s}", d5p_cut_col_y, t)
+  px <- sx(sprintf("P(X\\le %d)", n)); py <- sy(sprintf("P(Y_{%d}\\ge 3)", n))
+  col <- function(color, rule, val) tags$div(class = "d5p-cut-col", style = paste0("--c:", color),
+    tags$div(class = "d5p-cut-rule", rule),
+    tags$div(class = "d5p-cut-val", val))
+  withMathJax(tagList(
+    tags$div(class = "d5p-cut-two",
+      col(d5p_cut_col_x, "Reguła „do trzeciej wady”: liczymy kontrole",
+        if (is.na(X)) sprintf("X > 80 > %d", n) else sprintf("X = %d %s %d", X, if (okx) "≤" else ">", n)),
+      col(d5p_cut_col_y, sprintf("Reguła „%d prób”: liczymy wady", n),
+        sprintf("Y%s = %d %s 3", d5p_sub(n), Y, if (Y >= 3) "≥" else "<"))),
+    tags$div(class = "d5p-cut-eq", d5p_math(sprintf("%s=%.3f=%s", px, prob, py))),
+    tags$p(class = "d5p-cut-verdict",
+      style = paste0("color:", if (okx) "var(--upwr-ink)" else "var(--upwr-accent)"),
+      if (okx) sprintf("Ta seria: audyt mieści się w limicie %d kontroli ✓", n)
+      else sprintf("Ta seria: przy limicie %d kontroli zabraknie ×", n))
+  ))
 }
 
 d5p_cut_ui <- d5p_panel("Pojęcie", "Taśma przecięta na n",
-  d5p_css,
+  d5p_css, d5p_cut_css,
   uiOutput("d5p_cut_head"),
   uiOutput("d5p_cut_stage"),
   lc_slider("d5p_cut_n", "Cięcie po kontroli n", 5, 80, 30, 1),
   uiOutput("d5p_cut_read"),
   tags$p(class = "d5p-caption",
-    "Dwa opisy tego samego zdarzenia: trzecia wada pojawia się do n-tej kontroli włącznie, czyli w pierwszych n kontrolach są co najmniej trzy wady. Przesuń cięcie i sprawdź, że oba odczyty zawsze się zgadzają."),
+    "Dwa opisy tego samego zdarzenia: trzecia wada pojawia się do n-tej kontroli włącznie, czyli w pierwszych n kontrolach są co najmniej trzy wady. Lewy odczyt liczy kontrole do trzeciej wady, prawy liczy wady w pierwszych n kontrolach; dlatego oba prawdopodobieństwa są równe."),
   tags$div(class = "d5p-nav",
-    lc_action("d5p_cut_new", "Inna taśma", variant = "solid")))
+    lc_action("d5p_cut_new", icon = "shuffle", variant = "ghost", aria_label = "Inna taśma")))
 
 # ============================================================================
 # SERWER
@@ -215,7 +267,7 @@ d5p_oddzialy_server <- function(input, output, session) {
 
   output$d5p_br_head <- renderUI({
     n <- length(br()$xs)
-    d5p_head("Dwadzieścia oddziałów", sprintf("Audytów: %d", n))
+    d5p_head(sprintf("Budżet: %d kontroli na oddział", d5p_br_budget), sprintf("Audytów: %d", n))
   })
   output$d5p_br_stage <- renderUI({
     s <- br()

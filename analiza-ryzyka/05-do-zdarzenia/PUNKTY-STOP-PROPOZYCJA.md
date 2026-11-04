@@ -31,7 +31,7 @@ brak pamięci i tożsamość (5.7).
 | 3 | rozdz. 2, „Brak pamięci” | scena · wprowadzenie | Kierownik: „20 kontroli bez wady, więc zaraz się pojawi”. Odpowiedź przez obraz, nie wzór. |
 | 4 | po 3 albo przełącznik w 3 | symulacja · domknięcie pojęcia | Weź tylko serie, które przetrwały 20 kontroli, i licz od 20: histogram reszty oczekiwania wygląda jak na starcie. |
 | 5 | rozdz. 3, „Suma czasów” | pojęcie | Taśma kontroli z trzema znacznikami to trzy sklejone oczekiwania geometryczne: G₁ + G₂ + G₃. |
-| 6 | rozdz. 3, przykład 5.4(a) | pojęcie (krokowe) | C(4,2) = 6 układów; ostatnia kratka wymuszona, stąd x−1 i r−1. |
+| 6 | rozdz. 3, przykład 5.3(a) | pojęcie (krokowe) | C(4,2) = 6 układów; audyt kończy się na r-tej wadzie, więc rozmieszczamy tylko r−1 wad wśród x−1 kontroli. |
 | 7 | rozdz. 3, obecny NB | piaskownica | r = 1 daje geometryczny; większe r przesuwa szczyt i symetryzuje rozkład (warunek: stała oś). |
 | 8 | rozdz. 4, otwarcie | scena · wprowadzenie | Dwadzieścia oddziałów planuje po 30 kontroli, czyli „średnią”. Odliczamy, komu zabrakło: około 8 z 20. |
 | 9 | rozdz. 4, przy (5.7) | pojęcie | Ta sama taśma przecięta na n: „skończyliśmy do n” = „w n kontrolach ≥ r wady”. Most do wykładu 04. |
@@ -73,8 +73,8 @@ widgety zostały obok do porównania. Pliki: `modules/stop_proto_*.R`
 | P2 | `d5p_geo_ui` | geo | pod istniejącym widgetem geo |
 | P3 | (wchłonięty przez P4: cytat kierownika w podpisie) | — | — |
 | P4 | `d5p_memory_ui` | geo | po wzorze 5.4 |
-| P5 | `d5p_sum_ui` | suma | przed wzorem 5.5 |
-| P6 | `d5p_arr_ui` | suma | po przykładzie 5.4 |
+| P5 | `d5p_sum_ui` | suma | przed wzorem 5.6 (E i Var) |
+| P6 | `d5p_arr_ui` | suma | po przykładzie 5.3 |
 | P7 | poprawka osi `d5_nb` (oś zależy tylko od p) | block.R | — |
 | P8 | `d5p_branches_ui` | oddzialy | początek sekcji „Średnia a kwantyl” |
 | P9 | `d5p_cut_ui` | oddzialy | po wzorze 5.7 |
@@ -119,3 +119,7 @@ Nowe liczby (mieszanka dostawców 50/50, p = 0.05 i 0.15, 1 mln serii):
 
 Interakcje prototypów P1–P12 sprawdzone w przeglądarce (1280×900), bez błędów
 konsoli i serwera.
+
+## Stan (2026-11-04)
+
+Wszystkie punkty stop zostały przejrzane z wariantami B (Codex) i zaakceptowane; plakietka „Prototyp” została zdjęta. Warianty B zostały usunięte.

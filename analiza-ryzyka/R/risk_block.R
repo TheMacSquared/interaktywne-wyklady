@@ -251,10 +251,22 @@ risk_body <- function(items) {
   }))
 }
 
-risk_definition <- function(num, term, text) {
+# Język praktyki przy wzorze albo definicji: jak pojęcie nazywa inżynier i na
+# jakie jego pytanie odpowiada. practice = c(term = "…", question = "…").
+risk_practice <- function(practice) {
+  if (is.null(practice)) return(NULL)
+  stopifnot(all(c("term", "question") %in% names(practice)))
+  tags$div(class = "risk-practice",
+    tags$span(class = "risk-practice-l", "W praktyce"),
+    tags$span(class = "risk-practice-t", practice[["term"]]),
+    tags$span(class = "risk-practice-q", paste0("„", practice[["question"]], "”")))
+}
+
+risk_definition <- function(num, term, text, practice = NULL) {
   # Elementy będące już tagami (np. lista pojęć) wchodzą bez opakowania w <p>.
   lc_note(paste0("Definicja ", num), title = term,
-    lapply(text, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x)))
+    lapply(text, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x)),
+    risk_practice(practice))
 }
 
 # Wzór z numerem i objaśnieniem symboli. `legend` to nazwany wektor:
@@ -271,13 +283,16 @@ risk_tex_colors <- function(tex, colors) {
 
 # notes: opisy części wzoru jak w lc_formula_annotated() (znaczniki ⟦k|...⟧ w tex);
 # note_colors i above przechodzą do niej bez zmian. Numer wzoru stoi wtedy
-# przy prawej krawędzi wiersza wzoru.
+# przy prawej krawędzi wiersza wzoru. practice: linijka „W praktyce” pod wzorem
+# (risk_practice()).
 risk_formula <- function(tex, num = NULL, legend = NULL, colors = NULL,
-                         notes = NULL, note_colors = NULL, above = NULL) {
+                         notes = NULL, note_colors = NULL, above = NULL,
+                         practice = NULL) {
   if (!is.null(notes)) {
     q <- htmltools::tagQuery(lc_formula_annotated(tex, notes, note_colors, above = above))
     if (!is.null(num)) q$find(".lc-fa-tex")$append(tags$div(class = "lc-formula-num", paste0("(", num, ")")))
-    return(tagList(q$allTags(), if (!is.null(legend)) risk_formula_legend(legend)))
+    return(tagList(q$allTags(), if (!is.null(legend)) risk_formula_legend(legend),
+      risk_practice(practice)))
   }
   if (!is.null(colors)) {
     tex <- risk_tex_colors(tex, colors)
@@ -290,7 +305,8 @@ risk_formula <- function(tex, num = NULL, legend = NULL, colors = NULL,
       tags$div(class = "lc-formula-tex", withMathJax(paste0("$$", tex, "$$"))),
       if (!is.null(num)) tags$div(class = "lc-formula-num", paste0("(", num, ")"))
     ),
-    if (!is.null(legend)) risk_formula_legend(legend)
+    if (!is.null(legend)) risk_formula_legend(legend),
+    risk_practice(practice)
   )
 }
 
@@ -322,7 +338,21 @@ risk_parts <- function(...) {
   )
 }
 
-risk_example <- function(num, title, problem, steps, answer = NULL, steps_type = NULL) {
+# open = TRUE: przykład omawiany, nie zadanie do sprawdzenia. Rozwiązanie jest od
+# razu widoczne i zajmuje pełną szerokość tekstu, bez wcięcia notatki; odpowiedź
+# podpisana jako „Wniosek”.
+risk_example <- function(num, title, problem, steps, answer = NULL, steps_type = NULL,
+                         open = FALSE) {
+  if (isTRUE(open)) {
+    return(tags$div(class = "risk-case",
+      tags$div(class = "risk-case-l", paste0("Przykład ", num)),
+      tags$div(class = "risk-case-t", title),
+      lapply(problem, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x)),
+      tags$ol(type = steps_type, class = if (!is.null(steps_type)) "lc-example-list",
+        lapply(steps, tags$li)),
+      if (!is.null(answer)) tags$p(tags$strong("Wniosek:"), paste0(" ", answer))
+    ))
+  }
   lc_note(paste0("Przykład ", num), title = title,
     lapply(problem, function(x) if (inherits(x, "shiny.tag")) x else tags$p(x)),
     lc_more("Rozwiązanie",

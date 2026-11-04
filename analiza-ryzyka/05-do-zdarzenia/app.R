@@ -46,7 +46,11 @@ source(file.path(app_dir, "modules", "stop_proto_tasma.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_geo.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_suma.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_oddzialy.R"), local = TRUE)
-source(file.path(app_dir, "modules", "stop_proto_plan.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_proto_nb.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_proto_rezerwa.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_proto_planex.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_proto_mix.R"), local = TRUE)
+source(file.path(app_dir, "modules", "stop_proto_dostawcy.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
@@ -58,7 +62,15 @@ ui <- lecture_page(
   lecture_num = "05",
   lecture_title = "Ile prób do zdarzenia",
   module_label = "Analiza ryzyka · Bananpol",
-  chapters = .chapters
+  chapters = .chapters,
+  # Chart.js dla punktów stop P7 (nb_chart.js) i „Limit, średnia i rezerwa” (plan_chart.js)
+  header_extras = tagList(
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
+    includeScript(file.path(app_dir, "modules", "nb_chart.js")),
+    includeScript(file.path(app_dir, "modules", "plan_chart.js")),
+    includeScript(file.path(app_dir, "modules", "mix_chart.js"))
+  )
 )
 
 server <- function(input, output, session) {
