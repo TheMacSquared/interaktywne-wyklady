@@ -1,3 +1,157 @@
+# Warianty B korzystają z tej samej oprawy SVG co prototypy wykładu.
+d5b_widget <- function(id, title, control) {
+  d5p_panel(id, title, d5p_css, control, uiOutput(paste0("d5b_view_", if (id == "P3B / P4B") "P34B" else id)))
+}
+
+d5b_p1_ui <- d5b_widget("P1B", "Dwa audyty na tej samej taśmie",
+  lc_slider("d5b_scan", "Przewiń zapis do kontroli", 1, 34, 1, 1))
+d5b_p2_ui <- d5b_widget("P2B", "Ile audytów wciąż czeka?",
+  lc_slider("d5b_days", "Liczba wykonanych kontroli", 1, 40, 10, 1))
+d5b_p34_ui <- d5b_widget("P3B / P4B", "Szansa w następnej kontroli",
+  tagList(lc_slider("d5b_clean", "Liczba kontroli bez wady", 0, 30, 20, 1),
+    checkboxInput("d5b_new_batch", "Następna sztuka z nowej partii (5% wad)")))
+d5b_p5_ui <- d5b_widget("P5B", "Stoper z międzyczasami",
+  lc_slider("d5b_lap", "Odsłoń taśmę do kolejnej wady", 1, 3, 1, 1))
+d5b_p6_ui <- d5b_widget("P6B", "Która kratka zamyka audyt?",
+  checkboxGroupInput("d5b_defects", "Kontrole z wadą", 1:5, selected = c(1, 3, 5), inline = TRUE))
+d5b_p7_ui <- d5b_widget("P7B", "Jeden limit, różne cele",
+  lc_slider("d5b_budget", "Limit kontroli", 3, 80, 20, 1))
+d5b_p12_ui <- d5b_widget("P12B", "Co wpiszesz po zakończeniu?",
+  lc_slider("d5b_final", "Maksymalna liczba kontroli", 1, 40, 30, 1))
+
+d5b_tape <- function(marks, stop, total = 34) {
+  d5p_tape(seq_len(stop) %in% marks, 8, 8, pitch = 16, size = 13, n_cells = total)
+}
+
+d5b_bar <- function(label, fraction, y) {
+  sprintf(paste0('<text x="8" y="%d">%s · %.1f%%</text>',
+    '<rect class="d5p-cell-idle" x="8" y="%d" width="544" height="17"/>',
+    '<rect class="d5p-ok" x="8" y="%d" width="%g" height="17"/>'),
+    y, label, 100 * fraction, y + 7, y + 7, 544 * fraction)
+}
+
+d5b_p8_ui <- d5b_widget("P8B", "Dwadzieścia oddziałów, jeden limit",
+  lc_slider("d5b_branch_limit", "Limit na oddział", 10, 100, 30, 1))
+d5b_p9_ui <- d5b_widget("P9B", "Przetnij taśmę",
+  lc_slider("d5b_cut", "Limit kontroli", 1, 40, 30, 1))
+d5b_p10_ui <- d5b_widget("P10B", "Czy zapas wystarczy?",
+  lc_slider("d5b_limit", "Kontrole na audyt", 3, 100, 30, 1))
+d5b_p11_ui <- d5b_widget("P11B", "Wspólny limit dla dwóch dostawców",
+  lc_slider("d5b_supplier_limit", "Wspólny limit kontroli", 3, 160, 61, 1))
+
+d5b_server <- function(input, output, session) {
+  completion <- function(limit, p) pbinom(2, limit, p, lower.tail = FALSE)
+
+  marks <- c(4L, 11L, 34L)
+  output$d5b_view_P1B <- renderUI({
+    req(input$d5b_scan)
+    stop <- input$d5b_scan
+    fixed <- min(stop, 20L)
+    tagList(
+      d5p_head("A · kończy po 20 kontrolach", sprintf("%d kontroli / %d wad", fixed, sum(marks <= fixed))),
+      d5p_svg(560, 30, "Taśma audytora A", d5b_tape(marks, fixed)),
+      d5p_head("B · kończy po trzeciej wadzie", sprintf("%d kontroli / %d wad", stop, sum(marks <= stop))),
+      d5p_svg(560, 30, "Taśma audytora B", d5b_tape(marks, stop)))
+  })
+  output$d5b_view_P2B <- renderUI({
+    req(input$d5b_days)
+    waiting <- .9^input$d5b_days
+    d5p_svg(560, 104, "Odsetek audytów według wyniku",
+      d5b_bar("Znaleziono pierwszą wadę", 1 - waiting, 20),
+      d5b_bar("Wciąż bez pierwszej wady", waiting, 68))
+  })
+  output$d5b_view_P34B <- renderUI({
+    req(!is.null(input$d5b_clean))
+    next_p <- if (isTRUE(input$d5b_new_batch)) .05 else .10
+    tagList(d5p_svg(560, 30, "Dotychczasowe kontrole bez wad",
+      d5b_tape(integer(), input$d5b_clean, 30)),
+      d5p_svg(560, 104, "Porównanie szansy wykrycia w jednej kontroli",
+        d5b_bar("Pierwsza kontrola", .10, 20),
+        d5b_bar("Następna kontrola", next_p, 68)))
+  })
+  output$d5b_view_P5B <- renderUI({
+    req(input$d5b_lap)
+    stop <- marks[input$d5b_lap]
+    laps <- diff(c(0L, marks))[seq_len(input$d5b_lap)]
+    tagList(d5p_svg(560, 30, "Taśma do wybranej wady", d5b_tape(marks, stop)),
+      d5p_head(paste("Międzyczasy:", paste(laps, collapse = " + ")), paste(stop, "kontroli")))
+  })
+  output$d5b_view_P6B <- renderUI({
+    defects <- sort(as.integer(input$d5b_defects))
+    stop <- if (length(defects) >= 3) defects[3] else 5L
+    status <- if (length(defects) >= 3) paste("Audyt kończy się na kontroli", stop) else "Za mało wad, żeby ukończyć audyt"
+    tagList(d5p_svg(100, 30, "Taśma pięciu kontroli", d5b_tape(defects, stop, 5)),
+      tags$p(status))
+  })
+  output$d5b_view_P7B <- renderUI({
+    req(input$d5b_budget)
+    d5p_svg(560, 144, "Szanse ukończenia w wybranym limicie",
+      lapply(1:3, function(r) {
+        d5b_bar(c("Co najmniej jedna wada", "Co najmniej dwie wady", "Co najmniej trzy wady")[r],
+          pbinom(r - 1, input$d5b_budget, .10, lower.tail = FALSE), 20 + (r - 1) * 45)
+      }))
+  })
+  output$d5b_view_P12B <- renderUI({
+    req(input$d5b_final)
+    stop <- min(input$d5b_final, marks[3])
+    count <- sum(marks <= stop)
+    tagList(d5p_svg(660, 30, "Taśma do zakończenia audytu", d5b_tape(marks, stop, 40)),
+      d5p_head(if (count == 3) "Cel osiągnięty" else "Limit wyczerpany",
+        sprintf("%d kontroli · %d z 3 wad", stop, count)))
+  })
+
+  output$d5b_view_P8B <- renderUI({
+    req(input$d5b_branch_limit)
+    times <- c(12, 43, 24, 27, 51, 18, 29, 35, 23, 61,
+      14, 30, 37, 33, 17, 22, 72, 16, 47, 26)
+    done <- times <= input$d5b_branch_limit
+    tagList(d5p_svg(560, 112, "Dwadzieścia przykładowych oddziałów",
+      lapply(seq_along(times), function(i) {
+        x <- 8 + ((i - 1) %% 10) * 55
+        y <- 4 + ((i - 1) %/% 10) * 55
+        sprintf(paste0('<rect class="%s" x="%d" y="%d" width="50" height="48" rx="4"/>',
+          '<text x="%d" y="%d" text-anchor="middle">%d</text>',
+          '<text x="%d" y="%d" text-anchor="middle">%s</text>'),
+          if (done[i]) "d5p-cell-ok" else "d5p-cell-idle", x, y,
+          x + 25, y + 18, times[i], x + 25, y + 38, if (done[i]) "✓" else "×")
+      })),
+      d5p_head("Przykład · potrzebne kontrole w każdym oddziale",
+        sprintf("%d z 20 ukończonych", sum(done))),
+      tags$p("✓ mieści się w limicie · × przekracza limit"))
+  })
+  output$d5b_view_P9B <- renderUI({
+    req(input$d5b_cut)
+    limit <- input$d5b_cut
+    count <- sum(marks <= limit)
+    x <- 5 + 16 * limit
+    tagList(d5p_svg(660, 34, "Taśma przecięta po wybranej kontroli",
+      d5p_tape(seq_len(40) %in% marks, 8, 8, pitch = 16, size = 13,
+        dim = seq_len(40) > limit),
+      sprintf('<line class="d5p-limit" x1="%d" x2="%d" y1="2" y2="30"/>', x, x)),
+      d5p_head(sprintf("Do kontroli %d: %d z 3 wad", limit, count),
+        if (count == 3) "Cel osiągnięty" else "Trzecia wada poza limitem"))
+  })
+  output$d5b_view_P10B <- renderUI({
+    req(input$d5b_limit)
+    chance <- completion(input$d5b_limit, .10)
+    tagList(d5p_svg(560, 104, "Szanse ukończenia przy wybranym limicie",
+      d5b_bar("Ukończone w limicie", chance, 20),
+      d5b_bar("Niedokończone w limicie", 1 - chance, 68),
+      '<line class="d5p-limit" x1="524.8" x2="524.8" y1="23" y2="48"/>'),
+      d5p_head("Kreska oznacza cel 95%",
+        if (chance >= .95) "Cel spełniony" else "Poniżej celu"))
+  })
+  output$d5b_view_P11B <- renderUI({
+    req(input$d5b_supplier_limit)
+    chances <- completion(input$d5b_supplier_limit, c(.05, .15))
+    tagList(d5p_svg(560, 144, "Szanse ukończenia według dostawcy",
+      d5b_bar("Dostawca A · 5% wad", chances[1], 20),
+      d5b_bar("Dostawca B · 15% wad", chances[2], 65),
+      d5b_bar("Wspólny wynik przy mieszance 50/50", mean(chances), 110)),
+      tags$p("Jeden audyt obejmuje jedną partię. Celem jest zebranie trzech wad."))
+  })
+}
+
 # Blok 05: Ile prób do zdarzenia -----------------------------------------
 
 dozd_quiz <- list(questions = list(
@@ -101,6 +255,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Sam schemat prób nie wystarcza jednak, żeby wskazać rozkład. Potrzebna jest jeszcze informacja, kiedy przestajemy wykonywać próby."
           ),
           d5p_rule_ui,  # PROTOTYP P1
+          d5b_p1_ui,
           risk_definition("5.1", "Reguła zatrzymania", c(
             "Reguła zatrzymania to zasada, która określa, po której próbie kończy się seria obserwacji.",
             "Przy regule „stała liczba prób” zatrzymujemy się po n-tej próbie, niezależnie od wyników; losowa jest wtedy liczba sukcesów. Przy regule „stała liczba sukcesów” zatrzymujemy się w chwili r-tego sukcesu, niezależnie od tego, ile prób to zajęło; losowa jest wtedy liczba prób."
@@ -158,6 +313,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           risk_try("zostaw p = 0.10 i kliknij „Losuj ponownie” kilka razy. Zapisz, gdzie leży najwyższy słupek i jak daleko sięga najdłuższa seria. Potem zmień p na 0.30 i na 0.03."),
           risk_widget_panel("Symulacja", "Ile kontroli do pierwszej wady?", tagList(lc_slider("d5_geo_p", "Prawdopodobieństwo wady p", .01, .5, .1, .01), lc_action("d5_geo_run", "Losuj ponownie", icon = "shuffle")), "d5_geo", "d5_geo_stats"),
           d5p_geo_ui,  # PROTOTYP P2 (porównanie z widgetem wyżej)
+          d5b_p2_ui,
           c(
             "Niezależnie od p najwyższy słupek stoi przy pierwszej kontroli. Kolejne słupki systematycznie maleją, ale bardzo powoli, gdy p jest małe. Pojedyncze serie ciągną się kilka razy dłużej niż średnia. Przy p = 0.03 średni czas oczekiwania to około 33 kontroli, a najdłuższe serie wychodzą poza prawą krawędź wykresu, czyli ponad 80 kontroli.",
             "Te obserwacje mają proste wyjaśnienie rachunkowe, które wyprowadzimy w następnej sekcji. Warto je jednak najpierw zobaczyć: w planowaniu zasobów to właśnie długi ogon, a nie średnia, sprawia kłopot."
@@ -222,6 +378,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           ),
           risk_formula("P(X>s+t\\mid X>s)=P(X>t)", num = "5.4"),
           d5p_memory_ui,  # PROTOTYP P4
+          d5b_p34_ui,
           "Dowód wymaga tylko definicji prawdopodobieństwa warunkowego z wykładu 02 i wzoru (5.2). Zdarzenie {X > s + t} zawiera się w {X > s}, więc ich iloczyn to po prostu {X > s + t}. Stąd P(X > s + t | X > s) = P(X > s + t) / P(X > s) = (1 - p)^(s+t) / (1 - p)^s = (1 - p)^t = P(X > t).",
           risk_example("5.3", "Dwadzieścia kontroli bez wykrycia",
             problem = "Audyt przy p = 0.10 trwa już 20 kontroli i nie wykrył żadnej wady. Jakie jest prawdopodobieństwo, że wada pojawi się w ciągu kolejnych 10 kontroli? Jak częsta jest w ogóle seria 20 kontroli bez wykrycia?",
@@ -253,6 +410,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             "Łączna liczba kontroli X jest więc sumą r niezależnych zmiennych geometrycznych G₁ + G₂ + … + G_r. Średnia sumy to suma średnich, a — dla niezależnych składników — wariancja sumy to suma wariancji. Ze wzoru (5.3) dostajemy od razu:"
           ),
           d5p_sum_ui,  # PROTOTYP P5
+          d5b_p5_ui,
           risk_formula("E(X)=\\frac{r}{p},\\qquad \\operatorname{Var}(X)=\\frac{r(1-p)}{p^{2}}", num = "5.5",
             legend = c("r" = "liczba wykryć, na którą czekamy", "p" = "prawdopodobieństwo wykrycia w jednej kontroli")),
           "Dla audytu Bananpolu (r = 3, p = 0.10): E(X) = 30 kontroli, Var(X) = 270, odchylenie standardowe około 16.4 kontroli. Rozrzut względem średniej jest mniejszy niż w rozkładzie geometrycznym — dodawanie niezależnych oczekiwań częściowo uśrednia pecha i szczęście — ale wciąż duży."
@@ -285,8 +443,10 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             answer = "(a) około 0.005; (b) około 0.024. Nawet wartość równa średniej ma małe prawdopodobieństwo — rozkład rozciąga się na kilkadziesiąt możliwych wartości."
           ),
           d5p_arr_ui,  # PROTOTYP P6
+          d5b_p6_ui,
           risk_try("ustaw r = 1 i porównaj wykres z histogramem z rozdziału o pierwszym wykryciu. Potem zwiększaj r do 10 przy stałym p i obserwuj, jak przesuwa się szczyt i zmienia symetria."),
           risk_widget_panel("Rozkład", "Łączna liczba kontroli", tagList(lc_slider("d5_p", "p wykrycia", .01, .5, .1, .01), lc_slider("d5_r", "r", 1, 10, 3, 1)), "d5_nb", "d5_nb_stats"),
+          d5b_p7_ui,
           c(
             "Dla r = 3 i p = 0.10 najwyższe słupki stoją przy 20 i 21 kontrolach, mediana wynosi 27, a średnia 30. Trzy różne „środki” rozkładu leżą w różnych miejscach, bo rozkład jest prawostronnie skośny. W miarę wzrostu r skośność maleje, a kształt coraz bardziej przypomina dzwon — to zapowiedź rozkładu normalnego z następnego wykładu."
           ),
@@ -334,6 +494,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         formula = "E(X)=\\frac{r}{p}",
         body = list(
           d5p_branches_ui,  # PROTOTYP P8
+          d5b_p8_ui,
           c(
             "Pytanie planisty brzmi: jakie jest prawdopodobieństwo, że audyt skończy się najpóźniej w n-tej kontroli? Można by sumować wzór (5.6) od r do n, ale istnieje krótsza droga, która łączy ten wykład z poprzednim.",
             "Audyt kończy się najpóźniej w n-tej kontroli wtedy i tylko wtedy, gdy w pierwszych n kontrolach znaleziono co najmniej r wad. To dwa opisy tego samego zdarzenia: jeden w języku reguły „do r-tego sukcesu”, drugi w języku reguły „n prób”."
@@ -341,6 +502,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           risk_formula("P(X\\le n)=P(Y_n\\ge r),\\qquad Y_n\\sim B(n,p)", num = "5.7",
             legend = c("X" = "łączna liczba kontroli do r-tego wykrycia", "Y_n" = "liczba wykryć w pierwszych n kontrolach")),
           d5p_cut_ui,  # PROTOTYP P9
+          d5b_p9_ui,
           risk_example("5.6", "Czy średnia wystarczy jako limit?",
             problem = "Przy p = 0.10 i r = 3 oblicz prawdopodobieństwo ukończenia audytu w limicie 30 kontroli, czyli limicie równym średniej.",
             steps = c(
@@ -375,7 +537,8 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
         text = "Wynik tego rachunku trafia do jednego dokumentu: planu audytu. Dobry plan nie obiecuje, że audyt się uda — podaje, z jakim prawdopodobieństwem uda się w ramach przyznanych zasobów, i co się stanie, jeśli limit zostanie osiągnięty bez ukończenia celu. Ta ostatnia pozycja jest najczęściej pomijana, a to ona decyduje, czy przekroczenie limitu będzie kontrolowaną decyzją, czy improwizacją.",
         bullets = c("cel r i definicja wykrycia", "p i jego źródło", "limit zasobów", "P(ukończenia przed limitem)", "reakcja, gdy limit zostanie przekroczony"),
         body = list("Wybór poziomu α nie jest decyzją statystyczną. Wyższy poziom kosztuje: z 90% na 95% limit rośnie z 52 do 61 kontroli, a z 95% na 99% — do 81. Rachunek pokazuje koszt każdego punktu procentowego pewności; to, ile pewności się opłaca, zależy od konsekwencji niedokończonego audytu.",
-          d5p_cost_ui),  # PROTOTYP P10
+          d5p_cost_ui,  # PROTOTYP P10
+          d5b_p10_ui),
         decision = "Planuj na podstawie prawdopodobieństwa ukończenia lub kwantyla, a nie tylko średniej; oddziel oczekiwaną liczbę kontroli od bezpiecznego zapasu planistycznego."
       )
     )
@@ -405,6 +568,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             note = "p każdej partii losujemy z rozkładu normalnego o tym odchyleniu i ograniczamy do przedziału [0.005; 0.95]."),
           "Przy rosnącym odchyleniu histogram „zmiennego p” wyraźnie wyciąga się w prawo, a średnia symulowana rośnie. Szczególnie groźne są partie o bardzo małym p: przy p = 0.02 średni czas do trzech wad to 150 kontroli. Kilka takich partii wystarczy, by plan oparty na stałym p stał się fikcją.",
           d5p_suppliers_ui,  # PROTOTYP P11
+          d5b_p11_ui,
           risk_check("d5_chk_mix",
             "Średnie p w dwóch rodzajach partii wynosi 0.10. Średni czas do trzeciej wady w mieszance jest…",
             c("równy 30, bo średnie p się nie zmieniło" = "equal", "większy niż 30" = "greater", "mniejszy niż 30" = "smaller"),
@@ -439,7 +603,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           "Gdy czekamy na r-te zdarzenie, liczba prób jest sumą r niezależnych czasów geometrycznych i ma rozkład ujemny dwumianowy (5.6) o średniej r/p. Tożsamość (5.7) łączy go z rozkładem dwumianowym i pozwala policzyć prawdopodobieństwo ukończenia w limicie. Plan zasobów opieramy na kwantylu, a nie na średniej, i zawsze nazywamy parametryzację używaną w oprogramowaniu.",
           "Wszystkie te wyniki zależą od stałego p i niezależności prób. Zmienność p między partiami wydłuża średni czas i poszerza ogon — dokładnie tam, gdzie leży limit planistyczny."
         ),
-        body = list(d5p_close_ui)  # PROTOTYP P12
+        body = list(d5p_close_ui, d5b_p12_ui)  # PROTOTYP P12
       ),
       list(
         id = "sciaga", title = "Ściąga",
@@ -533,4 +697,5 @@ dozd_server <- function(input, output, session) {
   d5p_suma_server(input, output, session)
   d5p_oddzialy_server(input, output, session)
   d5p_plan_server(input, output, session)
+  d5b_server(input, output, session)
 }
