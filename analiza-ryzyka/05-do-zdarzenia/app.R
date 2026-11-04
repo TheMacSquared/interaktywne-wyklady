@@ -65,6 +65,19 @@ ui <- lecture_page(
   chapters = .chapters,
   # Chart.js dla punktów stop P7 (nb_chart.js) i „Limit, średnia i rezerwa” (plan_chart.js)
   header_extras = tagList(
+    # Zapisy matematyczne w zwykłym tekście (\\( … \\) w akapicie albo punkcie listy)
+    # dostają jasne tło z ramką, jak w wykładzie 04. Wzory numerowane stoją w <div>.
+    tags$style(HTML("
+      :is(p, li) > .MathJax {
+        background: var(--upwr-surface);
+        border: 1px solid var(--upwr-rule);
+        border-radius: 4px;
+        padding: .05em .35em;
+        margin: 0 .1em;
+      }
+      /* Ramki rozpychają wyjustowany tekst, więc akapity z matematyką wyrównujemy do lewej. */
+      :is(p, li):has(> .MathJax) { text-align: left; }
+    ")),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
     includeScript(file.path(app_dir, "modules", "nb_chart.js")),
