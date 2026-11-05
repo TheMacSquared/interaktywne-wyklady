@@ -49,7 +49,7 @@ lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
 # Prototypy punktów stop (2026-10-29): przed rozdziałami, bo ich UI wstawiamy w tekst.
-for (.f in c("common", paste0("ch", 1:6), "ch2_var", "ch5_z", "ch5_calc")) {
+for (.f in c("common", paste0("ch", 1:6), "ch2_var", "ch5_z", "ch5_calc", "ec")) {
   source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
 }
 source(file.path(app_dir, "modules", "ch1_most.R"),      local = TRUE)
@@ -74,9 +74,8 @@ ui <- lecture_page(
   lecture_title = "Rozkłady prawdopodobieństwa",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  # Wykresy JS: Chart.js i ECharts (migracja; ECharts od Ryc. 4.3); sceny w scenes.js / scenes.css
+  # Wykresy JS w ECharts (lc_charts.js); sceny w scenes.js / scenes.css
   header_extras = tagList(
-    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
@@ -87,6 +86,12 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "duel_chart.js")),
     includeScript(file.path(app_dir, "modules", "zscore_chart.js")),
     includeScript(file.path(app_dir, "modules", "cases_chart.js")),
+    # Prototypy E1–E2: możliwości ECharts (mapa zbieżności, zaznaczanie przedziału)
+    includeScript(file.path(app_dir, "modules", "ec_proto.js")),
+    # Quiz: przykładowa realizacja po odpowiedzi (histogram i rozkład teoretyczny)
+    includeScript(file.path(app_dir, "modules", "quiz_chart.js")),
+    s3p_ec_css,
+    s3p_4ax_css,
     s3p_54_css,
     includeScript(file.path(app_dir, "modules", "experiment.js")),
     # Sceny „od intuicji do formalizmu” (PROTOTYPY 2026-10-08)
@@ -140,7 +145,14 @@ ui <- lecture_page(
     tags$style(HTML("
       .lc-cdf { container-type: inline-size; }
       .lc-area-canvas { position: relative; aspect-ratio: 2.2 / 1; touch-action: none; }
-      .lc-area-canvas > canvas, .lc-area-canvas > .lc-ec { position: absolute; inset: 0; }
+      .lc-area-canvas > canvas { position: absolute; inset: 0; }
+      /* Wykresy ECharts wypełniają kontener z aspect-ratio (wszystkie mają position: relative). */
+      .lc-ec { position: absolute; inset: 0; }
+      .lc-quizex { margin: .8em 0 1em; }
+      .lc-quizex-sample { margin: .3em 0 0; color: var(--upwr-ink-soft); }
+      .lc-quizex-sample span { font-family: var(--upwr-mono); color: var(--upwr-ink); }
+      .lc-quizex-canvas { position: relative; aspect-ratio: 2.4 / 1; margin-top: .4em; }
+      @media (max-width: 640px) { .lc-quizex-canvas { aspect-ratio: 1.3 / 1; } }
       .lc-area[data-lc-chart-large='true'] .lc-area-canvas { aspect-ratio: 1.65 / 1; }
       @media (max-width: 640px) {
         .lc-area-canvas { aspect-ratio: 1.4 / 1; }

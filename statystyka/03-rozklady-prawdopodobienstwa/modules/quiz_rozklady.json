@@ -4,355 +4,678 @@
       "id": 1,
       "question": "Liczba orłów w 10 rzutach monetą",
       "correct": "dwumianowy",
-      "explanation": "Rzut monetą to doświadczenie Bernoulliego (sukces/porażka). Liczba sukcesów w n próbach ma rozkład dwumianowy B(n,p). Tu: n=10, p=0.5."
+      "explanation": "Rzut monetą to doświadczenie Bernoulliego (sukces/porażka). Liczba sukcesów w n próbach ma rozkład dwumianowy B(n,p). Tu: n=10, p=0.5.",
+      "example": {
+        "dist": "binom",
+        "n": 10,
+        "p": 0.5,
+        "x": "Liczba orłów w 10 rzutach"
+      }
     },
     {
       "id": 2,
       "question": "Liczba usterek w metrze bieżącym kabla",
       "correct": "poissona",
-      "explanation": "Rozkład Poissona modeluje liczbę zdarzeń w stałym przedziale (czasu/przestrzeni), gdy zdarzenia występują ze stałą średnią częstością (λ), niezależnie od siebie i bez górnego ograniczenia. Usterki spełniają te założenia."
+      "explanation": "Rozkład Poissona modeluje liczbę zdarzeń w stałym przedziale (czasu/przestrzeni), gdy zdarzenia występują ze stałą średnią częstością (λ), niezależnie od siebie i bez górnego ograniczenia. Usterki spełniają te założenia.",
+      "example": {
+        "dist": "pois",
+        "lambda": 2,
+        "x": "Usterki w metrze kabla"
+      }
     },
     {
       "id": 3,
       "question": "Wzrost dorosłych mężczyzn w populacji",
       "correct": "normalny",
-      "explanation": "Cechy biologiczne w dużych populacjach mają rozkład normalny (Centralne Twierdzenie Graniczne). Wzrost jest sumą wielu czynników genetycznych i środowiskowych."
+      "explanation": "Cechy biologiczne w dużych populacjach mają rozkład normalny (Centralne Twierdzenie Graniczne). Wzrost jest sumą wielu czynników genetycznych i środowiskowych.",
+      "example": {
+        "dist": "norm",
+        "mean": 178,
+        "sd": 7,
+        "x": "Wzrost mężczyzny (cm)"
+      }
     },
     {
       "id": 4,
       "question": "Liczba sześćek w 20 rzutach kostką",
       "correct": "dwumianowy",
-      "explanation": "Każdy rzut: sukces (6) lub porażka (1-5) z prawdopodobieństwem p=1/6. To schemat Bernoulliego, więc liczba sześćek ~ B(20, 1/6)."
+      "explanation": "Każdy rzut: sukces (6) lub porażka (1-5) z prawdopodobieństwem p=1/6. To schemat Bernoulliego, więc liczba sześćek ~ B(20, 1/6).",
+      "example": {
+        "dist": "binom",
+        "n": 20,
+        "p": 0.166667,
+        "x": "Liczba szóstek w 20 rzutach"
+      }
     },
     {
       "id": 5,
       "question": "Liczba zgłoszeń na infolinię w ciągu godziny",
       "correct": "poissona",
-      "explanation": "Zgłoszenia przychodzą ze stałą średnią częstością (λ zgłoszeń/godz), niezależnie od siebie, bez górnego limitu. To klasyczne założenia Poissona: zdarzenia w stałym czasie ze znaną λ."
+      "explanation": "Zgłoszenia przychodzą ze stałą średnią częstością (λ zgłoszeń/godz), niezależnie od siebie, bez górnego limitu. To klasyczne założenia Poissona: zdarzenia w stałym czasie ze znaną λ.",
+      "example": {
+        "dist": "pois",
+        "lambda": 12,
+        "x": "Zgłoszenia w ciągu godziny"
+      }
     },
     {
       "id": 6,
       "question": "Wynik testu IQ w populacji",
       "correct": "normalny",
-      "explanation": "Testy IQ są skonstruowane tak, by mieć rozkład normalny z średnią 100 i odchyleniem standardowym 15. To założenie projektowe."
+      "explanation": "Testy IQ są skonstruowane tak, by mieć rozkład normalny z średnią 100 i odchyleniem standardowym 15. To założenie projektowe.",
+      "example": {
+        "dist": "norm",
+        "mean": 100,
+        "sd": 15,
+        "x": "Wynik IQ"
+      }
     },
     {
       "id": 7,
       "question": "Liczba poprawnych odpowiedzi w teście z 30 pytań (prawda/fałsz), zgadywanie losowe",
       "correct": "dwumianowy",
-      "explanation": "Każda odpowiedź: sukces (poprawna) z p=0.5 lub porażka. Niezależne próby Bernoulliego, więc liczba poprawnych ~ B(30, 0.5)."
+      "explanation": "Każda odpowiedź: sukces (poprawna) z p=0.5 lub porażka. Niezależne próby Bernoulliego, więc liczba poprawnych ~ B(30, 0.5).",
+      "example": {
+        "dist": "binom",
+        "n": 30,
+        "p": 0.5,
+        "x": "Poprawne odpowiedzi z 30"
+      }
     },
     {
       "id": 8,
       "question": "Liczba wypadków drogowych na skrzyżowaniu w ciągu tygodnia",
       "correct": "poissona",
-      "explanation": "Wypadki zachodzą ze stałą średnią częstością (λ wypadków/tydzień), niezależnie od siebie, w każdym momencie z równym prawdopodobieństwem. Teoretycznie bez górnego limitu. To Poisson."
+      "explanation": "Wypadki zachodzą ze stałą średnią częstością (λ wypadków/tydzień), niezależnie od siebie, w każdym momencie z równym prawdopodobieństwem. Teoretycznie bez górnego limitu. To Poisson.",
+      "example": {
+        "dist": "pois",
+        "lambda": 1.5,
+        "x": "Wypadki w tygodniu"
+      }
     },
     {
       "id": 9,
       "question": "Błąd pomiaru masy w laboratorium",
       "correct": "normalny",
-      "explanation": "Błędy pomiarowe są sumą wielu małych losowych czynników. Centralne Twierdzenie Graniczne mówi, że taka suma ma rozkład normalny."
+      "explanation": "Błędy pomiarowe są sumą wielu małych losowych czynników. Centralne Twierdzenie Graniczne mówi, że taka suma ma rozkład normalny.",
+      "example": {
+        "dist": "norm",
+        "mean": 0,
+        "sd": 0.2,
+        "x": "Błąd pomiaru masy (mg)"
+      }
     },
     {
       "id": 10,
       "question": "Liczba ósemek wylosowanych z talii 52 kart (losowanie ze zwracaniem, 10 razy)",
       "correct": "dwumianowy",
-      "explanation": "Każde losowanie: sukces (ósemka) z p=4/52=1/13. Ze zwracaniem = niezależne próby Bernoulliego, liczba ósemek ~ B(10, 1/13)."
+      "explanation": "Każde losowanie: sukces (ósemka) z p=4/52=1/13. Ze zwracaniem = niezależne próby Bernoulliego, liczba ósemek ~ B(10, 1/13).",
+      "example": {
+        "dist": "binom",
+        "n": 10,
+        "p": 0.076923,
+        "x": "Liczba ósemek w 10 losowaniach"
+      }
     },
     {
       "id": 11,
       "question": "Liczba literówek na stronie książki",
       "correct": "poissona",
-      "explanation": "Literówki występują ze stałą średnią częstością (λ literówek/stronę), niezależnie od siebie, w dowolnym miejscu tekstu. Brak górnego ograniczenia. Rozkład Poissona."
+      "explanation": "Literówki występują ze stałą średnią częstością (λ literówek/stronę), niezależnie od siebie, w dowolnym miejscu tekstu. Brak górnego ograniczenia. Rozkład Poissona.",
+      "example": {
+        "dist": "pois",
+        "lambda": 0.8,
+        "x": "Literówki na stronie"
+      }
     },
     {
       "id": 12,
       "question": "Temperatura powietrza w południe (w stałej lokalizacji, w tym samym miesiącu różnych lat)",
       "correct": "normalny",
-      "explanation": "Temperatura jest wypadkową wielu czynników atmosferycznych. W dłuższym okresie (np. 30 lat) ma rozkład zbliżony do normalnego."
+      "explanation": "Temperatura jest wypadkową wielu czynników atmosferycznych. W dłuższym okresie (np. 30 lat) ma rozkład zbliżony do normalnego.",
+      "example": {
+        "dist": "norm",
+        "mean": 22,
+        "sd": 3,
+        "x": "Temperatura w południe (°C)"
+      }
     },
     {
       "id": 13,
       "question": "Liczba sukcesów w 15 próbach, gdy P(sukces)=0.3",
       "correct": "dwumianowy",
-      "explanation": "Schemat Bernoulliego: n=15 niezależnych prób z prawdopodobieństwem sukcesu p=0.3. Liczba sukcesów ~ B(15, 0.3)."
+      "explanation": "Schemat Bernoulliego: n=15 niezależnych prób z prawdopodobieństwem sukcesu p=0.3. Liczba sukcesów ~ B(15, 0.3).",
+      "example": {
+        "dist": "binom",
+        "n": 15,
+        "p": 0.3,
+        "x": "Liczba sukcesów w 15 próbach"
+      }
     },
     {
       "id": 14,
       "question": "Liczba błędów w 1000 liniach kodu programu",
       "correct": "poissona",
-      "explanation": "Błędy występują ze stałą średnią częstością (λ błędów/1000 linii), niezależnie od siebie, w dowolnym miejscu kodu. Brak górnego limitu (nie ma ustalonej liczby prób jak w dwumianowym). To Poisson."
+      "explanation": "Błędy występują ze stałą średnią częstością (λ błędów/1000 linii), niezależnie od siebie, w dowolnym miejscu kodu. Brak górnego limitu (nie ma ustalonej liczby prób jak w dwumianowym). To Poisson.",
+      "example": {
+        "dist": "pois",
+        "lambda": 15,
+        "x": "Błędy w 1000 liniach kodu"
+      }
     },
     {
       "id": 15,
       "question": "Średnia ocen ze egzaminu w dużej grupie studentów",
       "correct": "normalny",
-      "explanation": "Dla dużej grupy (n>30) średnia z dowolnego rozkładu ma rozkład zbliżony do normalnego (Centralne Twierdzenie Graniczne)."
+      "explanation": "Dla dużej grupy (n>30) średnia z dowolnego rozkładu ma rozkład zbliżony do normalnego (Centralne Twierdzenie Graniczne).",
+      "example": {
+        "dist": "norm",
+        "mean": 3.8,
+        "sd": 0.15,
+        "x": "Średnia ocen w grupie"
+      }
     },
     {
       "id": 16,
       "question": "Liczba defektów w partii 100 sztuk, gdy p(defekt)=0.05",
       "correct": "dwumianowy",
-      "explanation": "Każda sztuka: defekt (sukces) lub nie (porażka) z p=0.05. Niezależne kontrole 100 sztuk ~ B(100, 0.05). (Uwaga: przy małym p można aproksymować Poissonem)"
+      "explanation": "Każda sztuka: defekt (sukces) lub nie (porażka) z p=0.05. Niezależne kontrole 100 sztuk ~ B(100, 0.05). (Uwaga: przy małym p można aproksymować Poissonem)",
+      "example": {
+        "dist": "binom",
+        "n": 100,
+        "p": 0.05,
+        "x": "Defekty w partii 100 sztuk"
+      }
     },
     {
       "id": 17,
       "question": "Liczba klientów wchodzących do sklepu w ciągu 10 minut",
       "correct": "poissona",
-      "explanation": "Klienci przychodzą ze stałą średnią częstością (λ klientów/10 min), niezależnie od siebie, bez pamięci (każda chwila równie prawdopodobna). Brak górnego limitu. Klasyczny Poisson."
+      "explanation": "Klienci przychodzą ze stałą średnią częstością (λ klientów/10 min), niezależnie od siebie, bez pamięci (każda chwila równie prawdopodobna). Brak górnego limitu. Klasyczny Poisson.",
+      "example": {
+        "dist": "pois",
+        "lambda": 6,
+        "x": "Klienci w ciągu 10 minut"
+      }
     },
     {
       "id": 18,
       "question": "Czas życia żarówki produkowanej przez daną firmę",
       "correct": "normalny",
-      "explanation": "Czas życia produktów często ma rozkład normalny (lub log-normalny). Dla żarówek standardowych rozkład normalny jest dobrym przybliżeniem."
+      "explanation": "Czas życia produktów często ma rozkład normalny (lub log-normalny). Dla żarówek standardowych rozkład normalny jest dobrym przybliżeniem.",
+      "example": {
+        "dist": "norm",
+        "mean": 1000,
+        "sd": 100,
+        "x": "Czas życia żarówki (h)"
+      }
     },
     {
       "id": 19,
       "question": "Liczba wygranych losów w loterii (30 losów, p(wygrana)=0.01)",
       "correct": "dwumianowy",
-      "explanation": "Każdy los: wygrana (p=0.01) lub przegrana. Niezależne próby ~ B(30, 0.01). (Przy małym p × dużym n można użyć aproksymacji Poissona)."
+      "explanation": "Każdy los: wygrana (p=0.01) lub przegrana. Niezależne próby ~ B(30, 0.01). (Przy małym p × dużym n można użyć aproksymacji Poissona).",
+      "example": {
+        "dist": "binom",
+        "n": 30,
+        "p": 0.01,
+        "x": "Wygrane losy z 30"
+      }
     },
     {
       "id": 20,
       "question": "Liczba połączeń telefonicznych w centrali w ciągu minuty",
       "correct": "poissona",
-      "explanation": "Połączenia przychodzą ze stałą średnią częstością (λ połączeń/min), niezależnie od siebie, w dowolnej chwili. Teoretycznie bez górnego limitu. Klasyczny Poisson w telekomunikacji."
+      "explanation": "Połączenia przychodzą ze stałą średnią częstością (λ połączeń/min), niezależnie od siebie, w dowolnej chwili. Teoretycznie bez górnego limitu. Klasyczny Poisson w telekomunikacji.",
+      "example": {
+        "dist": "pois",
+        "lambda": 4,
+        "x": "Połączenia w ciągu minuty"
+      }
     },
     {
       "id": 21,
       "question": "Waga jabłek w skrzynce (średnia 150g)",
       "correct": "normalny",
-      "explanation": "Waga owoców jest zmienną ciągłą zależną od wielu czynników (genetyka, warunki wzrostu). W dużej partii ma rozkład normalny."
+      "explanation": "Waga owoców jest zmienną ciągłą zależną od wielu czynników (genetyka, warunki wzrostu). W dużej partii ma rozkład normalny.",
+      "example": {
+        "dist": "norm",
+        "mean": 150,
+        "sd": 20,
+        "x": "Masa jabłka (g)"
+      }
     },
     {
       "id": 22,
       "question": "Liczba awarii serwera w ciągu miesiąca (średnio 3 awarie/miesiąc)",
       "correct": "poissona",
-      "explanation": "Awarie występują ze stałą średnią częstością (λ=3/miesiąc), niezależnie od siebie, w dowolnym momencie z równym prawdopodobieństwem. Brak górnego ograniczenia. Rozkład Poissona."
+      "explanation": "Awarie występują ze stałą średnią częstością (λ=3/miesiąc), niezależnie od siebie, w dowolnym momencie z równym prawdopodobieństwem. Brak górnego ograniczenia. Rozkład Poissona.",
+      "example": {
+        "dist": "pois",
+        "lambda": 3,
+        "x": "Awarie serwera w miesiącu"
+      }
     },
     {
       "id": 23,
       "question": "Liczba głów w 50 rzutach monetą",
       "correct": "dwumianowy",
-      "explanation": "Rzut monetą: głowa (sukces) z p=0.5. Liczba głów w n=50 rzutach ~ B(50, 0.5)."
+      "explanation": "Rzut monetą: głowa (sukces) z p=0.5. Liczba głów w n=50 rzutach ~ B(50, 0.5).",
+      "example": {
+        "dist": "binom",
+        "n": 50,
+        "p": 0.5,
+        "x": "Liczba głów w 50 rzutach"
+      }
     },
     {
       "id": 24,
       "question": "Ciśnienie krwi skurczowe w populacji dorosłych",
       "correct": "normalny",
-      "explanation": "Parametry fizjologiczne w dużych populacjach mają zazwyczaj rozkład normalny. Ciśnienie skurczowe też ma rozkład zbliżony do normalnego."
+      "explanation": "Parametry fizjologiczne w dużych populacjach mają zazwyczaj rozkład normalny. Ciśnienie skurczowe też ma rozkład zbliżony do normalnego.",
+      "example": {
+        "dist": "norm",
+        "mean": 125,
+        "sd": 15,
+        "x": "Ciśnienie skurczowe (mmHg)"
+      }
     },
     {
       "id": 25,
       "question": "Liczba bakterii na płytce Petriego (gdy średnio jest 20 kolonii)",
       "correct": "poissona",
-      "explanation": "Kolonie pojawiają się ze stałą średnią częstością (λ=20 kolonii/płytka), niezależnie od siebie, w dowolnym miejscu płytki. Brak górnego limitu liczby kolonii. Rozkład Poissona."
+      "explanation": "Kolonie pojawiają się ze stałą średnią częstością (λ=20 kolonii/płytka), niezależnie od siebie, w dowolnym miejscu płytki. Brak górnego limitu liczby kolonii. Rozkład Poissona.",
+      "example": {
+        "dist": "pois",
+        "lambda": 20,
+        "x": "Kolonie bakterii na płytce"
+      }
     },
     {
       "id": 26,
       "question": "Liczba studentów zdających egzamin (80 osób pisze, każdy p(zdał)=0.7)",
       "correct": "dwumianowy",
-      "explanation": "Każdy student: zdał (sukces) z p=0.7 lub nie. Zakładając niezależność (brak ściągania), liczba zdających ~ B(80, 0.7)."
+      "explanation": "Każdy student: zdał (sukces) z p=0.7 lub nie. Zakładając niezależność (brak ściągania), liczba zdających ~ B(80, 0.7).",
+      "example": {
+        "dist": "binom",
+        "n": 80,
+        "p": 0.7,
+        "x": "Zdający spośród 80 osób"
+      }
     },
     {
       "id": 27,
       "question": "Liczba meteorów obserwowanych w nocy (średnio 5/godzinę)",
       "correct": "poissona",
-      "explanation": "Meteory pojawiają się ze stałą średnią częstością (λ=5/godz), niezależnie od siebie, w dowolnej chwili z równym prawdopodobieństwem. Brak górnego limitu. Rozkład Poissona."
+      "explanation": "Meteory pojawiają się ze stałą średnią częstością (λ=5/godz), niezależnie od siebie, w dowolnej chwili z równym prawdopodobieństwem. Brak górnego limitu. Rozkład Poissona.",
+      "example": {
+        "dist": "pois",
+        "lambda": 5,
+        "x": "Meteory w ciągu godziny"
+      }
     },
     {
       "id": 29,
       "question": "Czas przygotowania kawy w kawiarni (średnio 3 min z małymi odchyleniami)",
       "correct": "normalny",
-      "explanation": "Czas przygotowania kawy zależy od wielu drobnych czynników (ilość mleka, temperatura, barista), które sumują się dając rozkład zbliżony do normalnego — symetryczny wokół średniej."
+      "explanation": "Czas przygotowania kawy zależy od wielu drobnych czynników (ilość mleka, temperatura, barista), które sumują się dając rozkład zbliżony do normalnego — symetryczny wokół średniej.",
+      "example": {
+        "dist": "norm",
+        "mean": 3,
+        "sd": 0.4,
+        "x": "Czas przygotowania kawy (min)"
+      }
     },
     {
       "id": 30,
       "question": "Liczba wypadków przy pracy w fabryce w ciągu roku (średnio 12/rok)",
       "correct": "poissona",
-      "explanation": "Wypadki zachodzą ze stałą średnią częstością (λ=12/rok), niezależnie od siebie, w dowolnym momencie roku z równym prawdopodobieństwem. Brak górnego limitu. Rozkład Poissona."
+      "explanation": "Wypadki zachodzą ze stałą średnią częstością (λ=12/rok), niezależnie od siebie, w dowolnym momencie roku z równym prawdopodobieństwem. Brak górnego limitu. Rozkład Poissona.",
+      "example": {
+        "dist": "pois",
+        "lambda": 12,
+        "x": "Wypadki przy pracy w roku"
+      }
     },
     {
       "id": 31,
       "question": "Liczba rzutów kostką do wypadnięcia pierwszej szóstki",
       "correct": "geometryczny",
-      "explanation": "Powtarzamy niezależne próby Bernoulliego (p=1/6) aż do pierwszego sukcesu. Liczba prób do pierwszego sukcesu ma rozkład geometryczny Geom(1/6)."
+      "explanation": "Powtarzamy niezależne próby Bernoulliego (p=1/6) aż do pierwszego sukcesu. Liczba prób do pierwszego sukcesu ma rozkład geometryczny Geom(1/6).",
+      "example": {
+        "dist": "geom",
+        "p": 0.166667,
+        "x": "Rzuty do pierwszej szóstki"
+      }
     },
     {
       "id": 32,
       "question": "Liczba losowań karty do wyciągnięcia pierwszego asa (ze zwracaniem)",
       "correct": "geometryczny",
-      "explanation": "Każde losowanie to próba Bernoulliego z p=4/52. Zwracanie zapewnia niezależność prób. Liczymy próby do pierwszego sukcesu — rozkład geometryczny Geom(1/13)."
+      "explanation": "Każde losowanie to próba Bernoulliego z p=4/52. Zwracanie zapewnia niezależność prób. Liczymy próby do pierwszego sukcesu — rozkład geometryczny Geom(1/13).",
+      "example": {
+        "dist": "geom",
+        "p": 0.076923,
+        "x": "Losowania do pierwszego asa"
+      }
     },
     {
       "id": 33,
       "question": "Ile telefonów do klienta, zanim odbierze (p=0.3)",
       "correct": "geometryczny",
-      "explanation": "Każdy telefon to niezależna próba z p=0.3. Interesuje nas ile prób potrzeba do pierwszego sukcesu (odebrania) — rozkład geometryczny Geom(0.3)."
+      "explanation": "Każdy telefon to niezależna próba z p=0.3. Interesuje nas ile prób potrzeba do pierwszego sukcesu (odebrania) — rozkład geometryczny Geom(0.3).",
+      "example": {
+        "dist": "geom",
+        "p": 0.3,
+        "x": "Telefony do pierwszego odebrania"
+      }
     },
     {
       "id": 34,
       "question": "Liczba prób wpisania losowego 4-cyfrowego PIN-u do trafienia poprawnego",
       "correct": "geometryczny",
-      "explanation": "Każda próba to losowe wpisanie PIN-u z p=1/10000. Próby są niezależne, liczymy ile potrzeba do pierwszego trafienia — rozkład geometryczny Geom(1/10000)."
+      "explanation": "Każda próba to losowe wpisanie PIN-u z p=1/10000. Próby są niezależne, liczymy ile potrzeba do pierwszego trafienia — rozkład geometryczny Geom(1/10000).",
+      "example": {
+        "dist": "geom",
+        "p": 0.0001,
+        "x": "Próby do trafienia PIN-u"
+      }
     },
     {
       "id": 35,
       "question": "Ile pudełek z płatkami trzeba kupić, żeby trafić na naklejkę (p=0.1)",
       "correct": "geometryczny",
-      "explanation": "Każde pudełko to niezależna próba z p=0.1 szansy na naklejkę. Liczymy pudełka do pierwszego sukcesu — rozkład geometryczny Geom(0.1)."
+      "explanation": "Każde pudełko to niezależna próba z p=0.1 szansy na naklejkę. Liczymy pudełka do pierwszego sukcesu — rozkład geometryczny Geom(0.1).",
+      "example": {
+        "dist": "geom",
+        "p": 0.1,
+        "x": "Pudełka do pierwszej naklejki"
+      }
     },
     {
       "id": 36,
       "question": "Liczba strzałów do pierwszego trafienia w tarczę (p=0.4)",
       "correct": "geometryczny",
-      "explanation": "Każdy strzał to niezależna próba Bernoulliego z p=0.4. Interesuje nas liczba strzałów do pierwszego trafienia — rozkład geometryczny Geom(0.4)."
+      "explanation": "Każdy strzał to niezależna próba Bernoulliego z p=0.4. Interesuje nas liczba strzałów do pierwszego trafienia — rozkład geometryczny Geom(0.4).",
+      "example": {
+        "dist": "geom",
+        "p": 0.4,
+        "x": "Strzały do pierwszego trafienia"
+      }
     },
     {
       "id": 37,
       "question": "Ile razy trzeba rzucić monetą, żeby wypadł orzeł",
       "correct": "geometryczny",
-      "explanation": "Rzuty monetą to niezależne próby Bernoulliego z p=0.5. Liczymy rzuty do pierwszego orła — rozkład geometryczny Geom(0.5)."
+      "explanation": "Rzuty monetą to niezależne próby Bernoulliego z p=0.5. Liczymy rzuty do pierwszego orła — rozkład geometryczny Geom(0.5).",
+      "example": {
+        "dist": "geom",
+        "p": 0.5,
+        "x": "Rzuty do pierwszego orła"
+      }
     },
     {
       "id": 38,
       "question": "Liczba rozmów kwalifikacyjnych do otrzymania pierwszej oferty pracy (p=0.2)",
       "correct": "geometryczny",
-      "explanation": "Każda rozmowa to niezależna próba z p=0.2. Liczymy ile rozmów do pierwszej oferty — rozkład geometryczny Geom(0.2)."
+      "explanation": "Każda rozmowa to niezależna próba z p=0.2. Liczymy ile rozmów do pierwszej oferty — rozkład geometryczny Geom(0.2).",
+      "example": {
+        "dist": "geom",
+        "p": 0.2,
+        "x": "Rozmowy do pierwszej oferty"
+      }
     },
     {
       "id": 39,
       "question": "Ile pacjentów trzeba zbadać, żeby znaleźć pierwszego z rzadką chorobą (p=0.01)",
       "correct": "geometryczny",
-      "explanation": "Każde badanie to niezależna próba z p=0.01. Liczymy badania do pierwszego pozytywnego wyniku — rozkład geometryczny Geom(0.01)."
+      "explanation": "Każde badanie to niezależna próba z p=0.01. Liczymy badania do pierwszego pozytywnego wyniku — rozkład geometryczny Geom(0.01).",
+      "example": {
+        "dist": "geom",
+        "p": 0.01,
+        "x": "Pacjenci do pierwszego chorego"
+      }
     },
     {
       "id": 40,
       "question": "Liczba prób uruchomienia starego samochodu do pierwszego udanego startu (p=0.6)",
       "correct": "geometryczny",
-      "explanation": "Każda próba uruchomienia to próba Bernoulliego z p=0.6. Liczymy próby do pierwszego sukcesu — rozkład geometryczny Geom(0.6)."
+      "explanation": "Każda próba uruchomienia to próba Bernoulliego z p=0.6. Liczymy próby do pierwszego sukcesu — rozkład geometryczny Geom(0.6).",
+      "example": {
+        "dist": "geom",
+        "p": 0.6,
+        "x": "Próby do pierwszego udanego startu"
+      }
     },
     {
       "id": 41,
       "question": "Miesięczne zarobki pracowników w dużej firmie",
       "correct": "lognormalny",
-      "explanation": "Zarobki są zawsze dodatnie, większość osób zarabia blisko mediany, ale jest długi ogon bardzo wysokich płac. Logarytm zarobków ma rozkład normalny — stąd rozkład log-normalny."
+      "explanation": "Zarobki są zawsze dodatnie, większość osób zarabia blisko mediany, ale jest długi ogon bardzo wysokich płac. Logarytm zarobków ma rozkład normalny — stąd rozkład log-normalny.",
+      "example": {
+        "dist": "lnorm",
+        "median": 6000,
+        "sdlog": 0.5,
+        "x": "Miesięczne zarobki (zł)"
+      }
     },
     {
       "id": 42,
       "question": "Czas trwania sesji użytkownika na stronie internetowej",
       "correct": "lognormalny",
-      "explanation": "Czasy sesji są dodatnie, większość jest krótka, ale zdarzają się bardzo długie. Rozkład jest silnie skośny w prawo — logarytm czasu sesji ma rozkład normalny, więc czas ma rozkład log-normalny."
+      "explanation": "Czasy sesji są dodatnie, większość jest krótka, ale zdarzają się bardzo długie. Rozkład jest silnie skośny w prawo — logarytm czasu sesji ma rozkład normalny, więc czas ma rozkład log-normalny.",
+      "example": {
+        "dist": "lnorm",
+        "median": 3,
+        "sdlog": 0.9,
+        "x": "Czas sesji (min)"
+      }
     },
     {
       "id": 43,
       "question": "Wielkość plików na dysku komputera",
       "correct": "lognormalny",
-      "explanation": "Rozmiary plików są dodatnie, większość jest mała, ale zdarzają się bardzo duże pliki. Rozkład jest silnie skośny w prawo — to klasyczny przykład rozkładu log-normalnego."
+      "explanation": "Rozmiary plików są dodatnie, większość jest mała, ale zdarzają się bardzo duże pliki. Rozkład jest silnie skośny w prawo — to klasyczny przykład rozkładu log-normalnego.",
+      "example": {
+        "dist": "lnorm",
+        "median": 0.5,
+        "sdlog": 1.5,
+        "x": "Wielkość pliku (MB)"
+      }
     },
     {
       "id": 44,
       "question": "Stężenie zanieczyszczeń w powietrzu (pomiary dobowe)",
       "correct": "lognormalny",
-      "explanation": "Stężenia są zawsze dodatnie, większość dni ma niskie wartości, ale zdarzają się dni z bardzo wysokim zanieczyszczeniem. Logarytm stężeń ma rozkład normalny — rozkład log-normalny."
+      "explanation": "Stężenia są zawsze dodatnie, większość dni ma niskie wartości, ale zdarzają się dni z bardzo wysokim zanieczyszczeniem. Logarytm stężeń ma rozkład normalny — rozkład log-normalny.",
+      "example": {
+        "dist": "lnorm",
+        "median": 30,
+        "sdlog": 0.5,
+        "x": "Stężenie PM10 (µg/m³)"
+      }
     },
     {
       "id": 45,
       "question": "Cena akcji spółki giełdowej",
       "correct": "lognormalny",
-      "explanation": "Ceny akcji są zawsze dodatnie. Model geometrycznego ruchu Browna zakłada, że logarytmiczne stopy zwrotu mają rozkład normalny, co oznacza, że same ceny mają rozkład log-normalny."
+      "explanation": "Ceny akcji są zawsze dodatnie. Model geometrycznego ruchu Browna zakłada, że logarytmiczne stopy zwrotu mają rozkład normalny, co oznacza, że same ceny mają rozkład log-normalny.",
+      "example": {
+        "dist": "lnorm",
+        "median": 50,
+        "sdlog": 0.3,
+        "x": "Cena akcji (zł)"
+      }
     },
     {
       "id": 46,
       "question": "Czas naprawy awarii sprzętu w serwisie",
       "correct": "lognormalny",
-      "explanation": "Czasy napraw są dodatnie, większość napraw jest szybka, ale zdarzają się bardzo długie. Rozkład jest skośny w prawo — logarytm czasu naprawy ma rozkład normalny, więc czas ma rozkład log-normalny."
+      "explanation": "Czasy napraw są dodatnie, większość napraw jest szybka, ale zdarzają się bardzo długie. Rozkład jest skośny w prawo — logarytm czasu naprawy ma rozkład normalny, więc czas ma rozkład log-normalny.",
+      "example": {
+        "dist": "lnorm",
+        "median": 4,
+        "sdlog": 0.7,
+        "x": "Czas naprawy (h)"
+      }
     },
     {
       "id": 47,
       "question": "Powierzchnia mieszkań w dużym mieście",
       "correct": "lognormalny",
-      "explanation": "Powierzchnie są dodatnie, większość mieszkań ma podobny metraż, ale zdarzają się bardzo duże apartamenty. Rozkład jest skośny w prawo — to rozkład log-normalny."
+      "explanation": "Powierzchnie są dodatnie, większość mieszkań ma podobny metraż, ale zdarzają się bardzo duże apartamenty. Rozkład jest skośny w prawo — to rozkład log-normalny.",
+      "example": {
+        "dist": "lnorm",
+        "median": 55,
+        "sdlog": 0.35,
+        "x": "Powierzchnia mieszkania (m²)"
+      }
     },
     {
       "id": 48,
       "question": "Masa cząstek aerozolu w atmosferze",
       "correct": "lognormalny",
-      "explanation": "Rozmiary i masy cząstek aerozolu są dodatnie i mają rozkład silnie skośny w prawo. W fizyce atmosfery modeluje się je rozkładem log-normalnym."
+      "explanation": "Rozmiary i masy cząstek aerozolu są dodatnie i mają rozkład silnie skośny w prawo. W fizyce atmosfery modeluje się je rozkładem log-normalnym.",
+      "example": {
+        "dist": "lnorm",
+        "median": 1,
+        "sdlog": 1,
+        "x": "Masa cząstki aerozolu (pg)"
+      }
     },
     {
       "id": 49,
       "question": "Czas od zakażenia do wystąpienia objawów choroby (okres inkubacji)",
       "correct": "lognormalny",
-      "explanation": "Okres inkubacji jest zawsze dodatni, większość osób zachoruje w podobnym czasie, ale u niektórych objawy pojawią się znacznie później. W epidemiologii modeluje się go rozkładem log-normalnym."
+      "explanation": "Okres inkubacji jest zawsze dodatni, większość osób zachoruje w podobnym czasie, ale u niektórych objawy pojawią się znacznie później. W epidemiologii modeluje się go rozkładem log-normalnym.",
+      "example": {
+        "dist": "lnorm",
+        "median": 5,
+        "sdlog": 0.4,
+        "x": "Okres inkubacji (dni)"
+      }
     },
     {
       "id": 50,
       "question": "Wielkość odszkodowań wypłacanych przez firmę ubezpieczeniową",
       "correct": "lognormalny",
-      "explanation": "Odszkodowania są dodatnie, większość jest niewielka, ale zdarzają się bardzo duże wypłaty. Rozkład jest silnie skośny w prawo — w aktuariacie modeluje się to rozkładem log-normalnym."
+      "explanation": "Odszkodowania są dodatnie, większość jest niewielka, ale zdarzają się bardzo duże wypłaty. Rozkład jest silnie skośny w prawo — w aktuariacie modeluje się to rozkładem log-normalnym.",
+      "example": {
+        "dist": "lnorm",
+        "median": 8,
+        "sdlog": 1,
+        "x": "Wysokość odszkodowania (tys. zł)"
+      }
     },
     {
       "id": 51,
       "question": "Czas oczekiwania na następną wiadomość na grupowym czacie, gdy wiadomości przychodzą losowo (średnio co 10 min)",
       "correct": "wykladniczy",
-      "explanation": "Wiadomości na czacie przychodzą losowo ze stałą średnią częstością (proces Poissona), więc czas między kolejnymi wiadomościami ma rozkład wykładniczy. Kluczowa cecha: brak pamięci — nie ma znaczenia, ile już czekasz."
+      "explanation": "Wiadomości na czacie przychodzą losowo ze stałą średnią częstością (proces Poissona), więc czas między kolejnymi wiadomościami ma rozkład wykładniczy. Kluczowa cecha: brak pamięci — nie ma znaczenia, ile już czekasz.",
+      "example": {
+        "dist": "exp",
+        "mean": 10,
+        "x": "Czas do następnej wiadomości (min)"
+      }
     },
     {
       "id": 52,
       "question": "Czas między kolejnymi zgłoszeniami na infolinię",
       "correct": "wykladniczy",
-      "explanation": "Zgłoszenia przychodzą jako proces Poissona (ze stałą λ). Czas między kolejnymi zgłoszeniami ma rozkład wykładniczy Exp(λ). To naturalny partner rozkładu Poissona."
+      "explanation": "Zgłoszenia przychodzą jako proces Poissona (ze stałą λ). Czas między kolejnymi zgłoszeniami ma rozkład wykładniczy Exp(λ). To naturalny partner rozkładu Poissona.",
+      "example": {
+        "dist": "exp",
+        "mean": 5,
+        "x": "Czas między zgłoszeniami (min)"
+      }
     },
     {
       "id": 53,
       "question": "Czas do pierwszej awarii nowego serwera",
       "correct": "wykladniczy",
-      "explanation": "Przy założeniu stałej intensywności awarii (brak starzenia się), czas do awarii ma rozkład wykładniczy. Cecha braku pamięci: prawdopodobieństwo awarii w następnej godzinie nie zależy od tego, ile serwer już działa."
+      "explanation": "Przy założeniu stałej intensywności awarii (brak starzenia się), czas do awarii ma rozkład wykładniczy. Cecha braku pamięci: prawdopodobieństwo awarii w następnej godzinie nie zależy od tego, ile serwer już działa.",
+      "example": {
+        "dist": "exp",
+        "mean": 365,
+        "x": "Czas do pierwszej awarii (dni)"
+      }
     },
     {
       "id": 54,
       "question": "Czas między kolejnymi trzęsieniami ziemi w danym regionie",
       "correct": "wykladniczy",
-      "explanation": "Trzęsienia ziemi zachodzą losowo ze stałą średnią częstością. Czas między nimi ma rozkład wykładniczy — każda chwila jest równie prawdopodobna, niezależnie od tego, kiedy było ostatnie trzęsienie."
+      "explanation": "Trzęsienia ziemi zachodzą losowo ze stałą średnią częstością. Czas między nimi ma rozkład wykładniczy — każda chwila jest równie prawdopodobna, niezależnie od tego, kiedy było ostatnie trzęsienie.",
+      "example": {
+        "dist": "exp",
+        "mean": 15,
+        "x": "Czas między trzęsieniami ziemi (lata)"
+      }
     },
     {
       "id": 55,
       "question": "Czas między kolejnymi klientami wchodzącymi do sklepu",
       "correct": "wykladniczy",
-      "explanation": "Klienci przychodzą jako proces Poissona. Czas między kolejnymi klientami ma rozkład wykładniczy Exp(λ). Poisson liczy zdarzenia w przedziale czasu, wykładniczy mierzy czas między zdarzeniami."
+      "explanation": "Klienci przychodzą jako proces Poissona. Czas między kolejnymi klientami ma rozkład wykładniczy Exp(λ). Poisson liczy zdarzenia w przedziale czasu, wykładniczy mierzy czas między zdarzeniami.",
+      "example": {
+        "dist": "exp",
+        "mean": 2,
+        "x": "Czas między klientami (min)"
+      }
     },
     {
       "id": 56,
       "question": "Czas do rozpadu pojedynczego atomu promieniotwórczego",
       "correct": "wykladniczy",
-      "explanation": "Rozpad promieniotwórczy to klasyczny proces bezpamięciowy — prawdopodobieństwo rozpadu w następnej sekundzie nie zależy od tego, ile atom już istnieje. Czas do rozpadu ma rozkład wykładniczy."
+      "explanation": "Rozpad promieniotwórczy to klasyczny proces bezpamięciowy — prawdopodobieństwo rozpadu w następnej sekundzie nie zależy od tego, ile atom już istnieje. Czas do rozpadu ma rozkład wykładniczy.",
+      "example": {
+        "dist": "exp",
+        "mean": 8,
+        "x": "Czas do rozpadu atomu (h)"
+      }
     },
     {
       "id": 57,
       "question": "Czas między kolejnymi wypadkami na danym odcinku autostrady",
       "correct": "wykladniczy",
-      "explanation": "Wypadki zachodzą losowo ze stałą średnią częstością (proces Poissona). Czas między kolejnymi wypadkami ma rozkład wykładniczy."
+      "explanation": "Wypadki zachodzą losowo ze stałą średnią częstością (proces Poissona). Czas między kolejnymi wypadkami ma rozkład wykładniczy.",
+      "example": {
+        "dist": "exp",
+        "mean": 30,
+        "x": "Czas między wypadkami (dni)"
+      }
     },
     {
       "id": 58,
       "question": "Czas oczekiwania na kolejne połączenie telefoniczne w centrali",
       "correct": "wykladniczy",
-      "explanation": "Połączenia przychodzą jako proces Poissona. Czas między kolejnymi połączeniami ma rozkład wykładniczy — naturalny partner Poissona w wymiarze ciągłym."
+      "explanation": "Połączenia przychodzą jako proces Poissona. Czas między kolejnymi połączeniami ma rozkład wykładniczy — naturalny partner Poissona w wymiarze ciągłym.",
+      "example": {
+        "dist": "exp",
+        "mean": 15,
+        "x": "Czas do kolejnego połączenia (s)"
+      }
     },
     {
       "id": 59,
       "question": "Czas do znalezienia pierwszego błędu podczas code review (przy stałej intensywności przeglądania)",
       "correct": "wykladniczy",
-      "explanation": "Przy stałym tempie przeglądania kodu, błędy pojawiają się losowo ze stałą częstością. Czas do pierwszego znalezionego błędu ma rozkład wykładniczy."
+      "explanation": "Przy stałym tempie przeglądania kodu, błędy pojawiają się losowo ze stałą częstością. Czas do pierwszego znalezionego błędu ma rozkład wykładniczy.",
+      "example": {
+        "dist": "exp",
+        "mean": 20,
+        "x": "Czas do pierwszego błędu w review (min)"
+      }
     },
     {
       "id": 60,
       "question": "Czas między kolejnymi meteorami podczas deszczu meteorów",
       "correct": "wykladniczy",
-      "explanation": "Meteory pojawiają się losowo ze stałą średnią częstością (proces Poissona). Czas między kolejnymi meteorami ma rozkład wykładniczy — każda chwila jest równie prawdopodobna."
+      "explanation": "Meteory pojawiają się losowo ze stałą średnią częstością (proces Poissona). Czas między kolejnymi meteorami ma rozkład wykładniczy — każda chwila jest równie prawdopodobna.",
+      "example": {
+        "dist": "exp",
+        "mean": 3,
+        "x": "Czas między meteorami (min)"
+      }
     }
   ]
 }

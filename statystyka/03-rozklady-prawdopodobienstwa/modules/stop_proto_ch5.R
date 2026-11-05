@@ -1,9 +1,9 @@
 # PROTOTYPY PUNKTÓW STOP — rozdział 5 (2026-10-29) ---------------------------
-#   s3p_5a_ui — Ryc. 5.7 „Rozkład normalny w sześciu kierunkach” (zaakceptowany 2026-10-29;
+#   s3p_5a_ui — Ryc. 5.8 „Rozkład normalny w sześciu kierunkach” (zaakceptowany 2026-10-29;
 #               Chart.js, cases_chart.js; zastąpiła „Batonik 50 g”)
 #   Usunięty 2026-10-29: 5b „Czarny poniedziałek 1987”.
 #   (5c przeniesiony do stop_proto_ch5_z.R jako trzy warianty 5c-A/B/C)
-#   s3p_5d_ui — Ryc. 5.8 „Normalny czy nie?” (zaakceptowany 2026-10-29; dane z ankiety)
+#   s3p_5d_ui — Ryc. 5.9 „Normalny czy nie?” (zaakceptowany 2026-10-29; dane z ankiety)
 # Serwer: s3p_ch5_server(input, output, session).
 
 # ============================================================================
@@ -32,7 +32,7 @@ s3p_5a_cases <- list(
        q = "Jaki odsetek batoników waży mniej niż 50 g z etykiety?")
 )
 
-s3p_5a_ui <- s3p_panel("5a", "Ryc. 5.7", "Rozkład normalny w sześciu kierunkach", proto = FALSE,
+s3p_5a_ui <- s3p_panel("5a", "Ryc. 5.8", "Rozkład normalny w sześciu kierunkach", proto = FALSE,
   tags$div(class = "lc-cases", `data-config` = jsonlite::toJSON(s3p_5a_cases, auto_unbox = TRUE, digits = NA),
     lc_toolbar(
       lc_group("Kierunek", tags$div(class = "lc-seg", role = "group",
@@ -45,7 +45,7 @@ s3p_5a_ui <- s3p_panel("5a", "Ryc. 5.7", "Rozkład normalny w sześciu kierunkac
       ),
       lc_chart_zoom_button()
     ),
-    tags$div(class = "lc-area-canvas", tags$canvas(role = "img", `data-role` = "pdf", `aria-label` = "Gęstość rozkładu normalnego z zacienionym ogonem za progiem")),
+    tags$div(class = "lc-area-canvas", tags$div(class = "lc-ec", role = "img", `data-role` = "pdf", `aria-label` = "Gęstość rozkładu normalnego z zacienionym ogonem za progiem")),
     lc_caption(tags$span(`data-role` = "story", s3p_5a_cases[[1]]$story), " ",
                tags$span(`data-role` = "q", s3p_5a_cases[[1]]$q))
   )
@@ -75,7 +75,7 @@ s3p_5d_vars <- local({
   )
 })
 
-s3p_5d_ui <- s3p_panel("5d", "Ryc. 5.8", "Normalny czy nie?", proto = FALSE,
+s3p_5d_ui <- s3p_panel("5d", "Ryc. 5.9", "Normalny czy nie?", proto = FALSE,
   lc_toolbar(
     lc_group("Zmienna z ankiety", lc_select("s3p_5d_var",
       choices = setNames(names(s3p_5d_vars), vapply(s3p_5d_vars, `[[`, "", "lab")))),

@@ -23,8 +23,22 @@ ch6_ui <- list(
       bardzo wiele zjawisk. W tym rozdziale zobaczymy, skąd się bierze: pojawia się
       za każdym razem, gdy uśredniamy lub sumujemy wiele niezależnych wartości."),
 
-    # PROTOTYP PUNKTU STOP (2026-10-29)
-    s3p_6a_ui,
+    lc_p("Zacznijmy od krótkiego filmu o smokach i królikach, który pokazuje,
+      skąd bierze się dzwon. W kolejnych sekcjach rozłożymy to na części."),
+
+    figure_panel(
+      label = "Film",
+      title = "Wideo wprowadzające",
+      full_width = TRUE,
+      div(style = "position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;",
+        tags$iframe(
+          src = "https://www.youtube.com/embed/jvoxEYmQHNM",
+          style = "position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;",
+          allowfullscreen = NA,
+          allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        )
+      )
+    ),
 
     lc_h2("ch6-ctg", "Centralne Twierdzenie Graniczne (CTG)"),
 
@@ -89,22 +103,7 @@ ch6_ui <- list(
       jedna obserwacja potrafi zdominować całą sumę; dane z pomiarów i ankiet spełniają
       ten warunek niemal zawsze."),
 
-    lc_p("Film wprowadzający poniżej omawia twierdzenie, a w kolejnych sekcjach
-      sprawdzimy je w symulacjach."),
-
-    figure_panel(
-      label = "Film",
-      title = "Wideo wprowadzające",
-      full_width = TRUE,
-      div(style = "position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;",
-        tags$iframe(
-          src = "https://www.youtube.com/embed/jvoxEYmQHNM",
-          style = "position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;",
-          allowfullscreen = NA,
-          allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        )
-      )
-    ),
+    lc_p("Sprawdźmy teraz twierdzenie w symulacjach."),
 
     # ========================================================================
     # WIDGET 1: Eksperyment CTG (kluczowy)
@@ -183,38 +182,31 @@ ch6_ui <- list(
       W praktyce mamy konkretne n i potrzebujemy wiedzieć, czy jest wystarczająco duże,
       żeby przybliżenie normalne było dobre. Odpowiedź zależy od kształtu rozkładu
       wyjściowego, przede wszystkim od jego ",
-      gloss("skośność", "skośności"), ". Panel poniżej zestawia po 2000 średnich dla
-      n = 1, 5, 30 i 100 z krzywą normalną przewidzianą przez CTG. Każdy panel ma
-      własną skalę osi, więc porównujemy kształt, a nie szerokość."),
+      gloss("skośność", "skośności"), ". Rycina poniżej pokazuje całą tę drogę naraz.
+      Każdy wiersz mapy to osobny eksperyment: wiele razy losujemy n obserwacji,
+      liczymy ich średnią i patrzymy z góry na histogram tych średnich. Wiersze się
+      nie kumulują, wiersz 7 nie korzysta z wierszy 1–6. Pod mapą wybrany wiersz
+      jako zwykły histogram 2000 średnich z krzywą normalną przewidzianą przez CTG."),
 
-    figure_panel(
-      label = "Ryc. 6.3",
-      title = "Rozkład średnich dla różnych n",
-      full_width = TRUE,
-      selectInput("ch6_effect_dist", "Rozkład populacji:",
-        choices = c(
-          "Wykładniczy" = "exponential",
-          "Jednostajny"  = "uniform",
-          "U-kształtny"  = "u_shape"
-        ),
-        selected = "exponential"
-      ),
-      lc_plot("ch6_effect_plot", ratio = "1.8/1", max_height = "350px")
-    ),
+    s3p_e1_ui,
 
-    lc_p("Dla rozkładu jednostajnego, który jest symetryczny, histogram pokrywa się
-      z krzywą już przy n = 5. Rozkład wykładniczy ma skośność 2, a skośność średniej
-      maleje jak 2/√n: wynosi 0.89 dla n = 5, 0.37 dla n = 30 i 0.20 dla n = 100.
-      Asymetria słabnie więc powoli i najdłużej widać ją w ogonach."),
+    lc_p("Na mapie widać oba skutki uśredniania. Rozkład się zwęża: dla czasu rozmowy
+      na infolinii (μ = σ = 4 min) SE spada z 4 min dla pojedynczej rozmowy do 1.79
+      dla n = 5, 0.89 dla n = 20 i 0.63 dla n = 40. I symetryzuje się: rozkład
+      wykładniczy ma skośność 2, a skośność średniej maleje jak 2/√n, do 0.89 dla
+      n = 5, 0.45 dla n = 20 i 0.32 dla n = 40. Asymetria słabnie więc powoli
+      i najdłużej widać ją w ogonach. Dwa garby plonu z krzaka zlewają się w jeden już
+      przy n = 5, a symetryczny błąd zaokrąglenia daje dzwon prawie od razu:
+      przy n = 5 poza dzwonem leży 1.6% prawdopodobieństwa, dla infolinii jeszcze 11.2%."),
 
     lc_p("Dobrze to widać na konkretnym prawdopodobieństwie. W rozkładzie normalnym
       przedział μ ± 1.96·SE obejmuje dokładnie 95% wartości, po 2.5% zostaje
       w każdym ogonie (to dokładniejsza wersja reguły 68–95–99.7 z rozdziału 5).
-      Dla średnich z rozkładu wykładniczego przy n = 5 powyżej górnej granicy leży
-      4.3% średnich, a poniżej dolnej tylko 0.04%. Przy n = 30 jest to 3.4% i 1.4%,
-      przy n = 100 — 3.0% i 1.9%. Łącznie poza przedziałem leży za każdym razem
-      od 4.4% do 4.9% średnich, blisko 5%, ale podział między ogonami wyrównuje się
-      dopiero przy dużych n."),
+      Dla średnich czasu rozmowy przy n = 5 powyżej górnej granicy leży 4.3% średnich,
+      a poniżej dolnej tylko 0.04%. Przy n = 20 jest to 3.6% i 1.1%, przy n = 40 —
+      3.3% i 1.6%. Łącznie poza przedziałem leży za każdym razem od 4.4% do 4.9%
+      średnich, blisko 5%, ale podział między ogonami wyrównuje się dopiero przy
+      dużych n."),
 
     lc_note("Zasada", rule = TRUE,
       "Nie ma jednej liczby obserwacji, od której przybliżenie normalne zaczyna
@@ -224,7 +216,7 @@ ch6_ui <- list(
     ),
 
     # ========================================================================
-    # WIDGET 3: Dlaczego to działa
+    # Dlaczego to działa — intuicja (obraz: mapa Ryc. 6.3)
     # ========================================================================
     lc_h2("ch6-dlaczego", "Dlaczego to działa? — intuicja"),
 
@@ -233,23 +225,7 @@ ch6_ui <- list(
       z kilku obserwacji, duże musiałyby być prawie wszystkie naraz, a to zdarza się
       rzadko. Zwykle wartości duże mieszają się z małymi i odchylenia w przeciwne
       strony się znoszą. Im więcej obserwacji uśredniamy, tym silniej to działa.
-      Kroki poniżej pokazują 5000 średnich z rozkładu wykładniczego (μ = 2, σ = 2)
-      dla n = 1, 2, 5 i 30, na wspólnych osiach."),
-
-    figure_panel(
-      label = "Ryc. 6.4",
-      full_width = TRUE,
-      lc_step_widget("ch6_why",
-        title = "Od jednej obserwacji do średniej z 30",
-        steps = c("Jedna obserwacja", "Średnia z 2", "Średnia z 5", "Średnia z 30"),
-        plot_id = "ch6_why_plot"
-      )
-    ),
-
-    lc_p("Kolejne kroki pokazują jednocześnie oba skutki uśredniania. Rozkład się zwęża:
-      SE spada z 2 dla pojedynczej obserwacji do 1.41 dla n = 2, 0.89 dla n = 5
-      i 0.37 dla n = 30. I symetryzuje się: długi prawy ogon skraca się, lewa strona
-      się wypełnia, a przy n = 30 krzywa normalna pasuje do histogramu niemal dokładnie."),
+      Na mapie Ryc. 6.3 widać to jako prawy ogon, który blednie z wiersza na wiersz."),
 
     lc_p("To samo dotyczy sum, bo suma n obserwacji to n razy ich średnia. Dlatego
       rozkład normalny opisuje tak wiele zjawisk: wzrost człowieka, błąd pomiaru czy
@@ -258,11 +234,7 @@ ch6_ui <- list(
       normalny jest dopiero ich łączny efekt."),
 
     # PROTOTYP PUNKTU STOP (2026-10-29)
-    s3p_6d_ui,
-
     s3p_6b_ui,
-
-    s3p_6c_ui,
 
     lc_p("W praktyce mamy zwykle jedną próbę i jedną średnią, a μ nie znamy. CTG mówi,
       jak daleko ta średnia może leżeć od μ: w około 95% prób nie dalej niż 1.96·SE.
@@ -272,8 +244,6 @@ ch6_ui <- list(
 
     # PROTOTYP PUNKTU STOP (2026-10-29)
     lc_h2("ch6-domkniecie", "Domknięcie wykładu"),
-
-    s3p_d1_ui,
 
     s3p_d2_ui,
 
@@ -422,92 +392,6 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  # --- Widget 2: Wpływ wielkości próby ---
-  zoom_plot_server("ch6_effect_plot", reactive({
-    dist <- input$ch6_effect_dist
-    params <- get_population_params(dist)
-
-    ns <- c(1, 5, 30, 100)
-    plot_data <- do.call(rbind, lapply(ns, function(n) {
-      means <- replicate(2000, mean(generate_population_sample(dist, n)))
-      data.frame(
-        mean_val = means,
-        n_label = paste0("n = ", n)
-      )
-    }))
-    plot_data$n_label <- factor(plot_data$n_label,
-                                levels = paste0("n = ", ns))
-
-    # Krzywe normalne
-    norm_data <- do.call(rbind, lapply(ns, function(n) {
-      theo_sd <- params$sigma / sqrt(n)
-      x_seq <- seq(params$mu - 4*theo_sd, params$mu + 4*theo_sd, length.out = 200)
-      data.frame(
-        x = x_seq,
-        y = dnorm(x_seq, params$mu, theo_sd),
-        n_label = paste0("n = ", n)
-      )
-    }))
-    norm_data$n_label <- factor(norm_data$n_label, levels = paste0("n = ", ns))
-
-    ggplot(plot_data, aes(x = mean_val)) +
-      geom_histogram(aes(y = after_stat(density)),
-                     bins = 40, fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.6) +
-      geom_line(data = norm_data, aes(x = x, y = y),
-                color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
-      facet_wrap(~n_label, scales = "free") +
-      labs(x = "Średnia z próby", y = "Gęstość") +
-      theme_upwr(base_size = 12)
-  }))
-
-  # --- Widget 3: Dlaczego to działa ---
-  # Krok widgetu (1..4) żyje w przeglądarce.
-  ch6_why_step <- lc_step_server("ch6_why", input)$step
-  ch6_why_n <- c(1, 2, 5, 30)
-
-  # Symulacje wszystkich kroków naraz: stała rama osi z pełnych danych.
-  ch6_why_sims <- reactive({
-    lapply(ch6_why_n, function(n_val) replicate(5000, mean(rexp(n_val, 0.5))))
-  })
-
-  zoom_plot_server("ch6_why_plot", reactive({
-    step <- ch6_why_step()
-    sims <- ch6_why_sims()
-    params <- get_population_params("exponential")
-
-    n_val <- ch6_why_n[step]
-    means <- sims[[step]]
-    df <- data.frame(x = means)
-    theo_sd <- params$sigma / sqrt(n_val)
-
-    # Rama: X od 0 do 99.5 percentyla jednej obserwacji, Y z krzywej dla n = 30.
-    x_lim <- c(0, quantile(sims[[1]], 0.995))
-    y_lim <- c(0, dnorm(params$mu, params$mu, params$sigma / sqrt(max(ch6_why_n))) * 1.3)
-
-    p <- ggplot(df, aes(x = x)) +
-      step_result(geom_histogram, mapping = aes(y = after_stat(density)), bins = 50)
-
-    if (n_val >= 2) {
-      x_range <- seq(min(means), max(means), length.out = 200)
-      norm_df <- data.frame(x = x_range,
-                            y = dnorm(x_range, params$mu, theo_sd))
-      p <- p + step_layer(geom_line, step_role(step, 2), data = norm_df,
-                          mapping = aes(x = x, y = y), linewidth = 1.5)
-    }
-
-    p + labs(x = "Średnia", y = "Gęstość") +
-      step_frame(xlim = x_lim, ylim = y_lim)
-  }))
-
-  output$ch6_why_text <- renderUI({
-    step <- ch6_why_step()
-    texts <- list(
-      "Pojedyncza obserwacja z rozkładu wykładniczego: silnie prawoskośna, SD = σ = 2.",
-      "Średnia z 2: mniej skrajnych wartości, lewa strona zaczyna się wypełniać. SE ≈ 1.41.",
-      "Średnia z 5: kształt bardziej symetryczny, prawy ogon wciąż dłuższy. SE ≈ 0.89.",
-      "Średnia z 30: krzywa normalna pasuje niemal dokładnie. SE ≈ 0.37."
-    )
-    texts[[step]]
-  })
+  # Ryc. 6.3 (mapa zbieżności) rysuje ec_proto.js z danych w data-config.
 
 }

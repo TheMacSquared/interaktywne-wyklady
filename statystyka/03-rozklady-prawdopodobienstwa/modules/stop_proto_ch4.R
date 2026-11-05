@@ -1,5 +1,6 @@
 # PROTOTYPY PUNKTÓW STOP — rozdział 4 (2026-10-29) ---------------------------
-#   s3p_4a_ui — Ryc. 4.2 „Ile osób ma dokładnie 170 cm?” (zaakceptowany 2026-10-29)
+#   Ryc. 4.2 „Ile osób ma dokładnie 170 cm?”: od 2026-11-05 wariant ECharts „lupa”
+#             (s3p_4aa_ui w stop_proto_ec.R); tu zostaje populacja s3p_4a_pop.
 #   s3p_4b_ui — Ryc. 4.5 „Kwantyl: odwrotne pytanie” (zaakceptowany 2026-10-29; Chart.js, quantile_chart.js)
 #   s3p_4c_ui — Ryc. 4.10 „Paradoks autobusu” (zaakceptowany 2026-10-29)
 #   Usunięty 2026-10-29: 4d „Guinness i Gosset”.
@@ -12,16 +13,6 @@
 # ============================================================================
 
 s3p_4a_pop <- local({ set.seed(3401); rnorm(1e6, 170, 8) })
-s3p_4a_prec <- c("1 cm" = 1, "1 mm" = 0.1, "0.1 mm" = 0.01, "0.01 mm" = 0.001)
-
-s3p_4a_ui <- s3p_panel("4a", "Ryc. 4.2", "Ile osób ma dokładnie 170 cm?", proto = FALSE,
-  lc_toolbar(
-    lc_segmented("s3p_4a_prec", "Dokładność pomiaru", choices = setNames(names(s3p_4a_prec), names(s3p_4a_prec))),
-    lc_readouts(uiOutput("s3p_4a_read"))
-  ),
-  lc_plot("s3p_4a_plot", ratio = "2.4/1"),
-  uiOutput("s3p_4a_caption")
-)
 
 # ============================================================================
 # (4b) „KWANTYL: ODWROTNE PYTANIE” — Chart.js (quantile_chart.js), wzrost N(170, 8)
@@ -53,7 +44,7 @@ s3p_4b_ui <- s3p_panel("4b", "Ryc. 4.5", "Kwantyl: odwrotne pytanie", proto = FA
       lc_chart_zoom_button()
     ),
     tags$div(class = "lc-area-canvas",
-      tags$canvas(role = "img", `data-role` = "pdf", `aria-label` = "Gęstość wzrostu N(170, 8) z polem na lewo od x"))
+      tags$div(class = "lc-ec", role = "img", `data-role` = "pdf", `aria-label` = "Gęstość wzrostu N(170, 8) z polem na lewo od x"))
   )
 )
 
@@ -110,40 +101,6 @@ s3p_4f_ui <- s3p_panel("4f", "Ryc. 4.14", "Losowe podwyżki", proto = FALSE,
 # ============================================================================
 
 s3p_ch4_server <- function(input, output, session) {
-
-  # --- 4a -------------------------------------------------------------------
-  delta_4a <- reactive(s3p_4a_prec[[input$s3p_4a_prec %||% "1 cm"]])
-  count_4a <- reactive(sum(abs(s3p_4a_pop - 170) < delta_4a() / 2))
-
-  output$s3p_4a_read <- renderUI({
-    tagList(lc_readout("Osób z wynikiem „170”", lc_fmt(count_4a(), 0, " "), color = upwr_accent),
-            lc_readout("Odsetek", paste0(lc_fmt(100 * count_4a() / 1e6, 4), "%")))
-  })
-
-  zoom_plot_server("s3p_4a_plot", reactive({
-    dl <- delta_4a()
-    x <- seq(160, 180, length.out = 800)
-    d <- data.frame(x = x, y = dnorm(x, 170, 8))
-    strip <- data.frame(x = seq(170 - dl / 2, 170 + dl / 2, length.out = 50))
-    strip$y <- dnorm(strip$x, 170, 8)
-    ggplot(d, aes(x, y)) +
-      geom_area(data = strip, fill = upwr_accent, alpha = 0.8) +
-      geom_line(linewidth = 1.1, colour = upwr_secondary) +
-      annotate("segment", x = 170, xend = 170, y = 0, yend = dnorm(170, 170, 8), colour = upwr_accent,
-               linewidth = if (dl < 0.2) 0.6 else 0) +
-      { if (dl < 0.2) annotate("segment", x = 172.5, xend = 170.15, y = 0.022, yend = 0.03,
-                               arrow = arrow(length = unit(0.25, "cm")), colour = upwr_accent) } +
-      { if (dl < 0.2) annotate("text", x = 172.6, y = 0.021, hjust = 0, colour = upwr_accent, fontface = "bold",
-                               label = sprintf("pas szerokości %s cm", lc_fmt(dl, 3))) } +
-      coord_cartesian(ylim = c(0, 0.055)) +
-      labs(x = "Wzrost (cm)", y = "Gęstość", subtitle = "Milion dorosłych, wzrost N(170, 8)") +
-      theme_upwr(grid = "y")
-  }))
-
-  output$s3p_4a_caption <- renderUI({
-    lc_caption(sprintf("Przy dokładności %s „dokładnie 170 cm” oznacza pas od %s do %s cm. Każde dziesięciokrotne zwiększenie dokładności zmniejsza liczbę takich osób dziesięciokrotnie. Przy pomiarze idealnym pas ma szerokość zero, a jego pole też jest zerem: P(X = 170) = 0.",
-      input$s3p_4a_prec %||% "1 cm", lc_fmt(170 - delta_4a() / 2, 4), lc_fmt(170 + delta_4a() / 2, 4)))
-  })
 
   # --- 4c -------------------------------------------------------------------
   bus_times <- reactive({

@@ -138,7 +138,7 @@ ch5_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-area-canvas",
-          tags$canvas(role = "img", `data-role` = "pdf", `aria-label` = "Gęstości wzrostu kobiet i mężczyzn; parametry w odczytach nad wykresem"))
+          tags$div(class = "lc-ec", role = "img", `data-role` = "pdf", `aria-label` = "Gęstości wzrostu kobiet i mężczyzn; parametry w odczytach nad wykresem"))
       )
     ),
 
@@ -254,6 +254,8 @@ ch5_ui <- list(
       odpowiada z > 1.5, więc P(X > 80) = 1 − P(Z ≤ 1.5) = 0.0668: taki wynik
       osiąga około 6.7% zdających. Podobnie IQ powyżej 130 punktów (z = 2) ma 2.3% populacji."),
 
+    s3p_e2_ui,
+
     lc_p("Często pytanie jest odwrotne: znamy prawdopodobieństwo i szukamy
       wartości. Odpowiedzią jest ", gloss("percentyl"), " rozkładu, czyli wartość
       pozostawiającą na lewo pole p. Na przykład percentyl rzędu 0.975
@@ -266,14 +268,14 @@ ch5_ui <- list(
     lc_p("Rozkład normalny pracuje w wielu dziedzinach. Galeria zestawia sześć
       przypadków z różnych kierunków studiów; próg można przesuwać po wykresie."),
 
-    # Ryc. 5.7: prototyp 5a (zaakceptowany 2026-10-29; Chart.js, cases_chart.js)
+    # Ryc. 5.8: prototyp 5a (zaakceptowany 2026-10-29; Chart.js, cases_chart.js)
     s3p_5a_ui,
 
     lc_p("Nie każda zmienna ma jednak rozkład normalny. Galeria porównuje zmienne
       z ankiety z krzywą normalną o tej samej średniej i tym samym odchyleniu
       standardowym."),
 
-    # Ryc. 5.8: prototyp 5d (zaakceptowany 2026-10-29)
+    # Ryc. 5.9: prototyp 5d (zaakceptowany 2026-10-29)
     s3p_5d_ui,
 
     lc_chapter_next(

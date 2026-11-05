@@ -132,8 +132,8 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   - [ ] Migracja statystyki z Chart.js na ECharts (decyzja 2026-11-05:
     renderer SVG, canvas dla tysięcy punktów; pełny `echarts.min.js`
     z cdnjs; analiza ryzyka zostaje przy Chart.js). Wspólna obsługa
-    w `lc_charts.js` i pilot 03 Ryc. 4.3 gotowe. Dalej: reszta 03,
-    potem 01, 02, 05 (Ryc. 2.4 z własnym kodem w `app.R`), mostki
+    w `lc_charts.js` gotowa; wykład 03 w całości na ECharts (8 widgetów,
+    bez Chart.js). Dalej: 01, 02, 05 (Ryc. 2.4 z własnym kodem w `app.R`), mostki
     offline `widgets/01-ch2-jakosciowe.js` i `05-ch2-hipotezy.js`;
     na końcu usunąć Chart.js, `styleAxes`, `create` i rozważyć okrojoną
     bibliotekę.
@@ -143,6 +143,15 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   - [ ] Statystyka 01, 03: pozostałe wykresy R (eksploratory rozkładów,
     histogramy, pudełka itd.).
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).
+  - [ ] Statystyka 03 offline, Ryc. 1.2 (lejek): odczyty przechodzą zapisane
+    stany, ale wykres zostaje pusty — serie przychodzą z serwera
+    (`lejek_series`). Potrzebny mostek `"live": true` w `stany.json`
+    i losowanie serii w `build/widgets/03-*.js` (sprawdzone 2026-11-05;
+    dotyczyło też wersji Chart.js, bo mechanizm jest ten sam).
+  - [ ] Statystyka 03: decyzja o prototypie ECharts E2 „Zaznacz przedział”
+    (rozdz. 5, po Ryc. 5.6); `modules/stop_proto_ec.R`, `modules/ec_proto.js`.
+    E1 „Mapa zbieżności” przyjęta 2026-11-05 jako Ryc. 6.3 (wariant z mapą
+    i histogramem 2000 średnich); zastąpiła dawne Ryc. 6.3, 6.4 i prototyp 6d.
   - [ ] Dwa widgety Chart.js dostają dane z sesji Shiny (`onMessage`):
     statystyka 01 `scenario_chart.js` i 03 `lejek_chart.js`. Sprawdzić
     w buildzie offline; build obsługuje taki przypadek przez `"live": true`

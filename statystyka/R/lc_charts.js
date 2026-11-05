@@ -105,6 +105,8 @@
         pending = requestAnimationFrame(function () {
           pending = null;
           if (instance.isDisposed && instance.isDisposed()) return;
+          // Ukryty kontener (display: none) ma rozmiar 0 — czekamy na ponowne pokazanie.
+          if (!element.clientWidth || !element.clientHeight) return;
           instance.resize();
           if (opts.onResize) opts.onResize(instance);
         });
@@ -227,6 +229,19 @@
       nameGap: Math.round(size * 2)
     }, extra || {});
   }
+
+  // Kursor nad wykresem ECharts w jednostkach osi (siatka 0). xRange / yRange
+  // ograniczają wynik do zakresu rysunku; px / py to piksele w elemencie.
+  function ecPointer(instance, element, event, xRange, yRange) {
+    var rect = element.getBoundingClientRect();
+    var px = event.clientX - rect.left, py = event.clientY - rect.top;
+    var v = instance.convertFromPixel({ gridIndex: 0 }, [px, py]) || [NaN, NaN];
+    function clamp(value, range) { return range ? Math.max(range[0], Math.min(range[1], value)) : value; }
+    return { x: clamp(v[0], xRange), y: clamp(v[1], yRange), rawX: v[0], rawY: v[1], px: px, py: py };
+  }
+
+  // Nazwa osi ECharts zawinięta do szerokości wykresu (jak axisTitle w Chart.js).
+  function ecName(text, width, fontSize) { return axisTitle(text, width, fontSize).join("\n"); }
 
   function axisFontSize(root) {
     var size = parseFloat(getComputedStyle(root).fontSize) || 16;
@@ -392,7 +407,8 @@
   });
 
   window.lcCharts = {
-    onReady: onReady, create: create, chart: chart, ecAxis: ecAxis, destroy: destroy, listen: listen,
+    onReady: onReady, create: create, chart: chart, ecAxis: ecAxis, ecPointer: ecPointer, ecName: ecName,
+    destroy: destroy, listen: listen,
     onTheme: onTheme, onDispose: onDispose, onMessage: onMessage,
     tween: tween, cancelTween: cancelTween,
     token: token, alpha: alpha, palette: palette, styleAxes: styleAxes, normalCdf: normalCdf,

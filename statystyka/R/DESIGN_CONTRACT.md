@@ -173,7 +173,18 @@ Analiza ryzyka zostaje na razie przy Chart.js (osobna decyzja).
 - Serie mają `id`, a zmiany danych idą przez `setOption({series: [{id, data}]})`.
   Pozycje uchwytów i przeliczenie kursora: `convertToPixel` /
   `convertFromPixel` z `{gridIndex: 0}`.
-- Wzorzec: statystyka 03, Ryc. 4.3 (`modules/area_chart.js`).
+- `ecPointer(chart, element, event, xRange, yRange)` zamienia kursor na
+  wartości osi (z ograniczeniem do zakresu rysunku); `ecName(text, width,
+  fontSize)` zawija długą nazwę osi jak `axisTitle()`.
+- Etykiety rysowane dawniej wtyczką canvas (np. duże p i x w kwantylu) to
+  elementy `graphic` typu `text`, przeliczane w `onResize`.
+- Wykresy porównywane ze sobą (kalkulator z, dwie skale) mają stałe marginesy
+  siatki (`outerBoundsMode: "none"`), żeby osie pozostały wyrównane.
+- Wiele serii tła (lejek): jedna seria `lines` z `polyline: true` zamiast
+  serii na każdą próbę; renderer `"canvas"`.
+- Wzorce: statystyka 03 — Ryc. 4.3 (`area_chart.js`, uchwyty), 4.4
+  (`cdf_chart.js`, dwa wykresy i kursor), 4.5 (`quantile_chart.js`, `graphic`),
+  1.2 (`lejek_chart.js`, canvas i komunikaty z serwera).
 - Build offline wbudowuje `echarts.min.js` w plik (`build_offline.R`);
   widget z `data-ready` jest odtwarzany z czystej kopii, więc działa bez serwera.
 

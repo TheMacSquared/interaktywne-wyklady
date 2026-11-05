@@ -25,8 +25,8 @@ s3p_54_js <- function(num, title, mode, canvases) {
 }
 
 s3p_54a_ui <- s3p_54_js("5.4-A", "Kalkulator z-score", "two", tagList(
-  tags$div(class = "s3p-54-canvas", tags$canvas(role = "img", `data-role` = "x", `aria-label` = "Wartość x w oryginalnej skali")),
-  tags$div(class = "s3p-54-canvas", tags$canvas(role = "img", `data-role` = "z", `aria-label` = "Ta sama obserwacja na skali z"))))
+  tags$div(class = "s3p-54-canvas", tags$div(class = "lc-ec", role = "img", `data-role` = "x", `aria-label` = "Wartość x w oryginalnej skali")),
+  tags$div(class = "s3p-54-canvas", tags$div(class = "lc-ec", role = "img", `data-role` = "z", `aria-label` = "Ta sama obserwacja na skali z"))))
 
 s3p_54_css <- tags$style(HTML("
   .s3p-54-canvas { position: relative; aspect-ratio: 3.2 / 1; margin-top: .4em; }

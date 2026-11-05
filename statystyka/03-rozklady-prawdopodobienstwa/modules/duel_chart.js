@@ -1,42 +1,42 @@
 // „Kto bardziej wyjątkowy?” (Ryc. 5.5). Widok „raw”: dwa małe wykresy gęstości
 // w oryginalnych skalach z wartością x do przeciągania; widok „z”: wspólna oś
 // z = (x − μ)/σ z obiema wartościami ([data-d-view]). Pary z data-config (JSON z R): [{short, q, a, b}],
-// gdzie a/b = {lab, grp, x, mu, sd, unit, step}. Kontener .lc-duel z <canvas
+// gdzie a/b = {lab, grp, x, mu, sd, unit, step}. Kontener .lc-duel z <div class="lc-ec"
 // data-role="a" | "b" | "z">, przyciskami [data-d-pair] i odczytami [data-role="la|lb|za|zb|q"].
-// Wzorzec jak area_chart.js (Ryc. 4.3).
+// ECharts, wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
   var Charts = window.lcCharts;
-  var token = Charts.token, alpha = Charts.alpha;
+  var alpha = Charts.alpha;
   var Z_LO = -4, Z_HI = 7;
 
   function pdf(v, mu, sd) { var z = (v - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); }
   function decs(step) { return step >= 1 ? 0 : step >= 0.1 ? 1 : 2; }
 
-  function baseChart(canvas, title, plugins) {
-    return Charts.create(canvas, {
-      type: "line",
-      plugins: plugins || [],
-      data: { datasets: [
-        { data: [], fill: "origin", borderWidth: 2 },
-        { data: [], borderWidth: 2.5 },
-        { data: [], borderWidth: 2.5 },
-        { data: [], pointRadius: 7, pointHoverRadius: 7, borderWidth: 2, showLine: false }
-      ] },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { top: 4, right: 8 } },
-        scales: { x: { type: "linear", title: { display: true, text: title } }, y: { min: 0, display: false } },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } },
-        elements: { point: { radius: 0 }, line: { tension: 0 } }
-      }
-    });
+  function line(id, width) {
+    return { id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+             lineStyle: { width: width } };
+  }
+
+  function baseChart(el, name, onResize) {
+    return Charts.chart(el, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 24, right: 24, top: 8, bottom: 8, outerBoundsMode: "none" },
+      xAxis: { type: "value", name: name },
+      yAxis: { type: "value", min: 0, show: false },
+      series: [
+        Object.assign(line("pdf", 2), { areaStyle: {} }),
+        line("ma", 2.5),
+        line("mb", 2.5),
+        { id: "dots", type: "scatter", data: [], symbolSize: 14, silent: true, animation: false }
+      ]
+    }, { onResize: onResize });
   }
 
   function init(root) {
-    var cv = { a: root.querySelector('canvas[data-role="a"]'), b: root.querySelector('canvas[data-role="b"]'),
-               z: root.querySelector('canvas[data-role="z"]') };
+    var cv = { a: root.querySelector('.lc-ec[data-role="a"]'), b: root.querySelector('.lc-ec[data-role="b"]'),
+               z: root.querySelector('.lc-ec[data-role="z"]') };
     if (!cv.a || !cv.b || !cv.z) return false;
-    var PAIRS = JSON.parse(root.dataset.config || "[]"), cur = 0, S = {}, view = "raw";
+    var PAIRS = JSON.parse(root.dataset.config || "[]"), S = {}, view = "raw";
     var boxTop = root.querySelector(".lc-duel-top"), boxZ = root.querySelector(".lc-duel-z");
     var layer = Charts.handleLayer(root), handles = {}, starters = {};
     ["a", "b"].forEach(function (k) {
@@ -53,84 +53,99 @@
         onPointerDown: function (event) { starters[k](event); }
       });
     });
-    function syncHandle(k, chart) {
+    function syncHandle(k) {
       if (!S[k]) return;
       var s = S[k];
       handles[k].element.hidden = view !== "raw";
       handles[k].element.setAttribute("aria-label", s.o.lab + ": " + s.o.grp);
       handles[k].value(s.x, s.lo, s.hi, s.x.toFixed(decs(s.o.step)) + " " + s.o.unit);
-      handles[k].position(chart.scales.x.getPixelForValue(s.x), chart.scales.y.getPixelForValue(pdf(s.o.mu, s.o.mu, s.o.sd) * 1.05));
+      var q = ch[k].convertToPixel({ gridIndex: 0 }, [s.x, pdf(s.o.mu, s.o.mu, s.o.sd) * 1.05]);
+      if (q) handles[k].position(q[0], q[1]);
     }
-    function plugins(k) { return [{ id: "duelHandle", afterRender: function (chart) { syncHandle(k, chart); }, beforeLayout: function (chart) {
-      chart.options.scales.x.ticks.maxTicksLimit = Math.max(3, Math.min(6, Math.floor((chart.width || 640) / (Charts.axisFontSize(root) * 3.5))));
-      if (S[k]) chart.options.scales.x.title.text = Charts.axisTitle(S[k].o.grp + " (" + S[k].o.unit + ")", chart.width, Charts.axisFontSize(root));
-    } }]; }
-    var ch = { a: baseChart(cv.a, "", plugins("a")), b: baseChart(cv.b, "", plugins("b")), z: baseChart(cv.z, "Wspólna skala: z") };
+    var ch = {};
+    ch.a = baseChart(cv.a, "", function () { layout("a"); syncHandle("a"); });
+    ch.b = baseChart(cv.b, "", function () { layout("b"); syncHandle("b"); });
+    ch.z = baseChart(cv.z, "Wspólna skala: z", function () { layout("z"); });
     var read = {};
     ["la", "lb", "za", "zb", "q"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
-    var COL = {};
+
+    // Margines, liczba podziałek i zawinięta nazwa osi według szerokości wykresu.
+    function layout(k) {
+      var size = Charts.axisFontSize(root), width = ch[k].getWidth ? ch[k].getWidth() : 640;
+      var text = k === "z" ? "Wspólna skala: z" : (S[k] ? S[k].o.grp + " (" + S[k].o.unit + ")" : "");
+      var lines = Charts.axisTitle(text, width, size).length, pad = Math.ceil(size * 1.6);
+      var axis = { name: Charts.ecName(text, width, size) };
+      if (k !== "z") axis.splitNumber = Math.max(3, Math.min(6, Math.floor(width / (size * 3.5))));
+      ch[k].setOption({ grid: { left: pad, right: pad, bottom: Math.ceil(size * (2.4 + 1.3 * lines)) }, xAxis: axis });
+    }
 
     function paint() {
-      var ink = token("--upwr-ink-soft") || "#444", surface = token("--upwr-surface") || "#fff";
-      COL = { a: token("--upwr-accent") || "#6b1a2a", b: token("--upwr-cat-indygo") || "#3a5a8a" };
+      var P = Charts.palette(), size = Charts.axisFontSize(root);
+      var COL = { a: P.accent, b: Charts.token("--upwr-cat-indygo", "#3a5a8a") };
       Object.keys(ch).forEach(function (k) {
-        Charts.styleAxes(ch[k], null, { includeBounds: false, fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-        ch[k].options.scales.x.ticks.maxTicksLimit = 6;
-        ch[k].options.layout.padding.left = ch[k].options.layout.padding.right = Math.ceil(Charts.axisFontSize(root) * 1.6);
-        var ds = ch[k].data.datasets;
-        ds[0].borderColor = ink; ds[0].backgroundColor = alpha(token("--upwr-rule") || "#d9cfbc", 0.5);
-        ds[3].pointBorderColor = ds[3].pointHoverBorderColor = surface;
+        var x = Charts.ecAxis(P, size, { nameGap: Math.round(size * 1.9), nameTextStyle: {
+          color: P.subtle, fontFamily: P.mono, fontSize: size, verticalAlign: "top", lineHeight: size * 1.3 } });
+        x.axisLabel.showMinLabel = x.axisLabel.showMaxLabel = false;
+        var series = [{ id: "pdf", lineStyle: { color: P.soft }, areaStyle: { color: alpha(P.rule, 0.5) } }];
+        if (k === "z") {
+          series.push({ id: "ma", lineStyle: { color: COL.a } }, { id: "mb", lineStyle: { color: COL.b } },
+            { id: "dots", itemStyle: { color: function (d) { return d.dataIndex === 0 ? COL.a : COL.b; },
+                                       borderColor: P.surface, borderWidth: 2 } });
+        } else {
+          series.push({ id: "ma", lineStyle: { color: COL[k] } },
+            { id: "dots", itemStyle: { color: COL[k], borderColor: P.surface, borderWidth: 2 } });
+        }
+        ch[k].setOption({ xAxis: x, series: series });
+        layout(k);
       });
-      ["a", "b"].forEach(function (k) {
-        var ds = ch[k].data.datasets;
-        ds[1].borderColor = COL[k];
-        ds[3].pointBackgroundColor = ds[3].pointHoverBackgroundColor = COL[k];
-      });
-      ch.z.data.datasets[1].borderColor = COL.a;
-      ch.z.data.datasets[2].borderColor = COL.b;
-      ch.z.data.datasets[3].pointBackgroundColor = ch.z.data.datasets[3].pointHoverBackgroundColor = [COL.a, COL.b];
-      Object.keys(ch).forEach(function (k) { ch[k].update(); });
+      syncHandle("a"); syncHandle("b");
     }
 
     function setPair(i) {
-      cur = i; var pr = PAIRS[i];
+      var pr = PAIRS[i];
       ["a", "b"].forEach(function (k) {
         var o = pr[k], lo = Math.min(o.mu - 4 * o.sd, o.x - o.sd), hi = Math.max(o.mu + 4 * o.sd, o.x + o.sd);
         S[k] = { o: o, x: o.x, lo: lo, hi: hi };
-        var c = ch[k], xs = [];
+        var xs = [];
         for (var v = lo; v <= hi + 1e-9; v += (hi - lo) / 300) xs.push(v);
-        c.options.scales.x.min = lo; c.options.scales.x.max = hi;
-        c.options.scales.x.title.text = o.grp + " (" + o.unit + ")";
-        c.options.scales.y.max = pdf(o.mu, o.mu, o.sd) * 1.2;
-        c.data.datasets[0].data = xs.map(function (v) { return { x: v, y: pdf(v, o.mu, o.sd) }; });
+        ch[k].setOption({
+          xAxis: { min: lo, max: hi },
+          yAxis: { max: pdf(o.mu, o.mu, o.sd) * 1.2 },
+          series: [{ id: "pdf", data: xs.map(function (v) { return [v, pdf(v, o.mu, o.sd)]; }) }]
+        });
+        layout(k);
       });
       var zs = [];
       for (var z = Z_LO; z <= Z_HI + 1e-9; z += 0.025) zs.push(z);
-      ch.z.options.scales.x.min = Z_LO; ch.z.options.scales.x.max = Z_HI;
-      ch.z.options.scales.x.ticks.stepSize = 1;
-      ch.z.options.scales.y.max = pdf(0, 0, 1) * 1.2;
-      ch.z.data.datasets[0].data = zs.map(function (v) { return { x: v, y: pdf(v, 0, 1) }; });
+      ch.z.setOption({
+        xAxis: { min: Z_LO, max: Z_HI, interval: 1 },
+        yAxis: { max: pdf(0, 0, 1) * 1.2 },
+        series: [{ id: "pdf", data: zs.map(function (v) { return [v, pdf(v, 0, 1)]; }) }]
+      });
       if (read.la) read.la.textContent = pr.a.lab;
       if (read.lb) read.lb.textContent = pr.b.lab;
       if (read.q) read.q.textContent = pr.q;
       draw();
     }
 
+    function clampZ(v) { return Math.max(Z_LO, Math.min(v, Z_HI)); }
     function draw() {
       var zv = {};
       ["a", "b"].forEach(function (k) {
-        var s = S[k], o = s.o, c = ch[k], top = pdf(o.mu, o.mu, o.sd) * 1.05;
-        c.data.datasets[1].data = [{ x: s.x, y: 0 }, { x: s.x, y: top }];
-        c.data.datasets[3].data = [{ x: s.x, y: top }];
-        c.update("none");
-        syncHandle(k, c);
+        var s = S[k], o = s.o, top = pdf(o.mu, o.mu, o.sd) * 1.05;
+        ch[k].setOption({ series: [
+          { id: "ma", data: [[s.x, 0], [s.x, top]] },
+          { id: "dots", data: [[s.x, top]] }
+        ] });
+        syncHandle(k);
         zv[k] = (s.x - o.mu) / o.sd;
       });
-      var zt = pdf(0, 0, 1) * 1.05;
-      ch.z.data.datasets[1].data = [{ x: Math.max(Z_LO, Math.min(zv.a, Z_HI)), y: 0 }, { x: Math.max(Z_LO, Math.min(zv.a, Z_HI)), y: zt }];
-      ch.z.data.datasets[2].data = [{ x: Math.max(Z_LO, Math.min(zv.b, Z_HI)), y: 0 }, { x: Math.max(Z_LO, Math.min(zv.b, Z_HI)), y: zt * 0.8 }];
-      ch.z.data.datasets[3].data = [{ x: Math.max(Z_LO, Math.min(zv.a, Z_HI)), y: zt }, { x: Math.max(Z_LO, Math.min(zv.b, Z_HI)), y: zt * 0.8 }];
-      ch.z.update("none");
+      var zt = pdf(0, 0, 1) * 1.05, za = clampZ(zv.a), zb = clampZ(zv.b);
+      ch.z.setOption({ series: [
+        { id: "ma", data: [[za, 0], [za, zt]] },
+        { id: "mb", data: [[zb, 0], [zb, zt * 0.8]] },
+        { id: "dots", data: [[za, zt], [zb, zt * 0.8]] }
+      ] });
       ["a", "b"].forEach(function (k) {
         var s = S[k], el = read["z" + k];
         if (el) el.textContent = view === "z" ? "z = " + zv[k].toFixed(2) : s.x.toFixed(decs(s.o.step)) + " " + s.o.unit;
@@ -139,26 +154,25 @@
 
     // Przeciąganie wartości x na małych wykresach.
     ["a", "b"].forEach(function (k) {
-      var c = ch[k], canvas = cv[k], drag = false;
+      var el = cv[k], drag = false;
       function move(e) {
-        var rc = canvas.getBoundingClientRect(), area = c.chartArea, s = S[k];
-        var px = Math.max(area.left, Math.min(area.right, e.clientX - rc.left));
-        var v = Math.round(c.scales.x.getValueForPixel(px) / s.o.step) * s.o.step;
+        var s = S[k], v = Charts.ecPointer(ch[k], el, e, [s.lo, s.hi]).x;
+        v = Math.round(v / s.o.step) * s.o.step;
         s.x = Math.max(s.lo, Math.min(s.hi, v)); draw();
       }
-      canvas.style.touchAction = "none"; canvas.style.cursor = "ew-resize";
-      starters[k] = function (e) { drag = true; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault(); };
-      Charts.listen(canvas, "pointerdown", starters[k]);
-      Charts.listen(canvas, "pointermove", function (e) { if (drag) move(e); });
-      ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = false; }); });
+      el.style.touchAction = "none"; el.style.cursor = "ew-resize";
+      starters[k] = function (e) { drag = true; el.setPointerCapture(e.pointerId); move(e); e.preventDefault(); };
+      Charts.listen(el, "pointerdown", starters[k]);
+      Charts.listen(el, "pointermove", function (e) { if (drag) move(e); });
+      ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(el, t, function () { drag = false; }); });
     });
 
-    // Widok: dwie skale oryginalne albo jedna skala z.
+    // Widok: dwie skale oryginalne albo jedna skala z. Obserwator rozmiaru
+    // dopasowuje wykres, który właśnie stał się widoczny.
     function setView(v) {
       view = v;
       if (boxTop) boxTop.hidden = v !== "raw";
       if (boxZ) boxZ.hidden = v !== "z";
-      Object.keys(ch).forEach(function (k) { ch[k].resize(); });
       draw();
     }
 

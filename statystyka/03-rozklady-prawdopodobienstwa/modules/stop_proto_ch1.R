@@ -39,7 +39,7 @@ s3p_11c_ui <- s3p_panel("1.1-C", "Ryc. 1.2", "Lejek", proto = FALSE,
       lc_chart_zoom_button()
     ),
     tags$div(class = "lc-lejek-canvas",
-      tags$canvas(role = "img", `data-role` = "lejek",
+      tags$div(class = "lc-ec", role = "img", `data-role` = "lejek",
                   `aria-label` = "Lejek: częstość szóstek w seriach rzutów na tle pasa 1/6")),
     uiOutput("s3p_11c_caption")
   )

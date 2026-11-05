@@ -2,12 +2,12 @@
 // uchwyt na szczycie: ruch w bok zmienia μ, w górę i w dół σ (wyższy szczyt to
 // węższa krzywa, bo pole zawsze wynosi 1). Kontener:
 // .lc-normals[data-mu1][data-sd1][data-mu2][data-sd2][data-lo][data-hi]
-// z <canvas data-role="pdf">, przyciskiem [data-n-reset] i odczytami
+// z <div class="lc-ec" data-role="pdf">, przyciskiem [data-n-reset] i odczytami
 // [data-role="n1"], [data-role="n2"], [data-role="a"], [data-role="b"].
-// Wzorzec jak area_chart.js (Ryc. 4.3).
+// ECharts, wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
   var Charts = window.lcCharts;
-  var token = Charts.token, alpha = Charts.alpha;
+  var alpha = Charts.alpha;
   var SD_MIN = 4, SD_MAX = 20;
 
   var phi = Charts.normalCdf;
@@ -15,8 +15,8 @@
   function pdf(v, mu, sd) { var z = (v - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); }
 
   function init(root) {
-    var canvas = root.querySelector('canvas[data-role="pdf"]');
-    if (!canvas) return false;
+    var el = root.querySelector('.lc-ec[data-role="pdf"]');
+    if (!el) return false;
 
     var START = [
       { mu: parseFloat(root.dataset.mu1), sd: parseFloat(root.dataset.sd1) },
@@ -30,9 +30,10 @@
     var read = {};
     ["n1", "n2", "a", "b"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
 
+    var drag = -1;
     var layer = Charts.handleLayer(root);
     var handles = G.map(function (g, i) {
-      return layer.add(canvas, {
+      return layer.add(el, {
         role: "button", label: ["Kobiety", "Mężczyźni"][i],
         hint: "Lewo i prawo zmieniają średnią. Góra zmniejsza odchylenie i podnosi szczyt, dół zwiększa odchylenie. Shift zwiększa krok dziesięciokrotnie.",
         onKey: function (event) {
@@ -43,59 +44,56 @@
           G[i][key] = +Math.max(horizontal ? LO + 5 : SD_MIN, Math.min(horizontal ? HI - 5 : SD_MAX, G[i][key] + direction * step)).toFixed(1);
           draw(); layer.announce(handles[i].element.getAttribute("aria-label")); return true;
         },
-        onPointerDown: function (event) { drag = i; canvas.setPointerCapture(event.pointerId); event.preventDefault(); }
+        onPointerDown: function (event) { drag = i; el.setPointerCapture(event.pointerId); event.preventDefault(); }
       });
     });
-    function syncHandles(ch) {
+    function peak(g) { return chart.convertToPixel({ gridIndex: 0 }, [g.mu, pdf(g.mu, g.mu, g.sd)]); }
+    function syncHandles() {
       handles.forEach(function (handle, i) {
-        var g = G[i]; handle.position(ch.scales.x.getPixelForValue(g.mu), ch.scales.y.getPixelForValue(pdf(g.mu, g.mu, g.sd)));
+        var g = G[i], q = peak(g);
+        if (q) handle.position(q[0], q[1]);
         handle.element.setAttribute("aria-label", ["Kobiety", "Mężczyźni"][i] + ". Średnia " + num(g.mu) + " cm, odchylenie " + num(g.sd) + " cm");
       });
     }
-    var chart = Charts.create(canvas, {
-      type: "line",
-      plugins: [{ id: "normalHandles", afterRender: syncHandles }],
-      data: { datasets: [
-        { data: [], fill: "origin", borderWidth: 2.5 },
-        { data: [], fill: "origin", borderWidth: 2.5 },
-        { data: [], pointRadius: 8, pointHoverRadius: 8, borderWidth: 2, showLine: false }
-      ] },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { top: 10, right: 8 } },
-        scales: {
-          x: { type: "linear", min: LO, max: HI, ticks: { stepSize: 10 }, title: { display: true, text: "Wzrost (cm)" } },
-          y: { min: 0, max: TOP, ticks: { stepSize: 0.02 }, title: { display: true, text: "Gęstość" } }
-        },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } },
-        elements: { point: { radius: 0 }, line: { tension: 0 } }
-      }
-    });
+    function curve(id) {
+      return { id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+               lineStyle: { width: 2.5 }, areaStyle: {} };
+    }
+    var chart = Charts.chart(el, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 8, right: 12, top: 14, bottom: 8 },
+      xAxis: { type: "value", min: LO, max: HI, interval: 10, name: "Wzrost (cm)" },
+      yAxis: { type: "value", min: 0, max: TOP, interval: 0.02, name: "Gęstość" },
+      series: [curve("g0"), curve("g1"),
+        { id: "dots", type: "scatter", data: [], symbolSize: 16, silent: true, animation: false }]
+    }, { onResize: syncHandles });
 
-    var COLS = [];
     function paint() {
-      var surface = token("--upwr-surface") || "#fff";
-      COLS = [token("--upwr-cat-niebo") || "#6a9dc4", token("--upwr-cat-terakota") || "#b25838"];
-      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-      chart.options.scales.x.ticks.maxTicksLimit = 6;
-      chart.options.scales.y.ticks.maxTicksLimit = 5;
-      var ds = chart.data.datasets;
-      [0, 1].forEach(function (i) { ds[i].borderColor = COLS[i]; ds[i].backgroundColor = alpha(COLS[i], 0.18); });
-      ds[2].pointBackgroundColor = ds[2].pointHoverBackgroundColor = COLS;
-      ds[2].pointBorderColor = ds[2].pointHoverBorderColor = surface;
-      chart.update();
+      var P = Charts.palette(), size = Charts.axisFontSize(root);
+      var cols = [P.niebo, P.terakota];
+      var y = Charts.ecAxis(P, size, { nameGap: Math.round(size * 3.2) });
+      y.axisLabel.formatter = function (v) { return Charts.fmt(v, 2); };
+      // Kraniec 215 nie leży na podziałce co 10 — bez etykiety nachodziłby na 210.
+      var x = Charts.ecAxis(P, size);
+      x.axisLabel.showMaxLabel = false;
+      chart.setOption({
+        xAxis: x,
+        yAxis: y,
+        series: [0, 1].map(function (i) {
+          return { id: "g" + i, lineStyle: { color: cols[i] }, areaStyle: { color: alpha(cols[i], 0.18) } };
+        }).concat([{ id: "dots", itemStyle: {
+          color: function (d) { return cols[d.dataIndex]; }, borderColor: P.surface, borderWidth: 2 } }])
+      });
+      syncHandles();
     }
 
     function pct(x) { return (100 * x).toFixed(1) + "%"; }
     function num(x) { return x.toFixed(1); }
     function draw() {
-      var ds = chart.data.datasets;
-      [0, 1].forEach(function (i) {
-        ds[i].data = XS.map(function (v) { return { x: v, y: pdf(v, G[i].mu, G[i].sd) }; });
-      });
-      ds[2].data = G.map(function (g) { return { x: g.mu, y: pdf(g.mu, g.mu, g.sd) }; });
-      chart.update("none");
-      syncHandles(chart);
+      chart.setOption({ series: [0, 1].map(function (i) {
+        return { id: "g" + i, data: XS.map(function (v) { return [v, pdf(v, G[i].mu, G[i].sd)]; }) };
+      }).concat([{ id: "dots", data: G.map(function (g) { return [g.mu, pdf(g.mu, g.mu, g.sd)]; }) }]) });
+      syncHandles();
       if (read.n1) read.n1.textContent = "N(" + num(G[0].mu) + ", " + num(G[0].sd) + ")";
       if (read.n2) read.n2.textContent = "N(" + num(G[1].mu) + ", " + num(G[1].sd) + ")";
       // kobiety wyższe niż średni mężczyzna; mężczyźni niżsi niż średnia kobieta
@@ -104,40 +102,32 @@
     }
 
     // Przeciąganie uchwytu: wciśnięcie łapie bliższy szczyt (w pikselach).
-    var drag = -1;
-    function at(e) {
-      var rc = canvas.getBoundingClientRect();
-      return { px: e.clientX - rc.left, py: e.clientY - rc.top };
+    function nearest(p) {
+      var best = -1, bd = Infinity;
+      G.forEach(function (g, i) {
+        var q = peak(g), dx = q[0] - p.px, dy = q[1] - p.py, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < bd) { bd = d; best = i; }
+      });
+      return { i: best, d: bd };
     }
     function move(e) {
-      var p = at(e), a = chart.chartArea;
-      var mu = chart.scales.x.getValueForPixel(Math.max(a.left, Math.min(a.right, p.px)));
-      var h = chart.scales.y.getValueForPixel(Math.max(a.top, Math.min(a.bottom, p.py)));
-      G[drag].mu = Math.max(LO + 5, Math.min(HI - 5, Math.round(mu * 2) / 2));
-      var sd = 1 / (Math.max(h, 1e-6) * Math.sqrt(2 * Math.PI));
+      var p = Charts.ecPointer(chart, el, e, [LO, HI], [0, TOP]);
+      G[drag].mu = Math.max(LO + 5, Math.min(HI - 5, Math.round(p.x * 2) / 2));
+      var sd = 1 / (Math.max(p.y, 1e-6) * Math.sqrt(2 * Math.PI));
       G[drag].sd = Math.max(SD_MIN, Math.min(SD_MAX, Math.round(sd * 10) / 10));
       draw();
     }
-    canvas.style.touchAction = "none";
-    Charts.listen(canvas, "pointerdown", function (e) {
-      var p = at(e), best = -1, bd = Infinity;
-      G.forEach(function (g, i) {
-        var dx = chart.scales.x.getPixelForValue(g.mu) - p.px, dy = chart.scales.y.getPixelForValue(pdf(g.mu, g.mu, g.sd)) - p.py;
-        var d = Math.sqrt(dx * dx + dy * dy);
-        if (d < bd) { bd = d; best = i; }
-      });
-      if (best < 0 || bd > 60) return;
-      drag = best; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault();
+    el.style.touchAction = "none";
+    Charts.listen(el, "pointerdown", function (e) {
+      var n = nearest(Charts.ecPointer(chart, el, e));
+      if (n.i < 0 || n.d > 60) return;
+      drag = n.i; el.setPointerCapture(e.pointerId); move(e); e.preventDefault();
     });
-    Charts.listen(canvas, "pointermove", function (e) {
+    Charts.listen(el, "pointermove", function (e) {
       if (drag >= 0) { move(e); return; }
-      var p = at(e), near = G.some(function (g) {
-        var dx = chart.scales.x.getPixelForValue(g.mu) - p.px, dy = chart.scales.y.getPixelForValue(pdf(g.mu, g.mu, g.sd)) - p.py;
-        return dx * dx + dy * dy < 60 * 60;
-      });
-      canvas.style.cursor = near ? "move" : "default";
+      el.style.cursor = nearest(Charts.ecPointer(chart, el, e)).d < 60 ? "move" : "default";
     });
-    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = -1; }); });
+    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(el, t, function () { drag = -1; }); });
 
     Charts.listen(root, "click", function (e) {
       if (!e.target.closest("[data-n-reset]")) return;

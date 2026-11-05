@@ -187,8 +187,8 @@ ch4_ui <- list(
       na przedziale od 0 do 0.5 ma f(x) = 2 na całym przedziale, a mimo to pole
       pod nim wynosi 2 · 0.5 = 1."),
 
-    # Ryc. 4.2: prototyp 4a (zaakceptowany 2026-10-29)
-    s3p_4a_ui,
+    # Ryc. 4.2: lupa w ECharts (zaakceptowana 2026-11-05, ec_proto.js)
+    s3p_4aa_ui,
 
     lc_p("Wróćmy do wzrostu z Ryc. 4.2. Skoro pytanie o dokładnie 170 cm nie ma
       sensu, trzeba ustalić, co znaczy „około 170 cm”, na przykład 170 ± 5 cm.
@@ -259,10 +259,10 @@ ch4_ui <- list(
         ),
         tags$div(class = "lc-cdf-grid",
           tags$div(class = "lc-cdf-canvas",
-            tags$canvas(role = "img", `data-role` = "pdf",
+            tags$div(class = "lc-ec", role = "img", `data-role` = "pdf",
                         `aria-label` = "Gęstość N(0, 1) z polem na lewo od x")),
           tags$div(class = "lc-cdf-canvas",
-            tags$canvas(role = "img", `data-role` = "cdf",
+            tags$div(class = "lc-ec", role = "img", `data-role` = "cdf",
                         `aria-label` = "Dystrybuanta N(0, 1) z punktem (x, F(x))"))
         )
       )

@@ -1,4 +1,4 @@
-// Kalkulator z-score w Chart.js (prototypy 5.4-A i 5.4-B). Pola μ, σ, x
+// Kalkulator z-score w ECharts (prototypy 5.4-A i 5.4-B). Pola μ, σ, x
 // ([data-role="mu|sd|x"] — zwykłe <input type="number">), x także przeciągany po wykresie.
 // data-mode="two": dwa wykresy pod sobą (skala x i skala z, wyrównane);
 // data-mode="dual": jedna krzywa z dwiema osiami pod spodem (x i z).
@@ -6,70 +6,74 @@
 // Wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
   var Charts = window.lcCharts;
-  var token = Charts.token, alpha = Charts.alpha;
+  var alpha = Charts.alpha;
 
   function pdf(v, mu, sd) { var z = (v - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); }
   function num(v) { return String(+(+v).toFixed(2)); }
 
-  function chart(canvas, scales) {
-    return Charts.create(canvas, {
-      type: "line",
-      data: { datasets: [
-        { data: [], fill: "origin", borderWidth: 2.5 },
-        { data: [], borderWidth: 2.5 },
-        { data: [], pointRadius: 7, pointHoverRadius: 7, borderWidth: 2, showLine: false }
-      ] },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { top: 6, right: 12 } }, scales: scales,
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } },
-        elements: { point: { radius: 0 }, line: { tension: 0 } }
-      }
+  function line(id, width) {
+    return { id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+             lineStyle: { width: width } };
+  }
+
+  // Stałe marginesy (outerBoundsMode: "none") utrzymują wyrównanie osi x i z
+  // mimo różnych etykiet.
+  function makeChart(el, xAxis) {
+    return Charts.chart(el, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 24, right: 24, top: 8, bottom: 40, outerBoundsMode: "none" },
+      xAxis: xAxis,
+      yAxis: { type: "value", min: 0, show: false },
+      series: [
+        Object.assign(line("pdf", 2.5), { areaStyle: {} }),
+        line("mark", 2.5),
+        { id: "dot", type: "scatter", data: [], symbolSize: 14, silent: true, animation: false }
+      ]
     });
   }
 
   function init(root) {
     var mode = root.dataset.mode || "two";
-    var cvX = root.querySelector('canvas[data-role="x"]'), cvZ = root.querySelector('canvas[data-role="z"]');
-    if (!cvX || (mode === "two" && !cvZ)) return false;
+    var elX = root.querySelector('.lc-ec[data-role="x"]'), elZ = root.querySelector('.lc-ec[data-role="z"]');
+    if (!elX || (mode === "two" && !elZ)) return false;
     var inp = {};
     ["mu", "sd", "x"].forEach(function (k) { inp[k] = root.querySelector('input[data-role="' + k + '"]'); });
     var readZ = root.querySelector('[data-role="zval"]'), readC = root.querySelector('[data-role="calc"]');
     var P = { mu: +inp.mu.value, sd: +inp.sd.value, x: +inp.x.value };
 
     var charts = [];
-    var cx = chart(cvX, mode === "dual" ? {
-      x: { type: "linear", position: "bottom", title: { display: true, text: "x" } },
-      xz: { type: "linear", position: "bottom", min: -4, max: 4, ticks: { stepSize: 1 }, title: { display: true, text: "z" } },
-      y: { min: 0, display: false }
-    } : {
-      x: { type: "linear", title: { display: true, text: "x" } },
-      y: { min: 0, display: false }
-    });
+    var cx = makeChart(elX, mode === "dual" ? [
+      { type: "value", position: "bottom", name: "x" },
+      { type: "value", position: "bottom", min: -4, max: 4, interval: 1, name: "z" }
+    ] : { type: "value", name: "x" });
     charts.push(cx);
     var cz = null;
     if (mode === "two") {
-      cz = chart(cvZ, { x: { type: "linear", min: -4, max: 4, ticks: { stepSize: 1 }, title: { display: true, text: "z" } },
-                        y: { min: 0, display: false } });
+      cz = makeChart(elZ, { type: "value", min: -4, max: 4, interval: 1, name: "z" });
       charts.push(cz);
     }
 
     function paint() {
-      var ink = token("--upwr-ink-soft") || "#444", accent = token("--upwr-accent") || "#7a2e3b";
-      var surface = token("--upwr-surface") || "#fff";
-      var fill = alpha(token("--upwr-rule") || "#d9cfbc", 0.5);
+      var C = Charts.palette(), size = Charts.axisFontSize(root), pad = Math.ceil(size * 1.6);
       charts.forEach(function (c) {
-        Charts.styleAxes(c, null, { includeBounds: false, fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-        c.options.scales.x.ticks.maxTicksLimit = 5;
-        // Jednakowe marginesy utrzymują wyrównanie osi x i z mimo różnych etykiet.
-        c.options.layout.padding.left = c.options.layout.padding.right = Math.ceil(Charts.axisFontSize(root) * 1.6);
-        if (c.options.scales.xz) c.options.scales.xz.grid.display = false;
-        var ds = c.data.datasets;
-        ds[0].borderColor = ink; ds[0].backgroundColor = fill;
-        ds[1].borderColor = accent;
-        ds[2].pointBackgroundColor = ds[2].pointHoverBackgroundColor = accent;
-        ds[2].pointBorderColor = ds[2].pointHoverBorderColor = surface;
-        c.update();
+        function axis(offset, grid) {
+          var a = Charts.ecAxis(C, size, { nameGap: Math.round(size * 1.8), offset: offset || 0,
+            nameTextStyle: { color: C.subtle, fontFamily: C.mono, fontSize: size, verticalAlign: "top" } });
+          a.axisLabel.showMinLabel = a.axisLabel.showMaxLabel = false;
+          if (grid === false) a.splitLine = { show: false };
+          a.splitNumber = 5;
+          return a;
+        }
+        var dual = c === cx && mode === "dual";
+        c.setOption({
+          grid: { left: pad, right: pad, bottom: Math.ceil(size * (dual ? 7.2 : 3.6)) },
+          xAxis: dual ? [axis(0), axis(Math.ceil(size * 3.6), false)] : axis(0),
+          series: [
+            { id: "pdf", lineStyle: { color: C.soft }, areaStyle: { color: alpha(C.rule, 0.5) } },
+            { id: "mark", lineStyle: { color: C.accent } },
+            { id: "dot", itemStyle: { color: C.accent, borderColor: C.surface, borderWidth: 2 } }
+          ]
+        });
       });
     }
 
@@ -78,22 +82,26 @@
       var x = Math.max(lo, Math.min(hi, P.x)), z = (P.x - mu) / sd, top = pdf(mu, mu, sd);
       var xs = [];
       for (var v = lo; v <= hi + 1e-9; v += (hi - lo) / 300) xs.push(v);
-      cx.options.scales.x.min = lo; cx.options.scales.x.max = hi;
-      cx.options.scales.y.max = top * 1.2;
-      var ds = cx.data.datasets;
-      ds[0].data = xs.map(function (v) { return { x: v, y: pdf(v, mu, sd) }; });
-      ds[1].data = [{ x: x, y: 0 }, { x: x, y: top * 1.08 }];
-      ds[2].data = [{ x: x, y: top * 1.08 }];
-      cx.update("none");
+      cx.setOption({
+        xAxis: mode === "dual" ? [{ min: lo, max: hi }, {}] : { min: lo, max: hi },
+        yAxis: { max: top * 1.2 },
+        series: [
+          { id: "pdf", data: xs.map(function (v) { return [v, pdf(v, mu, sd)]; }) },
+          { id: "mark", data: [[x, 0], [x, top * 1.08]] },
+          { id: "dot", data: [[x, top * 1.08]] }
+        ]
+      });
       if (cz) {
         var zz = Math.max(-4, Math.min(4, z)), zs = [];
         for (var t = -4; t <= 4.0001; t += 0.02) zs.push(t);
-        cz.options.scales.y.max = pdf(0, 0, 1) * 1.2;
-        var d2 = cz.data.datasets;
-        d2[0].data = zs.map(function (t) { return { x: t, y: pdf(t, 0, 1) }; });
-        d2[1].data = [{ x: zz, y: 0 }, { x: zz, y: pdf(0, 0, 1) * 1.08 }];
-        d2[2].data = [{ x: zz, y: pdf(0, 0, 1) * 1.08 }];
-        cz.update("none");
+        cz.setOption({
+          yAxis: { max: pdf(0, 0, 1) * 1.2 },
+          series: [
+            { id: "pdf", data: zs.map(function (t) { return [t, pdf(t, 0, 1)]; }) },
+            { id: "mark", data: [[zz, 0], [zz, pdf(0, 0, 1) * 1.08]] },
+            { id: "dot", data: [[zz, pdf(0, 0, 1) * 1.08]] }
+          ]
+        });
       }
       if (readZ) readZ.textContent = z.toFixed(2);
       if (readC) readC.textContent = "z = (" + num(P.x) + " − " + num(mu) + ") / " + num(sd) + " = " + z.toFixed(2);
@@ -110,18 +118,18 @@
     // Przeciąganie x po górnym wykresie.
     var drag = false;
     function move(e) {
-      var rc = cvX.getBoundingClientRect(), area = cx.chartArea;
-      var px = Math.max(area.left, Math.min(area.right, e.clientX - rc.left));
+      var sd = Math.max(P.sd, 1e-6), lo = P.mu - 4 * sd, hi = P.mu + 4 * sd;
+      var v = Charts.ecPointer(cx, elX, e, [lo, hi]).x;
       var step = Math.pow(10, Math.floor(Math.log10(P.sd)) - 1);
-      P.x = Math.round(cx.scales.x.getValueForPixel(px) / step) * step;
+      P.x = Math.round(v / step) * step;
       P.x = +P.x.toFixed(6);
       if (inp.x) inp.x.value = num(P.x);
       draw();
     }
-    cvX.style.touchAction = "none"; cvX.style.cursor = "ew-resize";
-    Charts.listen(cvX, "pointerdown", function (e) { drag = true; cvX.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
-    Charts.listen(cvX, "pointermove", function (e) { if (drag) move(e); });
-    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(cvX, t, function () { drag = false; }); });
+    elX.style.touchAction = "none"; elX.style.cursor = "ew-resize";
+    Charts.listen(elX, "pointerdown", function (e) { drag = true; elX.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
+    Charts.listen(elX, "pointermove", function (e) { if (drag) move(e); });
+    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(elX, t, function () { drag = false; }); });
 
     Charts.zoomControl(root);
     paint();

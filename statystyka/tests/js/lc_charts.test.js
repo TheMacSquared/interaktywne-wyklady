@@ -119,13 +119,22 @@ function environment(shiny = true) {
     setOption(option) {
       assert.ok(!this.disposed, "setOption() na zwolnionym wykresie");
       this.updates++;
-      if (option.xAxis) this.xAxis = { ...this.xAxis, ...option.xAxis };
-      if (option.yAxis) this.yAxis = { ...this.yAxis, ...option.yAxis };
+      const merge = (old, add) => Array.isArray(add)
+        ? add.map((a, i) => ({ ...((Array.isArray(old) ? old[i] : i ? {} : old) || {}), ...a }))
+        : Array.isArray(old) ? [{ ...old[0], ...add }, ...old.slice(1)] : { ...old, ...add };
+      if (option.xAxis) this.xAxis = merge(this.xAxis, option.xAxis);
+      if (option.yAxis) this.yAxis = merge(this.yAxis, option.yAxis);
       (option.series || []).forEach(s => this.series.set(s.id, { ...(this.series.get(s.id) || {}), ...s }));
     }
     convertToPixel(finder, value) { assert.ok(!this.disposed); return [value[0] * 100, value[1] * 100]; }
     convertFromPixel(finder, pixel) { assert.ok(!this.disposed); return [pixel[0] / 100, pixel[1] / 100]; }
     resize() { assert.ok(!this.disposed); }
+    on(name, fn) { (this.events ||= {})[name] = fn; }
+    dispatchAction(action) { assert.ok(!this.disposed); (this.actions ||= []).push(action); }
+    getWidth() { return 1000; }
+    getHeight() { return 500; }
+    get data() { return Object.fromEntries([...this.series].map(([id, s]) => [id, s.data])); }
+    get axisFont() { return (Array.isArray(this.xAxis) ? this.xAxis[0] : this.xAxis).axisLabel?.fontSize; }
     isDisposed() { return !!this.disposed; }
     dispose() { assert.ok(!this.disposed, "powtórne dispose()"); this.disposed = true; live.delete(this); }
   }
@@ -261,13 +270,14 @@ test("lejek odtwarza serie po powrocie, także po wiadomości bez obecnego DOM",
   const message = env.handlers.get("lejek_series");
   message({ series: [[0, 0.5, 0.33]] });
   for (let i = 0; i < 10; i++) {
-    const el = root("lc-lejek", [canvas("lejek")]);
+    const el = root("lc-lejek", [ecbox("lejek")]);
     env.mount(el);
     assert.equal(env.live.size, 1);
     const ch = [...env.live][0];
-    assert.equal(ch.canvas, el.children[0]);
-    assert.equal(ch.data.datasets.length, 4);
-    assert.equal(ch.data.datasets[3].data.length, 3);
+    assert.equal(ch.element, el.children[0]);
+    assert.equal(ch.opts.renderer, "canvas", "lejek rysuje setki serii na canvas");
+    assert.equal(ch.series.get("old").data.length, 0);
+    assert.equal(ch.series.get("last").data.length, 3);
     message({ series: [[0, 0.5, 0.33], [1, 0.5, 0.33]] });
     assert.equal(env.timers.size, 1, "nowa seria jest animowana");
     env.unmount(el);
@@ -276,8 +286,8 @@ test("lejek odtwarza serie po powrocie, także po wiadomości bez obecnego DOM",
     message({ series: [[0, 0.5, 0.33]] });
   }
   message({ series: [] });
-  env.mount(root("lc-lejek", [canvas("lejek")]));
-  assert.equal([...env.live][0].data.datasets.length, 3, "reset działa także poza rozdziałem");
+  env.mount(root("lc-lejek", [ecbox("lejek")]));
+  assert.equal([...env.live][0].series.get("last").data.length, 0, "reset działa także poza rozdziałem");
   assert.equal(env.errors.length, 0);
 });
 
@@ -348,15 +358,16 @@ test("dystrybuanta łączy wykresy i chroni wybór klawiaturowy przed hoverem", 
   const env = environment();
   env.load("03-rozklady-prawdopodobienstwa/modules/cdf_chart.js");
   const x = new Element("span", { "data-role": "x" });
-  const el = root("lc-cdf", [canvas("pdf"), canvas("cdf"), x]);
+  const el = root("lc-cdf", [ecbox("pdf"), ecbox("cdf"), x]);
   env.mount(el);
   const handle = el.querySelector(".lc-chart-handle");
   press(handle, "ArrowRight"); assert.equal(x.textContent, "1.05");
   const pdf = [...env.live][0], cdf = [...env.live][1];
-  pdf.options.onHover({ x: 200 }); assert.equal(x.textContent, "1.05");
-  assert.equal(cdf.data.datasets[3].data[0].x, 1.05);
-  pdf.options.onClick({ x: 200 }); assert.equal(x.textContent, "2.00");
-  press(handle, "ArrowLeft", true); assert.equal(x.textContent, "1.50");
+  pdf.element.emit("pointermove", { clientX: 200, clientY: 0 }); assert.equal(x.textContent, "1.05");
+  assert.equal(cdf.series.get("dot").data[0][0], 1.05);
+  pdf.element.emit("pointerdown", { clientX: 200, clientY: 0 }); assert.equal(x.textContent, "2.00");
+  pdf.element.emit("pointermove", { clientX: 150, clientY: 0 }); assert.equal(x.textContent, "1.50", "po kliknięciu kursor znów prowadzi x");
+  press(handle, "ArrowLeft", true); assert.equal(x.textContent, "1.00");
   env.unmount(el); assert.equal(env.live.size, 0);
   assert.equal(env.errors.length, 0);
 });
@@ -369,7 +380,7 @@ test("kwantyl ukrywa odpowiedź po zmianie i wyłącza uchwyt w trybie p", () =>
   const preset = new Element("button", { "data-q-p": "0.5", "aria-pressed": "true" });
   const reveal = new Element("button", { "data-q-reveal": "true" });
   const x = new Element("span", { "data-role": "x" }), p = new Element("span", { "data-role": "p" });
-  const el = root("lc-quant", [canvas("pdf"), modeX, modeP, preset, reveal, x, p]);
+  const el = root("lc-quant", [ecbox("pdf"), modeX, modeP, preset, reveal, x, p]);
   env.mount(el);
   const handle = el.querySelector(".lc-chart-handle");
   el.emit("click", { target: reveal }); assert.notEqual(p.textContent, "?");
@@ -471,16 +482,16 @@ test("wszystkie migrowane widgety inicjują się i wracają z nową instancją",
     ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-simpson", [canvas("plot")],
       json({ x: [1, 2, 3, 4, 5, 6], y: [3, 2, 1, 6, 5, 4], g: [0, 0, 0, 1, 1, 1],
         groups: ["A", "B"], colors: ["--upwr-accent", "--upwr-reference"], xlim: [0, 10], ylim: [0, 10] })), 1],
-    ["03-rozklady-prawdopodobienstwa", "cdf_chart", () => root("lc-cdf", [canvas("pdf"), canvas("cdf")]), 2],
-    ["03-rozklady-prawdopodobienstwa", "quantile_chart", () => root("lc-quant", [canvas("pdf")]), 1],
-    ["03-rozklady-prawdopodobienstwa", "normals_chart", () => root("lc-normals", [canvas("pdf")],
+    ["03-rozklady-prawdopodobienstwa", "cdf_chart", () => root("lc-cdf", [ecbox("pdf"), ecbox("cdf")]), 2],
+    ["03-rozklady-prawdopodobienstwa", "quantile_chart", () => root("lc-quant", [ecbox("pdf")]), 1],
+    ["03-rozklady-prawdopodobienstwa", "normals_chart", () => root("lc-normals", [ecbox("pdf")],
       { "data-mu1": 170, "data-sd1": 8, "data-mu2": 180, "data-sd2": 10 }), 1],
-    ["03-rozklady-prawdopodobienstwa", "cases_chart", () => root("lc-cases", [canvas("pdf")],
+    ["03-rozklady-prawdopodobienstwa", "cases_chart", () => root("lc-cases", [ecbox("pdf")],
       json([{ ...normal, t: 178, tail: "upper" }])), 1],
-    ["03-rozklady-prawdopodobienstwa", "duel_chart", () => root("lc-duel", [canvas("a"), canvas("b"), canvas("z")],
+    ["03-rozklady-prawdopodobienstwa", "duel_chart", () => root("lc-duel", [ecbox("a"), ecbox("b"), ecbox("z")],
       json([pair])), 3],
-    ["03-rozklady-prawdopodobienstwa", "zscore_chart", () => root("lc-zcalc", [canvas("x"), canvas("z"), ...zInputs()]), 2],
-    ["03-rozklady-prawdopodobienstwa", "zscore_chart", () => root("lc-zcalc", [canvas("x"), ...zInputs()], { "data-mode": "dual" }), 1]
+    ["03-rozklady-prawdopodobienstwa", "zscore_chart", () => root("lc-zcalc", [ecbox("x"), ecbox("z"), ...zInputs()]), 2],
+    ["03-rozklady-prawdopodobienstwa", "zscore_chart", () => root("lc-zcalc", [ecbox("x"), ...zInputs()], { "data-mode": "dual" }), 1]
   ];
   for (const [course, script, makeRoot, expected] of fixtures) {
     const env = environment();
@@ -537,18 +548,49 @@ for (const [kind,config,start,end] of [
 
 test("dwie krzywe: niezależne średnie, odwrotny kierunek odchylenia i reset",()=>{
  const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/normals_chart.js");const reset=new Element("button",{"data-n-reset":"true"});
- const el=root("lc-normals",[canvas("pdf"),reset],{"data-mu1":166,"data-sd1":6,"data-mu2":178,"data-sd2":7});env.mount(el);
- const [a,b]=el.querySelectorAll(".lc-chart-handle"),ch=[...env.live][0],original=ch.data.datasets[2].data.map(p=>({...p}));
- press(a,"ArrowRight",true);assert.equal(ch.data.datasets[2].data[0].x,171);assert.equal(ch.data.datasets[2].data[1].x,178);
- press(a,"ArrowUp");assert.ok(ch.data.datasets[2].data[0].y>original[0].y);
- assert.equal(b.getAttribute("role"),"button");el.emit("click",{target:reset});assert.equal(ch.data.datasets[2].data[0].x,166);assert.equal(ch.data.datasets[2].data[0].y,original[0].y);assert.equal(env.errors.length,0);
+ const el=root("lc-normals",[ecbox("pdf"),reset],{"data-mu1":166,"data-sd1":6,"data-mu2":178,"data-sd2":7});env.mount(el);
+ const [a,b]=el.querySelectorAll(".lc-chart-handle"),ch=[...env.live][0],dots=()=>ch.series.get("dots").data,original=dots().map(p=>[...p]);
+ press(a,"ArrowRight",true);assert.equal(dots()[0][0],171);assert.equal(dots()[1][0],178);
+ press(a,"ArrowUp");assert.ok(dots()[0][1]>original[0][1]);
+ assert.equal(b.getAttribute("role"),"button");el.emit("click",{target:reset});assert.equal(dots()[0][0],166);assert.equal(dots()[0][1],original[0][1]);assert.equal(env.errors.length,0);
+});
+
+test("prototypy E1–E2: mapa wybiera n klawiaturą, przedział liczy dane i model", () => {
+  const env = environment();
+  env.load("03-rozklady-prawdopodobienstwa/modules/ec_proto.js");
+  const rows = [1, 2, 3].map(n => [0.1 * n, 0.5 * n, 0.1 * n]);
+  const base = { key: "a", short: "A", unit: "g", axis: "Oś", story: "", one: "jedna", many: "wielu", mu: 0.5, sd: 0.3, skew: 1, xlo: 0, xhi: 1, rows, tv: [0.3, 0.2, 0.1],
+    sims: 10, bins: 2, counts: [[6, 4], [5, 5], [4, 6]] };
+  const n = new Element("span", { "data-role": "n" }), tv = new Element("span", { "data-role": "tv" });
+  const map = root("lc-ecmap", [ecbox("map"), n, tv], { "data-config": JSON.stringify([base]) });
+  env.mount(map);
+  const h = map.querySelector(".lc-chart-handle");
+  press(h, "ArrowDown"); assert.equal(n.textContent, "2"); assert.equal(tv.textContent, "20.0%");
+  press(h, "End"); assert.equal(n.textContent, "3");
+  [...env.live][0].events.mouseover({ seriesId: "map", value: [1, 0, 1] }); assert.equal(n.textContent, "1");
+  env.unmount(map); assert.equal(env.live.size, 0);
+  const data = new Element("span", { "data-role": "data" }), model = new Element("span", { "data-role": "model" });
+  const big = new Element("button", { "data-b-preset": "big" });
+  const values = Array.from({ length: 100 }, (_, i) => 150 + i);
+  const brush = root("lc-brushx", [ecbox("hist"), data, model, big],
+    { "data-config": JSON.stringify({ values, mean: 199.5, sd: 29, lo: 90, hi: 300, bin: 5, a: 160, b: 200 }) });
+  env.mount(brush);
+  assert.equal(data.textContent, "39.0% (39)");
+  brush.emit("click", { target: big });
+  assert.equal(data.textContent, "0.00% (0)", "kraniec osi to przedział otwarty");
+  const ch = [...env.live][0];
+  ch.events.brushSelected({ batch: [{ areas: [{ coordRange: [200, 230.4] }] }] });
+  assert.equal(data.textContent, "29.0% (29)", "granice zaokrąglone do 1 g, przedział otwarty");
+  assert.ok(ch.actions.some(a => a.type === "takeGlobalCursor"));
+  env.unmount(brush); assert.equal(env.live.size, 0);
+  assert.equal(env.errors.length, 0);
 });
 
 test("pojedynek: kroki w jednostkach, ukryte uchwyty w z i reset przy zmianie pary",()=>{
  const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/duel_chart.js");
  const group={mu:170,sd:8,x:178,step:.5,unit:"cm",grp:"Grupa",lab:"Osoba"};
  const raw=new Element("button",{"data-d-view":"raw"}),z=new Element("button",{"data-d-view":"z"}),pair=new Element("button",{"data-d-pair":"1"});
- const el=root("lc-duel",[root("lc-duel-top",[canvas("a"),canvas("b")]),root("lc-duel-z",[canvas("z")]),raw,z,pair],{"data-config":JSON.stringify([{a:group,b:group},{a:{...group,x:38,mu:36.6,sd:.5,step:.1,unit:"°C"},b:group}])});env.mount(el);
+ const el=root("lc-duel",[root("lc-duel-top",[ecbox("a"),ecbox("b")]),root("lc-duel-z",[ecbox("z")]),raw,z,pair],{"data-config":JSON.stringify([{a:group,b:group},{a:{...group,x:38,mu:36.6,sd:.5,step:.1,unit:"°C"},b:group}])});env.mount(el);
  const [a,b]=el.querySelectorAll(".lc-chart-handle");press(a,"ArrowRight",true);assert.equal(Number(a.getAttribute("aria-valuenow")),183);assert.equal(Number(b.getAttribute("aria-valuenow")),178);
  el.emit("click",{target:z});assert.equal(a.hidden,true);press(a,"ArrowLeft");assert.equal(Number(a.getAttribute("aria-valuenow")),183);
  el.emit("click",{target:raw});assert.equal(a.hidden,false);assert.equal(Number(a.getAttribute("aria-valuenow")),183);
@@ -558,7 +600,7 @@ test("pojedynek: kroki w jednostkach, ukryte uchwyty w z i reset przy zmianie pa
 test("galeria: krok zależy od przypadku, prawdopodobieństwo dwóch ogonów jest symetryczne",()=>{
  const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/cases_chart.js");
  const item={mu:0,sd:1,t:1,step:.1,unit:"cm",axis:"Długa nazwa osi wymagająca zawijania",tail:"outside"},other=new Element("button",{"data-c-case":"1"}),p=new Element("span",{"data-role":"p"});
- const el=root("lc-cases",[canvas("pdf"),other,p],{"data-config":JSON.stringify([item,{...item,t:0,step:5,mu:0,sd:10,unit:"pkt",tail:"lower"}])});env.mount(el);
+ const el=root("lc-cases",[ecbox("pdf"),other,p],{"data-config":JSON.stringify([item,{...item,t:0,step:5,mu:0,sd:10,unit:"pkt",tail:"lower"}])});env.mount(el);
  const h=el.querySelector(".lc-chart-handle"),old=p.textContent;press(h,"ArrowLeft",true);assert.equal(p.textContent,"100.0%");press(h,"ArrowLeft",true);assert.equal(p.textContent,old);
  el.emit("click",{target:other});press(h,"ArrowRight");assert.equal(h.getAttribute("aria-valuetext"),"5 pkt");press(h,"End");assert.equal(Number(h.getAttribute("aria-valuenow")),40);
  const lines=env.window.lcCharts.axisTitle(item.axis,180,21);assert.ok(lines.length>1);assert.equal(lines.join(" "),item.axis);assert.equal(env.errors.length,0);
@@ -568,13 +610,15 @@ test("galeria: krok zależy od przypadku, prawdopodobieństwo dwóch ogonów jes
 function zoomWithoutChangingData(env, el) {
   const charts = [...env.live];
   const before = JSON.stringify(charts.map(ch => ch.data));
-  const size = charts.find(ch => ch.options.scales)?.options.scales.x.ticks.font.size;
+  const font = ch => ch.options?.scales ? ch.options.scales.x.ticks.font.size : ch.axisFont;
+  const sized = charts.find(ch => font(ch));
+  const size = sized && font(sized);
   el.querySelector("[data-lc-chart-zoom]").emit("click");
   env.theme(el);
   assert.equal(JSON.stringify(charts.map(ch => ch.data)), before);
   assert.deepEqual([...env.live], charts, "lupa nie wymienia instancji wykresów");
   if (size) {
-    const after = charts.find(ch => ch.options.scales).options.scales.x.ticks.font.size;
+    const after = font(sized);
     assert.ok(el.dataset.lcChartLarge === "true" ? after > size : after < size);
   }
   assert.equal(env.errors.length, 0);
@@ -623,21 +667,22 @@ test("Simpson: lupa zachowuje widok osobnych branż", () => {
 
 test("lejek: lupa nie kończy animacji, nie zmienia serii i zachowuje skalę log", () => {
   const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/lejek_chart.js");
-  const el=root("lc-lejek",[zoomButton(),canvas("lejek")]);env.mount(el);
+  const el=root("lc-lejek",[zoomButton(),ecbox("lejek")]);env.mount(el);
   env.handlers.get("lejek_series")({series:[[.1,.2,.15]]});
   assert.equal(env.timers.size,1);
   zoomWithoutChangingData(env,el);
   assert.equal(env.timers.size,1);
-  const ch=[...env.live][0];assert.equal(ch.options.scales.x.type,"logarithmic");
-  assert.equal(ch.data.datasets[3].data.length,1);
-  env.handlers.get("lejek_series")({series:[]});assert.equal(env.timers.size,0);assert.equal(ch.data.datasets.length,3);
+  const ch=[...env.live][0];assert.equal(ch.xAxis.type,"log");
+  assert.equal(ch.series.get("last").data.length,1);
+  env.handlers.get("lejek_series")({series:[]});assert.equal(env.timers.size,0);
+  assert.equal(ch.series.get("last").data.length,0);assert.equal(ch.series.get("old").data.length,0);
 });
 
 test("kalkulator z: pola i wynik zostają po powiększeniu, niepoprawne σ nie psuje danych", () => {
   const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/zscore_chart.js");
   const fields=["mu","sd","x"].map((role,i)=>new Element("input",{"data-role":role,value:[65,10,80][i]}));
   const z=new Element("span",{"data-role":"zval"});
-  const el=root("lc-zcalc",[zoomButton(),canvas("x"),canvas("z"),...fields,z]);env.mount(el);
+  const el=root("lc-zcalc",[zoomButton(),ecbox("x"),ecbox("z"),...fields,z]);env.mount(el);
   fields[2].value="90";fields[2].emit("input");assert.equal(z.textContent,"2.50");
   zoomWithoutChangingData(env,el);assert.equal(z.textContent,"2.50");assert.equal(fields[2].value,"90");
   const before=JSON.stringify([...env.live].map(ch=>ch.data));

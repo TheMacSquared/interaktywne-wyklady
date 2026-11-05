@@ -1,12 +1,12 @@
-// Dystrybuanta N(0, 1): dwa połączone wykresy Chart.js (gęstość z polem
+// Dystrybuanta N(0, 1): dwa połączone wykresy ECharts (gęstość z polem
 // na lewo od x i krzywa F(x) z punktem). Kursor lub palec na którymkolwiek
-// wykresie ustawia x. Kontener: .lc-cdf[data-x] z dwoma <canvas>
+// wykresie ustawia x. Kontener: .lc-cdf[data-x] z dwoma <div class="lc-ec">
 // (data-role="pdf" / "cdf") i odczytami [data-role="x"] / [data-role="F"].
 // Rozdział renderuje się przez renderUI, więc wykresy startują, gdy
 // kontener pojawi się w DOM.
 (function () {
   var Charts = window.lcCharts;
-  var token = Charts.token, alpha = Charts.alpha;
+  var alpha = Charts.alpha;
   var X_MIN = -4, X_MAX = 4, STEP = 0.025;
 
   function pdf(x) { return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI); }
@@ -19,36 +19,30 @@
   var XS = [];
   for (var i = 0; i <= (X_MAX - X_MIN) / STEP; i++) XS.push(+(X_MIN + i * STEP).toFixed(3));
 
-  function axes(yMax, yTitle) {
-    return {
-      x: { type: "linear", min: X_MIN, max: X_MAX,
-           ticks: { stepSize: 1 }, title: { display: true, text: "x" } },
-      y: { min: 0, max: yMax, title: { display: true, text: yTitle } }
-    };
+  function line(id, width, dash) {
+    return { id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+             lineStyle: { width: width, type: dash ? [5, 4] : "solid" } };
   }
 
-  function baseOptions(yMax, yTitle) {
+  function option(yMax, yTitle, yStep, series) {
     return {
-      responsive: true, maintainAspectRatio: false, animation: false,
-      locale: "en-US",  // kropka dziesiętna na osiach
-      events: ["mousemove", "mousedown", "touchstart", "touchmove", "click"],
-      layout: { padding: { top: 6, right: 8 } },
-      scales: axes(yMax, yTitle),
-      plugins: { legend: { display: false }, tooltip: { enabled: false },
-                 colors: { enabled: false } },
-      elements: { point: { radius: 0 }, line: { tension: 0 } }
+      animation: false, aria: { enabled: false },
+      grid: { left: 8, right: 12, top: 10, bottom: 8 },
+      xAxis: { type: "value", min: X_MIN, max: X_MAX, interval: 2, name: "x" },
+      yAxis: { type: "value", min: 0, max: yMax, interval: yStep, name: yTitle },
+      series: series
     };
   }
 
   function init(root) {
-    var pdfCanvas = root.querySelector('canvas[data-role="pdf"]');
-    var cdfCanvas = root.querySelector('canvas[data-role="cdf"]');
-    if (!pdfCanvas || !cdfCanvas) return false;
+    var pdfEl = root.querySelector('.lc-ec[data-role="pdf"]');
+    var cdfEl = root.querySelector('.lc-ec[data-role="cdf"]');
+    if (!pdfEl || !cdfEl) return false;
 
     var x0 = parseFloat(root.dataset.x || "1");
     var keyboard = false, dragging = false;
     var layer = Charts.handleLayer(root);
-    var handle = layer.add(cdfCanvas, {
+    var handle = layer.add(cdfEl, {
       label: "Położenie x na dystrybuancie",
       hint: "Strzałki zmieniają x o 0.05; Shift ze strzałką o 0.5. Home i End: krańce osi.",
       onKey: function (event) {
@@ -60,102 +54,94 @@
       },
       onPointerDown: function (event) {
         keyboard = false; dragging = true;
-        cdfCanvas.setPointerCapture(event.pointerId);
-        pointerX(event);
+        cdfEl.setPointerCapture(event.pointerId);
+        setX(Charts.ecPointer(cdfChart, cdfEl, event, [X_MIN, X_MAX]).x);
         event.preventDefault();
       }
     });
-    function positionHandle(ch) {
-      handle.position(ch.scales.x.getPixelForValue(x0), ch.scales.y.getPixelForValue(cdf(x0)));
+    function positionHandle() {
+      var p = cdfChart.convertToPixel({ gridIndex: 0 }, [x0, cdf(x0)]);
+      if (p) handle.position(p[0], p[1]);
     }
     var readX = root.querySelector('[data-role="x"]');
     var readF = root.querySelector('[data-role="F"]');
 
-    var pdfChart = Charts.create(pdfCanvas, {
-      type: "line",
-      data: { datasets: [
-        { data: XS.map(function (x) { return { x: x, y: pdf(x) }; }), borderWidth: 2 },
-        { data: [], fill: "origin", borderWidth: 0 },
-        { data: [], borderWidth: 1.5 }
-      ] },
-      options: baseOptions(0.45, "Gęstość f(x)")
-    });
+    var pdfChart = Charts.chart(pdfEl, option(0.45, "Gęstość f(x)", 0.1, [
+      Object.assign(line("shade", 0), { areaStyle: {} }),
+      Object.assign(line("curve", 2), { data: XS.map(function (x) { return [x, pdf(x)]; }) }),
+      line("mark", 1.5)
+    ]));
+    var cdfChart = Charts.chart(cdfEl, option(1, "F(x) = P(X ≤ x)", 0.2, [
+      Object.assign(line("curve", 2), { data: XS.map(function (x) { return [x, cdf(x)]; }) }),
+      line("vert", 1.5, true),
+      line("horiz", 1.5, true),
+      { id: "dot", type: "scatter", data: [], symbolSize: 12, silent: true, animation: false }
+    ]), { onResize: positionHandle });
 
-    var cdfChart = Charts.create(cdfCanvas, {
-      type: "line",
-      data: { datasets: [
-        { data: XS.map(function (x) { return { x: x, y: cdf(x) }; }), borderWidth: 2 },
-        { data: [], borderWidth: 1.5, borderDash: [5, 4] },
-        { data: [], borderWidth: 1.5, borderDash: [5, 4] },
-        { data: [], pointRadius: 6, pointHoverRadius: 6, borderWidth: 2, showLine: false }
-      ] },
-      options: baseOptions(1.05, "F(x) = P(X ≤ x)"),
-      plugins: [{ id: "cdfHandle", afterRender: positionHandle }]
-    });
-    cdfChart.options.scales.y.max = 1;
-    cdfChart.options.scales.y.ticks = { stepSize: 0.2 };
+    function axes(P, size, yTitleGap) {
+      return {
+        xAxis: Charts.ecAxis(P, size),
+        yAxis: Charts.ecAxis(P, size, { nameGap: Math.round(size * yTitleGap) })
+      };
+    }
 
     function paint() {
-      var ink = token("--upwr-ink-soft") || "#444";
-      var accent = token("--upwr-accent") || "#7a2e3b";
-      [pdfChart, cdfChart].forEach(function (ch) {
-        Charts.styleAxes(ch, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-        ch.options.scales.x.ticks.maxTicksLimit = 5;
-        ch.data.datasets[0].borderColor = ink;
-      });
-      pdfChart.data.datasets[1].backgroundColor = alpha(accent, 0.28);
-      pdfChart.data.datasets[2].borderColor = accent;
-      cdfChart.data.datasets[1].borderColor = accent;
-      cdfChart.data.datasets[2].borderColor = accent;
-      var surface = token("--upwr-surface") || "#fff";
-      var dot = cdfChart.data.datasets[3];
-      dot.backgroundColor = dot.pointBackgroundColor = dot.pointHoverBackgroundColor = accent;
-      dot.borderColor = dot.pointBorderColor = dot.pointHoverBorderColor = surface;
-      // Pełny update: tryb "none" zostawia w punktach zbuforowane stare kolory.
-      pdfChart.update();
-      cdfChart.update();
+      var P = Charts.palette(), size = Charts.axisFontSize(root);
+      // Górny kraniec 0.45 nie jest podziałką co 0.1 — bez etykiety nachodziłby na 0.4.
+      var pdfAxes = axes(P, size, 3.2);
+      pdfAxes.yAxis.axisLabel.showMaxLabel = false;
+      pdfChart.setOption(Object.assign(pdfAxes, { series: [
+        { id: "shade", lineStyle: { width: 0 }, areaStyle: { color: alpha(P.accent, 0.28) } },
+        { id: "curve", lineStyle: { color: P.soft } },
+        { id: "mark", lineStyle: { color: P.accent } }
+      ] }));
+      cdfChart.setOption(Object.assign(axes(P, size, 2.8), { series: [
+        { id: "curve", lineStyle: { color: P.soft } },
+        { id: "vert", lineStyle: { color: P.accent } },
+        { id: "horiz", lineStyle: { color: P.accent } },
+        { id: "dot", itemStyle: { color: P.accent, borderColor: P.surface, borderWidth: 2 } }
+      ] }));
+      positionHandle();
     }
 
     function setX(x) {
       x0 = Math.max(X_MIN, Math.min(X_MAX, Math.round(x * 100) / 100));
       var F = cdf(x0);
-      var shade = XS.filter(function (x) { return x <= x0; })
-        .map(function (x) { return { x: x, y: pdf(x) }; });
-      shade.push({ x: x0, y: pdf(x0) });
-      pdfChart.data.datasets[1].data = shade;
-      pdfChart.data.datasets[2].data = [{ x: x0, y: 0 }, { x: x0, y: pdf(x0) }];
-      cdfChart.data.datasets[1].data = [{ x: x0, y: 0 }, { x: x0, y: F }];
-      cdfChart.data.datasets[2].data = [{ x: X_MIN, y: F }, { x: x0, y: F }];
-      cdfChart.data.datasets[3].data = [{ x: x0, y: F }];
-      pdfChart.update("none");
-      cdfChart.update("none");
+      var shade = XS.filter(function (x) { return x <= x0; }).map(function (x) { return [x, pdf(x)]; });
+      shade.push([x0, pdf(x0)]);
+      pdfChart.setOption({ series: [
+        { id: "shade", data: shade },
+        { id: "mark", data: [[x0, 0], [x0, pdf(x0)]] }
+      ] });
+      cdfChart.setOption({ series: [
+        { id: "vert", data: [[x0, 0], [x0, F]] },
+        { id: "horiz", data: [[X_MIN, F], [x0, F]] },
+        { id: "dot", data: [[x0, F]] }
+      ] });
       if (readX) readX.textContent = fmt(x0, 2);
       if (readF) readF.textContent = fmt(F, 4);
       handle.value(x0, X_MIN, X_MAX, "x = " + fmt(x0, 2) + "; F(x) = " + fmt(F, 4));
-      positionHandle(cdfChart);
+      positionHandle();
     }
 
-    function pointerX(event) {
-      var rect = cdfCanvas.getBoundingClientRect(), axis = cdfChart.scales.x;
-      setX(axis.getValueForPixel(event.clientX - rect.left));
-    }
-    function follow(ch) {
-      ch.options.onHover = function (event) {
-        if (keyboard) return;
-        var area = ch.chartArea;
-        if (event.x < area.left || event.x > area.right) return;
-        setX(ch.scales.x.getValueForPixel(event.x));
-      };
-      ch.options.onClick = function (event) {
+    // Najechanie kursorem ustawia x, dopóki wybór nie pochodzi z klawiatury.
+    function follow(ch, el) {
+      el.style.cursor = "crosshair";
+      Charts.listen(el, "pointermove", function (event) {
+        var p = Charts.ecPointer(ch, el, event);
+        if (dragging && el === cdfEl) { setX(Math.max(X_MIN, Math.min(X_MAX, p.rawX))); return; }
+        if (keyboard || !(p.rawX >= X_MIN && p.rawX <= X_MAX)) return;
+        setX(p.rawX);
+      });
+      Charts.listen(el, "pointerdown", function (event) {
         keyboard = false;
-        setX(ch.scales.x.getValueForPixel(event.x));
-      };
-      Charts.listen(ch.canvas, "pointerdown", function () { keyboard = false; });
+        var p = Charts.ecPointer(ch, el, event);
+        if (p.rawX >= X_MIN && p.rawX <= X_MAX) setX(p.rawX);
+      });
     }
-    follow(pdfChart); follow(cdfChart);
-    Charts.listen(cdfCanvas, "pointermove", function (event) { if (dragging) pointerX(event); });
+    follow(pdfChart, pdfEl); follow(cdfChart, cdfEl);
     ["pointerup", "pointercancel"].forEach(function (type) {
-      Charts.listen(cdfCanvas, type, function () { dragging = false; });
+      Charts.listen(cdfEl, type, function () { dragging = false; });
     });
     Charts.zoomControl(root);
 

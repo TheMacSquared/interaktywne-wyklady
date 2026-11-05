@@ -46,6 +46,8 @@ s3p_css <- tags$style(HTML("
   .s3p-node rect { fill: var(--upwr-surface); stroke-width: 2.2; }
   .s3p-node text { font-size: 14px; font-weight: 600; text-anchor: middle; }
   .s3p-edge { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: 1.6; }
+  .s3p-node .s3p-node-sub { font-size: 11.5px; font-weight: 400; fill: var(--upwr-ink-soft) !important; }
+  .s3p-link { stroke-dasharray: 5 4; }
   .s3p-edge-lab { font-size: 11.5px; fill: var(--upwr-ink-soft) !important; text-anchor: middle; }
   .s3p-group { font-size: 12px; font-weight: 700; letter-spacing: .06em; fill: var(--upwr-ink-subtle) !important; }
 "))

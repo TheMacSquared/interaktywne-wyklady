@@ -2,18 +2,18 @@
 // Tryb „x”: granicę x przeciąga się po wykresie, szukane jest p = P(X ≤ x).
 // Tryb „p”: wybiera się p, szukany jest x. Szukana liczba to „?” do kliknięcia „Odsłoń”;
 // każda zmiana chowa ją z powrotem. Kontener: .lc-quant[data-mu][data-sd][data-x][data-lo][data-hi]
-// z <canvas data-role="pdf">, przyciskami [data-q-mode], [data-q-p], [data-q-reveal]
-// i odczytami [data-role="x"] / [data-role="p"]. Wzorzec jak area_chart.js (Ryc. 4.3).
+// z <div class="lc-ec" data-role="pdf">, przyciskami [data-q-mode], [data-q-p], [data-q-reveal]
+// i odczytami [data-role="x"] / [data-role="p"]. ECharts, wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
   var Charts = window.lcCharts;
-  var token = Charts.token, alpha = Charts.alpha;
+  var alpha = Charts.alpha;
   var SNAP = 0.5;
 
   var phi = Charts.normalCdf;
 
   function init(root) {
-    var canvas = root.querySelector('canvas[data-role="pdf"]');
-    if (!canvas) return false;
+    var el = root.querySelector('.lc-ec[data-role="pdf"]');
+    if (!el) return false;
 
     var MU = parseFloat(root.dataset.mu || "0"), SD = parseFloat(root.dataset.sd || "1");
     var LO = parseFloat(root.dataset.lo || String(MU - 4 * SD)), HI = parseFloat(root.dataset.hi || String(MU + 4 * SD));
@@ -22,7 +22,7 @@
     var pGroup = root.querySelector('[data-role="pgroup"]'), revealBtn = root.querySelector("[data-q-reveal]");
 
     var layer = Charts.handleLayer(root);
-    var handle = layer.add(canvas, {
+    var handle = layer.add(el, {
       label: "Granica x w pytaniu o prawdopodobieństwo",
       hint: "Strzałki przesuwają x o 0.5 cm; Shift ze strzałką o 5 cm. Odpowiedź odsłania osobny przycisk.",
       onKey: function (event) {
@@ -35,91 +35,98 @@
       },
       onPointerDown: function (event) { startDrag(event); }
     });
-    function positionHandle(ch) {
-      handle.position(ch.scales.x.getPixelForValue(x), ch.scales.y.getPixelForValue(TOP * 0.82));
-    }
     function pdf(v) { var z = (v - MU) / SD; return Math.exp(-z * z / 2) / (SD * Math.sqrt(2 * Math.PI)); }
     function quant(q) {
       return Charts.normalQuantile(q, MU, SD, LO, HI);
     }
-    var TOP = pdf(MU) * 1.25;
+    var TOP = pdf(MU) * 1.25, HY = TOP * 0.82;
     var XS = [];
     for (var v = LO; v <= HI + 1e-9; v += (HI - LO) / 480) XS.push(+v.toFixed(4));
 
-    // Duże liczby na wykresie: p w zacienionym polu, x nad granicą („?”, gdy szukane).
-    var labels = {
-      id: "quantLabels",
-      afterDatasetsDraw: function (ch) {
-        var c = ch.ctx, sx = ch.scales.x, sy = ch.scales.y, accent = token("--upwr-accent") || "#7a2e3b";
-        var font = token("--upwr-mono") || "monospace";
-        var pTxt = (mode === "x" && !shown) ? "?" : p.toFixed(2);
-        var xTxt = "x = " + ((mode === "p" && !shown) ? "?" : x.toFixed(1));
-        c.save();
-        c.fillStyle = accent; c.textAlign = "center";
-        c.font = "700 " + (Charts.axisFontSize(root) * 2.1) + "px " + font;
-        var cx = sx.getPixelForValue(Math.max(LO + 4, Math.min(x - 6, (Math.max(LO, x - 3 * SD) + x) / 2)));
-        var half = c.measureText(pTxt).width / 2;
-        cx = Math.max(ch.chartArea.left + half, Math.min(ch.chartArea.right - half, cx));
-        c.fillText(pTxt, cx, sy.getPixelForValue(TOP * 0.22));
-        c.font = "700 " + (Charts.axisFontSize(root) * 1.3) + "px " + font;
-        half = c.measureText(xTxt).width / 2;
-        var tx = Math.max(ch.chartArea.left + half, Math.min(ch.chartArea.right - half, sx.getPixelForValue(x)));
-        c.fillText(xTxt, tx, sy.getPixelForValue(TOP * 0.93));
-        c.restore();
-      }
-    };
+    function line(id, width) {
+      return { id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+               lineStyle: { width: width } };
+    }
+    var chart = Charts.chart(el, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 8, right: 12, top: 10, bottom: 8 },
+      xAxis: { type: "value", min: LO, max: HI, interval: 10, name: "Wzrost (cm)" },
+      yAxis: { type: "value", min: 0, max: TOP, splitNumber: 4, name: "Gęstość" },
+      series: [
+        Object.assign(line("shade", 0), { areaStyle: {} }),
+        Object.assign(line("pdf", 2), { data: XS.map(function (v) { return [v, pdf(v)]; }) }),
+        line("mark", 2),
+        { id: "dot", type: "scatter", data: [], symbolSize: 16, silent: true, animation: false }
+      ]
+    }, { onResize: function () { labels(); positionHandle(); } });
 
-    var chart = Charts.create(canvas, {
-      type: "line",
-      data: { datasets: [
-        { data: XS.map(function (v) { return { x: v, y: pdf(v) }; }), borderWidth: 2 },
-        { data: [], fill: "origin", borderWidth: 0 },
-        { data: [], borderWidth: 2 },
-        { data: [], pointRadius: 8, pointHoverRadius: 8, borderWidth: 2, showLine: false }
-      ] },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { top: 6, right: 8 } },
-        scales: {
-          x: { type: "linear", min: LO, max: HI, ticks: { stepSize: 10 }, title: { display: true, text: "Wzrost (cm)" } },
-          y: { min: 0, max: TOP, title: { display: true, text: "Gęstość" } }
-        },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } },
-        elements: { point: { radius: 0 }, line: { tension: 0 } }
-      },
-      plugins: [labels, { id: "quantHandle", afterRender: positionHandle }]
-    });
+    function positionHandle() {
+      var q = chart.convertToPixel({ gridIndex: 0 }, [x, HY]);
+      if (q) handle.position(q[0], q[1]);
+    }
+
+    // Duże liczby na wykresie: p w zacienionym polu, x nad granicą („?”, gdy szukane).
+    function labels() {
+      var P = Charts.palette(), size = Charts.axisFontSize(root), font = P.mono;
+      var pTxt = (mode === "x" && !shown) ? "?" : p.toFixed(2);
+      var xTxt = "x = " + ((mode === "p" && !shown) ? "?" : x.toFixed(1));
+      var left = chart.convertToPixel({ gridIndex: 0 }, [LO, 0]), right = chart.convertToPixel({ gridIndex: 0 }, [HI, 0]);
+      if (!left || !right) return;
+      var pSize = size * 2.1, xSize = size * 1.3;
+      function clampX(px, text, fs) {
+        var half = text.length * fs * 0.31;
+        return Math.max(left[0] + half, Math.min(right[0] - half, px));
+      }
+      var cp = chart.convertToPixel({ gridIndex: 0 },
+        [Math.max(LO + 4, Math.min(x - 6, (Math.max(LO, x - 3 * SD) + x) / 2)), TOP * 0.22]);
+      var cx = chart.convertToPixel({ gridIndex: 0 }, [x, TOP * 0.93]);
+      chart.setOption({ graphic: [
+        { id: "pLabel", type: "text", silent: true, z: 10,
+          x: clampX(cp[0], pTxt, pSize), y: cp[1],
+          style: { text: pTxt, fill: P.accent, font: "700 " + pSize + "px " + font,
+                   textAlign: "center", textVerticalAlign: "bottom" } },
+        { id: "xLabel", type: "text", silent: true, z: 10,
+          x: clampX(cx[0], xTxt, xSize), y: cx[1],
+          style: { text: xTxt, fill: P.accent, font: "700 " + xSize + "px " + font,
+                   textAlign: "center", textVerticalAlign: "bottom" } }
+      ] });
+    }
 
     function paint() {
-      var ink = token("--upwr-ink-soft") || "#444";
-      var accent = token("--upwr-accent") || "#7a2e3b";
-      var surface = token("--upwr-surface") || "#fff";
-      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-      chart.options.scales.x.ticks.maxTicksLimit = 5;
-      var ds = chart.data.datasets;
-      ds[0].borderColor = ink;
-      ds[1].backgroundColor = alpha(accent, 0.28);
-      ds[2].borderColor = accent;
-      ds[3].backgroundColor = ds[3].pointBackgroundColor = ds[3].pointHoverBackgroundColor = accent;
-      ds[3].borderColor = ds[3].pointBorderColor = ds[3].pointHoverBorderColor = surface;
-      chart.update();
+      var P = Charts.palette(), size = Charts.axisFontSize(root);
+      var y = Charts.ecAxis(P, size, { nameGap: Math.round(size * 3.6) });
+      y.axisLabel.showMaxLabel = false;
+      y.axisLabel.formatter = function (v) { return Charts.fmt(v, 3); };
+      chart.setOption({
+        xAxis: Charts.ecAxis(P, size),
+        yAxis: y,
+        series: [
+          { id: "shade", lineStyle: { width: 0 }, areaStyle: { color: alpha(P.accent, 0.28) } },
+          { id: "pdf", lineStyle: { color: P.soft } },
+          { id: "mark", lineStyle: { color: P.accent } },
+          { id: "dot", itemStyle: { color: P.accent, borderColor: P.surface, borderWidth: 2 } }
+        ]
+      });
+      labels();
+      positionHandle();
     }
 
     function draw() {
-      var ds = chart.data.datasets, hy = TOP * 0.82;
-      ds[1].data = XS.filter(function (v) { return v < x; }).map(function (v) { return { x: v, y: pdf(v) }; })
-        .concat([{ x: x, y: pdf(x) }]);
-      ds[2].data = [{ x: x, y: 0 }, { x: x, y: hy }];
-      ds[3].data = mode === "x" ? [{ x: x, y: hy }] : [];
-      chart.update("none");
+      chart.setOption({ series: [
+        { id: "shade", data: XS.filter(function (v) { return v < x; }).map(function (v) { return [v, pdf(v)]; })
+            .concat([[x, pdf(x)]]) },
+        { id: "mark", data: [[x, 0], [x, HY]] },
+        { id: "dot", data: mode === "x" ? [[x, HY]] : [] }
+      ] });
       if (readX) readX.textContent = (mode === "p" && !shown) ? "?" : x.toFixed(1);
       if (readP) readP.textContent = (mode === "x" && !shown) ? "?" : p.toFixed(2);
       if (pGroup) pGroup.hidden = mode !== "p";
       if (revealBtn) { var sp = revealBtn.querySelector("span") || revealBtn; sp.textContent = shown ? "Ukryj" : "Odsłoń"; }
-      canvas.style.cursor = mode === "x" ? "ew-resize" : "default";
+      el.style.cursor = mode === "x" ? "ew-resize" : "default";
       handle.element.hidden = mode !== "x";
       handle.value(x, LO, HI, "x = " + x.toFixed(1) + " cm");
-      positionHandle(chart);
+      labels();
+      positionHandle();
     }
 
     function press(group, btn) {
@@ -144,20 +151,19 @@
 
     // Przeciąganie granicy tylko w trybie „x”.
     var drag = false;
-    function valueAt(e) {
-      var rc = canvas.getBoundingClientRect(), area = chart.chartArea;
-      var px = Math.max(area.left, Math.min(area.right, e.clientX - rc.left));
-      return Math.max(LO, Math.min(HI, Math.round(chart.scales.x.getValueForPixel(px) / SNAP) * SNAP));
+    function move(e) {
+      var v = Charts.ecPointer(chart, el, e, [LO, HI]).x;
+      x = Math.max(LO, Math.min(HI, Math.round(v / SNAP) * SNAP));
+      p = phi((x - MU) / SD); shown = false; draw();
     }
-    function move(e) { x = valueAt(e); p = phi((x - MU) / SD); shown = false; draw(); }
-    canvas.style.touchAction = "none";
+    el.style.touchAction = "none";
     function startDrag(e) {
       if (mode !== "x") return;
-      drag = true; canvas.setPointerCapture(e.pointerId); move(e); e.preventDefault();
+      drag = true; el.setPointerCapture(e.pointerId); move(e); e.preventDefault();
     }
-    Charts.listen(canvas, "pointerdown", startDrag);
-    Charts.listen(canvas, "pointermove", function (e) { if (drag) move(e); });
-    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = false; }); });
+    Charts.listen(el, "pointerdown", startDrag);
+    Charts.listen(el, "pointermove", function (e) { if (drag) move(e); });
+    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(el, t, function () { drag = false; }); });
 
     Charts.zoomControl(root);
     paint();
