@@ -121,14 +121,15 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 
 - [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
   wspólnym komponentem.
-- [ ] Więcej wykresów w Chart.js. Kryterium (2026-11-05, zasada
-  w `statystyka/R/DESIGN_CONTRACT.md`): wykres w Chart.js działa w wersji
+- [ ] Więcej wykresów JS (ECharts). Kryterium (2026-11-05, zasada
+  w `statystyka/R/DESIGN_CONTRACT.md`): wykres JS działa w wersji
   offline dla studentów (`przedmioty/statystyka/skrypt/`, bez serwera R)
   i zwiększa responsywność, więc wierne odtworzenie wykresu R też jest
   zyskiem — nie tylko widgety ggplot + suwak. Prowadzący potwierdził na
   zajęciach, że wykresy Chart.js są wyraźnie bardziej responsywne niż
   renderowane w Shiny (2026-10-29). Wspólna obsługa: `statystyka/R/lc_charts.js`.
-  Stan: 18 widgetów w statystyce 01–03; w 04 warianty B1–B8 (prototypy).
+  Stan 2026-11-05: statystyka 01, 02, 03 i 05 na ECharts; w 04 warianty
+  B1–B8 (prototypy, jeszcze Chart.js).
   - [ ] Migracja statystyki z Chart.js na ECharts (decyzja 2026-11-05:
     renderer SVG, canvas dla tysięcy punktów; pełny `echarts.min.js`
     z cdnjs; analiza ryzyka zostaje przy Chart.js). Wspólna obsługa
@@ -149,17 +150,23 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     (`lejek_series`). Potrzebny mostek `"live": true` w `stany.json`
     i losowanie serii w `build/widgets/03-*.js` (sprawdzone 2026-11-05;
     dotyczyło też wersji Chart.js, bo mechanizm jest ten sam).
-  - [ ] Statystyka 03: decyzja o prototypie ECharts E2 „Zaznacz przedział”
-    (rozdz. 5, po Ryc. 5.6); `modules/stop_proto_ec.R`, `modules/ec_proto.js`.
-    E1 „Mapa zbieżności” przyjęta 2026-11-05 jako Ryc. 6.3 (wariant z mapą
-    i histogramem 2000 średnich); zastąpiła dawne Ryc. 6.3, 6.4 i prototyp 6d.
-  - [ ] Dwa widgety Chart.js dostają dane z sesji Shiny (`onMessage`):
-    statystyka 01 `scenario_chart.js` i 03 `lejek_chart.js`. Sprawdzić
-    w buildzie offline; build obsługuje taki przypadek przez `"live": true`
-    w `stany.json` i mostek w `build/widgets/NN-*.js` (wzór: 05 Ryc. 2.4).
+    Wzór mostka: 05 Ryc. 2.4 (`"live": true`, `build/widgets/05-ch2-hipotezy.js`).
     Widgety z `data-config` działają offline bez dodatkowych wpisów
-    (sprawdzone na 02, 2026-11-05: `lcCharts` ustawia `data-ready`, więc
-    build wstawia czystą kopię z pristine.js zamiast obrazka).
+    (`lcCharts` ustawia `data-ready`, build wstawia czystą kopię z pristine.js).
+  - [ ] Wersje offline statystyki (`przedmioty/statystyka/skrypt/`): przebudować
+    00, 04, 06–10 (`build_offline.R --check`). 03 wymaga tylko `--stamp --only=03`
+    — po zrzucie zmienił się wyłącznie `R/DESIGN_CONTRACT.md`. 01, 02, 03 (treść)
+    i 05 aktualne na 2026-11-05.
+  - [ ] Statystyka 03, quiz: przejrzeć parametry przykładowych realizacji
+    (pole `example` w `modules/quiz_rozklady.json`). Część dobrana, bo pytania
+    ich nie podają: m.in. wzrost N(178, 7), IQ N(100, 15), zarobki LogN
+    z medianą 6000 zł, usterki kabla Pois(2), PM10 z medianą 30 µg/m³,
+    trzęsienia ziemi Exp(15 lat), pliki LogN(mediana 0.5 MB, σ log 1.5).
+  - [ ] Statystyka 03, rozdz. 6: decyzje o pozostałych prototypach —
+    „Prototyp sceny” (Zapytaj grupkę), 6b „Grupka przyjaciół” i D2 „Drzewo
+    rodu rozkładów” (nowy układ 2026-11-05: dwumianowy i Poisson obok siebie
+    jako „ile sukcesów?”, geometryczny i wykładniczy jako „ile czekać?”).
+    Sprawdzić też, czy osadzony film (jvoxEYmQHNM) to ten o smokach i królikach.
 
 - [ ] Przejrzeć widgety aktywnych wykładów i wskazać, które skorzystają na
   sterowaniu klawiaturą (Tab, strzałki, większy krok z Shiftem, Home/End),
