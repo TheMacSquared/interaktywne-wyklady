@@ -1,8 +1,9 @@
-// Wspólne narzędzia rycin Chart.js wykładu 01 (Ryc. 3.4, 3.6, 3.9, 3.10, 5.5):
-// statystyki liczone jak w R, losowanie, histogram i podpisy linii rysowane
-// wtyczkami. Cykl życia, kolory i formatowanie: R/lc_charts.js.
+// Wspólne narzędzia rycin ECharts wykładu 01 (Ryc. 3.4, 3.6, 3.9, 3.10, 5.5):
+// statystyki liczone jak w R, losowanie, słupki histogramu (seria custom)
+// i podpisy linii (graphic). Cykl życia, kolory i formatowanie: R/lc_charts.js.
 // Eksport: window.lc01.
 (function () {
+  var Charts = window.lcCharts;
   // ---- Statystyki (zgodne z R) -------------------------------------------
   function sorted(x) { return x.slice().sort(function (a, b) { return a - b; }); }
   // Sumowanie Neumaiera zachowuje małe składniki przy znoszących się liczbach.
@@ -59,68 +60,55 @@
     return s * scale;
   }
 
-  // Stała szerokość osi Y: wykresy jeden pod drugim mają wtedy wspólną skalę X w pikselach.
-  function fixedWidth(w) { return function (scale) { scale.width = w; }; }
+  // ---- Pomocniki ECharts ------------------------------------------------------
+  // Słupki histogramu jako seria custom: dane [l, r, n]. Wygląd w obiekcie o
+  // (zmienianym przez widget): {fill, fillLeft, split, gap}; przy split słupek
+  // na lewo od tej wartości (także jego część) dostaje kolor fillLeft.
+  function histRender(o) {
+    return function (params, api) {
+      var l = api.value(0), r = api.value(1), n = api.value(2);
+      if (!n) return null;
+      var a = api.coord([l, n]), b = api.coord([r, 0]);
+      var x0 = a[0], x1 = b[0], y = a[1], h = b[1] - a[1];
+      var kids = [{ type: "rect", shape: { x: x0, y: y, width: x1 - x0, height: h }, style: { fill: o.fill } }];
+      if (o.split != null && o.fillLeft && l < o.split) {
+        var sx = Math.min(x1, api.coord([o.split, 0])[0]);
+        kids.push({ type: "rect", shape: { x: x0, y: y, width: sx - x0, height: h }, style: { fill: o.fillLeft } });
+      }
+      kids.push({ type: "rect", shape: { x: x0 + 0.5, y: y + 0.5, width: Math.max(0, x1 - x0 - 1), height: h },
+                  style: { fill: "none", stroke: o.gap, lineWidth: 1 } });
+      return { type: "group", children: kids };
+    };
+  }
+  function histSeries(id, o) {
+    return { id: id, type: "custom", renderItem: histRender(o), data: [], silent: true, animation: false,
+             encode: { x: [0, 1], y: 2 }, clip: true };
+  }
+  function histData(bins) { return bins.map(function (b) { return [b.l, b.r, b.n]; }); }
 
-  // ---- Wtyczki rysujące ------------------------------------------------------
-  // options.plugins.lcHist = { bins: [{l, r, n}], fill, split: x | null, fillLeft, gap }
-  var histPlugin = {
-    id: "lcHist",
-    beforeDatasetsDraw: function (chart, args, o) {
-      if (!o || !o.bins || !o.bins.length) return;
-      var ctx = chart.ctx, a = chart.chartArea, xs = chart.scales.x, ys = chart.scales.y;
-      function rects(color) {
-        ctx.fillStyle = color;
-        o.bins.forEach(function (b) {
-          if (!b.n) return;
-          var x0 = xs.getPixelForValue(b.l), x1 = xs.getPixelForValue(b.r), y = ys.getPixelForValue(b.n);
-          ctx.fillRect(x0, y, x1 - x0, ys.getPixelForValue(0) - y);
-        });
-      }
-      ctx.save();
-      ctx.beginPath(); ctx.rect(a.left, a.top, a.right - a.left, a.bottom - a.top); ctx.clip();
-      rects(o.fill);
-      if (o.split != null && o.fillLeft) {
-        var sx = xs.getPixelForValue(o.split);
-        ctx.beginPath(); ctx.rect(a.left, a.top, Math.max(0, sx - a.left), a.bottom - a.top); ctx.clip();
-        rects(o.fillLeft);
-      }
-      ctx.restore();
-      // Odstępy między słupkami w kolorze tła.
-      ctx.save();
-      ctx.beginPath(); ctx.rect(a.left, a.top, a.right - a.left, a.bottom - a.top); ctx.clip();
-      ctx.strokeStyle = o.gap; ctx.lineWidth = 1;
-      o.bins.forEach(function (b) {
-        if (!b.n) return;
-        var x0 = xs.getPixelForValue(b.l), x1 = xs.getPixelForValue(b.r), y = ys.getPixelForValue(b.n);
-        ctx.strokeRect(x0 + 0.5, y + 0.5, x1 - x0 - 1, ys.getPixelForValue(0) - y);
-      });
-      ctx.restore();
-    }
-  };
-  // options.plugins.lcLabels = { items: [{x, text, color, row}], font }
-  // Podpis przy pionowej linii w wierszu row (od góry obszaru wykresu);
-  // przy prawej krawędzi napis przechodzi na lewą stronę linii.
-  var labelPlugin = {
-    id: "lcLabels",
-    afterDatasetsDraw: function (chart, args, o) {
-      if (!o || !o.items || !o.items.length) return;
-      var ctx = chart.ctx, a = chart.chartArea, xs = chart.scales.x;
-      ctx.save();
-      var fontSize = o.fontSize || 12;
-      ctx.font = "600 " + fontSize + "px " + (o.font || "monospace");
-      ctx.textBaseline = "top";
-      o.items.forEach(function (it) {
-        var px = xs.getPixelForValue(it.x), w = ctx.measureText(it.text).width;
-        var right = px + 5 + w <= a.right;
-        var tx = right ? px + 5 : px - 5 - w, ty = a.top + 4 + (it.row || 0) * fontSize * 4 / 3;
-        if (o.halo) { ctx.fillStyle = o.halo; ctx.fillRect(tx - 2, ty - 1, w + 4, fontSize * 1.25); }
-        ctx.fillStyle = it.color;
-        ctx.fillText(it.text, tx, ty);
-      });
-      ctx.restore();
-    }
-  };
+  // Podpisy przy pionowych liniach: items [{x, text, color, row}] w wierszach od
+  // górnej krawędzi siatki (y = ymax); przy prawej krawędzi (x = xmax) napis
+  // przechodzi na lewą stronę linii. Zastępuje całą warstwę graphic wykresu.
+  function lineLabels(chart, items, o) {
+    var size = o.fontSize || 12, out = [];
+    items.forEach(function (it, k) {
+      var p = chart.convertToPixel({ gridIndex: 0 }, [it.x, o.ymax]);
+      var edge = chart.convertToPixel({ gridIndex: 0 }, [o.xmax, o.ymax]);
+      if (!p || !edge) return;
+      var w = it.text.length * size * 0.62, right = p[0] + 5 + w <= edge[0];
+      out.push({ type: "text", silent: true, z: 20, x: right ? p[0] + 5 : p[0] - 5 - w,
+        y: p[1] + 4 + (it.row || 0) * size * 4 / 3,
+        style: { text: it.text, fill: it.color, font: "600 " + size + "px " + (o.font || "monospace"),
+                 backgroundColor: o.halo || "transparent", padding: [1, 2] } });
+    });
+    chart.setOption({ graphic: out }, { replaceMerge: ["graphic"] });
+  }
+
+  // Pionowa linia od 0 do y (seria line z dwoma punktami).
+  function vline(x, y) { return x == null || !isFinite(x) ? [] : [[x, 0], [x, y]]; }
+
+  // Wartość osi pod wskaźnikiem (przycięta do zakresu rysunku).
+  function valueAt(chart, el, e, xr, yr) { return Charts.ecPointer(chart, el, e, xr, yr); }
 
   // Biny o stałej szerokości od lo do hi.
   function bins(values, lo, hi, width) {
@@ -134,23 +122,10 @@
     return out;
   }
 
-  // Wartość osi X pod wskaźnikiem (przycięta do obszaru wykresu).
-  function valueAtX(chart, e) {
-    var r = chart.canvas.getBoundingClientRect(), a = chart.chartArea;
-    var px = Math.max(a.left, Math.min(a.right, e.clientX - r.left));
-    return chart.scales.x.getValueForPixel(px);
-  }
-  function valueAtY(chart, e) {
-    var r = chart.canvas.getBoundingClientRect(), a = chart.chartArea;
-    var py = Math.max(a.top, Math.min(a.bottom, e.clientY - r.top));
-    return chart.scales.y.getValueForPixel(py);
-  }
-  function pixelX(chart, e) { return e.clientX - chart.canvas.getBoundingClientRect().left; }
-
   window.lc01 = {
     sorted: sorted, mean: mean, median: median, quantile7: quantile7, trimMean: trimMean,
     runif: runif, sampleInt: sampleInt, rnorm: rnorm, rgammaInt: rgammaInt,
-    fixedWidth: fixedWidth, histPlugin: histPlugin, labelPlugin: labelPlugin,
-    bins: bins, valueAtX: valueAtX, valueAtY: valueAtY, pixelX: pixelX
+    histSeries: histSeries, histData: histData, lineLabels: lineLabels, vline: vline,
+    valueAt: valueAt, bins: bins
   };
 })();

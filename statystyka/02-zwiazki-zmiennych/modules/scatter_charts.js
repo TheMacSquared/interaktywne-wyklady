@@ -1,4 +1,4 @@
-// Wykresy rozrzutu w Chart.js (rozdz. 4 i 5). Wszystko liczy się w przeglądarce:
+// Wykresy rozrzutu w ECharts (rozdz. 4 i 5). Wszystko liczy się w przeglądarce:
 // prosta MNK, r Pearsona i SD reszt. Cztery kontenery:
 //   .lc-strength (Ryc. 4.3) — stały trend, rozrzut zmienia uchwyt na brzegu pasa ±2 SD
 //                             albo przyciski [data-s-preset]; data-config {x, e, sigma, start}
@@ -8,16 +8,17 @@
 //                             odstających; data-n, data-sd, data-shift, przyciski [data-o-new], [data-o-add]
 //   .lc-simpson  (Ryc. 5.4) — dane z R, przełącznik [data-s-view] „Razem / Osobno”;
 //                             data-config {x, y, g, groups, colors, xlim, ylim}
-// Odczyty w [data-role]. Start po pojawieniu się kontenera w DOM (rozdziały
-// renderują się przez renderUI), przemalowanie przy zmianie data-lc-theme.
+// Wykres: <div class="lc-ec" data-role="plot">. Odczyty w [data-role]. Start po
+// pojawieniu się kontenera w DOM (rozdziały renderują się przez renderUI),
+// przemalowanie przy zmianie motywu, S/M/L i lupy.
 (function () {
   var Charts = window.lcCharts;
-  var token = Charts.token, alpha = Charts.alpha;
+  var alpha = Charts.alpha;
 
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
   var fit = Charts.linearFit;
-  function line(f, x0, x1) { return [{ x: x0, y: f.a + f.b * x0 }, { x: x1, y: f.a + f.b * x1 }]; }
+  function line(f, x0, x1) { return [[x0, f.a + f.b * x0], [x1, f.a + f.b * x1]]; }
   function fmt(v, d) { return isFinite(v) ? v.toFixed(d) : "–"; }
 
   function reads(root, keys) {
@@ -27,38 +28,41 @@
   }
   function put(el, s) { if (el) el.textContent = s; }
 
-  function makeChart(canvas, datasets, scales, plugins) {
-    return Charts.create(canvas, {
-      type: "scatter",
-      plugins: plugins || [],
-      data: { datasets: datasets },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { top: 8, right: 10 } },
-        scales: {
-          x: Object.assign({ type: "linear", title: { display: true, text: "" } }, scales.x),
-          y: Object.assign({ type: "linear", title: { display: true, text: "" } }, scales.y)
-        },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } },
-        elements: { line: { tension: 0 } }
-      }
-    });
+  // Serie: punkty (scatter) i odcinki (line); id nadaje widget.
+  function pts(id, size) { return { id: id, type: "scatter", data: [], symbolSize: size, silent: true, animation: false }; }
+  function seg(id, width, dash) {
+    return { id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+             lineStyle: { width: width, type: dash ? [5, 4] : "solid" } };
   }
 
-  function pointer(canvas, e) {
-    var rc = canvas.getBoundingClientRect();
+  function makeChart(el, series, x, y, onResize) {
+    return Charts.chart(el, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 8, right: 12, top: 10, bottom: 8 },
+      xAxis: Object.assign({ type: "value" }, x),
+      yAxis: Object.assign({ type: "value" }, y),
+      series: series
+    }, { onResize: onResize });
+  }
+
+  // Wspólny styl osi; interwały i nazwy podaje widget.
+  function axes(root, chart, x, y) {
+    var P = Charts.palette(), size = Charts.axisFontSize(root);
+    chart.setOption({
+      xAxis: Charts.ecAxis(P, size, Object.assign({ nameGap: Math.round(size * 1.9) }, x || {})),
+      yAxis: Charts.ecAxis(P, size, Object.assign({ nameGap: Math.round(size * 2.6) }, y || {}))
+    });
+    return P;
+  }
+
+  function toPx(chart, x, y) { return chart.convertToPixel({ gridIndex: 0 }, [x, y]) || [NaN, NaN]; }
+  function pointer(el, e) {
+    var rc = el.getBoundingClientRect();
     return { px: e.clientX - rc.left, py: e.clientY - rc.top };
   }
   function pixelDist(chart, p, x, y) {
-    var dx = chart.scales.x.getPixelForValue(x) - p.px, dy = chart.scales.y.getPixelForValue(y) - p.py;
+    var q = toPx(chart, x, y), dx = q[0] - p.px, dy = q[1] - p.py;
     return Math.sqrt(dx * dx + dy * dy);
-  }
-  function valueAt(chart, p) {
-    var a = chart.chartArea;
-    return {
-      x: chart.scales.x.getValueForPixel(clamp(p.px, a.left, a.right)),
-      y: chart.scales.y.getValueForPixel(clamp(p.py, a.top, a.bottom))
-    };
   }
 
   function pressPresets(root, attr, values, cur) {
@@ -68,36 +72,34 @@
     });
   }
 
-
-  // Zbiór punktów (x, e) i uchwyt przeciągany w pionie: wspólne dla Ryc. 4.3 i 4.4.
-  function handleDrag(canvas, chart, handlePos, onMove) {
+  // Uchwyt przeciągany w pionie: wspólne dla Ryc. 4.3 i 4.4.
+  function handleDrag(el, chart, handlePos, ranges, onMove) {
     var drag = false;
     function near(p) { var h = handlePos(); return pixelDist(chart, p, h.x, h.y) < 40; }
-    canvas.style.touchAction = "none";
+    el.style.touchAction = "none";
     function start(e) {
-      drag = true; canvas.setPointerCapture(e.pointerId); e.preventDefault();
+      drag = true; el.setPointerCapture(e.pointerId); e.preventDefault();
     }
-    Charts.listen(canvas, "pointerdown", function (e) { if (near(pointer(canvas, e))) start(e); });
-    Charts.listen(canvas, "pointermove", function (e) {
-      var p = pointer(canvas, e);
-      if (drag) { onMove(valueAt(chart, p)); return; }
-      canvas.style.cursor = near(p) ? "ns-resize" : "default";
+    Charts.listen(el, "pointerdown", function (e) { if (near(pointer(el, e))) start(e); });
+    Charts.listen(el, "pointermove", function (e) {
+      if (drag) { onMove(Charts.ecPointer(chart, el, e, ranges.x, ranges.y)); return; }
+      el.style.cursor = near(pointer(el, e)) ? "ns-resize" : "default";
     });
-    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(canvas, t, function () { drag = false; }); });
+    ["pointerup", "pointercancel"].forEach(function (t) { Charts.listen(el, t, function () { drag = false; }); });
     return start;
   }
 
   // ==========================================================================
   // Ryc. 4.3: siła korelacji — stały trend, zmienny rozrzut
   // ==========================================================================
-  function initStrength(root, canvas) {
+  function initStrength(root, el) {
     var C = JSON.parse(root.dataset.config), X = C.x, E = C.e;
     var SMAX = 3.5, HX = 2, XL = [-3, 3], YL = [-10, 10];
     var sigma = C.sigma[C.start || 0], f = null;
     var R = reads(root, ["r", "r2"]);
 
     var layer = Charts.handleLayer(root), startDrag;
-    var handle = layer.add(canvas, {
+    var handle = layer.add(el, {
       label: "Rozrzut wokół prostej", orientation: "vertical",
       hint: "Strzałki zmieniają wartość, Shift zwiększa krok. Home i End wybierają granice.",
       onKey: function (event) {
@@ -108,54 +110,43 @@
       },
       onPointerDown: function (event) { startDrag(event); }
     });
-    function syncHandle(ch) {
+    function syncHandle() {
       if (!f) return;
-      var h = hpos(); handle.position(ch.scales.x.getPixelForValue(h.x), ch.scales.y.getPixelForValue(h.y));
+      var h = hpos(), q = toPx(chart, h.x, h.y);
+      handle.position(q[0], q[1]);
       handle.value(sigma, 0, SMAX, fmt(sigma, 2));
     }
-    var chart = makeChart(canvas, [
-      { data: [], pointRadius: 3.5, borderWidth: 0 },
-      { data: [], showLine: true, pointRadius: 0, borderWidth: 1.5, borderDash: [5, 4] },
-      { data: [], showLine: true, pointRadius: 0, borderWidth: 1.5, borderDash: [5, 4] },
-      { data: [], showLine: true, pointRadius: 0, borderWidth: 2.5 },
-      { data: [], pointRadius: 8, borderWidth: 2 }
-    ], {
-      x: { min: XL[0], max: XL[1], ticks: { stepSize: 1 }, title: { display: true, text: "x" } },
-      y: { min: YL[0], max: YL[1], ticks: { stepSize: 5 }, title: { display: true, text: "y" } }
-    }, [{ id: "parameterHandle", afterRender: syncHandle }]);
+    var chart = makeChart(el, [pts("pts", 7), seg("up", 1.5, true), seg("lo", 1.5, true), seg("fit", 2.5), pts("dot", 16)],
+      { min: XL[0], max: XL[1], interval: 1, name: "x" },
+      { min: YL[0], max: YL[1], interval: 5, name: "y" }, syncHandle);
 
     function paint() {
-      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-      chart.options.scales.x.ticks.maxTicksLimit = 6;
-      chart.options.scales.y.ticks.maxTicksLimit = 6;
-      var niebo = token("--upwr-cat-niebo") || "#1d5f9e", accent = token("--upwr-accent") || "#7a2e3b";
-      var subtle = token("--upwr-ink-subtle") || "#888", surface = token("--upwr-surface") || "#fff";
-      var ds = chart.data.datasets;
-      ds[0].backgroundColor = alpha(niebo, 0.65);
-      ds[1].borderColor = ds[2].borderColor = subtle;
-      ds[3].borderColor = accent;
-      ds[4].backgroundColor = accent; ds[4].borderColor = surface;
-      chart.update();
+      var P = axes(root, chart);
+      chart.setOption({ series: [
+        { id: "pts", itemStyle: { color: alpha(P.niebo, 0.65) } },
+        { id: "up", lineStyle: { color: P.subtle } }, { id: "lo", lineStyle: { color: P.subtle } },
+        { id: "fit", lineStyle: { color: P.accent } },
+        { id: "dot", itemStyle: { color: P.accent, borderColor: P.surface, borderWidth: 2 } }
+      ] });
+      syncHandle();
     }
     function hpos() { return { x: HX, y: f.a + f.b * HX + 2 * f.sd }; }
     function draw() {
       var ys = X.map(function (x, i) { return x + sigma * E[i]; });
       f = fit(X, ys);
-      var up = { a: f.a + 2 * f.sd, b: f.b }, lo = { a: f.a - 2 * f.sd, b: f.b };
-      var ds = chart.data.datasets;
-      ds[0].data = X.map(function (x, i) { return { x: x, y: ys[i] }; });
-      ds[1].data = line(up, XL[0], XL[1]);
-      ds[2].data = line(lo, XL[0], XL[1]);
-      ds[3].data = line(f, XL[0], XL[1]);
-      ds[4].data = [hpos()];
-      chart.update("none");
+      var up = { a: f.a + 2 * f.sd, b: f.b }, lo = { a: f.a - 2 * f.sd, b: f.b }, h = hpos();
+      chart.setOption({ series: [
+        { id: "pts", data: X.map(function (x, i) { return [x, ys[i]]; }) },
+        { id: "up", data: line(up, XL[0], XL[1]) }, { id: "lo", data: line(lo, XL[0], XL[1]) },
+        { id: "fit", data: line(f, XL[0], XL[1]) }, { id: "dot", data: [[h.x, h.y]] }
+      ] });
       put(R.r, fmt(f.r, 2));
       put(R.r2, fmt(100 * f.r * f.r, 0) + "%");
-      syncHandle(chart);
+      syncHandle();
       pressPresets(root, "data-s-preset", C.sigma, sigma);
     }
 
-    startDrag = handleDrag(canvas, chart, hpos, function (v) {
+    startDrag = handleDrag(el, chart, hpos, { x: XL, y: YL }, function (v) {
       Charts.cancelTween(root);
       sigma = clamp(Math.round((v.y - (f.a + f.b * HX)) / 2 * 100) / 100, 0, SMAX);
       draw();
@@ -174,14 +165,14 @@
   // ==========================================================================
   // Ryc. 4.4: r nie zależy od nachylenia
   // ==========================================================================
-  function initSlope(root, canvas) {
+  function initSlope(root, el) {
     var C = JSON.parse(root.dataset.config), X = C.x, E = C.e, REL = C.rel;
     var BMIN = 0.1, BMAX = 2, HX = 2.5, XL = [-3, 3], YL = [-6, 6];
     var slope = C.slopes[C.start || 0], f = null;
     var R = reads(root, ["b", "sd", "r"]);
 
     var layer = Charts.handleLayer(root), startDrag;
-    var handle = layer.add(canvas, {
+    var handle = layer.add(el, {
       label: "Nachylenie", orientation: "vertical",
       hint: "Strzałki zmieniają wartość, Shift zwiększa krok. Home i End wybierają granice.",
       onKey: function (event) {
@@ -192,49 +183,42 @@
       },
       onPointerDown: function (event) { startDrag(event); }
     });
-    function syncHandle(ch) {
+    function syncHandle() {
       if (!f) return;
-      var h = hpos(); handle.position(ch.scales.x.getPixelForValue(h.x), ch.scales.y.getPixelForValue(h.y));
+      var h = hpos(), q = toPx(chart, h.x, h.y);
+      handle.position(q[0], q[1]);
       handle.value(slope, BMIN, BMAX, fmt(slope, 2));
     }
-    var chart = makeChart(canvas, [
-      { data: [], pointRadius: 3.5, borderWidth: 0 },
-      { data: [], showLine: true, pointRadius: 0, borderWidth: 2.5 },
-      { data: [], pointRadius: 8, borderWidth: 2 }
-    ], {
-      x: { min: XL[0], max: XL[1], ticks: { stepSize: 1 }, title: { display: true, text: "x" } },
-      y: { min: YL[0], max: YL[1], ticks: { stepSize: 2 }, title: { display: true, text: "y" } }
-    }, [{ id: "parameterHandle", afterRender: syncHandle }]);
+    var chart = makeChart(el, [pts("pts", 7), seg("fit", 2.5), pts("dot", 16)],
+      { min: XL[0], max: XL[1], interval: 1, name: "x" },
+      { min: YL[0], max: YL[1], interval: 2, name: "y" }, syncHandle);
 
     function paint() {
-      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-      chart.options.scales.x.ticks.maxTicksLimit = 6;
-      chart.options.scales.y.ticks.maxTicksLimit = 6;
-      var niebo = token("--upwr-cat-niebo") || "#1d5f9e", accent = token("--upwr-accent") || "#7a2e3b";
-      var surface = token("--upwr-surface") || "#fff";
-      var ds = chart.data.datasets;
-      ds[0].backgroundColor = alpha(niebo, 0.65);
-      ds[1].borderColor = accent;
-      ds[2].backgroundColor = accent; ds[2].borderColor = surface;
-      chart.update();
+      var P = axes(root, chart);
+      chart.setOption({ series: [
+        { id: "pts", itemStyle: { color: alpha(P.niebo, 0.65) } },
+        { id: "fit", lineStyle: { color: P.accent } },
+        { id: "dot", itemStyle: { color: P.accent, borderColor: P.surface, borderWidth: 2 } }
+      ] });
+      syncHandle();
     }
     function hpos() { return { x: HX, y: f.a + f.b * HX }; }
     function draw() {
       var ys = X.map(function (x, i) { return slope * (x + REL * E[i]); });
       f = fit(X, ys);
-      var ds = chart.data.datasets;
-      ds[0].data = X.map(function (x, i) { return { x: x, y: ys[i] }; });
-      ds[1].data = line(f, XL[0], XL[1]);
-      ds[2].data = [hpos()];
-      chart.update("none");
+      var h = hpos();
+      chart.setOption({ series: [
+        { id: "pts", data: X.map(function (x, i) { return [x, ys[i]]; }) },
+        { id: "fit", data: line(f, XL[0], XL[1]) }, { id: "dot", data: [[h.x, h.y]] }
+      ] });
       put(R.b, fmt(f.b, 2));
       put(R.sd, fmt(f.sd, 2));
       put(R.r, fmt(f.r, 2));
-      syncHandle(chart);
+      syncHandle();
       pressPresets(root, "data-s-preset", C.slopes, slope);
     }
 
-    startDrag = handleDrag(canvas, chart, hpos, function (v) {
+    startDrag = handleDrag(el, chart, hpos, { x: XL, y: YL }, function (v) {
       Charts.cancelTween(root);
       slope = clamp(Math.round((v.y - f.a) / HX * 20) / 20, BMIN, BMAX);
       draw();
@@ -262,22 +246,22 @@
   }
   function r2(v) { return Math.round(v * 100) / 100; }
 
-  function initOutlier(root, canvas) {
+  function initOutlier(root, el) {
     var N = parseInt(root.dataset.n || "50", 10), SD = parseFloat(root.dataset.sd || "3");
     var SHIFT = parseFloat(root.dataset.shift || "15");
-    var base = [], outs = [], LO = -10, HI = 10;
+    var base = [], outs = [], LO = -10, HI = 10, STEP = 5;
     var R = reads(root, ["r", "r0", "k"]);
 
     var layer = Charts.handleLayer(root), pointHandles = [], lastR = NaN;
-    function syncHandles(ch) {
+    function syncHandles() {
       pointHandles.forEach(function (handle, i) {
-        var point = outs[i];
-        handle.position(ch.scales.x.getPixelForValue(point.x), ch.scales.y.getPixelForValue(point.y));
+        var point = outs[i], q = toPx(chart, point.x, point.y);
+        handle.position(q[0], q[1]);
         handle.element.setAttribute("aria-label", "Wartość odstająca " + (i + 1) + ". X " + fmt(point.x, 1) + ", Y " + fmt(point.y, 1));
       });
     }
     function makePointHandle(i) {
-      var handle = layer.add(canvas, {
+      var handle = layer.add(el, {
         role: "button", label: "Wartość odstająca " + (i + 1),
         hint: "Lewo i prawo zmieniają X, góra i dół zmieniają Y. Shift zwiększa krok dziesięciokrotnie.",
         onKey: function (event) {
@@ -292,60 +276,49 @@
           return true;
         },
         onPointerDown: function (event) {
-          drag = i; canvas.setPointerCapture(event.pointerId); event.preventDefault();
+          drag = i; el.setPointerCapture(event.pointerId); event.preventDefault();
         }
       });
       handle.element.setAttribute("data-boundary", i + 1);
       return handle;
     }
-    var chart = makeChart(canvas, [
-      { data: [], pointRadius: 4, borderWidth: 0 },
-      { data: [], pointRadius: 8, borderWidth: 2 },
-      { data: [], showLine: true, pointRadius: 0, borderWidth: 1.5, borderDash: [5, 4] },
-      { data: [], showLine: true, pointRadius: 0, borderWidth: 2.5 }
-    ], {
-      x: { title: { display: true, text: "X" } },
-      y: { title: { display: true, text: "Y" } }
-    }, [{ id: "outlierHandles", afterRender: syncHandles }]);
+    var chart = makeChart(el, [pts("base", 8), pts("outs", 16), seg("fit0", 1.5, true), seg("fit", 2.5)],
+      { name: "X" }, { name: "Y" }, syncHandles);
 
     function paint() {
-      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-      chart.options.scales.x.ticks.maxTicksLimit = 6;
-      chart.options.scales.y.ticks.maxTicksLimit = 6;
-      var niebo = token("--upwr-cat-niebo") || "#1d5f9e", accent = token("--upwr-accent") || "#7a2e3b";
-      var subtle = token("--upwr-ink-subtle") || "#888", surface = token("--upwr-surface") || "#fff";
-      var ds = chart.data.datasets;
-      ds[0].backgroundColor = alpha(niebo, 0.65);
-      ds[1].backgroundColor = accent; ds[1].borderColor = surface;
-      ds[2].borderColor = subtle;
-      ds[3].borderColor = accent;
-      chart.update();
+      var P = axes(root, chart);
+      chart.setOption({ series: [
+        { id: "base", itemStyle: { color: alpha(P.niebo, 0.65) } },
+        { id: "outs", itemStyle: { color: P.accent, borderColor: P.surface, borderWidth: 2 } },
+        { id: "fit0", lineStyle: { color: P.subtle } },
+        { id: "fit", lineStyle: { color: P.accent } }
+      ] });
+      syncHandles();
     }
 
     // Wspólny zakres osi x i y z zapasem, krok 5; stały w trakcie przeciągania.
     function rescale() {
       var all = base.concat(outs), mn = Infinity, mx = -Infinity;
       all.forEach(function (p) { mn = Math.min(mn, p.x, p.y); mx = Math.max(mx, p.x, p.y); });
-      var lo = Math.min(-10, mn - 2), hi = Math.max(10, mx + 4), step = hi - lo > 40 ? 10 : 5;
-      LO = Math.floor(lo / step) * step;
-      HI = Math.ceil(hi / step) * step;
-      ["x", "y"].forEach(function (k) {
-        var s = chart.options.scales[k];
-        s.min = LO; s.max = HI; s.ticks.stepSize = step;
-      });
+      var lo = Math.min(-10, mn - 2), hi = Math.max(10, mx + 4);
+      STEP = hi - lo > 40 ? 10 : 5;
+      LO = Math.floor(lo / STEP) * STEP;
+      HI = Math.ceil(hi / STEP) * STEP;
+      var range = { min: LO, max: HI, interval: STEP };
+      chart.setOption({ xAxis: range, yAxis: range });
     }
 
     function draw() {
-      var all = base.concat(outs), ds = chart.data.datasets;
+      var all = base.concat(outs);
       var fa = fit(all.map(function (p) { return p.x; }), all.map(function (p) { return p.y; }));
       var f0 = fit(base.map(function (p) { return p.x; }), base.map(function (p) { return p.y; }));
-      ds[0].data = base;
-      ds[1].data = outs;
-      ds[2].data = outs.length ? line(f0, LO, HI) : [];
-      ds[3].data = line(fa, LO, HI);
-      chart.update("none");
+      function xy(p) { return [p.x, p.y]; }
+      chart.setOption({ series: [
+        { id: "base", data: base.map(xy) }, { id: "outs", data: outs.map(xy) },
+        { id: "fit0", data: outs.length ? line(f0, LO, HI) : [] }, { id: "fit", data: line(fa, LO, HI) }
+      ] });
       lastR = fa.r;
-      syncHandles(chart);
+      syncHandles();
       put(R.r, fmt(fa.r, 3));
       put(R.r0, fmt(f0.r, 3));
       put(R.k, String(outs.length));
@@ -375,23 +348,22 @@
       outs.forEach(function (o, i) { var d = pixelDist(chart, p, o.x, o.y); if (d < bd) { bd = d; best = i; } });
       return best;
     }
-    canvas.style.touchAction = "none";
-    Charts.listen(canvas, "pointerdown", function (e) {
-      var i = nearest(pointer(canvas, e));
+    el.style.touchAction = "none";
+    Charts.listen(el, "pointerdown", function (e) {
+      var i = nearest(pointer(el, e));
       if (i < 0) return;
-      drag = i; canvas.setPointerCapture(e.pointerId); e.preventDefault();
+      drag = i; el.setPointerCapture(e.pointerId); e.preventDefault();
     });
-    Charts.listen(canvas, "pointermove", function (e) {
-      var p = pointer(canvas, e);
+    Charts.listen(el, "pointermove", function (e) {
       if (drag >= 0) {
-        var v = valueAt(chart, p);
+        var v = Charts.ecPointer(chart, el, e, [LO, HI], [LO, HI]);
         outs[drag] = { x: Math.round(v.x * 10) / 10, y: Math.round(v.y * 10) / 10 };
         draw(); return;
       }
-      canvas.style.cursor = nearest(p) >= 0 ? "move" : "default";
+      el.style.cursor = nearest(pointer(el, e)) >= 0 ? "move" : "default";
     });
     ["pointerup", "pointercancel"].forEach(function (t) {
-      Charts.listen(canvas, t, function () { if (drag >= 0) { drag = -1; rescale(); draw(); } });
+      Charts.listen(el, t, function () { if (drag >= 0) { drag = -1; rescale(); draw(); } });
     });
 
     Charts.listen(root, "click", function (e) {
@@ -406,7 +378,7 @@
   // ==========================================================================
   // Ryc. 5.4: paradoks Simpsona
   // ==========================================================================
-  function initSimpson(root, canvas) {
+  function initSimpson(root, el) {
     var C = JSON.parse(root.dataset.config), X = C.x, Y = C.y, G = C.g, K = C.groups.length;
     var view = "all", COLS = [];
     var R = reads(root, ["r", "verdict", "caption"]);
@@ -426,36 +398,30 @@
     var fall = fit(X, Y);
     var sall = [Math.min.apply(null, X), Math.max.apply(null, X)];
 
-    var sets = [{ data: [], pointRadius: 4, borderWidth: 0 },
-                { data: [], showLine: true, pointRadius: 0, borderWidth: 2.5 }];
-    for (k = 0; k < K; k++) sets.push({ data: [], showLine: true, pointRadius: 0, borderWidth: 2.5 });
-    var chart = makeChart(canvas, sets, {
-      x: { min: C.xlim[0], max: C.xlim[1], ticks: { stepSize: 5 }, title: { display: true, text: "Staż (lata)" } },
-      y: { min: C.ylim[0], max: C.ylim[1], ticks: { stepSize: 2 }, title: { display: true, text: "Pensja (tys. zł)" } }
-    });
-    chart.data.datasets[0].data = X.map(function (x, i) { return { x: x, y: Y[i] }; });
+    var series = [pts("pts", 8), seg("all", 2.5)];
+    for (k = 0; k < K; k++) series.push(seg("g" + k, 2.5));
+    var chart = makeChart(el, series,
+      { min: C.xlim[0], max: C.xlim[1], interval: 5, name: "Staż (lata)" },
+      { min: C.ylim[0], max: C.ylim[1], interval: 2, name: "Pensja (tys. zł)" });
+    chart.setOption({ series: [{ id: "pts", data: X.map(function (x, i) { return [x, Y[i], G[i]]; }) }] });
 
     function paint() {
-      Charts.styleAxes(chart, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-      chart.options.scales.x.ticks.maxTicksLimit = 5;
-      chart.options.scales.y.ticks.maxTicksLimit = 5;
-      COLS = C.colors.map(function (t) { return token(t) || "#888"; });
+      axes(root, chart);
+      COLS = C.colors.map(function (t) { return Charts.token(t) || "#888"; });
       draw();
     }
 
     function draw() {
-      var ds = chart.data.datasets, split = view === "split";
-      var grey = token("--upwr-ink-subtle") || "#888", sec = token("--upwr-secondary") || "#2d3b3d";
-      ds[0].backgroundColor = G.map(function (g) { return split ? alpha(COLS[g], 0.8) : alpha(grey, 0.45); });
-      ds[1].data = line(fall, sall[0], sall[1]);
-      ds[1].borderColor = sec;
-      ds[1].borderWidth = split ? 1.5 : 2.5;
-      ds[1].borderDash = split ? [6, 4] : [];
+      var split = view === "split", P = Charts.palette();
+      var upd = [
+        { id: "pts", itemStyle: { color: function (d) { return split ? alpha(COLS[d.value[2]], 0.8) : alpha(P.subtle, 0.45); } } },
+        { id: "all", data: line(fall, sall[0], sall[1]),
+          lineStyle: { color: P.secondary, width: split ? 1.5 : 2.5, type: split ? [6, 4] : "solid" } }
+      ];
       for (var k = 0; k < K; k++) {
-        ds[2 + k].data = split ? line(fits[k], spans[k][0], spans[k][1]) : [];
-        ds[2 + k].borderColor = COLS[k];
+        upd.push({ id: "g" + k, data: split ? line(fits[k], spans[k][0], spans[k][1]) : [], lineStyle: { color: COLS[k] } });
       }
-      chart.update("none");
+      chart.setOption({ series: upd });
 
       put(R.r, fmt(fall.r, 2));
       for (k = 0; k < K; k++) put(gread[k], fmt(fits[k].r, 2));
@@ -489,9 +455,9 @@
   var KINDS = { "lc-strength": initStrength, "lc-slope": initSlope, "lc-outlier": initOutlier, "lc-simpson": initSimpson };
 
   function init(root) {
-    var canvas = root.querySelector('canvas[data-role="plot"]');
-    if (!canvas) return false;
-    for (var cls in KINDS) if (root.classList.contains(cls)) { KINDS[cls](root, canvas); return; }
+    var el = root.querySelector('.lc-ec[data-role="plot"]');
+    if (!el) return false;
+    for (var cls in KINDS) if (root.classList.contains(cls)) { KINDS[cls](root, el); return; }
   }
 
   Charts.onReady(".lc-scat", init);

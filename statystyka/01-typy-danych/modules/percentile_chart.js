@@ -1,59 +1,50 @@
 // Percentyle wzrostu (Ryc. 3.9): histogram z linią percentyla przeciąganą po wykresie
 // (przyciąganie do całkowitych rzędów 0–100%), część danych na lewo od linii
-// zacieniona; pod spodem wykres pudełkowy rysowany ręcznie z tym samym punktem.
+// zacieniona; pod spodem wykres pudełkowy z tym samym punktem (seria custom).
 // Kwantyl jak quantile(type = 7) w R. Kontener .lc-pctl[data-config] z
-// <canvas data-role="hist">, <canvas data-role="box">, przyciskami [data-p-set]
-// i odczytami [data-role="p|q|share|text"]. data-config: {values, p, bin, unit}.
+// <div class="lc-ec" data-role="hist">, <div class="lc-ec" data-role="box">,
+// przyciskami [data-p-set] i odczytami [data-role="p|q|share|text"].
+// data-config: {values, p, bin, unit}. ECharts, wymaga chart_utils.js (window.lc01).
 (function () {
   var Charts = window.lcCharts;
   var U = window.lc01;
   if (!U) return;
 
-  // Pudełko, wąsy i punkty odstające (reguła 1.5 · IQR jak w ggplot2) + znacznik percentyla.
-  var boxPlugin = {
-    id: "lcBox",
-    afterDatasetsDraw: function (chart, args, o) {
-      if (!o || !o.stats) return;
-      var ctx = chart.ctx, xs = chart.scales.x, ys = chart.scales.y, s = o.stats;
-      var X = function (v) { return xs.getPixelForValue(v); };
-      var yT = ys.getPixelForValue(0.42), yB = ys.getPixelForValue(-0.42), yM = ys.getPixelForValue(0);
-      ctx.save();
-      ctx.lineWidth = 1.5; ctx.strokeStyle = o.ink;
-      ctx.beginPath();
-      ctx.moveTo(X(s.lo), yM); ctx.lineTo(X(s.q1), yM);
-      ctx.moveTo(X(s.q3), yM); ctx.lineTo(X(s.hi), yM);
-      ctx.moveTo(X(s.lo), yM - 7); ctx.lineTo(X(s.lo), yM + 7);
-      ctx.moveTo(X(s.hi), yM - 7); ctx.lineTo(X(s.hi), yM + 7);
-      ctx.stroke();
-      ctx.fillStyle = o.fill;
-      ctx.fillRect(X(s.q1), yT, X(s.q3) - X(s.q1), yB - yT);
-      ctx.strokeRect(X(s.q1), yT, X(s.q3) - X(s.q1), yB - yT);
-      ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.moveTo(X(s.med), yT); ctx.lineTo(X(s.med), yB); ctx.stroke();
-      ctx.fillStyle = o.outlier;
-      s.out.forEach(function (v) { ctx.beginPath(); ctx.arc(X(v), yM, 3, 0, 2 * Math.PI); ctx.fill(); });
-      // Znacznik percentyla: romb i podpis „P50” nad nim.
+  // Pudełko, wąsy i punkty odstające (reguła 1.5 · IQR jak w ggplot2) + znacznik
+  // percentyla (romb i podpis „P50”). Styl i znacznik w obiekcie o.
+  function boxRender(o) {
+    return function (params, api) {
+      var s = o.stats;
+      function X(v) { return api.coord([v, 0])[0]; }
+      var yT = api.coord([0, 0.42])[1], yB = api.coord([0, -0.42])[1], yM = api.coord([0, 0])[1];
+      var line = { stroke: o.ink, lineWidth: 1.5 };
+      var kids = [
+        { type: "line", shape: { x1: X(s.lo), y1: yM, x2: X(s.q1), y2: yM }, style: line },
+        { type: "line", shape: { x1: X(s.q3), y1: yM, x2: X(s.hi), y2: yM }, style: line },
+        { type: "line", shape: { x1: X(s.lo), y1: yM - 7, x2: X(s.lo), y2: yM + 7 }, style: line },
+        { type: "line", shape: { x1: X(s.hi), y1: yM - 7, x2: X(s.hi), y2: yM + 7 }, style: line },
+        { type: "rect", shape: { x: X(s.q1), y: yT, width: X(s.q3) - X(s.q1), height: yB - yT },
+          style: { fill: o.fill, stroke: o.ink, lineWidth: 1.5 } },
+        { type: "line", shape: { x1: X(s.med), y1: yT, x2: X(s.med), y2: yB }, style: { stroke: o.ink, lineWidth: 2.5 } }
+      ];
+      s.out.forEach(function (v) { kids.push({ type: "circle", shape: { cx: X(v), cy: yM, r: 3 }, style: { fill: o.outlier } }); });
       if (o.mark != null) {
-        var mx = X(o.mark), r = 8;
-        ctx.fillStyle = o.accent; ctx.strokeStyle = o.surface; ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(mx, yM - r); ctx.lineTo(mx + r, yM); ctx.lineTo(mx, yM + r); ctx.lineTo(mx - r, yM);
-        ctx.closePath(); ctx.fill(); ctx.stroke();
-        ctx.font = "700 " + (o.fontSize || 12) + "px " + o.font; ctx.textBaseline = "bottom";
-        var w = ctx.measureText(o.markText).width, a = chart.chartArea;
-        var tx = Math.max(a.left, Math.min(a.right - w, mx - w / 2));
-        ctx.fillStyle = o.accent;
-        ctx.fillText(o.markText, tx, yT - 3);
+        var mx = X(o.mark), r = 8, size = o.fontSize || 12;
+        var left = X(o.lo), right = X(o.hi), w = o.markText.length * size * 0.62;
+        kids.push({ type: "polygon", shape: { points: [[mx, yM - r], [mx + r, yM], [mx, yM + r], [mx - r, yM]] },
+                    style: { fill: o.accent, stroke: o.surface, lineWidth: 2 } });
+        kids.push({ type: "text", x: Math.max(left, Math.min(right - w, mx - w / 2)), y: yT - 3,
+                    style: { text: o.markText, fill: o.accent, font: "700 " + size + "px " + o.font, textVerticalAlign: "bottom" } });
       }
-      ctx.restore();
-    }
-  };
+      return { type: "group", children: kids };
+    };
+  }
 
   function init(root) {
     var cfg = JSON.parse(root.dataset.config || "{}");
-    var cHist = root.querySelector('canvas[data-role="hist"]');
-    var cBox = root.querySelector('canvas[data-role="box"]');
-    if (!cHist || !cBox) return false;
+    var eHist = root.querySelector('.lc-ec[data-role="hist"]');
+    var eBox = root.querySelector('.lc-ec[data-role="box"]');
+    if (!eHist || !eBox) return false;
     var S = U.sorted(cfg.values), N = S.length, BIN = cfg.bin || 2, UNIT = cfg.unit || "cm";
     var LO = Math.floor(S[0] / 5) * 5, HI = Math.ceil(S[N - 1] / 5) * 5;
     var Q = []; for (var i = 0; i <= 100; i++) Q.push(U.quantile7(S, i / 100, true));
@@ -65,12 +56,11 @@
     var BINS = U.bins(S, LO, HI, BIN), TOP = 0;
     BINS.forEach(function (b) { TOP = Math.max(TOP, b.n); });
     TOP = Math.ceil(TOP * 1.25 / 5) * 5;
-    var p = cfg.p != null ? cfg.p : 50;
+    var p = cfg.p != null ? cfg.p : 50, drag = false;
     var read = {};
     ["p", "q", "share", "text"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
-    var Y_W = 58;
     var layer = Charts.handleLayer(root);
-    var handle = layer.add(cHist, {
+    var handle = layer.add(eHist, {
       label: "Rząd percentyla",
       hint: "Strzałki zmieniają rząd percentyla o 1 punkt procentowy; Shift ze strzałką o 10. Home: 0, End: 100.",
       onKey: function (event) {
@@ -81,81 +71,65 @@
         return true;
       },
       onPointerDown: function (event) {
-        drag = true; cHist.setPointerCapture(event.pointerId);
-        p = nearestP(U.valueAtX(chHist, event)); draw(); event.preventDefault();
+        drag = true; eHist.setPointerCapture(event.pointerId);
+        p = nearestP(U.valueAt(chHist, eHist, event, [LO, HI]).x); draw(); event.preventDefault();
       }
     });
-    function positionHandle(ch) {
-      handle.position(ch.scales.x.getPixelForValue(Q[p]), ch.scales.y.getPixelForValue(TOP * 0.9));
+    function positionHandle() {
+      var q = chHist.convertToPixel({ gridIndex: 0 }, [Q[p], TOP * 0.9]);
+      if (q) handle.position(q[0], q[1]);
     }
 
-    var chHist = Charts.create(cHist, {
-      type: "scatter",
-      data: { datasets: [
-        { data: [], showLine: true, pointRadius: 0, borderWidth: 2.5 },
-        { data: [], pointRadius: 8, borderWidth: 2 }
-      ] },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { top: 6, right: 12 } },
-        scales: {
-          x: { type: "linear", min: LO, max: HI, ticks: { stepSize: 5 } },
-          y: { min: 0, max: TOP, ticks: { precision: 0 }, afterFit: U.fixedWidth(Y_W),
-               title: { display: true, text: "Liczba studentów" } }
-        },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false },
-                   lcHist: { bins: BINS }, lcLabels: { items: [] } }
-      },
-      plugins: [U.histPlugin, U.labelPlugin, { id: "percentileHandle", afterRender: positionHandle }]
-    });
-    var chBox = Charts.create(cBox, {
-      type: "scatter",
-      data: { datasets: [] },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { right: 12 } },
-        scales: {
-          x: { type: "linear", min: LO, max: HI, ticks: { stepSize: 5 },
-               title: { display: true, text: "Wzrost (" + UNIT + ")" } },
-          y: { min: -1, max: 1.25, ticks: { display: false }, afterFit: U.fixedWidth(Y_W) }
-        },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, lcBox: { stats: box } }
-      },
-      plugins: [boxPlugin]
+    var histStyle = { bins: BINS, fill: "#ccc", fillLeft: "#88a", gap: "#fff", split: null };
+    var boxStyle = { stats: box, lo: LO, hi: HI };
+    var chHist = Charts.chart(eHist, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 58, right: 12, top: 6, bottom: 28, outerBoundsMode: "none" },
+      xAxis: { type: "value", min: LO, max: HI, interval: 5 },
+      yAxis: { type: "value", min: 0, max: TOP, minInterval: 1, name: "Liczba studentów" },
+      series: [
+        Object.assign(U.histSeries("hist", histStyle), { data: U.histData(BINS) }),
+        { id: "line", type: "line", data: [], symbol: "none", silent: true, animation: false, lineStyle: { width: 2.5 } },
+        { id: "dot", type: "scatter", data: [], symbolSize: 16, silent: true, animation: false }
+      ]
+    }, { onResize: function () { draw(); } });
+    var chBox = Charts.chart(eBox, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 58, right: 12, top: 4, bottom: 48, outerBoundsMode: "none" },
+      xAxis: { type: "value", min: LO, max: HI, interval: 5, name: "Wzrost (" + UNIT + ")" },
+      yAxis: { type: "value", min: -1, max: 1.25, show: false },
+      series: [{ id: "box", type: "custom", renderItem: boxRender(boxStyle), data: [[0]], silent: true, animation: false, clip: false }]
     });
 
-    var P = null;
+    var P = null, FS = 12;
     function paint() {
-      P = Charts.palette();
-      var fontSize = Charts.axisFontSize(root);
-      [chHist, chBox].forEach(function (ch) {
-        Charts.styleAxes(ch, P, { maxRotation: 0, fontSize: fontSize });
-        ch.options.scales.y.afterFit = U.fixedWidth(Math.ceil(fontSize * 5));
-        ch.options.scales.x.ticks.maxTicksLimit = 6;
-      });
-      chBox.options.scales.y.grid = { display: false };
-      chBox.options.scales.y.border = { display: false };
-      Object.assign(chHist.options.plugins.lcHist, { fill: Charts.alpha(P.ref, 0.45), fillLeft: Charts.alpha(P.niebo, 0.7), gap: P.surface });
-      Object.assign(chHist.options.plugins.lcLabels, { font: P.mono, fontSize: fontSize, halo: Charts.alpha(P.surface, 0.85) });
-      Object.assign(chBox.options.plugins.lcBox, { ink: P.soft, fill: Charts.alpha(P.ref, 0.25), outlier: Charts.alpha(P.soft, 0.5),
-        accent: P.accent, surface: P.surface, font: P.mono, fontSize: fontSize });
-      var ds = chHist.data.datasets;
-      ds[0].borderColor = P.accent;
-      ds[1].pointBackgroundColor = P.accent; ds[1].pointBorderColor = P.surface;
-      chHist.update(); chBox.update();
+      P = Charts.palette(); FS = Charts.axisFontSize(root);
+      var left = Math.ceil(FS * 5), x = Charts.ecAxis(P, FS, { nameGap: Math.round(FS * 1.9) });
+      chHist.setOption({ grid: { left: left, bottom: Math.ceil(FS * 2) }, xAxis: x,
+                         yAxis: Charts.ecAxis(P, FS, { nameGap: Math.round(FS * 2.6) }) });
+      chBox.setOption({ grid: { left: left, bottom: Math.ceil(FS * 3.6) }, xAxis: x });
+      Object.assign(histStyle, { fill: Charts.alpha(P.ref, 0.45), fillLeft: Charts.alpha(P.niebo, 0.7), gap: P.surface });
+      Object.assign(boxStyle, { ink: P.soft, fill: Charts.alpha(P.ref, 0.25), outlier: Charts.alpha(P.soft, 0.5),
+        accent: P.accent, surface: P.surface, font: P.mono, fontSize: FS });
+      chHist.setOption({ series: [
+        { id: "line", lineStyle: { color: P.accent } },
+        { id: "dot", itemStyle: { color: P.accent, borderColor: P.surface, borderWidth: 2 } }
+      ] });
     }
 
     function draw() {
       var q = Q[p], qr = Charts.round(q, 1);
       var share = 100 * S.filter(function (v) { return v <= qr; }).length / N;
       var hy = TOP * 0.9;
-      chHist.data.datasets[0].data = [{ x: q, y: 0 }, { x: q, y: hy }];
-      chHist.data.datasets[1].data = [{ x: q, y: hy }];
-      chHist.options.plugins.lcHist.split = q;
-      chHist.options.plugins.lcLabels.items = [{ x: q, text: Charts.fmt(q, 1) + " " + UNIT, color: P.accent, row: 0 }];
-      chBox.options.plugins.lcBox.mark = q;
-      chBox.options.plugins.lcBox.markText = "P" + p;
-      chHist.update("none"); chBox.update("none");
+      histStyle.split = q;
+      boxStyle.mark = q; boxStyle.markText = "P" + p;
+      chHist.setOption({ series: [
+        { id: "hist", renderItem: U.histSeries("hist", histStyle).renderItem },
+        { id: "line", data: [[q, 0], [q, hy]] }, { id: "dot", data: [[q, hy]] }
+      ] });
+      chBox.setOption({ series: [{ id: "box", renderItem: boxRender(boxStyle) }] });
+      U.lineLabels(chHist, [{ x: q, text: Charts.fmt(q, 1) + " " + UNIT, color: P.accent, row: 0 }],
+        { xmax: HI, ymax: TOP, font: P.mono, fontSize: FS, halo: Charts.alpha(P.surface, 0.85) });
       if (read.p) read.p.textContent = p + "%";
       if (read.q) read.q.textContent = Charts.fmt(q, 1) + " " + UNIT;
       if (read.share) read.share.textContent = Charts.fmt(share, 1) + "%";
@@ -165,7 +139,7 @@
         b.setAttribute("aria-pressed", String(+b.dataset.pSet === p));
       });
       handle.value(p, 0, 100, "Percentyl " + p + "; " + Charts.fmt(q, 1) + " " + UNIT);
-      positionHandle(chHist);
+      positionHandle();
       root.lcState = { p: p, q: q, share: share };
     }
 
@@ -176,24 +150,23 @@
       return best;
     }
 
-    var drag = false;
-    [[cHist, chHist], [cBox, chBox]].forEach(function (pair) {
-      var canvas = pair[0], chart = pair[1];
-      canvas.style.touchAction = "none";
-      canvas.style.cursor = "ew-resize";
-      Charts.listen(canvas, "pointerdown", function (e) {
+    [[eHist, chHist], [eBox, chBox]].forEach(function (pair) {
+      var el = pair[0], chart = pair[1];
+      el.style.touchAction = "none";
+      el.style.cursor = "ew-resize";
+      Charts.listen(el, "pointerdown", function (e) {
         drag = true;
-        canvas.setPointerCapture(e.pointerId);
-        p = nearestP(U.valueAtX(chart, e)); draw();
+        el.setPointerCapture(e.pointerId);
+        p = nearestP(U.valueAt(chart, el, e, [LO, HI]).x); draw();
         e.preventDefault();
       });
-      Charts.listen(canvas, "pointermove", function (e) {
+      Charts.listen(el, "pointermove", function (e) {
         if (!drag) return;
-        var np = nearestP(U.valueAtX(chart, e));
+        var np = nearestP(U.valueAt(chart, el, e, [LO, HI]).x);
         if (np !== p) { p = np; draw(); }
       });
       ["pointerup", "pointercancel"].forEach(function (t) {
-        Charts.listen(canvas, t, function () { drag = false; });
+        Charts.listen(el, t, function () { drag = false; });
       });
     });
 

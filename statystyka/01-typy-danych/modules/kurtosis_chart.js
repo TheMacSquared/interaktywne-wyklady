@@ -4,8 +4,8 @@
 //   |kurtoza| ≤ 0.01: N(0, 1);
 //   kurtoza > 0.01: t Studenta przeskalowany do SD = 1, df = max(4.5, 6/k + 4).
 // Kurtozę zmienia przeciąganie szczytu w górę lub w dół (krok 0.2 na 6 px ruchu)
-// i przyciski [data-k-set]. Kontener .lc-kurt z <canvas data-role="main">,
-// <canvas data-role="tail"> i polami [data-role="type|ek|text"].
+// i przyciski [data-k-set]. Kontener .lc-kurt z <div class="lc-ec" data-role="main">,
+// <div class="lc-ec" data-role="tail"> i polami [data-role="type|ek|text"]. ECharts.
 (function () {
   var Charts = window.lcCharts;
   var U = window.lc01;
@@ -80,8 +80,8 @@
   }
 
   function init(root) {
-    var cMain = root.querySelector('canvas[data-role="main"]');
-    var cTail = root.querySelector('canvas[data-role="tail"]');
+    var cMain = root.querySelector('.lc-ec[data-role="main"]');
+    var cTail = root.querySelector('.lc-ec[data-role="tail"]');
     if (!cMain || !cTail) return false;
     var read = {};
     ["type", "ek", "text", "swatch"].forEach(function (k) { read[k] = root.querySelector('[data-role="' + k + '"]'); });
@@ -103,72 +103,56 @@
       },
       onPointerDown: function (event) { startDrag(event); }
     });
-    function positionHandle(ch) {
-      handle.position(ch.scales.x.getPixelForValue(0), ch.scales.y.getPixelForValue(density(ek)(0)));
+    function positionHandle() {
+      var q = chMain.convertToPixel({ gridIndex: 0 }, [0, density(ek)(0)]);
+      if (q) handle.position(q[0], q[1]);
     }
-    function ds(extra) {
-      return Object.assign({ data: [], showLine: true, pointRadius: 0, borderWidth: 2 }, extra || {});
+    function curve(id, extra) {
+      return Object.assign({ id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+                             lineStyle: { width: 2 } }, extra || {});
     }
-    var common = {
-      responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-      plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } }
-    };
-    var chMain = Charts.create(cMain, {
-      type: "scatter",
-      plugins: [{ id: "kurtosisHandle", afterRender: positionHandle }],
-      data: { datasets: [
-        ds({ fill: "origin", borderWidth: 2.5 }),
-        ds({ borderDash: [6, 4] }),
-        { data: [], pointRadius: 8, borderWidth: 2 }
-      ] },
-      options: Object.assign({}, common, {
-        layout: { padding: { top: 6, right: 12 } },
-        scales: {
-          x: { type: "linear", min: -5, max: 5, ticks: { stepSize: 1 }, title: { display: true, text: "x" } },
-          y: { min: 0, max: 0.55, ticks: { stepSize: 0.1, includeBounds: false },
-               title: { display: true, text: "Gęstość" } }
-        }
-      })
-    });
-    var chTail = Charts.create(cTail, {
-      type: "scatter",
-      data: { datasets: [ds({ fill: "origin", borderWidth: 2.5 }), ds({ fill: "origin", borderDash: [6, 4] })] },
-      options: Object.assign({}, common, {
-        layout: { padding: { top: 6, right: 12 } },
-        scales: {
-          x: { type: "linear", min: TAIL, max: 5, ticks: { stepSize: 0.5 }, title: { display: true, text: "x" } },
-          y: { min: 0, max: 0.02, ticks: { stepSize: 0.005 },
-               title: { display: true, text: "Gęstość" } }
-        }
-      })
-    });
+    function opts(x, y, series, onResize) {
+      return [{ animation: false, aria: { enabled: false }, grid: { left: 8, right: 12, top: 6, bottom: 8 },
+                xAxis: Object.assign({ type: "value", name: "x" }, x),
+                yAxis: Object.assign({ type: "value", min: 0, name: "Gęstość" }, y), series: series },
+              { onResize: onResize }];
+    }
+    var mo = opts({ min: -5, max: 5, interval: 1 }, { max: 0.55, interval: 0.1 }, [
+      curve("f", { areaStyle: {}, lineStyle: { width: 2.5 } }),
+      curve("norm", { lineStyle: { width: 2, type: [6, 4] } }),
+      { id: "dot", type: "scatter", data: [], symbolSize: 16, silent: true, animation: false }
+    ], positionHandle);
+    var chMain = Charts.chart(cMain, mo[0], mo[1]);
+    var to = opts({ min: TAIL, max: 5, interval: 0.5 }, { max: 0.02, interval: 0.005 }, [
+      curve("f", { areaStyle: {}, lineStyle: { width: 2.5 } }),
+      curve("norm", { areaStyle: {}, lineStyle: { width: 2, type: [6, 4] } })
+    ]);
+    var chTail = Charts.chart(cTail, to[0], to[1]);
 
     var P = null;
     function paint() {
       P = Charts.palette();
-      [chMain, chTail].forEach(function (ch) {
-        Charts.styleAxes(ch, P, { maxRotation: 0, fontSize: Charts.axisFontSize(root) });
-        ch.options.scales.x.ticks.maxTicksLimit = 6;
-        ch.options.scales.y.ticks.maxTicksLimit = 5;
+      var fs = Charts.axisFontSize(root);
+      [[chMain, 1], [chTail, 3]].forEach(function (pair) {
+        var y = Charts.ecAxis(P, fs, { nameGap: Math.round(fs * (pair[1] === 1 ? 2.6 : 3.6)) });
+        y.axisLabel.showMaxLabel = false;
+        pair[0].setOption({ xAxis: Charts.ecAxis(P, fs, { nameGap: Math.round(fs * 1.9) }), yAxis: y,
+          series: [{ id: "norm", lineStyle: { color: P.ref } }] });
       });
-      chMain.data.datasets[1].borderColor = P.ref;
-      chTail.data.datasets[1].borderColor = P.ref;
-      chTail.data.datasets[1].backgroundColor = Charts.alpha(P.ref, 0.15);
-      chMain.update(); chTail.update();
+      chTail.setOption({ series: [{ id: "norm", areaStyle: { color: Charts.alpha(P.ref, 0.15) } }] });
     }
 
     function draw() {
       var f = density(ek), k = kind(ek), col = P[k.color];
-      var m = chMain.data.datasets, t = chTail.data.datasets;
-      m[0].data = XS.map(function (x) { return { x: x, y: f(x) }; });
-      m[1].data = XS.map(function (x) { return { x: x, y: dnorm(x) }; });
-      m[2].data = [{ x: 0, y: f(0) }];
-      m[0].borderColor = col; m[0].backgroundColor = Charts.alpha(col, 0.3);
-      m[2].pointBackgroundColor = col; m[2].pointBorderColor = P.surface;
-      t[0].data = XT.map(function (x) { return { x: x, y: f(x) }; });
-      t[1].data = XT.map(function (x) { return { x: x, y: dnorm(x) }; });
-      t[0].borderColor = col; t[0].backgroundColor = Charts.alpha(col, 0.3);
-      chMain.update("none"); chTail.update("none");
+      chMain.setOption({ series: [
+        { id: "f", data: XS.map(function (x) { return [x, f(x)]; }), lineStyle: { color: col }, areaStyle: { color: Charts.alpha(col, 0.3) } },
+        { id: "norm", data: XS.map(function (x) { return [x, dnorm(x)]; }) },
+        { id: "dot", data: [[0, f(0)]], itemStyle: { color: col, borderColor: P.surface, borderWidth: 2 } }
+      ] });
+      chTail.setOption({ series: [
+        { id: "f", data: XT.map(function (x) { return [x, f(x)]; }), lineStyle: { color: col }, areaStyle: { color: Charts.alpha(col, 0.3) } },
+        { id: "norm", data: XT.map(function (x) { return [x, dnorm(x)]; }) }
+      ] });
 
       var pt = upper(f, TAIL), v = verdict(ek);
       if (read.type) read.type.textContent = k.name;
@@ -189,7 +173,7 @@
         b.setAttribute("aria-pressed", String(Math.abs(+b.dataset.kSet - ek) < 1e-9));
       });
       handle.value(ek, KMIN, KMAX, "Kurtoza nadwyżkowa " + Charts.fmt(ek, 1));
-      positionHandle(chMain);
+      positionHandle();
       root.lcState = { ek: ek, peak: f(0), tail: pt, normTail: NORM_TAIL, f: f };
     }
 

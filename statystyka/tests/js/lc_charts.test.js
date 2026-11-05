@@ -298,15 +298,16 @@ test("scenariusz koło/słupki obsługuje obie kolejności wiadomości i DOM", (
     const message = env.handlers.get("render_scenario");
     const data = { labels: ["A", "B"], data: [60, 40], colors: ["#aaa", "#bbb"], reveal: true };
     if (beforeDom) message(data);
-    const makeRoot = () => root("lc-scenario", [canvas("pie", { id: "ch2_pie_canvas" }), canvas("bar", { id: "ch2_bar_canvas" })]);
+    const makeRoot = () => root("lc-scenario", [ecbox("pie", { id: "ch2_pie_canvas" }), ecbox("bar", { id: "ch2_bar_canvas" })]);
+    const bars = () => [...env.live][1].series.get("bar").data.length;
     let el = makeRoot(); env.mount(el);
     if (!beforeDom) message(data);
-    assert.equal(env.live.size, 2);
-    message({ ...data, reveal: false }); assert.equal(env.live.size, 1);
-    message(data); assert.equal(env.live.size, 2);
+    assert.equal(env.live.size, 2); assert.equal(bars(), 2);
+    message({ ...data, reveal: false }); assert.equal(bars(), 0, "słupki dopiero po odsłonięciu");
+    message(data); assert.equal(bars(), 2);
     env.unmount(el); assert.equal(env.live.size, 0);
     el = makeRoot(); env.mount(el);
-    assert.equal(env.live.size, 2, "dane wracają bez kolejnej wiadomości z R");
+    assert.equal(bars(), 2, "dane wracają bez kolejnej wiadomości z R");
     env.unmount(el);
     assert.equal(env.errors.length, 0);
   }
@@ -399,7 +400,7 @@ test("percentyl przesuwa się według rzędu, z obiema wizualizacjami", () => {
   const env = environment();
   env.load("01-typy-danych/modules/chart_utils.js");
   env.load("01-typy-danych/modules/percentile_chart.js");
-  const el = root("lc-pctl", [canvas("hist"), canvas("box")], {
+  const el = root("lc-pctl", [ecbox("hist"), ecbox("box")], {
     "data-config": JSON.stringify({ values: [150, 160, 170, 180, 190], p: 50 })
   });
   env.mount(el);
@@ -408,8 +409,9 @@ test("percentyl przesuwa się według rzędu, z obiema wizualizacjami", () => {
   press(handle, "ArrowLeft", true); assert.equal(el.lcState.p, 41);
   press(handle, "Home"); assert.equal(el.lcState.p, 0);
   press(handle, "End"); assert.equal(el.lcState.p, 100);
-  assert.equal([...env.live][0].data.datasets[1].data[0].x, 190);
-  assert.equal([...env.live][1].options.plugins.lcBox.mark, 190);
+  assert.equal([...env.live][0].series.get("dot").data[0][0], 190);
+  assert.equal(el.lcState.q, 190);
+  assert.ok([...env.live][1].series.get("box").renderItem, "pudełko przerysowane z nowym znacznikiem");
   assert.equal(env.errors.length, 0);
 });
 
@@ -420,7 +422,7 @@ test("odpowiedzi średnia/mediana są niezależne i odsłaniane tylko przyciskie
   const reveal = new Element("button", { "data-g-act": "reveal" });
   const fresh = new Element("button", { "data-g-act": "new" });
   const zoom = new Element("button", { "data-lc-chart-zoom": "true" });
-  const el = root("lc-guess", [canvas("hist"), reveal, fresh, zoom]);
+  const el = root("lc-guess", [ecbox("hist"), reveal, fresh, zoom]);
   env.mount(el);
   const mean = el.querySelector("[data-guess=\"mean\"]"), median = el.querySelector("[data-guess=\"median\"]");
   assert.equal(el.lcState.guess.mean, null); assert.equal(el.lcState.guess.median, null);
@@ -428,12 +430,12 @@ test("odpowiedzi średnia/mediana są niezależne i odsłaniane tylko przyciskie
   press(mean, "End"); press(median, "Home");
   assert.ok(el.lcState.guess.mean > el.lcState.guess.median, "brak ograniczenia a ≤ b dla typów");
   assert.equal(el.lcState.revealed, false); assert.equal(reveal.disabled, false);
-  assert.equal([...env.live][0].data.datasets[2].data.length, 0);
+  assert.equal([...env.live][0].series.get("tMean").data.length, 0);
   const before = JSON.stringify(el.lcState);
   zoom.emit("click"); env.theme(el); assert.equal(JSON.stringify(el.lcState), before);
   el.emit("click", { target: reveal });
   assert.equal(el.lcState.revealed, true); assert.equal(mean.hidden, true); assert.equal(median.hidden, true);
-  assert.ok([...env.live][0].data.datasets[2].data.length > 0);
+  assert.ok([...env.live][0].series.get("tMean").data.length > 0);
   for (let i = 0; i < 5; i++) el.emit("click", { target: fresh });
   assert.equal(el.querySelectorAll(".lc-chart-handle").length, 2);
   assert.equal(el.lcState.guess.mean, null); assert.equal(el.lcState.guess.median, null);
@@ -445,20 +447,20 @@ test("punkty odstające mają osobne uchwyty 2D, zwalniane przy nowych danych", 
   const env = environment();
   env.load("02-zwiazki-zmiennych/modules/scatter_charts.js");
   const add = new Element("button", { "data-o-add": "true" }), fresh = new Element("button", { "data-o-new": "true" });
-  const el = root("lc-scat lc-outlier", [canvas("plot"), add, fresh]);
+  const el = root("lc-scat lc-outlier", [ecbox("plot"), add, fresh]);
   env.mount(el);
   assert.equal(el.querySelectorAll(".lc-chart-handle").length, 0);
   el.emit("click", { target: add });
   const ch = [...env.live][0], handle = el.querySelector(".lc-chart-handle");
-  const old = { ...ch.data.datasets[1].data[0] };
+  const out = () => ch.series.get("outs").data[0], old = [...out()];
   press(handle, "ArrowRight");
-  assert.ok(ch.data.datasets[1].data[0].x > old.x); assert.equal(ch.data.datasets[1].data[0].y, old.y);
-  press(handle, "ArrowUp", true); assert.ok(ch.data.datasets[1].data[0].y > old.y);
+  assert.ok(out()[0] > old[0]); assert.equal(out()[1], old[1]);
+  press(handle, "ArrowUp", true); assert.ok(out()[1] > old[1]);
   el.emit("click", { target: add }); assert.equal(el.querySelectorAll(".lc-chart-handle").length, 2);
   el.emit("click", { target: fresh });
   assert.equal(el.querySelectorAll(".lc-chart-handle").length, 0);
   assert.equal(handle.listeners.get("keydown").size, 0);
-  assert.equal(ch.data.datasets[0].data.length, 50);
+  assert.equal(ch.series.get("base").data.length, 50);
   assert.equal(env.errors.length, 0);
 });
 
@@ -468,18 +470,18 @@ test("wszystkie migrowane widgety inicjują się i wracają z nową instancją",
   const zInputs = () => ["mu", "sd", "x"].map((role, i) => new Element("input", { "data-role": role, value: [170, 8, 178][i] }));
   const pair = { a: normal, b: { ...normal, mu: 180 } };
   const fixtures = [
-    ["01-typy-danych", "salary_chart", () => root("lc-salary", [canvas("hist"), canvas("strip")],
+    ["01-typy-danych", "salary_chart", () => root("lc-salary", [ecbox("hist"), ecbox("strip")],
       json({ n: 20, shape: 3, scale: 100, shift: 1000, hi: 5000, bin: 100 })), 2],
-    ["01-typy-danych", "percentile_chart", () => root("lc-pctl", [canvas("hist"), canvas("box")],
+    ["01-typy-danych", "percentile_chart", () => root("lc-pctl", [ecbox("hist"), ecbox("box")],
       json({ values: [150, 160, 165, 170, 175, 180, 190], p: 50, bin: 2 })), 2],
-    ["01-typy-danych", "guess_chart", () => root("lc-guess", [canvas("hist")]), 1],
-    ["01-typy-danych", "kurtosis_chart", () => root("lc-kurt", [canvas("main"), canvas("tail")]), 2],
-    ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-strength", [canvas("plot")],
+    ["01-typy-danych", "guess_chart", () => root("lc-guess", [ecbox("hist")]), 1],
+    ["01-typy-danych", "kurtosis_chart", () => root("lc-kurt", [ecbox("main"), ecbox("tail")]), 2],
+    ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-strength", [ecbox("plot")],
       json({ x: [-1, 0, 1], e: [1, -2, 1], sigma: [0.5, 1, 2] })), 1],
-    ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-slope", [canvas("plot")],
+    ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-slope", [ecbox("plot")],
       json({ x: [-1, 0, 1], e: [1, -2, 1], rel: 0.33, slopes: [0.5, 1, 2] })), 1],
-    ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-outlier", [canvas("plot")]), 1],
-    ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-simpson", [canvas("plot")],
+    ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-outlier", [ecbox("plot")]), 1],
+    ["02-zwiazki-zmiennych", "scatter_charts", () => root("lc-scat lc-simpson", [ecbox("plot")],
       json({ x: [1, 2, 3, 4, 5, 6], y: [3, 2, 1, 6, 5, 4], g: [0, 0, 0, 1, 1, 1],
         groups: ["A", "B"], colors: ["--upwr-accent", "--upwr-reference"], xlim: [0, 10], ylim: [0, 10] })), 1],
     ["03-rozklady-prawdopodobienstwa", "cdf_chart", () => root("lc-cdf", [ecbox("pdf"), ecbox("cdf")]), 2],
@@ -511,7 +513,7 @@ test("wszystkie migrowane widgety inicjują się i wracają z nową instancją",
 test("pensja prezesa: uchwyt pojawia się po dodaniu i znika po nowym losowaniu", () => {
   const env = environment(); env.load("01-typy-danych/modules/chart_utils.js"); env.load("01-typy-danych/modules/salary_chart.js");
   const add = new Element("button", {"data-s-act":"ceo"}), reset = new Element("button", {"data-s-act":"reset"});
-  const el = root("lc-salary", [canvas("hist"),canvas("strip"),add,reset], {"data-config":JSON.stringify({n:30,shape:3,scale:1000,shift:2000,hi:25000,hi_wide:60000,bin:1000,bin_wide:2000,ceo:true,ceo_value:50000,snap:100})});
+  const el = root("lc-salary", [ecbox("hist"),ecbox("strip"),add,reset], {"data-config":JSON.stringify({n:30,shape:3,scale:1000,shift:2000,hi:25000,hi_wide:60000,bin:1000,bin_wide:2000,ceo:true,ceo_value:50000,snap:100})});
   env.mount(el); const h = el.querySelector(".lc-chart-handle"); assert.equal(h.hidden,true);
   el.emit("click",{target:add}); assert.equal(h.hidden,false); const oldMean=el.lcState.mean;
   press(h,"ArrowRight",true); assert.equal(Number(h.getAttribute("aria-valuenow")),51000); assert.ok(el.lcState.mean>oldMean);
@@ -523,7 +525,7 @@ test("pensja prezesa: uchwyt pojawia się po dodaniu i znika po nowym losowaniu"
 
 test("kurtoza: krok klawiatury i preset aktualizują jednocześnie szczyt i ogon", () => {
   const env=environment(); env.load("01-typy-danych/modules/chart_utils.js");env.load("01-typy-danych/modules/kurtosis_chart.js");
-  const preset=new Element("button",{"data-k-set":"0"}); const el=root("lc-kurt",[canvas("main"),canvas("tail"),preset]); env.mount(el);
+  const preset=new Element("button",{"data-k-set":"0"}); const el=root("lc-kurt",[ecbox("main"),ecbox("tail"),preset]); env.mount(el);
   const h=el.querySelector(".lc-chart-handle"), tail=el.lcState.tail;
   press(h,"ArrowUp"); assert.equal(el.lcState.ek,.2); assert.ok(el.lcState.tail>tail);
   press(h,"ArrowUp",true);assert.equal(el.lcState.ek,1.2);
@@ -537,7 +539,7 @@ for (const [kind,config,start,end] of [
 ]) test(kind+": klawiatura przerywa preset i zachowuje model korelacji",()=>{
   const env=environment();env.load("02-zwiazki-zmiennych/modules/scatter_charts.js");
   const preset=new Element("button",{"data-s-preset":"2"}),r=new Element("span",{"data-role":"r"});
-  const el=root("lc-scat lc-"+kind,[canvas("plot"),preset,r],{"data-config":JSON.stringify({x:[-1,0,1],e:[1,-2,1],...config})});env.mount(el);
+  const el=root("lc-scat lc-"+kind,[ecbox("plot"),preset,r],{"data-config":JSON.stringify({x:[-1,0,1],e:[1,-2,1],...config})});env.mount(el);
   const h=el.querySelector(".lc-chart-handle"),oldR=r.textContent;
   assert.equal(Number(h.getAttribute("aria-valuenow")),start);
   el.emit("click",{target:preset});assert.ok(env.frames.size>0);
@@ -628,25 +630,26 @@ const zoomButton = () => new Element("button", { "data-lc-chart-zoom": "true" })
 test("koło/słupki: lupa zachowuje ukrycie, odsłonięcie i paletę scenariusza", () => {
   const env = environment();
   env.load("01-typy-danych/modules/scenario_chart.js");
-  const el = root("lc-scenario", [zoomButton(), canvas("pie", {id:"ch2_pie_canvas"}), canvas("bar", {id:"ch2_bar_canvas"})]);
+  const el = root("lc-scenario", [zoomButton(), ecbox("pie", {id:"ch2_pie_canvas"}), ecbox("bar", {id:"ch2_bar_canvas"})]);
   env.mount(el);
   const message = env.handlers.get("render_scenario");
   const data = {labels:["A","B"],data:[45,25],colors:["#aaa","#bbb"],reveal:false};
   message(data);
   zoomWithoutChangingData(env, el);
-  assert.equal(env.live.size, 1);
+  const bar = [...env.live][1];
+  assert.equal(bar.series.get("bar").data.length, 0, "lupa nie odsłania słupków");
   message({...data,reveal:true});
-  const bar = [...env.live][1], font = bar.options.scales.x.ticks.font.size;
+  const font = bar.axisFont;
   zoomWithoutChangingData(env, el);
-  assert.ok(bar.options.scales.x.ticks.font.size < font, "wyłączenie lupy przywraca mniejszą czcionkę");
-  assert.equal(bar.data.datasets[0].backgroundColor.join(), data.colors.join());
+  assert.ok(bar.axisFont < font, "wyłączenie lupy przywraca mniejszą czcionkę");
+  assert.equal(bar.series.get("bar").data.map(d => d.itemStyle.color).join(), data.colors.join());
 });
 
 test("odporność miar: lupa zachowuje pensje i średnią uciętą", () => {
   const env=environment();
   env.load("01-typy-danych/modules/chart_utils.js"); env.load("01-typy-danych/modules/salary_chart.js");
   const add=new Element("button",{"data-s-act":"out5"});
-  const el=root("lc-salary",[zoomButton(),canvas("hist"),canvas("strip"),add],{"data-config":JSON.stringify({n:40,shape:3,scale:1000,shift:2000,trim:.1,hi:60000,bin:1500})});
+  const el=root("lc-salary",[zoomButton(),ecbox("hist"),ecbox("strip"),add],{"data-config":JSON.stringify({n:40,shape:3,scale:1000,shift:2000,trim:.1,hi:60000,bin:1500})});
   env.mount(el); el.emit("click",{target:add});
   const before=JSON.stringify(el.lcState);
   zoomWithoutChangingData(env,el);
@@ -658,11 +661,11 @@ test("odporność miar: lupa zachowuje pensje i średnią uciętą", () => {
 test("Simpson: lupa zachowuje widok osobnych branż", () => {
   const env=environment();env.load("02-zwiazki-zmiennych/modules/scatter_charts.js");
   const split=new Element("button",{"data-s-view":"split"});
-  const el=root("lc-scat lc-simpson",[zoomButton(),canvas("plot"),split],{"data-config":JSON.stringify({x:[1,2,3,4,5,6],y:[3,2,1,6,5,4],g:[0,0,0,1,1,1],groups:["A","B"],colors:["--upwr-accent","--upwr-reference"],xlim:[0,10],ylim:[0,10]})});
+  const el=root("lc-scat lc-simpson",[zoomButton(),ecbox("plot"),split],{"data-config":JSON.stringify({x:[1,2,3,4,5,6],y:[3,2,1,6,5,4],g:[0,0,0,1,1,1],groups:["A","B"],colors:["--upwr-accent","--upwr-reference"],xlim:[0,10],ylim:[0,10]})});
   env.mount(el);el.emit("click",{target:split});
-  const ch=[...env.live][0];assert.ok(ch.data.datasets[2].data.length);
+  const ch=[...env.live][0];assert.ok(ch.series.get("g0").data.length);
   zoomWithoutChangingData(env,el);
-  assert.ok(ch.data.datasets[2].data.length);assert.equal(ch.data.datasets[1].borderDash.join(),"6,4");
+  assert.ok(ch.series.get("g0").data.length);assert.equal(ch.series.get("all").lineStyle.type.join(),"6,4");
 });
 
 test("lejek: lupa nie kończy animacji, nie zmienia serii i zachowuje skalę log", () => {

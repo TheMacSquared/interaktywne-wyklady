@@ -245,9 +245,10 @@ ch2h_ui <- list(
             ), selected = "two.sided"),
         lc_slider("ch2h_alpha", "α", 0.01, 0.10, 0.05, 0.01)
       ),
-      div(class = "ws-chart-wrap",
-            tags$canvas(id = "ch2h_sided_chart")
-          )
+      div(class = "ws-chart-wrap", `data-ws-id` = "ch2h_sided_chart", `data-ws-type` = "sided",
+          `data-sided` = "two.sided", `data-crit` = qnorm(0.975),
+          tags$div(class = "lc-ec", role = "img",
+                   `aria-label` = "Rozkład statystyki testowej pod H0 z zacienionym obszarem odrzucenia"))
     ),
 
     lc_p("Przy α = 0.05 test dwustronny odrzuca H₀, gdy statystyka jest

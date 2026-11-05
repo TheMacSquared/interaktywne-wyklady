@@ -370,9 +370,10 @@ ch1d_ui <- list(
     figure_panel(
       label = "Ryc. 3.3",
       title = "p-wartość jako pole ogonów",
-      div(class = "ws-chart-wrap",
-        tags$canvas(id = "ch1_pvalue_chart")
-      )
+      div(class = "ws-chart-wrap", `data-ws-id` = "ch1_pvalue_chart", `data-ws-type` = "pvalue",
+        `data-stat` = 2.17,
+        tags$div(class = "lc-ec", role = "img",
+                 `aria-label` = "Rozkład N(0, 1) z zacienionymi ogonami poza ±2.17: p-wartość"))
     ),
 
     lc_p("Zacieniowane pole w obu ogonach, na lewo od -2.17 i na prawo od 2.17,

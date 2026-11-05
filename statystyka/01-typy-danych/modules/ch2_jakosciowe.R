@@ -156,14 +156,14 @@ ch2_ui <- list(
           tags$div(
             tags$h4("Wykres kołowy"),
             div(class = "lc-scenario-canvas",
-              tags$canvas(id = "ch2_pie_canvas", role = "img", `aria-label` = "Udziały produktów na wykresie kołowym")
+              tags$div(class = "lc-ec", id = "ch2_pie_canvas", role = "img", `aria-label` = "Udziały produktów na wykresie kołowym")
             ),
             uiOutput("ch2_scenario_pie_verdict")
           ),
           tags$div(
             tags$h4("Wykres słupkowy, te same dane"),
             div(class = "lc-scenario-canvas",
-              tags$canvas(id = "ch2_bar_canvas", role = "img", `aria-label` = "Udziały tych samych produktów na wykresie słupkowym po odsłonięciu"),
+              tags$div(class = "lc-ec", id = "ch2_bar_canvas", role = "img", `aria-label` = "Udziały tych samych produktów na wykresie słupkowym po odsłonięciu"),
               uiOutput("ch2_bar_cover")
             ),
             uiOutput("ch2_scenario_bar_verdict")
@@ -504,7 +504,7 @@ ch2_server <- function(input, output, session) {
   })
 
   # ========================================================================
-  # Widget 2: Pie vs Bar — scenario comparison (Chart.js)
+  # Widget 2: Pie vs Bar — scenario comparison (ECharts)
   # ========================================================================
 
   # Zmiana scenariusza zaczyna rundę od nowa: nowy identyfikator widgetu
@@ -526,7 +526,7 @@ ch2_server <- function(input, output, session) {
 
   ch2_widget_id <- reactive(paste0("ch2_order_", ch2_round()))
 
-  # Send scenario data to Chart.js via custom message
+  # Send scenario data to ECharts (scenario_chart.js) via custom message
   observe({
     s <- ch2_current_scenario()
     session$sendCustomMessage("render_scenario", list(

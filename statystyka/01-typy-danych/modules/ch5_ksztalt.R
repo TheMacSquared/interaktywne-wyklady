@@ -211,12 +211,12 @@ ch5_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-kurt-main",
-          tags$canvas(role = "img", `data-role` = "main",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "main",
             `aria-label` = "Gęstość rozkładu o wybranej kurtozie na tle rozkładu normalnego")),
         lc_caption("Przeciągnij szczyt lub wybierz go Tabem i użyj strzałek góra/dół, aby zmienić kurtozę nadwyżkową (od -1.2 do 6)."),
         tags$h4("Powiększenie prawego ogona (x > 2.5)"),
         tags$div(class = "lc-kurt-tail",
-          tags$canvas(role = "img", `data-role` = "tail",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "tail",
             `aria-label` = "Powiększenie prawego ogona obu gęstości dla x od 2.5 do 5")),
         lc_status(tags$p(`data-role` = "text", ""))
       )

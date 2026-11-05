@@ -2,8 +2,8 @@
 // tych samych zasad co dawniej w R: 200 obserwacji z rozkładu symetrycznego (normalny),
 // prawoskośnego (gamma + przesunięcie) albo lewoskośnego (100 − gamma), zaokrąglone
 // do 0.1. Pierwsze kliknięcie to typowana średnia, drugie — mediana; przed odsłonięciem
-// typy można przeciągać. Kontener .lc-guess z <canvas data-role="hist">, przyciskami
-// [data-g-act="new|reveal"] i polami [data-role="banner|feedback"].
+// typy można przeciągać. Kontener .lc-guess z <div class="lc-ec" data-role="hist">,
+// przyciskami [data-g-act="new|reveal"] i polami [data-role="banner|feedback"]. ECharts.
 (function () {
   var Charts = window.lcCharts;
   var U = window.lc01;
@@ -25,13 +25,13 @@
   }
 
   function init(root) {
-    var canvas = root.querySelector('canvas[data-role="hist"]');
+    var canvas = root.querySelector('.lc-ec[data-role="hist"]');
     if (!canvas) return false;
     var banner = root.querySelector('[data-role="banner"]');
     var feedback = root.querySelector('[data-role="feedback"]');
     var btnReveal = root.querySelector('[data-g-act="reveal"]');
     var round = null, guess = { mean: null, median: null }, revealed = false;
-    var score = { total: 0, good: 0 }, LO = 0, HI = 1, drag = null;
+    var score = { total: 0, good: 0 }, LO = 0, HI = 1, YMAX = 5, drag = null;
 
     var layer = Charts.handleLayer(root), guessHandles = {};
     ["mean", "median"].forEach(function (key) {
@@ -60,42 +60,39 @@
       handle.element.setAttribute("class", "lc-chart-handle has-dot is-unset");
       guessHandles[key] = handle;
     });
-    function syncHandles(ch) {
+    function syncHandles() {
       if (!round) return;
       ["mean", "median"].forEach(function (key, i) {
         var value = guess[key] == null ? (LO + HI) / 2 : guess[key];
-        guessHandles[key].position(ch.scales.x.getPixelForValue(value), ch.scales.y.getPixelForValue(ch.options.scales.y.max * (i ? 0.72 : 0.9)));
+        var q = chart.convertToPixel({ gridIndex: 0 }, [value, YMAX * (i ? 0.72 : 0.9)]);
+        if (q) guessHandles[key].position(q[0], q[1]);
       });
     }
-    var chart = Charts.create(canvas, {
-      type: "scatter",
-      data: { datasets: [0, 1, 2, 3].map(function (k) {
-        return { data: [], showLine: true, pointRadius: 0, borderWidth: k < 2 ? 2 : 3, borderDash: k < 2 ? [6, 4] : [] };
-      }) },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { top: 6, right: 12 } },
-        scales: {
-          x: { type: "linear", ticks: { includeBounds: false }, title: { display: true, text: "Wartość" } },
-          y: { min: 0, ticks: { precision: 0 }, title: { display: true, text: "Liczebność" } }
-        },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false },
-                   lcHist: { bins: [] }, lcLabels: { items: [] } }
-      },
-      plugins: [U.histPlugin, U.labelPlugin, { id: "guessHandles", afterRender: syncHandles }]
-    });
+    var histStyle = { fill: "#ccc", gap: "#fff" };
+    var ids = ["gMean", "gMed", "tMean", "tMed"];
+    var chart = Charts.chart(canvas, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 8, right: 12, top: 6, bottom: 8 },
+      xAxis: { type: "value", name: "Wartość" },
+      yAxis: { type: "value", min: 0, minInterval: 1, name: "Liczebność" },
+      series: [U.histSeries("hist", histStyle)].concat(ids.map(function (id, k) {
+        return { id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+                 lineStyle: { width: k < 2 ? 2 : 3, type: k < 2 ? [6, 4] : "solid" } };
+      }))
+    }, { onResize: function () { if (round) draw(); } });
 
     var P = null;
     function paint() {
       P = Charts.palette();
-      Charts.styleAxes(chart, P, { maxRotation: 0, fontSize: Charts.axisFontSize(root) });
-      chart.options.scales.x.ticks.maxTicksLimit = 6;
-      Object.assign(chart.options.plugins.lcHist, { fill: Charts.alpha(P.ref, 0.5), gap: P.surface });
-      Object.assign(chart.options.plugins.lcLabels, { font: P.mono, fontSize: Charts.axisFontSize(root), halo: Charts.alpha(P.surface, 0.85) });
-      var ds = chart.data.datasets;
-      ds[0].borderColor = ds[2].borderColor = P.accent;
-      ds[1].borderColor = ds[3].borderColor = P.niebo;
-      chart.update();
+      var fs = Charts.axisFontSize(root), x = Charts.ecAxis(P, fs, { nameGap: Math.round(fs * 1.9) });
+      x.axisLabel.showMinLabel = x.axisLabel.showMaxLabel = false;
+      histStyle.fill = Charts.alpha(P.ref, 0.5); histStyle.gap = P.surface;
+      chart.setOption({
+        xAxis: x, yAxis: Charts.ecAxis(P, fs, { nameGap: Math.round(fs * 2.6) }),
+        series: [{ id: "hist", renderItem: U.histSeries("hist", histStyle).renderItem }].concat(ids.map(function (id, k) {
+          return { id: id, lineStyle: { color: k % 2 ? P.niebo : P.accent } };
+        }))
+      });
     }
 
     function newRound() {
@@ -104,27 +101,28 @@
       var b = U.bins(x, mn, mx + 1e-9, w), top = 0;
       b.forEach(function (bb) { top = Math.max(top, bb.n); });
       LO = mn - 0.05 * (mx - mn); HI = mx + 0.05 * (mx - mn);
-      chart.options.scales.x.min = LO; chart.options.scales.x.max = HI;
-      chart.options.scales.y.max = Math.ceil(top * 1.45 / 5) * 5;
-      chart.options.plugins.lcHist.bins = b;
+      YMAX = Math.ceil(top * 1.45 / 5) * 5;
+      chart.setOption({ xAxis: { min: LO, max: HI }, yAxis: { max: YMAX }, series: [{ id: "hist", data: U.histData(b) }] });
       guess = { mean: null, median: null }; revealed = false;
       draw();
     }
 
-    function vline(v) { var t = chart.options.scales.y.max; return v == null ? [] : [{ x: v, y: 0 }, { x: v, y: t }]; }
+    function vline(v) { return U.vline(v, YMAX); }
 
     function draw() {
-      var x = round.values, m = U.mean(x), med = U.median(x), ds = chart.data.datasets, labels = [];
-      ds[0].data = vline(guess.mean); ds[1].data = vline(guess.median);
-      ds[2].data = revealed ? vline(m) : []; ds[3].data = revealed ? vline(med) : [];
+      var x = round.values, m = U.mean(x), med = U.median(x), labels = [];
+      chart.setOption({ series: [
+        { id: "gMean", data: vline(guess.mean) }, { id: "gMed", data: vline(guess.median) },
+        { id: "tMean", data: revealed ? vline(m) : [] }, { id: "tMed", data: revealed ? vline(med) : [] }
+      ] });
       if (guess.mean != null) labels.push({ x: guess.mean, text: "Wskazana średnia", color: P.accent, row: 0 });
       if (guess.median != null) labels.push({ x: guess.median, text: "Wskazana mediana", color: P.niebo, row: 1 });
       if (revealed) {
         labels.push({ x: m, text: "Średnia " + Charts.fmt(m, 1), color: P.accent, row: 2 });
         labels.push({ x: med, text: "Mediana " + Charts.fmt(med, 1), color: P.niebo, row: 3 });
       }
-      chart.options.plugins.lcLabels.items = labels;
-      chart.update("none");
+      U.lineLabels(chart, labels, { xmax: HI, ymax: YMAX, font: P.mono, fontSize: Charts.axisFontSize(root),
+        halo: Charts.alpha(P.surface, 0.85) });
 
       var tone = "info", msg;
       if (guess.mean == null) msg = "Wskaż średnią: kliknij na wykresie lub użyj Tab i strzałek.";
@@ -160,7 +158,7 @@
         handle.value(unset ? (LO + HI) / 2 : guess[key], LO, HI,
           unset ? "Nie wskazano odpowiedzi. Enter ustawia znacznik w środku osi." : "Twój typ: " + Charts.fmt(guess[key], 1));
       });
-      syncHandles(chart);
+      syncHandles();
       root.lcState = { type: round.type, values: x, mean: m, median: med, guess: guess, revealed: revealed, score: score };
     }
 
@@ -174,13 +172,14 @@
       draw();
     }
 
-    function at(e) { return Math.round(U.valueAtX(chart, e) * 10) / 10; }
-    function px(v) { return chart.scales.x.getPixelForValue(v); }
+    function at(e) { return Math.round(U.valueAt(chart, canvas, e, [LO, HI]).x * 10) / 10; }
+    function px(v) { return chart.convertToPixel({ gridIndex: 0 }, [v, 0])[0]; }
+    function pixelX(e) { return e.clientX - canvas.getBoundingClientRect().left; }
     canvas.style.touchAction = "none";
     canvas.style.cursor = "crosshair";
     Charts.listen(canvas, "pointerdown", function (e) {
       if (revealed) return;
-      var x = U.pixelX(chart, e), v = at(e), near = null, best = 12;
+      var x = pixelX(e), v = at(e), near = null, best = 12;
       ["mean", "median"].forEach(function (k) {
         if (guess[k] != null && Math.abs(px(guess[k]) - x) < best) { best = Math.abs(px(guess[k]) - x); near = k; }
       });
@@ -195,7 +194,7 @@
     Charts.listen(canvas, "pointermove", function (e) {
       if (drag) { guess[drag] = at(e); draw(); return; }
       if (revealed) { canvas.style.cursor = "default"; return; }
-      var x = U.pixelX(chart, e), near = ["mean", "median"].some(function (k) {
+      var x = pixelX(e), near = ["mean", "median"].some(function (k) {
         return guess[k] != null && Math.abs(px(guess[k]) - x) < 12;
       });
       canvas.style.cursor = near ? "ew-resize" : (guess.median == null ? "crosshair" : "default");

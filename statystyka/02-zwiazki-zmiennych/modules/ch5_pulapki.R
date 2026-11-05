@@ -100,7 +100,7 @@ ch5_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-scat-canvas",
-          tags$canvas(role = "img", `data-role` = "plot",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "plot",
                       `aria-label` = "Wykres rozrzutu 50 punktów bez związku z prostą dopasowania; dopisane wartości odstające można przeciągać")),
         lc_caption("Przeciągnij dopisany punkt lub użyj Tab i strzałek. Przerywana prosta pokazuje dopasowanie bez wartości odstających.")
       )
@@ -162,7 +162,7 @@ ch5_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-scat-canvas",
-          tags$canvas(role = "img", `data-role` = "plot",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "plot",
                       `aria-label` = "Staż a pensja 120 pracowników trzech branż: prosta dla wszystkich razem albo osobna prosta dla każdej branży")),
         lc_status(
           tagAppendAttributes(lc_verdict(tags$strong("Razem:"), type = "warning"), `data-role` = "verdict"),

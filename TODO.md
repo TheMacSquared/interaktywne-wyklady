@@ -132,11 +132,12 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   - [ ] Migracja statystyki z Chart.js na ECharts (decyzja 2026-11-05:
     renderer SVG, canvas dla tysięcy punktów; pełny `echarts.min.js`
     z cdnjs; analiza ryzyka zostaje przy Chart.js). Wspólna obsługa
-    w `lc_charts.js` gotowa; wykład 03 w całości na ECharts (8 widgetów,
-    bez Chart.js). Dalej: 01, 02, 05 (Ryc. 2.4 z własnym kodem w `app.R`), mostki
-    offline `widgets/01-ch2-jakosciowe.js` i `05-ch2-hipotezy.js`;
-    na końcu usunąć Chart.js, `styleAxes`, `create` i rozważyć okrojoną
-    bibliotekę.
+    w `lc_charts.js` gotowa. Wykłady 01, 02, 03 i 05 w całości na ECharts
+    (2026-11-05; mostek offline `widgets/01-ch2-jakosciowe.js` też). Chart.js
+    zostaje tylko w 04 (warianty B1–B8 w `brainstorm.js`, do decyzji
+    o prototypach). Na końcu usunąć Chart.js, `styleAxes`, `create` i rozważyć
+    okrojoną bibliotekę. Wykresy R, których na razie nie przenosimy, są
+    w wersji offline zamrożone (decyzja 2026-11-05).
   - [ ] Statystyka 04: decyzje o parach prototyp R / wariant B
     (`04-przedzialy-ufnosci/BRAINSTORM.md`), potem port pozostałych
     wykresów R, w tym zaakceptowanych Ryc. 1.1–1.4 i paneli rozdz. 3–5.

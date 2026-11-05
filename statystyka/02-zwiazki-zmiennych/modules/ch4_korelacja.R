@@ -117,7 +117,7 @@ ch4_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-scat-canvas",
-          tags$canvas(role = "img", `data-role` = "plot",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "plot",
                       `aria-label` = "Wykres rozrzutu 90 punktów wokół prostej o nachyleniu 1; rozrzut wokół prostej można zmieniać")),
         lc_caption("Przeciągnij uchwyt na brzegu pasa lub wybierz go Tabem i użyj strzałek góra/dół.")
       )
@@ -155,7 +155,7 @@ ch4_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-scat-canvas",
-          tags$canvas(role = "img", `data-role` = "plot",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "plot",
                       `aria-label` = "Wykres rozrzutu 90 punktów wokół prostej; nachylenie prostej można zmieniać, korelacja pozostaje 0.95")),
         lc_caption("Przeciągnij uchwyt na prostej lub wybierz go Tabem i użyj strzałek góra/dół.")
       )

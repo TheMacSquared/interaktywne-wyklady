@@ -75,7 +75,7 @@ source(file.path(app_dir, "modules", "ch7_quiz.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch8_cwiczenia.R"),  local = TRUE)
 
 # ============================================================================
-# GLOBAL UI HEADER (CSS, JS, Chart.js)
+# GLOBAL UI HEADER (CSS, JS, ECharts)
 # ============================================================================
 
 # App-specyficzne extras — przekazywane do lecture_page() jako header_extras
@@ -107,9 +107,9 @@ app_extras <- tagList(
     .ch3-six-label + .lc-formula-box { overflow-x: auto; }
     .ch3-six-row.is-sorted + .lc-formula-box { overflow-x: auto; }
   ")),
-  tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+  tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
   includeScript(file.path(project_root, "R", "lc_charts.js")),
-  # Ryciny liczone w przeglądarce (Chart.js): Ryc. 3.4, 3.6, 3.9, 3.10, 5.5
+  # Ryciny liczone w przeglądarce (ECharts): Ryc. 2.3, 3.4, 3.6, 3.9, 3.10, 5.5
   includeScript(file.path(app_dir, "modules", "chart_utils.js")),
   includeScript(file.path(app_dir, "modules", "salary_chart.js")),
   includeScript(file.path(app_dir, "modules", "percentile_chart.js")),
@@ -121,6 +121,8 @@ app_extras <- tagList(
     .lc-guess-canvas { position: relative; width: 100%; aspect-ratio: 1.9 / 1; max-height: 360px; touch-action: none; margin-top: .4em; }
     .lc-kurt-main { position: relative; width: 100%; aspect-ratio: 2 / 1; max-height: 340px; touch-action: none; }
     .lc-kurt-tail { position: relative; width: 100%; aspect-ratio: 3 / 1; max-height: 210px; }
+    /* Wykresy ECharts wypełniają kontener (wszystkie mają position: relative). */
+    .lc-ec { position: absolute; inset: 0; }
     @media (max-width: 640px) {
       .lc-salary-hist, .lc-pctl-hist { aspect-ratio: 1.7 / 1; }
       .lc-salary-strip, .lc-pctl-box { aspect-ratio: 3.6 / 1; }

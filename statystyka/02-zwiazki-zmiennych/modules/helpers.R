@@ -82,7 +82,7 @@ scene_texts <- function(input, output, id, texts) {
 }
 
 # ============================================================================
-# Wykresy rozrzutu w Chart.js (scatter_charts.js): dane bazowe z R
+# Wykresy rozrzutu w ECharts (scatter_charts.js): dane bazowe z R
 # ============================================================================
 
 # Konfiguracja dla kontenera: JSON w atrybucie data-config.

@@ -72,13 +72,17 @@ header_extras <- tagList(
   # Sceny SVG (ANOVA, rozdz. 09): modules/scenes.js + modules/scenes.css
   tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
   includeScript(file.path(app_dir, "modules", "scenes.js")),
-  tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+  # Wykresy rozkładu statystyki testowej (Ryc. 2.4, 3.3): ECharts przez lcCharts.
+  tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+  includeScript(file.path(project_root, "R", "lc_charts.js")),
+  includeScript(file.path(app_dir, "modules", "ws_charts.js")),
   tags$style(HTML("
     .ws-chart-wrap {
       position: relative;
       width: 100%;
       height: 320px;
     }
+    .ws-chart-wrap > .lc-ec { position: absolute; inset: 0; }
 
     .ch2-step-panel {
       animation: ch2StepEnter 360ms cubic-bezier(.2, .75, .25, 1);
@@ -108,146 +112,6 @@ header_extras <- tagList(
       }
     }
   ")),
-  tags$script(HTML("
-    window.wsCharts = window.wsCharts || {};
-    window.wsPendingCharts = window.wsPendingCharts || {};
-
-    function wsCss(name, fallback) {
-      var value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-      return value || fallback;
-    }
-
-    function wsNormPdf(x) {
-      return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
-    }
-
-    function wsDestroyChart(id) {
-      if (window.wsCharts[id]) {
-        window.wsCharts[id].destroy();
-        delete window.wsCharts[id];
-      }
-    }
-
-    function wsRenderWhenReady(type, msg) {
-      var canvas = document.getElementById(msg.id);
-      if (!canvas || !window.Chart) {
-        window.wsPendingCharts[msg.id] = { type: type, msg: msg };
-        return false;
-      }
-      delete window.wsPendingCharts[msg.id];
-      if (type === 'sided') wsRenderSidedChart(msg);
-      if (type === 'pvalue') wsRenderPValueChart(msg);
-      return true;
-    }
-
-    function wsFlushPendingCharts() {
-      Object.keys(window.wsPendingCharts).forEach(function(id) {
-        var pending = window.wsPendingCharts[id];
-        wsRenderWhenReady(pending.type, pending.msg);
-      });
-    }
-
-    function wsDistributionData(msg) {
-      var xs = [];
-      var line = [];
-      var shade = [];
-      var sided = msg.sided || 'two.sided';
-      var critHigh = sided === 'two.sided' ? msg.crit : (sided === 'greater' ? msg.crit : null);
-      var critLow = sided === 'two.sided' ? -msg.crit : (sided === 'less' ? msg.crit : null);
-
-      for (var i = 0; i <= 240; i++) {
-        var x = -4 + i * (8 / 240);
-        var y = wsNormPdf(x);
-        var inTail = false;
-        if (sided === 'two.sided') inTail = x <= critLow || x >= critHigh;
-        if (sided === 'greater') inTail = x >= critHigh;
-        if (sided === 'less') inTail = x <= critLow;
-        xs.push(x.toFixed(2));
-        line.push({ x: x, y: y });
-        shade.push({ x: x, y: inTail ? y : null });
-      }
-      return { line: line, shade: shade, critLow: critLow, critHigh: critHigh };
-    }
-
-    function wsRenderSidedChart(msg) {
-      var canvas = document.getElementById(msg.id);
-      if (!canvas || !window.Chart) return;
-      wsDestroyChart(msg.id);
-      var accent = wsCss('--upwr-accent', '#6b1a2a');
-      var h0 = wsCss('--upwr-niebo', '#6a9dc4');
-      var reference = wsCss('--upwr-reference', '#8b8175');
-      var data = wsDistributionData(msg);
-      var datasets = [
-        { label: msg.shadeLabel || 'Obszar odrzucenia', data: data.shade, borderColor: 'transparent',
-          backgroundColor: 'rgba(107, 26, 42, 0.30)', fill: 'origin', pointRadius: 0,
-          tension: 0.25, spanGaps: false },
-        { label: 'Rozkład pod H0', data: data.line, borderColor: h0, borderWidth: 3,
-          backgroundColor: 'transparent', pointRadius: 0, tension: 0.25 }
-      ];
-
-      if (data.critLow !== null) {
-        datasets.push({
-          label: 'Dolny punkt krytyczny',
-          data: [{ x: data.critLow, y: 0 }, { x: data.critLow, y: wsNormPdf(data.critLow) }],
-          borderColor: accent, borderWidth: 2, borderDash: [6, 5],
-          pointRadius: 0, showLine: true
-        });
-      }
-      if (data.critHigh !== null) {
-        datasets.push({
-          label: 'Górny punkt krytyczny',
-          data: [{ x: data.critHigh, y: 0 }, { x: data.critHigh, y: wsNormPdf(data.critHigh) }],
-          borderColor: accent, borderWidth: 2, borderDash: [6, 5],
-          pointRadius: 0, showLine: true
-        });
-      }
-
-      window.wsCharts[msg.id] = new Chart(canvas, {
-        type: 'line',
-        data: { datasets: datasets },
-        options: {
-          responsive: true, maintainAspectRatio: false, parsing: false,
-          animation: { duration: 650, easing: 'easeOutQuart' },
-          scales: {
-            x: { type: 'linear', min: -4, max: 4, grid: { color: 'rgba(139,129,117,.12)' },
-                 ticks: { color: reference },
-                 title: { display: true, text: msg.xLabel || 'Statystyka testowa', color: reference } },
-            y: { min: 0, max: 0.43, grid: { color: 'rgba(139,129,117,.12)' },
-                 ticks: { color: reference } }
-          },
-          plugins: {
-            legend: { display: false },
-            title: { display: false },
-            tooltip: { enabled: false }
-          }
-        }
-      });
-    }
-
-    // Pole p-wartości: oba ogony od |statystyki obserwowanej| w górę.
-    function wsRenderPValueChart(msg) {
-      wsRenderSidedChart(Object.assign({
-        sided: 'two.sided',
-        crit: msg.stat || 2.17,
-        shadeLabel: 'p-wartość: wyniki co najmniej tak skrajne'
-      }, msg));
-    }
-
-    if (window.Shiny) {
-      Shiny.addCustomMessageHandler('ws_sided_chart', function(msg) {
-        wsRenderWhenReady('sided', msg);
-      });
-      Shiny.addCustomMessageHandler('ws_pvalue_chart', function(msg) {
-        wsRenderWhenReady('pvalue', msg);
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      wsFlushPendingCharts();
-      var observer = new MutationObserver(wsFlushPendingCharts);
-      observer.observe(document.body, { childList: true, subtree: true });
-    });
-  "))
 )
 
 # ============================================================================

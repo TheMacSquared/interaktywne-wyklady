@@ -1,10 +1,11 @@
 // Pensje w firmie: histogram + pasek obserwacji ze średnią, medianą i (opcjonalnie)
 // średnią uciętą liczonymi na żywo (Ryc. 3.4 i Ryc. 3.6). Kliknięcie na którymkolwiek
 // wykresie dopisuje pensję w tym miejscu; punkt prezesa (Ryc. 3.4) przeciąga się po pasku.
-// Kontener .lc-salary[data-config] z <canvas data-role="hist">, <canvas data-role="strip">,
-// przyciskami [data-s-act="ceo|out1|out5|reset"] i odczytami [data-role=...].
-// data-config (JSON z R): {n, shape, scale, shift, trim, ceo, ceo_value, hi, hi_wide,
-// bin, bin_wide, snap}. Wymaga chart_utils.js (window.lc01).
+// Kontener .lc-salary[data-config] z <div class="lc-ec" data-role="hist">,
+// <div class="lc-ec" data-role="strip">, przyciskami [data-s-act="ceo|out1|out5|reset"]
+// i odczytami [data-role=...]. data-config (JSON z R): {n, shape, scale, shift, trim,
+// ceo, ceo_value, hi, hi_wide, bin, bin_wide, snap}. Wymaga chart_utils.js (window.lc01).
+// ECharts: oba wykresy mają stałe marginesy siatki, więc osie x są wyrównane.
 (function () {
   var Charts = window.lcCharts;
   var U = window.lc01;
@@ -12,9 +13,9 @@
 
   function init(root) {
     var cfg = JSON.parse(root.dataset.config || "{}");
-    var cHist = root.querySelector('canvas[data-role="hist"]');
-    var cStrip = root.querySelector('canvas[data-role="strip"]');
-    if (!cHist || !cStrip) return false;
+    var eHist = root.querySelector('.lc-ec[data-role="hist"]');
+    var eStrip = root.querySelector('.lc-ec[data-role="strip"]');
+    if (!eHist || !eStrip) return false;
     var TRIM = cfg.trim || 0, SNAP = cfg.snap || 100;
     var read = {};
     ["mean", "median", "diff", "n", "trim", "count",
@@ -38,14 +39,14 @@
     function values() { return items.map(function (it) { return it.v; }); }
     function ceo() { for (var i = 0; i < items.length; i++) if (items[i].kind === "ceo") return items[i]; return null; }
 
-    var hi = cfg.hi, dragging = null;
+    var hi = cfg.hi, dragging = null, yTop = 5;
     function axisMax() {
       var wide = cfg.hi_wide && items.some(function (it) { return it.v > cfg.hi; });
       return wide ? cfg.hi_wide : cfg.hi;
     }
 
     var layer = cfg.ceo ? Charts.handleLayer(root) : null, bossHandle = null;
-    if (layer) bossHandle = layer.add(cStrip, {
+    if (layer) bossHandle = layer.add(eStrip, {
       label: "Pensja prezesa",
       hint: "Strzałki zmieniają pensję; Shift zwiększa krok dziesięciokrotnie. Home i End: krańce zakresu.",
       onKey: function (event) {
@@ -58,89 +59,69 @@
       },
       onPointerDown: function (event) {
         if (!ceo()) return;
-        dragging = ceo(); cStrip.setPointerCapture(event.pointerId); event.preventDefault();
+        dragging = ceo(); eStrip.setPointerCapture(event.pointerId); event.preventDefault();
       }
     });
     if (bossHandle) bossHandle.element.hidden = true;
-    function positionBoss(ch) {
+    function positionBoss() {
       var boss = ceo(); if (!bossHandle || !boss) return;
-      bossHandle.position(ch.scales.x.getPixelForValue(boss.v), ch.scales.y.getPixelForValue(boss.j));
+      var q = chStrip.convertToPixel({ gridIndex: 0 }, [boss.v, boss.j]);
+      if (q) bossHandle.position(q[0], q[1]);
     }
-    var Y_W = 58;
-    function lineDs(dash, width) {
-      return { type: "scatter", data: [], showLine: true, pointRadius: 0, borderWidth: width, borderDash: dash };
+
+    var histStyle = { fill: "#ccc", gap: "#fff" };
+    function vl(id, dash) {
+      return { id: id, type: "line", data: [], symbol: "none", silent: true, animation: false,
+               lineStyle: { width: 2.5, type: dash || "solid" } };
     }
-    var chHist = Charts.create(cHist, {
-      type: "scatter",
-      data: { datasets: [lineDs([], 2.5), lineDs([7, 4], 2.5), lineDs([2, 3], 2.5)] },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { top: 8, right: 12 } },
-        scales: {
-          x: { type: "linear", min: 0, max: hi, ticks: { callback: function (v) { return Charts.fmt(v, 0, true); } } },
-          y: { min: 0, max: 5, ticks: { precision: 0 }, afterFit: U.fixedWidth(Y_W),
-               title: { display: true, text: "Liczba osób" } }
-        },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } }
-      },
-      plugins: [U.histPlugin]
+    function money(v) { return Charts.fmt(v, 0, true); }
+    var chHist = Charts.chart(eHist, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 58, right: 20, top: 8, bottom: 28, outerBoundsMode: "none" },
+      xAxis: { type: "value", min: 0, max: hi, axisLabel: { formatter: money } },
+      yAxis: { type: "value", min: 0, max: 5, minInterval: 1, name: "Liczba osób" },
+      series: [U.histSeries("hist", histStyle), vl("m"), vl("med", [7, 4]), vl("tr", [2, 3])]
     });
-    var chStrip = Charts.create(cStrip, {
-      type: "scatter",
-      plugins: [{ id: "bossHandle", afterRender: positionBoss }],
-      data: { datasets: [
-        { data: [], pointRadius: 4, borderWidth: 1.5 },
-        { data: [], pointRadius: 4, borderWidth: 1.5 },
-        { data: [], pointRadius: 8, borderWidth: 2.5, clip: false },
-        lineDs([], 2.5), lineDs([7, 4], 2.5), lineDs([2, 3], 2.5)
-      ] },
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false, locale: "en-US", events: [],
-        layout: { padding: { right: 12 } },
-        scales: {
-          x: { type: "linear", min: 0, max: hi, ticks: { callback: function (v) { return Charts.fmt(v, 0, true); } },
-               title: { display: true, text: "Zarobki (zł)" } },
-          y: { min: -1, max: 1, ticks: { display: false }, grid: { display: false }, afterFit: U.fixedWidth(Y_W) }
-        },
-        plugins: { legend: { display: false }, tooltip: { enabled: false }, colors: { enabled: false } }
-      }
-    });
+    var chStrip = Charts.chart(eStrip, {
+      animation: false, aria: { enabled: false },
+      grid: { left: 58, right: 20, top: 8, bottom: 48, outerBoundsMode: "none" },
+      xAxis: { type: "value", min: 0, max: hi, axisLabel: { formatter: money }, name: "Zarobki (zł)" },
+      yAxis: { type: "value", min: -1, max: 1, show: false },
+      series: [
+        { id: "kept", type: "scatter", data: [], symbolSize: 8, silent: true, animation: false },
+        { id: "cut", type: "scatter", data: [], symbolSize: 8, silent: true, animation: false },
+        { id: "boss", type: "scatter", data: [], symbolSize: 16, silent: true, animation: false, clip: false },
+        vl("m"), vl("med", [7, 4]), vl("tr", [2, 3])
+      ]
+    }, { onResize: positionBoss });
 
     var P = null;
     function paint() {
       P = Charts.palette();
-      var fontSize = Charts.axisFontSize(root);
-      [chHist, chStrip].forEach(function (c) {
-        Charts.styleAxes(c, P, { maxRotation: 0, fontSize: fontSize });
-        c.options.layout.padding.right = Math.ceil(fontSize * 1.6);
-        c.options.scales.x.ticks.maxTicksLimit = 6;
-        c.options.scales.y.afterFit = U.fixedWidth(Math.ceil(fontSize * 5));
-      });
-      chStrip.options.scales.y.grid = { display: false };
-      chStrip.options.scales.y.border = { display: false };
-      chHist.options.plugins.lcHist = Object.assign({}, chHist.config.options.plugins.lcHist || {},
-        { fill: Charts.alpha(P.ref, 0.55), gap: P.surface });
-      var colors = [P.accent, P.niebo, P.szalwia];
-      for (var k = 0; k < 3; k++) {
-        chHist.data.datasets[k].borderColor = colors[k];
-        chStrip.data.datasets[3 + k].borderColor = colors[k];
-      }
-      var s = chStrip.data.datasets;
-      s[0].pointBackgroundColor = function (c) { return c.raw && c.raw.added ? Charts.alpha(P.terakota, 0.8) : Charts.alpha(P.secondary, 0.55); };
-      s[0].pointBorderColor = function (c) { return c.raw && c.raw.added ? P.terakota : P.secondary; };
-      s[1].pointBackgroundColor = "transparent";
-      s[1].pointBorderColor = function (c) { return c.raw && c.raw.added ? P.terakota : P.subtle; };
-      s[2].pointBackgroundColor = P.terakota;
-      s[2].pointBorderColor = P.surface;
-      chHist.update(); chStrip.update();
+      var fs = Charts.axisFontSize(root), left = Math.ceil(fs * 5), right = Math.ceil(fs * 2.6);  // miejsce na „60 000”
+      var x = Charts.ecAxis(P, fs, { nameGap: Math.round(fs * 1.9), splitNumber: 6 });
+      x.axisLabel.formatter = money;
+      var y = Charts.ecAxis(P, fs, { nameGap: Math.round(fs * 2.6) });
+      chHist.setOption({ grid: { left: left, right: right, bottom: Math.ceil(fs * 2) }, xAxis: x, yAxis: y });
+      chStrip.setOption({ grid: { left: left, right: right, bottom: Math.ceil(fs * 3.6) }, xAxis: x });
+      histStyle.fill = Charts.alpha(P.ref, 0.55); histStyle.gap = P.surface;
+      var colors = [P.accent, P.niebo, P.szalwia], ids = ["m", "med", "tr"], upd = [{ id: "hist", renderItem: U.histSeries("hist", histStyle).renderItem }];
+      ids.forEach(function (id, k) { upd.push({ id: id, lineStyle: { color: colors[k] } }); });
+      chHist.setOption({ series: upd });
+      var added = function (d) { return d.value[2]; };
+      chStrip.setOption({ series: [
+        { id: "kept", itemStyle: { color: function (d) { return added(d) ? Charts.alpha(P.terakota, 0.8) : Charts.alpha(P.secondary, 0.55); },
+                                   borderColor: function (d) { return added(d) ? P.terakota : P.secondary; }, borderWidth: 1.5 } },
+        { id: "cut", itemStyle: { color: "transparent",
+                                  borderColor: function (d) { return added(d) ? P.terakota : P.subtle; }, borderWidth: 1.5 } },
+        { id: "boss", itemStyle: { color: P.terakota, borderColor: P.surface, borderWidth: 2.5 } }
+      ].concat(ids.map(function (id, k) { return { id: id, lineStyle: { color: colors[k] } }; })) });
     }
 
     function setAxis(max) {
       hi = max;
-      [chHist, chStrip].forEach(function (c) {
-        c.options.scales.x.max = max;
-        c.options.scales.x.ticks.stepSize = max > 30000 ? 10000 : 5000;
-      });
+      var ax = { max: max, interval: max > 30000 ? 10000 : 5000 };
+      chHist.setOption({ xAxis: ax }); chStrip.setOption({ xAxis: ax });
     }
 
     function draw() {
@@ -155,25 +136,22 @@
       var bw = hi > cfg.hi ? (cfg.bin_wide || cfg.bin) : cfg.bin;
       var b = U.bins(x, 0, hi, bw), top = 0;
       b.forEach(function (bb) { top = Math.max(top, bb.n); });
-      chHist.options.scales.y.max = Math.max(5, Math.ceil(top * 1.15 / 5) * 5);
-      chHist.options.plugins.lcHist.bins = b;
-      var yTop = chHist.options.scales.y.max;
-      var stats = [m, med, tr];
-      for (var k = 0; k < 3; k++) {
-        var on = isFinite(stats[k]);
-        chHist.data.datasets[k].data = on ? [{ x: stats[k], y: 0 }, { x: stats[k], y: yTop }] : [];
-        chStrip.data.datasets[3 + k].data = on ? [{ x: stats[k], y: -1 }, { x: stats[k], y: 1 }] : [];
-      }
+      yTop = Math.max(5, Math.ceil(top * 1.15 / 5) * 5);
+      var stats = [m, med, tr], ids = ["m", "med", "tr"];
+      chHist.setOption({ yAxis: { max: yTop }, series: [{ id: "hist", data: U.histData(b) }].concat(ids.map(function (id, k) {
+        return { id: id, data: U.vline(stats[k], yTop) };
+      })) });
       var kept = [], cutPts = [], boss = [];
       items.forEach(function (it, i) {
-        var pt = { x: it.v, y: it.j, added: it.kind !== "base" };
+        var pt = [it.v, it.j, it.kind !== "base" ? 1 : 0];
         if (it.kind === "ceo") boss.push(pt);
         else if (trimmed[i]) cutPts.push(pt); else kept.push(pt);
       });
-      chStrip.data.datasets[0].data = kept;
-      chStrip.data.datasets[1].data = cutPts;
-      chStrip.data.datasets[2].data = boss;
-      chHist.update("none"); chStrip.update("none");
+      chStrip.setOption({ series: [
+        { id: "kept", data: kept }, { id: "cut", data: cutPts }, { id: "boss", data: boss }
+      ].concat(ids.map(function (id, k) {
+        return { id: id, data: isFinite(stats[k]) ? [[stats[k], -1], [stats[k], 1]] : [] };
+      })) });
 
       function set(k, t) { if (read[k]) read[k].textContent = t; }
       set("mean", Charts.fmt(m, 0, true) + " zł");
@@ -193,10 +171,10 @@
       }
       if (btn.ceo) btn.ceo.disabled = !!ceo();
       if (bossHandle) {
-        var boss = ceo(); bossHandle.element.hidden = !boss;
-        if (boss) {
-          bossHandle.value(boss.v, SNAP, cfg.hi_wide || cfg.hi, Charts.fmt(boss.v, 0, true) + " zł");
-          positionBoss(chStrip);
+        var bs = ceo(); bossHandle.element.hidden = !bs;
+        if (bs) {
+          bossHandle.value(bs.v, SNAP, cfg.hi_wide || cfg.hi, Charts.fmt(bs.v, 0, true) + " zł");
+          positionBoss();
         }
       }
       root.lcState = { values: x, mean: m, median: med, trim: tr, axisMax: hi };
@@ -206,48 +184,47 @@
 
     function snap(v) { return Math.max(SNAP, Math.min(hi, Math.round(v / SNAP) * SNAP)); }
 
-    function nearCeo(chart, e) {
+    function nearCeo(chart, el, e) {
       var c = ceo(); if (!c || chart !== chStrip) return false;
-      var r = cStrip.getBoundingClientRect();
-      var dx = e.clientX - r.left - chStrip.scales.x.getPixelForValue(c.v);
-      var dy = e.clientY - r.top - chStrip.scales.y.getPixelForValue(c.j);
-      return Math.abs(dx) <= 14 && Math.abs(dy) <= 16;
+      var r = el.getBoundingClientRect(), q = chStrip.convertToPixel({ gridIndex: 0 }, [c.v, c.j]);
+      return Math.abs(e.clientX - r.left - q[0]) <= 14 && Math.abs(e.clientY - r.top - q[1]) <= 16;
     }
 
-    function attach(canvas, chart) {
-      canvas.style.touchAction = "none";
-      canvas.style.cursor = "copy";
-      Charts.listen(canvas, "pointerdown", function (e) {
-        var v = snap(U.valueAtX(chart, e));
-        if (nearCeo(chart, e)) {
+    function attach(el, chart) {
+      el.style.touchAction = "none";
+      el.style.cursor = "copy";
+      function at(e) { return U.valueAt(chart, el, e, [0, hi]).x; }
+      Charts.listen(el, "pointerdown", function (e) {
+        var v = snap(at(e));
+        if (nearCeo(chart, el, e)) {
           dragging = ceo();
-          canvas.setPointerCapture(e.pointerId);
-          canvas.style.cursor = "grabbing";
+          el.setPointerCapture(e.pointerId);
+          el.style.cursor = "grabbing";
         } else {
           items.push({ v: v, j: jitter(), kind: "add" });
           refresh();
         }
         e.preventDefault();
       });
-      Charts.listen(canvas, "pointermove", function (e) {
+      Charts.listen(el, "pointermove", function (e) {
         if (dragging) {
-          dragging.v = snap(U.valueAtX(chart, e));
+          dragging.v = snap(at(e));
           draw();
         } else if (chart === chStrip) {
-          canvas.style.cursor = nearCeo(chart, e) ? "grab" : "copy";
+          el.style.cursor = nearCeo(chart, el, e) ? "grab" : "copy";
         }
       });
       ["pointerup", "pointercancel"].forEach(function (t) {
-        Charts.listen(canvas, t, function () {
+        Charts.listen(el, t, function () {
           if (!dragging) return;
           dragging = null;
-          canvas.style.cursor = "copy";
+          el.style.cursor = "copy";
           refresh();
         });
       });
     }
-    attach(cHist, chHist);
-    attach(cStrip, chStrip);
+    attach(eHist, chHist);
+    attach(eStrip, chStrip);
 
     Charts.listen(root, "click", function (e) {
       var b = e.target.closest("[data-s-act]");

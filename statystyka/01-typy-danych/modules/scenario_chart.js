@@ -1,105 +1,75 @@
-// Ryc. 2.3: wykres kołowy i słupkowy. Ostatni scenariusz przeżywa zmianę rozdziału.
+// Ryc. 2.3: wykres kołowy i słupkowy (ECharts). Scenariusz przychodzi z serwera
+// (komunikat render_scenario: {labels, data, colors, reveal}); ostatni przeżywa
+// zmianę rozdziału. Słupki i wartości pojawiają się dopiero po odsłonięciu.
+// Kontener .lc-scenario z <div class="lc-ec" id="ch2_pie_canvas"> i
+// <div class="lc-ec" id="ch2_bar_canvas">.
 (function () {
   var Charts = window.lcCharts;
   var latest = null, current = null;
 
-  function render(root, msg) {
-    Charts.destroy(current.pie);
-    Charts.destroy(current.bar);
-    current.pie = current.bar = null;
-    var pieCtx = root.querySelector("#ch2_pie_canvas");
-    var barCtx = root.querySelector("#ch2_bar_canvas");
-    current.pie = Charts.create(pieCtx, {
-      type: 'pie',
-      data: {
-        labels: msg.labels,
-        datasets: [{
-          data: msg.data,
-          backgroundColor: msg.colors,
-          borderWidth: 1,
-          borderColor: 'rgba(255,255,255,0.6)'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 500 },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            enabled: !!msg.reveal,
-            callbacks: {
-              label: function(ctx) { return ctx.label + ': ' + ctx.parsed + '%'; }
-            }
-          }
-        }
-      }
-    });
+  // ECharts nie rozumie var() ani color-mix(): kolor liczy przeglądarka.
+  function resolve(css) {
+    if (!/var\(|color-mix/.test(css)) return css;
+    var probe = document.createElement("span");
+    probe.style.color = css; probe.style.display = "none";
+    document.body.appendChild(probe);
+    var c = getComputedStyle(probe).color;
+    probe.remove();
+    return c;
+  }
 
-    // Słupki (i ich wartości) rysujemy dopiero po odsłonięciu.
-    if (msg.reveal) current.bar = Charts.create(barCtx, {
-      type: 'bar',
-      data: {
-        labels: msg.labels,
-        datasets: [{
-          data: msg.data,
-          backgroundColor: msg.colors,
-          borderRadius: 4,
-          barPercentage: 0.7
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: 'y',
-        animation: { duration: 500 },
-        scales: {
-          x: {
-            min: 0, max: 50,
-            grid: { color: 'rgba(128,128,128,0.1)' },
-            ticks: {
-              callback: function(v) { return v + '%'; },
-              color: 'rgba(128,128,128,0.5)',
-              font: { size: 12 }
-            }
-          },
-          y: {
-            grid: { display: false },
-            ticks: { color: 'rgba(128,128,128,0.6)', font: { size: 13 } }
-          }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function(ctx) { return ctx.parsed.x + '%'; }
-            }
-          }
-        }
-      }
+  function render(root, msg) {
+    var colors = (msg.colors || []).map(resolve);
+    current.pie.setOption({
+      tooltip: { show: !!msg.reveal, trigger: "item", formatter: function (p) { return p.name + ": " + p.value + "%"; } },
+      series: [{ id: "pie", data: msg.labels.map(function (l, i) {
+        return { name: l, value: msg.data[i], itemStyle: { color: colors[i] } };
+      }) }]
     });
-    paint(root, true);
+    current.bar.setOption({
+      yAxis: { data: msg.reveal ? msg.labels : [] },
+      series: [{ id: "bar", data: msg.reveal ? msg.data.map(function (v, i) {
+        return { value: v, itemStyle: { color: colors[i] } };
+      }) : [] }]
+    });
+    current.el.bar.style.visibility = msg.reveal ? "" : "hidden";
   }
 
   // Zmiany wyglądu nie odtwarzają scenariusza ani nie odsłaniają odpowiedzi.
-  function paint(root, animate) {
-    if (!current || current.root !== root || !current.bar) return;
-    var ch = current.bar;
-    Charts.styleAxes(ch, null, { fontSize: Charts.axisFontSize(root), maxRotation: 0 });
-    ch.options.scales.x.ticks.maxTicksLimit = 4;
-    ch.options.scales.y.grid.display = false;
-    ch.stop();
-    // Także późniejszy responsywny resize ma użyć gotowej geometrii słupków.
-    if (!animate) ch.options.animation = false;
-    ch.update(animate ? undefined : "none");
+  function paint(root) {
+    if (!current || current.root !== root) return;
+    var P = Charts.palette(), fs = Charts.axisFontSize(root);
+    var x = Charts.ecAxis(P, fs, { splitNumber: 4 });
+    x.axisLabel.formatter = function (v) { return v + "%"; };
+    var y = Charts.ecAxis(P, fs * 1.08);
+    y.splitLine = { show: false };
+    current.bar.setOption({ xAxis: x, yAxis: y });
+    current.pie.setOption({ series: [{ id: "pie", itemStyle: { borderColor: Charts.alpha(P.surface, 0.6) } }] });
   }
 
   Charts.onReady(".lc-scenario", function (root) {
-    if (!root.querySelector("#ch2_pie_canvas") || !root.querySelector("#ch2_bar_canvas")) return false;
-    current = { root: root, pie: null, bar: null };
+    var ePie = root.querySelector("#ch2_pie_canvas"), eBar = root.querySelector("#ch2_bar_canvas");
+    if (!ePie || !eBar) return false;
+    var pie = Charts.chart(ePie, {
+      animationDuration: 500, animationDurationUpdate: 500, aria: { enabled: false },
+      tooltip: { show: false },
+      series: [{ id: "pie", type: "pie", radius: ["0%", "88%"], label: { show: false }, labelLine: { show: false },
+                 itemStyle: { borderWidth: 1 }, emphasis: { scale: false }, data: [] }]
+    });
+    var bar = Charts.chart(eBar, {
+      animationDuration: 500, animationDurationUpdate: 500, aria: { enabled: false },
+      grid: { left: 8, right: 16, top: 8, bottom: 8 },
+      tooltip: { trigger: "item", formatter: function (p) { return p.value + "%"; } },
+      xAxis: { type: "value", min: 0, max: 50 },
+      yAxis: { type: "category", data: [], inverse: true },
+      series: [{ id: "bar", type: "bar", data: [], barWidth: "70%", itemStyle: { borderRadius: 4 } }]
+    });
+    current = { root: root, pie: pie, bar: bar, el: { pie: ePie, bar: eBar } };
     Charts.zoomControl(root);
     Charts.onTheme(root, function () { paint(root); });
     Charts.onDispose(root, function () { current = null; });
+    paint(root);
+    eBar.style.visibility = "hidden";
     if (latest) render(root, latest);
   });
 

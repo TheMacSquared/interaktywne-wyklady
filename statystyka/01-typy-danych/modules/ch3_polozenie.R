@@ -278,10 +278,10 @@ ch3_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-salary-hist",
-          tags$canvas(role = "img", `data-role` = "hist",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "hist",
             `aria-label` = "Histogram zarobków z liniami średniej i mediany")),
         tags$div(class = "lc-salary-strip",
-          tags$canvas(role = "img", `data-role` = "strip",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "strip",
             `aria-label` = "Pensje jako punkty na osi zarobków; punkt prezesa można przeciągać")),
         lc_caption("Kliknij na wykresie, aby dopisać pensję w tym miejscu. Pensję prezesa
           (duży punkt) przeciągnij po pasku pod histogramem lub wybierz Tabem i przesuń strzałkami.")
@@ -375,10 +375,10 @@ ch3_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-salary-hist",
-          tags$canvas(role = "img", `data-role` = "hist",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "hist",
             `aria-label` = "Histogram zarobków z liniami średniej, mediany i średniej uciętej")),
         tags$div(class = "lc-salary-strip",
-          tags$canvas(role = "img", `data-role` = "strip",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "strip",
             `aria-label` = "Pensje jako punkty; puste kółka to wartości odrzucone w średniej uciętej")),
         lc_caption("Kliknij na wykresie, aby dopisać pensję w tym miejscu. Puste kółka
           na pasku to pensje odrzucone przy liczeniu średniej uciętej."),
@@ -514,10 +514,10 @@ ch3_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-pctl-hist",
-          tags$canvas(role = "img", `data-role` = "hist",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "hist",
             `aria-label` = "Histogram wzrostu z przeciąganą linią percentyla")),
         tags$div(class = "lc-pctl-box",
-          tags$canvas(role = "img", `data-role` = "box",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "box",
             `aria-label` = "Wykres pudełkowy wzrostu z zaznaczonym percentylem")),
         lc_caption("Przeciągnij linię percentyla lub użyj Tab i strzałek."),
         lc_status(p(`data-role` = "text", ""))
@@ -556,7 +556,7 @@ ch3_ui <- list(
         tags$div(`data-role` = "banner", class = "lc-caption", `data-tone` = "info",
                  tags$div("Wskaż średnią: kliknij na wykresie lub użyj Tab i strzałek.")),
         tags$div(class = "lc-guess-canvas",
-          tags$canvas(role = "img", `data-role` = "hist",
+          tags$div(class = "lc-ec", role = "img", `data-role` = "hist",
             `aria-label` = "Histogram losowych danych; mysz lub klawiatura wskazują typowaną średnią i medianę")),
         tags$div(`data-role` = "feedback", class = "lc-status", role = "status",
                  `aria-live` = "polite", hidden = NA)
