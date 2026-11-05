@@ -12,6 +12,14 @@ klawiaturę, lupy, ukrywanie odpowiedzi, S/M/L, telefon i powroty do rozdziału.
 Czytelność na rzutniku oraz pozostałych kandydatów trzeba jeszcze potwierdzić
 na zajęciach i w przeglądarce.
 
+Zmiana kryterium (2026-11-05): ocena powstała, gdy Chart.js uzasadniała tylko
+potrzeba płynnej interakcji. Obecnie port wykresu R jest zyskiem także
+wtedy, gdy wiernie odtwarza obecny obraz — działa w wersji offline bez
+serwera R i zwiększa responsywność (zasada w `R/DESIGN_CONTRACT.md`, sekcja
+„Interaktywne wykresy Chart.js”). Zalecenia o lupie, klawiaturze
+i czytelności poniżej pozostają aktualne; zdania wykluczające port
+wykresów R zostały poprawione.
+
 ## Wniosek i kolejność
 
 Najpierw uzupełnić działania, które bez kursora są niedostępne. Następnie
@@ -131,7 +139,8 @@ potrzebują lupy wykresu; warto zachować naturalne skalowanie tekstu.
 ### 01 — Pozostałe demonstracje i tabele
 
 Wykresy R mają już przycisk powiększenia przez `lc_plot()` / `zoom_plot_ui()`.
-Nie dodawać im obok drugiej lupy Chart.js. Warto sprawdzić i ewentualnie
+Są kandydatami do portu Chart.js według kryterium z 2026-11-05. Do tego czasu
+nie dodawać im obok drugiej lupy Chart.js. Warto sprawdzić i ewentualnie
 ujednolicić istniejący symbol oraz rozmiar napisów w powiększeniu, szczególnie:
 
 - 3.1 — budowa histogramu: stosy i porównania kilku histogramów;
@@ -155,14 +164,15 @@ responsywności, zamiast powiększać ją jak bitmapę.
 
 Kierunek korelacji 4.2, kwartet Anscombe’a 5.1 i nieliniowość 5.2 są obrazami.
 Mają już obsługę powiększenia; wspólny skrypt obsługuje też Enter, spację
-i Escape. Nie przenosić ich do Chart.js tylko po to, żeby dodać lupę.
+i Escape. To statyczne PNG, które nie wymagają serwera R, więc port do Chart.js
+nie daje zysku ani offline, ani w responsywności.
 
 ### 03 — Pozostałe rozkłady i CTG
 
 Eksploratory rozkładów dyskretnych i ciągłych oraz 5.2 i 5.6 mają już kontrolki
-i wykresy R. Najpierw sprawdzić klawiaturę istniejących suwaków i obecne
-powiększenie. Decyzję o Chart.js podejmować osobno, gdy potrzeba płynnej
-interakcji rzeczywiście uzasadnia migrację.
+i wykresy R. Suwak z wykresem renderowanym na serwerze to najmocniejszy
+kandydat do portu Chart.js (kryterium z 2026-11-05). Do czasu portu sprawdzić
+klawiaturę istniejących suwaków i obecne powiększenie.
 
 Na rzutniku szczególnie warto obejrzeć 3.12 (cztery rozkłady), 4.10 (paradoks
 autobusu), 6.2–6.4 (porównania rozkładu populacji i średnich) oraz podłączone
@@ -173,6 +183,8 @@ osobnym kandydatem do większego widoku SVG, po rozstrzygnięciu jego treści.
 ### 04 — Przedziały ufności
 
 Największa potencjalna korzyść dotyczy czytelności, nie nowych uchwytów.
+Wszystkie wykresy R wykładu są kandydatami do portu Chart.js (kryterium
+z 2026-11-05); kolejność wynika z decyzji o prototypach w `04-przedzialy-ufnosci/BRAINSTORM.md`.
 Sceny „Zmierz grupkę” i „Zarzuć siatkę” mają przyciski i SVG, jak w wykładzie 00.
 
 Priorytety sprawdzenia istniejącego powiększenia R:

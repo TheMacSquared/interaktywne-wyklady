@@ -33,11 +33,17 @@ z internetem, jak pozostałe wykłady korzystające z tej biblioteki.
 
 ## Co daje Chart.js
 
-Najmocniejsi kandydaci do późniejszego przepisania to 3a (przeciąganie
-średniej), 2c (płynna zmiana szerokości tych samych CI), 2d (natychmiastowe
-porównanie n) i pizzerie (dokładanie punktów). Wszystkie mają tu działające
-warianty. Dla tarczy 1b i statycznych histogramów 1c wystarcza R: sam transfer
-do Chart.js nie daje istotnej korzyści dydaktycznej.
+Kryterium z 5 listopada 2026 (`R/DESIGN_CONTRACT.md`): port do Chart.js
+pozwala wersji offline (bez serwera R) liczyć wykres na żywo i zwiększa
+responsywność, więc wierne odtworzenie
+wykresu R też jest zyskiem. Kandydatami są wszystkie wykresy R, które
+przetrwają decyzje o prototypach — również zaakceptowane Ryc. 1.1–1.4
+(tarcza, cztery miarki, 4× więcej osób, pizzerie) oraz oryginalne panele
+rozdziałów 3–5. Sceny SVG i Ryc. 2.1 już działają bez serwera.
+
+Najwięcej dydaktycznie zyskują 3a (przeciąganie średniej), 2c (płynna zmiana
+szerokości tych samych CI), 2d (natychmiastowe porównanie n) i pizzerie
+(dokładanie punktów). Wszystkie mają tu działające warianty.
 
 B7 używa Chart.js do natychmiastowego przeliczenia obrazu po kliknięciu
 produktu; kwantyle i wszystkie 51 zestawów granic liczy R. B6 dostaje z R

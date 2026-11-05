@@ -189,8 +189,10 @@ w kodzie, nie potwierdzona regresja z testu przeglądarkowego.
 SVG ma stały opis dostępności, który nie relacjonuje bieżącego licznika
 i pokrycia. Przy dopracowaniu potrzebny jest krótki tekstowy odczyt wyniku.
 Czytelność 36 wierszy, tryb rzutnika, klawiatura, powiększenie i zachowanie
-przy zmianie rozdziału wymagają osobnej kontroli wizualnej. Nie ma powodu
-przepisywać tych obrazów na Chart.js tylko dla ujednolicenia technologii.
+przy zmianie rozdziału wymagają osobnej kontroli wizualnej. Sceny SVG
+sterowane w JS działają bez serwera R, więc port do Chart.js nie daje tu
+zysku offline ani w responsywności (kryterium z 2026-11-05 w
+`R/DESIGN_CONTRACT.md` dotyczy wykresów R).
 
 ## Moja pierwotna propozycja głównej ścieżki — dziewięć punktów stop
 
