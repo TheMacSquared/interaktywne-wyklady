@@ -212,9 +212,9 @@ ch4_ui <- list(
           lc_chart_zoom_button()
         ),
         tags$div(class = "lc-area-canvas",
-          tags$canvas(`data-role` = "pdf",
-                      role = "img",
-                      `aria-label` = "Gęstość wzrostu N(170, 8) z polem między granicami a i b"))
+          tags$div(class = "lc-ec", `data-role` = "pdf",
+                   role = "img",
+                   `aria-label` = "Gęstość wzrostu N(170, 8) z polem między granicami a i b"))
       )
     ),
 

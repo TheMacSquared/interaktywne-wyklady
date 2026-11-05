@@ -121,17 +121,35 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 
 - [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
   wspólnym komponentem.
-- [ ] (Osobna sesja) Więcej wykresów w Chart.js: przejrzeć wszystkie wykłady
-  i wskazać wykresy/widgety ggplot + suwak, które można śmiało zastąpić
-  Chart.js (kursor albo przeciąganie zamiast suwaka, bez czekania na serwer).
-  Prowadzący potwierdził na zajęciach, że takie wykresy są wyraźnie bardziej
-  responsywne niż renderowane w Shiny (2026-10-29). Wzorce w statystyce 03:
-  Ryc. 4.3 (`modules/area_chart.js`: dwie granice przeciągane po wykresie,
-  pointer events z `setPointerCapture`, przyciąganie do siatki) i Ryc. 4.4
-  (`modules/cdf_chart.js`: kursor ustawia x na dwóch wykresach) — kolory
-  z tokenów motywu, tryb ciemny, `locale: "en-US"`, start po pojawieniu się
-  w DOM. Też statystyka 01 Ryc. 2.x (kołowy vs słupkowy). Przy kilku użyciach
-  rozważyć wspólny helper w `R/`.
+- [ ] Więcej wykresów w Chart.js. Kryterium (2026-11-05, zasada
+  w `statystyka/R/DESIGN_CONTRACT.md`): wykres w Chart.js działa w wersji
+  offline dla studentów (`przedmioty/statystyka/skrypt/`, bez serwera R)
+  i zwiększa responsywność, więc wierne odtworzenie wykresu R też jest
+  zyskiem — nie tylko widgety ggplot + suwak. Prowadzący potwierdził na
+  zajęciach, że wykresy Chart.js są wyraźnie bardziej responsywne niż
+  renderowane w Shiny (2026-10-29). Wspólna obsługa: `statystyka/R/lc_charts.js`.
+  Stan: 18 widgetów w statystyce 01–03; w 04 warianty B1–B8 (prototypy).
+  - [ ] Migracja statystyki z Chart.js na ECharts (decyzja 2026-11-05:
+    renderer SVG, canvas dla tysięcy punktów; pełny `echarts.min.js`
+    z cdnjs; analiza ryzyka zostaje przy Chart.js). Wspólna obsługa
+    w `lc_charts.js` i pilot 03 Ryc. 4.3 gotowe. Dalej: reszta 03,
+    potem 01, 02, 05 (Ryc. 2.4 z własnym kodem w `app.R`), mostki
+    offline `widgets/01-ch2-jakosciowe.js` i `05-ch2-hipotezy.js`;
+    na końcu usunąć Chart.js, `styleAxes`, `create` i rozważyć okrojoną
+    bibliotekę.
+  - [ ] Statystyka 04: decyzje o parach prototyp R / wariant B
+    (`04-przedzialy-ufnosci/BRAINSTORM.md`), potem port pozostałych
+    wykresów R, w tym zaakceptowanych Ryc. 1.1–1.4 i paneli rozdz. 3–5.
+  - [ ] Statystyka 01, 03: pozostałe wykresy R (eksploratory rozkładów,
+    histogramy, pudełka itd.).
+  - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).
+  - [ ] Dwa widgety Chart.js dostają dane z sesji Shiny (`onMessage`):
+    statystyka 01 `scenario_chart.js` i 03 `lejek_chart.js`. Sprawdzić
+    w buildzie offline; build obsługuje taki przypadek przez `"live": true`
+    w `stany.json` i mostek w `build/widgets/NN-*.js` (wzór: 05 Ryc. 2.4).
+    Widgety z `data-config` działają offline bez dodatkowych wpisów
+    (sprawdzone na 02, 2026-11-05: `lcCharts` ustawia `data-ready`, więc
+    build wstawia czystą kopię z pristine.js zamiast obrazka).
 
 - [ ] Przejrzeć widgety aktywnych wykładów i wskazać, które skorzystają na
   sterowaniu klawiaturą (Tab, strzałki, większy krok z Shiftem, Home/End),

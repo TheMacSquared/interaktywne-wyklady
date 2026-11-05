@@ -109,12 +109,34 @@ function environment(shiny = true) {
     destroy() { assert.ok(!this.destroyed, "powtórne destroy()"); this.destroyed = true; live.delete(this); }
   }
   window.Chart = Chart;
+  // Atrapa ECharts: współrzędne piksel = wartość × 100, jak w atrapie Chart.js.
+  class EChart {
+    constructor(element, opts) {
+      this.element = element; this.opts = opts; this.updates = 0;
+      this.xAxis = {}; this.yAxis = {}; this.series = new Map();
+      charts.push(this); live.add(this);
+    }
+    setOption(option) {
+      assert.ok(!this.disposed, "setOption() na zwolnionym wykresie");
+      this.updates++;
+      if (option.xAxis) this.xAxis = { ...this.xAxis, ...option.xAxis };
+      if (option.yAxis) this.yAxis = { ...this.yAxis, ...option.yAxis };
+      (option.series || []).forEach(s => this.series.set(s.id, { ...(this.series.get(s.id) || {}), ...s }));
+    }
+    convertToPixel(finder, value) { assert.ok(!this.disposed); return [value[0] * 100, value[1] * 100]; }
+    convertFromPixel(finder, pixel) { assert.ok(!this.disposed); return [pixel[0] / 100, pixel[1] / 100]; }
+    resize() { assert.ok(!this.disposed); }
+    isDisposed() { return !!this.disposed; }
+    dispose() { assert.ok(!this.disposed, "powtórne dispose()"); this.disposed = true; live.delete(this); }
+  }
+  const echarts = { init: (element, theme, opts) => new EChart(element, opts) };
+  window.echarts = echarts;
   function connect() {
     window.Shiny = { addCustomMessageHandler(name, fn) { registrations++; handlers.set(name, fn); } };
     document.emit("shiny:connected");
   }
   const context = vm.createContext({
-    document, window, Chart,
+    document, window, Chart, echarts,
     console: { error: (...args) => errors.push(args) },
     getComputedStyle: () => ({ getPropertyValue: () => "" }),
     MutationObserver: class {
@@ -143,6 +165,7 @@ function environment(shiny = true) {
 }
 
 const canvas = (role, attrs = {}) => new Element("canvas", { "data-role": role, ...attrs });
+const ecbox = (role, attrs = {}) => new Element("div", { class: "lc-ec", "data-role": role, ...attrs });
 const root = (cls, children, attrs = {}) => new Element("div", { class: cls, ...attrs }, children);
 const press = (handle, key, shiftKey = false) => handle.emit("keydown", {
   key, shiftKey, preventDefault() {}, stopPropagation() {}
@@ -282,7 +305,7 @@ test("scenariusz koło/słupki obsługuje obie kolejności wiadomości i DOM", (
 test("pole pod krzywą niszczy obsługę przeciągania i poprawnie wraca", () => {
   const env = environment();
   env.load("03-rozklady-prawdopodobienstwa/modules/area_chart.js");
-  const el = root("lc-area", [canvas("pdf")]);
+  const el = root("lc-area", [ecbox("pdf")]);
   env.mount(el);
   const first = [...env.live][0];
   el.children[0].emit("pointerdown", { clientX: 100, pointerId: 1, preventDefault() {} });
@@ -299,7 +322,7 @@ test("granice obsługują klawiaturę, a lupa powiększa napisy bez zmiany przed
   const env = environment();
   env.load("03-rozklady-prawdopodobienstwa/modules/area_chart.js");
   const zoom = new Element("button", { "data-lc-chart-zoom": "true", "aria-pressed": "false" });
-  const el = root("lc-area", [zoom, canvas("pdf")], { "data-a": 165, "data-b": 175, "data-mu": 170, "data-sd": 8 });
+  const el = root("lc-area", [zoom, ecbox("pdf")], { "data-a": 165, "data-b": 175, "data-mu": 170, "data-sd": 8 });
   env.mount(el);
   const a = el.querySelector("button[data-boundary=\"a\"]"), b = el.querySelector("button[data-boundary=\"b\"]");
   const key = (handle, value, shiftKey = false) => handle.emit("keydown", { key: value, shiftKey, preventDefault() {} });
@@ -308,13 +331,13 @@ test("granice obsługują klawiaturę, a lupa powiększa napisy bez zmiany przed
   key(a, "End"); assert.equal(a.getAttribute("aria-valuenow"), "175");
   key(b, "ArrowLeft"); assert.equal(b.getAttribute("aria-valuenow"), "175", "granice nie zamieniają się rolami");
   key(a, "Home"); assert.equal(a.getAttribute("aria-valuenow"), "138");
-  const ch = [...env.live][0], fontBefore = ch.options.scales.x.ticks.font.size;
+  const ch = [...env.live][0], fontBefore = ch.xAxis.axisLabel.fontSize;
   zoom.emit("click"); env.theme(el);
   assert.equal(zoom.getAttribute("aria-pressed"), "true");
-  assert.ok(ch.options.scales.x.ticks.font.size > fontBefore);
+  assert.ok(ch.xAxis.axisLabel.fontSize > fontBefore);
   assert.equal(a.getAttribute("aria-valuenow"), "138");
   zoom.emit("click"); env.theme(el);
-  assert.equal(ch.options.scales.x.ticks.font.size, fontBefore);
+  assert.equal(ch.xAxis.axisLabel.fontSize, fontBefore);
   assert.equal(el.querySelectorAll("input").length, 0);
   env.unmount(el);
   assert.equal(el.querySelectorAll("button[data-boundary]").length, 0);

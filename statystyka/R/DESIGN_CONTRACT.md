@@ -136,8 +136,49 @@ Reaktywna przekazana do `zoom_plot_server()` musi zwracać obiekt (ggplot, patch
 
 ### Interaktywne wykresy Chart.js
 
-Wykłady używające Chart.js ładują `R/lc_charts.js` w `header_extras`, po
-bibliotece Chart.js i przed skryptami poszczególnych widgetów. Wspólne API
+Kiedy przenosić wykres do Chart.js (kryterium z 5 listopada 2026): wykres
+liczony w przeglądarce działa w wersji offline dla studentów (statyczny HTML
+bez serwera R, build w `przedmioty/statystyka/skrypt/`) zamiast zamrożonych
+stanów albo osobnej ryciny przepisanej w `build/widgets/`. Zwiększa też
+responsywność na zajęciach. Dlatego wierne odtworzenie istniejącego wykresu R
+też jest zyskiem; nie wymaga nowej interakcji ani lepszego obrazu. O porcie
+decyduje wykonalność obliczeń:
+
+- obliczenia wykonywane w JS mają test zgodności z R (`test-chart-numerics.R`);
+- kwantyli t, beta i podobnych nie przybliżamy w JS — R liczy je przy
+  budowie UI i przekazuje tablicę w konfiguracji widgetu (`data-config`);
+- losowe próby można wygenerować w R z ustalonym ziarnem i przekazać tak samo
+  albo losować w JS (wtedy porównujemy momenty, nie sekwencje).
+
+Konfiguracja w `data-config` nie wymaga sesji serwera; kanał `onMessage()`
+wymaga. Statyczne obrazy (PNG) i sceny SVG sterowane w JS już działają bez
+serwera i nie są kandydatami do portu z tego powodu.
+
+Migracja na ECharts (decyzja 2026-11-05): statystyka przechodzi z Chart.js
+na ECharts 6.1.0 (`https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js`,
+pełna biblioteka). Do zakończenia migracji obie biblioteki działają obok
+siebie w tym samym `lcCharts`; nowe i przepisywane widgety używają ECharts.
+Analiza ryzyka zostaje na razie przy Chart.js (osobna decyzja).
+
+- Wykres to `<div class="lc-ec" data-role="…" role="img" aria-label="…">`
+  zamiast `<canvas>`; rozmiar nadaje kontener w CSS (`position: absolute;
+  inset: 0` w kontenerze z `aspect-ratio`).
+- `chart(element, option, {renderer, onResize})` tworzy wykres należący do
+  widgetu. Renderer domyślnie `"svg"` (ostry przy lupie i na rzutniku);
+  `"canvas"` tylko dla wykresów z tysiącami punktów. Obserwator rozmiaru
+  wywołuje `resize()` i `onResize(chart)`, np. do ustawienia uchwytów.
+- `ecAxis(palette, fontSize, extra)` zwraca styl osi z tokenów motywu
+  (odpowiednik `styleAxes()`); widget scala go przez `setOption()` w funkcji
+  wywoływanej z `onTheme()`.
+- Serie mają `id`, a zmiany danych idą przez `setOption({series: [{id, data}]})`.
+  Pozycje uchwytów i przeliczenie kursora: `convertToPixel` /
+  `convertFromPixel` z `{gridIndex: 0}`.
+- Wzorzec: statystyka 03, Ryc. 4.3 (`modules/area_chart.js`).
+- Build offline wbudowuje `echarts.min.js` w plik (`build_offline.R`);
+  widget z `data-ready` jest odtwarzany z czystej kopii, więc działa bez serwera.
+
+Wykłady używające wykresów JS ładują `R/lc_charts.js` w `header_extras`, po
+bibliotece wykresów i przed skryptami poszczególnych widgetów. Wspólne API
 jest dostępne jako `window.lcCharts`:
 
 - `onReady(selector, init)` inicjuje kontener po wstawieniu rozdziału przez

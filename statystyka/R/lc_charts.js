@@ -1,6 +1,8 @@
-// Wspólna obsługa Chart.js. Ładować po Chart.js, przed skryptami widgetów.
+// Wspólna obsługa wykresów JS (Chart.js i ECharts w trakcie migracji).
+// Ładować po bibliotece wykresów, przed skryptami widgetów.
 // onReady(selector, init) wiąże zasoby z kontenerem tworzonym przez renderUI.
-// create(), listen(), onTheme(), onDispose() zwalniają je po usunięciu kontenera.
+// create() (Chart.js), chart() (ECharts), listen(), onTheme(), onDispose()
+// zwalniają je po usunięciu kontenera.
 (function () {
   "use strict";
   var widgets = new Map(), registrations = [];
@@ -37,20 +39,31 @@
     widget.cleanups.reverse().forEach(function (fn) {
       try { fn(); } catch (err) { console.error(err); }
     });
-    widget.charts.forEach(function (chart) { chart.destroy(); });
+    widget.charts.forEach(release);
     delete root.dataset.ready;
+  }
+
+  // Chart.js: destroy(); ECharts: dispose() i odłączenie obserwatora rozmiaru.
+  function release(chart) {
+    if (chart.__lcResize) chart.__lcResize.disconnect();
+    if (typeof chart.destroy === "function") chart.destroy();
+    else if (typeof chart.dispose === "function") chart.dispose();
+  }
+
+  function libraryLoaded() {
+    return typeof window.Chart !== "undefined" || typeof window.echarts !== "undefined";
   }
 
   function scan() {
     widgets.forEach(function (widget, root) {
       if (!root.isConnected) dispose(root, widget);
     });
-    if (typeof window.Chart === "undefined") return;
+    if (!libraryLoaded()) return;
     registrations.forEach(function (registration) {
       document.querySelectorAll(registration.selector).forEach(function (root) {
         if (widgets.has(root)) return;
         // Nie inicjujemy niekompletnego kontenera podczas wstawiania HTML.
-        if (!root.querySelector("canvas")) return;
+        if (!root.querySelector("canvas") && !root.querySelector(".lc-ec")) return;
         var widget = { charts: new Set(), cleanups: [], themes: new Set(), frame: null };
         widgets.set(root, widget);
         try {
@@ -76,11 +89,36 @@
     return chart;
   }
 
+  // ECharts w elemencie .lc-ec. Domyślnie SVG (ostry obraz przy lupie i na
+  // rzutniku); renderer "canvas" dla wykresów z tysiącami punktów.
+  // Kontener nadaje rozmiar przez CSS; obserwator rozmiaru wywołuje resize()
+  // i opcjonalnie options.onResize(chart), np. do ustawienia uchwytów.
+  function chart(element, option, options) {
+    var widget = owner(element), opts = options || {};
+    var instance = window.echarts.init(element, null, { renderer: opts.renderer || "svg", locale: "EN" });
+    instance.setOption(option);
+    widget.charts.add(instance);
+    if (typeof window.ResizeObserver !== "undefined") {
+      var pending = null;
+      instance.__lcResize = new window.ResizeObserver(function () {
+        if (pending !== null) return;
+        pending = requestAnimationFrame(function () {
+          pending = null;
+          if (instance.isDisposed && instance.isDisposed()) return;
+          instance.resize();
+          if (opts.onResize) opts.onResize(instance);
+        });
+      });
+      instance.__lcResize.observe(element);
+    }
+    return instance;
+  }
+
   // Do wymiany wykresu we wciąż otwartym widgecie (np. nowy scenariusz).
   function destroy(chart) {
     if (!chart) return;
     widgets.forEach(function (widget) { widget.charts.delete(chart); });
-    chart.destroy();
+    release(chart);
   }
 
   function onDispose(root, fn) { owner(root).cleanups.push(fn); }
@@ -172,6 +210,22 @@
       if (k === "x" && options && options.maxRotation !== undefined) s.ticks.maxRotation = options.maxRotation;
       if (s.title) { s.title.color = P.subtle; s.title.font = { family: P.mono, size: options && options.titleSize || fontSize }; }
     });
+  }
+
+  // Styl osi ECharts z tokenów motywu; odpowiednik styleAxes() dla Chart.js.
+  // Zwraca obiekt do scalenia z konfiguracją osi (xAxis / yAxis).
+  function ecAxis(colors, fontSize, extra) {
+    var P = colors || palette(), size = fontSize || 12;
+    var text = { color: P.subtle, fontFamily: P.mono, fontSize: size };
+    return Object.assign({
+      axisLine: { show: true, lineStyle: { color: P.rule } },
+      axisTick: { show: true, lineStyle: { color: P.rule } },
+      splitLine: { show: true, lineStyle: { color: P.ruleSoft } },
+      axisLabel: Object.assign({ hideOverlap: true }, text),
+      nameTextStyle: text,
+      nameLocation: "middle",
+      nameGap: Math.round(size * 2)
+    }, extra || {});
   }
 
   function axisFontSize(root) {
@@ -338,7 +392,7 @@
   });
 
   window.lcCharts = {
-    onReady: onReady, create: create, destroy: destroy, listen: listen,
+    onReady: onReady, create: create, chart: chart, ecAxis: ecAxis, destroy: destroy, listen: listen,
     onTheme: onTheme, onDispose: onDispose, onMessage: onMessage,
     tween: tween, cancelTween: cancelTween,
     token: token, alpha: alpha, palette: palette, styleAxes: styleAxes, normalCdf: normalCdf,

@@ -74,9 +74,10 @@ ui <- lecture_page(
   lecture_title = "Rozkłady prawdopodobieństwa",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  # Chart.js do pola pod krzywą i dystrybuanty (rozdz. 4, Ryc. 4.3 i 4.4); sceny w scenes.js / scenes.css
+  # Wykresy JS: Chart.js i ECharts (migracja; ECharts od Ryc. 4.3); sceny w scenes.js / scenes.css
   header_extras = tagList(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
     includeScript(file.path(app_dir, "modules", "lejek_chart.js")),
@@ -139,7 +140,7 @@ ui <- lecture_page(
     tags$style(HTML("
       .lc-cdf { container-type: inline-size; }
       .lc-area-canvas { position: relative; aspect-ratio: 2.2 / 1; touch-action: none; }
-      .lc-area-canvas > canvas { position: absolute; inset: 0; }
+      .lc-area-canvas > canvas, .lc-area-canvas > .lc-ec { position: absolute; inset: 0; }
       .lc-area[data-lc-chart-large='true'] .lc-area-canvas { aspect-ratio: 1.65 / 1; }
       @media (max-width: 640px) {
         .lc-area-canvas { aspect-ratio: 1.4 / 1; }
