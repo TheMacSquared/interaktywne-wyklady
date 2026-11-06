@@ -140,6 +140,18 @@ ui <- lecture_page(
       .lc-exp-slot { fill: none; stroke: var(--upwr-rule); stroke-width: 1.5; stroke-dasharray: 3 4; }
       .lc-exp-event { fill: var(--upwr-ink-subtle); stroke: var(--upwr-surface); stroke-width: 1.5; }
       .lc-exp-event.is-hit { fill: var(--upwr-accent); }
+      /* Dron z GPS (Ryc. 5.10) */
+      .lc-exp-pad { fill: var(--upwr-panel); stroke: var(--upwr-rule); }
+      .lc-exp-ring { fill: none; stroke: var(--upwr-rule); stroke-dasharray: 3 4; }
+      .lc-exp-target { stroke: var(--upwr-ink); stroke-width: 2; }
+      .lc-exp-wall { fill: var(--upwr-rule); stroke: var(--upwr-ink-subtle); }
+      .lc-exp-past { fill: var(--upwr-ink-subtle); opacity: .35; }
+      .lc-exp-miss { stroke: var(--upwr-accent); stroke-width: 2; }
+      .lc-exp-leg { stroke: var(--upwr-accent); stroke-width: 1.5; stroke-dasharray: 4 3; opacity: .8; }
+      .lc-exp-drone-arm { stroke: var(--upwr-ink-soft); stroke-width: 2.5; }
+      .lc-exp-drone-rotor { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.5; opacity: .9; }
+      .lc-exp-drone-body { fill: var(--upwr-ink); }
+      .lc-exp-drone.is-landed { opacity: .45; }
     ")),
     # Dwa wykresy obok siebie, gdy panel ma miejsce; pod sobą na telefonie.
     tags$style(HTML("
@@ -195,6 +207,9 @@ ui <- lecture_page(
       .dmap.is-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
       .dmap.is-5 .dmap-q { min-height: 4.2em; }
       @media (max-width: 720px) { .dmap.is-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      .dmap.is-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .dmap.is-6 .dmap-q { min-height: 2.6em; }
+      @media (max-width: 720px) { .dmap.is-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
       .dmap-spark .dmap-area { fill: var(--dm-c); fill-opacity: .35; stroke: none; }
       .dmap-spark .dmap-curve { fill: none; stroke: var(--dm-c); stroke-width: 2; vector-effect: non-scaling-stroke; }
       .dmap-name { font-weight: 600; color: var(--dm-c); }

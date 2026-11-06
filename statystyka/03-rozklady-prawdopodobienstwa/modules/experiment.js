@@ -7,6 +7,7 @@
 //   "expo"      czas do pierwszego zdarzenia, X ciągły (wykładniczy)
 //   "weight"    ważenie osób, X = masa ciała (ciągły, → normalny)
 //   "sumdice"   n kostek, X = suma oczek (CTG); n zmienia się przyciskami [data-exp-n]
+//   "drone"     dron z GPS, X = kwadrat chybienia na n osiach (χ²(n)); n = 2 lub 3 z [data-exp-n]
 // Numer kroku czyta z data-lc-step korzenia widgetu, przyciski z [data-exp].
 // Rysuje SVG; serwer R nie bierze udziału (tekst kroków renderuje R).
 (function () {
@@ -390,6 +391,140 @@
     };
   };
 
+  // Dron z GPS (Ryc. 5.10): błąd pozycji na każdej osi ~ N(0, σ = 1 m),
+  // X = kwadrat chybienia = suma kwadratów błędów na n osiach (χ²(n)).
+  // n = 2: lądowanie na lądowisku (wschód, północ); n = 3: zawis przy balkonie (+ wysokość).
+  function erf(x) {
+    var t = 1 / (1 + 0.3275911 * Math.abs(x));
+    var y = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 +
+      t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-x * x);
+    return x >= 0 ? y : -y;
+  }
+  function chisqCdf(x, k) {
+    if (x <= 0) return 0;
+    if (k === 1) return erf(Math.sqrt(x / 2));
+    if (k === 2) return 1 - Math.exp(-x / 2);
+    return erf(Math.sqrt(x / 2)) - Math.sqrt(2 * x / Math.PI) * Math.exp(-x / 2);
+  }
+  function chisqPdf(x, k) {
+    if (x <= 0) return 0;
+    if (k === 1) return Math.exp(-x / 2) / Math.sqrt(2 * Math.PI * x);
+    if (k === 2) return Math.exp(-x / 2) / 2;
+    return Math.sqrt(x) * Math.exp(-x / 2) / Math.sqrt(2 * Math.PI);
+  }
+  function gauss() {
+    var u = 1 - Math.random(), v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function drawDrone(g, x, y, sc, cls) {
+    var q = svg("g", { transform: "translate(" + x + "," + y + ") scale(" + sc + ")", class: cls || "lc-exp-drone" }, g);
+    svg("line", { x1: -9, y1: -9, x2: 9, y2: 9, class: "lc-exp-drone-arm" }, q);
+    svg("line", { x1: -9, y1: 9, x2: 9, y2: -9, class: "lc-exp-drone-arm" }, q);
+    [[-9, -9], [9, -9], [-9, 9], [9, 9]].forEach(function (c) {
+      svg("circle", { cx: c[0], cy: c[1], r: 5.5, class: "lc-exp-drone-rotor" }, q);
+    });
+    svg("rect", { x: -5, y: -5, width: 10, height: 10, rx: 2, class: "lc-exp-drone-body" }, q);
+  }
+
+  KINDS.drone = function (cfg) {
+    var n = cfg.n || 2, w = cfg.width || 0.5, XMAX = cfg.xmax || 10, K = Math.round(XMAX / w);
+    var CX = n === 3 ? 200 : 320, CY = 98, S = 22, R = 4;        // widok z góry: środek, px na metr, zasięg
+    var BX = 470, BY = 98;                                        // widok z boku: balkon na wysokości celu
+    var past = [];
+    var bins = [];
+    for (var i = 0; i < K; i++) {
+      bins.push({ label: String(i * w), prob: chisqCdf((i + 1) * w, n) - chisqCdf(i * w, n) });
+    }
+    bins.push({ label: "…", prob: 0, tail: true });
+    function clampM(v) { return Math.max(-R, Math.min(R, v)); }
+    function f2(v) { return (v < 0 ? "−" : "") + Math.abs(v).toFixed(2); }
+    var AXES = ["Δx", "Δy", "Δz"];
+    return {
+      bins: bins, extra: 130, unit: "lot", meanLabel: "średnio X",
+      sub: n === 3 ? "kwadrat chybienia przy balkonie w tym locie" : "kwadrat chybienia przy lądowaniu w tym locie",
+      overlay: "curve", curveLabel: "model",
+      relLabel: "częstość w przedziale",
+      edge: function (i) { return i % 2 === 0 ? String(i * w) : ""; },
+      curve: function (t) {
+        var x = t * w;
+        return t <= 0.02 && n === 1 ? 0 : chisqPdf(Math.max(x, 1e-6), n) * w;
+      },
+      fmtX: function (x) { return typeof x === "number" ? x.toFixed(2) + " m²" : x; },
+      run: function () {
+        var d = [];
+        for (var j = 0; j < n; j++) d.push(Math.round(gauss() * 100) / 100);
+        var x = d.reduce(function (a, b) { return a + b * b; }, 0);
+        past.push(d); if (past.length > 400) past.shift();
+        return { d: d, x: x };
+      },
+      binOf: function (x) { return Math.min(Math.floor(x / w), K); },
+      draw: function (g, o, hi, prog) {
+        // widok z góry: lądowisko z pierścieniami co 1 m
+        svg("rect", { x: CX - R * S, y: CY - R * S, width: 2 * R * S, height: 2 * R * S, rx: 6, class: "lc-exp-pad" }, g);
+        for (var r = 1; r <= 3; r++) svg("circle", { cx: CX, cy: CY, r: r * S, class: "lc-exp-ring" }, g);
+        svg("line", { x1: CX - 7, x2: CX + 7, y1: CY, y2: CY, class: "lc-exp-target" }, g);
+        svg("line", { x1: CX, x2: CX, y1: CY - 7, y2: CY + 7, class: "lc-exp-target" }, g);
+        svg("text", { x: CX + S + 3, y: CY - 4, class: "lc-exp-tick" }, g, "1 m");
+        svg("text", { x: CX, y: CY + R * S + 14, "text-anchor": "middle", class: "lc-exp-sub" }, g,
+          n === 3 ? "widok z góry" : "lądowisko, widok z góry");
+        // widok z boku (tylko balkon): ściana, balkon, wysokość celu
+        if (n === 3) {
+          svg("rect", { x: BX + 70, y: CY - R * S, width: 16, height: 2 * R * S, class: "lc-exp-wall" }, g);
+          svg("rect", { x: BX + 44, y: BY + 4, width: 26, height: 5, class: "lc-exp-wall" }, g);
+          svg("line", { x1: BX - 60, x2: BX + 44, y1: BY, y2: BY, class: "lc-exp-ring" }, g);
+          for (var m = -3; m <= 3; m++) {
+            if (m) svg("line", { x1: BX - 64, x2: BX - 58, y1: BY - m * S, y2: BY - m * S, class: "lc-exp-gaugetick" }, g);
+          }
+          svg("text", { x: BX - 70, y: BY - S + 4, "text-anchor": "end", class: "lc-exp-tick" }, g, "+1 m");
+          svg("text", { x: BX, y: CY + R * S + 14, "text-anchor": "middle", class: "lc-exp-sub" }, g, "wysokość, widok z boku");
+        }
+        // wcześniejsze loty: chmura punktów
+        past.slice(0, o && (o.d || o.dTrue) ? -1 : undefined).forEach(function (d) {
+          svg("circle", { cx: CX + clampM(d[0]) * S, cy: CY - clampM(d[1]) * S, r: 2.2, class: "lc-exp-past" }, g);
+          if (n === 3) svg("circle", { cx: BX + (d[0] > 0 ? 6 : -6) * Math.min(1, Math.abs(d[0])), cy: BY - clampM(d[2]) * S, r: 2.2, class: "lc-exp-past" }, g);
+        });
+        var d = o ? (o.dTrue || o.d) : null;
+        if (!d) { drawDrone(g, CX - 150, 24, 1); return; }
+        var f = prog === undefined ? 1 : prog, e = 1 - Math.pow(1 - f, 3);
+        var tx = CX + clampM(d[0]) * S, ty = CY - clampM(d[1]) * S;
+        var sx = CX - 150, sy = 18;
+        var x = sx + (tx - sx) * e, y = sy + (ty - sy) * e;
+        if (f >= 1) {
+          svg("line", { x1: CX, y1: CY, x2: tx, y2: ty, class: "lc-exp-miss" }, g);
+          if (hi) {
+            svg("line", { x1: CX, y1: CY, x2: tx, y2: CY, class: "lc-exp-leg" }, g);
+            svg("line", { x1: tx, y1: CY, x2: tx, y2: ty, class: "lc-exp-leg" }, g);
+          }
+          svg("circle", { cx: tx, cy: ty, r: 4, class: "lc-exp-event is-hit" }, g);
+        }
+        // lądowanie: dron maleje, gdy schodzi; przy balkonie zawisa (bez zmniejszania)
+        var sc = n === 3 ? 1 : 1.25 - 0.45 * Math.max(0, (f - 0.6) / 0.4);
+        drawDrone(g, x, y, sc, f >= 1 && n === 2 ? "lc-exp-drone is-landed" : "lc-exp-drone");
+        if (n === 3) {
+          var hz = BY - clampM(d[2]) * S, hy = (BY - 70) + (hz - (BY - 70)) * e, hx = BX - 30 + 30 * e;
+          if (f >= 1) {
+            svg("line", { x1: BX, y1: BY, x2: BX, y2: hz, class: hi ? "lc-exp-leg" : "lc-exp-miss" }, g);
+            svg("circle", { cx: BX, cy: hz, r: 4, class: "lc-exp-event is-hit" }, g);
+          }
+          drawDrone(g, hx, hy, 0.8, "lc-exp-drone");
+        }
+      },
+      animate: function (o, fast, redraw, done) {
+        if (REDUCE) { done(); return; }
+        var frames = fast ? 10 : 34, i = 0;
+        var t = setInterval(function () {
+          i++;
+          redraw({ x: "?", dTrue: o.d }, false, i / frames);
+          if (i >= frames) { clearInterval(t); done(); }
+        }, fast ? 25 : 35);
+      },
+      log: function (o) {
+        return { cells: o.d.map(function (v, j) { return { t: AXES[j] + " " + f2(v), hit: false }; }),
+                 x: o.x.toFixed(2) + " m²" };
+      }
+    };
+  };
+
   // --- widget ----------------------------------------------------------------
   function init(root) {
     if (root.dataset.ready) return;
@@ -412,7 +547,7 @@
       EX = kind.extra || 0;
       READ_Y = 76 + EX; PT = 142 + EX; PB = 320 + EX; LOG_Y = 150 + EX;
       s.setAttribute("viewBox", "0 0 " + W + " " + (H0 + EX));
-      state = { counts: new Array(nb).fill(0), total: 0, rolls: [], last: null };
+      state = { counts: new Array(nb).fill(0), total: 0, rolls: [], last: null, sumX: 0 };
     }
     build();
 
@@ -515,7 +650,8 @@
       svg("text", { x: 16, y: (PT + PB) / 2, "text-anchor": "middle", class: "lc-exp-axtitle",
         transform: "rotate(-90 16 " + (PT + PB) / 2 + ")" }, gLow,
         h.rel ? (kind.relLabel || "częstość względna") : "liczba powtórzeń");
-      svg("text", { x: PR, y: PT - 10, "text-anchor": "end", class: "lc-exp-n" }, gLow, "n = " + state.total);
+      svg("text", { x: PR, y: PT - 10, "text-anchor": "end", class: "lc-exp-n" }, gLow, "n = " + state.total +
+        (kind.meanLabel && state.total ? " · " + kind.meanLabel + " = " + fmt(state.sumX / state.total, 2) : ""));
       if (h.rel) {
         if (curve) {
           svg("line", { x1: PL, x2: PL + 14, y1: PT - 14, y2: PT - 14, class: "lc-exp-curve" }, gLow);
@@ -566,7 +702,7 @@
       }, function () {
         commit(o);
         drawStage(o);
-        var land = function () { state.counts[i] += 1; render(); done(); };
+        var land = function () { state.counts[i] += 1; state.sumX += o.x; render(); done(); };
         if (step() >= 3 && !kind.noDrop) dropBall(i, fast ? 160 : 420, land); else land();
       });
     }
@@ -577,6 +713,7 @@
         for (var i = 0; i < m; i++) {
           o = kind.run();
           state.counts[kind.binOf(o.x)] += 1;
+          state.sumX += o.x;
         }
         commit(o);
         state.total += m - 1;

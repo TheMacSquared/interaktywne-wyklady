@@ -12,8 +12,13 @@ exp_widget <- function(id, title, roll_label, config, options = NULL) {
     toolbar = lc_toolbar(
       if (!is.null(options)) lc_group(options$label,
         tags$div(class = "lc-seg", role = "group", `aria-label` = options$label,
-          lapply(options$values, function(v) tags$button(type = "button",
-            `data-exp-n` = v, `aria-pressed` = if (v == options$selected) "true" else "false", v))
+          # values z nazwami: nazwa to napis na przycisku, wartość trafia do cfg.n
+          lapply(seq_along(options$values), function(i) {
+            v <- unname(options$values[[i]])
+            lab <- if (is.null(names(options$values))) v else names(options$values)[[i]]
+            tags$button(type = "button", `data-exp-n` = v,
+              `aria-pressed` = if (v == options$selected) "true" else "false", lab)
+          })
         )
       ),
       tags$button(type = "button", class = "lc-action is-solid", `data-exp` = "roll",

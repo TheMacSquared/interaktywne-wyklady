@@ -52,11 +52,12 @@ ch6_ui <- list(
 
     lc_p("Zobaczmy to na ocenach prowadzącego."),
 
-    # PROTOTYP SCENY (2026-10-08): Zapytaj grupkę (średnia z grupy, CTG)
+    # Ryc. 6.1 — scena „Zapytaj grupkę” (średnia z grupy, CTG)
     figure_panel(
-      label = "Prototyp sceny",
+      label = "Ryc. 6.1",
+      title = "Zapytaj grupkę: od jednej oceny do rozkładu średniej",
       width_mode = "text",
-      scene_widget("ch6_grupka", "Zapytaj grupkę: od jednej oceny do rozkładu średniej",
+      scene_widget("ch6_grupka", NULL,
         steps = c("Średnia X̄", "Powtarzamy", "Kształt"),
         labels = c("Zapytaj grupkę", "Zapytaj grupkę", "Zapytaj grupkę"),
         more_from = 2,
@@ -117,7 +118,7 @@ ch6_ui <- list(
       z krzywą normalną."),
 
     figure_panel(
-      label = "Ryc. 6.1",
+      label = "Ryc. 6.2",
       width_mode = "text",
       exp_widget("ch6_sumdice", "Suma oczek z n kostek", "Rzuć kostkami",
         list(kind = "sumdice", n = 1, xTitle = "X, czyli suma oczek",
@@ -135,7 +136,7 @@ ch6_ui <- list(
       lub n czyści zebrane średnie."),
 
     figure_panel(
-      label = "Ryc. 6.2",
+      label = "Ryc. 6.3",
       title = "Symulacja: średnie z dowolnego rozkładu → normalny",
       full_width = TRUE,
       lc_toolbar(
@@ -216,7 +217,7 @@ ch6_ui <- list(
     ),
 
     # ========================================================================
-    # Dlaczego to działa — intuicja (obraz: mapa Ryc. 6.3)
+    # Dlaczego to działa — intuicja (obraz: mapa Ryc. 6.4)
     # ========================================================================
     lc_h2("ch6-dlaczego", "Dlaczego to działa? — intuicja"),
 
@@ -225,7 +226,7 @@ ch6_ui <- list(
       z kilku obserwacji, duże musiałyby być prawie wszystkie naraz, a to zdarza się
       rzadko. Zwykle wartości duże mieszają się z małymi i odchylenia w przeciwne
       strony się znoszą. Im więcej obserwacji uśredniamy, tym silniej to działa.
-      Na mapie Ryc. 6.3 widać to jako prawy ogon, który blednie z wiersza na wiersz."),
+      Na mapie Ryc. 6.4 widać to jako prawy ogon, który blednie z wiersza na wiersz."),
 
     lc_p("To samo dotyczy sum, bo suma n obserwacji to n razy ich średnia. Dlatego
       rozkład normalny opisuje tak wiele zjawisk: wzrost człowieka, błąd pomiaru czy
@@ -262,7 +263,7 @@ ch6_ui <- list(
 
 ch6_server <- function(input, output, session) {
 
-  # --- Ryc. 6.1: suma n kostek → rozkład normalny (experiment.js) ---
+  # --- Ryc. 6.2: suma n kostek → rozkład normalny (experiment.js) ---
   X <- exp_X
   exp_texts(input, output, "ch6_sumdice", list(
     tagList("Rzucamy n kostkami naraz i dodajemy oczka. Liczbę kostek można zmienić w każdej chwili
@@ -392,6 +393,6 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  # Ryc. 6.3 (mapa zbieżności) rysuje ec_proto.js z danych w data-config.
+  # Ryc. 6.4 (mapa zbieżności) rysuje ec_proto.js z danych w data-config.
 
 }

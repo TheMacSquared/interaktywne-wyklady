@@ -1,11 +1,12 @@
 # PROTOTYPY PUNKTÓW STOP — rozdział 4 (2026-10-29) ---------------------------
 #   Ryc. 4.2 „Ile osób ma dokładnie 170 cm?”: od 2026-11-05 wariant ECharts „lupa”
 #             (s3p_4aa_ui w stop_proto_ec.R); tu zostaje populacja s3p_4a_pop.
-#   s3p_4b_ui — Ryc. 4.5 „Kwantyl: odwrotne pytanie” (zaakceptowany 2026-10-29; Chart.js, quantile_chart.js)
+#   s3p_4b_ui — Ryc. 4.5 „Kwantyl: odwrotne pytanie” (zaakceptowany 2026-10-29; ECharts, quantile_chart.js;
+#               od 2026-11-06 w obu trybach granicę przeciąga się po wykresie)
 #   s3p_4c_ui — Ryc. 4.10 „Paradoks autobusu” (zaakceptowany 2026-10-29)
 #   Usunięty 2026-10-29: 4d „Guinness i Gosset”.
-#   s3p_4e_ui — Ryc. 4.12 „Stos kwadratów” (zaakceptowany 2026-10-29)
-#   s3p_4f_ui — Ryc. 4.14 „Losowe podwyżki” (zaakceptowany 2026-10-29)
+#   Usunięty 2026-11-06: 4e „Stos kwadratów” (zastąpiła go scena „Dron z GPS”, Ryc. 5.10 w ch5_normalny.R).
+#   s3p_4f_ui — „Losowe podwyżki” (zaakceptowany 2026-10-29; od 2026-11-06 w rozdz. 5 jako Ryc. 5.13)
 # Serwer: s3p_ch4_server(input, output, session).
 
 # ============================================================================
@@ -15,7 +16,7 @@
 s3p_4a_pop <- local({ set.seed(3401); rnorm(1e6, 170, 8) })
 
 # ============================================================================
-# (4b) „KWANTYL: ODWROTNE PYTANIE” — Chart.js (quantile_chart.js), wzrost N(170, 8)
+# (4b) „KWANTYL: ODWROTNE PYTANIE” — ECharts (quantile_chart.js), wzrost N(170, 8)
 # ============================================================================
 
 # Przyciski segmentowe sterowane przez quantile_chart.js (bez wejść Shiny): atrybut attr = wartość.
@@ -33,9 +34,6 @@ s3p_4b_ui <- s3p_panel("4b", "Ryc. 4.5", "Kwantyl: odwrotne pytanie", proto = FA
     `data-lo` = "140", `data-hi` = "200",
     lc_toolbar(
       lc_group("Znam", s3p_4b_seg("data-q-mode", c("x" = "x", "p" = "p"), "x")),
-      tags$div(`data-role` = "pgroup", hidden = NA,
-        lc_group("p", s3p_4b_seg("data-q-p", c("0.03" = "0.03", "0.25" = "0.25", "0.5" = "0.5",
-                                               "0.9" = "0.9", "0.97" = "0.97"), "0.5"))),
       tags$button(type = "button", class = "lc-action is-solid", `data-q-reveal` = "1", tags$span("Odsłoń")),
       lc_readouts(
         lc_readout("x", tags$span(`data-role` = "x", "178.0")),
@@ -66,26 +64,10 @@ s3p_4c_ui <- s3p_panel("4c", "Ryc. 4.10", "Paradoks autobusu", proto = FALSE,
 )
 
 # ============================================================================
-# (4e) SYMULACJA „STOS KWADRATÓW”
-# ============================================================================
-
-s3p_4e_ui <- s3p_panel("4e", "Ryc. 4.12", "Stos kwadratów", proto = FALSE,
-  lc_toolbar(
-    lc_segmented("s3p_4e_df", "Ile kwadratów sumujemy (df)", choices = c("1" = "1", "2" = "2", "5" = "5", "10" = "10"),
-                 selected = "5"),
-    lc_action_group(label = "Losuj", s3p_4e_d1 = "+1", s3p_4e_d100 = "+100", s3p_4e_d1000 = "+1000"),
-    lc_action("s3p_4e_reset", icon = "reset", variant = "ghost", aria_label = "Od nowa"),
-    lc_readouts(uiOutput("s3p_4e_read"))
-  ),
-  uiOutput("s3p_4e_last"),
-  lc_plot("s3p_4e_plot", ratio = "2.4/1")
-)
-
-# ============================================================================
 # (4f) SYMULACJA „LOSOWE PODWYŻKI”
 # ============================================================================
 
-s3p_4f_ui <- s3p_panel("4f", "Ryc. 4.14", "Losowe podwyżki", proto = FALSE,
+s3p_4f_ui <- s3p_panel("4f", "Ryc. 5.13", "Losowe podwyżki", proto = FALSE,
   lc_toolbar(
     lc_action_group(label = "Czas", s3p_4f_y1 = "+1 rok", s3p_4f_y10 = "+10 lat"),
     lc_action("s3p_4f_reset", icon = "reset", variant = "ghost", aria_label = "Od nowa"),
@@ -166,46 +148,6 @@ s3p_ch4_server <- function(input, output, session) {
       "Autobusy odjeżdżają średnio co 10 minut, ale losowo. Pasażer częściej trafia w długą przerwę niż w krótką, bo długa zajmuje więcej czasu. Średnio czeka więc 10 minut, a nie 5. To bezpamięciowość rozkładu wykładniczego w praktyce."
     else "Autobus co 10 minut, pasażer przychodzi o losowej porze: czeka od 0 do 10 minut, średnio 5. To rozkład jednostajny U(0, 10).")
   })
-
-  # --- 4e -------------------------------------------------------------------
-  df_4e <- reactive(as.integer(input$s3p_4e_df %||% "5"))
-  chi <- reactiveVal(numeric(0)); last_z <- reactiveVal(NULL)
-  observeEvent(input$s3p_4e_df, { chi(numeric(0)); last_z(NULL) }, ignoreInit = TRUE)
-  draw_chi <- function(reps) {
-    k <- df_4e(); z <- matrix(rnorm(reps * k), reps)
-    last_z(z[reps, ]); chi(c(chi(), rowSums(z^2)))
-  }
-  observeEvent(input$s3p_4e_d1, draw_chi(1))
-  observeEvent(input$s3p_4e_d100, draw_chi(100))
-  observeEvent(input$s3p_4e_d1000, draw_chi(1000))
-  observeEvent(input$s3p_4e_reset, { chi(numeric(0)); last_z(NULL) })
-
-  output$s3p_4e_read <- renderUI({
-    v <- chi()
-    tagList(lc_readout("Sumy", length(v)), lc_readout("Średnia", if (length(v)) lc_fmt(mean(v), 2) else "–", color = upwr_accent),
-            lc_readout("Oczekiwana (df)", df_4e()))
-  })
-
-  output$s3p_4e_last <- renderUI({
-    z <- last_z()
-    if (is.null(z)) return(lc_caption("Każde losowanie: df wartości z N(0, 1), każdą podnosimy do kwadratu i sumujemy."))
-    lc_caption(sprintf("Ostatnie losowanie: %s = %s",
-      paste(sprintf("(%s)²", lc_fmt(z, 2)), collapse = " + "), lc_fmt(sum(z^2), 2)))
-  })
-
-  zoom_plot_server("s3p_4e_plot", reactive({
-    v <- chi(); k <- df_4e()
-    xmax <- qchisq(0.995, k)
-    x <- seq(0.01, xmax, length.out = 400)
-    p <- ggplot() + coord_cartesian(xlim = c(0, xmax)) +
-      labs(x = "Suma kwadratów", y = "Gęstość") + theme_upwr(grid = "y")
-    if (length(v)) p <- p + geom_histogram(data = data.frame(v = v), aes(v, after_stat(density)), bins = 40,
-                                           boundary = 0, fill = upwr_secondary, alpha = 0.7, colour = "white")
-    if (length(v) >= 30) p <- p + geom_line(data = data.frame(x = x, y = dchisq(x, k)), aes(x, y),
-                                           colour = upwr_accent, linewidth = 1.3) +
-      labs(subtitle = sprintf("Krzywa: χ²(%d)", k))
-    p
-  }))
 
   # --- 4f -------------------------------------------------------------------
   pay <- reactiveVal(list(year = 0, x = rep(5000, 1000)))

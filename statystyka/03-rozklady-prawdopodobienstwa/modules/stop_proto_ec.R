@@ -1,6 +1,6 @@
 # RYCINY ECHARTS (2026-11-05): druga część wykładu ----------------------------
-#   s3p_e1_ui — Ryc. 6.3 „Mapa zbieżności” (zaakceptowana 2026-11-05, zastąpiła
-#               dawne Ryc. 6.3, 6.4 i prototyp 6d): heatmapa gęstości średniej dla
+#   s3p_e1_ui — Ryc. 6.4 „Mapa zbieżności” (zaakceptowana 2026-11-05, zastąpiła
+#               dawne Ryc. 6.3, 6.4 i prototyp 6d; od 2026-11-06 numer 6.4): heatmapa gęstości średniej dla
 #               n = 1…40 i histogram 2000 wylosowanych średnich dla wybranego n.
 #   s3p_e2_ui — Ryc. 5.7 „Zaznacz przedział” (zaakceptowana 2026-11-05): histogram
 #               masy jabłek, zaznaczanie przedziału myszą i przybliżanie ogonów.
@@ -105,7 +105,7 @@ s3p_e1_dist_group <- function() {
 }
 
 # Mapa (heatmapa) z podpisami pierwszego i ostatniego wiersza.
-s3p_e1_ui <- s3p_panel("6.3", "Ryc. 6.3", "Mapa zbieżności", proto = FALSE,
+s3p_e1_ui <- s3p_panel("6.4", "Ryc. 6.4", "Mapa zbieżności", proto = FALSE,
   tags$div(class = "lc-ecmap",
     `data-config` = s3p_e1_json,
     lc_toolbar(

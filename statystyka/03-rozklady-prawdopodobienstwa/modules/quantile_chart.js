@@ -1,13 +1,14 @@
 // Kwantyl jako odwrotne pytanie (Ryc. 4.5): gęstość N(μ, σ) z polem na lewo od x.
-// Tryb „x”: granicę x przeciąga się po wykresie, szukane jest p = P(X ≤ x).
-// Tryb „p”: wybiera się p, szukany jest x. Szukana liczba to „?” do kliknięcia „Odsłoń”;
-// każda zmiana chowa ją z powrotem. Kontener: .lc-quant[data-mu][data-sd][data-x][data-lo][data-hi]
-// z <div class="lc-ec" data-role="pdf">, przyciskami [data-q-mode], [data-q-p], [data-q-reveal]
+// W obu trybach granicę przeciąga się po wykresie (albo strzałkami na uchwycie).
+// Tryb „x”: x skacze co 0.5 cm, szukane jest p = P(X ≤ x).
+// Tryb „p”: pole skacze co 0.01 (0.01–0.99), szukany jest x. Szukana liczba to „?” do kliknięcia
+// „Odsłoń”; każda zmiana chowa ją z powrotem. Kontener: .lc-quant[data-mu][data-sd][data-x][data-lo][data-hi]
+// z <div class="lc-ec" data-role="pdf">, przyciskami [data-q-mode], [data-q-reveal]
 // i odczytami [data-role="x"] / [data-role="p"]. ECharts, wzorzec jak area_chart.js (Ryc. 4.3).
 (function () {
   var Charts = window.lcCharts;
   var alpha = Charts.alpha;
-  var SNAP = 0.5;
+  var SNAP = 0.5, P_STEP = 0.01, P_MIN = 0.01, P_MAX = 0.99;
 
   var phi = Charts.normalCdf;
 
@@ -19,18 +20,24 @@
     var LO = parseFloat(root.dataset.lo || String(MU - 4 * SD)), HI = parseFloat(root.dataset.hi || String(MU + 4 * SD));
     var mode = "x", x = parseFloat(root.dataset.x || String(MU + SD)), p = phi((x - MU) / SD), shown = false;
     var readX = root.querySelector('[data-role="x"]'), readP = root.querySelector('[data-role="p"]');
-    var pGroup = root.querySelector('[data-role="pgroup"]'), revealBtn = root.querySelector("[data-q-reveal]");
+    var revealBtn = root.querySelector("[data-q-reveal]");
 
     var layer = Charts.handleLayer(root);
     var handle = layer.add(el, {
-      label: "Granica x w pytaniu o prawdopodobieństwo",
-      hint: "Strzałki przesuwają x o 0.5 cm; Shift ze strzałką o 5 cm. Odpowiedź odsłania osobny przycisk.",
+      label: "Granica pola pod krzywą",
+      hint: "W trybie x strzałki przesuwają x o 0.5 cm (Shift: 5 cm), w trybie p zmieniają p o 0.01 (Shift: 0.05). Odpowiedź odsłania osobny przycisk.",
       onKey: function (event) {
-        if (mode !== "x") return false;
-        var value = Charts.keyValue(event, x, LO, HI, SNAP, 5);
-        if (value === null) return false;
-        x = value; p = phi((x - MU) / SD); shown = false; draw();
-        layer.announce("x = " + x.toFixed(1) + " cm. Odpowiedź ukryta.");
+        if (mode === "x") {
+          var value = Charts.keyValue(event, x, LO, HI, SNAP, 5);
+          if (value === null) return false;
+          setX(value);
+          layer.announce("x = " + x.toFixed(1) + " cm. Odpowiedź ukryta.");
+        } else {
+          var q = Charts.keyValue(event, p, P_MIN, P_MAX, P_STEP, 0.05);
+          if (q === null) return false;
+          setP(q);
+          layer.announce("p = " + p.toFixed(2) + ". Odpowiedź ukryta.");
+        }
         return true;
       },
       onPointerDown: function (event) { startDrag(event); }
@@ -38,6 +45,11 @@
     function pdf(v) { var z = (v - MU) / SD; return Math.exp(-z * z / 2) / (SD * Math.sqrt(2 * Math.PI)); }
     function quant(q) {
       return Charts.normalQuantile(q, MU, SD, LO, HI);
+    }
+    function setX(v) { x = v; p = phi((x - MU) / SD); shown = false; draw(); }
+    function setP(q) {
+      p = Math.max(P_MIN, Math.min(P_MAX, Math.round(q / P_STEP) * P_STEP));
+      x = quant(p); shown = false; draw();
     }
     var TOP = pdf(MU) * 1.25, HY = TOP * 0.82;
     var XS = [];
@@ -116,15 +128,14 @@
         { id: "shade", data: XS.filter(function (v) { return v < x; }).map(function (v) { return [v, pdf(v)]; })
             .concat([[x, pdf(x)]]) },
         { id: "mark", data: [[x, 0], [x, HY]] },
-        { id: "dot", data: mode === "x" ? [[x, HY]] : [] }
+        { id: "dot", data: [[x, HY]] }
       ] });
       if (readX) readX.textContent = (mode === "p" && !shown) ? "?" : x.toFixed(1);
       if (readP) readP.textContent = (mode === "x" && !shown) ? "?" : p.toFixed(2);
-      if (pGroup) pGroup.hidden = mode !== "p";
       if (revealBtn) { var sp = revealBtn.querySelector("span") || revealBtn; sp.textContent = shown ? "Ukryj" : "Odsłoń"; }
-      el.style.cursor = mode === "x" ? "ew-resize" : "default";
-      handle.element.hidden = mode !== "x";
-      handle.value(x, LO, HI, "x = " + x.toFixed(1) + " cm");
+      el.style.cursor = "ew-resize";
+      if (mode === "x") handle.value(x, LO, HI, "x = " + x.toFixed(1) + " cm");
+      else handle.value(p, P_MIN, P_MAX, "p = " + p.toFixed(2));
       labels();
       positionHandle();
     }
@@ -134,31 +145,26 @@
     }
 
     Charts.listen(root, "click", function (e) {
-      var m = e.target.closest("[data-q-mode]"), q = e.target.closest("[data-q-p]"), r = e.target.closest("[data-q-reveal]");
+      var m = e.target.closest("[data-q-mode]"), r = e.target.closest("[data-q-reveal]");
       if (m) {
-        mode = m.getAttribute("data-q-mode"); press("[data-q-mode]", m); shown = false;
-        if (mode === "p") {
-          var cur = root.querySelector('[data-q-p][aria-pressed="true"]') || root.querySelector("[data-q-p]");
-          press("[data-q-p]", cur); p = parseFloat(cur.getAttribute("data-q-p")); x = quant(p);
-        }
-        draw();
-      } else if (q) {
-        press("[data-q-p]", q); p = parseFloat(q.getAttribute("data-q-p")); x = quant(p); shown = false; draw();
+        mode = m.getAttribute("data-q-mode"); press("[data-q-mode]", m);
+        // Granica zostaje w miejscu, tylko przyciąga się do siatki nowego trybu.
+        if (mode === "p") setP(p);
+        else setX(Math.max(LO, Math.min(HI, Math.round(x / SNAP) * SNAP)));
       } else if (r) {
         shown = !shown; draw();
       }
     });
 
-    // Przeciąganie granicy tylko w trybie „x”.
+    // Przeciąganie granicy w obu trybach: w „x” krok 0.5 cm, w „p” krok 0.01 pola.
     var drag = false;
     function move(e) {
       var v = Charts.ecPointer(chart, el, e, [LO, HI]).x;
-      x = Math.max(LO, Math.min(HI, Math.round(v / SNAP) * SNAP));
-      p = phi((x - MU) / SD); shown = false; draw();
+      if (mode === "x") setX(Math.max(LO, Math.min(HI, Math.round(v / SNAP) * SNAP)));
+      else setP(phi((v - MU) / SD));
     }
     el.style.touchAction = "none";
     function startDrag(e) {
-      if (mode !== "x") return;
       drag = true; el.setPointerCapture(e.pointerId); move(e); e.preventDefault();
     }
     Charts.listen(el, "pointerdown", startDrag);
