@@ -4,7 +4,7 @@ Stan przeglądu: 31 października 2026. Baza pierwotnego przeglądu: lokalny
 HEAD `7032a5c`; aktualizacja obejmuje pobrany `origin/main` z commitem
 `a8f6a039281a69a1052bf3322ac035a52767ef14`.
 To ocena i propozycja dydaktyczna do omówienia. W kolejnym kroku dodano
-do tekstu wykładu warianty B1–B8, opisane w [BRAINSTORM.md](BRAINSTORM.md);
+do tekstu wykładu warianty B3–B8 (B1, B2 odrzucone 2026-11-09), opisane w [BRAINSTORM.md](BRAINSTORM.md);
 oryginalne panele Claude’a zachowano do porównania.
 
 ## Źródło prototypów i zakres

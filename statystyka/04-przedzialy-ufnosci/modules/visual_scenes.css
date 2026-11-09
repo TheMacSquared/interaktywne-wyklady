@@ -8,7 +8,6 @@
 .vs-widget .vs-axis { stroke: var(--upwr-ink-subtle); stroke-width: 1.2; fill: none; }
 .vs-widget .vs-ref { stroke: var(--upwr-ink); stroke-width: 1.7; stroke-dasharray: 5 5; }
 .vs-widget button:focus-visible { outline: 2px solid var(--upwr-accent); outline-offset: 3px; }
-.vs-marker svg { stroke-linecap: round; stroke-linejoin: round; }
 @container (max-width: 500px) {
   .vs-widget .vs-art { overflow-x: auto; }
   .vs-widget .vs-art > svg { min-width: 36em; }

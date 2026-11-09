@@ -1,4 +1,4 @@
-# Warianty B1–B8 w tekście wykładu
+# Warianty B3–B8 w tekście wykładu
 
 Szkice do porównania obrazów i flow wykładu. Każdy stoi bezpośrednio po
 odpowiadającej mu rycinie Claude’a; nie usuwają obecnych wersji ani nie
@@ -14,16 +14,17 @@ shiny::runApp("statystyka/04-przedzialy-ufnosci", port = 8744)
 ```
 
 W istniejącym podglądzie trzeba odświeżyć sesję po restarcie aplikacji.
-Warianty mają plakietki „Wariant B1”–„Wariant B8” i znajdują się w treści,
+Warianty mają plakietki „Wariant B3”–„Wariant B8” i znajdują się w treści,
 bez osobnego rozdziału czy aplikacji. Fonty i Chart.js wymagają połączenia
 z internetem, jak pozostałe wykłady korzystające z tej biblioteki.
 
 ## Mapa porównania
 
+B1 (Cztery miarki na jednym torze) i B2 (Ta sama ocena, inna stabilność)
+odrzucone 2026-11-09; w rozdziale 1 zostają Ryc. 1.2 i 1.4.
+
 | Gdzie | Wariant | Co warto spróbować | Pomysł na przepływ opowieści |
 |---|---|---|---|
-| Rozdz. 1, po Czterech miarkach (1a) | B1: Cztery miarki na jednym torze | Przesuwaj numer grupki, potem odsłoń μ. Cztery duże punkty są wynikami tej samej próby. | Najpierw jeden pomiar na tle rozkładów, potem pytanie o rozrzut i obciążenie. Wspólna oś zamiast czterech histogramów. |
-| Rozdz. 1, po pizzeriach (1d) | B2: Ta sama ocena, inna stabilność | Dodaj 1, 20, 100 dni. Wczorajszy wynik pozostaje punktem odniesienia. | Ta sama historia zaakceptowanej ryciny, krótszy odczyt i płynne dokładanie punktów. Każdy dzień daje nową średnią dzienną. |
 | Rozdz. 2, po Suwaku ufności (2c) | B3: Stos i mapa 100 badań | Zmień 80% na 99% bez zmiany prób. Porównaj kolor mapy ze stosami. | Mapa daje obraz proporcji trafień, a stos wyjaśnia mechanizm. To kandydat do scalenia 2b i 2c. |
 | Rozdz. 2, po porównaniu zakresu ludzi i CI (2d) | B4: Dwa znaczenia 95% | 25 → 100 → 400; oba obiekty mają wspólną skalę. | Modelowy obraz izoluje zależność od n. Obecne 2d pokazuje prawdziwie zmieniającą się próbę — można porównać obie pedagogiczne wersje. |
 | Rozdz. 3, po Rozsuń linie (3a) | B5: Rozsuń grupy | Przeciągnij środek linii 1 albo wybierz „Pułapka”; uchwyt działa też z klawiatury. | Stała skala i trzy wyrównane wiersze pozwalają śledzić równocześnie CI grup i różnicy. Grupy wyrażone względem 9.08, różnica w naturalnej skali. |
@@ -43,7 +44,8 @@ rozdziałów 3–5. Sceny SVG i Ryc. 2.1 już działają bez serwera.
 
 Najwięcej dydaktycznie zyskują 3a (przeciąganie średniej), 2c (płynna zmiana
 szerokości tych samych CI), 2d (natychmiastowe porównanie n) i pizzerie
-(dokładanie punktów). Wszystkie mają tu działające warianty.
+(dokładanie punktów). Pierwsze trzy mają tu działające warianty; pizzerie
+(B2 odrzucony) czekają na port Ryc. 1.4.
 
 B7 używa Chart.js do natychmiastowego przeliczenia obrazu po kliknięciu
 produktu; kwantyle i wszystkie 51 zestawów granic liczy R. B6 dostaje z R
@@ -53,9 +55,6 @@ sprzątania zasobów, motywów, powiększania i uchwytów klawiaturowych.
 
 ## Założenia szkiców
 
-- B1: 200 niezależnych normalnych prób po 25 osób, cztery estymatory
-  wyznaczane z tych samych danych; „miarka +2” oznacza jawny błąd +2 cm.
-- B2: pula 500 dni, oceny 1–5 z identycznego modelu w obu pizzeriach.
 - B3: osiem serii po 100 prób, po nich cykl wraca do pierwszej serii;
   poziom zmienia kwantyl t, nie dane. Odsetek nie musi być dokładnie nominalny.
 - B4: znane σ = 10 i umownie stały środek 170. Ilustrujemy szerokość
@@ -70,7 +69,7 @@ sprzątania zasobów, motywów, powiększania i uchwytów klawiaturowych.
   z definicji filtra. To pokrycie warunkowe w wybranym podzbiorze, a nie
   twierdzenie, że poprawna procedura 95% ma zerowe pokrycie bez selekcji.
 
-Po wyczerpaniu pul B2/B8 przyciski dodawania są wyłączone; „Od nowa” wraca
+Po wyczerpaniu puli B8 przyciski dodawania są wyłączone; „Od nowa” wraca
 do początku. Zmiana rozdziału zaczyna wariant od początkowego stanu.
 
 ## Sprawdzenie

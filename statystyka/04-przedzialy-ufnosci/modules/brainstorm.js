@@ -1,4 +1,4 @@
-// Szkice B1–B8. Obliczenia rozkładów i kwantyle pochodzą z R.
+// Szkice B3–B8 (B1, B2 odrzucone 2026-11-09). Obliczenia rozkładów i kwantyle pochodzą z R.
 (function () {
   "use strict";
   var C = window.lcCharts;
@@ -6,11 +6,10 @@
   var fixed = function (v, d) { return Number(v).toFixed(d === undefined ? 2 : d); };
   var pct = function (v) { return fixed(100 * v, 1) + "%"; };
   var mean = function (xs) { return xs.reduce(function (a, b) { return a + b; }, 0) / xs.length; };
-  var sd = function (xs) { var m = mean(xs); return xs.length > 1 ? Math.sqrt(xs.reduce(function (a, x) { return a + (x-m)*(x-m); }, 0) / (xs.length-1)) : NaN; };
   C.onReady(".bb-widget", function (root) {
     var cfg = JSON.parse(root.dataset.config), kind = root.dataset.kind;
     var canvas = root.querySelector("canvas"), read = root.querySelector(".bb-read");
-    var state = { count: 0, batch: 0, truth: false, filtered: false, bad: new Set() };
+    var state = { count: 0, batch: 0, filtered: false, bad: new Set() };
     var P, inputs = {};
     root.querySelectorAll("[data-bb-input]").forEach(function (input) { inputs[input.dataset.bbInput] = input; });
     function val(key) { return Number(inputs[key].value); }
@@ -114,26 +113,7 @@
     }
     function draw() {
       P=C.palette(); var ds=[], rows, selected, i, y, lo, hi;
-      if(kind==="measures") {
-        frame(155,185,.4,4.6,{4:"Średnia",3:"Mediana",2:"Środek rozstępu",1:"Miarka +2"},"Oszacowanie wzrostu (cm)");
-        rows=cfg.rows;selected=val("sample")-1;
-        var keys=["mean_est","median_est","midrange_est","biased_est"];
-        keys.forEach(function(key,j){
-          var col=j===3?P.terakota:P.niebo;
-          ds.push(points(rows.map(function(r,k){return {x:r[key],y:4-j+Math.sin(k*5.7)*.19};}),C.alpha(col,.25),2,cfg.labels[j]));
-          ds.push(points([{x:rows[selected][key],y:4-j}],col,7,"Grupka "+(selected+1)));
-        });
-        if(state.truth)chart.$refs=[170];
-        say("Grupka "+(selected+1)+" · średnia "+fixed(rows[selected].mean_est,1)+" · mediana "+fixed(rows[selected].median_est,1)+" · środek rozstępu "+fixed(rows[selected].midrange_est,1)+" · miarka +2: "+fixed(rows[selected].biased_est,1)+" cm");
-      } else if(kind==="pizza") {
-        frame(1,5,.5,2.5,{2:"5 opinii / dzień",1:"200 opinii / dzień"},"Średnia dzienna ocena (gwiazdki)");
-        ["small","large"].forEach(function(key,j){
-          var vals=cfg.slice(0,state.count).map(function(r,k){return {x:r[key],y:2-j+.18*Math.sin(k*7.7)};});
-          ds.push(points(vals,C.alpha(j?P.niebo:P.bursztyn,.45),3));
-          ds.push(points([{x:4.4,y:2-j}],P.accent,7,"Wczoraj"));
-        });
-        say(state.count?state.count+" dni · SD średnich: "+(state.count>1?fixed(sd(cfg.slice(0,state.count).map(function(r){return r.small;})),2)+" i "+fixed(sd(cfg.slice(0,state.count).map(function(r){return r.large;})),2):"jeszcze za mało dni")+" · kolejność: 5 i 200 opinii":"Wczoraj: obie 4.4. Której średniej bardziej ufasz?");
-      } else if(kind==="coverage") {
+      if(kind==="coverage") {
         frame(158,182,0,31,null,"Średni wzrost (cm)");chart.$refs=[170];
         rows=cfg.groups[state.batch%cfg.groups.length];var tq=cfg.tq[val("level")-80],hits=0;
         rows.forEach(function(r,k){
@@ -187,17 +167,15 @@
         var cov=rows.filter(function(r){return r.lo<=26&&r.hi>=26;}).length;
         say(state.count?"Wszystkie: "+state.count+", pokrycie "+pct(cov/state.count)+" · wybrane: "+selected.length+" ("+pct(selected.length/state.count)+") · pokrycie w wybranych: "+(selected.length?"0%":"brak wyników")+" · widok: "+(state.filtered?"wybrane":"wszystkie"):"Najpierw wykonaj badania. Każdy wynik powstaje tą samą metodą 95% CI.");
       }
-      if(kind==="pizza"||kind==="publish")root.querySelectorAll("[data-bb-action]").forEach(function(button){
+      if(kind==="publish")root.querySelectorAll("[data-bb-action]").forEach(function(button){
         var key=button.dataset.bbAction;
-        if(["one","twenty","hundred","thousand"].indexOf(key)>=0)button.disabled=state.count>=(kind==="pizza"?500:cfg.rows.length);
+        if(["one","twenty","hundred","thousand"].indexOf(key)>=0)button.disabled=state.count>=cfg.rows.length;
       });
       finish(ds);
     }
     Object.keys(inputs).forEach(function(k){C.listen(inputs[k],"input",draw);});
     C.listen(root,"click",function(e){
       var btn=e.target.closest("[data-bb-action]");if(!btn)return;var a=btn.dataset.bbAction;
-      if(kind==="measures"&&a==="truth"){state.truth=!state.truth;btn.textContent=state.truth?"Ukryj μ":"Pokaż μ";btn.setAttribute("aria-pressed",String(state.truth));}
-      if(kind==="pizza"){if(a==="reset")state.count=0;else state.count=Math.min(500,state.count+(a==="one"?1:a==="twenty"?20:100));}
       if(kind==="coverage"&&a==="new")state.batch++;
       if(kind==="people")set("n",Number(a.slice(1)));
       if(kind==="difference")set("d",a==="near"?.10:a==="trap"?.30:.60);

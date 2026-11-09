@@ -27,7 +27,7 @@ bb_canvas <- function(label, ratio = "2 / 1") tags$div(class = "bb-chart",
 bb_panel <- function(id, title, controls, config, caption, ..., ratio = "2 / 1") {
   tags$div(class = "bb-widget", id = paste0("bb_", id), `data-kind` = id,
     `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = 10, dataframe = "rows"),
-    figure_panel(label = paste0("Wariant B", match(id, names(bb_variants))),
+    figure_panel(label = paste0("Wariant ", bb_variants[[id]]),
       title = title, width_mode = "wide",
       lc_toolbar(controls, lc_chart_zoom_button()),
       ...,
@@ -37,15 +37,12 @@ bb_panel <- function(id, title, controls, config, caption, ..., ratio = "2 / 1")
     )
   )
 }
-bb_variants <- c(measures = "1a", pizza = "1d", coverage = "2c", people = "2d",
-                 difference = "3a", useful = "3c", defects = "4a", publish = "5c")
+# Numery wariantów zgodne z BRAINSTORM.md; B1 i B2 (rozdz. 1) odrzucone 2026-11-09.
+bb_variants <- c(coverage = "B3", people = "B4", difference = "B5",
+                 useful = "B6", defects = "B7", publish = "B8")
 
 bb_configs <- bb_seed(431026, {
-  measures <- s4p_1a_simulate(200)
   groups <- lapply(1:8, function(i) s4p_2_draw(100))
-  pizza <- data.frame(
-    small = replicate(500, mean(sample(1:5, 5, TRUE, prob = s4p_1d_star_p))),
-    large = replicate(500, mean(sample(1:5, 200, TRUE, prob = s4p_1d_star_p))))
   # Stałe 95% CI z 4000 niezależnych, poprawnie raportowanych badań.
   x <- matrix(rnorm(4000 * 40, 26, 8), nrow = 40)
   means <- colMeans(x); se <- apply(x, 2, sd) / sqrt(40)
@@ -59,8 +56,7 @@ bb_configs <- bb_seed(431026, {
                    if (k == 50) 1 else qbeta(.975, k+1, 50-k)))
   })
   st <- s4p_3a_stats(.34)
-  list(measures = list(rows = measures, labels = s4p_1a_levels), pizza = pizza,
-       coverage = list(groups = groups, tq = unname(qt((1 + (80:99)/100)/2, 24))),
+  list(coverage = list(groups = groups, tq = unname(qt((1 + (80:99)/100)/2, 24))),
        people = list(z = z), difference = list(base = 9.08,
          margins = c((st$ci1[2]-st$ci1[1])/2, (st$ci2[2]-st$ci2[1])/2),
          diff_margin = st$d_ist),
@@ -69,17 +65,6 @@ bb_configs <- bb_seed(431026, {
 })
 
 bb_ui <- list(
-  measures = bb_panel("measures", "Cztery miarki na jednym torze",
-    tagList(bb_slider("measures", "sample", "Grupka", 1, 200, 1),
-            bb_action("truth", "Pokaż μ")), bb_configs$measures,
-    "Każdy wiersz pokazuje 200 estymat; wyróżnione punkty pochodzą z tej samej grupki 25 osób.",
-    ratio = "1.8 / 1"),
-  pizza = bb_panel("pizza", "Ta sama ocena, inna stabilność",
-    bb_actions(bb_action("one", "Kolejny dzień"), bb_action("twenty", "+20 dni"),
-               bb_action("hundred", "+100 dni"), bb_action("reset", "Od nowa")),
-    bb_configs$pizza,
-    "Porównujemy średnie dzienne z tego samego modelu ocen; duży romb to wczorajsze 4.4, kropki to kolejne dni.",
-    ratio = "2.1 / 1"),
   coverage = bb_panel("coverage", "Sto badań: stos i mapa trafień",
     tagList(bb_slider("coverage", "level", "Ufność (%)", 80, 99, 95),
             bb_action("new", "Następne 100 badań")), bb_configs$coverage,

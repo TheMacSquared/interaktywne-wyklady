@@ -52,22 +52,14 @@ ch1_ui <- list(
       gdzie lądują kolejne estymaty. W scenie poniżej kolejne grupki po 25 osób
       wychodzą z sali, a ich średnie wzrostu spadają jedna po drugiej na stos.
       Wzrost w populacji ma ", gloss("rozkład normalny"), " ze średnią μ = 170 cm
-      i odchyleniem standardowym σ = 10 cm, ale scena zdradza μ dopiero w ostatnim kroku."),
+      i odchyleniem standardowym σ = 10 cm, ale scena pokazuje μ dopiero po kliknięciu „Pokaż μ”."),
 
-    # PROTOTYP SCENY (2026-10-08): Zmierz grupkę — estymator się waha, μ stoi
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch1_grupka", "Zmierz grupkę: x̄ się waha",
-        steps = c("Grupka", "Powtarzamy", "μ"),
-        labels = c("Zmierz grupkę", "Zmierz grupkę", "Zmierz grupkę"),
-        more_from = 2,
-        config = list(kind = "net", mode = "mean", mu = net_world$mu, sigma = net_world$sigma,
-                      n = 25L, xmin = 140, xmax = 200, height = 480,
-                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali; średnia grupki x̄ spada żetonem na stos pod osią wzrostu, a w ostatnim kroku widać μ i odchylenie standardowe średnich"))
-    ),
-
-    visual_scenes_ui,
+    visual_scene_ui("ch1_grupka", "Zmierz grupkę: x̄ się waha",
+      caption = "Na ilustracji fragment kolejki, na osi wszystkie 25 pomiarów grupki;
+        pod osią stos średnich kolejnych grupek. Populacja: μ = 170 cm, σ = 10 cm.",
+      aria = "Student z miarką mierzy grupkę 25 osób wychodzących z sali; pomiary
+        spadają na oś wzrostu, średnia grupki x̄ trafia na stos średnich, a po
+        odsłonięciu widać μ"),
 
     lc_p("Pojedyncze estymaty rozrzucają się po obu stronach μ, ale stos układa
       się wokół μ. Przy n = 25 ", gloss("błąd standardowy"), " wynosi
@@ -145,7 +137,6 @@ ch1_ui <- list(
       pomiar wychodzi o 2 cm za duży."),
 
     s4p("1a"),
-    bb("measures"),
 
     lc_p("Po tysiącu grupek trzy pierwsze stosy stoją wokół μ = 170 cm, więc
       wszystkie trzy estymatory są nieobciążone. Różnią się jednak szerokością:
@@ -212,7 +203,6 @@ ch1_ui <- list(
       centymetrów od μ, a sama liczba nie zdradza, jak daleko."),
 
     s4p("1d"),
-    bb("pizza"),
 
     lc_p("Ta sama sytuacja zdarza się poza salą wykładową. Na Ryc. 1.4 dwie
       pizzerie miały wczoraj tę samą średnią ocen, 4.4 ★. U Gośki oceniło
@@ -244,13 +234,5 @@ ch1_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
-
-  # --- PROTOTYP SCENY (2026-10-08): Zmierz grupkę ---
-  scene_texts(input, output, "ch1_grupka", list(
-    tagList("Zmierz kilka grupek. Pionowa kreska na osi to średnia grupki ",
-      tags$code("x̄", .noWS = "outside"), "."),
-    tagList("Każda średnia spada na stos. Dorzuć +100 i +1000 grupek."),
-    tagList("Przerywana linia to ", tags$code("μ", .noWS = "outside"),
-      ". Estymator się waha, μ stoi w miejscu.")
-  ))
+  # Scena i ryciny rozdziału działają po stronie przeglądarki albo w s4p_ch1_server().
 }
