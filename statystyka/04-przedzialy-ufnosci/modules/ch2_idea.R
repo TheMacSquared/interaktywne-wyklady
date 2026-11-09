@@ -89,7 +89,7 @@ ch2_ui <- list(
         more_from = 2,
         config = list(kind = "net", mode = "net", mu = net_world$mu, sigma = net_world$sigma,
                       n = 25L, mult = "t", tq = net_tq, z = 1.96,
-                      xmin = 140, xmax = 200, height = 550,
+                      xmin = 140, xmax = 200, height = 600,
                       aria = "Student z miarką mierzy grupkę osób wychodzących z sali, zarzuca przedział x̄ ± margines na oś wzrostu; kolejne przedziały układają się pod osią, a w ostatnim kroku widać μ i odsetek trafień"))
     ),
 
@@ -116,8 +116,6 @@ ch2_ui <- list(
       są wyraźnie szersze i chybia średnio jeden na sto. Przy 80% kwantyl spada
       do 1.32, przedziały się zwężają, a chybia średnio co piąty."),
 
-    s4p("2b"),
-    s4p("2c"),
     bb("coverage"),
 
     lc_h2("ch2-jak-interpretowac", "Jak (nie) interpretować przedział ufności"),
@@ -153,7 +151,6 @@ ch2_ui <- list(
       ilu ludzi zmierzyliśmy. Zdanie D nie mówi nic: średnia z próby, 170 cm,
       jest środkiem przedziału, więc leży w nim zawsze."),
 
-    s4p("2d"),
     bb("people"),
 
     lc_note("Zasada", rule = TRUE,

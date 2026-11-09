@@ -65,13 +65,16 @@
     var BASE = 132;                        // linia stóp grupki
     var NETY = 174;                        // środek siatki nad osią
     var DOTY = 206, AXY = 216;             // pomiary i oś
-    var STK = 284, ROWH = 6.4, ROWS = 36;  // stos siatek pod osią
+    var STK = 304, ROWH = 6.4, ROWS = 36;  // stos siatek pod osią
+    // Stos siatek ma własną, powiększoną oś (lupa na wycinek osi wzrostu).
+    var ZMIN = cfg.zmin || 158, ZMAX = cfg.zmax || 182;
     var SBASE = (cfg.height || H) - 46, STOP = AXY + 40;   // stos żetonów x̄ (tryb mean)
     var BIN = 0.5, TOK = 4.6;                              // szerokość przegródki (cm), żeton (px)
     var st = { n: cfg.n || 25, mult: cfg.mult || "t", draws: [], hits: 0, last: null,
                bins: {}, sum: 0, sq: 0 };
 
     function X(v) { return PL + (PR - PL) * (Math.max(XMIN, Math.min(XMAX, v)) - XMIN) / (XMAX - XMIN); }
+    function Z(v) { return PL + (PR - PL) * (Math.max(ZMIN, Math.min(ZMAX, v)) - ZMIN) / (ZMAX - ZMIN); }
     function k() { return st.mult === "z" ? ZQ : Number(TQ[String(st.n)] || ZQ); }
 
     // jedna grupka → {h:[…], xbar, s, me, lo, hi, hit}
@@ -186,18 +189,36 @@
 
     // stos siatek pod osią: najnowsza na górze
     function rowY(i) { return STK + i * ROWH; }
+    // lupa: wycinek [ZMIN, ZMAX] osi wzrostu rozciągnięty na całą szerokość stosu
+    function drawLens(g) {
+      var top = AXY + 26, bot = STK - 12;
+      svg("polygon", { points: [X(ZMIN), top, X(ZMAX), top, PR, bot, PL, bot].join(" "), class: "lc-sc-lens" }, g);
+      svg("line", { x1: X(ZMIN), x2: PL, y1: top, y2: bot, class: "lc-sc-lens-edge" }, g);
+      svg("line", { x1: X(ZMAX), x2: PR, y1: top, y2: bot, class: "lc-sc-lens-edge" }, g);
+      svg("line", { x1: X(ZMIN), x2: X(ZMAX), y1: AXY, y2: AXY, class: "lc-sc-lens-band" }, g);
+      var ay = rowY(ROWS - 1) + 10;
+      svg("line", { x1: PL, x2: PR, y1: ay, y2: ay, class: "lc-sc-axis" }, g);
+      for (var v = Math.ceil(ZMIN / 5) * 5; v <= ZMAX; v += 5) {
+        svg("line", { x1: Z(v), x2: Z(v), y1: ay, y2: ay + 5, class: "lc-sc-axis" }, g);
+        svg("text", { x: Z(v), y: ay + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(v));
+      }
+      svg("text", { x: PR, y: ay + 19, "text-anchor": "end", class: "lc-sc-sub" }, g, "×" + fmt((XMAX - XMIN) / (ZMAX - ZMIN), 1));
+    }
     function drawStack(g, step) {
       var N = st.draws.length, show = st.draws.slice(-ROWS).reverse();
+      drawLens(g);
       show.forEach(function (d, i) {
         var cls = step >= M.reveal ? (d.hit ? " is-hit" : " is-miss") : "";
-        svg("line", { x1: X(d.lo), x2: X(d.hi), y1: rowY(i), y2: rowY(i), class: "lc-sc-ci" + cls }, g);
-        svg("circle", { cx: X(d.xbar), cy: rowY(i), r: 1.8, class: "lc-sc-ci-dot" + cls }, g);
+        svg("line", { x1: Z(d.lo), x2: Z(d.hi), y1: rowY(i), y2: rowY(i), class: "lc-sc-ci" + cls }, g);
+        svg("circle", { cx: Z(d.xbar), cy: rowY(i), r: 2.4, class: "lc-sc-ci-dot" + cls }, g);
       });
       if (step >= M.reveal) {
-        svg("line", { x1: X(MU), x2: X(MU), y1: NETY - 16, y2: rowY(ROWS - 1) + 6, class: "lc-sc-param" }, g);
+        svg("line", { x1: X(MU), x2: X(MU), y1: NETY - 16, y2: AXY + 26, class: "lc-sc-param" }, g);
+        svg("line", { x1: X(MU), x2: Z(MU), y1: AXY + 26, y2: STK - 12, class: "lc-sc-param" }, g);
+        svg("line", { x1: Z(MU), x2: Z(MU), y1: STK - 12, y2: rowY(ROWS - 1) + 10, class: "lc-sc-param" }, g);
       }
       var cov = N ? fmt(100 * st.hits / N, 1) + "% (" + st.hits + "/" + N + ")" : "—";
-      readout(g, rowY(ROWS) + 22, step, "pokrycie = " + cov, "siatek: " + N);
+      readout(g, rowY(ROWS) + 46, step, "pokrycie = " + cov, "siatek: " + N);
     }
 
     // stos żetonów x̄ (tryb mean): przegródki po BIN cm; gdy żetony nie mieszczą się, słupki
@@ -271,7 +292,11 @@
         var y = y0 + (y1 - y0) * ease(u);
         g.textContent = "";
         if (mean) svg("circle", { cx: X(d.xbar), cy: y, r: TOK / 2 + 0.6, class: "lc-sc-tok is-fly" }, g);
-        else svg("line", { x1: X(d.lo), x2: X(d.hi), y1: y, y2: y, class: "lc-sc-ci is-fly" }, g);
+        else {
+          // w locie siatka przechodzi ze skali osi wzrostu do skali lupy
+          var w = ease(u), lo = X(d.lo) + (Z(d.lo) - X(d.lo)) * w, hi = X(d.hi) + (Z(d.hi) - X(d.hi)) * w;
+          svg("line", { x1: lo, x2: hi, y1: y, y2: y, class: "lc-sc-ci is-fly" }, g);
+        }
       }, function () { g.textContent = ""; done(); });
     }
 

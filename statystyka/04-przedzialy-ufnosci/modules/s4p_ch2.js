@@ -189,7 +189,7 @@
       render();
     });
 
-    x = snap(parseFloat(root.dataset.x || "172.4"));
+    x = snap(parseFloat(root.dataset.x || "170"));
     render();
   }
 

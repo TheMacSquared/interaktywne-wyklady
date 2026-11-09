@@ -73,7 +73,7 @@ bb_ui <- list(
     ratio = "1.7 / 1"),
   people = bb_panel("people", "Dwa różne znaczenia 95%",
     tagList(bb_slider("people", "n", "Liczba osób", 5, 1600, 25),
-            bb_actions(bb_action("n25", "25"), bb_action("n100", "100"), bb_action("n400", "400"))),
+            bb_actions(bb_action("n5", "5"), bb_action("n25", "25"), bb_action("n100", "100"), bb_action("n400", "400"))),
     bb_configs$people,
     "Porównanie modelowe: stałe σ = 10 cm i środek 170 cm; górny pas obejmuje 95% wzrostów, dolny ilustruje szerokość 95% CI średniej.",
     ratio = "1.9 / 1"),

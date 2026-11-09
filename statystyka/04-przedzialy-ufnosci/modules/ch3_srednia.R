@@ -240,9 +240,7 @@ ch3_ui <- list(
        przedziałów grup nie dowodzi, że różnicy nie ma."
     ),
 
-    s4p("3a"),
     bb("difference"),
-    s4p("3b"),
 
     lc_h2("ch3-case-studies", "Case studies — jak interpretować CI w praktyce"),
 

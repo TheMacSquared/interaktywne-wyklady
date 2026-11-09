@@ -22,6 +22,10 @@ z internetem, jak pozostałe wykłady korzystające z tej biblioteki.
 
 B1 (Cztery miarki na jednym torze) i B2 (Ta sama ocena, inna stabilność)
 odrzucone 2026-11-09; w rozdziale 1 zostają Ryc. 1.2 i 1.4.
+B3 i B4 przyjęte 2026-11-09 zamiast prototypów 2b, 2c i 2d (usunięte);
+B4 dostał przycisk n = 5. Do zrobienia: wygląd i port na ECharts.
+B5 przyjęty 2026-11-09 zamiast prototypu 3a (usunięty; obliczenia
+`s4p_3a_stats()` zostają w stop_proto_ch3.R).
 
 | Gdzie | Wariant | Co warto spróbować | Pomysł na przepływ opowieści |
 |---|---|---|---|

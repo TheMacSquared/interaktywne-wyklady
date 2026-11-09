@@ -33,10 +33,10 @@
 .lc-sc-float { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
 
 /* stos siatek: szare, dopóki μ ukryte; potem trafione / chybione */
-.lc-sc-ci { stroke: var(--upwr-ink-subtle); stroke-width: 2.6; stroke-linecap: round; opacity: .75; }
+.lc-sc-ci { stroke: var(--upwr-ink-subtle); stroke-width: 3.6; stroke-linecap: round; opacity: .75; }
 .lc-sc-ci.is-fly { stroke: var(--upwr-ink-soft); opacity: 1; }
 .lc-sc-ci.is-hit { stroke: var(--upwr-cat-szalwia, #3f8f5f); opacity: .9; }
-.lc-sc-ci.is-miss { stroke: var(--upwr-cat-terakota); opacity: 1; stroke-width: 3; }
+.lc-sc-ci.is-miss { stroke: var(--upwr-cat-terakota); opacity: 1; stroke-width: 4.2; }
 .lc-sc-ci-dot { fill: var(--upwr-ink-soft); }
 .lc-sc-ci-dot.is-hit { fill: var(--upwr-cat-szalwia, #3f8f5f); }
 .lc-sc-ci-dot.is-miss { fill: var(--upwr-cat-terakota); }
@@ -44,3 +44,8 @@
 /* stos żetonów x̄ (tryb mean) */
 .lc-sc-tok { fill: var(--upwr-cat-bursztyn); opacity: .85; }
 .lc-sc-tok.is-fly { opacity: 1; }
+
+/* lupa: powiększony wycinek osi wzrostu nad stosem siatek */
+.lc-sc-lens { fill: var(--upwr-ink-subtle); opacity: .06; }
+.lc-sc-lens-edge { stroke: var(--upwr-ink-subtle); stroke-width: 1; stroke-dasharray: 3 4; }
+.lc-sc-lens-band { stroke: var(--upwr-ink-subtle); stroke-width: 5; opacity: .35; }
