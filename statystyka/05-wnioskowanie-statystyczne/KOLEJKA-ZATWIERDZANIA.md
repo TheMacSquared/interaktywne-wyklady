@@ -13,7 +13,7 @@ shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
 
 | Rozdz. | Element | Status |
 |---|---|---|
-| 03 | Prototyp 5A „Czujka dymu w akademiku” | przyjęty (9.11), do poprawy grafiki |
+| 03 | Prototyp 5A „Czujka dymu w akademiku” | przyjęty (9.11), do poprawy grafiki; `type-error.jpg` zostaje |
 | 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | do oceny; obok Ryc. 3.1 |
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | do oceny |
 | 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | do oceny; obok Ryc. 7.1 |
@@ -26,8 +26,8 @@ shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
 
 Decyzja (9.11): 5A przyjęty, mechanika i puenta bez zmian. Do zrobienia:
 dopracować grafiki. Czujka pod sufitem jest mała i mało czytelna,
-a ikony tostera i płomienia są szkicowe. Do rozstrzygnięcia przy
-wdrożeniu: czy 5A zastępuje `type-error.jpg`.
+a ikony tostera i płomienia są szkicowe. `type-error.jpg` zostaje obok 5A,
+bo jest humorystyczny (decyzja 9.11).
 
 Do decyzji: czy 5B zastępuje Ryc. 3.1. 5B używa
 dwóch grup jak historia z telefonem; po przyjęciu trzeba przepisać dwa
