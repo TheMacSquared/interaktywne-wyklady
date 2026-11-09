@@ -45,6 +45,7 @@ Wszystko działa bez serwera R. Suwaki to zwykłe `input type=range`.
 | 5C | rozdz. 06, przed „Od współczynnika do testu” | scena | — | Odrzucony 9.11 i usunięty: sztuczna historia, a stos r z powtórzonych grupek to rozkład próbkowy (CTG) w kostiumie. Otwarty pomysł: przypadek z jedną próbą (kolejka, poz. 3). |
 | 5D | rozdz. 09, na początku „Dlaczego nie kilka testów t?” | scena (kadry) | Pocięcie jednej zmiennej na wiele podgrup daje przypadkowe „sukcesy”; gazeta pokazuje tylko ten jeden. | Żelki i trądzik (motyw xkcd 882, własna grafika), dane stałe: 400 jedzących dzielonych na 20 kolorów, średnie podgrup wobec pasa zakresu przypadku; jedna wypada poza pas → gazeta → cała seria. Ryc. 9.1 zostaje jako pojęcie (wzór). |
 | 5E | rozdz. 07, po hipotezach, przed wzorami E i χ² | scena (kadry) | Liczebności oczekiwane to „jak by było, gdyby nic nie zależało”. | 200 kontroli (dane jak w Ryc. 7.1): kierowcy jako kropki → świat bez związku (po 40) → obrysy braków i nadwyżek → wkłady (O − E)²/E, suma χ² = 8.33. Kandydat na zastąpienie tabelarycznej Ryc. 7.1. |
+| 5E-2 | rozdz. 07, pod 5E | scena (kadry) | Różnica odsetków w próbie z wykładu 02 to jeszcze nie związek: χ² = 1.30. | Oprawa i dane sceny „Kto dostaje mandat?” z wykładu 02 (70 kierowców): tabela → paski i wspólne 27% → braki i nadmiary w przegródkach → wkłady do χ². Wariant do wyboru zamiast 5E. |
 
 5D ma stałe dane (`p5_jelly_data()` w `proto05.R`, ziarno 833): poza pasem
 jest dokładnie jedna podgrupa, więc prowadzący wie, co pokaże każdy kadr.

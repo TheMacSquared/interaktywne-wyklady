@@ -55,3 +55,19 @@
 .p5-chi { fill: var(--upwr-accent); opacity: .85; }
 .p5-chi.is-no { opacity: .45; }
 .lc-sc-halo { fill: var(--upwr-accent); opacity: .16; }
+
+/* 5E-2: oprawa sceny „stop” z wykładu 02 (płeć = niebo / bursztyn, mandat = akcent, pouczenie = szałwia) */
+.p5-person.is-k, .p5-rowname.is-k { fill: var(--upwr-cat-niebo); }
+.p5-person.is-m, .p5-rowname.is-m { fill: var(--upwr-cat-bursztyn); }
+.p5-person.is-ghost { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.p5-ticket { stroke-width: 1.4; }
+.p5-ticket.is-fine { fill: var(--upwr-accent); stroke: var(--upwr-surface); }
+.p5-ticket.is-warn { fill: var(--upwr-surface); stroke: var(--upwr-sage); }
+.p5-cell { fill: var(--upwr-surface-sunken); stroke: var(--upwr-rule); }
+.p5-bar.is-fine { fill: var(--upwr-accent); }
+.p5-bar.is-warn { fill: var(--upwr-sage-tint); stroke: var(--upwr-sage); stroke-width: 1; }
+.p5-colhead { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.p5-rowname { font: 600 14px var(--upwr-sans); }
+.p5-count { font: 600 14px var(--upwr-mono); fill: var(--upwr-ink-soft); }
+.p5-count.is-hit { fill: var(--upwr-accent); }
+.p5-contrib { font: 700 22px var(--upwr-mono); fill: var(--upwr-ink); }

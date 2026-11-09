@@ -17,6 +17,7 @@ shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
 | 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | odrzucony (9.11), usunięty |
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | odrzucony (9.11), usunięty |
 | 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | do oceny; obok Ryc. 7.1 |
+| 07 | Prototyp 5E-2 „Kontrola drogowa z wykładu 02” (oprawa i dane sceny „stop” z 02) | do oceny; wariant 5E |
 | 09 | Prototyp 5D „Żelki i trądzik” | przyjęty (9.11) po przebudowie, z cytowaniem xkcd 882 |
 | 09 | Sceny `jars`, `worlds`, `stress` (8.10) | czekają na ocenę (5F) |
 
@@ -39,10 +40,27 @@ to moc. Wtedy Ryc. 3.1 tylko nazywa to, co sala zobaczyła na czujce. Do
 sprawdzenia: czy uśrednianie odczytów brzmi realnie i czy druga puenta nie
 rozmywa 5A.
 
-### 2. 5E — mandaty (rozdz. 07)
+### 2. 5E i 5E-2 — mandaty (rozdz. 07)
 
-Kadry stoją przed wzorami, a stara Ryc. 7.1 (trzy tabele) po nich. Po
-przyjęciu: usunąć Ryc. 7.1 i przenieść wzory E i χ² za scenę.
+5E podobał się (9.11); pytanie było, czy da się go połączyć ze sceną
+„Kto dostaje mandat?” z wykładu 02 (Ryc. 2.1). Stąd 5E-2, tuż pod 5E:
+ta sama oprawa (ludziki w kolorach płci, karteczki mandat / pouczenie,
+przegródki tabeli, paski 100%) i te same dane (22 kobiety, 4 mandaty;
+48 mężczyzn, 15 mandatów). Kadry: tabela → świat bez związku (paski
+i wspólne 27%) → braki i nadmiary w przegródkach (kontury i obwódki, E)
+→ wkłady (O − E)²/E.
+
+Różnica merytoryczna: dane z 02 dają χ² = 1.30, p = 0.25, czyli różnica
+18% / 31% z 70 kierowców mieści się w przypadku. 5E (200 kontroli, 30 / 50)
+daje χ² = 8.33, p = 0.004. Do decyzji:
+
+- 5E-2 zastępuje 5E: ciągłość z wykładem 02 i puenta „różnica w próbie
+  to jeszcze nie związek w populacji”. Wtedy tekst rozdziału, który dziś
+  liczy na danych Ryc. 7.1 (8.33, p = 0.004), trzeba przepiąć albo
+  zostawić Ryc. 7.1 jako drugi przykład, z istotnym wynikiem.
+- 5E zostaje: wynik istotny, zgodny z obecnym tekstem.
+
+Po decyzji: usunąć niewybrany wariant i Ryc. 7.1, wzory E i χ² za scenę.
 
 ### 3. 5C — korelacja (rozdz. 06)
 

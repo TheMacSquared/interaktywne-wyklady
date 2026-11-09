@@ -117,6 +117,23 @@ p5_5E_ui <- local({
         aria = "Sto kobiet i stu mężczyzn po kontroli drogowej, z zaznaczonymi mandatami; kolejne kadry pokazują liczby oczekiwane przy braku związku, różnice i ich wkład do statystyki chi-kwadrat")))
 })
 
+# --- 5E-2: kontrola drogowa z wykładu 02 (ta sama oprawa i dane, rozdz. 07) -------
+# Dane jak stop_data w 02-zwiazki-zmiennych/modules/helpers.R (seed 5): 22 kobiety
+# (4 mandaty), 48 mężczyzn (15 mandatów). χ² = 1.30, p = 0.25.
+p5_stop_data <- local({
+  set.seed(5)
+  sex  <- c(rep("K", 22), rep("M", 48))
+  fine <- c(rep(1L, 4), rep(0L, 18), rep(1L, 15), rep(0L, 33))
+  ord  <- sample(length(sex))
+  list(sex = sex[ord], fine = fine[ord])
+})
+
+p5_5E2_ui <- p5_panel("5E-2", "scena", "Kontrola drogowa z wykładu 02: czy to więcej niż przypadek?",
+  p5_scene_widget("p5_tickets2", "Kto dostaje mandat? Ta sama kontrola, nowe pytanie",
+    steps = c("Tabela", "Świat bez związku", "Braki i nadmiary", "Jedna liczba"),
+    config = list(kind = "tickets2", sex = p5_stop_data$sex, fine = p5_stop_data$fine, height = 345,
+      aria = "Siedemdziesięciu kierowców z wykładu 02 w tabeli płeć razy wynik kontroli; kolejne kadry pokazują wspólny odsetek mandatów, braki i nadmiary w przegródkach oraz wkłady do statystyki chi-kwadrat")))
+
 # --- teksty kroków ------------------------------------------------------------
 p5_server <- function(input, output, session) {
   scene_texts(input, output, "p5_jelly", list(
@@ -132,6 +149,19 @@ p5_server <- function(input, output, session) {
     tagList("Wszystkie 20 grup pochodzi z tej samej chmury wyników. 19 średnich jest
       w pasie, jedna poza nim. Przy 20 podgrupach i α = 0.05 tyle właśnie daje
       przypadek.")
+  ))
+  scene_texts(input, output, "p5_tickets2", list(
+    tagList("Kontrola drogowa z wykładu 02: 22 kobiety i 48 mężczyzn. Mandat dostało
+      18% kobiet i 31% mężczyzn. W tej próbie różnica jest. Czy byłaby też
+      w następnym dniu kontroli?"),
+    tagList("Gdyby płeć nie miała znaczenia, oba paski kończyłyby się w tym samym
+      miejscu: na 27%, tyle mandatów było wśród wszystkich 70 kierowców."),
+    tagList("Wracamy do przegródek. Przy 27% w każdym wierszu kobietom brakuje
+      około 2 mandatów (kontury), a mężczyźni mają około 2 nadmiarowe (obwódki).
+      E to liczebność oczekiwana."),
+    tagList("Każdą różnicę podnosimy do kwadratu i dzielimy przez E. Suma to
+      χ² = 1.30. Za chwilę zobaczymy, że taka wartość zdarza się często przez
+      sam przypadek: różnica z wykładu 02 nie wystarcza, by mówić o związku.")
   ))
   scene_texts(input, output, "p5_tickets", list(
     tagList("Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet
