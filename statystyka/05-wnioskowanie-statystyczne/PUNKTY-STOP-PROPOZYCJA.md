@@ -46,7 +46,7 @@ Wszystko działa bez serwera R. Suwaki to zwykłe `input type=range`.
 | 5D | rozdz. 09, na początku „Dlaczego nie kilka testów t?” | scena (kadry) | Pocięcie jednej zmiennej na wiele podgrup daje przypadkowe „sukcesy”; gazeta pokazuje tylko ten jeden. | Żelki i trądzik (motyw xkcd 882, własna grafika), dane stałe: 400 jedzących dzielonych na 20 kolorów, średnie podgrup wobec pasa zakresu przypadku; jedna wypada poza pas → gazeta → cała seria. Ryc. 9.1 zostaje jako pojęcie (wzór). |
 | 5E | rozdz. 07, po hipotezach, przed wzorami E i χ² | scena (kadry) | Liczebności oczekiwane to „jak by było, gdyby nic nie zależało”. | 200 kontroli (dane jak w Ryc. 7.1): kierowcy jako kropki → świat bez związku (po 40) → obrysy braków i nadwyżek → wkłady (O − E)²/E, suma χ² = 8.33. Kandydat na zastąpienie tabelarycznej Ryc. 7.1. |
 
-5D ma stałe dane (`p5_jelly_data()` w `proto05.R`, ziarno 113): poza pasem
+5D ma stałe dane (`p5_jelly_data()` w `proto05.R`, ziarno 833): poza pasem
 jest dokładnie jedna podgrupa, więc prowadzący wie, co pokaże każdy kadr.
 
 ## Do decyzji bez prototypu (priorytet B)

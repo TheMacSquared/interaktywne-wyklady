@@ -17,7 +17,7 @@ shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
 | 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | odrzucony (9.11), usunięty |
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | odrzucony (9.11), usunięty |
 | 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | do oceny; obok Ryc. 7.1 |
-| 09 | Prototyp 5D „Żelki i trądzik” | przebudowany 9.11 (kadry), do oceny |
+| 09 | Prototyp 5D „Żelki i trądzik” | przyjęty (9.11) po przebudowie, z cytowaniem xkcd 882 |
 | 09 | Sceny `jars`, `worlds`, `stress` (8.10) | czekają na ocenę (5F) |
 
 ## Kolejka
@@ -63,14 +63,17 @@ kadry ze stałymi danymi. Potem, na prośbę o pokazanie mechanizmu, scena
 pokazuje cięcie jednej zmiennej na podgrupy:
 
 1. Pytanie: 100 niejedzących i 400 jedzących (kropka = osoba, liczba
-   wyprysków), średnia jedzących w pasie zakresu przypadku, p = 0.66.
+   wyprysków), średnia jedzących w pasie zakresu przypadku, p = 0.61.
 2. Podział na kolory: te same 400 kropek rozjeżdża się na 20 wierszy po
    20 osób; pas dla grupy 20 osób jest szerszy; średnia zielonych wypada
-   poza niego (p = 0.013).
+   poza niego w górę (p = 0.031).
 3. Gazeta: tylko zielone żelki.
 4. Cała seria: 19 średnich w pasie, 1 poza; 20 × 5% = średnio 1 alarm.
 
-Dane: `p5_jelly_data()` w `proto05.R`, ziarno 113 (jedyny alarm: zielone).
+Decyzja (9.11): przyjęty w tej wersji. Pod panelem podpis ze źródłem
+(Randall Munroe, „Significant”, xkcd 882, CC BY-NC 2.5).
+
+Dane: `p5_jelly_data()` w `proto05.R`, ziarno 833 (jedyny alarm: zielone, średnio więcej wyprysków).
 Motyw z xkcd 882 („Significant”), grafika własna. Ryc. 9.1 po scenie
 daje wzór 64%.
 

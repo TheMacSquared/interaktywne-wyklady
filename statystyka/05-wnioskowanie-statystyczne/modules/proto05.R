@@ -72,9 +72,9 @@ p5_jelly_names <- c("czerwone", "zielone", "niebieskie", "żółte", "pomarańcz
 # Stałe dane: 100 osób niejedzących i 400 jedzących żelki (po 20 na ulubiony kolor),
 # ta sama populacja N(12, 4) wyprysków. Pas „zakresu przypadku” = średnia niejedzących
 # ± 1.96·s·√(1/100 + 1/n); alarm, gdy średnia podgrupy wypada poza pas (test z).
-# Ziarno 113 dobrane tak, że poza pasem jest dokładnie jedna podgrupa: zielone (p = 0.013),
-# a jedzący razem nie różnią się od niejedzących (p = 0.66).
-p5_jelly_data <- function(seed = 113, n_ctrl = 100, k = 20, m = 20, mu = 12, sd = 4) {
+# Ziarno 833 dobrane tak, że poza pasem jest dokładnie jedna podgrupa: zielone, ze średnio
+# większą liczbą wyprysków (+2.1, p = 0.031); jedzący razem nie różnią się od niejedzących (p = 0.61).
+p5_jelly_data <- function(seed = 833, n_ctrl = 100, k = 20, m = 20, mu = 12, sd = 4) {
   set.seed(seed)
   ctrl <- pmax(0, round(rnorm(n_ctrl, mu, sd)))
   eat <- pmax(0, round(rnorm(k * m, mu, sd)))
@@ -93,13 +93,16 @@ p5_jelly_data <- function(seed = 113, n_ctrl = 100, k = 20, m = 20, mu = 12, sd 
 p5_5D_ui <- local({
   d <- p5_jelly_data()
   hit <- which(d$p < 0.05)
-  stopifnot(length(hit) == 1)
+  stopifnot(length(hit) == 1, d$rm[hit] > d$m_ctrl)
   p5_panel("5D", "scena", "Żelki i trądzik",
     p5_scene_widget("p5_jelly", "Badacz dzieli jedzących żelki według ulubionego koloru",
       steps = c("Pytanie", "Podział na kolory", "Gazeta", "Cała seria"),
       config = c(list(kind = "jelly", colors = p5_jelly_colors, names = p5_jelly_names,
         hit = hit, alpha = 0.05, height = 640), d,
-        list(aria = "Wyniki 400 osób jedzących żelki i 100 niejedzących; jedzący zostają podzieleni na 20 podgrup według ulubionego koloru, średnie podgrup rozrzuca przypadek i jedna, zielona, wypada poza zakres przypadku; gazeta pokazuje tylko ją"))))
+        list(aria = "Wyniki 400 osób jedzących żelki i 100 niejedzących; jedzący zostają podzieleni na 20 podgrup według ulubionego koloru, średnie podgrup rozrzuca przypadek i jedna, zielona, wypada poza zakres przypadku; gazeta pokazuje tylko ją"))),
+    lc_caption("Na podstawie komiksu: Randall Munroe, „Significant”, xkcd nr 882 (",
+      tags$a(href = "https://xkcd.com/882/", target = "_blank", rel = "noopener", "xkcd.com/882"),
+      "), licencja CC BY-NC 2.5. Grafika i dane własne."))
 })
 
 # --- 5E: mandaty i świat bez związku (rozdz. 07, przed wzorami E i χ²) -----------
@@ -122,7 +125,8 @@ p5_server <- function(input, output, session) {
       przypadek. Związku nie ma."),
     tagList("Badacz dzieli tych samych 400 jedzących na 20 grup według ulubionego
       koloru. W grupie 20 osób średnia skacze bardziej, więc pas jest szerszy.
-      Średnie rozrzucają się wokół wspólnej, a zielone wypadają poza pas."),
+      Średnie rozrzucają się wokół wspólnej, a zielone wypadają poza pas:
+      mają średnio więcej wyprysków."),
     tagList("Tak wynik widzi czytelnik gazety: jeden kolor, jedno badanie i p poniżej
       0.05. Wygląda przekonująco."),
     tagList("Wszystkie 20 grup pochodzi z tej samej chmury wyników. 19 średnich jest
