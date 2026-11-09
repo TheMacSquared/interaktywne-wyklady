@@ -88,7 +88,6 @@
         }
         if(step>=3) {
           line([[0,.06],[0,.98]],P.ref,1,1,true);
-          label(0,.91,'0 = brak różnicy',P.ink,1,'right');
           point(d.mean,.52,color(3),13,1);
           if(step===3) label(d.mean,.52,'x̄₁ − x̄₂ = '+f(d.mean),color(3),1);
         }

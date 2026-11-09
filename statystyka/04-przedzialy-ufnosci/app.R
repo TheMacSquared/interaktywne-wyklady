@@ -1,5 +1,5 @@
-# Przedzialy ufnosci - interaktywny przewodnik
-# Scrollowalny skrypt z osadzonymi widgetami do nauczania przedzialow ufnosci
+# Przedziały ufności — interaktywny przewodnik
+# Scrollowalny skrypt z osadzonymi widgetami do nauczania przedziałów ufności
 
 library(shiny)
 library(ggplot2)
@@ -49,17 +49,16 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
-# Prototypy punktów stop (2026-10-30): przed rozdziałami, bo ich UI wstawiamy w tekst.
+source(file.path(app_dir, "modules", "ci_echarts.R"),      local = TRUE)
+source(file.path(app_dir, "modules", "ci_construction.R"), local = TRUE)
+# Ryciny wstawiane w tekst: przed rozdziałami, bo rozdziały wstawiają ich UI.
 for (.f in c("common", paste0("ch", 1:5))) {
-  .p <- file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R"))
-  if (file.exists(.p)) source(.p, local = TRUE)
+  source(file.path(app_dir, "modules", paste0("figures_", .f, ".R")), local = TRUE)
 }
-source(file.path(app_dir, "modules", "brainstorm.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ci_explorers.R"), local = TRUE)
 source(file.path(app_dir, "modules", "visual_scenes.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_estymacja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_idea.R"),      local = TRUE)
-source(file.path(app_dir, "modules", "ci_construction.R"), local = TRUE)
-source(file.path(app_dir, "modules", "ci_echarts.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_srednia.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch4_proporcja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch5_czynniki.R"),  local = TRUE)
@@ -81,15 +80,14 @@ ui <- lecture_page(
   header_extras = tagList(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
-    # Wykresy JS: ECharts (Ryc. 4.2, s4p_ch4.js) i Chart.js (warianty B — do migracji)
+    # Wykresy JS: ECharts SVG ze wspólną obsługą lc_charts.js
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
-    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
-    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "brainstorm.css"), warn = FALSE), collapse = "\n"))),
-    includeScript(file.path(app_dir, "modules", "brainstorm.js")),
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "ci_explorers.css"), warn = FALSE), collapse = "\n"))),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "visual_scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "visual_scenes.js")),
-    lapply(sort(list.files(file.path(app_dir, "modules"), pattern = "^s4p_.*\\.js$", full.names = TRUE)),
+    lapply(file.path(app_dir, "modules", c("fig_ch2.js", "fig_ch4.js", "ci_construction.js",
+                                           "ci_echarts.js", "ci_explorers.js")),
            includeScript),
     tags$style(HTML("
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
@@ -99,10 +97,10 @@ ui <- lecture_page(
       .lc-ec { position: absolute; inset: 0; }
       .ci-construction { position: relative; aspect-ratio: 2.5 / 1; }
       .ci-construction[data-kind=diff] { aspect-ratio: 2 / 1; }
-      .s4p-zero-canvas { position: relative; aspect-ratio: 2.4 / 1; touch-action: none; margin-top: .6em; }
-      .s4p-zero[data-lc-chart-large='true'] .s4p-zero-canvas { aspect-ratio: 1.65 / 1; }
-      .s4p-zero .s4p-zero-range { width: 100%; cursor: pointer; }
-      @media (max-width: 640px) { .s4p-zero-canvas { aspect-ratio: 1.4 / 1; } }
+      .fig-zero-canvas { position: relative; aspect-ratio: 2.4 / 1; touch-action: none; margin-top: .6em; }
+      .fig-zero[data-lc-chart-large='true'] .fig-zero-canvas { aspect-ratio: 1.65 / 1; }
+      .fig-zero .fig-zero-range { width: 100%; cursor: pointer; }
+      @media (max-width: 640px) { .fig-zero-canvas { aspect-ratio: 1.4 / 1; } }
     "))
   )
 )
@@ -122,9 +120,9 @@ server <- function(input, output, session) {
   ch5_server(input, output, session)
   ch7_server(input, output, session)
 
-  # Prototypy punktów stop (2026-10-30)
+  # Serwery rycin wstawianych w tekst (figures_ch*.R)
   for (.f in paste0("ch", 1:5)) {
-    .fn <- get0(paste0("s4p_", .f, "_server"))
+    .fn <- get0(paste0("fig_", .f, "_server"))
     if (is.function(.fn)) .fn(input, output, session)
   }
 }

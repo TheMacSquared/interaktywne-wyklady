@@ -2,7 +2,7 @@
 // sztuk na n sprawdzonych, ufność 95%. Część Walda poniżej zera jest w terakocie,
 // reszta w kolorze przedziału; Wilson w szałwii. x zmienia suwak albo przeciąganie
 // punktu p̂ na wykresie (strzałki na uchwycie: ±1 sztuka). Kontener:
-// .s4p-zero[data-z][data-n][data-x][data-xmax] z <div class="lc-ec" data-role="ci">,
+// .fig-zero[data-z][data-n][data-x][data-xmax] z <div class="lc-ec" data-role="ci">,
 // przyciskami [data-zero-n], suwakiem [data-role="x"] i odczytami
 // [data-role="phat|wald|wilson|caption|x-out"]. ECharts, wzorzec jak quantile_chart.js (stat. 03).
 (function () {
@@ -168,5 +168,5 @@
     Charts.onTheme(root, paint);
   }
 
-  Charts.onReady(".s4p-zero", init);
+  Charts.onReady(".fig-zero", init);
 })();

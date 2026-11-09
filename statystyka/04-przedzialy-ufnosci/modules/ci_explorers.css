@@ -1,0 +1,13 @@
+/* Eksploratory CI (ci_explorers.R / .js); wspólne komponenty lc-* bez zmian. */
+.ci-explorer { margin-block: 1.2em 2em; }
+.ci-explorer .ci-explorer-chart { position: relative; width: 100%; min-height: 15em; touch-action: pan-y; }
+.ci-explorer[data-lc-chart-large="true"] .ci-explorer-chart { min-height: 25em; }
+.ci-explorer .ci-explorer-read { margin-top: .8em; min-height: 2em; font-family: var(--upwr-mono); font-size: .9em; line-height: 1.7; color: var(--upwr-ink); }
+.ci-explorer .ci-explorer-slider { min-width: min(100%, 15em); flex: 1 1 15em; }
+.ci-explorer .ci-explorer-slider label { display: flex; justify-content: space-between; gap: 1em; font-size: .85em; }
+.ci-explorer .ci-explorer-slider output { font-family: var(--upwr-mono); }
+.ci-explorer input[type="range"] { width: 100%; accent-color: var(--upwr-accent); cursor: pointer; }
+.ci-explorer .ci-explorer-map { display: grid; grid-template-columns: repeat(10, 1fr); gap: .3em; max-width: 30em; margin: 1em auto; }
+.ci-explorer .ci-explorer-map span { aspect-ratio: 2.2; border-radius: .15em; background: var(--upwr-cat-szalwia); }
+.ci-explorer .ci-explorer-map span.is-miss { background: var(--upwr-cat-terakota); }
+.ci-explorer button:focus-visible, .ci-explorer input:focus-visible { outline: 2px solid var(--upwr-accent); outline-offset: 3px; }

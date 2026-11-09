@@ -183,8 +183,9 @@ osobnym kandydatem do większego widoku SVG, po rozstrzygnięciu jego treści.
 ### 04 — Przedziały ufności
 
 Największa potencjalna korzyść dotyczy czytelności, nie nowych uchwytów.
-Wszystkie wykresy R wykładu są kandydatami do portu Chart.js (kryterium
-z 2026-11-05); kolejność wynika z decyzji o prototypach w `04-przedzialy-ufnosci/BRAINSTORM.md`.
+Od 2026-11-09 wszystkie wykresy wykładu rysuje ECharts (eksploratory
+w `ci_explorers.js`, wykresy ggplot przez most `ci_echarts`), więc numery
+rycin poniżej sprzed tej daty mogą się różnić od obecnych.
 Sceny „Zmierz grupkę” i „Zarzuć siatkę” mają przyciski i SVG, jak w wykładzie 00.
 
 Priorytety sprawdzenia istniejącego powiększenia R:

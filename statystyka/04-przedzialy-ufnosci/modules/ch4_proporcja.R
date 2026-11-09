@@ -125,7 +125,7 @@ ch4_ui <- list(
       Walda, od 3.2% do 18.8%. Panel pokazuje oba przedziały dla kontroli
       jakości: ile sztuk sprawdzono i ile z nich okazało się wadliwych."),
 
-    s4p("4a"),
+    fig("4a"),
 
     lc_p("Przy dwóch wadliwych sztukach na 50 dolna granica Walda spada do −1.4%,
       czyli poniżej najmniejszego możliwego odsetka. Przy zerze braków
@@ -518,8 +518,6 @@ ch4_server <- function(input, output, session) {
 
     p_bot <- ggplot() +
       step_line("known", xintercept = 0) +
-      ch4_role_text(0, 0.45, "0 = brak różnicy", role = "known",
-                 hjust = -0.1, size = 4) +
       labs(x = "Różnica proporcji  —  Grupa 1 − Grupa 2",
            y = NULL) +
       step_frame(xlim = xlims_bot, ylim = c(-0.55, 0.55), y_axis = FALSE)
@@ -1009,9 +1007,7 @@ ch4_server <- function(input, output, session) {
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank()) +
       geom_vline(xintercept = 0, color = col_true_local,
-                 linewidth = 1, linetype = "dashed") +
-      annotate("text", x = 0, y = 0.45, label = "0 = brak różnicy",
-               color = col_true_local, fontface = "bold", size = 4, hjust = -0.1)
+                 linewidth = 1, linetype = "dashed")
 
     # Obszar hipotezy
     if (!is.null(hypothesis)) {
@@ -1083,7 +1079,7 @@ ch4_server <- function(input, output, session) {
 
     xlims <- range(c(all_lowers, all_uppers))
     xlims[1] <- max(0, xlims[1] - 0.03)
-    xlims[2] <- min(1, xlims[2] + 0.03)
+    xlims[2] <- min(1, xlims[2] + 0.12)
 
     y_positions <- seq_len(k)
     group_df <- data.frame(group = groups, y = y_positions,
@@ -1100,17 +1096,11 @@ ch4_server <- function(input, output, session) {
             panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank())
 
-    # Etykiety grup
-    p <- p +
-      annotate("text", x = xlims[1], y = y_positions,
-               label = groups, hjust = 0, fontface = "bold", size = 4.5,
-               color = upwr_secondary)
-
-    # Krok 1+: surowe liczby x/n
+    # Nazwa i liczby w jednej kolumnie po prawej, poza przedziałami.
     if (step >= 1) {
       p <- p +
         annotate("text", x = xlims[2], y = y_positions,
-                 label = group_df$label, hjust = 1, size = 4,
+                 label = paste(groups, group_df$label, sep = " · "), hjust = 1, size = 4,
                  color = upwr_secondary, fontface = "italic")
     }
 

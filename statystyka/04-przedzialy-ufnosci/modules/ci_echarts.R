@@ -77,6 +77,15 @@ ci_echarts_spec <- function(plot) {
         d <- d[as.integer(d$PANEL)==pi,,drop=FALSE]
         if (!nrow(d)) next
         geom <- class(b$plot$layers[[li]]$geom)[1]
+        if (geom == "GeomBlank") next  # tylko rozszerza skale
+        if (geom %in% c("GeomArea", "GeomRibbon")) {
+          # Pole między ymin i ymax jako wielokąt: górna krawędź, potem dolna wstecz.
+          for (g in unique(d$group)) {
+            dd <- d[d$group==g,,drop=FALSE]; dd <- dd[order(dd$x),,drop=FALSE]
+            add("polygon", unname(rbind(cbind(dd$x, dd$ymax), cbind(rev(dd$x), rev(dd$ymin)))), dd[1,,drop=FALSE])
+          }
+          next
+        }
         if (geom %in% c("GeomLine", "GeomPath")) {
           for (g in unique(d$group)) {
             dd <- d[d$group==g,,drop=FALSE]
@@ -122,10 +131,12 @@ ci_echarts_spec <- function(plot) {
   list(panels=panels, color_keys=color_keys)
 }
 
-ci_echarts_server <- function(id, plot, session = shiny::getDefaultReactiveDomain()) {
+# alt: opis dostępności; bez niego aria-label składa się z nazw osi i napisów.
+ci_echarts_server <- function(id, plot, alt = NULL, session = shiny::getDefaultReactiveDomain()) {
   output <- session$output
   output[[paste0(id,"_ec")]] <- shiny::renderUI({
     spec <- ci_echarts_spec(plot())
+    if (!is.null(alt)) spec$alt <- alt
     tags$span(`data-ci-spec` = jsonlite::toJSON(spec, auto_unbox=TRUE,
       null="null", na="null", digits=12))
   })

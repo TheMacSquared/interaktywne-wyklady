@@ -707,7 +707,7 @@ test("konstruktor CI podpina lupę poza wykresem bez pętli inicjalizacji", () =
   const plot = root("ci-ec-plot", [ecbox("ci"),config]);
   const button = new Element("button", {"data-lc-chart-zoom":"true"});
   const stepper = root("lc-stepper", [button,plot]);
-  env.load("04-przedzialy-ufnosci/modules/s4p_ci_echarts.js");
+  env.load("04-przedzialy-ufnosci/modules/ci_echarts.js");
   env.mount(stepper);
   assert.equal(env.errors.length,0,"lupa poza korzeniem wykresu nie może przerwać inicjalizacji");
   assert.equal(env.live.size,1);
@@ -716,6 +716,10 @@ test("konstruktor CI podpina lupę poza wykresem bez pętli inicjalizacji", () =
     const rendered = series.renderItem({dataIndex:i},{coord:p=>[p[0]*1000,p[1]*500]});
     assert.ok(rendered.clipPath.shape.width>500,"obszar przycięcia musi mieć szerokość panelu, nie grubość kreski");
     assert.ok(rendered.children.length>0);
+    // Element o tym samym indeksie mógł wcześniej być napisem z przesunięciem x/y.
+    assert.equal(rendered.x,0,"grupa zeruje przesunięcie po poprzednim napisie");
+    assert.equal(rendered.y,0);
+    assert.equal(rendered.children[0].x,0,"kształt zeruje przesunięcie po poprzednim napisie");
   }
   for(let i=0;i<5;i++) env.mutations();
   assert.equal(env.charts.length,1,"kolejne mutacje DOM nie tworzą ponownie wykresu");
@@ -725,4 +729,47 @@ test("konstruktor CI podpina lupę poza wykresem bez pętli inicjalizacji", () =
   assert.equal(env.live.size,0);
   assert.equal(button.listeners.get("click").size,0,"sprzątanie usuwa obsługę zewnętrznego przycisku");
   assert.equal(env.errors.length,0);
+});
+
+test("eksploratory CI (Ryc. 2.2, 3.4, 3.5): ECharts, klawiatura, presety i sprzątanie", () => {
+  const env = environment();
+  env.load("04-przedzialy-ufnosci/modules/ci_explorers.js");
+  const explorer = (kind, config, inputs, buttons = []) => {
+    const read = new Element("div", { class: "ci-explorer-read" });
+    const fields = Object.entries(inputs).map(([k, v]) => new Element("input", { "data-ex-input": k, value: String(v) }));
+    const btns = buttons.map(a => new Element("button", { "data-ex-action": a }));
+    const box = new Element("div", { class: "ci-explorer-chart" }, [new Element("div", { class: "lc-ec" })]);
+    const el = root("ci-explorer", [...fields, ...btns, box, read], { "data-kind": kind, "data-config": JSON.stringify(config) });
+    return { el, read, fields, btns };
+  };
+  // Ryc. 3.4: uchwyt średniej linii 1 zmienia różnicę z klawiatury.
+  const diff = explorer("difference", { base: 9.08, margins: [0.18, 0.17], diff_margin: 0.25 }, { d: 0.34 }, ["trap"]);
+  env.mount(diff.el);
+  assert.equal(env.errors.length, 0);
+  assert.equal(env.live.size, 1);
+  assert.match(diff.read.textContent, /^Różnica 0.34/);
+  const handle = diff.el.querySelector(".lc-chart-handle");
+  press(handle, "ArrowRight", true);
+  assert.equal(String(diff.fields[0].value), "0.44", "Shift + strzałka przesuwa o 0.1");
+  assert.match(diff.read.textContent, /^Różnica 0.44/);
+  diff.el.emit("click", { target: diff.btns[0] });
+  assert.equal(String(diff.fields[0].value), "0.3", "preset „Pułapka”");
+  // Ryc. 3.5: preset ustawia efekt i n, odczyt mówi o kierunku i użyteczności.
+  const tq = Array.from({ length: 1981 }, () => 1.96);
+  const useful = explorer("useful", { tq }, { effect: 0.4, n: 1000 }, ["useful"]);
+  env.mount(useful.el);
+  useful.el.emit("click", { target: useful.btns[0] });
+  assert.deepEqual(useful.fields.map(f => String(f.value)), ["4", "400"]);
+  assert.match(useful.read.textContent, /kierunek dodatni · oszczędność przekracza 2 min/);
+  // Ryc. 2.2 bez mapy: wykres i odczyt działają, nowa seria przechodzi do kolejnych prób.
+  const groups = [[{ xbar: 170, s: 10 }], [{ xbar: 190, s: 10 }]];
+  const cov = explorer("coverage", { groups, tq: Array(20).fill(2.064) }, { level: 95 }, ["new"]);
+  env.mount(cov.el);
+  assert.match(cov.read.textContent, /trafia 1 \/ 100/);
+  cov.el.emit("click", { target: cov.btns[0] });
+  assert.match(cov.read.textContent, /trafia 0 \/ 100/);
+  [diff, useful, cov].forEach(x => env.unmount(x.el));
+  assert.equal(env.live.size, 0, "zmiana rozdziału zwalnia wykresy");
+  assert.equal(diff.el.querySelectorAll(".lc-chart-handle").length, 0, "uchwyt znika razem z widgetem");
+  assert.equal(env.errors.length, 0);
 });

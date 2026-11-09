@@ -26,6 +26,22 @@ ch5_ui <- list(
       co tę odległość wydłuża i skraca oraz jak zaplanować badanie, żeby
       wynik był wystarczająco precyzyjny."),
 
+    lc_p("Zacznijmy od sytuacji, w której precyzję widać w złotówkach. Pracownia
+      sondażowa ma oszacować poparcie dla partii i płaci 20 zł za każdą ankietę.
+      Na początku ma 100 ankiet, a przy poparciu bliskim 50% wynik obarczony
+      jest marginesem prawie ±10 punktów procentowych. Dokupuj ankiety albo
+      podwajaj próbę i obserwuj, jak zwęża się przedział i rośnie rachunek.
+      Wykres pokazuje planowaną precyzję przy p = 0.5, a nie wynik zebranych
+      już odpowiedzi."),
+
+    fig("5a"),
+
+    lc_p("Pierwsze dokupione setki ankiet wyraźnie zwężają przedział, kolejne
+      coraz mniej. Żeby zmniejszyć margines o połowę, trzeba czterokrotnie
+      zwiększyć próbę, więc także koszt. Z ±10 do ±5 punktów pracownia przechodzi
+      za 6 000 zł, z ±5 do ±2.5 płaci już 24 000 zł. Ten rozdział wyjaśnia,
+      skąd bierze się ta zależność i od czego jeszcze zależy szerokość przedziału."),
+
     lc_h2("ch5-czynniki", "Trzy czynniki szerokości przedziału"),
 
     lc_p("Odległość od estymaty do każdej z granic przedziału nazywamy ",
@@ -64,7 +80,7 @@ ch5_ui <- list(
       porównać jego szerokość między ustawieniami."),
 
     figure_panel(
-      label = "Ryc. 5.1", title = "Jak zmienia się szerokość przedziału?",
+      label = "Ryc. 5.2", title = "Jak zmienia się szerokość przedziału?",
       full_width = TRUE,
       lc_toolbar(
         lc_slider("ch5_n", "Wielkość próby (n)", 5, 100, 30, 1),
@@ -115,7 +131,7 @@ ch5_ui <- list(
       publikacji albo rozsądnego szacunku zakresu wartości."),
 
     figure_panel(
-      label = "Ryc. 5.2", title = "Kalkulator wielkości próby",
+      label = "Ryc. 5.3", title = "Kalkulator wielkości próby",
       full_width = TRUE,
       lc_toolbar(
         numericInput("ch5_plan_me", "Pożądany margines błędu",
@@ -140,8 +156,9 @@ ch5_ui <- list(
       95% wymaga wtedy 1068 respondentów. Stąd biorą się typowe sondaże
       na około tysiącu osób."),
 
-    s4p("5a"),
-    s4p("5b"),
+    lc_p("To ten sam rachunek co w pracowni z Ryc. 5.1: margines ±3 punkty
+      wymaga około tysiąca ankiet, a każde kolejne zmniejszenie go o połowę
+      kosztuje cztery razy więcej."),
 
     lc_h2("ch5-porownanie", "Ten sam zbiór, trzy poziomy ufności"),
 
@@ -151,7 +168,7 @@ ch5_ui <- list(
       są za każdym razem te same, zmienia się tylko t*."),
 
     figure_panel(
-      label = "Ryc. 5.3", title = "Trzy poziomy ufności",
+      label = "Ryc. 5.4", title = "Trzy poziomy ufności",
       full_width = TRUE,
       lc_toolbar(
         selectInput("ch5_cmp_data", "Dane",
@@ -259,15 +276,13 @@ ch5_ui <- list(
       Kto najpierw patrzy na przedziały, a potem wybiera poziom, przy którym
       wniosek wychodzi „po jego myśli”, przestaje mierzyć siłę dowodów."),
 
-    s4p("5c"),
-    bb("publish"),
 
     lc_note("Zasada", rule = TRUE,
       "Poziom ufności ustal przed analizą danych i zawsze podawaj go w raporcie
        razem z przedziałem."
     ),
 
-    s4p("D1"),
+    fig("D1"),
 
     lc_p("Ten rozdział zamyka wykład o przedziałach ufności. Zaczęliśmy od
       pytania, jak z jednej próby powiedzieć coś o populacji, a skończyliśmy

@@ -22,8 +22,8 @@
       };
       spec.panels.forEach((p,pi)=>{
         const box=p.box, yWidth=p.y.show?Math.min(W*.24,Math.max(36,...p.y.labels.map(s=>s.length*fs*.53))):8;
-        const left=box[0]*W+yWidth+8, top=box[1]*H+(p.label?fs*2:fs*.9);
-        const width=Math.max(20,box[2]*W-yWidth-28), height=Math.max(20,box[3]*H-fs*(p.label?5.2:4.2));
+        const yName=p.y.name?fs*1.6:0, left=box[0]*W+yWidth+8+yName, top=box[1]*H+(p.label?fs*2:fs*.9);
+        const width=Math.max(20,box[2]*W-yWidth-28-yName), height=Math.max(20,box[3]*H-fs*(p.label?5.2:4.2));
         grids.push({left,top,width,height,outerBoundsMode:'none'});
         const axis=(a,vertical)=>{
           const labels=a.labels,breaks=a.breaks;
@@ -32,14 +32,25 @@
             return at>=0?labels[at]:String(Math.round(v*100)/100);
           };
           const discrete=labels.some((s,i)=>!Number.isFinite(Number(s)) || Math.abs(Number(s)-breaks[i])>1e-6);
+          // Kraniec osi dostaje etykietę tylko wtedy, gdy jest podziałką z R
+          // (bez „24.45” czy „475.9” uciętych przy brzegu).
+          const isBreak=v=>breaks.some(b=>Math.abs(b-v)<1e-7*Math.max(1,Math.abs(v)));
+          // Etykiety tekstowe (np. „1 ★”, nazwy wierszy) stoją dokładnie na podziałkach R;
+          // automatyczne podziałki ECharts zaczynają się od krańca osi i by je minęły.
+          // To samo dla nierównych odstępów, np. wartości krytycznych ±1.96 i ±2.78.
+          const step=breaks.length>1?breaks[1]-breaks[0]:0;
+          const uneven=breaks.some((v,i)=>i>0 && Math.abs(v-breaks[i-1]-step)>1e-6*Math.max(1,Math.abs(step)));
+          const pinned=discrete || uneven, custom=pinned?breaks:undefined;
           return C.ecAxis(P,fs,{type:'value',gridIndex:pi,min:a.range[0],max:a.range[1],
-            interval:discrete && breaks.length>1?Math.abs(breaks[1]-breaks[0]):undefined,
             splitNumber:5,name:a.name,nameGap:fs*(vertical?3:2),
             nameTextStyle:{fontFamily:C.token('--upwr-sans'),fontSize:fs,color:P.soft},
-            axisLabel:{show:a.show,color:P.subtle,fontSize:fs,fontFamily:vertical?C.token('--upwr-sans'):P.mono,
-              hideOverlap:true,formatter:discrete?v=>{const at=breaks.findIndex(b=>Math.abs(b-v)<1e-7);return at>=0?labels[at]:'';}:fmt},
-            axisLine:{show:!vertical || a.show,lineStyle:{color:P.rule}},
-            axisTick:{show:a.show,lineStyle:{color:P.rule}},splitLine:{show:!vertical || a.show,lineStyle:{color:P.ruleSoft}}});
+            axisLabel:{show:a.show,customValues:custom,
+              showMinLabel:pinned?undefined:isBreak(a.range[0]),showMaxLabel:pinned?undefined:isBreak(a.range[1]),
+              color:P.subtle,fontSize:fs,fontFamily:vertical?C.token('--upwr-sans'):P.mono,
+              hideOverlap:!pinned,formatter:pinned?v=>{const at=breaks.findIndex(b=>Math.abs(b-v)<1e-7*Math.max(1,Math.abs(v)));return at>=0?labels[at]:'';}:fmt},
+            axisLine:{show:!vertical || a.show,onZero:false,lineStyle:{color:P.rule}},
+            axisTick:{show:a.show,customValues:custom,lineStyle:{color:P.rule}},
+            splitLine:{show:!pinned && (!vertical || a.show),lineStyle:{color:P.ruleSoft}}});
         };
         xAxis.push(axis(p.x,false));yAxis.push(axis(p.y,true));
         if(p.label) graphic.push({type:'text',left,top:box[1]*H,style:{text:p.label,fill:P.ink,fontSize:fs,fontFamily:C.token('--upwr-sans')}});
@@ -62,22 +73,37 @@
             }
             if(e.type==='point') {
               const pt=coord(coords),r=Math.max(2,e.size*1.05);
+              if(e.shape==='4') {
+                // Krzyżyk (shape = 4 w ggplot): dwie kreski zamiast wypełnienia.
+                const line=(a,b)=>({type:'line',shape:{x1:pt[0]+a*r,y1:pt[1]+b*r,x2:pt[0]-a*r,y2:pt[1]-b*r},
+                  style:{stroke,lineWidth:Math.max(1.5,r/3),opacity}});
+                shape=[line(1,1),line(1,-1)];
+              } else {
               shape=e.shape==='18'?{type:'polygon',shape:{points:[[pt[0],pt[1]-r],[pt[0]+r,pt[1]],[pt[0],pt[1]+r],[pt[0]-r,pt[1]]]}}:
                 {type:'circle',shape:{cx:pt[0],cy:pt[1],r}};
               shape.style={fill:stroke,opacity};
+              }
             } else if(e.type==='line') {
               shape={type:'polyline',shape:{points:coords.map(coord)},style:{stroke,lineWidth:strokeWidth,lineDash:dash,fill:null,opacity}};
+            } else if(e.type==='polygon') {
+              shape={type:'polygon',shape:{points:coords.map(coord)},style:{fill,stroke:null,opacity}};
             } else if(e.type==='rect') {
               const a=coord(coords.slice(0,2)),b=coord(coords.slice(2));
               shape={type:'rect',shape:{x:Math.min(a[0],b[0]),y:Math.min(a[1],b[1]),width:Math.abs(a[0]-b[0]),height:Math.abs(a[1]-b[1])},
                 style:{fill,stroke:e.color==='NA'?null:stroke,lineWidth:strokeWidth,opacity}};
             }
-            return {type:'group',clipPath:{type:'rect',shape:{x:left,y:top,width,height}},children:shape?[shape]:[]};
+            // ECharts przy zmianie kroku używa ponownie elementów z tym samym indeksem.
+            // Napis ma przesunięcie x/y; bez jawnego zera grupa i kształt
+            // w jego miejscu dziedziczyłyby to przesunięcie i uciekały z wykresu.
+            const still={x:0,y:0,rotation:0,scaleX:1,scaleY:1};
+            const children=shape?[].concat(shape):[];
+            children.forEach(child=>Object.assign(child,still));
+            return {type:'group',...still,clipPath:{type:'rect',shape:{x:left,y:top,width,height}},children};
           }});
       });
       chart.setOption({animation:false,grid:grids,xAxis,yAxis,series,graphic,
         tooltip:{show:false},textStyle:{fontFamily:C.token('--upwr-sans'),fontSize:fs}},true);
-      el.setAttribute('aria-label',spec.panels.map(p=>[p.x.name,p.y.name,...p.elements.filter(e=>e.type==='text').map(e=>e.text)].filter(Boolean).join('. ')).join('. '));
+      el.setAttribute('aria-label',spec.alt || spec.panels.map(p=>[p.x.name,p.y.name,...p.elements.filter(e=>e.type==='text').map(e=>e.text)].filter(Boolean).join('. ')).join('. '));
     }
     chart=C.chart(el,{}, {renderer:'svg',onResize:draw});
     const observer=new MutationObserver(draw);

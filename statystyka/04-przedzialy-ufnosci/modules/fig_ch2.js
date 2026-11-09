@@ -1,8 +1,8 @@
-// PROTOTYPY PUNKTÓW STOP — rozdział 2, prototyp 2a „Przeciągnij x̄” (2026-10-30)
-// Vanilla JS + SVG, bez serwera. Kontener (R: s4p_2a_ui):
-//   .s4p-flip[data-mu][data-se][data-x][data-min][data-max]
-//     .s4p-flip-stage  — tu wstawiamy SVG
-//     .s4p-flip-read   — odczyt pod rysunkiem
+// Ryc. 2.1 „Odwrócenie: od μ do x̄ i z powrotem” (rozdz. 2)
+// Vanilla JS + SVG, bez serwera. Kontener (R: fig_2a_ui):
+//   .fig-flip[data-mu][data-se][data-x][data-min][data-max]
+//     .fig-flip-stage  — tu wstawiamy SVG
+//     .fig-flip-read   — odczyt pod rysunkiem
 // Przeciąganie: pointer events na całym rysunku (mysz, palec).
 // Klawiatura: uchwyt x̄ to <g role="slider" tabindex="0">; strzałki ±0.1 cm,
 // Shift+strzałka ±1 cm, Home/End na krańce zakresu.
@@ -31,8 +31,8 @@
 
   function init(root) {
     if (root.dataset.ready) return;
-    var stage = root.querySelector(".s4p-flip-stage");
-    var readEl = root.querySelector(".s4p-flip-read");
+    var stage = root.querySelector(".fig-flip-stage");
+    var readEl = root.querySelector(".fig-flip-read");
     if (!stage) return;
     root.dataset.ready = "1";
 
@@ -98,14 +98,14 @@
     var capR = el("line", { y1: IVY - 9, y2: IVY + 9, "stroke-width": "3" }, svg);
 
     var handle = el("g", {
-      class: "s4p-flip-handle",
+      class: "fig-flip-handle",
       role: "slider",
       tabindex: "0",
       "aria-label": "x̄, średnia z próby",
       "aria-valuemin": XMIN.toFixed(1),
       "aria-valuemax": XMAX.toFixed(1)
     }, svg);
-    var hit = el("circle", { r: "18", fill: "transparent", class: "s4p-flip-hit" }, handle);
+    var hit = el("circle", { r: "18", fill: "transparent", class: "fig-flip-hit" }, handle);
     var rhomb = el("polygon", { "stroke-width": "2" }, handle);
     setFill(rhomb, "var(--upwr-cat-bursztyn)");
     setStroke(rhomb, "var(--upwr-surface)");
@@ -115,7 +115,7 @@
     if (readEl) {
       txt = document.createElement("span");
       verdict = document.createElement("span");
-      verdict.className = "s4p-flip-verdict";
+      verdict.className = "fig-flip-verdict";
       readEl.textContent = "";
       readEl.appendChild(txt);
       readEl.appendChild(verdict);
@@ -194,7 +194,7 @@
   }
 
   function scan() {
-    document.querySelectorAll(".s4p-flip:not([data-ready])").forEach(init);
+    document.querySelectorAll(".fig-flip:not([data-ready])").forEach(init);
   }
 
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });

@@ -52,8 +52,8 @@ ch2_ui <- list(
       colors = c("accent", "param")
     ),
 
-    # Ta sama odległość czytana od μ i od x̄ (Ryc. 2.1, s4p_2a_ui w stop_proto_ch2.R)
-    s4p("2a"),
+    # Ta sama odległość czytana od μ i od x̄ (Ryc. 2.1, fig_2a_ui w figures_ch2.R)
+    fig("2a"),
 
     lc_p("Przedział od x̄ - 1.96·SE do x̄ + 1.96·SE to 95% ",
       gloss("przedział ufności"), " dla μ (CI, od ang. ",
@@ -79,7 +79,7 @@ ch2_ui <- list(
       kroku odczyt pod stosem podaje ", gloss("pokrycie"), ", czyli odsetek
       siatek, które złapały μ."),
 
-    # PROTOTYP SCENY (2026-10-08): Zarzuć siatkę — co znaczy 95%
+    # Scena: Zarzuć siatkę — co znaczy 95%
     figure_panel(
       label = "Scena",
       width_mode = "wide",
@@ -114,9 +114,11 @@ ch2_ui <- list(
 
     lc_p("Pewność ma swoją cenę. Przy 99% kwantyl t rośnie do 2.80, przedziały
       są wyraźnie szersze i chybia średnio jeden na sto. Przy 80% kwantyl spada
-      do 1.32, przedziały się zwężają, a chybia średnio co piąty."),
+      do 1.32, przedziały się zwężają, a chybia średnio co piąty. Na Ryc. 2.2
+      zmiana poziomu ufności przelicza te same sto badań, więc widać, ile
+      trafień kosztuje węższy przedział."),
 
-    bb("coverage"),
+    ci_explorer("coverage"),
 
     lc_h2("ch2-jak-interpretowac", "Jak (nie) interpretować przedział ufności"),
 
@@ -127,7 +129,7 @@ ch2_ui <- list(
       jedno poprawnie opisuje ten wynik."),
 
     figure_panel(
-      label = "Ryc. 2.2", title = "Quiz: interpretacja CI",
+      label = "Ryc. 2.3", title = "Quiz: interpretacja CI",
       full_width = TRUE,
       p("Wybierz poprawną interpretację:"),
       uiOutput("ch2_quiz_options"),
@@ -151,7 +153,11 @@ ch2_ui <- list(
       ilu ludzi zmierzyliśmy. Zdanie D nie mówi nic: średnia z próby, 170 cm,
       jest środkiem przedziału, więc leży w nim zawsze."),
 
-    bb("people"),
+    lc_p("Ryc. 2.4 zestawia oba pasy na jednej osi. Gdy zwiększamy liczbę osób,
+      zwęża się tylko przedział ufności średniej, a pas, w którym mieści się
+      95% wzrostów, zostaje taki sam."),
+
+    ci_explorer("people"),
 
     lc_note("Zasada", rule = TRUE,
       tagList(
@@ -180,7 +186,7 @@ ch2_ui <- list(
 
 ch2_server <- function(input, output, session) {
 
-  # --- PROTOTYP SCENY (2026-10-08): Zarzuć siatkę ---
+  # --- Scena: Zarzuć siatkę ---
   scene_texts(input, output, "ch2_siatka", list(
     tagList("Zmierz grupkę. Siatka to ", tags$code("x̄", .noWS = "outside"),
       " ± margines, czyli 95% przedział ufności dla ", tags$code("μ", .noWS = "outside"), "."),

@@ -128,21 +128,23 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   zyskiem — nie tylko widgety ggplot + suwak. Prowadzący potwierdził na
   zajęciach, że wykresy Chart.js są wyraźnie bardziej responsywne niż
   renderowane w Shiny (2026-10-29). Wspólna obsługa: `statystyka/R/lc_charts.js`.
-  Stan 2026-11-05: statystyka 01, 02, 03 i 05 na ECharts; w 04 warianty
-  B3–B6 i B8 (prototypy, jeszcze Chart.js; B1, B2, B7 odrzucone 2026-11-09).
-  Pierwszy widget ECharts w 04: Ryc. 4.2 „Zero braków” (2026-11-09).
+  Stan 2026-11-09: statystyka 01, 02, 03, 04 i 05 na ECharts. W 04 wszystkie
+  ryciny rysuje ECharts: eksploratory w `ci_explorers.js`, wykresy ggplot przez
+  most `ci_echarts.R` / `ci_echarts.js` (obliczenia w R, rysunek w JS).
   - [ ] Migracja statystyki z Chart.js na ECharts (decyzja 2026-11-05:
     renderer SVG, canvas dla tysięcy punktów; pełny `echarts.min.js`
     z cdnjs; analiza ryzyka zostaje przy Chart.js). Wspólna obsługa
     w `lc_charts.js` gotowa. Wykłady 01, 02, 03 i 05 w całości na ECharts
-    (2026-11-05; mostek offline `widgets/01-ch2-jakosciowe.js` też). Chart.js
-    zostaje tylko w 04 (warianty B3–B6 i B8 w `brainstorm.js`, do decyzji
-    o prototypach). Na końcu usunąć Chart.js, `styleAxes`, `create` i rozważyć
-    okrojoną bibliotekę. Wykresy R, których na razie nie przenosimy, są
+    (2026-11-05; mostek offline `widgets/01-ch2-jakosciowe.js` też), 04 od
+    2026-11-09. Wykłady statystyki nie ładują już Chart.js (poza
+    `prototypy/chart-dostepnosc`); zostało usunąć `styleAxes`,
+    `create` z `lc_charts.js` (po sprawdzeniu testów, które ich używają)
+    i rozważyć okrojoną bibliotekę. Wykresy R, których na razie nie przenosimy, są
     w wersji offline zamrożone (decyzja 2026-11-05).
-  - [ ] Statystyka 04: decyzje o parach prototyp R / wariant B
-    (`04-przedzialy-ufnosci/BRAINSTORM.md`), potem port pozostałych
-    wykresów R, w tym zaakceptowanych Ryc. 1.1–1.4 i paneli rozdz. 3–5.
+  - [x] Statystyka 04: decyzje o prototypach i port wszystkich wykresów
+    na ECharts (2026-11-09). Ryciny rysowane przez most `ci_echarts` nadal
+    potrzebują serwera R do obliczeń; w pełni offline działają eksploratory,
+    Ryc. 2.1 i 4.2 oraz sceny SVG.
   - [ ] Statystyka 01, 03: pozostałe wykresy R (eksploratory rozkładów,
     histogramy, pudełka itd.).
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).

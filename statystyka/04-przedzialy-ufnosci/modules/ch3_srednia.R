@@ -61,7 +61,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.1", title = "Rozkład t ma cięższe ogony",
       width_mode = "text",
-      lc_plot("ch3_tnorm_plot", ratio = "2/1", max_height = "380px"),
+      ci_echarts_ui("ch3_tnorm_plot", ratio = "2/1", max_height = "380px"),
       lc_caption("t* dla 95%: 2.78 przy n = 5, 2.06 przy n = 25, 1.96 w rozkładzie normalnym.")
     ),
 
@@ -239,7 +239,11 @@ ch3_ui <- list(
        przedziałów grup nie dowodzi, że różnicy nie ma."
     ),
 
-    bb("difference"),
+    lc_p("Na Ryc. 3.4 można rozsuwać średnie dwóch linii płatków ze scenariusza C.
+      Warto znaleźć ustawienie, w którym przedziały grup jeszcze się nakładają,
+      a przedział różnicy już nie obejmuje zera."),
+
+    ci_explorer("difference"),
 
     lc_h2("ch3-case-studies", "Case studies — jak interpretować CI w praktyce"),
 
@@ -345,8 +349,12 @@ ch3_ui <- list(
       standardowego IQ. Wynik jest istotny statystycznie, ale nie ma ",
       gloss("istotność praktyczna", "istotności praktycznej"), "."),
 
-    s4p("3c"),
-    bb("useful"),
+    lc_p("Żeby ocenić znaczenie praktyczne, trzeba przed badaniem ustalić, jaka
+      zmiana jest użyteczna. Na Ryc. 3.5 progiem jest oszczędność 2 minut.
+      Przedział może leżeć nad zerem, a mimo to w całości poniżej progu. Może też
+      być tak szeroki, że nie rozstrzyga ani kierunku, ani użyteczności."),
+
+    ci_explorer("useful"),
 
     lc_p("Przy wielu grupach przedziały zestawia się na jednej osi w ",
       gloss("forest plot", "forest plocie"), ". Taki wykres to szybka mapa:
@@ -378,7 +386,7 @@ ch3_ui <- list(
 ch3_server <- function(input, output, session) {
 
   # Gęstość N(0, 1) i t (df = 4), ogony poza ±t*
-  zoom_plot_server("ch3_tnorm_plot", reactive({
+  ci_echarts_server("ch3_tnorm_plot", reactive({
     df_t <- 4
     t_star <- qt(0.975, df_t); z_star <- qnorm(0.975)
     x <- seq(-5, 5, length.out = 600)
@@ -947,9 +955,9 @@ ch3_server <- function(input, output, session) {
     }
     if (step >= 2) {
       p_top <- p_top +
-        geom_segment(aes(x = x1, xend = x1, y = 0.4, yend = 2.1),
+        geom_segment(aes(x = x1, xend = x1, y = 0.6, yend = 2.1),
                      color = col_g1, linetype = "dotted", linewidth = 0.8) +
-        geom_segment(aes(x = x2, xend = x2, y = 0.4, yend = 2.1),
+        geom_segment(aes(x = x2, xend = x2, y = 0.6, yend = 2.1),
                      color = col_g2, linetype = "dotted", linewidth = 0.8) +
         geom_point(aes(x = x1, y = 1.8), color = col_g1,
                    size = 7, shape = 18) +
@@ -958,7 +966,8 @@ ch3_server <- function(input, output, session) {
         annotate("text", x = x1, y = 2.15,
                  label = paste0("x̄₁ = ", round(x1, 2)),
                  color = col_g1, fontface = "bold", size = 4.5) +
-        annotate("text", x = x2, y = 2.15,
+        # x̄₂ pod grupą B: przy bliskich średnich etykiety nie nachodzą na siebie.
+        annotate("text", x = x2, y = 0.47,
                  label = paste0("x̄₂ = ", round(x2, 2)),
                  color = col_g2, fontface = "bold", size = 4.5)
     }
@@ -1009,9 +1018,7 @@ ch3_server <- function(input, output, session) {
       # linia zero gdy brak hipotezy
       p_bot <- p_bot +
         geom_vline(xintercept = 0, color = col_true,
-                   linewidth = 1, linetype = "dashed") +
-        annotate("text", x = 0, y = 0.55, label = "0 = brak różnicy",
-                 color = col_true, fontface = "bold", size = 4, hjust = -0.1)
+                   linewidth = 1, linetype = "dashed")
     }
 
     p_bot <- p_bot +

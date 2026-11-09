@@ -79,7 +79,7 @@ ch1_ui <- list(
       withMathJax("\\(\\hat{\\theta}\\)"), " oznacza estymator parametru ",
       withMathJax("\\(\\theta\\)"), "."),
 
-    s4p("1b"),
+    fig("1b"),
 
     lc_p("Ryc. 1.1 pokazuje estymatory na tarczy. Środek tarczy to parametr,
       a każdy strzał to estymata z jednej próby. Dwie górne tarcze celują
@@ -136,7 +136,7 @@ ch1_ui <- list(
       miarki. Uszkodzonej miarce brakuje pierwszych 2 cm taśmy, więc każdy
       pomiar wychodzi o 2 cm za duży."),
 
-    s4p("1a"),
+    fig("1a"),
 
     lc_p("Po tysiącu grupek trzy pierwsze stosy stoją wokół μ = 170 cm, więc
       wszystkie trzy estymatory są nieobciążone. Różnią się jednak szerokością:
@@ -183,7 +183,7 @@ ch1_ui <- list(
        zwiększyć próbę."
     ),
 
-    s4p("1c"),
+    fig("1c"),
 
     lc_p("Ryc. 1.3 pokazuje tę zasadę na stosach średnich. Przy n = 25 średnie
       rozrzucają się z odchyleniem standardowym około 2 cm, przy n = 100 około
@@ -202,7 +202,7 @@ ch1_ui <- list(
       skoki by nie zniknęły. Dowolna pojedyncza estymata może więc leżeć kilka
       centymetrów od μ, a sama liczba nie zdradza, jak daleko."),
 
-    s4p("1d"),
+    fig("1d"),
 
     lc_p("Ta sama sytuacja zdarza się poza salą wykładową. Na Ryc. 1.4 dwie
       pizzerie miały wczoraj tę samą średnią ocen, 4.4 ★. U Gośki oceniło
@@ -234,5 +234,5 @@ ch1_ui <- list(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
-  # Scena i ryciny rozdziału działają po stronie przeglądarki albo w s4p_ch1_server().
+  # Scena i ryciny rozdziału działają po stronie przeglądarki albo w fig_ch1_server().
 }
