@@ -129,13 +129,14 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   zajęciach, że wykresy Chart.js są wyraźnie bardziej responsywne niż
   renderowane w Shiny (2026-10-29). Wspólna obsługa: `statystyka/R/lc_charts.js`.
   Stan 2026-11-05: statystyka 01, 02, 03 i 05 na ECharts; w 04 warianty
-  B3–B8 (prototypy, jeszcze Chart.js; B1, B2 odrzucone 2026-11-09).
+  B3–B6 i B8 (prototypy, jeszcze Chart.js; B1, B2, B7 odrzucone 2026-11-09).
+  Pierwszy widget ECharts w 04: Ryc. 4.2 „Zero braków” (2026-11-09).
   - [ ] Migracja statystyki z Chart.js na ECharts (decyzja 2026-11-05:
     renderer SVG, canvas dla tysięcy punktów; pełny `echarts.min.js`
     z cdnjs; analiza ryzyka zostaje przy Chart.js). Wspólna obsługa
     w `lc_charts.js` gotowa. Wykłady 01, 02, 03 i 05 w całości na ECharts
     (2026-11-05; mostek offline `widgets/01-ch2-jakosciowe.js` też). Chart.js
-    zostaje tylko w 04 (warianty B3–B8 w `brainstorm.js`, do decyzji
+    zostaje tylko w 04 (warianty B3–B6 i B8 w `brainstorm.js`, do decyzji
     o prototypach). Na końcu usunąć Chart.js, `styleAxes`, `create` i rozważyć
     okrojoną bibliotekę. Wykresy R, których na razie nie przenosimy, są
     w wersji offline zamrożone (decyzja 2026-11-05).

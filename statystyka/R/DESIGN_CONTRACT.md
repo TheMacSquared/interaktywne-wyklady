@@ -158,7 +158,8 @@ Migracja na ECharts (decyzja 2026-11-05): statystyka przechodzi z Chart.js
 na ECharts 6.1.0 (`https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js`,
 pełna biblioteka). Do zakończenia migracji obie biblioteki działają obok
 siebie w tym samym `lcCharts`; nowe i przepisywane widgety używają ECharts.
-Stan: wykłady 01, 02, 03 i 05 bez Chart.js; zostaje 04 (prototypy).
+Stan: wykłady 01, 02, 03 i 05 bez Chart.js; zostaje 04 (warianty B, ECharts
+ma już Ryc. 4.2).
 Analiza ryzyka zostaje na razie przy Chart.js (osobna decyzja). Wykresy R,
 których na razie nie przenosimy, są w wersji offline zamrożone.
 

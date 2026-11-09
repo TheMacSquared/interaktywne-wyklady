@@ -37,9 +37,9 @@ bb_panel <- function(id, title, controls, config, caption, ..., ratio = "2 / 1")
     )
   )
 }
-# Numery wariantów zgodne z BRAINSTORM.md; B1 i B2 (rozdz. 1) odrzucone 2026-11-09.
+# Numery wariantów zgodne z BRAINSTORM.md; B1, B2 (rozdz. 1) i B7 (rozdz. 4) odrzucone 2026-11-09.
 bb_variants <- c(coverage = "B3", people = "B4", difference = "B5",
-                 useful = "B6", defects = "B7", publish = "B8")
+                 useful = "B6", publish = "B8")
 
 bb_configs <- bb_seed(431026, {
   groups <- lapply(1:8, function(i) s4p_2_draw(100))
@@ -49,19 +49,13 @@ bb_configs <- bb_seed(431026, {
   publication <- data.frame(mean = means, lo = means - qt(.975, 39) * se,
                             hi = means + qt(.975, 39) * se)
   z <- qnorm(.975)
-  defect_intervals <- lapply(0:50, function(k) {
-    list(wald = unname(s4p_ch4_wald(k, 50, z)),
-         wilson = unname(s4p_ch4_wilson(k, 50, z)),
-         exact = c(if (k == 0) 0 else qbeta(.025, k, 51-k),
-                   if (k == 50) 1 else qbeta(.975, k+1, 50-k)))
-  })
   st <- s4p_3a_stats(.34)
   list(coverage = list(groups = groups, tq = unname(qt((1 + (80:99)/100)/2, 24))),
        people = list(z = z), difference = list(base = 9.08,
          margins = c((st$ci1[2]-st$ci1[1])/2, (st$ci2[2]-st$ci2[1])/2),
          diff_margin = st$d_ist),
        useful = list(tq = unname(qt(.975, 2*(20:2000)-2))),
-       defects = list(intervals = defect_intervals), publish = list(rows = publication, xlim = c(floor(min(publication$lo)), ceiling(max(publication$hi)))))
+       publish = list(rows = publication, xlim = c(floor(min(publication$lo)), ceiling(max(publication$hi)))))
 })
 
 bb_ui <- list(
@@ -90,12 +84,6 @@ bb_ui <- list(
                        bb_action("useful", "Wyraźnie użyteczna"))), bb_configs$useful,
     "Założony przed badaniem próg użytecznej zmiany: 2 min; s = 10 min w obu niezależnych grupach, 95% CI różnicy.",
     ratio = "2.5 / 1"),
-  defects = bb_panel("defects", "Zaznacz wadliwe sztuki",
-    bb_actions(bb_action("zero", "0 wad"), bb_action("one", "1 wada"), bb_action("four", "4 wady")),
-    bb_configs$defects,
-    "Każdy kwadrat to jedna z 50 sprawdzonych sztuk. Wald, Wilson i dokładny Clopper–Pearson dla tej samej próby, ufność 95%.",
-    tags$div(class = "bb-products", role = "group", `aria-label` = "Próba 50 produktów"),
-    ratio = "2.3 / 1"),
   publish = bb_panel("publish", "Co zostaje po selekcji wyników?",
     bb_actions(bb_action("one", "+1 badanie"), bb_action("hundred", "+100"),
                bb_action("thousand", "+1000"), bb_action("filter", "Tylko dolna granica > 26"),

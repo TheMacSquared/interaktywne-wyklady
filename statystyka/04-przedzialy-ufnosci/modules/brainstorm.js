@@ -1,4 +1,4 @@
-// Szkice B3–B8 (B1, B2 odrzucone 2026-11-09). Obliczenia rozkładów i kwantyle pochodzą z R.
+// Szkice B3–B6 i B8 (B1, B2, B7 odrzucone 2026-11-09). Obliczenia rozkładów i kwantyle pochodzą z R.
 (function () {
   "use strict";
   var C = window.lcCharts;
@@ -9,7 +9,7 @@
   C.onReady(".bb-widget", function (root) {
     var cfg = JSON.parse(root.dataset.config), kind = root.dataset.kind;
     var canvas = root.querySelector("canvas"), read = root.querySelector(".bb-read");
-    var state = { count: 0, batch: 0, filtered: false, bad: new Set() };
+    var state = { count: 0, batch: 0, filtered: false };
     var P, inputs = {};
     root.querySelectorAll("[data-bb-input]").forEach(function (input) { inputs[input.dataset.bbInput] = input; });
     function val(key) { return Number(inputs[key].value); }
@@ -29,7 +29,7 @@
           return (ctx.dataset.label ? ctx.dataset.label + ": " : "") + fixed(ctx.parsed.x,2);
         }}}},
         scales: { x:{type:"linear", title:{display:true,text:""}, ticks:{maxTicksLimit:6,callback:function(v){
-          return kind === "defects" ? Math.round(v*100)+"%" : String(Math.round(v*1000)/1000);
+          return String(Math.round(v*1000)/1000);
         }}},
           y:{type:"linear", min:0,max:5, afterBuildTicks:function(axis){
             if(axis.chart.$labels)axis.ticks=Object.keys(axis.chart.$labels).map(Number).sort(function(a,b){return a-b;}).map(function(v){return {value:v};});
@@ -99,18 +99,6 @@
       var map=root.querySelector(".bb-map");
       for(var m=0;m<100;m++)map.appendChild(document.createElement("span"));
     }
-    if(kind==="defects") {
-      var box=root.querySelector(".bb-products");
-      for(var b=0;b<50;b++) {
-        var button=document.createElement("button");button.type="button";button.textContent=String(b+1);
-        button.dataset.product=String(b);button.setAttribute("aria-label","Sztuka "+(b+1)+": przełącz wadę");
-        button.setAttribute("aria-pressed","false");box.appendChild(button);
-      }
-      C.listen(box,"click",function(e){
-        var button=e.target.closest("[data-product]");if(!button)return;
-        var k=Number(button.dataset.product);if(state.bad.has(k))state.bad.delete(k);else state.bad.add(k);draw();
-      });
-    }
     function draw() {
       P=C.palette(); var ds=[], rows, selected, i, y, lo, hi;
       if(kind==="coverage") {
@@ -152,13 +140,6 @@
         var stat=lo>0?"kierunek dodatni":hi<0?"kierunek ujemny":"kierunek nierozstrzygnięty";
         var practical=lo>2?"oszczędność przekracza 2 min":hi < -2?"nowa metoda wydłuża czas o ponad 2 min":lo>=-2&&hi<=2?"cały CI w pasie zmian mniejszych niż 2 min":"użyteczność nierozstrzygnięta";
         say("95% CI ["+fixed(lo,2)+", "+fixed(hi,2)+"] min · "+stat+" · "+practical);
-      } else if(kind==="defects") {
-        frame(-.12,1.12,.5,3.5,{3:"Wald",2:"Wilson",1:"Dokładny"},"Proporcja wadliwych sztuk");
-        chart.$refs=[0,1];chart.$bands=[{lo:-.12,hi:0,color:C.alpha(P.terakota,.1)}];
-        var x=state.bad.size,iv=cfg.intervals[x];
-        ["wald","wilson","exact"].forEach(function(key,j){ds.push(line(iv[key][0],iv[key][1],3-j,j===0?P.terakota:j===1?P.niebo:P.szalwia,5,key));ds.push(points([{x:x/50,y:3-j}],P.bursztyn,4));});
-        box.querySelectorAll("[data-product]").forEach(function(el){el.setAttribute("aria-pressed",String(state.bad.has(Number(el.dataset.product))));});
-        say(x+" / 50 wad · Wald ["+pct(iv.wald[0])+", "+pct(iv.wald[1])+"] · Wilson ["+pct(iv.wilson[0])+", "+pct(iv.wilson[1])+"]"+(x===0?" · brak wad w próbie nie oznacza braku wad w populacji":""));
       } else if(kind==="publish") {
         frame(cfg.xlim[0],cfg.xlim[1],0,41,null,"Średni czas dojazdu (min)");chart.$refs=[26];
         rows=cfg.rows.slice(0,state.count);selected=rows.filter(function(r){return r.lo>26;});
@@ -180,7 +161,6 @@
       if(kind==="people")set("n",Number(a.slice(1)));
       if(kind==="difference")set("d",a==="near"?.10:a==="trap"?.30:.60);
       if(kind==="useful"){set("effect",a==="tiny"?.4:a==="uncertain"?3:4);set("n",a==="tiny"?1000:a==="uncertain"?20:400);}
-      if(kind==="defects"){state.bad.clear();for(var k=0;k<(a==="zero"?0:a==="one"?1:4);k++)state.bad.add(k);}
       if(kind==="publish"){
         if(a==="filter"){state.filtered=!state.filtered;btn.textContent=state.filtered?"Pokaż wszystkie":"Tylko dolna granica > 26";btn.setAttribute("aria-pressed",String(state.filtered));}
         else if(a==="reset"){state.count=0;state.filtered=false;var filter=root.querySelector('[data-bb-action="filter"]');filter.textContent="Tylko dolna granica > 26";filter.setAttribute("aria-pressed","false");}else state.count=Math.min(cfg.rows.length,state.count+(a==="one"?1:a==="hundred"?100:1000));

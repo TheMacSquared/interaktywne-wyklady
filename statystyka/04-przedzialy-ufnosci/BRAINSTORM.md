@@ -26,6 +26,8 @@ B3 i B4 przyjęte 2026-11-09 zamiast prototypów 2b, 2c i 2d (usunięte);
 B4 dostał przycisk n = 5. Do zrobienia: wygląd i port na ECharts.
 B5 przyjęty 2026-11-09 zamiast prototypu 3a (usunięty; obliczenia
 `s4p_3a_stats()` zostają w stop_proto_ch3.R).
+B7 odrzucony 2026-11-09 razem z prototypem 4b; prototyp 4a przepisany na
+ECharts (`modules/s4p_ch4.js`) i przeniesiony za Ryc. 4.1 jako Ryc. 4.2.
 
 | Gdzie | Wariant | Co warto spróbować | Pomysł na przepływ opowieści |
 |---|---|---|---|
@@ -33,7 +35,6 @@ B5 przyjęty 2026-11-09 zamiast prototypu 3a (usunięty; obliczenia
 | Rozdz. 2, po porównaniu zakresu ludzi i CI (2d) | B4: Dwa znaczenia 95% | 25 → 100 → 400; oba obiekty mają wspólną skalę. | Modelowy obraz izoluje zależność od n. Obecne 2d pokazuje prawdziwie zmieniającą się próbę — można porównać obie pedagogiczne wersje. |
 | Rozdz. 3, po Rozsuń linie (3a) | B5: Rozsuń grupy | Przeciągnij środek linii 1 albo wybierz „Pułapka”; uchwyt działa też z klawiatury. | Stała skala i trzy wyrównane wiersze pozwalają śledzić równocześnie CI grup i różnicy. Grupy wyrażone względem 9.08, różnica w naturalnej skali. |
 | Rozdz. 3, po Istotne, ale nieważne (3c) | B6: Użyteczna oszczędność czasu | Przełącz trzy celowe warianty, potem zmieniaj efekt i n niezależnie. | Jasny próg 2 min zamiast umownego progu IQ; osobno odczyt kierunku i użyteczności. |
-| Rozdz. 4, po Zero braków (4a) | B7: Zaznacz wadliwe sztuki | Zacznij od 0, zaznacz 1 i 4 wady; klikaj same produkty. | Najpierw namacalna próba, potem wynik trzech metod. Dokładny CI Cloppera–Pearsona łączy panel z opisem programów statystycznych. |
 | Rozdz. 5, po Poziomie dobranym po fakcie (5c) | B8: Selekcja wyników | Dodaj 1000 badań i przełącz wszystkie/wybrane. | Alternatywny eksperyment: stały poziom 95%, zmienia się wyłącznie reguła pokazywania wyników. Może też otwierać temat selekcji w kolejnym wykładzie. |
 
 ## Co daje Chart.js
@@ -51,8 +52,7 @@ szerokości tych samych CI), 2d (natychmiastowe porównanie n) i pizzerie
 (dokładanie punktów). Pierwsze trzy mają tu działające warianty; pizzerie
 (B2 odrzucony) czekają na port Ryc. 1.4.
 
-B7 używa Chart.js do natychmiastowego przeliczenia obrazu po kliknięciu
-produktu; kwantyle i wszystkie 51 zestawów granic liczy R. B6 dostaje z R
+B6 dostaje z R
 kwantyle t dla każdego dostępnego n. Nie implementujemy przybliżenia kwantyla
 t w JavaScripcie. Każdy wariant korzysta ze wspólnego `lcCharts` i jego
 sprzątania zasobów, motywów, powiększania i uchwytów klawiaturowych.
@@ -67,7 +67,6 @@ sprzątania zasobów, motywów, powiększania i uchwytów klawiaturowych.
   nigdy nie wybieramy granic CI niezależnie od danych i metody.
 - B6: dwie niezależne grupy o takim samym n i s = 10; t z 2n − 2 df.
   Próg ±2 min to założenie użyteczności, nie własność rozkładu.
-- B7: wszystkie wyniki 0–50 wad, stałe n = 50; Wald bez przycinania granic.
 - B8: pula 4000 badań z N(26, 8), n = 40, dwustronne 95% CI t.
   Wybrane wyniki mają dolną granicę >26, więc ich pokrycie μ=26 wynosi 0%
   z definicji filtra. To pokrycie warunkowe w wybranym podzbiorze, a nie

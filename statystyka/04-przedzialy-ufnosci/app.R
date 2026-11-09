@@ -79,7 +79,8 @@ ui <- lecture_page(
   header_extras = tagList(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
-    # Prototypy punktów stop: Chart.js i własne skrypty s4p_*.js
+    # Wykresy JS: ECharts (Ryc. 4.2, s4p_ch4.js) i Chart.js (warianty B — do migracji)
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "brainstorm.css"), warn = FALSE), collapse = "\n"))),
@@ -92,6 +93,12 @@ ui <- lecture_page(
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
       .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
       .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+      /* Wykresy ECharts wypełniają kontener z aspect-ratio. */
+      .lc-ec { position: absolute; inset: 0; }
+      .s4p-zero-canvas { position: relative; aspect-ratio: 2.4 / 1; touch-action: none; margin-top: .6em; }
+      .s4p-zero[data-lc-chart-large='true'] .s4p-zero-canvas { aspect-ratio: 1.65 / 1; }
+      .s4p-zero .s4p-zero-range { width: 100%; cursor: pointer; }
+      @media (max-width: 640px) { .s4p-zero-canvas { aspect-ratio: 1.4 / 1; } }
     "))
   )
 )

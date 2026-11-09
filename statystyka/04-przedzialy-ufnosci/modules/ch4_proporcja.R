@@ -73,28 +73,9 @@ ch4_ui <- list(
       above  = c(2, 3)
     ),
 
-    lc_p("To przybliżenie zawodzi, gdy próba jest mała albo \\(\\hat{p}\\) leży
-      blisko 0 lub 1. Rozkład dwumianowy jest wtedy wyraźnie skośny, jak
-      B(50, 0.1) w wykładzie 03, a 95-procentowy przedział Walda obejmuje
-      prawdziwe \\(p\\) rzadziej, niż obiecuje. Dla \\(p = 0.08\\) i \\(n = 50\\)
-      jego rzeczywiste ", gloss("pokrycie"), " wynosi około 91%. Przy 4 wadliwych
-      sztukach na 50 Wald daje przedział od 0.5% do 15.5%, a ",
-      gloss("przedział Wilsona"), ", który poprawia wzór Walda, od 3.2% do 18.8%.
-      Im bliżej
-      0 lub 1 leży proporcja i im mniejsza jest próba, tym gorzej działa
-      przybliżenie Walda. W tym rozdziale liczymy przedziały Walda, bo ich wzór
-      najprościej pokazuje konstrukcję. W części przykładów poniżej sukcesów
-      albo porażek jest niewiele i tam przedziały są tylko przybliżone."),
-
-    s4p("4a"),
-    bb("defects"),
-    s4p("4b"),
-
-    lc_p("Programy statystyczne często nie podają przedziału Walda, tylko ",
-      gloss("przedział Cloppera-Pearsona", "przedział Cloppera-Pearsona"),
-      ", oparty bezpośrednio na rozkładzie dwumianowym i bezpieczniejszy przy
-      małych próbach. Jego granice mogą się więc nieco różnić od przedziałów
-      Walda liczonych w tym rozdziale."),
+    lc_p("Przedział Walda opiera się na przybliżeniu normalnym, a ono ma swoje
+      granice. Najpierw zobaczymy, jak przedział działa w typowej sytuacji,
+      a potem, kiedy przybliżenie zawodzi."),
 
     lc_h2("ch4-budowa", "Budowa przedziału — krok po kroku"),
 
@@ -132,6 +113,37 @@ ch4_ui <- list(
       czyli niemal tak często, jak obiecuje. Przybliżenie normalne działa
       tu dobrze, bo w próbie jest typowo około 30 odpowiedzi TAK i 20 NIE."),
 
+    lc_h2("ch4-wald-granice", "Kiedy przybliżenie zawodzi"),
+
+    lc_p("Inaczej jest, gdy próba jest mała albo \\(\\hat{p}\\) leży blisko 0
+      lub 1, a odpowiedzi TAK albo NIE jest tylko kilka. Rozkład dwumianowy jest
+      wtedy wyraźnie skośny, jak B(50, 0.1) w wykładzie 03, a 95-procentowy
+      przedział Walda obejmuje prawdziwe \\(p\\) rzadziej, niż obiecuje. Dla
+      \\(p = 0.08\\) i \\(n = 50\\) jego rzeczywiste ", gloss("pokrycie"),
+      " wynosi około 91%. Przy 4 wadliwych sztukach na 50 Wald daje przedział
+      od 0.5% do 15.5%, a ", gloss("przedział Wilsona"), ", który poprawia wzór
+      Walda, od 3.2% do 18.8%. Panel pokazuje oba przedziały dla kontroli
+      jakości: ile sztuk sprawdzono i ile z nich okazało się wadliwych."),
+
+    s4p("4a"),
+
+    lc_p("Przy dwóch wadliwych sztukach na 50 dolna granica Walda spada do −1.4%,
+      czyli poniżej najmniejszego możliwego odsetka. Przy zerze braków
+      \\(\\hat{p} = 0\\), więc SE też wynosi zero, a przedział Walda kurczy się
+      do jednego punktu, jakby braków w całej produkcji na pewno nie było.
+      Tymczasem brak wad w próbie nie oznacza braku wad w populacji: Wilson
+      dla 0 z 50 daje przedział od 0 do 7.1%. Im bliżej 0 lub 1 leży proporcja
+      i im mniejsza jest próba, tym gorzej działa przybliżenie Walda.
+      W tym rozdziale liczymy przedziały Walda, bo ich wzór najprościej pokazuje
+      konstrukcję. W części przykładów poniżej sukcesów albo porażek jest
+      niewiele i tam przedziały są tylko przybliżone."),
+
+    lc_p("Programy statystyczne często nie podają przedziału Walda, tylko ",
+      gloss("przedział Cloppera-Pearsona", "przedział Cloppera-Pearsona"),
+      ", oparty bezpośrednio na rozkładzie dwumianowym i bezpieczniejszy przy
+      małych próbach. Jego granice mogą się więc nieco różnić od przedziałów
+      Walda liczonych w tym rozdziale."),
+
     lc_h2("ch4-roznica", "Budowa przedziału dla różnicy proporcji"),
 
     lc_p("Częściej niż jeden odsetek porównujemy dwa: zdawalność w dwóch grupach,
@@ -155,7 +167,7 @@ ch4_ui <- list(
       osób zadowolonych z usługi wynosi 70% i 50%."),
 
     figure_panel(
-      label = "Ryc. 4.2",
+      label = "Ryc. 4.3",
       full_width = TRUE,
       lc_step_widget("ch4_dstep",
         title = "Konstruowanie CI dla różnicy",
