@@ -69,17 +69,38 @@ p5_jelly_names <- c("czerwone", "zielone", "niebieskie", "żółte", "pomarańcz
                     "różowe", "brązowe", "białe", "czarne", "turkusowe", "limonkowe", "bordowe",
                     "beżowe", "szare", "miętowe", "łososiowe", "oliwkowe", "granatowe", "złote")
 
-# Stała seria: jeden kolor (zielone) poniżej α, pozostałe p powyżej; badanie ogólne p = 0.58.
-p5_jelly_p <- c(0.62, 0.031, 0.48, 0.91, 0.27, 0.74, 0.39, 0.083, 0.56, 0.19,
-                0.85, 0.33, 0.67, 0.12, 0.95, 0.44, 0.71, 0.24, 0.58, 0.36)
+# Stałe dane: 100 osób niejedzących i 400 jedzących żelki (po 20 na ulubiony kolor),
+# ta sama populacja N(12, 4) wyprysków. Pas „zakresu przypadku” = średnia niejedzących
+# ± 1.96·s·√(1/100 + 1/n); alarm, gdy średnia podgrupy wypada poza pas (test z).
+# Ziarno 113 dobrane tak, że poza pasem jest dokładnie jedna podgrupa: zielone (p = 0.013),
+# a jedzący razem nie różnią się od niejedzących (p = 0.66).
+p5_jelly_data <- function(seed = 113, n_ctrl = 100, k = 20, m = 20, mu = 12, sd = 4) {
+  set.seed(seed)
+  ctrl <- pmax(0, round(rnorm(n_ctrl, mu, sd)))
+  eat <- pmax(0, round(rnorm(k * m, mu, sd)))
+  grp <- rep(seq_len(k), each = m)
+  s <- sd(c(ctrl, eat))
+  se_row <- s * sqrt(1 / n_ctrl + 1 / m)
+  se_all <- s * sqrt(1 / n_ctrl + 1 / (k * m))
+  rm <- as.numeric(tapply(eat, grp, mean))
+  list(ctrl = ctrl, eat = eat, grp = grp, rm = rm,
+       p = 2 * pnorm(-abs((rm - mean(ctrl)) / se_row)),
+       p_all = 2 * pnorm(-abs((mean(eat) - mean(ctrl)) / se_all)),
+       half_row = qnorm(0.975) * se_row, half_all = qnorm(0.975) * se_all,
+       m_ctrl = mean(ctrl), m_eat = mean(eat))
+}
 
-p5_5D_ui <- p5_panel("5D", "scena", "Żelki i trądzik",
-  p5_scene_widget("p5_jelly", "Badacz sprawdza, czy żelki wywołują trądzik",
-    steps = c("Pytanie", "Kolor po kolorze", "Gazeta", "Cała seria"),
-    config = list(kind = "jelly", colors = p5_jelly_colors, names = p5_jelly_names,
-      p = p5_jelly_p, hit = 1L, p_all = 0.58, alpha = 0.05, height = 350,
-      aria = "Badanie żelków: najpierw wszystkie razem bez związku, potem 20 kolorów po kolei z jednym alarmem przy zielonych, potem gazeta pokazuje tylko zielone żelki, na koniec cała seria: 1 alarm na 20 testów"))
-)
+p5_5D_ui <- local({
+  d <- p5_jelly_data()
+  hit <- which(d$p < 0.05)
+  stopifnot(length(hit) == 1)
+  p5_panel("5D", "scena", "Żelki i trądzik",
+    p5_scene_widget("p5_jelly", "Badacz dzieli jedzących żelki według ulubionego koloru",
+      steps = c("Pytanie", "Podział na kolory", "Gazeta", "Cała seria"),
+      config = c(list(kind = "jelly", colors = p5_jelly_colors, names = p5_jelly_names,
+        hit = hit, alpha = 0.05, height = 640), d,
+        list(aria = "Wyniki 400 osób jedzących żelki i 100 niejedzących; jedzący zostają podzieleni na 20 podgrup według ulubionego koloru, średnie podgrup rozrzuca przypadek i jedna, zielona, wypada poza zakres przypadku; gazeta pokazuje tylko ją"))))
+})
 
 # --- 5E: mandaty i świat bez związku (rozdz. 07, przed wzorami E i χ²) -----------
 p5_5E_ui <- local({
@@ -96,14 +117,17 @@ p5_5E_ui <- local({
 # --- teksty kroków ------------------------------------------------------------
 p5_server <- function(input, output, session) {
   scene_texts(input, output, "p5_jelly", list(
-    tagList("Badacz sprawdza, czy osoby jedzące żelki mają więcej trądziku. Wynik:
-      brak związku. Może więc któryś kolor?"),
-    tagList("Bada każdy z 20 kolorów osobno, testem przy α = 0.05. Lampka zapala się
-      na czerwono, gdy p < 0.05. Przy zielonych żelkach się zapaliła."),
+    tagList("Każda kropka to jedna osoba i jej liczba wyprysków. Średnia jedzących
+      żelki leży w szarym pasie: tyle może się różnić od niejedzących przez sam
+      przypadek. Związku nie ma."),
+    tagList("Badacz dzieli tych samych 400 jedzących na 20 grup według ulubionego
+      koloru. W grupie 20 osób średnia skacze bardziej, więc pas jest szerszy.
+      Średnie rozrzucają się wokół wspólnej, a zielone wypadają poza pas."),
     tagList("Tak wynik widzi czytelnik gazety: jeden kolor, jedno badanie i p poniżej
       0.05. Wygląda przekonująco."),
-    tagList("Cała seria: 19 kolorów bez alarmu i jeden z alarmem. Przy 20 testach
-      i α = 0.05 przypadek daje średnio jeden fałszywy alarm, a tyle właśnie wyszło.")
+    tagList("Wszystkie 20 grup pochodzi z tej samej chmury wyników. 19 średnich jest
+      w pasie, jedna poza nim. Przy 20 podgrupach i α = 0.05 tyle właśnie daje
+      przypadek.")
   ))
   scene_texts(input, output, "p5_tickets", list(
     tagList("Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet

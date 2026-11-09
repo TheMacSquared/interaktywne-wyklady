@@ -58,12 +58,21 @@ Forma przykładów, bez powtarzania prób.
 
 ### 4. 5D — żelki (rozdz. 09)
 
-Przebudowany 9.11 po pierwszej ocenie: lampki i licznik serii były
-niezrozumiałe, a powtarzanie serii znów było symulacją. Teraz cztery kadry
-ze stałymi danymi: pytanie ogólne (p = 0.58) → 20 kolorów po kolei, jeden
-alarm przy zielonych (p = 0.031) → gazeta pokazuje tylko zielone → cała
-seria: 20 testów × 5% = średnio 1 fałszywy alarm. Motyw z xkcd 882
-(„Significant”), grafika własna. Ryc. 9.1 zaraz po scenie daje wzór 64%.
+Przebudowany 9.11 dwa razy. Najpierw lampki z licznikiem serii zastąpiły
+kadry ze stałymi danymi. Potem, na prośbę o pokazanie mechanizmu, scena
+pokazuje cięcie jednej zmiennej na podgrupy:
+
+1. Pytanie: 100 niejedzących i 400 jedzących (kropka = osoba, liczba
+   wyprysków), średnia jedzących w pasie zakresu przypadku, p = 0.66.
+2. Podział na kolory: te same 400 kropek rozjeżdża się na 20 wierszy po
+   20 osób; pas dla grupy 20 osób jest szerszy; średnia zielonych wypada
+   poza niego (p = 0.013).
+3. Gazeta: tylko zielone żelki.
+4. Cała seria: 19 średnich w pasie, 1 poza; 20 × 5% = średnio 1 alarm.
+
+Dane: `p5_jelly_data()` w `proto05.R`, ziarno 113 (jedyny alarm: zielone).
+Motyw z xkcd 882 („Significant”), grafika własna. Ryc. 9.1 po scenie
+daje wzór 64%.
 
 ### 5. Decyzje bez prototypu
 

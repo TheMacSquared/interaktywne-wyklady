@@ -43,11 +43,11 @@ Wszystko działa bez serwera R. Suwaki to zwykłe `input type=range`.
 | 5A | rozdz. 03, po akapicie o czujniku, przed tabelą błędów | scena (jeden obraz z „co, jeśli”) | Każdy próg alarmu wymienia fałszywe alarmy na przeoczenia. | Czujka dymu: odczyty w zwykłe dni N(20, 6) i przy pożarze N(45, 8), suwak progu. Odczyt: % fałszywych alarmów (i ile dni w roku) oraz % przeoczonych pożarów. Kandydat na zastąpienie `type-error.jpg`. |
 | 5B | rozdz. 03, przed Ryc. 3.1 | piaskownica | — | Odrzucony 9.11 jako dubel Ryc. 3.1 i usunięty. Otwarty pomysł: uśrednianie odczytów w 5A (kolejka, poz. 1). |
 | 5C | rozdz. 06, przed „Od współczynnika do testu” | scena | — | Odrzucony 9.11 i usunięty: sztuczna historia, a stos r z powtórzonych grupek to rozkład próbkowy (CTG) w kostiumie. Otwarty pomysł: przypadek z jedną próbą (kolejka, poz. 3). |
-| 5D | rozdz. 09, na początku „Dlaczego nie kilka testów t?” | scena (kadry) | Jeden alarm na 20 testów to tyle, ile daje przypadek; gazeta pokazuje tylko ten jeden. | Żelki i trądzik (motyw xkcd 882, własna grafika), dane stałe: pytanie ogólne → kolor po kolorze → gazeta → cała seria. Ryc. 9.1 zostaje jako pojęcie (wzór). |
+| 5D | rozdz. 09, na początku „Dlaczego nie kilka testów t?” | scena (kadry) | Pocięcie jednej zmiennej na wiele podgrup daje przypadkowe „sukcesy”; gazeta pokazuje tylko ten jeden. | Żelki i trądzik (motyw xkcd 882, własna grafika), dane stałe: 400 jedzących dzielonych na 20 kolorów, średnie podgrup wobec pasa zakresu przypadku; jedna wypada poza pas → gazeta → cała seria. Ryc. 9.1 zostaje jako pojęcie (wzór). |
 | 5E | rozdz. 07, po hipotezach, przed wzorami E i χ² | scena (kadry) | Liczebności oczekiwane to „jak by było, gdyby nic nie zależało”. | 200 kontroli (dane jak w Ryc. 7.1): kierowcy jako kropki → świat bez związku (po 40) → obrysy braków i nadwyżek → wkłady (O − E)²/E, suma χ² = 8.33. Kandydat na zastąpienie tabelarycznej Ryc. 7.1. |
 
-5D ma stałą serię p-wartości (`p5_jelly_p` w `proto05.R`): jedna poniżej
-0.05, pozostałe powyżej, więc prowadzący wie, co pokaże każdy kadr.
+5D ma stałe dane (`p5_jelly_data()` w `proto05.R`, ziarno 113): poza pasem
+jest dokładnie jedna podgrupa, więc prowadzący wie, co pokaże każdy kadr.
 
 ## Do decyzji bez prototypu (priorytet B)
 
