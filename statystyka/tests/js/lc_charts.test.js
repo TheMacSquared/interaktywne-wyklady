@@ -702,12 +702,12 @@ test("konstruktor CI podpina lupę poza wykresem bez pętli inicjalizacji", () =
     {type:"line",coords:[[.2,.5],[.8,.5]],color:"#222",fill:"transparent",alpha:1,width:2,size:3,shape:"16",dash:"solid"},
     {type:"point",coords:[.5,.5],color:"#222",fill:"transparent",alpha:1,width:1,size:5,shape:"18",dash:"solid"}
   ]}],color_keys:{}};
-  const source = new Element("span", {"data-ci-spec":JSON.stringify(spec)});
-  const config = root("ci-ec-config", [source]);
-  const plot = root("ci-ec-plot", [ecbox("ci"),config]);
+  const source = new Element("span", {"data-ec-spec":JSON.stringify(spec)});
+  const config = root("lc-ec-plot-config", [source]);
+  const plot = root("lc-ec-plot", [ecbox("ci"),config]);
   const button = new Element("button", {"data-lc-chart-zoom":"true"});
   const stepper = root("lc-stepper", [button,plot]);
-  env.load("04-przedzialy-ufnosci/modules/ci_echarts.js");
+  env.load("R/lc_ggplot_echarts.js");
   env.mount(stepper);
   assert.equal(env.errors.length,0,"lupa poza korzeniem wykresu nie może przerwać inicjalizacji");
   assert.equal(env.live.size,1);

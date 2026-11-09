@@ -1,17 +1,17 @@
-/* Wektorowy renderer scen CI obliczonych przez R. Osie i rysunek: ECharts SVG. */
+/* Rysunek wykresów ggplot w ECharts SVG (lc_ggplot_echarts.R): dane i skale z R. */
 (function () {
   'use strict';
   const C=window.lcCharts;
   if(!C) return;
-  C.onReady('.ci-ec-plot',function(root) {
-    const el=root.querySelector('.lc-ec'), config=root.querySelector('.ci-ec-config');
-    if(!el || !config || !config.querySelector('[data-ci-spec]')) return false;
+  C.onReady('.lc-ec-plot',function(root) {
+    const el=root.querySelector('.lc-ec'), config=root.querySelector('.lc-ec-plot-config');
+    if(!el || !config || !config.querySelector('[data-ec-spec]')) return false;
     let chart;
     function draw() {
       if(!root.isConnected || (chart && chart.isDisposed())) return;
-      const source=config.querySelector('[data-ci-spec]');
+      const source=config.querySelector('[data-ec-spec]');
       if(!source || !chart) return;
-      const spec=JSON.parse(source.dataset.ciSpec), P=C.palette();
+      const spec=JSON.parse(source.dataset.ecSpec), P=C.palette();
       const stepper=root.closest('.lc-stepper');
       const fs=C.axisFontSize(stepper || root), W=chart.getWidth(), H=chart.getHeight();
       const grids=[],xAxis=[],yAxis=[],series=[],graphic=[];
@@ -22,8 +22,10 @@
       };
       spec.panels.forEach((p,pi)=>{
         const box=p.box, yWidth=p.y.show?Math.min(W*.24,Math.max(36,...p.y.labels.map(s=>s.length*fs*.53))):8;
+        // Wielowierszowe etykiety osi x (np. zawinięte nazwy kategorii) przesuwają nazwę osi niżej.
+        const xLines=p.x.show?Math.max(1,...p.x.labels.map(s=>String(s).split('\n').length)):1, xExtra=(xLines-1)*fs*1.2;
         const yName=p.y.name?fs*1.6:0, left=box[0]*W+yWidth+8+yName, top=box[1]*H+(p.label?fs*2:fs*.9);
-        const width=Math.max(20,box[2]*W-yWidth-28-yName), height=Math.max(20,box[3]*H-fs*(p.label?5.2:4.2));
+        const width=Math.max(20,box[2]*W-yWidth-28-yName), height=Math.max(20,box[3]*H-fs*(p.label?5.2:4.2)-xExtra);
         grids.push({left,top,width,height,outerBoundsMode:'none'});
         const axis=(a,vertical)=>{
           const labels=a.labels,breaks=a.breaks;
@@ -42,7 +44,7 @@
           const uneven=breaks.some((v,i)=>i>0 && Math.abs(v-breaks[i-1]-step)>1e-6*Math.max(1,Math.abs(step)));
           const pinned=discrete || uneven, custom=pinned?breaks:undefined;
           return C.ecAxis(P,fs,{type:'value',gridIndex:pi,min:a.range[0],max:a.range[1],
-            splitNumber:5,name:a.name,nameGap:fs*(vertical?3:2),
+            splitNumber:5,name:a.name,nameGap:vertical?fs*3:fs*2+xExtra,
             nameTextStyle:{fontFamily:C.token('--upwr-sans'),fontSize:fs,color:P.soft},
             axisLabel:{show:a.show,customValues:custom,
               showMinLabel:pinned?undefined:isBreak(a.range[0]),showMaxLabel:pinned?undefined:isBreak(a.range[1]),
@@ -107,7 +109,7 @@
     }
     chart=C.chart(el,{}, {renderer:'svg',onResize:draw});
     const observer=new MutationObserver(draw);
-    observer.observe(config,{childList:true,subtree:true,attributes:true,attributeFilter:['data-ci-spec']});
+    observer.observe(config,{childList:true,subtree:true,attributes:true,attributeFilter:['data-ec-spec']});
     const stepper=root.closest('.lc-stepper');
     if(stepper) observer.observe(stepper,{attributes:true,attributeFilter:['data-lc-chart-large']});
     C.onTheme(root,draw);C.onDispose(root,()=>observer.disconnect());
@@ -119,7 +121,7 @@
         const large=stepper.dataset.lcChartLarge!=='true';stepper.dataset.lcChartLarge=String(large);
         button.setAttribute('aria-pressed',String(large));
       };
-      // Przycisk należy do steppera, poza korzeniem .ci-ec-plot.
+      // Przycisk należy do steppera, poza korzeniem .lc-ec-plot.
       // C.listen() szuka właściciela przycisku i w tym układzie rzuca błąd.
       if(button){button.addEventListener('click',toggle);C.onDispose(root,()=>button.removeEventListener('click',toggle));}
     }

@@ -45,6 +45,7 @@ source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
 source(file.path(project_root, "R", "shared.R"),         local = TRUE)
 source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "ankieta.R"),        local = TRUE)
+source(file.path(project_root, "R", "lc_ggplot_echarts.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
 
@@ -76,6 +77,8 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "scenes.js")),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
+    # Wykresy ggplot w ECharts (Ryc. tabeli krzyżowej i pudełek): most z R/.
+    includeScript(file.path(project_root, "R", "lc_ggplot_echarts.js")),
     includeScript(file.path(app_dir, "modules", "scatter_charts.js")),
     tags$style(HTML("
       .lc-scat-canvas { position: relative; aspect-ratio: 1.8 / 1; touch-action: none; }

@@ -105,7 +105,7 @@ ch2_ui <- list(
           selected = "bar"
         )
       ),
-      lc_plot("ch2_cross_plot")
+      lc_ec_plot_ui("ch2_cross_plot")
     ),
 
     lc_p("Same liczebności łatwo źle odczytać, tak jak w kontroli drogowej.
@@ -247,7 +247,7 @@ ch2_server <- function(input, output, session) {
     lc_caption(tone = "info", text)
   })
 
-  zoom_plot_server("ch2_cross_plot", reactive({
+  lc_ec_plot_server("ch2_cross_plot", reactive({
     row_var <- input$ch2_cross_row
     col_var <- input$ch2_cross_col
     chart_type <- input$ch2_cross_chart
@@ -272,8 +272,15 @@ ch2_server <- function(input, output, session) {
       heat_df <- as.data.frame(as.table(tbl))
       names(heat_df) <- c("Wiersz", "Kolumna", "Wartosc")
 
+      # Wartości w komórkach zamiast legendy barw (wykres ECharts nie ma legendy).
+      pct <- input$ch2_cross_type %in% c("row_pct", "col_pct")
+      heat_df$etykieta <- if (pct) paste0(lc_fmt(heat_df$Wartosc, 1), "%") else lc_fmt(heat_df$Wartosc, 0)
+      heat_df$ciemne <- heat_df$Wartosc > mean(range(heat_df$Wartosc))
+
       ggplot(heat_df, aes(x = Kolumna, y = Wiersz, fill = Wartosc)) +
         geom_tile(color = "white", linewidth = 1.5) +
+        geom_text(aes(label = etykieta, colour = ciemne), size = 4.2, show.legend = FALSE) +
+        scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = upwr_ink), guide = "none") +
         scale_fill_upwr_seq(variant = "burgundy", name = fill_label) +
         scale_x_discrete(labels = scales::label_wrap(12)) +
         scale_y_discrete(labels = scales::label_wrap(12)) +
@@ -290,5 +297,5 @@ ch2_server <- function(input, output, session) {
         labs(x = cross_labels[[row_var]], y = "Liczebność", fill = cross_labels[[col_var]]) +
         theme(legend.position = "none")
     }
-  }))
+  }), alt = "Liczebności dwóch zmiennych jakościowych z ankiety: słupki obok siebie albo mapa ciepła z wartościami w komórkach")
 }

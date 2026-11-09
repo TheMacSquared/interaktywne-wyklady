@@ -1,17 +1,27 @@
-# Wektorowe sceny CI: istniejące modele i skale R, natywne osie i serie ECharts.
-# Adapter lokalny dla tego wykładu; nie używa PNG ani zrzutów SVG z R.
-ci_echarts_ui <- function(id, ratio = NULL, max_height = NULL, zoom = TRUE) {
-  tags$div(class = "ci-ec-plot lc-plot", `data-chart-id` = id,
+# Wykres ggplot rysowany przez ECharts (SVG). R liczy dane i skale
+# (ggplot_build), a lc_ggplot_echarts.js rysuje te same elementy na natywnych
+# osiach ECharts: ostry obraz przy lupie, wspólny motyw i skalowanie napisów.
+# Wymaga serwera R; wykres, który ma działać offline, piszemy wprost w JS.
+#
+# UI:     lc_ec_plot_ui("id", ratio = "2/1")       zamiast lc_plot("id", ...)
+# Serwer: lc_ec_plot_server("id", reactive(p), alt) zamiast zoom_plot_server(...)
+# Obsługiwane geometrie: point/jitter, line/path, segment, vline/hline, text,
+# rect/col/bar/histogram/tile, errorbar, area/ribbon, boxplot, blank; panele
+# facet_* i patchwork. Legendy nie są rysowane — opis zostaje w tekście
+# lub na samym wykresie (np. wartości w kafelkach).
+lc_ec_plot_ui <- function(id, ratio = NULL, max_height = NULL, zoom = TRUE) {
+  tags$div(class = "lc-ec-plot lc-plot", `data-chart-id` = id,
     style = paste0("position:relative;",
       if (!is.null(ratio)) paste0("--lc-plot-ratio:",ratio,";"),
       if (!is.null(max_height)) paste0("--lc-plot-max:", max_height, ";")),
     if (zoom) tags$div(style="position:absolute;right:.3em;top:.3em;z-index:3;",lc_chart_zoom_button()),
-    tags$div(class = "lc-ec", role = "img", `aria-label` = "Przedział ufności"),
-    tags$div(class = "ci-ec-config", style = "display:none", uiOutput(paste0(id, "_ec")))
+    tags$div(class = "lc-ec", role = "img", `aria-label` = "Wykres",
+             style = "position:absolute;inset:0"),
+    tags$div(class = "lc-ec-plot-config", style = "display:none", uiOutput(paste0(id, "_ec")))
   )
 }
 
-ci_echarts_spec <- function(plot) {
+lc_ec_plot_spec <- function(plot) {
   panels <- list()
   visit <- function(p, box = c(0, 0, 1, 1)) {
     if (inherits(p, "patchwork")) {
@@ -55,6 +65,8 @@ ci_echarts_spec <- function(plot) {
       elements <- list()
       add <- function(type, coords, r, extra = list()) {
         value <- function(key, default) if (key %in% names(r) && !is.na(r[[key]][1])) r[[key]][1] else default
+        # Skale dyskretne zwracają klasę mapped_discrete; do JSON idą zwykłe liczby.
+        coords <- if (is.matrix(coords)) matrix(as.numeric(coords), ncol = 2) else as.numeric(coords)
         if (is.matrix(coords)) {
           coords[is.infinite(coords[,1]),1] <- ifelse(coords[is.infinite(coords[,1]),1]>0,xr[2],xr[1])
           coords[is.infinite(coords[,2]),2] <- ifelse(coords[is.infinite(coords[,2]),2]>0,yr[2],yr[1])
@@ -101,7 +113,21 @@ ci_echarts_spec <- function(plot) {
           else if (geom == "GeomVline") add("line", rbind(c(r$xintercept,yr[1]),c(r$xintercept,yr[2])),r)
           else if (geom == "GeomHline") add("line", rbind(c(xr[1],r$yintercept),c(xr[2],r$yintercept)),r)
           else if (geom == "GeomSegment") add("line",rbind(c(r$x,r$y),c(r$xend,r$yend)),r)
-          else if (geom %in% c("GeomRect","GeomCol","GeomBar")) add("rect",c(r$xmin,r$ymin,r$xmax,r$ymax),r)
+          else if (geom %in% c("GeomRect","GeomCol","GeomBar","GeomTile")) add("rect",c(r$xmin,r$ymin,r$xmax,r$ymax),r)
+          else if (geom == "GeomBoxplot") {
+            # Pudełko, mediana i wąsy; obserwacje odstające rysuje osobna warstwa punktów.
+            if (isTRUE(r$flipped_aes)) {
+              add("rect",c(r$xlower,r$ymin,r$xupper,r$ymax),r)
+              add("line",rbind(c(r$xmiddle,r$ymin),c(r$xmiddle,r$ymax)),r)
+              add("line",rbind(c(r$xmin,r$y),c(r$xlower,r$y)),r)
+              add("line",rbind(c(r$xupper,r$y),c(r$xmax,r$y)),r)
+            } else {
+              add("rect",c(r$xmin,r$lower,r$xmax,r$upper),r)
+              add("line",rbind(c(r$xmin,r$middle),c(r$xmax,r$middle)),r)
+              add("line",rbind(c(r$x,r$ymin),c(r$x,r$lower)),r)
+              add("line",rbind(c(r$x,r$upper),c(r$x,r$ymax)),r)
+            }
+          }
           else if (geom == "GeomErrorbar") {
             if (isTRUE(r$flipped_aes)) {
               add("line",rbind(c(r$xmin,r$y),c(r$xmax,r$y)),r)
@@ -110,7 +136,7 @@ ci_echarts_spec <- function(plot) {
               add("line",rbind(c(r$x,r$ymin),c(r$x,r$ymax)),r)
               for (y in c(r$ymin,r$ymax)) add("line",rbind(c(r$xmin,y),c(r$xmax,y)),r)
             }
-          } else stop("Nieobsługiwana geometria sceny CI: ",geom)
+          } else stop("lc_ec_plot: nieobsługiwana geometria ", geom)
         }
       }
       facet_keys <- setdiff(names(layout), c("PANEL","ROW","COL","SCALE_X","SCALE_Y","COORD"))
@@ -132,12 +158,12 @@ ci_echarts_spec <- function(plot) {
 }
 
 # alt: opis dostępności; bez niego aria-label składa się z nazw osi i napisów.
-ci_echarts_server <- function(id, plot, alt = NULL, session = shiny::getDefaultReactiveDomain()) {
+lc_ec_plot_server <- function(id, plot, alt = NULL, session = shiny::getDefaultReactiveDomain()) {
   output <- session$output
   output[[paste0(id,"_ec")]] <- shiny::renderUI({
-    spec <- ci_echarts_spec(plot())
+    spec <- lc_ec_plot_spec(plot())
     if (!is.null(alt)) spec$alt <- alt
-    tags$span(`data-ci-spec` = jsonlite::toJSON(spec, auto_unbox=TRUE,
+    tags$span(`data-ec-spec` = jsonlite::toJSON(spec, auto_unbox=TRUE,
       null="null", na="null", digits=12))
   })
   shiny::outputOptions(output, paste0(id,"_ec"), suspendWhenHidden=FALSE)

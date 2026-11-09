@@ -85,7 +85,7 @@ ch3_ui <- list(
           lc_select("ch3_grp", ch3_grp_choices, selected = "plec",
                     aria_label = "Zmienna dzieląca na grupy"))
       ),
-      lc_plot("ch3_box_plot", ratio = "2/1"),
+      lc_ec_plot_ui("ch3_box_plot", ratio = "2/1"),
       uiOutput("ch3_box_table"),
       uiOutput("ch3_box_caption")
     ),
@@ -135,7 +135,7 @@ ch3_server <- function(input, output, session) {
       data.frame(n = length(x), mean = mean(x), med = median(x), sd = sd(x))))
   })
 
-  zoom_plot_server("ch3_box_plot", reactive({
+  lc_ec_plot_server("ch3_box_plot", reactive({
     df <- ch3_df()
     k <- nlevels(df$grupa)
     v_label <- names(ch3_num_choices)[ch3_num_choices == input$ch3_num]
@@ -147,7 +147,7 @@ ch3_server <- function(input, output, session) {
       scale_color_manual(values = upwr_cat_n(k), guide = "none") +
       scale_y_discrete(limits = rev, labels = scales::label_wrap(12)) +
       labs(x = v_label, y = g_label)
-  }))
+  }), alt = "Wykres pudełkowy wybranej zmiennej ilościowej w grupach, z punktami pojedynczych osób")
 
   output$ch3_box_table <- renderUI({
     st <- ch3_stats()

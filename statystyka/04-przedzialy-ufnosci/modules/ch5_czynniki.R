@@ -88,7 +88,7 @@ ch5_ui <- list(
         lc_slider("ch5_s", "Odchylenie std. (s)", 1, 12, 8, 1),
         lc_readouts(uiOutput("ch5_me_display"))
       ),
-      ci_echarts_ui("ch5_factors_plot", max_height = "480px")
+      lc_ec_plot_ui("ch5_factors_plot", max_height = "480px")
     ),
 
     lc_p("Przy ustawieniach początkowych (n = 30, s = 8, poziom ufności 95%)
@@ -141,7 +141,7 @@ ch5_ui <- list(
         lc_slider("ch5_plan_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01)
       ),
       uiOutput("ch5_plan_result"),
-      ci_echarts_ui("ch5_plan_plot", max_height = "440px")
+      lc_ec_plot_ui("ch5_plan_plot", max_height = "440px")
     ),
 
     lc_p("Przy domyślnych ustawieniach (margines 2, s = 10, poziom ufności 95%)
@@ -189,7 +189,7 @@ ch5_ui <- list(
         lc_action("ch5_cmp_calc", "Oblicz 3 przedziały", variant = "solid"),
         lc_readouts(uiOutput("ch5_cmp_stats"))
       ),
-      ci_echarts_ui("ch5_cmp_plot", max_height = "250px")
+      lc_ec_plot_ui("ch5_cmp_plot", max_height = "250px")
     ),
 
     lc_p("Dla próby wzrostu 30 studentów (średnia 170.69 cm, s = 12.55 cm)
@@ -227,7 +227,7 @@ ch5_ui <- list(
         withMathJax("\\(\\bar{x} = 28.5\\)"), " min, odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
         Hipoteza: średni czas dojazdu w populacji przekracza 26 min."),
       uiOutput("ch5_edge1_buttons"),
-      ci_echarts_ui("ch5_edge1_plot", ratio = "2.6/1", max_height = "240px"),
+      lc_ec_plot_ui("ch5_edge1_plot", ratio = "2.6/1", max_height = "240px"),
       uiOutput("ch5_edge1_explain")
     ),
 
@@ -238,7 +238,7 @@ ch5_ui <- list(
         Odpowiedzi TAK udzieliło 540 osób (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
         Hipoteza: poparcie w populacji przekracza próg 50%."),
       uiOutput("ch5_edge2_buttons"),
-      ci_echarts_ui("ch5_edge2_plot", ratio = "2.6/1", max_height = "240px"),
+      lc_ec_plot_ui("ch5_edge2_plot", ratio = "2.6/1", max_height = "240px"),
       uiOutput("ch5_edge2_explain")
     ),
 
@@ -250,7 +250,7 @@ ch5_ui <- list(
         (na 100), ", withMathJax("\\(s = 10\\)"), " pkt.
         Hipoteza: średni wynik w populacji przekracza próg 65 pkt."),
       uiOutput("ch5_edge3_buttons"),
-      ci_echarts_ui("ch5_edge3_plot", ratio = "2.6/1", max_height = "240px"),
+      lc_ec_plot_ui("ch5_edge3_plot", ratio = "2.6/1", max_height = "240px"),
       uiOutput("ch5_edge3_explain")
     ),
 
@@ -310,7 +310,7 @@ ch5_ui <- list(
 ch5_server <- function(input, output, session) {
 
   # --- Widget 1: Trzy suwaki ---
-  ci_echarts_server("ch5_factors_plot", reactive({
+  lc_ec_plot_server("ch5_factors_plot", reactive({
     req(input$ch5_n, input$ch5_conf, input$ch5_s)
     n <- input$ch5_n
     conf <- input$ch5_conf
@@ -398,7 +398,7 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  ci_echarts_server("ch5_plan_plot", reactive({
+  lc_ec_plot_server("ch5_plan_plot", reactive({
     req(input$ch5_plan_me, input$ch5_plan_s, input$ch5_plan_conf)
     me_max <- input$ch5_plan_me
     s <- input$ch5_plan_s
@@ -484,7 +484,7 @@ ch5_server <- function(input, output, session) {
     ch5_cmp_data(do.call(rbind, results))
   })
 
-  ci_echarts_server("ch5_cmp_plot", reactive({
+  lc_ec_plot_server("ch5_cmp_plot", reactive({
     df <- ch5_cmp_data()
     if (is.null(df)) {
       ggplot() +
@@ -779,7 +779,7 @@ ch5_server <- function(input, output, session) {
       ch5_edge_state[[case_id]]
       edge_buttons_ui(case_id)
     })
-    ci_echarts_server(paste0("ch5_", case_id, "_plot"), reactive({
+    lc_ec_plot_server(paste0("ch5_", case_id, "_plot"), reactive({
       ch5_edge_state[[case_id]]
       render_edge_plot(case_id)
     }))

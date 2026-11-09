@@ -57,8 +57,8 @@ fig_5a_ui <- fig_panel("5a", "Ryc. 5.1", "Pracownia dokupuje ankiety", width_mod
     lc_action("fig_5a_reset", icon = "reset", variant = "ghost", aria_label = "Od nowa"),
     lc_readouts(uiOutput("fig_5a_read"))
   ),
-  ci_echarts_ui("fig_5a_ci", ratio = "3.2/1"),
-  ci_echarts_ui("fig_5a_path", ratio = "2.6/1"),
+  lc_ec_plot_ui("fig_5a_ci", ratio = "3.2/1"),
+  lc_ec_plot_ui("fig_5a_path", ratio = "2.6/1"),
   uiOutput("fig_5a_caption")
 )
 
@@ -116,7 +116,7 @@ fig_D1_ui <- fig_panel("D1", "Ryc. 5.5", NULL, width_mode = "wide",
     title = "Anatomia przedziału",
     steps = c("Estymata", "Błąd standardowy", "Przedział", "Co go zwęża", "Odczyt"),
     toolbar = lc_toolbar(lc_chart_zoom_button()),
-    body = ci_echarts_ui("fig_D1_plot", ratio = "2.6/1", zoom = FALSE)
+    body = lc_ec_plot_ui("fig_D1_plot", ratio = "2.6/1", zoom = FALSE)
   )
 )
 
@@ -145,9 +145,9 @@ fig_ch5_server <- function(input, output, session) {
     lc_caption("Połowa marginesu kosztuje cztery razy więcej ankiet.")
   })
 
-  ci_echarts_server("fig_5a_ci", reactive(fig_5a_ci_fn(fig_5a_ns())),
+  lc_ec_plot_server("fig_5a_ci", reactive(fig_5a_ci_fn(fig_5a_ns())),
     alt = "Przedziały 50% ± margines błędu dla sondażu, najnowszy na górze, poprzednie blade")
-  ci_echarts_server("fig_5a_path", reactive(fig_5a_path_fn(fig_5a_ns())),
+  lc_ec_plot_server("fig_5a_path", reactive(fig_5a_path_fn(fig_5a_ns())),
     alt = "Margines błędu w pkt proc. w zależności od kosztu badania w tys. zł")
 
   # --- D1: domknięcie krokowe ---
@@ -159,6 +159,6 @@ fig_ch5_server <- function(input, output, session) {
     "Rozdz. 5: większa próba (n × 4), mniejsze s (s / 2) i niższa ufność (90%) zawężają przedział. Dwa pierwsze działają przez SE, trzeci przez t*.",
     "Rozdz. 5: próg 26 min leży wewnątrz przedziału, więc dane tego nie rozstrzygają. Wykład 05 wróci do takich pytań."
   ))
-  ci_echarts_server("fig_D1_plot", reactive(fig_D1_plot_fn(step())),
+  lc_ec_plot_server("fig_D1_plot", reactive(fig_D1_plot_fn(step())),
     alt = "Przedział ufności czasu dojazdu 28.5 min z progiem 26 min w środku")
 }

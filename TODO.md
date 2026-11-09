@@ -145,8 +145,12 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     na ECharts (2026-11-09). Ryciny rysowane przez most `ci_echarts` nadal
     potrzebują serwera R do obliczeń; w pełni offline działają eksploratory,
     Ryc. 2.1 i 4.2 oraz sceny SVG.
-  - [ ] Statystyka 01, 03: pozostałe wykresy R (eksploratory rozkładów,
-    histogramy, pudełka itd.).
+  - [x] Most ggplot → ECharts we wspólnym `statystyka/R/lc_ggplot_echarts.*`
+    (2026-11-09); wykład 02 w całości na ECharts (tabela krzyżowa, pudełka).
+  - [ ] Statystyka 01: 30 wykresów R — najpierw spis do akceptacji
+    (most albo przepisanie w JS, kryterium offline i responsywności).
+  - [ ] Statystyka 03: najpierw decyzje o prototypach `stop_proto_*`
+    (12 z 29 wykresów R), potem port.
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).
   - [ ] Statystyka 03 offline, Ryc. 1.2 (lejek): odczyty przechodzą zapisane
     stany, ale wykres zostaje pusty — serie przychodzą z serwera

@@ -49,7 +49,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
-source(file.path(app_dir, "modules", "ci_echarts.R"),      local = TRUE)
+source(file.path(project_root, "R", "lc_ggplot_echarts.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ci_construction.R"), local = TRUE)
 # Ryciny wstawiane w tekst: przed rozdziałami, bo rozdziały wstawiają ich UI.
 for (.f in c("common", paste0("ch", 1:5))) {
@@ -86,8 +86,9 @@ ui <- lecture_page(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "ci_explorers.css"), warn = FALSE), collapse = "\n"))),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "visual_scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "visual_scenes.js")),
+    includeScript(file.path(project_root, "R", "lc_ggplot_echarts.js")),
     lapply(file.path(app_dir, "modules", c("fig_ch2.js", "fig_ch4.js", "ci_construction.js",
-                                           "ci_echarts.js", "ci_explorers.js")),
+                                           "ci_explorers.js")),
            includeScript),
     tags$style(HTML("
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }

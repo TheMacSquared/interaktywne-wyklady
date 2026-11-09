@@ -33,7 +33,7 @@ fig_1a_ui <- fig_panel("1a", "Ryc. 1.2", "Cztery miarki",
     lc_action("fig_1a_reset", icon = "reset", variant = "ghost", aria_label = "Od nowa"),
     lc_readouts(uiOutput("fig_1a_read"))
   ),
-  ci_echarts_ui("fig_1a_plot", ratio = "1.9/1"),
+  lc_ec_plot_ui("fig_1a_plot", ratio = "1.9/1"),
   uiOutput("fig_1a_table"),
   width_mode = "wide"
 )
@@ -119,7 +119,7 @@ fig_1b_rings <- do.call(rbind, lapply(fig_1b_panels, function(p) {
 }))
 
 fig_1b_ui <- fig_panel("1b", "Ryc. 1.1", "Tarcza: obciążenie i rozrzut",
-  ci_echarts_ui("fig_1b_plot", ratio = "1/1"),
+  lc_ec_plot_ui("fig_1b_plot", ratio = "1/1"),
   width_mode = "text"
 )
 
@@ -162,7 +162,7 @@ fig_1c_brackets <- data.frame(panel = factor(fig_1c_labels, levels = fig_1c_labe
                               hi = net_world$mu + 2 * fig_1c_sd)
 
 fig_1c_ui <- fig_panel("1c", "Ryc. 1.3", "4× więcej osób, połowa rozrzutu",
-  ci_echarts_ui("fig_1c_plot", ratio = "1.1/1"),
+  lc_ec_plot_ui("fig_1c_plot", ratio = "1.1/1"),
   width_mode = "text"
 )
 
@@ -204,7 +204,7 @@ fig_1d_ui <- fig_panel("1d", "Ryc. 1.4", "Dwie pizzerie, obie 4.4 ★",
     lc_action("fig_1d_reset", icon = "reset", variant = "ghost", aria_label = "Od nowa"),
     lc_readouts(uiOutput("fig_1d_read"))
   ),
-  ci_echarts_ui("fig_1d_plot", ratio = "3/1"),
+  lc_ec_plot_ui("fig_1d_plot", ratio = "3/1"),
   uiOutput("fig_1d_caption"),
   width_mode = "wide"
 )
@@ -246,15 +246,15 @@ fig_ch1_server <- function(input, output, session) {
 
   output$fig_1a_table <- renderUI(fig_1a_table(groups_1a()))
 
-  ci_echarts_server("fig_1a_plot", reactive(fig_1a_plot_fn(groups_1a())),
+  lc_ec_plot_server("fig_1a_plot", reactive(fig_1a_plot_fn(groups_1a())),
     alt = "Cztery histogramy estymat z grupek po 25 osób: średnia, mediana, środek rozstępu i uszkodzona miarka, na wspólnej osi wzrostu, z przerywaną linią μ = 170 cm")
 
   # --- (1b) Tarcza (statyczna) -----------------------------------------------
-  ci_echarts_server("fig_1b_plot", reactive(fig_1b_plot_fn()),
+  lc_ec_plot_server("fig_1b_plot", reactive(fig_1b_plot_fn()),
     alt = "Cztery tarcze z dwudziestoma strzałami: nieobciążony mały i duży rozrzut w górnym rzędzie, obciążony mały i duży rozrzut w dolnym; środek tarczy to parametr")
 
   # --- (1c) Cztery razy więcej osób (statyczna) ------------------------------
-  ci_echarts_server("fig_1c_plot", reactive(fig_1c_plot_fn()),
+  lc_ec_plot_server("fig_1c_plot", reactive(fig_1c_plot_fn()),
     alt = "Trzy histogramy średnich z 3000 grupek dla n = 25, 100 i 400, pod sobą; węższy stos przy większej grupce, klamry ±2 SD pod każdym")
 
   # --- (1d) Dwie pizzerie ------------------------------------------------------
@@ -300,6 +300,6 @@ fig_ch1_server <- function(input, output, session) {
                        reps_n, sd_1d(st, 1), sd_1d(st, 2)))
   })
 
-  ci_echarts_server("fig_1d_plot", reactive(fig_1d_plot_fn(state_1d())),
+  lc_ec_plot_server("fig_1d_plot", reactive(fig_1d_plot_fn(state_1d())),
     alt = "Dwa wiersze na osi ocen od 1 do 5 gwiazdek: pizzeria U Gośki z 5 opiniami dziennie i Napoli z 200, obie ze znacznikiem 4.4 i średnimi ocen z kolejnych dni")
 }

@@ -94,7 +94,7 @@ ch4_ui <- list(
           lc_action("ch4_step_new_sample", "Nowa próba", icon = "shuffle",
                     variant = "outline"), lc_chart_zoom_button()
         ),
-        body = ci_echarts_ui("ch4_step_plot", ratio = "2.5/1", zoom = FALSE)
+        body = lc_ec_plot_ui("ch4_step_plot", ratio = "2.5/1", zoom = FALSE)
       )
     ),
 
@@ -176,7 +176,7 @@ ch4_ui <- list(
           lc_action("ch4_dstep_new_sample", "Nowe próby", icon = "shuffle",
                     variant = "outline"), lc_chart_zoom_button()
         ),
-        body = ci_echarts_ui("ch4_dstep_plot", ratio = "2/1", zoom = FALSE)
+        body = lc_ec_plot_ui("ch4_dstep_plot", ratio = "2/1", zoom = FALSE)
       )
     ),
 
@@ -330,7 +330,7 @@ ch4_server <- function(input, output, session) {
              colour = STEP_ROLES[[role]]$colour, fontface = "bold", size = size)
   }
 
-  ci_echarts_server("ch4_step_plot", reactive({
+  lc_ec_plot_server("ch4_step_plot", reactive({
     step <- ch4_step()
     samp <- ch4_step_sample()
 
@@ -459,7 +459,7 @@ ch4_server <- function(input, output, session) {
     ch4_dstep_samples(generate_dstep_prop_samples())
   })
 
-  ci_echarts_server("ch4_dstep_plot", reactive({
+  lc_ec_plot_server("ch4_dstep_plot", reactive({
     step <- ch4_dstep()
     samples <- ch4_dstep_samples()
 
@@ -1338,7 +1338,7 @@ ch4_server <- function(input, output, session) {
     output[[paste0(widget_id, "_widget")]] <- renderUI({
       lc_step_widget(widget_id,
         steps = sub("^[0-9]+\\.\\s*", "", cfg$steps),
-        body = ci_echarts_ui(paste0(widget_id, "_plot"),
+        body = lc_ec_plot_ui(paste0(widget_id, "_plot"),
           ratio = if (cfg$type %in% c("single_prop", "compare_n_prop")) "2.4/1" else "1.6/1", zoom = FALSE),
         toolbar = lc_toolbar(
           lc_step_from(n_core, lc_chips(paste0(widget_id, "_hyp"), hyp_choices, label = "Sprawdź")),
@@ -1350,7 +1350,7 @@ ch4_server <- function(input, output, session) {
     output[[paste0(widget_id, "_text")]] <- renderUI({
       if (step() == n_core) "Przedział gotowy. Wybierz hipotezę, żeby sprawdzić ją na wykresie."
     })
-    ci_echarts_server(paste0(widget_id, "_plot"), reactive(
+    lc_ec_plot_server(paste0(widget_id, "_plot"), reactive(
       render_case_plot(cfg, step(), hyp_idx())
     ))
     output[[paste0(widget_id, "_explain")]] <- renderUI(

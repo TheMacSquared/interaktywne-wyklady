@@ -61,7 +61,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.1", title = "Rozkład t ma cięższe ogony",
       width_mode = "text",
-      ci_echarts_ui("ch3_tnorm_plot", ratio = "2/1", max_height = "380px"),
+      lc_ec_plot_ui("ch3_tnorm_plot", ratio = "2/1", max_height = "380px"),
       lc_caption("t* dla 95%: 2.78 przy n = 5, 2.06 przy n = 25, 1.96 w rozkładzie normalnym.")
     ),
 
@@ -173,7 +173,7 @@ ch3_ui <- list(
       title = "Dwaj dostawcy mąki — zgodne sygnały, różnica istotna",
       p("Zakład piekarniczy porównuje dwóch dostawców mąki pszennej typu 550
         pod względem zawartości białka (%). Pobrano po 40 partii od każdego dostawcy."),
-      ci_echarts_ui("ch3_comp_A_plot", ratio = "1.8/1", max_height = "340px"),
+      lc_ec_plot_ui("ch3_comp_A_plot", ratio = "1.8/1", max_height = "340px"),
       uiOutput("ch3_comp_A_verdict")
     ),
 
@@ -183,7 +183,7 @@ ch3_ui <- list(
       title = "Jogurt w szkle i w plastiku — zgodne sygnały, brak różnicy",
       p("Technolog sprawdza, czy materiał opakowania wpływa na zawartość tłuszczu (%)
         w jogurcie naturalnym po 7 dniach przechowywania. Po 30 próbek z każdego typu."),
-      ci_echarts_ui("ch3_comp_B_plot", ratio = "1.8/1", max_height = "340px"),
+      lc_ec_plot_ui("ch3_comp_B_plot", ratio = "1.8/1", max_height = "340px"),
       uiOutput("ch3_comp_B_verdict")
     ),
 
@@ -194,7 +194,7 @@ ch3_ui <- list(
       p("Zakład sprawdza, czy dwie linie produkcyjne płatków śniadaniowych
         dają produkt o tej samej zawartości błonnika (g / 100 g).
         Po 120 partii z każdej linii."),
-      ci_echarts_ui("ch3_comp_C_plot", ratio = "1.8/1", max_height = "340px"),
+      lc_ec_plot_ui("ch3_comp_C_plot", ratio = "1.8/1", max_height = "340px"),
       uiOutput("ch3_comp_C_verdict")
     ),
 
@@ -386,7 +386,7 @@ ch3_ui <- list(
 ch3_server <- function(input, output, session) {
 
   # Gęstość N(0, 1) i t (df = 4), ogony poza ±t*
-  ci_echarts_server("ch3_tnorm_plot", reactive({
+  lc_ec_plot_server("ch3_tnorm_plot", reactive({
     df_t <- 4
     t_star <- qt(0.975, df_t); z_star <- qnorm(0.975)
     x <- seq(-5, 5, length.out = 600)
@@ -1384,7 +1384,7 @@ ch3_server <- function(input, output, session) {
     output[[paste0(widget_id, "_widget")]] <- renderUI({
       lc_step_widget(widget_id,
         steps = sub("^[0-9]+\\.\\s*", "", cfg$steps),
-        body = ci_echarts_ui(paste0(widget_id, "_plot"),
+        body = lc_ec_plot_ui(paste0(widget_id, "_plot"),
           ratio = if (cfg$type %in% c("single_mean", "compare_n")) "2.4/1" else "1.6/1", zoom = FALSE),
         toolbar = lc_toolbar(
           lc_step_from(n_core, lc_chips(paste0(widget_id, "_hyp"), hyp_choices, label = "Sprawdź")),
@@ -1396,7 +1396,7 @@ ch3_server <- function(input, output, session) {
     output[[paste0(widget_id, "_text")]] <- renderUI({
       if (step() == n_core) "Przedział gotowy. Wybierz hipotezę, żeby sprawdzić ją na wykresie."
     })
-    ci_echarts_server(paste0(widget_id, "_plot"), reactive(
+    lc_ec_plot_server(paste0(widget_id, "_plot"), reactive(
       render_case_plot(cfg, step(), hyp_idx())
     ))
     output[[paste0(widget_id, "_explain")]] <- renderUI(
@@ -1592,9 +1592,9 @@ ch3_server <- function(input, output, session) {
     )
   }
 
-  ci_echarts_server("ch3_comp_A_plot", reactive({ ch3_comp_plot("A") }))
-  ci_echarts_server("ch3_comp_B_plot", reactive({ ch3_comp_plot("B") }))
-  ci_echarts_server("ch3_comp_C_plot", reactive({ ch3_comp_plot("C") }))
+  lc_ec_plot_server("ch3_comp_A_plot", reactive({ ch3_comp_plot("A") }))
+  lc_ec_plot_server("ch3_comp_B_plot", reactive({ ch3_comp_plot("B") }))
+  lc_ec_plot_server("ch3_comp_C_plot", reactive({ ch3_comp_plot("C") }))
   output$ch3_comp_A_verdict <- renderUI({ ch3_comp_verdict("A") })
   output$ch3_comp_B_verdict <- renderUI({ ch3_comp_verdict("B") })
   output$ch3_comp_C_verdict <- renderUI({ ch3_comp_verdict("C") })

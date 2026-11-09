@@ -191,6 +191,27 @@ których na razie nie przenosimy, są w wersji offline zamrożone.
 - Build offline wbudowuje `echarts.min.js` w plik (`build_offline.R`);
   widget z `data-ready` jest odtwarzany z czystej kopii, więc działa bez serwera.
 
+### Wykresy ggplot w ECharts (`R/lc_ggplot_echarts.R`)
+
+Gdy wykres ma zostać w ggplot, a ma wyglądać i skalować się jak pozostałe
+wykresy JS, używamy mostu: `lc_ec_plot_ui(id, ratio)` zamiast `lc_plot()`
+i `lc_ec_plot_server(id, reactive(p), alt)` zamiast `zoom_plot_server()`.
+R liczy `ggplot_build()`, a `R/lc_ggplot_echarts.js` rysuje te same elementy
+na osiach ECharts (SVG, motyw, lupa, skalowanie napisów). Wykład ładuje
+`lc_ggplot_echarts.R` przez `source()` oraz `lc_ggplot_echarts.js` po
+`lc_charts.js`.
+
+- Most wymaga serwera R. Wykres, który musi działać offline albo reagować
+  płynnie na przeciąganie, piszemy wprost w JS (np. eksploratory w 04).
+- Obsługiwane geometrie są wymienione w nagłówku pliku R; nieznana geometria
+  przerywa rysowanie komunikatem `lc_ec_plot: nieobsługiwana geometria`.
+- Legendy nie są rysowane. Opis kolorów należy do tekstu, odczytów albo
+  samego wykresu (np. wartości w kafelkach mapy ciepła).
+- Etykiety tekstowe i nierówne podziałki (np. ±1.96, ±2.78) stoją dokładnie
+  na podziałkach z R; skrajne etykiety, które nie są podziałką, są ukryte.
+- Wzorce: statystyka 02 — tabela krzyżowa i pudełka; 04 — Ryc. 1.1–1.4,
+  3.1–3.3, 5.1–5.5.
+
 Wykłady używające wykresów JS ładują `R/lc_charts.js` w `header_extras`, po
 bibliotece wykresów i przed skryptami poszczególnych widgetów. Wspólne API
 jest dostępne jako `window.lcCharts`:
