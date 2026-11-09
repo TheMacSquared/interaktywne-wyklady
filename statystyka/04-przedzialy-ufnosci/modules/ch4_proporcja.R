@@ -1167,7 +1167,7 @@ ch4_server <- function(input, output, session) {
     groups <- rownames(mat)
     k <- length(groups)
     sym <- function(i, j) if (i == j) "—" else if (mat[i, j]) "✓" else "×"
-    cls <- function(i, j) if (i == j) "is-dim" else if (mat[i, j]) "is-best" else NA
+    cls <- function(i, j) if (i == j) "is-dim" else if (mat[i, j]) "is-best" else NA_character_
     df <- data.frame(group = groups)
     cell_class <- list()
     for (j in seq_len(k)) {
