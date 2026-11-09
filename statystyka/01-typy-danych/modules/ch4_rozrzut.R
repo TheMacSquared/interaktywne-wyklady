@@ -212,16 +212,16 @@ ch4_ui <- list(
 
     figure_panel(
       label = "Ryc. 4.2",
-      lc_step_widget("ch4_sd",
+      lc01_stat_figure("sd", bare = TRUE, body = lc_step_widget("ch4_sd",
         title = "Obliczanie odchylenia standardowego",
         steps = c("Dane", "Odchylenia od średniej", "Wariancja i SD"),
         toolbar = lc_toolbar(
-          lc_action("ch4_sd_new", "Losuj nowy zestaw", variant = "outline")
+          lc01_stat_action("new", "ch4_sd_new", "Losuj nowy zestaw", variant = "outline"),
+          lc_chart_zoom_button()
         ),
-        plot_id = "ch4_sd_plot",
-        ratio = "2/1",
-        extra = uiOutput("ch4_sd_table")
-      )
+        body = lc01_stat_chart(0, ratio = "2/1", max_height = "420px"),
+        extra = tags$div(`data-role` = "table")
+      ))
     ),
 
     lc_p("Najdłuższe strzałki dają największy wkład do sumy, bo podnosimy je
@@ -248,9 +248,7 @@ ch4_ui <- list(
       label = "Ryc. 4.3",
       title = "Reguła 68–95–99.7 na rozkładzie normalnym",
       width_mode = "text",
-      tags$div(class = "proto-regula",
-        lc_plot("ch4_proto_regula", ratio = "2.2/1", max_height = "300px")
-      )
+      lc01_stat_figure("regula", ratio = "2.2/1", max_height = "300px")
     ),
 
     lc_p("Panel nakłada te trzy pasy na ", gloss("histogram"), " wybranej zmiennej z ankiety
@@ -315,16 +313,21 @@ ch4_ui <- list(
 
     figure_panel(
       label = "Ryc. 4.5",
-      lc_step_widget("ch4_bp",
+      # Krok 6: niskie pudełko (wykres 0) nad histogramem (wykres 1).
+      tags$style(HTML("
+        #ch4_bp[data-lc-step='6'] .lc01-stat-chart[data-k='0'] { aspect-ratio: 5 / 1 !important; min-height: 6em; }
+      ")),
+      lc01_stat_figure("bp", bare = TRUE, body = lc_step_widget("ch4_bp",
         title = "Wykres pudełkowy — budowa krok po kroku",
         steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
                   "Granice 1.5 IQR", "Wąsy i odstające", "Gotowy wykres"),
         toolbar = lc_toolbar(
-          lc_action("ch4_bp_new", "Losuj nowe dane", variant = "outline")
+          lc01_stat_action("new", "ch4_bp_new", "Losuj nowe dane", variant = "outline"),
+          lc_chart_zoom_button()
         ),
-        plot_id = "ch4_bp_plot",
-        ratio = "2/1"
-      )
+        body = tagList(lc01_stat_chart(0, ratio = "2/1", max_height = "420px"),
+                       lc01_stat_chart(1, ratio = "2.4/1", max_height = "340px"))
+      ))
     ),
 
     lc_p("Trzy dodane wartości zwykle wypadają poza granice i zostają
@@ -507,400 +510,13 @@ ch4_server <- function(input, output, session) {
     ))
   })
 
-  # --- Widget 2: SD step-by-step ---
-
-  # Krok widgetu (1..3) żyje w przeglądarce; nowy zestaw nie cofa kroku.
-  ch4_sd_step <- lc_step_server("ch4_sd", input)$step
-  ch4_sd_data <- reactiveVal(round(rnorm(10, mean = 170, sd = 8), 1))
-
-  observeEvent(input$ch4_sd_new, {
-    set.seed(NULL)
-    ch4_sd_data(round(rnorm(10, mean = 170, sd = 8), 1))
-  })
-
-  zoom_plot_server("ch4_sd_plot", reactive({
-    step <- ch4_sd_step()
-
-    vals <- ch4_sd_data()
-    n <- length(vals)
-    x_bar <- mean(vals)
-    s <- sd(vals)
-
-    # Stała rama: dane i pas średnia ± SD, wspólne dla kroków.
-    x_rng <- range(vals, x_bar - s, x_bar + s)
-    x_pad <- diff(x_rng) * 0.08
-    frame <- step_frame(xlim = x_rng + c(-x_pad, x_pad), ylim = c(0, n + 1.2),
-                        y_axis = FALSE)
-
-    if (step == 1) {
-      # Krok 1: punkty na osi liczbowej
-      df <- data.frame(x = vals)
-      p <- ggplot(df, aes(x = x, y = (n + 1) / 2)) +
-        step_layer(geom_point, "data", size = 4, alpha = 1) +
-        labs(x = "Wzrost (cm)", y = "") +
-        frame
-
-    } else {
-      # Kroki 2-3: punkty jedna pod drugą, posortowane wg odległości od średniej
-      deviations <- vals - x_bar
-      ord <- order(abs(deviations), decreasing = TRUE)
-      df <- data.frame(
-        x = vals[ord],
-        dev = deviations[ord],
-        y = seq(n, 1)  # najdalszy na górze
-      )
-      dev_role <- step_role(step, 2)
-
-      p <- ggplot(df, aes(x = x, y = y))
-
-      if (step >= 3) {
-        p <- p +
-          annotate("rect", xmin = x_bar - s, xmax = x_bar + s,
-                   ymin = 0, ymax = n + 0.3, fill = STEP_ROLES$new$colour, alpha = 0.08) +
-          step_line("new", xintercept = x_bar - s) +
-          step_line("new", xintercept = x_bar + s) +
-          step_label(x_bar - s, 0.3, paste0("śr. − SD\n", round(x_bar - s, 1)),
-                     role = "new", hjust = 0.5) +
-          step_label(x_bar + s, 0.3, paste0("śr. + SD\n", round(x_bar + s, 1)),
-                     role = "new", hjust = 0.5) +
-          step_label(x_bar, 0.5, paste0("SD = ", round(s, 2), " cm"),
-                     role = "new", hjust = 0.5, vjust = 0.5, size = 4.2)
-      }
-
-      p <- p +
-        step_line(dev_role, xintercept = x_bar) +
-        step_layer(geom_segment, dev_role,
-                   mapping = aes(x = x_bar, xend = x, y = y, yend = y),
-                   arrow = arrow(length = unit(0.15, "cm"), type = "closed")) +
-        step_layer(geom_point, "data", size = 4, alpha = 1) +
-        step_label(x_bar, n + 0.8, paste0("średnia = ", round(x_bar, 2)),
-                   role = dev_role, hjust = 0.5, vjust = 0.5) +
-        labs(x = "Wzrost (cm)", y = "") +
-        frame
-    }
-
-    p
-  }))
-
-  output$ch4_sd_table <- renderUI({
-    step <- ch4_sd_step()
-    if (step < 2) return(NULL)
-
-    vals <- ch4_sd_data()
-    n <- length(vals)
-    x_bar <- mean(vals)
-
-    deviations <- vals - x_bar
-    sq_deviations <- deviations^2
-
-    df <- data.frame(
-      i = as.character(1:n),
-      x = vals,
-      dev = round(deviations, 2),
-      sq = round(sq_deviations, 2)
-    )
-    # Od kroku 3: wiersz sumy kwadratów odchyleń.
-    foot <- if (step >= 3) list(i = "SUMA", x = "", dev = "",
-                                sq = round(sum(sq_deviations), 2))
-
-    lc_table(df, cols = list(
-      lc_col("i", "i", "row"),
-      lc_col("x", "xᵢ", digits = 1),
-      lc_col("dev", "xᵢ − x̄", digits = 2),
-      lc_col("sq", "(xᵢ − x̄)²", digits = 2)
-    ), foot = foot)
-  })
-
-  output$ch4_sd_text <- renderUI({
-    step <- ch4_sd_step()
-
-    if (step == 1) {
-      "Dziesięć pomiarów wzrostu na osi liczbowej. Każdy punkt to jedna obserwacja."
-    } else if (step == 2) {
-      vals <- ch4_sd_data()
-      x_bar <- mean(vals)
-      paste0("Średnia wynosi ", round(x_bar, 2),
-             " cm. Strzałki to odchylenia od średniej, tabela podaje ich kwadraty.")
-    } else if (step == 3) {
-      vals <- ch4_sd_data()
-      n <- length(vals)
-      x_bar <- mean(vals)
-      deviations <- vals - x_bar
-      sq_deviations <- deviations^2
-      variance <- sum(sq_deviations) / (n - 1)
-      s <- sqrt(variance)
-      withMathJax(
-        paste0("Wariancja \\(s^2\\) = ", round(sum(sq_deviations), 2), " / ", n - 1,
-               " = ", round(variance, 2), " cm². ",
-               "Odchylenie standardowe \\(s = \\sqrt{", round(variance, 2), "} = ",
-               round(s, 2), "\\) cm. Pas na wykresie to \\(\\bar{x} \\pm s\\).")
-      )
-    }
-  })
-
-  # Krzywa normalna, pasy jak w Ryc. 4.4, klamry z odsetkami
-  zoom_plot_server("ch4_proto_regula", reactive({
-    x <- seq(-3.6, 3.6, length.out = 600)
-    dens <- data.frame(x = x, y = dnorm(x))
-    band_alphas <- c(0.40, 0.25, 0.12)
-    pk <- dnorm(0)
-    br <- data.frame(k = 1:3, y = pk * c(1.12, 1.28, 1.44),
-                     lab = c("68%", "95%", "99.7%"))
-
-    p <- ggplot(dens, aes(x = x, y = y))
-    for (k in 3:1) {
-      p <- p + geom_area(data = dens[abs(dens$x) <= k, ], fill = upwr_accent,
-                         alpha = band_alphas[k])
-    }
-    p +
-      geom_line(colour = upwr_secondary, linewidth = 0.9) +
-      geom_segment(data = br, aes(x = -k, xend = k, y = y, yend = y),
-                   colour = upwr_accent, linewidth = 0.6, inherit.aes = FALSE) +
-      geom_segment(data = rbind(transform(br, xs = -k), transform(br, xs = br$k)),
-                   aes(x = xs, xend = xs, y = y, yend = y - pk * 0.04),
-                   colour = upwr_accent, linewidth = 0.6, inherit.aes = FALSE) +
-      geom_text(data = br, aes(x = 0, y = y, label = lab), vjust = -0.45,
-                family = lc_mono_family, colour = upwr_accent, fontface = "bold",
-                size = 4, inherit.aes = FALSE) +
-      scale_x_continuous(breaks = -3:3,
-        labels = c("x̄ − 3s", "x̄ − 2s", "x̄ − s", "x̄", "x̄ + s", "x̄ + 2s", "x̄ + 3s")) +
-      scale_y_continuous(limits = c(0, pk * 1.58), expand = c(0, 0)) +
-      labs(x = NULL, y = NULL) +
-      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-            panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(),
-            panel.grid.minor.x = element_blank())
-  }))
+  # Ryc. 4.2 (SD krok po kroku) i 4.3 (reguła 68–95–99.7) rysuje stat_charts.js.
 
   # --- Widget 2b: Empirical rule (68-95-99.7) ---
 
   # Ryc. 4.4 rysuje stat_charts.js; opisy w UI (ch4_emp_notes).
 
-  # --- Widget 3: Boxplot builder ---
-
-  # Krok widgetu (1..5) żyje w przeglądarce; nowe dane nie cofają kroku.
-  ch4_bp_step <- lc_step_server("ch4_bp", input)$step
-  ch4_bp_data <- reactiveVal(round(c(rnorm(27, 170, 8), 145, 198, 200), 1))
-
-  observeEvent(input$ch4_bp_new, {
-    set.seed(NULL)
-    ch4_bp_data(round(c(rnorm(27, 170, 8), 145, 198, 200), 1))
-  })
-
-  zoom_plot_server("ch4_bp_plot", reactive({
-    step <- ch4_bp_step()
-
-    vals <- ch4_bp_data()
-    sorted_vals <- sort(vals)
-    med <- median(vals)
-    q1 <- quantile(vals, 0.25)
-    q3 <- quantile(vals, 0.75)
-    iqr_val <- q3 - q1
-    lower_fence <- q1 - 1.5 * iqr_val
-    upper_fence <- q3 + 1.5 * iqr_val
-    whisker_low <- min(vals[vals >= lower_fence])
-    whisker_high <- max(vals[vals <= upper_fence])
-    outliers <- vals[vals < lower_fence | vals > upper_fence]
-
-    # Stała rama osi X z pełnych danych i granic, wspólna dla kroków.
-    x_span <- range(c(vals, lower_fence, upper_fence))
-    x_lim <- x_span + c(-1, 1) * diff(x_span) * 0.06
-    # Etykiety co 20 cm, dodatkowa cienka siatka co 10 cm do odczytu długości wąsów.
-    x_grid <- list(
-      scale_x_continuous(breaks = seq(0, 300, by = 20), minor_breaks = seq(0, 300, by = 10)),
-      theme(panel.grid.minor.x = element_line(colour = upwr_rule, linewidth = 0.15))
-    )
-    frame <- list(x_grid, step_frame(xlim = x_lim, ylim = c(-0.9, 0.9), y_axis = FALSE))
-
-    if (step == 6) {
-      # Final: clean boxplot + histogram for comparison
-      df <- data.frame(x = vals)
-      p_box <- ggplot(df, aes(x = x, y = "")) +
-        step_result(geom_boxplot, outlier.colour = STEP_ROLES$known$colour,
-                    outlier.size = 3, width = 0.4) +
-        step_layer(geom_jitter, "known", width = 0, height = 0.05, alpha = 0.4, size = 2) +
-        labs(x = "", y = "") +
-        x_grid +
-        step_frame(xlim = x_lim, ylim = c(0.5, 1.5), y_axis = FALSE)
-
-      p_hist <- ggplot(df, aes(x = x)) +
-        step_result(geom_histogram, bins = 15)
-      count_max <- max(layer_data(p_hist)$count)
-      p_hist <- p_hist +
-        step_line("known", xintercept = med, helper = FALSE) +
-        step_line("known", xintercept = q1) +
-        step_line("known", xintercept = q3) +
-        labs(x = "Wzrost (cm)", y = "Liczebność") +
-        x_grid +
-        step_frame(xlim = x_lim, ylim = c(0, count_max * 1.08))
-
-      return(gridExtra::arrangeGrob(p_box, p_hist, nrow = 2, heights = c(1, 1.2)))
-    }
-
-    # Steps 1-5: manual construction
-    df <- data.frame(x = vals, y = 0)
-
-    if (step == 1) {
-      # Jittered raw data
-      set.seed(42)
-      df$y_jit <- runif(nrow(df), -0.3, 0.3)
-
-      ggplot(df, aes(x = x, y = y_jit)) +
-        step_layer(geom_point, "data", size = 3) +
-        labs(x = "Wzrost (cm)", y = "") +
-        frame
-
-    } else if (step == 2) {
-      set.seed(42)
-      df$y_jit <- runif(nrow(df), -0.3, 0.3)
-
-      ggplot(df, aes(x = x, y = y_jit)) +
-        step_layer(geom_point, "data", size = 3) +
-        step_line("new", xintercept = med, helper = FALSE) +
-        step_label(med, 0.65, "Mediana", role = "new", hjust = 0.5, vjust = 0.5) +
-        labs(x = "Wzrost (cm)", y = "") +
-        frame
-
-    } else if (step == 3) {
-      set.seed(42)
-      df$y_jit <- runif(nrow(df), -0.3, 0.3)
-
-      ggplot(df, aes(x = x, y = y_jit)) +
-        # IQR box
-        step_result(geom_rect, data = data.frame(xmin = q1, xmax = q3),
-                    mapping = aes(xmin = xmin, xmax = xmax, ymin = -0.5, ymax = 0.5),
-                    inherit.aes = FALSE, alpha = 0.2) +
-        step_layer(geom_point, "data", size = 3) +
-        step_line("known", xintercept = med, helper = FALSE) +
-        step_line("new", xintercept = q1) +
-        step_line("new", xintercept = q3) +
-        step_label(med, 0.7, "Mediana", role = "known", hjust = 0.5, vjust = 0.5) +
-        step_label(q1, -0.65, "Q1", role = "new", hjust = 0.5, vjust = 0.5) +
-        step_label(q3, -0.65, "Q3", role = "new", hjust = 0.5, vjust = 0.5) +
-        step_label((q1 + q3) / 2, 0.7, "IQR", role = "new", vjust = 0.5,
-                   hjust = ifelse(abs(med - (q1 + q3) / 2) < 3, 2, 0.5)) +
-        labs(x = "Wzrost (cm)", y = "") +
-        frame
-
-    } else if (step == 4) {
-      set.seed(42)
-      df$y_jit <- runif(nrow(df), -0.2, 0.2)
-
-      # Odcinki 1.5 IQR od krawędzi pudełka do granic
-      steps_df <- data.frame(x = c(q1, q3), xend = c(lower_fence, upper_fence),
-                             y = -0.6, yend = -0.6)
-
-      ggplot(df) +
-        step_result(geom_rect, data = data.frame(xmin = q1, xmax = q3),
-                    mapping = aes(xmin = xmin, xmax = xmax, ymin = -0.4, ymax = 0.4),
-                    alpha = 0.2) +
-        step_layer(geom_segment, "known",
-                   data = data.frame(x = med, xend = med, y = -0.4, yend = 0.4),
-                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
-                   linewidth = 1.2) +
-        step_line("new", xintercept = lower_fence) +
-        step_line("new", xintercept = upper_fence) +
-        step_layer(geom_segment, "new", data = steps_df,
-                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
-                   arrow = grid::arrow(length = grid::unit(0.15, "cm"), ends = "last")) +
-        step_label((q1 + lower_fence) / 2, -0.72, "1.5 IQR", role = "new",
-                   hjust = 0.5, vjust = 0.5) +
-        step_label((q3 + upper_fence) / 2, -0.72, "1.5 IQR", role = "new",
-                   hjust = 0.5, vjust = 0.5) +
-        step_layer(geom_point, "data", mapping = aes(x = x, y = y_jit),
-                   size = 2.5, alpha = 0.5) +
-        labs(x = "Wzrost (cm)", y = "") +
-        frame
-
-    } else if (step == 5) {
-      is_outlier <- vals < lower_fence | vals > upper_fence
-      df$outlier <- is_outlier
-      set.seed(42)
-      df$y_jit <- runif(nrow(df), -0.2, 0.2)
-
-      whiskers <- data.frame(
-        x    = c(whisker_low, whisker_low, q3, whisker_high),
-        xend = c(q1, whisker_low, whisker_high, whisker_high),
-        y    = c(0, -0.2, 0, -0.2),
-        yend = c(0, 0.2, 0, 0.2)
-      )
-
-      p <- ggplot(df) +
-        # IQR box
-        step_result(geom_rect, data = data.frame(xmin = q1, xmax = q3),
-                    mapping = aes(xmin = xmin, xmax = xmax, ymin = -0.4, ymax = 0.4),
-                    alpha = 0.2) +
-        # Median line inside box
-        step_layer(geom_segment, "known",
-                   data = data.frame(x = med, xend = med, y = -0.4, yend = 0.4),
-                   mapping = aes(x = x, xend = xend, y = y, yend = yend),
-                   linewidth = 1.2) +
-        # Granice z poprzedniego kroku
-        step_line("known", xintercept = lower_fence) +
-        step_line("known", xintercept = upper_fence) +
-        # Whiskers
-        step_layer(geom_segment, "new", data = whiskers,
-                   mapping = aes(x = x, xend = xend, y = y, yend = yend)) +
-        # Points: normal
-        step_layer(geom_point, "data", data = df[!df$outlier, ],
-                   mapping = aes(x = x, y = y_jit), size = 2.5, alpha = 0.5) +
-        # Points: outliers
-        step_layer(geom_point, "new", data = df[df$outlier, ],
-                   mapping = aes(x = x, y = y_jit), size = 4, shape = 18) +
-        labs(x = "Wzrost (cm)", y = "") +
-        frame
-
-      if (length(outliers) > 0) {
-        p <- p +
-          step_label(mean(outliers), 0.55, paste0("wartości odstające: ", length(outliers)),
-                     role = "new", hjust = 0.5, vjust = 0.5)
-      }
-
-      p
-    }
-  }))
-
-  output$ch4_bp_text <- renderUI({
-    step <- ch4_bp_step()
-    if (step == 1) {
-      "30 pomiarów wzrostu na osi liczbowej. Widać zakres, ale trudno coś szybko odczytać."
-    } else if (step == 2) {
-      vals <- ch4_bp_data()
-      paste0("Mediana = ", round(median(vals), 1),
-             " cm dzieli posortowane dane na dwie połowy.")
-    } else if (step == 3) {
-      vals <- ch4_bp_data()
-      q1 <- quantile(vals, 0.25)
-      q3 <- quantile(vals, 0.75)
-      paste0("Q1 = ", round(q1, 1), " cm, Q3 = ", round(q3, 1),
-             " cm. Pudełko obejmuje środkowe 50% danych, IQR = ",
-             round(q3 - q1, 1), " cm.")
-    } else if (step %in% 4:5) {
-      vals <- ch4_bp_data()
-      q1 <- quantile(vals, 0.25)
-      q3 <- quantile(vals, 0.75)
-      iqr_val <- q3 - q1
-      lower_fence <- q1 - 1.5 * iqr_val
-      upper_fence <- q3 + 1.5 * iqr_val
-      outliers <- vals[vals < lower_fence | vals > upper_fence]
-      inside <- vals[vals >= lower_fence & vals <= upper_fence]
-      if (step == 4) {
-        paste0("Granice: Q1 − 1.5 IQR = ", round(lower_fence, 1),
-               " cm i Q3 + 1.5 IQR = ", round(upper_fence, 1),
-               " cm. Poza nimi leży obserwacji: ", length(outliers), ".")
-      } else {
-        paste0("Wąsy kończą się na ostatnich obserwacjach przed granicami: ",
-               round(min(inside), 1), " i ", round(max(inside), 1), " cm. ",
-               if (length(outliers) > 0) {
-                 paste0("Wartości odstające: ",
-                        paste(round(sort(outliers), 1), collapse = ", "), " cm.")
-               } else {
-                 "Brak wartości odstających."
-               })
-      }
-    } else if (step == 6) {
-      "Gotowy wykres pudełkowy (u góry) obok histogramu tych samych danych (u dołu)."
-    }
-  })
+  # Ryc. 4.5 (pudełko krok po kroku) rysuje stat_charts.js.
 
   # --- Widget 3b: Group comparison ---
 

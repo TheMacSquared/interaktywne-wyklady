@@ -878,3 +878,40 @@ test("pudełka w grupach (01, Ryc. 4.6): kilka kontrolek wybiera opis pary zmien
   env.unmount(fig);
   assert.equal(env.live.size, 0);
 });
+
+test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę; zbędny wykres znika", () => {
+  const env = environment();
+  env.window.lc01Survey = { n: 0, columns: {} };
+  env.load("01-typy-danych/modules/chart_utils.js");
+  env.load("01-typy-danych/modules/stat_charts.js");
+  const stepper = (id, charts, extra = []) => {
+    const text = new Element("div", { id: id + "_text" });
+    const boxes = charts.map(k => root("lc01-stat-chart", [ecbox(String(k))], { "data-k": String(k) }));
+    const st = root("lc-stepper", [...boxes, text, ...extra], { id, "data-lc-step": "1" });
+    return { st, text, boxes };
+  };
+  const table = new Element("div", { "data-role": "table" }), again = new Element("button", { "data-stat-act": "new" });
+  const sd = stepper("ch4_sd", [0], [table, again]);
+  const fig = root("lc01-stat", [sd.st], { "data-fig": "sd" });
+  env.mount(fig);
+  assert.equal(env.errors.length, 0);
+  assert.match(sd.text.innerHTML, /Dziesięć pomiarów/);
+  assert.equal(table.innerHTML, "", "tabela dopiero od kroku 2");
+  sd.st.setAttribute("data-lc-step", "3"); env.theme(sd.st);
+  assert.match(sd.text.innerHTML, /Wariancja/);
+  assert.match(table.innerHTML, /SUMA/);
+  const before = table.innerHTML;
+  fig.emit("click", { target: again });
+  assert.notEqual(table.innerHTML, before, "nowy zestaw zmienia tabelę");
+  // Ryc. 4.5: drugi wykres (histogram) widoczny tylko w kroku 6.
+  const bp = stepper("ch4_bp", [0, 1]);
+  const fig2 = root("lc01-stat", [bp.st], { "data-fig": "bp" });
+  env.mount(fig2);
+  assert.equal(bp.boxes[1].hidden, true);
+  bp.st.setAttribute("data-lc-step", "6"); env.theme(bp.st);
+  assert.equal(bp.boxes[1].hidden, false);
+  assert.match(bp.text.innerHTML, /Gotowy wykres pudełkowy/);
+  [fig, fig2].forEach(f => env.unmount(f));
+  assert.equal(env.live.size, 0);
+  assert.equal(env.errors.length, 0);
+});

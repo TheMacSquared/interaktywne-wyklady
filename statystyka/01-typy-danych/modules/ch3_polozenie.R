@@ -175,28 +175,28 @@ ch3_ui <- list(
       label = "Ryc. 3.1",
       # Stosy (kroki 5–6) i trzy histogramy pod sobą (krok 7) potrzebują więcej wysokości.
       tags$style(HTML("
-        #ch3_hist[data-lc-step='5'] .lc-step-plot,
-        #ch3_hist[data-lc-step='6'] .lc-step-plot { --lc-plot-ratio: 1.8/1 !important; }
-        #ch3_hist[data-lc-step='7'] .lc-step-plot { --lc-plot-ratio: 1.2/1 !important;
-          --lc-plot-ratio-narrow: 3/4 !important; --lc-plot-max: 600px; }
+        #ch3_hist[data-lc-step='5'] .lc01-stat-chart[data-k='0'],
+        #ch3_hist[data-lc-step='6'] .lc01-stat-chart[data-k='0'] { aspect-ratio: 1.8 / 1 !important; max-height: 460px !important; }
+        #ch3_hist[data-lc-step='7'] .lc01-stat-chart { aspect-ratio: 3.6 / 1 !important; min-height: 9em; }
       ")),
-      lc_step_widget("ch3_hist",
+      lc01_stat_figure("hist", bare = TRUE, body = lc_step_widget("ch3_hist",
         title = "Budowa histogramu",
         steps = c("Surowe dane", "Posortuj dane", "Podziel na przedziały",
                   "Przypisz do binów", "Zlicz obserwacje", "Zbuduj słupki",
                   "Wpływ szerokości binu"),
         toolbar = lc_toolbar(
-          selectInput("ch3_hist_var", "Zmienna",
-            choices = c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
-                        "Czas dojazdu (min)" = "czas_dojazdu",
-                        "Średnia ocen" = "srednia_ocen"),
-            selected = "wzrost"
-          ),
-          lc_step_from(3, uiOutput("ch3_hist_bin_slider"))
+          lc01_stat_ctl(lc_group("Zmienna", lc_select("ch3_hist_var",
+            c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
+              "Czas dojazdu (min)" = "czas_dojazdu", "Średnia ocen" = "srednia_ocen"),
+            aria_label = "Zmienna"))),
+          lc_step_from(3, lc01_stat_slider("ch3_hist_bin_width", "Szerokość binu", 1, 15, 5, 1)),
+          lc_chart_zoom_button()
         ),
-        plot_id = "ch3_hist_plot",
-        extra = uiOutput("ch3_hist_table")
-      )
+        body = tagList(lc01_stat_chart(0, ratio = "2.5/1", max_height = "420px"),
+                       lc01_stat_chart(1, ratio = "3.6/1", max_height = "240px"),
+                       lc01_stat_chart(2, ratio = "3.6/1", max_height = "240px")),
+        extra = tags$div(`data-role` = "table")
+      ))
     ),
 
     lc_p("Ostatni krok pokazuje rzecz, o której łatwo zapomnieć: kształt
@@ -633,270 +633,7 @@ ch3_ui <- list(
 
 ch3_server <- function(input, output, session) {
 
-  # --------------------------------------------------------------------------
-  # Widget: Histogram krok po kroku
-  # --------------------------------------------------------------------------
-
-  # Krok widgetu (1..8) żyje w przeglądarce; zmiana zmiennej nie cofa kroku.
-  ch3_hist_step <- lc_step_server("ch3_hist", input)$step
-
-  # Default bin widths per variable
-  ch3_hist_defaults <- list(
-    wzrost = list(min = 1, max = 15, value = 5, step = 1, unit = "cm"),
-    waga = list(min = 2, max = 20, value = 5, step = 1, unit = "kg"),
-    czas_dojazdu = list(min = 2, max = 20, value = 5, step = 1, unit = "min"),
-    srednia_ocen = list(min = 0.1, max = 1, value = 0.3, step = 0.05, unit = "pkt")
-  )
-
-  output$ch3_hist_bin_slider <- renderUI({
-    d <- ch3_hist_defaults[[input$ch3_hist_var]]
-    lc_slider("ch3_hist_bin_width", "Szerokość binu", d$min, d$max, d$value, d$step)
-  })
-
-  # Compute bin breaks
-  ch3_hist_breaks <- reactive({
-    req(input$ch3_hist_bin_width)
-    x <- student_data[[input$ch3_hist_var]]
-    w <- input$ch3_hist_bin_width
-    start <- floor(min(x) / w) * w
-    end <- ceiling(max(x) / w) * w + w
-    seq(start, end, by = w)
-  })
-
-  # Data with bin assignments
-  ch3_hist_binned <- reactive({
-    req(input$ch3_hist_bin_width)
-    x <- student_data[[input$ch3_hist_var]]
-    breaks <- ch3_hist_breaks()
-    df <- data.frame(value = x)
-    df$bin <- cut(df$value, breaks = breaks, include.lowest = TRUE, right = FALSE)
-    df$bin_num <- as.numeric(df$bin)
-    df
-  })
-
-  # Bin statistics
-  ch3_hist_stats <- reactive({
-    df <- ch3_hist_binned()
-    breaks <- ch3_hist_breaks()
-    all_bins <- data.frame(
-      bin_start = breaks[-length(breaks)],
-      bin_end = breaks[-1]
-    )
-    all_bins$bin_mid <- (all_bins$bin_start + all_bins$bin_end) / 2
-    all_bins$bin_num <- seq_len(nrow(all_bins))
-
-    counts <- df %>%
-      filter(!is.na(bin)) %>%
-      group_by(bin_num) %>%
-      summarise(count = n(), .groups = "drop")
-    all_bins <- all_bins %>% left_join(counts, by = "bin_num")
-    all_bins$count[is.na(all_bins$count)] <- 0
-
-    # Trim to relevant range
-    min_d <- min(all_bins$bin_num[all_bins$count > 0])
-    max_d <- max(all_bins$bin_num[all_bins$count > 0])
-    all_bins %>%
-      filter(bin_num >= max(1, min_d - 1),
-             bin_num <= min(nrow(all_bins), max_d + 1))
-  })
-
-  # Obserwacje z numerem w stosie swojego binu (kroki 5–6)
-  ch3_hist_stacked <- reactive({
-    stats <- ch3_hist_stats()
-    ch3_hist_binned() %>%
-      filter(!is.na(bin)) %>%
-      arrange(bin_num, value) %>%
-      group_by(bin_num) %>%
-      mutate(k = row_number()) %>%
-      ungroup() %>%
-      inner_join(stats %>% select(bin_num, bin_start, bin_end, bin_mid), by = "bin_num")
-  })
-
-  # Kropka mniejsza, gdy stosy są wysokie, żeby się nie zlewały
-  ch3_hist_dot_size <- function(max_count) max(0.8, min(2.2, 60 / max_count))
-
-  # Oś X z granicami binów (co druga podpisana)
-  ch3_hist_edge_axis <- function(breaks) {
-    scale_x_continuous(breaks = breaks[seq(1, length(breaks), by = 2)],
-                       labels = function(v) lc_fmt(v, 2), minor_breaks = NULL)
-  }
-
-  # Variable labels
-  ch3_hist_var_labels <- c(
-    "wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
-    "czas_dojazdu" = "Czas dojazdu (min)",
-    "srednia_ocen" = "Średnia ocen"
-  )
-
-  zoom_plot_server("ch3_hist_plot", reactive({
-    step <- ch3_hist_step()
-    var_name <- input$ch3_hist_var
-    req(var_name)
-    x <- student_data[[var_name]]
-    x_label <- ch3_hist_var_labels[var_name]
-    n <- length(x)
-
-    x_lo <- min(x) - diff(range(x)) * 0.05
-    x_hi <- max(x) + diff(range(x)) * 0.05
-
-    strip_theme <- theme(axis.text.y = element_blank(),
-            axis.ticks.y = element_blank(),
-            panel.grid.major.y = element_blank(),
-            panel.grid.minor.y = element_blank())
-    # Dwie grupy przynależności do binów: naprzemiennie dane / grupa.
-    bin_role_colour <- function(bin_num) {
-      ifelse(bin_num %% 2 == 1, STEP_ROLES$data$colour, STEP_ROLES$group$colour)
-    }
-
-    if (step == 1) {
-      df <- data.frame(value = x)
-      ggplot(df, aes(x = value, y = 0)) +
-        step_layer(geom_jitter, "data", height = 0.3, size = 3) +
-        labs(x = x_label, y = "") + strip_theme +
-        step_frame(xlim = c(x_lo, x_hi), ylim = c(-0.5, 0.5))
-
-    } else if (step == 2) {
-      # Wartości po kolei: płasko tam, gdzie dane leżą gęsto, stromo na rzadkich końcach.
-      df <- data.frame(i = seq_along(x), value = sort(x))
-      ggplot(df, aes(x = i, y = value)) +
-        step_layer(geom_point, "data", size = 2) +
-        labs(x = "Numer obserwacji po posortowaniu", y = x_label) +
-        theme(panel.grid.minor = element_blank(), legend.position = "none")
-
-    } else if (step %in% 3:4) {
-      # Przedziały jako pasy na zmianę w dwóch kolorach; w kroku 4 punkty biorą kolor pasa.
-      breaks <- ch3_hist_breaks()
-      bands <- data.frame(xmin = breaks[-length(breaks)], xmax = breaks[-1],
-                          bin_num = seq_len(length(breaks) - 1)) %>%
-        filter(xmax > x_lo, xmin < x_hi)
-      df <- ch3_hist_binned() %>% filter(!is.na(bin))
-      set.seed(11)
-      df$jy <- runif(nrow(df), -0.3, 0.3)
-      w <- input$ch3_hist_bin_width
-      mid_bin <- bands[ceiling(nrow(bands) / 2), ]
-      point_colour <- if (step == 3) upwr_ink_soft else bin_role_colour(df$bin_num)
-
-      p <- ggplot() +
-        geom_rect(data = bands, aes(xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf),
-                  fill = bin_role_colour(bands$bin_num), alpha = if (step == 3) 0.18 else 0.12) +
-        geom_vline(xintercept = breaks, colour = upwr_ink_soft, linewidth = 0.3) +
-        geom_point(data = df, aes(x = value, y = jy), colour = point_colour,
-                   alpha = if (step == 3) 0.55 else 0.9, size = 2.4) +
-        ch3_hist_edge_axis(breaks) +
-        labs(x = x_label, y = "") + strip_theme +
-        step_frame(xlim = c(x_lo, x_hi), ylim = c(-0.45, if (step == 3) 0.8 else 0.45))
-      if (step == 3) {
-        p <- p +
-          annotate("segment", x = mid_bin$xmin, xend = mid_bin$xmax, y = 0.55, yend = 0.55,
-                   colour = STEP_ROLES$new$colour, linewidth = 0.9,
-                   arrow = arrow(ends = "both", length = unit(4, "pt"))) +
-          annotate("text", x = (mid_bin$xmin + mid_bin$xmax) / 2, y = 0.7,
-                   label = paste("szerokość", lc_fmt(w, 2), ch3_hist_defaults[[var_name]]$unit),
-                   colour = STEP_ROLES$new$colour, size = 4, fontface = "bold")
-      }
-      p
-
-    } else if (step == 5) {
-      # Stosy kropek: każda obserwacja staje w kolumnie swojego binu.
-      stats <- ch3_hist_stats()
-      df <- ch3_hist_stacked()
-      ggplot() +
-        geom_vline(xintercept = ch3_hist_breaks(), colour = upwr_rule, linewidth = 0.3) +
-        geom_point(data = df, aes(x = bin_mid, y = k - 0.5), colour = bin_role_colour(df$bin_num),
-                   size = ch3_hist_dot_size(max(stats$count))) +
-        geom_text(data = filter(stats, count > 0), aes(x = bin_mid, y = count + max(stats$count) * 0.05, label = count),
-                  size = 3.8, fontface = "bold", family = lc_mono_family, colour = STEP_ROLES$known$colour) +
-        ch3_hist_edge_axis(ch3_hist_breaks()) +
-        labs(x = x_label, y = "Liczba obserwacji") +
-        theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank()) +
-        step_frame(xlim = c(x_lo, x_hi), ylim = c(0, max(stats$count) * 1.15))
-
-    } else if (step == 6) {
-      # Kafelki: każda obserwacja to prostokąt pełnej szerokości binu; razem tworzą słupek.
-      stats <- ch3_hist_stats()
-      df <- ch3_hist_stacked()
-      ggplot() +
-        geom_rect(data = df, aes(xmin = bin_start, xmax = bin_end, ymin = k - 1, ymax = k),
-                  fill = STEP_ROLES$data$colour, alpha = 0.55, colour = "white", linewidth = 0.25) +
-        geom_rect(data = filter(stats, count > 0),
-                  aes(xmin = bin_start, xmax = bin_end, ymin = 0, ymax = count),
-                  fill = NA, colour = STEP_EDGE$colour, linewidth = 0.45) +
-        geom_text(data = filter(stats, count > 0), aes(x = bin_mid, y = count + max(stats$count) * 0.05, label = count),
-                  size = 3.8, fontface = "bold", family = lc_mono_family, colour = STEP_ROLES$known$colour) +
-        ch3_hist_edge_axis(ch3_hist_breaks()) +
-        labs(x = x_label, y = "Liczba obserwacji") +
-        theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank()) +
-        step_frame(xlim = c(x_lo, x_hi), ylim = c(0, max(stats$count) * 1.15))
-
-    } else if (step == 7) {
-      # Trzy szerokości pod sobą: najwęższa z suwaka, wybrana, najszersza.
-      d <- ch3_hist_defaults[[var_name]]
-      w <- input$ch3_hist_bin_width
-      widths <- unique(c(d$min, w, d$max))
-      notes <- c("najwęższa", "z suwaka", "najszersza")[match(widths, c(d$min, w, d$max))]
-      cols <- ifelse(widths == w, upwr_accent, upwr_ink_soft)
-      df <- data.frame(value = x)
-      plots <- lapply(seq_along(widths), function(i) {
-        ggplot(df, aes(x = value)) +
-          geom_histogram(binwidth = widths[i], boundary = floor(min(x) / w) * w, closed = "left",
-                         fill = cols[i], alpha = 0.75, colour = "white", linewidth = 0.3) +
-          labs(x = if (i == length(widths)) x_label else NULL, y = NULL,
-               subtitle = paste0("szerokość ", lc_fmt(widths[i], 2), " ", d$unit, " (", notes[i], ")")) +
-          coord_cartesian(xlim = c(x_lo, x_hi)) +
-          theme_upwr(base_size = 12, base_family = theme_get()$text$family) +
-          theme(panel.grid.minor = element_blank(),
-                plot.margin = margin(t = 4, r = 12, b = 2, l = 8),
-                plot.subtitle = element_text(colour = cols[i], face = "bold", size = 12,
-                                             margin = margin(b = 2)))
-      })
-      gridExtra::arrangeGrob(grobs = plots, ncol = 1)
-    }
-  }))
-
-  output$ch3_hist_text <- renderUI({
-    step <- ch3_hist_step()
-    var_name <- input$ch3_hist_var
-    req(var_name)
-    x <- student_data[[var_name]]
-    n <- length(x)
-    unit <- ch3_hist_defaults[[var_name]]$unit
-
-    txt <- switch(as.character(step),
-      "1" = paste0("Mamy ", n, " obserwacji — każdy punkt to jedna wartość. ",
-                   "Trudno z tego odczytać rozkład, prawda?"),
-      "2" = paste0("Sortujemy wartości od najmniejszej (", lc_fmt(min(x), 1), " ", unit,
-                   ") do największej (", lc_fmt(max(x), 1), " ", unit, ") i rysujemy je po kolei. ",
-                   "Tam, gdzie wykres jest płaski, wartości leżą gęsto; strome końce to rzadkie wartości skrajne."),
-      "3" = paste0("Dzielimy oś na równe przedziały (biny) o szerokości ",
-                   lc_fmt(input$ch3_hist_bin_width, 2), " ", unit,
-                   ". Każdy bin to „koszyk” na obserwacje."),
-      "4" = "Każda obserwacja trafia do swojego binu i przyjmuje jego kolor.",
-      "5" = "Każda obserwacja ląduje w kolumnie swojego binu i staje na poprzedniej. Wysokość stosu to liczba obserwacji w binie.",
-      "6" = "Stos zamieniamy w słupek tej samej wysokości. Każdy kafelek to jedna obserwacja, a słupek to ich liczba. To już jest histogram.",
-      "7" = paste0("Te same dane przy trzech szerokościach binu: najwęższej, wybranej suwakiem i najszerszej. ",
-                   "Za wąskie biny dają poszarpany wykres, za szerokie ukrywają kształt.")
-    )
-    txt
-  })
-
-  output$ch3_hist_table <- renderUI({
-    if (ch3_hist_step() < 5) return(NULL)
-    stats <- ch3_hist_stats()
-    n <- length(student_data[[input$ch3_hist_var]])
-
-    result <- stats %>% filter(count > 0) %>%
-      mutate(pct = round(count / n * 100, 1))
-    out <- data.frame(
-      bin = paste0("[", result$bin_start, ", ", result$bin_end, ")"),
-      count = result$count,
-      pct = result$pct
-    )
-    lc_table(out, cols = list(
-      lc_col("bin", "Przedział", "row"),
-      lc_col("count", "Liczba obs."),
-      lc_col("pct", "Procent (%)", digits = 1)
-    ))
-  })
+  # Ryc. 3.1 (budowa histogramu) rysuje stat_charts.js; suwak i tabela w przeglądarce.
 
   # --------------------------------------------------------------------------
   # Widget 1b: Sixth observation -- formulas step by step

@@ -134,6 +134,40 @@
     return { q1: q1, med: U.quantile7(s, 0.5, true), q3: q3, lo: inside[0], hi: inside[inside.length - 1],
              out: s.filter(function (t) { return t < lo || t > hi; }) };
   }
+  // ---- Tabela jak lc_table() w R -----------------------------------------------
+  // cols: [{label, digits, row}] (row: kolumna nagłówków wierszy); rows/foot: tablice
+  // wartości. Liczby wyrównane niewidocznymi zerami (lc-pad), jak w R.
+  function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function lcTable(cols, rows, foot) {
+    var shape = cols.map(function (c, j) {
+      if (c.row || c.digits == null) return null;
+      var all = rows.concat(foot ? [foot] : []).map(function (r) { return r[j]; })
+        .filter(function (v) { return typeof v === "number" && isFinite(v); });
+      var parts = all.map(function (v) { var t = lcFmt(v, c.digits).split("."); return { i: t[0].length, d: (t[1] || "").length }; });
+      return { i: Math.max.apply(null, parts.map(function (p) { return p.i; }).concat([0])),
+               d: c.digits };  // miejsca po przecinku dopełniane do cyfr kolumny
+    });
+    function pad(t) { return '<span class="lc-pad" aria-hidden="true">' + t + "</span>"; }
+    function zeros(n) { return new Array(n + 1).join("0"); }
+    function cell(v, c, j, tag) {
+      if (c.row) return '<th scope="row">' + esc(v) + "</th>";
+      var body = "";
+      if (typeof v === "number" && isFinite(v)) {
+        var t = lcFmt(v, c.digits), p = t.split("."), sh = shape[j];
+        var left = sh.i - p[0].length, right = sh.d - (p[1] || "").length;
+        body = (left > 0 ? pad(zeros(left)) : "") + esc(t) + (right > 0 ? pad((p[1] ? "" : ".") + zeros(right)) : "");
+      } else body = esc(v == null ? "" : v);
+      return "<" + tag + ' class="n" data-label="' + esc(c.label) + '">' + body + "</" + tag + ">";
+    }
+    var head = cols.map(function (c) { return '<th scope="col"' + (c.row ? "" : ' class="n"') + ">" + esc(c.label) + "</th>"; }).join("");
+    var body = rows.map(function (r) { return "<tr>" + cols.map(function (c, j) { return cell(r[j], c, j, "td"); }).join("") + "</tr>"; }).join("");
+    var tail = foot ? "<tfoot><tr>" + cols.map(function (c, j) { return cell(foot[j], c, j, "td"); }).join("") + "</tr></tfoot>" : "";
+    return '<div class="lc-tbl-block"><table class="lc-tbl is-fit"><thead><tr>' + head + "</tr></thead><tbody>" +
+           body + "</tbody>" + tail + "</table></div>";
+  }
+  // round() z R: zaokrąglenie do d miejsc, wypisane bez końcowych zer.
+  function rround(v, d) { return lcFmt(v, d); }
+
   var TYPE_COLOR = { nom: "terakota", ord: "bursztyn", disc: "niebo", cont: "szalwia" };
 
   // ---- Figury -------------------------------------------------------------
@@ -518,17 +552,357 @@
                legend: [{ text: "z²", color: P.ref, box: true }, { text: "z⁴", color: P.terakota, box: true }],
                aria: "Kwadraty 1, 4, 9 i czwarte potęgi 1, 16, 81 dla odległości 1, 2 i 3 SD od średniej" };
     },
+    // Ryc. 4.3 — reguła 68–95–99.7 na krzywej normalnej (statyczna).
+    regula: function (v, P) {
+      var pk = 1 / Math.sqrt(2 * Math.PI), layers = [], pts = [];
+      for (var i = 0; i <= 600; i++) { var t = -3.6 + 7.2 * i / 600; pts.push([t, pk * Math.exp(-t * t / 2)]); }
+      [3, 2, 1].forEach(function (k) {
+        layers.push({ type: "line", width: 0, color: P.accent, fill: P.accent, fillAlpha: [0, 0.40, 0.25, 0.12][k],
+                      data: pts.filter(function (p) { return Math.abs(p[0]) <= k + 1e-9; }) });
+      });
+      layers.push({ type: "line", data: pts, color: P.secondary, width: 1.8 });
+      [[1, 1.12, "68%"], [2, 1.28, "95%"], [3, 1.44, "99.7%"]].forEach(function (b) {
+        var y = pk * b[1];
+        layers.push({ type: "segment", from: [-b[0], y], to: [b[0], y], color: P.accent, width: 1.3 },
+                    { type: "segment", from: [-b[0], y], to: [-b[0], y - pk * 0.04], color: P.accent, width: 1.3 },
+                    { type: "segment", from: [b[0], y], to: [b[0], y - pk * 0.04], color: P.accent, width: 1.3 },
+                    { type: "text", x: 0, y: y, text: b[2], color: P.accent, mono: true, bold: true });
+      });
+      return { x: [-3.6, 3.6], y: [0, pk * 1.58], xName: "", yName: "", hideY: true, noYGrid: true,
+               xLabels: { "-3": "x̄ − 3s", "-2": "x̄ − 2s", "-1": "x̄ − s", "0": "x̄", "1": "x̄ + s", "2": "x̄ + 2s", "3": "x̄ + 3s" },
+               layers: layers,
+               aria: "Krzywa normalna z pasami ±1, ±2 i ±3 odchylenia standardowego: 68%, 95% i 99.7% obserwacji" };
+    },
+    // Ryc. 4.2 — obliczanie SD krok po kroku; przycisk losuje nowe 10 pomiarów.
+    sd: {
+      init: function (state) { this.act(state); },
+      act: function (state) { state.x = []; for (var i = 0; i < 10; i++) state.x.push(Math.round(U.rnorm(170, 8) * 10) / 10); },
+      draw: function (v, P, k, state, vals, step) {
+        var x = state.x, n = x.length, m = U.mean(x), s = U.sd(x);
+        var lo = Math.min(Math.min.apply(null, x), m - s), hi = Math.max(Math.max.apply(null, x), m + s), pad = (hi - lo) * 0.08;
+        var spec = { x: [lo - pad, hi + pad], y: [0, n + 1.2], xName: "Wzrost (cm)", yName: "", hideY: true, noYGrid: true, layers: [],
+                     aria: "Dziesięć pomiarów wzrostu, średnia " + lcFmt(m, 2) + " cm, SD " + lcFmt(s, 2) + " cm" };
+        if (step === 1) {
+          spec.layers.push({ type: "points", data: x.map(function (t) { return [t, (n + 1) / 2]; }), color: P.niebo, size: 13 });
+          return spec;
+        }
+        var role = step === 2 ? P.accent : P.secondary;
+        var ord = x.map(function (t, i) { return i; }).sort(function (a, b) { return Math.abs(x[b] - m) - Math.abs(x[a] - m); });
+        if (step >= 3) {
+          spec.layers.push({ type: "rect", x0: m - s, x1: m + s, y0: 0, y1: n + 0.3, fill: P.accent, alpha: 0.08, z: 1 },
+            { type: "vline", x: m - s, color: P.accent, width: 1.5, dash: [5, 4] },
+            { type: "vline", x: m + s, color: P.accent, width: 1.5, dash: [5, 4] },
+            { type: "text", x: m - s, y: 0.3, text: "śr. − SD\n" + lcFmt(m - s, 1), color: P.accent, bold: true, size: 0.85, valign: "middle" },
+            { type: "text", x: m + s, y: 0.3, text: "śr. + SD\n" + lcFmt(m + s, 1), color: P.accent, bold: true, size: 0.85, valign: "middle" },
+            { type: "text", x: m, y: 0.5, text: "SD = " + lcFmt(s, 2) + " cm", color: P.accent, bold: true, size: 1.1, valign: "middle" });
+        }
+        spec.layers.push({ type: "vline", x: m, color: role, width: 1.5, dash: [5, 4] },
+          { type: "arrows", color: role, width: 1.6, items: ord.map(function (i, r) { return { from: [m, n - r], to: [x[i], n - r] }; }) },
+          { type: "points", data: ord.map(function (i, r) { return [x[i], n - r]; }), color: P.niebo, size: 13 },
+          { type: "text", x: m, y: n + 0.8, text: "średnia = " + lcFmt(m, 2), color: role, bold: true, valign: "middle" });
+        return spec;
+      },
+      text: function (state, v, vals, step) {
+        var x = state.x, n = x.length, m = U.mean(x);
+        if (step === 1) return "Dziesięć pomiarów wzrostu na osi liczbowej. Każdy punkt to jedna obserwacja.";
+        if (step === 2) return "Średnia wynosi " + lcFmt(m, 2) + " cm. Strzałki to odchylenia od średniej, tabela podaje ich kwadraty.";
+        var ss = x.reduce(function (a, t) { return a + (t - m) * (t - m); }, 0), variance = ss / (n - 1);
+        return "Wariancja \\(s^2\\) = " + lcFmt(ss, 2) + " / " + (n - 1) + " = " + lcFmt(variance, 2) + " cm². " +
+               "Odchylenie standardowe \\(s = \\sqrt{" + lcFmt(variance, 2) + "} = " + lcFmt(Math.sqrt(variance), 2) +
+               "\\) cm. Pas na wykresie to \\(\\bar{x} \\pm s\\).";
+      },
+      table: function (state, v, vals, step) {
+        if (step < 2) return "";
+        var x = state.x, m = U.mean(x), ss = 0;
+        var rows = x.map(function (t, i) { var d = t - m; ss += d * d; return [String(i + 1), t, C.round(d, 2), C.round(d * d, 2)]; });
+        return lcTable([{ label: "i", row: true }, { label: "xᵢ", digits: 1 }, { label: "xᵢ − x̄", digits: 2 }, { label: "(xᵢ − x̄)²", digits: 2 }],
+                       rows, step >= 3 ? ["SUMA", "", "", C.round(ss, 2)] : null);
+      }
+    },
+    // Ryc. 4.5 — wykres pudełkowy krok po kroku; krok 6: pudełko (k = 0) i histogram (k = 1).
+    bp: {
+      init: function (state) { this.act(state); },
+      act: function (state) {
+        state.x = [];
+        for (var i = 0; i < 27; i++) state.x.push(Math.round(U.rnorm(170, 8) * 10) / 10);
+        state.x.push(145, 198, 200);
+      },
+      stats: function (x) {
+        var b = boxStats(x), iqr = b.q3 - b.q1;
+        b.fenceLo = b.q1 - 1.5 * iqr; b.fenceHi = b.q3 + 1.5 * iqr; b.iqr = iqr;
+        return b;
+      },
+      draw: function (v, P, k, state, vals, step) {
+        var x = state.x, b = this.stats(x), ink = P.ink;
+        var lo = Math.min(Math.min.apply(null, x), b.fenceLo), hi = Math.max(Math.max.apply(null, x), b.fenceHi), pad = (hi - lo) * 0.06;
+        var frame = { x: [lo - pad, hi + pad], xName: "Wzrost (cm)", yName: "", xLabelEvery: 20, layers: [] };
+        if (step === 6) {
+          if (k === 0) {
+            var j = U.seeded(3);
+            return Object.assign(frame, { y: [0.5, 1.5], hideY: true, noYGrid: true, alignLeft: true, xName: "",
+              layers: [{ type: "box", horizontal: true, stroke: ink, boxes: [{ pos: 1, width: 0.4, fill: C.alpha(P.niebo, 0.7),
+                         q1: b.q1, med: b.med, q3: b.q3, lo: b.lo, hi: b.hi }] },
+                       { type: "points", data: b.out.map(function (t) { return [t, 1]; }), color: P.secondary, size: 9 },
+                       { type: "points", data: x.map(function (t) { return [t, 1 + j.runif(-0.05, 0.05)]; }), color: P.secondary, alpha: 0.4, size: 6 }],
+              aria: "Gotowy wykres pudełkowy: mediana " + lcFmt(b.med, 1) + " cm, kwartyle " + lcFmt(b.q1, 1) + " i " + lcFmt(b.q3, 1) + " cm" });
+          }
+          var h = counts(binsGgplot(x, 15)), top = maxY(h) * 1.08;
+          return Object.assign(frame, { y: [0, top], yName: "Liczebność", alignLeft: true,
+            layers: [{ type: "bins", data: h, color: P.niebo, alpha: 0.7 },
+                     { type: "vline", x: b.med, color: P.secondary, width: 1.6 },
+                     { type: "vline", x: b.q1, color: P.secondary, width: 1.2, dash: [5, 4] },
+                     { type: "vline", x: b.q3, color: P.secondary, width: 1.2, dash: [5, 4] }],
+            aria: "Histogram tych samych 30 pomiarów z medianą i kwartylami" });
+        }
+        if (k === 1) return null;
+        var jit = U.seeded(42), spread = step <= 3 ? 0.3 : 0.2;
+        var jy = x.map(function () { return jit.runif(-spread, spread); });
+        var spec = Object.assign(frame, { y: [-0.9, 0.9], hideY: true, noYGrid: true,
+          aria: "Krok " + step + " budowy wykresu pudełkowego dla 30 pomiarów wzrostu" });
+        var L = spec.layers, dataPts = function (size, alpha, filter) {
+          var d = []; x.forEach(function (t, i) { if (!filter || filter(t)) d.push([t, jy[i]]); });
+          L.push({ type: "points", data: d, color: P.niebo, alpha: alpha, size: size });
+        };
+        var label = function (xx, y, text, color) { L.push({ type: "text", x: xx, y: y, text: text, color: color, bold: true, size: 0.9, valign: "middle" }); };
+        if (step <= 2) {
+          dataPts(9, 0.7);
+          if (step === 2) { L.push({ type: "vline", x: b.med, color: P.accent, width: 2 }); label(b.med, 0.65, "Mediana", P.accent); }
+          return spec;
+        }
+        if (step === 3) {
+          L.push({ type: "rect", x0: b.q1, x1: b.q3, y0: -0.5, y1: 0.5, fill: P.niebo, alpha: 0.2, stroke: ink, lineWidth: 0.8, z: 1 });
+          dataPts(9, 0.7);
+          L.push({ type: "vline", x: b.med, color: P.secondary, width: 1.6 },
+                 { type: "vline", x: b.q1, color: P.accent, width: 1.5, dash: [5, 4] },
+                 { type: "vline", x: b.q3, color: P.accent, width: 1.5, dash: [5, 4] });
+          label(b.med, 0.7, "Mediana", P.secondary); label(b.q1, -0.65, "Q1", P.accent); label(b.q3, -0.65, "Q3", P.accent);
+          var mid = (b.q1 + b.q3) / 2;
+          // „IQR” tuż nad pudełkiem, żeby nie nachodził na „Mediana” przy medianie w środku.
+          L.push({ type: "text", x: mid, y: 0.58, text: "IQR", color: P.accent, bold: true, size: 0.9, valign: "middle" });
+          return spec;
+        }
+        L.push({ type: "rect", x0: b.q1, x1: b.q3, y0: -0.4, y1: 0.4, fill: P.niebo, alpha: 0.2, stroke: ink, lineWidth: 0.8, z: 1 },
+               { type: "segment", from: [b.med, -0.4], to: [b.med, 0.4], color: P.secondary, width: 2.4 });
+        var fence = step === 4 ? P.accent : P.secondary;
+        L.push({ type: "vline", x: b.fenceLo, color: fence, width: 1.4, dash: [5, 4] },
+               { type: "vline", x: b.fenceHi, color: fence, width: 1.4, dash: [5, 4] });
+        if (step === 4) {
+          L.push({ type: "arrows", color: P.accent, width: 1.6, items: [{ from: [b.q1, -0.6], to: [b.fenceLo, -0.6] }, { from: [b.q3, -0.6], to: [b.fenceHi, -0.6] }] });
+          label((b.q1 + b.fenceLo) / 2, -0.75, "1.5 IQR", P.accent); label((b.q3 + b.fenceHi) / 2, -0.75, "1.5 IQR", P.accent);
+          dataPts(8, 0.5);
+          return spec;
+        }
+        L.push({ type: "segs", color: P.accent, width: 2, items: [
+          { from: [b.lo, 0], to: [b.q1, 0] }, { from: [b.lo, -0.2], to: [b.lo, 0.2] },
+          { from: [b.q3, 0], to: [b.hi, 0] }, { from: [b.hi, -0.2], to: [b.hi, 0.2] }] });
+        dataPts(8, 0.5, function (t) { return t >= b.fenceLo && t <= b.fenceHi; });
+        var outPts = []; x.forEach(function (t, i) { if (t < b.fenceLo || t > b.fenceHi) outPts.push([t, jy[i]]); });
+        if (outPts.length) {
+          L.push({ type: "points", data: outPts, color: P.accent, symbol: "diamond", size: 14 });
+          label(U.mean(outPts.map(function (p) { return p[0]; })), 0.55, "wartości odstające: " + outPts.length, P.accent);
+        }
+        return spec;
+      },
+      text: function (state, v, vals, step) {
+        var x = state.x, b = this.stats(x);
+        if (step === 1) return "30 pomiarów wzrostu na osi liczbowej. Widać zakres, ale trudno coś szybko odczytać.";
+        if (step === 2) return "Mediana = " + lcFmt(b.med, 1) + " cm dzieli posortowane dane na dwie połowy.";
+        if (step === 3) return "Q1 = " + lcFmt(b.q1, 1) + " cm, Q3 = " + lcFmt(b.q3, 1) + " cm. Pudełko obejmuje środkowe 50% danych, IQR = " + lcFmt(b.iqr, 1) + " cm.";
+        if (step === 4) return "Granice: Q1 − 1.5 IQR = " + lcFmt(b.fenceLo, 1) + " cm i Q3 + 1.5 IQR = " + lcFmt(b.fenceHi, 1) +
+                               " cm. Poza nimi leży obserwacji: " + b.out.length + ".";
+        if (step === 5) return "Wąsy kończą się na ostatnich obserwacjach przed granicami: " + lcFmt(b.lo, 1) + " i " + lcFmt(b.hi, 1) + " cm. " +
+          (b.out.length ? "Wartości odstające: " + b.out.map(function (t) { return lcFmt(t, 1); }).join(", ") + " cm." : "Brak wartości odstających.");
+        return "Gotowy wykres pudełkowy (u góry) obok histogramu tych samych danych (u dołu).";
+      }
+    },
+    // Ryc. 5.1 — skośność krok po kroku: dane, standaryzacja, trzecie potęgi, bilans.
+    sk: {
+      data: function (state, name) {
+        if (state.name === name) return state.d;
+        var x = U.survey(name), m = U.mean(x), s = U.sd(x), j = U.seeded(7);
+        var z = x.map(function (t) { return (t - m) / s; });
+        state.name = name;
+        state.d = { x: x, m: m, s: s, z: z, z3: z.map(function (t) { return t * t * t; }),
+                    jit: x.map(function () { return j.runif(-0.35, 0.35); }), label: U.surveyMeta(name).label };
+        return state.d;
+      },
+      draw: function (v, P, k, state, vals, step) {
+        var d = this.data(state, v), side = d.z.map(function (t) { return t < 0 ? P.niebo : P.terakota; });
+        if (step <= 2) {
+          var xv = step === 1 ? d.x : d.z, ctr = step === 1 ? d.m : 0;
+          var lo = Math.min.apply(null, xv), hi = Math.max.apply(null, xv), pad = (hi - lo) * 0.05, layers = [];
+          if (step === 2) [-3, -2, -1, 0, 1, 2, 3].forEach(function (t) { layers.push({ type: "vline", x: t, color: P.ref, width: 0.8, dash: [4, 4] }); });
+          layers.push({ type: "points", data: xv.map(function (t, i) { return [t, d.jit[i]]; }),
+                        colors: step === 2 ? side : null, color: P.niebo, alpha: 0.7, size: 7 },
+                      { type: "vline", x: ctr, color: step === 1 ? P.accent : P.secondary, width: 2 },
+                      { type: "text", x: ctr + (hi - lo) * 0.01, y: 0.5, align: "left", bold: true, size: 0.9,
+                        text: step === 1 ? "x̄ = " + d.m.toFixed(1) : "x̄", color: step === 1 ? P.accent : P.secondary });
+          return { x: [lo - pad, hi + pad], y: [-0.5, 0.62], hideY: true, noYGrid: true, yName: "",
+                   xName: step === 1 ? d.label : "Odległość od średniej (w SD)", xTicks: step === 2 ? [-3, -2, -1, 0, 1, 2, 3, 4].filter(function (t) { return t >= lo - pad && t <= hi + pad; }) : null,
+                   layers: layers, aria: step === 1 ? "Obserwacje zmiennej " + d.label + " ze średnią" : "Te same obserwacje w jednostkach SD" };
+        }
+        if (step === 3) {
+          var zlo = Math.min.apply(null, d.z), zhi = Math.max.apply(null, d.z), ylo = Math.min(0, Math.min.apply(null, d.z3)), yhi = Math.max(0, Math.max.apply(null, d.z3));
+          var py = (yhi - ylo) * 0.05, pz = (zhi - zlo) * 0.05;
+          return { x: [zlo - pz, zhi + pz], y: [ylo - py, yhi + py], xName: "Odległość od średniej (w SD)", yName: "z³",
+                   layers: [{ type: "segment", from: [zlo - pz, 0], to: [zhi + pz, 0], color: P.secondary, width: 1 },
+                            { type: "segs", width: 1.2, alpha: 0.7, items: d.z.map(function (t, i) { return { from: [t, 0], to: [t, d.z3[i]], color: side[i] }; }) },
+                            { type: "points", data: d.z.map(function (t, i) { return [t, d.z3[i]]; }), colors: side, size: 5 }],
+                   aria: "Trzecie potęgi odległości od średniej: dalekie obserwacje rosną najmocniej" };
+        }
+        var l = 0, r = 0; d.z3.forEach(function (t) { if (t < 0) l += t; else r += t; });
+        var tot = l + r, lim = Math.max(Math.abs(l), Math.abs(r), Math.abs(tot)) * 1.25, indygo = C.token("--upwr-cat-indygo", "#3a5a8a");
+        var vals3 = [l, r, tot], cols = [P.niebo, P.terakota, indygo];
+        return { x: [-lim, lim], y: [0.4, 3.6], xName: "Suma z³", yName: "", yLabels: { 3: "Lewa strona", 2: "Prawa strona", 1: "Suma" }, noYGrid: true,
+                 layers: [{ type: "vline", x: 0, color: P.secondary, width: 1 },
+                          { type: "hbins", data: vals3.map(function (t, i) { return [3 - i - 0.275, 3 - i + 0.275, t]; }), colors: cols, alpha: 0.9 }]
+                   .concat(vals3.map(function (t, i) {
+                     return { type: "text", x: t, y: 3 - i, text: t.toFixed(1), color: P.secondary, mono: true, valign: "middle", align: t < 0 ? "right" : "left" };
+                   })),
+                 aria: "Suma trzecich potęg: lewa strona " + l.toFixed(1) + ", prawa " + r.toFixed(1) + ", razem " + tot.toFixed(1) };
+      },
+      text: function (state, v, vals, step) {
+        var d = this.data(state, v), n = d.x.length;
+        if (step === 1) return n + " obserwacji i ich średnia.";
+        if (step === 2) return "Ta sama oś w jednostkach SD: średnia to 0, odchylenie standardowe to 1.";
+        if (step === 3) return "Trzecia potęga zachowuje znak i wydłuża dalekie obserwacje.";
+        var tot = d.z3.reduce(function (a, t) { return a + t; }, 0);
+        return "Suma " + lcFmt(tot, 1) + " podzielona przez " + n + " daje skośność " + lcFmt(tot / n, 2) + ".";
+      }
+    },
+    // Ryc. 3.1 — budowa histogramu w 7 krokach; suwak szerokości od kroku 3.
+    hist: {
+      DEF: { wzrost: [1, 15, 5, 1, "cm"], waga: [2, 20, 5, 1, "kg"], czas_dojazdu: [2, 20, 5, 1, "min"], srednia_ocen: [0.1, 1, 0.3, 0.05, "pkt"] },
+      // Zmiana zmiennej przywraca domyślną szerokość i zakres suwaka (jak dawny renderUI w R).
+      prepare: function (state, v, vals, root) {
+        var slider = root.querySelector("#ch3_hist_bin_width"), out = root.querySelector('[data-value="ch3_hist_bin_width"]');
+        var name = vals.ch3_hist_var, d = this.DEF[name];
+        if (slider && state.name !== name) {
+          slider.setAttribute("min", d[0]); slider.setAttribute("max", d[1]); slider.setAttribute("step", d[3]);
+          slider.value = String(d[2]);
+          state.name = name;
+        }
+        state.w = slider ? Number(slider.value) : d[2];
+        if (out) out.textContent = lcFmt(state.w, 2) + " " + d[4];
+      },
+      model: function (name, w) {
+        var x = U.survey(name), wr = function (t) { return roundTo(t, w); };
+        var start = wr(Math.floor(Math.min.apply(null, x) / w + 1e-9) * w), end = wr(Math.ceil(Math.max.apply(null, x) / w - 1e-9) * w + w), breaks = [];
+        for (var e = start; e <= end + w * 1e-9; e = wr(e + w)) breaks.push(e);
+        var bin = x.map(function (t) {
+          var i = Math.floor((t - start) / w + 1e-9);
+          return Math.min(i, breaks.length - 2);
+        });
+        var count = breaks.slice(1).map(function () { return 0; });
+        bin.forEach(function (i) { count[i]++; });
+        var nz = count.map(function (c, i) { return c ? i : -1; }).filter(function (i) { return i >= 0; });
+        var first = Math.max(0, nz[0] - 1), last = Math.min(count.length - 1, nz[nz.length - 1] + 1), stats = [];
+        for (var i = first; i <= last; i++) stats.push({ i: i, a: breaks[i], b: breaks[i + 1], n: count[i] });
+        var order = x.map(function (t, i) { return i; }).sort(function (p, q) { return bin[p] - bin[q] || x[p] - x[q]; }), seen = {}, k = [];
+        order.forEach(function (i) { seen[bin[i]] = (seen[bin[i]] || 0) + 1; k[i] = seen[bin[i]]; });
+        return { x: x, breaks: breaks, bin: bin, stats: stats, k: k };
+      },
+      draw: function (v, P, kk, state, vals, step) {
+        var name = vals.ch3_hist_var, d = this.DEF[name], w = state.w, md = this.model(name, w), x = md.x, n = x.length;
+        var lab = U.surveyMeta(name).label, lo0 = Math.min.apply(null, x), hi0 = Math.max.apply(null, x), xr = [lo0 - (hi0 - lo0) * 0.05, hi0 + (hi0 - lo0) * 0.05];
+        var parity = function (i) { return (i + 1) % 2 === 1 ? P.niebo : P.bursztyn; };
+        var edgeTicks = md.breaks.filter(function (e, i) { return i % 2 === 0 && e >= xr[0] && e <= xr[1]; });
+        if (step === 7) {
+          var widths = [d[0], w, d[1]].filter(function (t, i, a) { return a.indexOf(t) === i; });
+          if (kk >= widths.length) return null;
+          var wi = widths[kk], note = ["najwęższa", "z suwaka", "najszersza"][[d[0], w, d[1]].indexOf(wi)];
+          var bnd = Math.floor(lo0 / w + 1e-9) * w, origin = bnd - Math.ceil((bnd - lo0) / wi - 1e-9) * wi, h = [];
+          for (var e = origin; e <= hi0; e += wi) h.push([e, e + wi, 0]);
+          x.forEach(function (t) { var i = Math.floor((t - origin) / wi + 1e-9); if (h[i]) h[i][2]++; });
+          var col = wi === w ? P.accent : P.soft;
+          return { x: xr, y: [0, maxY(h) * 1.25], xName: kk === widths.length - 1 ? lab : "", yName: "", alignLeft: true,
+                   layers: [{ type: "bins", data: h, color: col, alpha: 0.75 },
+                            { type: "text", x: xr[0], y: "top", align: "left", bold: true, color: col,
+                              text: "szerokość " + lcFmt(wi, 2) + " " + d[4] + " (" + note + ")" }],
+                   aria: "Histogram przy szerokości przedziału " + lcFmt(wi, 2) + " " + d[4] };
+        }
+        if (kk > 0) return null;
+        var spec = { x: xr, xName: lab, yName: "", layers: [], aria: "Krok " + step + " budowy histogramu zmiennej " + lab };
+        var L = spec.layers;
+        if (step === 1) {
+          var j1 = U.seeded(5);
+          L.push({ type: "points", data: x.map(function (t) { return [t, j1.runif(-0.3, 0.3)]; }), color: P.niebo, alpha: 0.7, size: 9 });
+          return Object.assign(spec, { y: [-0.5, 0.5], hideY: true, noYGrid: true });
+        }
+        if (step === 2) {
+          var sx = U.sorted(x), pad = (hi0 - lo0) * 0.05;
+          return { x: [0, n + 1], y: [lo0 - pad, hi0 + pad], xName: "Numer obserwacji po posortowaniu", yName: lab,
+                   layers: [{ type: "points", data: sx.map(function (t, i) { return [i + 1, t]; }), color: P.niebo, alpha: 0.7, size: 6 }],
+                   aria: "Wartości zmiennej " + lab + " posortowane od najmniejszej do największej" };
+        }
+        if (step === 3 || step === 4) {
+          var bands = [];
+          for (var i = 0; i + 1 < md.breaks.length; i++) if (md.breaks[i + 1] > xr[0] && md.breaks[i] < xr[1]) bands.push(i);
+          bands.forEach(function (i) { L.push({ type: "band", lo: md.breaks[i], hi: md.breaks[i + 1], color: parity(i), alpha: step === 3 ? 0.18 : 0.12 }); });
+          md.breaks.forEach(function (e) { if (e >= xr[0] && e <= xr[1]) L.push({ type: "vline", x: e, color: P.soft, width: 0.6 }); });
+          var j2 = U.seeded(11), pts = x.map(function (t) { return [t, j2.runif(-0.3, 0.3)]; });
+          L.push({ type: "points", data: pts, size: 7, alpha: step === 3 ? 0.55 : 0.9,
+                   color: P.soft, colors: step === 4 ? md.bin.map(parity) : null });
+          var top3 = step === 3 ? 0.8 : 0.45;
+          if (step === 3) {
+            var mb = bands[Math.ceil(bands.length / 2) - 1], a = md.breaks[mb], bb = md.breaks[mb + 1];
+            L.push({ type: "arrows", both: true, head: 0.5, color: P.accent, width: 1.6, items: [{ from: [a, 0.55], to: [bb, 0.55] }] },
+                   { type: "text", x: (a + bb) / 2, y: 0.7, text: "szerokość " + lcFmt(w, 2) + " " + d[4], color: P.accent, bold: true, valign: "middle" });
+          }
+          return Object.assign(spec, { y: [-0.45, top3], hideY: true, noYGrid: true, xTicks: edgeTicks });
+        }
+        var max = Math.max.apply(null, md.stats.map(function (b) { return b.n; })), top = max * 1.15;
+        Object.assign(spec, { y: [0, top], yName: "Liczba obserwacji", xTicks: edgeTicks, noXGrid: true });
+        var labels = md.stats.filter(function (b) { return b.n; }).map(function (b) {
+          return { type: "text", x: (b.a + b.b) / 2, y: b.n + max * 0.03, text: String(b.n), color: P.secondary, mono: true, bold: true, size: 0.9 };
+        });
+        if (step === 5) {
+          md.breaks.forEach(function (e) { if (e >= xr[0] && e <= xr[1]) L.push({ type: "vline", x: e, color: P.rule, width: 0.6 }); });
+          var size = Math.max(4, Math.min(10, 300 / max));
+          L.push({ type: "points", size: size, colors: md.bin.map(parity),
+                   data: x.map(function (t, i) { var b0 = md.breaks[md.bin[i]], b1 = md.breaks[md.bin[i] + 1]; return [(b0 + b1) / 2, md.k[i] - 0.5]; }) });
+        } else {
+          L.push({ type: "rects", fill: P.niebo, alpha: 0.55, stroke: "#ffffff", lineWidth: 0.6,
+                   items: x.map(function (t, i) { return [md.breaks[md.bin[i]], md.breaks[md.bin[i] + 1], md.k[i] - 1, md.k[i]]; }) },
+                 { type: "rects", stroke: P.ink, lineWidth: 1, z: 3,
+                   items: md.stats.filter(function (b) { return b.n; }).map(function (b) { return [b.a, b.b, 0, b.n]; }) });
+        }
+        spec.layers = L.concat(labels);
+        return spec;
+      },
+      text: function (state, v, vals, step) {
+        var name = vals.ch3_hist_var, x = U.survey(name), unit = this.DEF[name][4];
+        return {
+          1: "Mamy " + x.length + " obserwacji — każdy punkt to jedna wartość. Trudno z tego odczytać rozkład, prawda?",
+          2: "Sortujemy wartości od najmniejszej (" + lcFmt(Math.min.apply(null, x), 1) + " " + unit + ") do największej (" +
+             lcFmt(Math.max.apply(null, x), 1) + " " + unit + ") i rysujemy je po kolei. Tam, gdzie wykres jest płaski, wartości leżą gęsto; strome końce to rzadkie wartości skrajne.",
+          3: "Dzielimy oś na równe przedziały (biny) o szerokości " + lcFmt(state.w, 2) + " " + unit + ". Każdy bin to „koszyk” na obserwacje.",
+          4: "Każda obserwacja trafia do swojego binu i przyjmuje jego kolor.",
+          5: "Każda obserwacja ląduje w kolumnie swojego binu i staje na poprzedniej. Wysokość stosu to liczba obserwacji w binie.",
+          6: "Stos zamieniamy w słupek tej samej wysokości. Każdy kafelek to jedna obserwacja, a słupek to ich liczba. To już jest histogram.",
+          7: "Te same dane przy trzech szerokościach binu: najwęższej, wybranej suwakiem i najszerszej. Za wąskie biny dają poszarpany wykres, za szerokie ukrywają kształt."
+        }[step];
+      },
+      table: function (state, v, vals, step) {
+        if (step < 5) return "";
+        var md = this.model(vals.ch3_hist_var, state.w), n = md.x.length;
+        return lcTable([{ label: "Przedział", row: true }, { label: "Liczba obs.", digits: 0 }, { label: "Procent (%)", digits: 1 }],
+          md.stats.filter(function (b) { return b.n; }).map(function (b) {
+            return ["[" + lcFmt(b.a, 6) + ", " + lcFmt(b.b, 6) + ")", b.n, C.round(100 * b.n / n, 1)];
+          }));
+      }
+    },
   };
 
   // ---- Rysunek opisu --------------------------------------------------------
   function rectSeries(L, horizontal) {
-    return { type: "custom", silent: true, z: 2, data: L.data.map(function (r, i) { return r.concat([i]); }),
+    return { type: "custom", silent: true, z: 2, clip: true, data: L.data.map(function (r, i) { return r.concat([i]); }),
       encode: horizontal ? { y: [0, 1], x: 2 } : { x: [0, 1], y: 2 },
       renderItem: function (params, api) {
         var i = api.value(3), color = L.colors ? L.colors[i] : L.color, a, b, shape;
         if (horizontal) {
           a = api.coord([0, api.value(1)]); b = api.coord([api.value(2), api.value(0)]);
-          shape = { x: a[0], y: a[1], width: b[0] - a[0], height: b[1] - a[1] };
+          shape = { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]) };
         } else {
           a = api.coord([api.value(0), api.value(2)]); b = api.coord([api.value(1), 0]);
           shape = { x: a[0] + 0.5, y: a[1], width: Math.max(0, b[0] - a[0] - 1), height: b[1] - a[1] };
@@ -564,8 +938,43 @@
         series.push({ type: "scatter", silent: true, z: 5, symbol: L.symbol || "circle", symbolSize: L.size || 10,
           data: [[L.x, L.y]], itemStyle: { color: L.color } });
       } else if (L.type === "points") {
-        series.push({ type: "scatter", silent: true, z: 5, symbolSize: L.size || 6, data: L.data,
-          itemStyle: { color: L.color, opacity: L.alpha == null ? 1 : L.alpha } });
+        series.push({ type: "scatter", silent: true, z: L.z || 5, symbol: L.symbol || "circle", symbolSize: L.size || 6, data: L.data,
+          itemStyle: { color: L.colors ? function (p) { return L.colors[p.dataIndex]; } : L.color,
+                       opacity: L.alpha == null ? 1 : L.alpha } });
+      } else if (L.type === "rect") {
+        // Prostokąt w jednostkach danych (x0, x1, y0, y1); bez obramowania, gdy stroke pusty.
+        series.push({ type: "custom", silent: true, z: L.z || 2, data: [[0]],
+          renderItem: function (params, api) {
+            var a = api.coord([L.x0, L.y1]), b = api.coord([L.x1, L.y0]);
+            return { type: "rect", x: 0, y: 0,
+                     shape: { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]) },
+                     style: { fill: L.fill ? C.alpha(L.fill, L.alpha == null ? 1 : L.alpha) : "none",
+                              stroke: L.stroke || null, lineWidth: L.lineWidth || 1 } };
+          } });
+      } else if (L.type === "rects") {
+        // Wiele prostokątów jednego stylu: items [[x0, x1, y0, y1], ...].
+        series.push({ type: "custom", silent: true, z: L.z || 2, data: L.items.map(function (r, i) { return [i]; }),
+          renderItem: function (params, api) {
+            var r = L.items[params.dataIndex], a = api.coord([r[0], r[3]]), b = api.coord([r[1], r[2]]);
+            return { type: "rect", x: 0, y: 0,
+                     shape: { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]) },
+                     style: { fill: L.fill ? C.alpha(L.fill, L.alpha == null ? 1 : L.alpha) : "none",
+                              stroke: L.stroke || null, lineWidth: L.lineWidth || 1 } };
+          } });
+      } else if (L.type === "arrows") {
+        series.push({ type: "lines", coordinateSystem: "cartesian2d", silent: true, z: 4,
+          symbol: L.both ? ["arrow", "arrow"] : ["none", "arrow"], symbolSize: Math.round(fs * (L.head || 0.7)),
+          data: L.items.map(function (it) { return { coords: [it.from, it.to] }; }),
+          lineStyle: { color: L.color, width: L.width || 2, opacity: 1 } });
+      } else if (L.type === "segs") {
+        // Odcinki w różnych kolorach: items [{from, to, color}].
+        series.push({ type: "custom", silent: true, z: L.z || 3, data: L.items.map(function (r, i) { return [i]; }),
+          renderItem: function (params, api) {
+            var it = L.items[params.dataIndex], a = api.coord(it.from), b = api.coord(it.to);
+            return { type: "line", x: 0, y: 0, shape: { x1: a[0], y1: a[1], x2: b[0], y2: b[1] },
+                     style: { stroke: it.color || L.color, lineWidth: L.width || 1.5, opacity: L.alpha == null ? 1 : L.alpha,
+                              lineDash: L.dash || null } };
+          } });
       } else if (L.type === "polygon") {
         series.push({ type: "custom", silent: true, z: 1, data: [[0]],
           renderItem: function (params, api) {
@@ -639,6 +1048,13 @@
         xa.nameGap = Math.round(fs * (1.4 + 1.25 * lines) + (spec.xRotate ? fs * 2.5 : 0));
       }
     }
+    if (spec.xLabelEvery) {
+      // Etykiety na okrągłych wielokrotnościach (np. co 20 cm), także gdy kraniec osi nie jest okrągły.
+      var step = spec.xLabelEvery, first = Math.ceil(spec.x[0] / step) * step, at = [];
+      for (var t = first; t <= spec.x[1] + 1e-9; t += step) at.push(t);
+      xa.axisLabel.customValues = at; xa.axisTick.customValues = at;
+      xa.axisLabel.showMinLabel = true; xa.axisLabel.showMaxLabel = true;
+    }
     if (spec.noXGrid) xa.splitLine = { show: false };
     // Odstęp nazwy liczy się od etykiet osi; przy stałym marginesie (alignLeft) mniejszy.
     var ya = C.ecAxis(P, fs, { type: "value", min: ymin, max: ymax, name: spec.yName || "",
@@ -692,6 +1108,8 @@
       if (box) return box.checked ? "on" : "off";
       var sel = ctl.matches && ctl.matches("select") ? ctl : ctl.querySelector("select");
       if (sel) return sel.value;
+      var range = ctl.querySelector('input[type="range"]');
+      if (range) return range.value;
       var radio = ctl.querySelector('input[type="radio"]:checked') || ctl.querySelector('input[type="radio"]');
       return radio ? radio.value : null;
     }
@@ -706,24 +1124,50 @@
       });
       return out;
     }
+    // Rycina krokowa (lc_step_widget): krok w atrybucie data-lc-step, tekst kroku
+    // w #<id>_text, tabela w [data-role="table"]. Wykres zwracający null jest ukrywany.
+    var stepper = root.querySelector(".lc-stepper");
+    function step() { return stepper ? Number(stepper.getAttribute("data-lc-step")) || 1 : null; }
+    function typeset(el) {
+      var MJ = window.MathJax;
+      if (MJ && MJ.Hub && MJ.Hub.Queue) MJ.Hub.Queue(["Typeset", MJ.Hub, el]);
+      else if (MJ && MJ.typesetPromise) MJ.typesetPromise([el]);
+    }
     function draw() {
-      var v = value(ctl), vals = values(), P = C.palette(), fs = C.axisFontSize(root);
-      if (fig.prepare) fig.prepare(state, v);
+      var vals = values();
+      if (fig.prepare) fig.prepare(state, value(ctl), vals, root);
+      vals = values();
+      var v = value(ctl), P = C.palette(), fs = C.axisFontSize(root), st = step();
       charts.forEach(function (chart, k) {
         if (chart.isDisposed && chart.isDisposed()) return;
-        var spec = fig.draw(v, P, k, state, vals);
+        var spec = fig.draw(v, P, k, state, vals, st), box = els[k].closest(".lc01-stat-chart") || els[k].parentNode;
+        if (box) box.hidden = !spec;
+        if (!spec) return;
         chart.setOption(option(spec, P, fs, els[k].clientWidth || 640), true);
         els[k].setAttribute("aria-label", spec.aria);
         if (k === 0 && legend) legendItems(legend, spec.legend);
       });
       if (fig.update) fig.update(root, state, v);
+      if (stepper && fig.text) {
+        var out = root.querySelector("#" + stepper.getAttribute("id") + "_text");
+        if (out) { out.innerHTML = fig.text(state, v, vals, st); typeset(out); }
+      }
+      if (fig.table) {
+        var tbl = root.querySelector('[data-role="table"]');
+        if (tbl) tbl.innerHTML = fig.table(state, v, vals, st);
+      }
       var key = fig.noteKey ? fig.noteKey(vals) : v;
       root.querySelectorAll("[data-when]").forEach(function (n) { n.hidden = n.getAttribute("data-when") !== key; });
     }
     for (var k = 0; k < els.length; k++) {
       charts.push(C.chart(els[k], { animation: false }, { onResize: draw }));
     }
-    ctls.forEach(function (c) { C.listen(c, "change", draw); });
+    ctls.forEach(function (c) { C.listen(c, "change", draw); C.listen(c, "input", draw); });
+    if (stepper) {
+      var watch = new MutationObserver(draw);
+      watch.observe(stepper, { attributes: true, attributeFilter: ["data-lc-step"] });
+      C.onDispose(root, function () { watch.disconnect(); });
+    }
     if (fig.act) C.listen(root, "click", function (e) {
       var btn = e.target.closest && e.target.closest("[data-stat-act]");
       if (!btn) return;

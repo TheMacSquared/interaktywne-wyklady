@@ -91,16 +91,16 @@ ch5_ui <- list(
 
     figure_panel(
       label = "Ryc. 5.1",
-      lc_step_widget("ch5_sk",
+      lc01_stat_figure("sk", bare = TRUE, body = lc_step_widget("ch5_sk",
         title = "Obliczanie skośności",
         steps = c("Dane", "Standaryzacja", "Trzecie potęgi", "Bilans"),
         toolbar = lc_toolbar(
-          lc_segmented("ch5_sk_var", "Zmienna",
-            choices = c("Czas dojazdu" = "czas_dojazdu", "Wzrost" = "wzrost"))
+          lc01_stat_ctl(lc_segmented("ch5_sk_var", "Zmienna",
+            choices = c("Czas dojazdu" = "czas_dojazdu", "Wzrost" = "wzrost"))),
+          lc_chart_zoom_button()
         ),
-        plot_id = "ch5_sk_plot",
-        ratio = "2.2/1"
-      )
+        body = lc01_stat_chart(0, ratio = "2.2/1", max_height = "400px")
+      ))
     ),
 
     lc_p("Trzecia potęga zachowuje znak, więc odchylenia w prawo i w lewo
@@ -316,95 +316,7 @@ ch5_server <- function(input, output, session) {
 
   # Ryc. 5.2 i 5.3 rysuje stat_charts.js; opisy w UI (ch5_skew_notes).
 
-  # Serwer widgetu krokowego
-  ch5_sk_step <- lc_step_server("ch5_sk", input)$step
-
-  ch5_sk_data <- reactive({
-    var <- input$ch5_sk_var %||% "czas_dojazdu"
-    x <- student_data[[var]]
-    m <- mean(x); s <- sd(x)
-    z <- (x - m) / s
-    set.seed(7)
-    list(x = x, z = z, m = m, s = s, z3 = z^3, n = length(x),
-         jit = runif(length(x), -0.35, 0.35),
-         label = variable_meta[[var]]$label)
-  })
-
-  zoom_plot_server("ch5_sk_plot", reactive({
-    step <- ch5_sk_step()
-    d <- ch5_sk_data()
-    col_l <- upwr_col("niebo")
-    col_r <- upwr_col("terakota")
-    side <- ifelse(d$z < 0, "l", "r")
-    side_cols <- c(l = col_l, r = col_r)
-
-    if (step <= 2) {
-      xv <- if (step == 1) d$x else d$z
-      ctr <- if (step == 1) d$m else 0
-      df <- data.frame(x = xv, y = d$jit, side = side)
-      p <- ggplot(df, aes(x = x, y = y))
-      if (step == 2) {
-        p <- p + geom_vline(xintercept = -3:3, colour = upwr_reference,
-                            linewidth = 0.3, linetype = "22")
-      }
-      p +
-        geom_point(aes(colour = if (step == 2) side else "d"),
-                   size = 2.4, alpha = 0.7) +
-        scale_colour_manual(values = c(side_cols, d = STEP_ROLES$data$colour)) +
-        step_line(if (step == 1) "new" else "known", xintercept = ctr, helper = FALSE) +
-        step_label(ctr + diff(range(xv)) * 0.01, 0.5,
-                   if (step == 1) sprintf("x̄ = %.1f", d$m) else "x̄",
-                   role = if (step == 1) "new" else "known", hjust = 0, vjust = 0) +
-        scale_x_continuous(breaks = if (step == 2) -3:4 else waiver()) +
-        labs(x = if (step == 1) d$label else "Odległość od średniej (w SD)", y = NULL) +
-        step_frame(xlim = range(xv) + c(-1, 1) * diff(range(xv)) * 0.05,
-                   ylim = c(-0.5, 0.62), y_axis = FALSE)
-
-    } else if (step == 3) {
-      df <- data.frame(z = d$z, z3 = d$z3, side = side)
-      ggplot(df, aes(x = z, y = z3, colour = side)) +
-        geom_hline(yintercept = 0, colour = upwr_secondary, linewidth = 0.5) +
-        geom_segment(aes(xend = z, y = 0, yend = z3), linewidth = 0.6, alpha = 0.7) +
-        geom_point(size = 1.8) +
-        scale_colour_manual(values = side_cols) +
-        labs(x = "Odległość od średniej (w SD)", y = "z³") +
-        theme(legend.position = "none")
-
-    } else {
-      sums <- c(l = sum(d$z3[d$z3 < 0]), r = sum(d$z3[d$z3 > 0]))
-      tot <- sum(sums)
-      df <- data.frame(
-        what = factor(c("Lewa strona", "Prawa strona", "Suma"),
-                      levels = c("Suma", "Prawa strona", "Lewa strona")),
-        val = c(sums[["l"]], sums[["r"]], tot),
-        fill = c(col_l, col_r, upwr_col("indygo"))
-      )
-      lim <- max(abs(df$val)) * 1.25
-      ggplot(df, aes(x = val, y = what)) +
-        geom_vline(xintercept = 0, colour = upwr_secondary, linewidth = 0.5) +
-        geom_col(aes(fill = I(fill)), width = 0.55, alpha = 0.9) +
-        geom_text(aes(label = formatC(val, format = "f", digits = 1), hjust = ifelse(val < 0, 1.15, -0.15)),
-                  family = lc_mono_family, colour = upwr_secondary, size = 4) +
-        scale_x_continuous(limits = c(-lim, lim)) +
-        labs(x = "Suma z³", y = NULL) +
-        theme(panel.grid.major.y = element_blank())
-    }
-  }))
-
-  output$ch5_sk_text <- renderUI({
-    step <- ch5_sk_step()
-    d <- ch5_sk_data()
-    switch(as.character(step),
-      "1" = paste0(d$n, " obserwacji i ich średnia."),
-      "2" = paste0("Ta sama oś w jednostkach SD: średnia to 0, odchylenie standardowe to 1."),
-      "3" = "Trzecia potęga zachowuje znak i wydłuża dalekie obserwacje.",
-      "4" = {
-        tot <- sum(d$z3)
-        paste0("Suma ", lc_fmt(tot, 1), " podzielona przez ", d$n,
-               " daje skośność ", lc_fmt(tot / d$n, 2), ".")
-      })
-  })
-
+  # Ryc. 5.1 (skośność krok po kroku) rysuje stat_charts.js.
 
   # --------------------------------------------------------------------------
   # Widget 3: Full picture (Capstone)
