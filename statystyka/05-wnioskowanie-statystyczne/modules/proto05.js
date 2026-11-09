@@ -6,7 +6,7 @@
 //   "smoke"   5A czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
 //   "jelly"   5D żelki i trądzik: jedna chmura wyników cięta na 20 podgrup kolorów (kadry)
 //   "tickets" 5E mandaty: świat bez związku → porównanie → χ² (kadry)
-//   "tickets2" 5E-2 ta sama historia w oprawie i na danych sceny „stop” z wykładu 02
+//            cfg.look = "people": 5E-2, ludziki z karteczkami jak w scenie „stop” z wykładu 02
 // Sterowanie: [data-sc-act] go | m10 | m100 | m1000, [data-sc-opt] "nazwa:wartość",
 // input[data-p5-range] "nazwa" (suwak, wartość liczbowa). Rysuje SVG bez serwera R.
 (function () {
@@ -270,9 +270,20 @@
   // =========================================================================
   KINDS.tickets = function (cfg, api) {
     var O = cfg.obs, E = cfg.exp, ROWS = cfg.rows, N = cfg.n_row;  // O[i] = [mandat, brak], E jak O
-    var BLK = [[50, "is-k"], [345, "is-m"]], TOP = 64, DX = 24, DY = 21;
+    var PEOPLE = cfg.look === "people";
+    var BLK = [[50, "is-k"], [345, "is-m"]], TOP = 64, DX = 24, DY = PEOPLE ? 27 : 21, S = 22;
 
-    function cell(i, k) { return { x: BLK[i][0] + (k % 10) * DX + 12, y: TOP + Math.floor(k / 10) * DY + 10 }; }
+    function cell(i, k) { return { x: BLK[i][0] + (k % 10) * DX + 12, y: TOP + Math.floor(k / 10) * DY + (PEOPLE ? 18 : 10) }; }
+
+    // 5E-2: ludzik w kolorze płci z karteczką (mandat / pouczenie / oczekiwany mandat),
+    // ta sama oprawa co scena „Kto dostaje mandat?” w wykładzie 02
+    function driver(g, x, y, sexCls, badge) {
+      var q = svg("g", { class: "p5-person " + sexCls }, g);
+      svg("circle", { cx: x, cy: y - S * 0.8, r: S * 0.17 }, q);
+      svg("rect", { x: x - S * 0.18, y: y - S * 0.6, width: S * 0.36, height: S * 0.6, rx: S * 0.13 }, q);
+      svg("rect", { x: x + S * 0.12, y: y - S * 0.52, width: S * 0.26, height: S * 0.34, rx: S * 0.04,
+        class: "p5-ticket is-" + badge }, q);
+    }
 
     function render() {
       var step = api.step(), g = api.stage, lo = api.low;
@@ -281,24 +292,26 @@
       for (var i = 0; i < 2; i++) {
         var obs = O[i][0], exp = E[i][0];
         var shown = step === 2 ? exp : obs;
-        svg("text", { x: BLK[i][0], y: TOP - 18, class: "lc-sc-rowlab" }, g,
-          ROWS[i] + " · " + (step === 2 ? "oczekiwane " + fmt(exp, 0) : obs) + " z " + N + " z mandatem");
+        svg("text", { x: BLK[i][0], y: TOP - 18, class: PEOPLE ? "p5-rowname " + BLK[i][1] : "lc-sc-rowlab" }, g,
+          ROWS[i] + " · " + (step === 2 ? "oczekiwane " + fmt(exp, 0) + " z " + N : obs + " z " + N + " z mandatem"));
         for (var k = 0; k < N; k++) {
           var c = cell(i, k), on = k < shown;
-          svg("circle", { cx: c.x, cy: c.y, r: 8,
+          if (PEOPLE) driver(g, c.x, c.y, BLK[i][1], on ? (step === 2 ? "exp" : "fine") : "warn");
+          else svg("circle", { cx: c.x, cy: c.y, r: 8,
             class: "p5-driver" + (on ? (step === 2 ? " is-exp" : " is-ticket") : "") }, g);
           if (step >= 3) {
             // brakujące (oczekiwane, a nie ma) i nadmiarowe (są, a nie oczekiwane)
-            if (k >= obs && k < exp) svg("circle", { cx: c.x, cy: c.y, r: 10.5, class: "p5-ring is-gap" }, g);
-            if (k >= exp && k < obs) svg("circle", { cx: c.x, cy: c.y, r: 10.5, class: "p5-ring is-extra" }, g);
+            var rc = PEOPLE ? { cx: c.x + 1, cy: c.y - S * 0.45, r: S * 0.55 } : { cx: c.x, cy: c.y, r: 10.5 };
+            if (k >= obs && k < exp) svg("circle", Object.assign({ class: "p5-ring is-gap" }, rc), g);
+            if (k >= exp && k < obs) svg("circle", Object.assign({ class: "p5-ring is-extra" }, rc), g);
           }
         }
       }
-      var y = TOP + 10 * DY + 26;
+      var y = TOP + 10 * DY + (PEOPLE ? 18 : 26);
       if (step === 1) {
-        readout(g, 50, y, [{ box: "p5-driver is-ticket", text: "mandat" }, { text: "łącznie " + total + " mandatów na " + all + " kontroli" }]);
+        readout(g, 50, y, [{ box: PEOPLE ? "p5-ticket is-fine" : "p5-driver is-ticket", text: "mandat" }, { text: "łącznie " + total + " mandatów na " + all + " kontroli" }]);
       } else if (step === 2) {
-        readout(g, 50, y, [{ box: "p5-driver is-exp", text: "oczekiwany mandat" },
+        readout(g, 50, y, [{ box: PEOPLE ? "p5-ticket is-exp" : "p5-driver is-exp", text: "oczekiwany mandat" },
           { text: total + " / " + all + " = " + pct(total / all, 0) + " w każdej grupie" }]);
       } else {
         readout(g, 50, y, [{ text: ROWS[0] + ": " + O[0][0] + " zamiast " + fmt(E[0][0], 0) },
@@ -312,7 +325,7 @@
         chi += v;
         cells.push({ lab: ROWS[i] + (j === 0 ? ", mandat" : ", bez mandatu"), o: O[i][j], e: E[i][j], v: v });
       }
-      var x0 = 50, x1 = 610, yb = 340, scale = (x1 - x0) / Math.max(10, Math.ceil(chi));
+      var x0 = 50, x1 = 610, yb = y + 54, scale = (x1 - x0) / Math.max(10, Math.ceil(chi));
       var x = x0;
       cells.forEach(function (cc, k) {
         var w = cc.v * scale;
@@ -326,177 +339,6 @@
         "od lewej: " + cells.map(function (cc) { return cc.lab; }).join(" · "));
     }
     return { render: render, reset: render, opt: function () {} };
-  };
-
-  // =========================================================================
-  // 5E-2 — KONTROLA DROGOWA Z WYKŁADU 02 (ta sama oprawa i dane: 22 kobiety,
-  // 48 mężczyzn, 4 i 15 mandatów). Kadry: tabela → świat bez związku (paski
-  // 100% i wspólne 27%) → braki i nadmiary w przegródkach → χ².
-  // Ludziki przechodzą między kadrami jak w scenie „stop” z wykładu 02.
-  // =========================================================================
-  KINDS.tickets2 = function (cfg, api) {
-    var SEX = cfg.sex, FINE = cfg.fine, N = SEX.length;
-    var ROWS = ["K", "M"], ROWNAME = { K: "kobiety", M: "mężczyźni" };
-    var COLX = { 1: [170, 345], 0: [362, 626] }, ROWY = { K: [62, 138], M: [154, 290] };
-    var GX = 20, GY = 28, NUMW = 50, BAR = { x0: 170, x1: 610, h: 30 };
-    var cnt = { K: { 0: 0, 1: 0 }, M: { 0: 0, 1: 0 } }, nRow = { K: 0, M: 0 };
-    var rank = new Array(N), rowRank = new Array(N), i, j;
-    for (i = 0; i < N; i++) { rank[i] = cnt[SEX[i]][FINE[i]]++; nRow[SEX[i]]++; }
-    var seen = { K: 0, M: 0 };
-    for (var f = 1; f >= 0; f--) for (j = 0; j < N; j++) if (FINE[j] === f) rowRank[j] = seen[SEX[j]]++;
-    var nFine = cnt.K[1] + cnt.M[1], share = nFine / N;
-    var E = {};
-    ROWS.forEach(function (r) { E[r] = { 1: nRow[r] * share, 0: nRow[r] * (1 - share) }; });
-    var st = { last: 0, pos: null, stop: null };
-
-    function per(fi) { return Math.floor((COLX[fi][1] - COLX[fi][0] - 12 - NUMW) / GX); }
-    function slot(r, fi, k) {
-      return { x: COLX[fi][0] + 16 + (k % per(fi)) * GX, y: ROWY[r][0] + 32 + Math.floor(k / per(fi)) * GY };
-    }
-    function barY(r) { return (ROWY[r][0] + ROWY[r][1]) / 2; }
-
-    function tokens(step) {
-      var out = [];
-      for (var i = 0; i < N; i++) {
-        var sx = SEX[i], fi = FINE[i], t;
-        if (step === 2) {
-          var w = (BAR.x1 - BAR.x0) / nRow[sx];
-          t = { x: BAR.x0 + (rowRank[i] + 0.5) * w, y: barY(sx) + 8, s: 12, o: 0 };
-        } else {
-          var p = slot(sx, fi, rank[i]);
-          t = { x: p.x, y: p.y, s: 20, o: step === 4 ? 0.25 : 1 };
-        }
-        out.push(t);
-      }
-      return out;
-    }
-
-    function person(g, x, y, s, cls, o, fine) {
-      var q = svg("g", { class: "p5-person " + cls, opacity: o }, g);
-      svg("circle", { cx: x, cy: y - s * 0.8, r: s * 0.17 }, q);
-      svg("rect", { x: x - s * 0.18, y: y - s * 0.6, width: s * 0.36, height: s * 0.6, rx: s * 0.13 }, q);
-      if (fine !== undefined) {
-        svg("rect", { x: x + s * 0.12, y: y - s * 0.52, width: s * 0.26, height: s * 0.34, rx: s * 0.04,
-          class: "p5-ticket " + (fine ? "is-fine" : "is-warn") }, q);
-      }
-      return q;
-    }
-
-    function cells(g) {
-      ROWS.forEach(function (r) {
-        [1, 0].forEach(function (f) {
-          svg("rect", { x: COLX[f][0], y: ROWY[r][0], width: COLX[f][1] - COLX[f][0],
-            height: ROWY[r][1] - ROWY[r][0], rx: 6, class: "p5-cell" }, g);
-        });
-      });
-    }
-    function heads(g) {
-      svg("text", { x: (COLX[1][0] + COLX[1][1]) / 2, y: 52, "text-anchor": "middle", class: "p5-colhead" }, g, "mandat");
-      svg("text", { x: (COLX[0][0] + COLX[0][1]) / 2, y: 52, "text-anchor": "middle", class: "p5-colhead" }, g, "pouczenie");
-    }
-    function rowLabels(g) {
-      ROWS.forEach(function (r) {
-        svg("text", { x: 156, y: barY(r) + 5, "text-anchor": "end", class: "p5-rowname is-" + r.toLowerCase() }, g, ROWNAME[r]);
-      });
-    }
-    function pctRow(r) { return cnt[r][1] / nRow[r]; }
-
-    function back(step, g) {
-      if (step !== 2) cells(g);
-      if (step === 2) {
-        ROWS.forEach(function (r) {
-          var y = barY(r) - BAR.h / 2, xm = BAR.x0 + (BAR.x1 - BAR.x0) * pctRow(r);
-          svg("rect", { x: BAR.x0, y: y, width: xm - BAR.x0, height: BAR.h, class: "p5-bar is-fine" }, g);
-          svg("rect", { x: xm, y: y, width: BAR.x1 - xm, height: BAR.h, class: "p5-bar is-warn" }, g);
-        });
-      }
-    }
-
-    function front(step, g) {
-      rowLabels(g);
-      if (step === 1) {
-        heads(g);
-        ROWS.forEach(function (r) {
-          [1, 0].forEach(function (f) {
-            svg("text", { x: COLX[f][1] - 10, y: barY(r) + 6, "text-anchor": "end",
-              class: "p5-count" + (f ? " is-hit" : "") }, g, String(cnt[r][f]));
-          });
-        });
-        readout(g, 170, 326, [{ text: "mandat: kobiety " + cnt.K[1] + " z " + nRow.K + " (" + pct(pctRow("K"), 0) +
-          ") · mężczyźni " + cnt.M[1] + " z " + nRow.M + " (" + pct(pctRow("M"), 0) + ")" }]);
-      }
-      if (step === 2) {
-        ROWS.forEach(function (r) {
-          var xm = BAR.x0 + (BAR.x1 - BAR.x0) * pctRow(r);
-          svg("text", { x: xm + 6, y: barY(r) - BAR.h / 2 - 8, class: "p5-count is-hit" }, g, pct(pctRow(r), 0));
-        });
-        var xs = BAR.x0 + (BAR.x1 - BAR.x0) * share;
-        svg("line", { x1: xs, x2: xs, y1: ROWY.K[0] + 10, y2: ROWY.M[1] - 10, class: "lc-sc-param" }, g);
-        [0, 50, 100].forEach(function (v) {
-          var x = BAR.x0 + (BAR.x1 - BAR.x0) * v / 100, y = barY("M") + BAR.h / 2;
-          svg("line", { x1: x, x2: x, y1: y, y2: y + 5, class: "lc-sc-axis" }, g);
-          svg("text", { x: x, y: y + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, v + "%");
-        });
-        readout(g, 170, 326, [{ dash: "lc-sc-param", text: "świat bez związku: w obu wierszach " +
-          nFine + " z " + N + " = " + pct(share, 0) + " mandatów" }]);
-      }
-      if (step === 3) {
-        heads(g);
-        ROWS.forEach(function (r) {
-          [1, 0].forEach(function (f) {
-            var o = cnt[r][f], e = E[r][f], er = Math.round(e), k;
-            // brakujący (oczekiwani, a ich nie ma): kontur; nadmiarowi: obwódka
-            for (k = o; k < er; k++) { var p = slot(r, f, k); person(g, p.x, p.y, 20, "is-ghost", 1); }
-            for (k = er; k < o; k++) {
-              var q = slot(r, f, k);
-              svg("circle", { cx: q.x, cy: q.y - 9, r: 11, class: "p5-ring is-extra" }, g);
-            }
-            svg("text", { x: COLX[f][1] - 10, y: barY(r) + 6, "text-anchor": "end", class: "p5-count" + (f ? " is-hit" : "") }, g, String(o));
-            svg("text", { x: COLX[f][1] - 10, y: barY(r) + 24, "text-anchor": "end", class: "lc-sc-tick" }, g, "E " + fmt(e, 1));
-          });
-        });
-        readout(g, 170, 326, [{ text: "kontur: oczekiwany, a go nie ma · obwódka: ponad oczekiwania" }]);
-      }
-      if (step === 4) {
-        heads(g);
-        var chi = 0, parts = [];
-        ROWS.forEach(function (r) {
-          [1, 0].forEach(function (f) {
-            var v = Math.pow(cnt[r][f] - E[r][f], 2) / E[r][f];
-            chi += v; parts.push(fmt(v, 2));
-            svg("text", { x: (COLX[f][0] + COLX[f][1]) / 2, y: barY(r) + 8, "text-anchor": "middle", class: "p5-contrib" }, g, fmt(v, 2));
-          });
-        });
-        readout(g, 170, 326, [{ text: "χ² = " + parts.join(" + ") + " = " + fmt(chi, 2) }]);
-      }
-    }
-
-    function drawAll(step, pos) {
-      var g = api.stage; g.textContent = ""; api.low.textContent = "";
-      back(step, g);
-      var showBadge = step !== 2;
-      pos.forEach(function (t, i) {
-        person(g, t.x, t.y, t.s, "is-" + SEX[i].toLowerCase(), t.o, showBadge ? FINE[i] : undefined);
-      });
-    }
-
-    function render() {
-      var step = api.step(), next = tokens(step), prev = st.pos;
-      if (st.stop) st.stop = null;
-      var tok = (st.tok = (st.tok || 0) + 1);
-      if (prev && st.last && st.last !== step && !REDUCE) {
-        tween(700, function (u) {
-          if (tok !== st.tok) return;
-          var e = u * u * (3 - 2 * u);
-          drawAll(step, next.map(function (t, i) {
-            var a = prev[i];
-            return { x: a.x + (t.x - a.x) * e, y: a.y + (t.y - a.y) * e, s: a.s + (t.s - a.s) * e, o: a.o + (t.o - a.o) * e };
-          }));
-        }, function () { if (tok === st.tok) { drawAll(step, next); front(step, api.stage); } });
-      } else { drawAll(step, next); front(step, api.stage); }
-      st.pos = next; st.last = step;
-    }
-    return { render: render, reset: function () { st.last = 0; st.pos = null; render(); }, opt: function () {} };
   };
 
   // =========================================================================

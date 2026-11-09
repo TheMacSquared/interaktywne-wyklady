@@ -106,33 +106,23 @@ p5_5D_ui <- local({
 })
 
 # --- 5E: mandaty i świat bez związku (rozdz. 07, przed wzorami E i χ²) -----------
-p5_5E_ui <- local({
+# 5E-2: ta sama historia, dane i kadry, ale wygląd ludzików z karteczkami
+# ze sceny „Kto dostaje mandat?” (wykład 02, Ryc. 2.1), którą studenci znają.
+p5_tickets_config <- local({
   obs <- matrix(c(30, 70, 50, 50), nrow = 2, byrow = TRUE)
-  ex <- outer(rowSums(obs), colSums(obs)) / sum(obs)
-  p5_panel("5E", "scena", "Mandaty: jak by było, gdyby płeć nie miała znaczenia?",
-    p5_scene_widget("p5_tickets", "200 kontroli drogowych, 100 kobiet i 100 mężczyzn",
-      steps = c("Kontrole", "Świat bez związku", "Porównaj", "Jedna liczba"),
-      config = list(kind = "tickets", obs = obs, exp = ex, rows = c("Kobiety", "Mężczyźni"),
-        n_row = 100, height = 450,
-        aria = "Sto kobiet i stu mężczyzn po kontroli drogowej, z zaznaczonymi mandatami; kolejne kadry pokazują liczby oczekiwane przy braku związku, różnice i ich wkład do statystyki chi-kwadrat")))
+  list(kind = "tickets", obs = obs, exp = outer(rowSums(obs), colSums(obs)) / sum(obs),
+       rows = c("Kobiety", "Mężczyźni"), n_row = 100,
+       aria = "Sto kobiet i stu mężczyzn po kontroli drogowej, z zaznaczonymi mandatami; kolejne kadry pokazują liczby oczekiwane przy braku związku, różnice i ich wkład do statystyki chi-kwadrat")
 })
+p5_tickets_steps <- c("Kontrole", "Świat bez związku", "Porównaj", "Jedna liczba")
 
-# --- 5E-2: kontrola drogowa z wykładu 02 (ta sama oprawa i dane, rozdz. 07) -------
-# Dane jak stop_data w 02-zwiazki-zmiennych/modules/helpers.R (seed 5): 22 kobiety
-# (4 mandaty), 48 mężczyzn (15 mandatów). χ² = 1.30, p = 0.25.
-p5_stop_data <- local({
-  set.seed(5)
-  sex  <- c(rep("K", 22), rep("M", 48))
-  fine <- c(rep(1L, 4), rep(0L, 18), rep(1L, 15), rep(0L, 33))
-  ord  <- sample(length(sex))
-  list(sex = sex[ord], fine = fine[ord])
-})
+p5_5E_ui <- p5_panel("5E", "scena", "Mandaty: jak by było, gdyby płeć nie miała znaczenia?",
+  p5_scene_widget("p5_tickets", "200 kontroli drogowych, 100 kobiet i 100 mężczyzn",
+    steps = p5_tickets_steps, config = c(p5_tickets_config, list(height = 450))))
 
-p5_5E2_ui <- p5_panel("5E-2", "scena", "Kontrola drogowa z wykładu 02: czy to więcej niż przypadek?",
-  p5_scene_widget("p5_tickets2", "Kto dostaje mandat? Ta sama kontrola, nowe pytanie",
-    steps = c("Tabela", "Świat bez związku", "Braki i nadmiary", "Jedna liczba"),
-    config = list(kind = "tickets2", sex = p5_stop_data$sex, fine = p5_stop_data$fine, height = 345,
-      aria = "Siedemdziesięciu kierowców z wykładu 02 w tabeli płeć razy wynik kontroli; kolejne kadry pokazują wspólny odsetek mandatów, braki i nadmiary w przegródkach oraz wkłady do statystyki chi-kwadrat")))
+p5_5E2_ui <- p5_panel("5E-2", "scena", "Mandaty: jak by było, gdyby płeć nie miała znaczenia?",
+  p5_scene_widget("p5_tickets2", "200 kontroli drogowych, 100 kobiet i 100 mężczyzn",
+    steps = p5_tickets_steps, config = c(p5_tickets_config, list(look = "people", height = 480))))
 
 # --- teksty kroków ------------------------------------------------------------
 p5_server <- function(input, output, session) {
@@ -150,20 +140,7 @@ p5_server <- function(input, output, session) {
       w pasie, jedna poza nim. Przy 20 podgrupach i α = 0.05 tyle właśnie daje
       przypadek.")
   ))
-  scene_texts(input, output, "p5_tickets2", list(
-    tagList("Kontrola drogowa z wykładu 02: 22 kobiety i 48 mężczyzn. Mandat dostało
-      18% kobiet i 31% mężczyzn. W tej próbie różnica jest. Czy byłaby też
-      w następnym dniu kontroli?"),
-    tagList("Gdyby płeć nie miała znaczenia, oba paski kończyłyby się w tym samym
-      miejscu: na 27%, tyle mandatów było wśród wszystkich 70 kierowców."),
-    tagList("Wracamy do przegródek. Przy 27% w każdym wierszu kobietom brakuje
-      około 2 mandatów (kontury), a mężczyźni mają około 2 nadmiarowe (obwódki).
-      E to liczebność oczekiwana."),
-    tagList("Każdą różnicę podnosimy do kwadratu i dzielimy przez E. Suma to
-      χ² = 1.30. Za chwilę zobaczymy, że taka wartość zdarza się często przez
-      sam przypadek: różnica z wykładu 02 nie wystarcza, by mówić o związku.")
-  ))
-  scene_texts(input, output, "p5_tickets", list(
+  p5_tickets_texts <- list(
     tagList("Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet
       i 50 mężczyzn."),
     tagList("Gdyby płeć nie miała znaczenia, w obu grupach mandat dostawałby ten sam
@@ -172,5 +149,7 @@ p5_server <- function(input, output, session) {
       10 nadmiarowych. Tyle samo różnią się komórki bez mandatu."),
     tagList("Każdą różnicę podnosimy do kwadratu i dzielimy przez liczbę oczekiwaną.
       Suma czterech wkładów to statystyka χ².")
-  ))
+  )
+  scene_texts(input, output, "p5_tickets", p5_tickets_texts)
+  scene_texts(input, output, "p5_tickets2", p5_tickets_texts)
 }
