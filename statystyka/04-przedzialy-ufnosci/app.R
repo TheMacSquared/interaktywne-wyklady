@@ -58,6 +58,8 @@ source(file.path(app_dir, "modules", "brainstorm.R"), local = TRUE)
 source(file.path(app_dir, "modules", "visual_scenes.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_estymacja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_idea.R"),      local = TRUE)
+source(file.path(app_dir, "modules", "ci_construction.R"), local = TRUE)
+source(file.path(app_dir, "modules", "ci_echarts.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_srednia.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch4_proporcja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch5_czynniki.R"),  local = TRUE)
@@ -95,6 +97,8 @@ ui <- lecture_page(
       .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
       /* Wykresy ECharts wypełniają kontener z aspect-ratio. */
       .lc-ec { position: absolute; inset: 0; }
+      .ci-construction { position: relative; aspect-ratio: 2.5 / 1; }
+      .ci-construction[data-kind=diff] { aspect-ratio: 2 / 1; }
       .s4p-zero-canvas { position: relative; aspect-ratio: 2.4 / 1; touch-action: none; margin-top: .6em; }
       .s4p-zero[data-lc-chart-large='true'] .s4p-zero-canvas { aspect-ratio: 1.65 / 1; }
       .s4p-zero .s4p-zero-range { width: 100%; cursor: pointer; }

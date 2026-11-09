@@ -1,5 +1,17 @@
 # Warianty B3–B8 w tekście wykładu
 
+## Aktualny stan — 2026-11-09
+
+- Prototypy 5a „Pracownia dokupuje ankiety”, 5b „Schody precyzji”,
+  5c „Poziom dobrany po fakcie” oraz D1 „Anatomia przedziału” są wyświetlane
+  w rozdziale 5 przez `s4p()`. Pozostają do oceny.
+- Piaskownica 3c „Istotne, ale nieważne” pozostaje widoczna obok B6.
+- Sceny rozdziałów 1 i 2 używają wspólnych ilustracji sali i postaci (S1).
+- Konstruktory i przykłady CI w rozdziałach 3–5 korzystają z ECharts SVG;
+  obliczenia i kwantyle pozostają w R. Warianty B to osobna kolejka oceny.
+
+Pozostała część dokumentu opisuje historię porównywania wariantów.
+
 Szkice do porównania obrazów i flow wykładu. Każdy stoi bezpośrednio po
 odpowiadającej mu rycinie Claude’a; nie usuwają obecnych wersji ani nie
 zmieniają statusu zaakceptowanych rycin. Kod bazowy Claude’a pochodzi

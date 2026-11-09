@@ -80,9 +80,9 @@ ch3_ui <- list(
         steps = c("Próba", "Średnia", "± SE", "Przedział"),
         toolbar = lc_toolbar(
           lc_action("ch3_step_new_sample", "Nowa próba", icon = "shuffle",
-                    variant = "outline")
+                    variant = "outline"), lc_chart_zoom_button()
         ),
-        plot_id = "ch3_step_plot"
+        body = ci_construction_ui("mean")
       )
     ),
 
@@ -135,10 +135,9 @@ ch3_ui <- list(
         steps = c("Dwie próby", "Dwie średnie", "Różnica", "± SE", "Przedział"),
         toolbar = lc_toolbar(
           lc_action("ch3_dstep_new_sample", "Nowe próby", icon = "shuffle",
-                    variant = "outline")
+                    variant = "outline"), lc_chart_zoom_button()
         ),
-        plot_id = "ch3_dstep_plot",
-        ratio = "2/1"
+        body = ci_construction_ui("diff")
       )
     ),
 
@@ -174,7 +173,7 @@ ch3_ui <- list(
       title = "Dwaj dostawcy mąki — zgodne sygnały, różnica istotna",
       p("Zakład piekarniczy porównuje dwóch dostawców mąki pszennej typu 550
         pod względem zawartości białka (%). Pobrano po 40 partii od każdego dostawcy."),
-      lc_plot("ch3_comp_A_plot", ratio = "1.8/1", max_height = "340px"),
+      ci_echarts_ui("ch3_comp_A_plot", ratio = "1.8/1", max_height = "340px"),
       uiOutput("ch3_comp_A_verdict")
     ),
 
@@ -184,7 +183,7 @@ ch3_ui <- list(
       title = "Jogurt w szkle i w plastiku — zgodne sygnały, brak różnicy",
       p("Technolog sprawdza, czy materiał opakowania wpływa na zawartość tłuszczu (%)
         w jogurcie naturalnym po 7 dniach przechowywania. Po 30 próbek z każdego typu."),
-      lc_plot("ch3_comp_B_plot", ratio = "1.8/1", max_height = "340px"),
+      ci_echarts_ui("ch3_comp_B_plot", ratio = "1.8/1", max_height = "340px"),
       uiOutput("ch3_comp_B_verdict")
     ),
 
@@ -195,7 +194,7 @@ ch3_ui <- list(
       p("Zakład sprawdza, czy dwie linie produkcyjne płatków śniadaniowych
         dają produkt o tej samej zawartości błonnika (g / 100 g).
         Po 120 partii z każdej linii."),
-      lc_plot("ch3_comp_C_plot", ratio = "1.8/1", max_height = "340px"),
+      ci_echarts_ui("ch3_comp_C_plot", ratio = "1.8/1", max_height = "340px"),
       uiOutput("ch3_comp_C_verdict")
     ),
 
@@ -426,84 +425,9 @@ ch3_server <- function(input, output, session) {
     ch3_step_sample(generate_step_sample())
   })
 
-  # Grubość paska przedziału: element wprowadzany w kroku grubszy niż znany.
-  ch3_bar_lw <- function(role) if (role == "new") 1.8 else 1.1
-
-  # Etykieta w kolorze roli, krojem wykresu.
-  ch3_role_text <- function(x, y, label, role, size, hjust = 0.5) {
-    annotate("text", x = x, y = y, label = label, hjust = hjust,
-             colour = STEP_ROLES[[role]]$colour, fontface = "bold", size = size)
-  }
-
-  zoom_plot_server("ch3_step_plot", reactive({
-    step <- ch3_step()
-    samp <- ch3_step_sample()
-
-    xbar <- mean(samp)
-    s <- sd(samp)
-    n <- length(samp)
-    se <- s / sqrt(n)
-    t_star <- qt(0.975, df = n - 1)
-    me <- t_star * se
-
-    # Stała oś X dla wszystkich kroków (oparta na surowych danych + CI)
-    xlims <- range(c(samp, xbar - 1.2 * me, xbar + 1.2 * me))
-    pad <- diff(xlims) * 0.05
-    xlims <- c(xlims[1] - pad, xlims[2] + pad)
-
-    # Jitter punktów na Y (deterministyczny na podstawie wartości)
-    set.seed(42)
-    jitter_y <- runif(n, min = 0.55, max = 0.90)
-    samp_df <- data.frame(x = samp, y = jitter_y)
-
-    # Oddzielne poziomy Y - każdy element na swojej linii
-    Y_MEAN <- 0.38
-    Y_SE   <- 0.12
-    Y_CI   <- -0.18
-
-    # Krok 1+: surowe punkty z próby
-    p <- ggplot() +
-      step_layer(geom_point, "data", data = samp_df,
-                 mapping = aes(x = x, y = y), size = 3) +
-      labs(x = "Wzrost (cm)", y = NULL) +
-      step_frame(xlim = xlims, ylim = c(-0.45, 0.98), y_axis = FALSE)
-
-    # Krok 2+: pionowa linia prowadząca + diament średniej
-    if (step >= 2) {
-      role <- step_role(step, 2)
-      p <- p +
-        step_line("known", xintercept = xbar) +
-        step_layer(geom_point, role, data = data.frame(x = xbar, y = Y_MEAN),
-                   mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch3_role_text(xbar, Y_MEAN - 0.13, "x̄", role = role,
-                   size = 5)
-    }
-
-    # Krok 3+: przedział +/- SE (węższy)
-    if (step >= 3) {
-      role <- step_role(step, 3)
-      p <- p +
-        step_layer(geom_errorbar, role,
-                   data = data.frame(xmin = xbar - se, xmax = xbar + se, y = Y_SE),
-                   mapping = aes(xmin = xmin, xmax = xmax, y = y),
-                   width = 0.07, linewidth = ch3_bar_lw(role)) +
-        ch3_role_text(xbar, Y_SE - 0.10, "± SE", role = role,
-                   size = 4.5)
-    }
-
-    # Krok 4: pełny CI (t* * SE, szerszy)
-    if (step >= 4) {
-      p <- p +
-        step_layer(geom_errorbar, "new",
-                   data = data.frame(xmin = xbar - me, xmax = xbar + me, y = Y_CI),
-                   mapping = aes(xmin = xmin, xmax = xmax, y = y),
-                   width = 0.10, linewidth = 2.2) +
-        ch3_role_text(xbar, Y_CI - 0.13, "95% CI", role = "new",
-                   size = 5)
-    }
-
-    p
-  }))
+  observe({
+    session$sendCustomMessage("ci-construction-mean", ci_construction_stats(ch3_step_sample()))
+  })
 
   output$ch3_step_text <- renderUI({
     step <- ch3_step()
@@ -555,122 +479,10 @@ ch3_server <- function(input, output, session) {
     ch3_dstep_samples(generate_diff_samples())
   })
 
-  zoom_plot_server("ch3_dstep_plot", reactive({
-    step <- ch3_dstep()
+  observe({
     samples <- ch3_dstep_samples()
-
-    men <- samples$men
-    women <- samples$women
-    n1 <- length(men); n2 <- length(women)
-    x1 <- mean(men); x2 <- mean(women)
-    s1 <- sd(men);   s2 <- sd(women)
-    diff_val <- x1 - x2
-    se <- sqrt(s1^2 / n1 + s2^2 / n2)
-    df_w <- (s1^2 / n1 + s2^2 / n2)^2 /
-            ((s1^2 / n1)^2 / (n1 - 1) + (s2^2 / n2)^2 / (n2 - 1))
-    t_star <- qt(0.975, df = df_w)
-    me <- t_star * se
-
-    # Mężczyźni: dane (niebo), kobiety: druga grupa (bursztyn)
-    col_men <- STEP_ROLES$data$colour
-    col_women <- STEP_ROLES$group$colour
-
-    # ---- GÓRNY PANEL: dwie grupy na skali wzrostu ----
-    xlims_top <- range(c(men, women))
-    pad_top <- diff(xlims_top) * 0.06
-    xlims_top <- c(xlims_top[1] - pad_top, xlims_top[2] + pad_top)
-
-    set.seed(42)
-    jitter_men <- runif(n1, min = 1.55, max = 2.05)
-    jitter_women <- runif(n2, min = 0.75, max = 1.25)
-    men_df <- data.frame(x = men, y = jitter_men)
-    women_df <- data.frame(x = women, y = jitter_women)
-
-    # Etykiety grup po lewej; krok 1+: punkty
-    p_top <- ggplot() +
-      annotate("text", x = xlims_top[1], y = 1.8, label = "Mężczyźni",
-               hjust = 0, fontface = "bold", size = 4.5, color = col_men) +
-      annotate("text", x = xlims_top[1], y = 1.0, label = "Kobiety",
-               hjust = 0, fontface = "bold", size = 4.5, color = col_women) +
-      step_layer(geom_point, "data", data = men_df,
-                 mapping = aes(x = x, y = y), size = 3) +
-      step_layer(geom_point, "group", data = women_df,
-                 mapping = aes(x = x, y = y), size = 3) +
-      labs(x = "Wzrost (cm)", y = NULL) +
-      step_frame(xlim = xlims_top, ylim = c(0.35, 2.25), y_axis = FALSE)
-
-    # Krok 2+: średnie (diamenty + linie)
-    if (step >= 2) {
-      role <- step_role(step, 2)
-      means_df <- data.frame(x = c(x1, x2), y = c(1.8, 1.0))
-      p_top <- p_top +
-        step_layer(geom_segment, role,
-                   data = data.frame(x = c(x1, x2), y = 0.4, yend = 2.1),
-                   mapping = aes(x = x, xend = x, y = y, yend = yend),
-                   linetype = "22") +
-        step_layer(geom_point, role, data = means_df,
-                   mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch3_role_text(x1, 2.15, paste0("x̄₁ = ", round(x1, 2)), role = role,
-                   size = 4.5) +
-        ch3_role_text(x2, 0.55, paste0("x̄₂ = ", round(x2, 2)), role = role,
-                   size = 4.5)
-    }
-
-    library(patchwork)
-
-    # Kroki 1-2: tylko górny panel; miejsce dolnego zostaje puste (stała rama)
-    if (step < 3) {
-      return((p_top / plot_spacer()) + plot_layout(heights = c(2, 1)))
-    }
-
-    # ---- DOLNY PANEL: różnica w skali wycentrowanej na 0 ----
-    # Limity: obejmij 0 i CI z marginesem
-    xlims_bot <- range(c(0, diff_val - 1.3 * me, diff_val + 1.3 * me))
-    pad_bot <- diff(xlims_bot) * 0.08
-    xlims_bot <- c(xlims_bot[1] - pad_bot, xlims_bot[2] + pad_bot)
-
-    # Krok 3+: punkt różnicy
-    role_diff <- step_role(step, 3)
-    p_bot <- ggplot() +
-      step_line("known", xintercept = 0) +
-      ch3_role_text(0, 0.45, "0 = brak różnicy", role = "known",
-                 hjust = -0.1, size = 4) +
-      step_layer(geom_point, role_diff, data = data.frame(x = diff_val, y = 0),
-                 mapping = aes(x = x, y = y), size = 7, shape = 18) +
-      ch3_role_text(diff_val, -0.22, paste0("x̄₁ − x̄₂ = ", round(diff_val, 2)),
-                 role = role_diff, size = 4.5) +
-      labs(x = "Różnica średnich (cm)  —  Mężczyźni − Kobiety",
-           y = NULL) +
-      step_frame(xlim = xlims_bot, ylim = c(-0.55, 0.55), y_axis = FALSE)
-
-    # Krok 4+: wąski przedział SE
-    if (step >= 4) {
-      role <- step_role(step, 4)
-      p_bot <- p_bot +
-        step_layer(geom_errorbar, role,
-                   data = data.frame(xmin = diff_val - se, xmax = diff_val + se, y = 0),
-                   mapping = aes(xmin = xmin, xmax = xmax, y = y),
-                   width = 0.08, linewidth = ch3_bar_lw(role)) +
-        ch3_role_text(diff_val, 0.17, paste0("± SE = ±", round(se, 2)), role = role,
-                   size = 4)
-    }
-
-    # Krok 5: pełen CI
-    if (step >= 5) {
-      p_bot <- p_bot +
-        step_layer(geom_errorbar, "new",
-                   data = data.frame(xmin = diff_val - me, xmax = diff_val + me, y = 0),
-                   mapping = aes(xmin = xmin, xmax = xmax, y = y),
-                   width = 0.14, linewidth = 2.2, alpha = 0.6) +
-        ch3_role_text(diff_val, -0.42,
-                   paste0("95% CI: [", round(diff_val - me, 2),
-                          " ; ", round(diff_val + me, 2), "]"),
-                   role = "new", size = 4.8)
-    }
-
-    # Połącz patchworkiem
-    (p_top / p_bot) + plot_layout(heights = c(2, 1))
-  }))
+    session$sendCustomMessage("ci-construction-diff", ci_construction_stats(samples$men, samples$women))
+  })
 
   output$ch3_dstep_text <- renderUI({
     step <- ch3_dstep()
@@ -752,10 +564,6 @@ ch3_server <- function(input, output, session) {
     }
   }
 
-  verdict_class <- function(v) {
-    switch(v, "yes" = "ok", "no" = "danger",
-           "maybe" = "warning")
-  }
   verdict_label <- function(v) {
     switch(v, "yes" = "TAK", "no" = "NIE", "maybe" = "NIEPEWNE")
   }
@@ -966,7 +774,7 @@ ch3_server <- function(input, output, session) {
         geom_point(aes(x = xbar, y = 0), color = col_estimate,
                    size = 7, shape = 18) +
         annotate("text", x = xbar, y = -0.18,
-                 label = paste0("x̄ = ", round(xbar, 2)),
+                 label = if (step == 2) paste0("x̄ = ", round(xbar, 2)) else "",
                  color = col_estimate, fontface = "bold", size = 5)
     }
     if (step >= 3) {
@@ -974,7 +782,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbar(aes(xmin = xbar - se, xmax = xbar + se, y = 0),
                        width = 0.06, color = col_hit, linewidth = 1.8, orientation = "y") +
         annotate("text", x = xbar, y = 0.14,
-                 label = paste0("± SE = ±", round(se, 2)),
+                 label = if (step == 3) paste0("± SE = ±", round(se, 2)) else "",
                  color = col_hit, fontface = "bold", size = 4)
     }
     if (step >= 4) {
@@ -982,7 +790,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbar(aes(xmin = xbar - me, xmax = xbar + me, y = 0),
                        width = 0.12, color = col_ci, linewidth = 2.2,
                        alpha = 0.6, orientation = "y") +
-        annotate("text", x = xbar, y = -0.38,
+        annotate("text", x = xbar, y = -0.22,
                  label = paste0("95% CI: [", round(xbar - me, 2),
                                 " ; ", round(xbar + me, 2), "]"),
                  color = col_ci, fontface = "bold", size = 4.8)
@@ -1150,7 +958,7 @@ ch3_server <- function(input, output, session) {
         annotate("text", x = x1, y = 2.15,
                  label = paste0("x̄₁ = ", round(x1, 2)),
                  color = col_g1, fontface = "bold", size = 4.5) +
-        annotate("text", x = x2, y = 0.55,
+        annotate("text", x = x2, y = 2.15,
                  label = paste0("x̄₂ = ", round(x2, 2)),
                  color = col_g2, fontface = "bold", size = 4.5)
     }
@@ -1210,7 +1018,7 @@ ch3_server <- function(input, output, session) {
       geom_point(aes(x = diff_val, y = 0), color = col_estimate,
                  size = 7, shape = 18) +
       annotate("text", x = diff_val, y = -0.22,
-               label = paste0("x̄₁ − x̄₂ = ", round(diff_val, 2)),
+               label = if (step == 3) paste0("x̄₁ − x̄₂ = ", round(diff_val, 2)) else "",
                color = col_estimate, fontface = "bold", size = 4.5)
 
     if (step >= 4) {
@@ -1218,7 +1026,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbar(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
                        width = 0.08, color = col_hit, linewidth = 1.8, orientation = "y") +
         annotate("text", x = diff_val, y = 0.17,
-                 label = paste0("± SE = ±", round(se, 2)),
+                 label = if (step == 4) paste0("± SE = ±", round(se, 2)) else "",
                  color = col_hit, fontface = "bold", size = 4)
     }
     if (step >= 5) {
@@ -1226,7 +1034,7 @@ ch3_server <- function(input, output, session) {
         geom_errorbar(aes(xmin = diff_val - me, xmax = diff_val + me, y = 0),
                        width = 0.14, color = col_ci, linewidth = 2.2,
                        alpha = 0.6, orientation = "y") +
-        annotate("text", x = diff_val, y = -0.42,
+        annotate("text", x = diff_val, y = 0.20,
                  label = paste0("95% CI: [", round(diff_val - me, 2),
                                 " ; ", round(diff_val + me, 2), "]"),
                  color = col_ci, fontface = "bold", size = 4.8)
@@ -1285,7 +1093,7 @@ ch3_server <- function(input, output, session) {
 
     # Etykiety grup
     p <- p +
-      annotate("text", x = xlims[1], y = y_positions,
+      annotate("text", x = xlims[1], y = y_positions - 0.38,
                label = groups, hjust = 0, fontface = "bold", size = 4.5,
                color = upwr_secondary)
 
@@ -1331,8 +1139,6 @@ ch3_server <- function(input, output, session) {
     p
   }
 
-  # ---- Liczba "core" kroków budowy CI (bez hipotez) ----
-  n_core_steps <- function(cfg) length(cfg$steps)
   # ---- Wykres case'a: krok budowy CI i (na ostatnim kroku) obszar hipotezy ----
   render_case_plot <- function(cfg, step, hyp_idx) {
     hypothesis <- NULL
@@ -1571,10 +1377,11 @@ ch3_server <- function(input, output, session) {
     output[[paste0(widget_id, "_widget")]] <- renderUI({
       lc_step_widget(widget_id,
         steps = sub("^[0-9]+\\.\\s*", "", cfg$steps),
-        plot_id = paste0(widget_id, "_plot"),
-        ratio = if (cfg$type %in% c("single_mean", "compare_n")) "2.4/1" else "1.6/1",
+        body = ci_echarts_ui(paste0(widget_id, "_plot"),
+          ratio = if (cfg$type %in% c("single_mean", "compare_n")) "2.4/1" else "1.6/1", zoom = FALSE),
         toolbar = lc_toolbar(
-          lc_step_from(n_core, lc_chips(paste0(widget_id, "_hyp"), hyp_choices, label = "Sprawdź"))
+          lc_step_from(n_core, lc_chips(paste0(widget_id, "_hyp"), hyp_choices, label = "Sprawdź")),
+          lc_chart_zoom_button()
         ),
         extra = uiOutput(paste0(widget_id, "_explain"))
       )
@@ -1582,7 +1389,7 @@ ch3_server <- function(input, output, session) {
     output[[paste0(widget_id, "_text")]] <- renderUI({
       if (step() == n_core) "Przedział gotowy. Wybierz hipotezę, żeby sprawdzić ją na wykresie."
     })
-    zoom_plot_server(paste0(widget_id, "_plot"), reactive(
+    ci_echarts_server(paste0(widget_id, "_plot"), reactive(
       render_case_plot(cfg, step(), hyp_idx())
     ))
     output[[paste0(widget_id, "_explain")]] <- renderUI(
@@ -1742,7 +1549,7 @@ ch3_server <- function(input, output, session) {
       theme(plot.title = element_text(size = 13, face = "bold"))
 
     # Układ jeden pod drugim
-    gridExtra::arrangeGrob(p_groups, p_diff, ncol = 1, heights = c(1, 1))
+    patchwork::wrap_plots(p_groups, p_diff, ncol = 1, heights = c(1, 1))
   }
 
   # Helper: werdykt tekstowy
@@ -1778,9 +1585,9 @@ ch3_server <- function(input, output, session) {
     )
   }
 
-  zoom_plot_server("ch3_comp_A_plot", reactive({ ch3_comp_plot("A") }))
-  zoom_plot_server("ch3_comp_B_plot", reactive({ ch3_comp_plot("B") }))
-  zoom_plot_server("ch3_comp_C_plot", reactive({ ch3_comp_plot("C") }))
+  ci_echarts_server("ch3_comp_A_plot", reactive({ ch3_comp_plot("A") }))
+  ci_echarts_server("ch3_comp_B_plot", reactive({ ch3_comp_plot("B") }))
+  ci_echarts_server("ch3_comp_C_plot", reactive({ ch3_comp_plot("C") }))
   output$ch3_comp_A_verdict <- renderUI({ ch3_comp_verdict("A") })
   output$ch3_comp_B_verdict <- renderUI({ ch3_comp_verdict("B") })
   output$ch3_comp_C_verdict <- renderUI({ ch3_comp_verdict("C") })

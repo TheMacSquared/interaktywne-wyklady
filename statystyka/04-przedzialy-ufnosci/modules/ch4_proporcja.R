@@ -92,9 +92,9 @@ ch4_ui <- list(
         steps = c("Próba", "p̂", "± SE", "Przedział"),
         toolbar = lc_toolbar(
           lc_action("ch4_step_new_sample", "Nowa próba", icon = "shuffle",
-                    variant = "outline")
+                    variant = "outline"), lc_chart_zoom_button()
         ),
-        plot_id = "ch4_step_plot"
+        body = ci_echarts_ui("ch4_step_plot", ratio = "2.5/1", zoom = FALSE)
       )
     ),
 
@@ -174,10 +174,9 @@ ch4_ui <- list(
         steps = c("Dwie próby", "Dwie p̂", "Różnica", "± SE", "Przedział"),
         toolbar = lc_toolbar(
           lc_action("ch4_dstep_new_sample", "Nowe próby", icon = "shuffle",
-                    variant = "outline")
+                    variant = "outline"), lc_chart_zoom_button()
         ),
-        plot_id = "ch4_dstep_plot",
-        ratio = "2/1"
+        body = ci_echarts_ui("ch4_dstep_plot", ratio = "2/1", zoom = FALSE)
       )
     ),
 
@@ -331,7 +330,7 @@ ch4_server <- function(input, output, session) {
              colour = STEP_ROLES[[role]]$colour, fontface = "bold", size = size)
   }
 
-  zoom_plot_server("ch4_step_plot", reactive({
+  ci_echarts_server("ch4_step_plot", reactive({
     step <- ch4_step()
     samp <- ch4_step_sample()
 
@@ -460,7 +459,7 @@ ch4_server <- function(input, output, session) {
     ch4_dstep_samples(generate_dstep_prop_samples())
   })
 
-  zoom_plot_server("ch4_dstep_plot", reactive({
+  ci_echarts_server("ch4_dstep_plot", reactive({
     step <- ch4_dstep()
     samples <- ch4_dstep_samples()
 
@@ -530,7 +529,7 @@ ch4_server <- function(input, output, session) {
       p_bot <- p_bot +
         step_layer(geom_point, role, data = data.frame(x = diff_val, y = 0),
                    mapping = aes(x = x, y = y), size = 7, shape = 18) +
-        ch4_role_text(diff_val, -0.22, paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)),
+        ch4_role_text(diff_val, -0.22, if (step == 3) paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)) else "",
                    role = role, size = 4.5)
     }
 
@@ -541,7 +540,7 @@ ch4_server <- function(input, output, session) {
                    data = data.frame(xmin = diff_val - se, xmax = diff_val + se, y = 0),
                    mapping = aes(xmin = xmin, xmax = xmax, y = y),
                    width = 0.08, linewidth = ch4_bar_lw(role)) +
-        ch4_role_text(diff_val, 0.17, paste0("± SE = ±", round(se, 3)), role = role,
+        ch4_role_text(diff_val, 0.17, if (step == 4) paste0("± SE = ±", round(se, 3)) else "", role = role,
                    size = 4)
     }
 
@@ -551,7 +550,7 @@ ch4_server <- function(input, output, session) {
                    data = data.frame(xmin = diff_val - me, xmax = diff_val + me, y = 0),
                    mapping = aes(xmin = xmin, xmax = xmax, y = y),
                    width = 0.14, linewidth = 2.2, alpha = 0.6) +
-        ch4_role_text(diff_val, -0.42,
+        ch4_role_text(diff_val, 0.20,
                    paste0("95% CI: [", round(diff_val - me, 3),
                           " ; ", round(diff_val + me, 3), "]"),
                    role = "new", size = 4.8)
@@ -655,10 +654,6 @@ ch4_server <- function(input, output, session) {
     }
   }
 
-  verdict_class <- function(v) {
-    switch(v, "yes" = "ok", "no" = "danger",
-           "maybe" = "warning")
-  }
   verdict_label <- function(v) {
     switch(v, "yes" = "TAK", "no" = "NIE", "maybe" = "NIEPEWNE")
   }
@@ -783,12 +778,11 @@ ch4_server <- function(input, output, session) {
             panel.grid.minor.x = element_blank())
 
     # ---- PRAWY PANEL: oś proporcji ----
-    xlims <- c(0, 1)
-    if (!is.null(hypothesis)) {
-      xlims <- range(c(xlims, hypothesis$bound))
-      xlims[1] <- max(0, xlims[1])
-      xlims[2] <- min(1, xlims[2])
-    }
+    # Stałe zbliżenie CI i wszystkich progów, niezależne od kroku i wyboru hipotezy.
+    xlims <- range(c(ci$lower, ci$upper, data$view_bounds,
+                    if (!is.null(hypothesis)) hypothesis$bound))
+    pad <- max(diff(xlims) * 0.2, 0.01)
+    xlims <- c(max(0, xlims[1] - pad), min(1, xlims[2] + pad))
 
     p_right <- ggplot() +
       coord_cartesian(xlim = xlims, ylim = c(-0.6, 0.6)) +
@@ -826,17 +820,17 @@ ch4_server <- function(input, output, session) {
       p_right <- p_right +
         geom_point(aes(x = phat, y = 0), color = col_estimate, size = 7, shape = 18) +
         annotate("text", x = phat, y = -0.22,
-                 label = paste0("p̂ = ", round(phat, 3)),
+                 label = if (step == 2) paste0("p̂ = ", round(phat, 3)) else "",
                  color = col_estimate, fontface = "bold", size = 4.8)
     }
 
-    # Krok 3+: SE
-    if (step >= 3) {
+    # Krok 3: SE; pełny CI zastępuje ten pasek w kroku 4.
+    if (step == 3) {
       p_right <- p_right +
         geom_errorbar(aes(xmin = phat - se, xmax = phat + se, y = 0),
                        width = 0.08, color = col_hit, linewidth = 1.8, orientation = "y") +
         annotate("text", x = phat, y = 0.20,
-                 label = paste0("± SE = ±", round(se, 3)),
+                 label = if (step == 3) paste0("± SE = ±", round(se, 3)) else "",
                  color = col_hit, fontface = "bold", size = 4)
     }
 
@@ -845,7 +839,7 @@ ch4_server <- function(input, output, session) {
       p_right <- p_right +
         geom_errorbar(aes(xmin = phat - me, xmax = phat + me, y = 0),
                        width = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6, orientation = "y") +
-        annotate("text", x = phat, y = -0.45,
+        annotate("text", x = phat, y = 0.20,
                  label = paste0("95% CI: [", round(phat - me, 3),
                                 " ; ", round(phat + me, 3), "]"),
                  color = col_ci, fontface = "bold", size = 4.8)
@@ -1046,7 +1040,7 @@ ch4_server <- function(input, output, session) {
         geom_point(aes(x = diff_val, y = 0), color = col_estimate,
                    size = 7, shape = 18) +
         annotate("text", x = diff_val, y = -0.22,
-                 label = paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)),
+                 label = if (step == 3) if (step == 3) paste0("p̂₁ − p̂₂ = ", round(diff_val, 3)) else "" else "",
                  color = col_estimate, fontface = "bold", size = 4.5)
     }
 
@@ -1055,7 +1049,7 @@ ch4_server <- function(input, output, session) {
         geom_errorbar(aes(xmin = diff_val - se, xmax = diff_val + se, y = 0),
                        width = 0.08, color = col_hit, linewidth = 1.8, orientation = "y") +
         annotate("text", x = diff_val, y = 0.17,
-                 label = paste0("± SE = ±", round(se, 3)),
+                 label = if (step == 4) paste0("± SE = ±", round(se, 3)) else "",
                  color = col_hit, fontface = "bold", size = 4)
     }
 
@@ -1063,7 +1057,7 @@ ch4_server <- function(input, output, session) {
       p_bot <- p_bot +
         geom_errorbar(aes(xmin = diff_val - me, xmax = diff_val + me, y = 0),
                        width = 0.14, color = col_ci, linewidth = 2.2, alpha = 0.6, orientation = "y") +
-        annotate("text", x = diff_val, y = -0.42,
+        annotate("text", x = diff_val, y = 0.20,
                  label = paste0("95% CI: [", round(diff_val - me, 3),
                                 " ; ", round(diff_val + me, 3), "]"),
                  color = col_ci, fontface = "bold", size = 4.8)
@@ -1135,8 +1129,6 @@ ch4_server <- function(input, output, session) {
     p
   }
 
-  # ---- Liczba "core" kroków budowy CI (bez hipotez) ----
-  n_core_steps <- function(cfg) length(cfg$steps)
   # ---- Wykres case'a: krok budowy CI i (na ostatnim kroku) obszar hipotezy ----
   render_case_plot <- function(cfg, step, hyp_idx) {
     hypothesis <- NULL
@@ -1150,7 +1142,9 @@ ch4_server <- function(input, output, session) {
     }
 
     switch(cfg$type,
-      "single_prop"     = plot_single_prop_step(cfg$data, plot_step, cfg$xlab,
+      "single_prop"     = plot_single_prop_step(
+                            c(cfg$data, list(view_bounds = vapply(cfg$hypotheses,
+                              function(h) h$bound, numeric(1)))), plot_step, cfg$xlab,
                                                  hypothesis = hypothesis),
       "compare_n_prop"  = plot_compare_n_prop_step(cfg$data, plot_step, cfg$xlab,
                                                     hypothesis = hypothesis),
@@ -1354,10 +1348,11 @@ ch4_server <- function(input, output, session) {
     output[[paste0(widget_id, "_widget")]] <- renderUI({
       lc_step_widget(widget_id,
         steps = sub("^[0-9]+\\.\\s*", "", cfg$steps),
-        plot_id = paste0(widget_id, "_plot"),
-        ratio = if (cfg$type %in% c("single_prop", "compare_n_prop")) "2.4/1" else "1.6/1",
+        body = ci_echarts_ui(paste0(widget_id, "_plot"),
+          ratio = if (cfg$type %in% c("single_prop", "compare_n_prop")) "2.4/1" else "1.6/1", zoom = FALSE),
         toolbar = lc_toolbar(
-          lc_step_from(n_core, lc_chips(paste0(widget_id, "_hyp"), hyp_choices, label = "Sprawdź"))
+          lc_step_from(n_core, lc_chips(paste0(widget_id, "_hyp"), hyp_choices, label = "Sprawdź")),
+          lc_chart_zoom_button()
         ),
         extra = uiOutput(paste0(widget_id, "_explain"))
       )
@@ -1365,7 +1360,7 @@ ch4_server <- function(input, output, session) {
     output[[paste0(widget_id, "_text")]] <- renderUI({
       if (step() == n_core) "Przedział gotowy. Wybierz hipotezę, żeby sprawdzić ją na wykresie."
     })
-    zoom_plot_server(paste0(widget_id, "_plot"), reactive(
+    ci_echarts_server(paste0(widget_id, "_plot"), reactive(
       render_case_plot(cfg, step(), hyp_idx())
     ))
     output[[paste0(widget_id, "_explain")]] <- renderUI(

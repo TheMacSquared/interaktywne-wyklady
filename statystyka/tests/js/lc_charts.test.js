@@ -151,6 +151,7 @@ function environment(shiny = true) {
     MutationObserver: class {
       constructor(fn) { this.fn = fn; }
       observe(node, options) { observers.push({ fn: this.fn, options }); }
+      disconnect() {}
     },
     requestAnimationFrame(fn) { const id = ++sequence; frames.set(id, fn); return id; },
     cancelAnimationFrame(id) { frames.delete(id); },
@@ -691,4 +692,37 @@ test("kalkulator z: pola i wynik zostają po powiększeniu, niepoprawne σ nie p
   const before=JSON.stringify([...env.live].map(ch=>ch.data));
   fields[1].value="0";fields[1].emit("input");
   assert.equal(JSON.stringify([...env.live].map(ch=>ch.data)),before);
+});
+
+
+test("konstruktor CI podpina lupę poza wykresem bez pętli inicjalizacji", () => {
+  const env = environment();
+  const axis = {range:[0,1],breaks:[0,1],labels:["0","1"],name:"",show:true};
+  const spec = {panels:[{box:[0,0,1,1],x:axis,y:axis,label:"",elements:[
+    {type:"line",coords:[[.2,.5],[.8,.5]],color:"#222",fill:"transparent",alpha:1,width:2,size:3,shape:"16",dash:"solid"},
+    {type:"point",coords:[.5,.5],color:"#222",fill:"transparent",alpha:1,width:1,size:5,shape:"18",dash:"solid"}
+  ]}],color_keys:{}};
+  const source = new Element("span", {"data-ci-spec":JSON.stringify(spec)});
+  const config = root("ci-ec-config", [source]);
+  const plot = root("ci-ec-plot", [ecbox("ci"),config]);
+  const button = new Element("button", {"data-lc-chart-zoom":"true"});
+  const stepper = root("lc-stepper", [button,plot]);
+  env.load("04-przedzialy-ufnosci/modules/s4p_ci_echarts.js");
+  env.mount(stepper);
+  assert.equal(env.errors.length,0,"lupa poza korzeniem wykresu nie może przerwać inicjalizacji");
+  assert.equal(env.live.size,1);
+  const series = [...env.live][0].series.get("panel-0");
+  for (let i=0;i<2;i++) {
+    const rendered = series.renderItem({dataIndex:i},{coord:p=>[p[0]*1000,p[1]*500]});
+    assert.ok(rendered.clipPath.shape.width>500,"obszar przycięcia musi mieć szerokość panelu, nie grubość kreski");
+    assert.ok(rendered.children.length>0);
+  }
+  for(let i=0;i<5;i++) env.mutations();
+  assert.equal(env.charts.length,1,"kolejne mutacje DOM nie tworzą ponownie wykresu");
+  button.emit("click");
+  assert.equal(stepper.dataset.lcChartLarge,"true");
+  env.unmount(stepper);
+  assert.equal(env.live.size,0);
+  assert.equal(button.listeners.get("click").size,0,"sprzątanie usuwa obsługę zewnętrznego przycisku");
+  assert.equal(env.errors.length,0);
 });

@@ -70,6 +70,9 @@
     path(g,"M231 155 L248 151 L258 183 L238 188Z","#d7b88e",ink,1.2);
     rect(g,235,151,10,5,soft,1);line(g,239,164,248,161,soft,1);line(g,242,173,251,170,soft,1);
   }
+  // Wspólne elementy ilustracji dla sceny z siatkami w rozdziale 2.
+  window.lcEditorialScene = {room: room, person: editorialPerson, station: station};
+
   function init(root) {
     var art=root.querySelector(".vs-art"),read=root.querySelector(".vs-read");
     var abort=new AbortController(),frame=null,seed=431031;

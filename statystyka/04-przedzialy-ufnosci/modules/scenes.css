@@ -49,3 +49,7 @@
 .lc-sc-lens { fill: var(--upwr-ink-subtle); opacity: .06; }
 .lc-sc-lens-edge { stroke: var(--upwr-ink-subtle); stroke-width: 1; stroke-dasharray: 3 4; }
 .lc-sc-lens-band { stroke: var(--upwr-ink-subtle); stroke-width: 5; opacity: .35; }
+
+/* Ta sama ilustracja redakcyjna co scena pomiaru w rozdziale 1. */
+.lc-sc-editorial text { font-family: var(--upwr-sans); fill: var(--upwr-ink); }
+.lc-sc-editorial .lc-sc-tick { font-family: var(--upwr-mono); }

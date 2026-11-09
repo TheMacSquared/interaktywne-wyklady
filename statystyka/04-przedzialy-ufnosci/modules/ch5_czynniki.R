@@ -72,7 +72,7 @@ ch5_ui <- list(
         lc_slider("ch5_s", "Odchylenie std. (s)", 1, 12, 8, 1),
         lc_readouts(uiOutput("ch5_me_display"))
       ),
-      lc_plot("ch5_factors_plot", max_height = "480px")
+      ci_echarts_ui("ch5_factors_plot", max_height = "480px")
     ),
 
     lc_p("Przy ustawieniach początkowych (n = 30, s = 8, poziom ufności 95%)
@@ -125,7 +125,7 @@ ch5_ui <- list(
         lc_slider("ch5_plan_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01)
       ),
       uiOutput("ch5_plan_result"),
-      lc_plot("ch5_plan_plot", max_height = "440px")
+      ci_echarts_ui("ch5_plan_plot", max_height = "440px")
     ),
 
     lc_p("Przy domyślnych ustawieniach (margines 2, s = 10, poziom ufności 95%)
@@ -172,7 +172,7 @@ ch5_ui <- list(
         lc_action("ch5_cmp_calc", "Oblicz 3 przedziały", variant = "solid"),
         lc_readouts(uiOutput("ch5_cmp_stats"))
       ),
-      lc_plot("ch5_cmp_plot", max_height = "250px")
+      ci_echarts_ui("ch5_cmp_plot", max_height = "250px")
     ),
 
     lc_p("Dla próby wzrostu 30 studentów (średnia 170.69 cm, s = 12.55 cm)
@@ -210,7 +210,7 @@ ch5_ui <- list(
         withMathJax("\\(\\bar{x} = 28.5\\)"), " min, odchylenie standardowe ", withMathJax("\\(s = 8\\)"), " min.
         Hipoteza: średni czas dojazdu w populacji przekracza 26 min."),
       uiOutput("ch5_edge1_buttons"),
-      lc_plot("ch5_edge1_plot", ratio = "2.6/1", max_height = "240px"),
+      ci_echarts_ui("ch5_edge1_plot", ratio = "2.6/1", max_height = "240px"),
       uiOutput("ch5_edge1_explain")
     ),
 
@@ -221,7 +221,7 @@ ch5_ui <- list(
         Odpowiedzi TAK udzieliło 540 osób (", withMathJax("\\(\\hat{p} = 0.54\\)"), ").
         Hipoteza: poparcie w populacji przekracza próg 50%."),
       uiOutput("ch5_edge2_buttons"),
-      lc_plot("ch5_edge2_plot", ratio = "2.6/1", max_height = "240px"),
+      ci_echarts_ui("ch5_edge2_plot", ratio = "2.6/1", max_height = "240px"),
       uiOutput("ch5_edge2_explain")
     ),
 
@@ -233,7 +233,7 @@ ch5_ui <- list(
         (na 100), ", withMathJax("\\(s = 10\\)"), " pkt.
         Hipoteza: średni wynik w populacji przekracza próg 65 pkt."),
       uiOutput("ch5_edge3_buttons"),
-      lc_plot("ch5_edge3_plot", ratio = "2.6/1", max_height = "240px"),
+      ci_echarts_ui("ch5_edge3_plot", ratio = "2.6/1", max_height = "240px"),
       uiOutput("ch5_edge3_explain")
     ),
 
@@ -295,7 +295,8 @@ ch5_ui <- list(
 ch5_server <- function(input, output, session) {
 
   # --- Widget 1: Trzy suwaki ---
-  zoom_plot_server("ch5_factors_plot", reactive({
+  ci_echarts_server("ch5_factors_plot", reactive({
+    req(input$ch5_n, input$ch5_conf, input$ch5_s)
     n <- input$ch5_n
     conf <- input$ch5_conf
     s <- input$ch5_s
@@ -382,7 +383,8 @@ ch5_server <- function(input, output, session) {
     )
   })
 
-  zoom_plot_server("ch5_plan_plot", reactive({
+  ci_echarts_server("ch5_plan_plot", reactive({
+    req(input$ch5_plan_me, input$ch5_plan_s, input$ch5_plan_conf)
     me_max <- input$ch5_plan_me
     s <- input$ch5_plan_s
     conf <- input$ch5_plan_conf
@@ -467,7 +469,7 @@ ch5_server <- function(input, output, session) {
     ch5_cmp_data(do.call(rbind, results))
   })
 
-  zoom_plot_server("ch5_cmp_plot", reactive({
+  ci_echarts_server("ch5_cmp_plot", reactive({
     df <- ch5_cmp_data()
     if (is.null(df)) {
       ggplot() +
@@ -484,10 +486,10 @@ ch5_server <- function(input, output, session) {
         geom_point(aes(x = xbar), color = col_estimate, size = 4, shape = 18) +
         scale_y_continuous(breaks = c(1, 2, 3),
                            labels = c("99%", "95%", "90%")) +
-        annotate("text", x = df$upper + 0.1, y = df$y,
+        annotate("text", x = df$xbar, y = df$y + 0.28,
                  label = paste0("[", round(df$lower, 2), " ; ",
                                 round(df$upper, 2), "]"),
-                 hjust = 0, size = 4) +
+                 hjust = 0.5, size = 4) +
         labs(
              x = "Wartość", y = "Poziom ufności") +
         theme_upwr()
@@ -671,7 +673,7 @@ ch5_server <- function(input, output, session) {
       p <- p +
         geom_errorbar(aes(xmin = ci$lower, xmax = ci$upper, y = 0),
                        width = 0.18, color = col_ci, linewidth = 2.4, alpha = 0.7, orientation = "y") +
-        annotate("text", x = center, y = -0.45,
+        annotate("text", x = center, y = 0.24,
                  label = paste0(round(conf * 100), "% CI: [",
                                 round(ci$lower, 3), " ; ", round(ci$upper, 3), "]"),
                  color = col_ci, fontface = "bold", size = 4.8)
@@ -762,7 +764,7 @@ ch5_server <- function(input, output, session) {
       ch5_edge_state[[case_id]]
       edge_buttons_ui(case_id)
     })
-    zoom_plot_server(paste0("ch5_", case_id, "_plot"), reactive({
+    ci_echarts_server(paste0("ch5_", case_id, "_plot"), reactive({
       ch5_edge_state[[case_id]]
       render_edge_plot(case_id)
     }))

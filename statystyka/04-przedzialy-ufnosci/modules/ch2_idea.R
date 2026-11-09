@@ -81,13 +81,13 @@ ch2_ui <- list(
 
     # PROTOTYP SCENY (2026-10-08): Zarzuć siatkę — co znaczy 95%
     figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
+      label = "Scena",
+      width_mode = "wide",
       scene_widget("ch2_siatka", "Zarzuć siatkę: co znaczy 95%",
         steps = c("Siatka", "Powtarzamy", "Gdzie μ?"),
         labels = c("Zarzuć siatkę", "Zarzuć siatkę", "Zarzuć siatkę"),
         more_from = 2,
-        config = list(kind = "net", mode = "net", mu = net_world$mu, sigma = net_world$sigma,
+        config = list(kind = "net", mode = "net", style = "editorial", mu = net_world$mu, sigma = net_world$sigma,
                       n = 25L, mult = "t", tq = net_tq, z = 1.96,
                       xmin = 140, xmax = 200, height = 600,
                       aria = "Student z miarką mierzy grupkę osób wychodzących z sali, zarzuca przedział x̄ ± margines na oś wzrostu; kolejne przedziały układają się pod osią, a w ostatnim kroku widać μ i odsetek trafień"))

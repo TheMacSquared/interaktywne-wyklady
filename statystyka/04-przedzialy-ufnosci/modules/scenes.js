@@ -62,10 +62,12 @@
     var MU = cfg.mu, SIGMA = cfg.sigma, TQ = cfg.tq || {}, ZQ = cfg.z || 1.96;
     var XMIN = cfg.xmin || 140, XMAX = cfg.xmax || 200;
     var PL = 50, PR = 610;                 // oś wzrostu
+    var editorial = cfg.style === "editorial";
     var BASE = 132;                        // linia stóp grupki
     var NETY = 174;                        // środek siatki nad osią
     var DOTY = 206, AXY = 216;             // pomiary i oś
-    var STK = 304, ROWH = 6.4, ROWS = 36;  // stos siatek pod osią
+    var STK = editorial ? 388 : 304, ROWH = 6.4, ROWS = editorial ? 24 : 36;  // stos siatek pod osią
+    if (editorial) { NETY = 256; DOTY = 288; AXY = 300; }
     // Stos siatek ma własną, powiększoną oś (lupa na wycinek osi wzrostu).
     var ZMIN = cfg.zmin || 158, ZMAX = cfg.zmax || 182;
     var SBASE = (cfg.height || H) - 46, STOP = AXY + 40;   // stos żetonów x̄ (tryb mean)
@@ -155,21 +157,36 @@
 
     function drawXbar(g, d) {
       svg("line", { x1: X(d.xbar), x2: X(d.xbar), y1: DOTY - 10, y2: AXY, class: "lc-sc-xbar" }, g);
-      svg("text", { x: 620, y: 20, "text-anchor": "end", class: "lc-sc-read" }, g,
+      svg("text", { x: 620, y: editorial ? 242 : 20, "text-anchor": "end", class: "lc-sc-read" }, g,
         "x̄ = " + fmt(d.xbar, 1) + " cm");
     }
 
     function drawStage(g, step, anim) {
-      drawRoom(g);
-      drawAxis(g);
       var d = st.last;
+      if (editorial) {
+        var illustration = svg("g", {class: "lc-sc-editorial", transform: "scale(0.76)"}, g);
+        var art = window.lcEditorialScene;
+        art.room(illustration);
+        var active = d ? Math.max(0, Math.min(d.n - 1, (anim ? anim.upto : d.n) - 1)) : 0;
+        var height = d ? d.h[active] : 170;
+        for (var j = 5; j >= 0; j--) {
+          var id = d ? (active + j + 1) % d.n : j;
+          var h = d ? d.h[id] : [168,178,163,174,181,169][j];
+          art.person(illustration,398+j*67,258,h*.80,id+2,"wait");
+        }
+        art.person(illustration,199,258,158,8,"observer");
+        art.person(illustration,307,258,height*.86,active,"measure");
+        art.station(illustration,258-height*.86);
+        if(d) svg("text",{x:339,y:258-height*.86-8,class:"lc-sc-tick"},illustration,fmt(height,1)+" cm");
+      } else drawRoom(g);
+      drawAxis(g);
       if (!d) return;
       var C = crowd(d.n), upto = anim ? anim.upto : d.n;
       for (var i = 0; i < upto; i++) {
         var p = C.pos(i), hp = d.h[i] * C.sc;
         var op = anim && i === upto - 1 && anim.fresh < 1 ? anim.fresh : 1;
         var gg = svg("g", { opacity: op }, g);
-        person(gg, p[0], p[1], hp, C.w, "is-crowd");
+        if (!editorial) person(gg, p[0], p[1], hp, C.w, "is-crowd");
         svg("circle", { cx: X(d.h[i]), cy: DOTY, r: d.n > 25 ? 2.6 : 3.6, class: "lc-sc-hdot", opacity: op }, g);
       }
       if (anim && !anim.done) return;
