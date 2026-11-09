@@ -18,6 +18,79 @@ ch4_bus_world <- function() {
 ch4_bus <- ch4_bus_world()
 ch4_bus_limit <- 5  # zapas: autobus o 7:45, jazda 10 min, zajęcia o 8:00
 
+# Ryc. 4.4, 4.7 i 4.8 rysuje stat_charts.js. Opisy dla danych ankiety liczymy
+# tu z góry; wartości po dopisaniu obserwacji odstających wpisuje przeglądarka.
+ch4_emp_choices <- c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
+                     "Czas dojazdu (min)" = "czas_dojazdu", "Średnia ocen" = "srednia_ocen",
+                     "Wydatki miesięczne (zł)" = "wydatki")
+
+ch4_emp_notes <- function() {
+  lapply(stats::setNames(nm = unname(ch4_emp_choices)), function(v) {
+    vals <- student_data[[v]]; m <- mean(vals); s <- sd(vals)
+    pct_in <- sapply(1:3, function(k) round(mean(vals >= m - k * s & vals <= m + k * s) * 100, 1))
+    pct_txt <- paste0(" W pasach ±1, ±2 i ±3 SD leży ", lc_fmt(pct_in[1], 1), "%, ",
+                      lc_fmt(pct_in[2], 1), "% i ", lc_fmt(pct_in[3], 1),
+                      "% danych (reguła: 68%, 95% i 99.7%).")
+    if (abs(pct_in[1] - 68) < 5) lc_status(tags$strong("Dobra zgodność z regułą."), pct_txt)
+    else lc_status(lc_verdict(tags$strong("Słaba zgodność z regułą."), type = "warning"), pct_txt)
+  })
+}
+
+# Tabela Ryc. 4.7: wartości wpisuje stat_charts.js po każdej zmianie danych.
+ch4_comp_table_ui <- function() {
+  x <- student_data$wzrost
+  start <- c(range = paste(lc_fmt(diff(range(x)), 1), "cm"), iqr = paste(lc_fmt(IQR(x), 1), "cm"),
+             sd = paste(lc_fmt(sd(x), 2), "cm"), cv = paste0(lc_fmt(sd(x) / mean(x) * 100, 1), "%"))
+  df <- data.frame(
+    measure = c("Rozstęp", "IQR (rozstęp międzykwartylowy)",
+                "Odchylenie standardowe (SD)", "Współczynnik zmienności (CV)"),
+    notes = c("Bardzo wrażliwy na wartości odstające — zależy tylko od min i max",
+              "Odporny na wartości odstające — oparty na kwartylach",
+              "Umiarkowanie wrażliwe — uwzględnia wszystkie dane",
+              "Bezjednostkowy — pozwala porównywać zmienność różnych zmiennych"),
+    stringsAsFactors = FALSE)
+  df$value <- lapply(names(start), function(k) lc01_stat_value(k, start[[k]]))
+  lc_table(df[c("measure", "value", "notes")],
+    cols = list(lc_col("measure", "Miara", "row"), lc_col("value", "Wartość"),
+                lc_col("notes", "Własności", "text")),
+    narrow = "stack-last")
+}
+
+ch4_cv_table_ui <- function() {
+  vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
+  labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
+  lc_table(
+    data.frame(var = labels,
+      mean = sapply(vars, function(v) mean(student_data[[v]])),
+      sd = sapply(vars, function(v) sd(student_data[[v]])),
+      cv = sapply(vars, function(v) sd(student_data[[v]]) / mean(student_data[[v]]) * 100)),
+    cols = list(lc_col("var", "Zmienna", "row"), lc_col("mean", "Średnia", digits = 2),
+                lc_col("sd", "SD", digits = 2), lc_col("cv", "CV (%)", digits = 1)),
+    label = "Współczynnik zmienności czterech zmiennych")
+}
+
+ch4_grp_choices <- c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
+                     "Czas dojazdu (min)" = "czas_dojazdu", "Średnia ocen" = "srednia_ocen")
+
+# Tabele Ryc. 4.6 dla każdej pary zmienna × podział (klucz „zmienna|grupy”).
+ch4_grp_notes <- function() {
+  keys <- expand.grid(v = unname(ch4_grp_choices), g = c("plec", "kierunek"), stringsAsFactors = FALSE)
+  notes <- lapply(seq_len(nrow(keys)), function(i) {
+    df <- data.frame(value = student_data[[keys$v[i]]], group = student_data[[keys$g[i]]])
+    stats <- df %>% group_by(group) %>%
+      summarise(n = n(), mean = round(mean(value), 2), median = round(median(value), 2),
+                sd = round(sd(value), 2), iqr = round(IQR(value), 2), .groups = "drop") %>%
+      mutate(group = as.character(group))
+    lc_table_split(stats,
+      cols = list(lc_col("group", "Grupa", "row"), lc_col("n", "n"),
+                  lc_col("mean", "Średnia", digits = 2), lc_col("median", "Mediana", digits = 2),
+                  lc_col("sd", "SD", digits = 2), lc_col("iqr", "IQR", digits = 2)),
+      groups = list(c("n", "mean", "median"), c("sd", "iqr")),
+      label = "Statystyki opisowe w grupach")
+  })
+  stats::setNames(notes, paste(keys$v, keys$g, sep = "|"))
+}
+
 ch4_ui <- list(
   id = "ch-rozrzut", num = "04", title = "Statystyki rozrzutu",
   content = tagList(
@@ -186,16 +259,9 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.4",
       title = "Reguła 68–95–99.7 — czy zawsze działa?",
-      selectInput("ch4_emp_var", "Wybierz zmienną:",
-        choices = c("Wzrost (cm)" = "wzrost",
-                    "Waga (kg)" = "waga",
-                    "Czas dojazdu (min)" = "czas_dojazdu",
-                    "Średnia ocen" = "srednia_ocen",
-                    "Wydatki miesięczne (zł)" = "wydatki"),
-        selected = "wzrost"
-      ),
-      lc_plot("ch4_emp_plot", ratio = "1.6/1", max_height = "400px"),
-      uiOutput("ch4_emp_text")
+      lc01_stat_figure("emp", ratio = "1.7/1", max_height = "400px",
+        control = lc_group("Zmienna", lc_select("ch4_emp_var", ch4_emp_choices, aria_label = "Zmienna")),
+        selected = "wzrost", notes = ch4_emp_notes())
     ),
 
     lc_p("Dla wzrostu reguła sprawdza się bardzo dobrze: w pasie ±1 SD leży
@@ -288,21 +354,18 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.6",
       title = "Wykresy pudełkowe w grupach",
-      lc_toolbar(
-        selectInput("ch4_grp_var", "Zmienna ilościowa",
-            choices = c("Wzrost (cm)" = "wzrost",
-                        "Waga (kg)" = "waga",
-                        "Czas dojazdu (min)" = "czas_dojazdu",
-                        "Średnia ocen" = "srednia_ocen"),
-            selected = "wzrost"
-            ),
-            lc_segmented("ch4_grp_by", "Grupuj wg",
-              choices = c("Płeć" = "plec", "Kierunek" = "kierunek")),
-            checkboxInput("ch4_grp_violin", "Pokaż wykres skrzypcowy", value = FALSE),
-            checkboxInput("ch4_grp_points", "Pokaż punkty", value = TRUE)
-            ),
-      lc_plot("ch4_grp_plot", ratio = "1.6/1", max_height = "400px"),
-      uiOutput("ch4_grp_table")
+      lc01_stat_figure("groups", ratio = "1.6/1", max_height = "400px",
+        control = lc_group("Zmienna ilościowa", lc_select("ch4_grp_var", ch4_grp_choices,
+                                                          aria_label = "Zmienna ilościowa")),
+        toolbar = tagList(
+          htmltools::tagAppendAttributes(lc_segmented("ch4_grp_by", "Grupuj wg",
+            choices = c("Płeć" = "plec", "Kierunek" = "kierunek")), class = "lc01-stat-ctl"),
+          htmltools::tagAppendAttributes(checkboxInput("ch4_grp_violin", "Pokaż wykres skrzypcowy", value = FALSE),
+                                         class = "lc01-stat-ctl"),
+          htmltools::tagAppendAttributes(checkboxInput("ch4_grp_points", "Pokaż punkty", value = TRUE),
+                                         class = "lc01-stat-ctl")
+        ),
+        selected = "wzrost|plec", notes = ch4_grp_notes())
     ),
 
     lc_p("Przy podziale wzrostu według płci pudełka kobiet i mężczyzn się
@@ -336,14 +399,14 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.7",
       title = "Porównanie miar rozrzutu i ich odporności",
-      lc_toolbar(
-        lc_action("ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
-        lc_action("ch4_comp_add5", "Dodaj 5 wartości odstających", variant = "solid"),
-        lc_action("ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-        lc_readouts(uiOutput("ch4_comp_n"))
-      ),
-      lc_plot("ch4_comp_plot", ratio = "1.8/1", max_height = "350px"),
-      uiOutput("ch4_comp_table")
+      lc01_stat_figure("comp", ratio = "1.8/1", max_height = "380px",
+        toolbar = tagList(
+          lc01_stat_action("add1", "ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
+          lc01_stat_action("add5", "ch4_comp_add5", "Dodaj 5 wartości odstających", variant = "solid"),
+          lc01_stat_action("reset", "ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+          lc_readouts(lc_readout("n", lc01_stat_value("n", nrow(student_data))))
+        ),
+        after = ch4_comp_table_ui())
     ),
 
     lc_p("Na początku rozstęp wynosi 41.2 cm, IQR 11.5 cm, a odchylenie
@@ -395,17 +458,9 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.8",
       title = "Porównanie zmienności między zmiennymi",
-      lc_plots(
-        tags$div(
-          tags$h4("SD: wartości nieporównywalne"),
-          lc_plot("ch4_sd_compare_plot", max_height = "350px")
-        ),
-        tags$div(
-          tags$h4("CV: wartości porównywalne"),
-          lc_plot("ch4_cv_plot", max_height = "350px")
-        )
-      ),
-      uiOutput("ch4_cv_table")
+      lc01_stat_figure("spread", charts = 2, ratio = "1.4/1", max_height = "350px",
+        headings = list("SD: wartości nieporównywalne", "CV: wartości porównywalne"),
+        after = ch4_cv_table_ui())
     ),
 
     lc_p("Według samego odchylenia standardowego kolejność to: czas dojazdu
@@ -618,79 +673,7 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 2b: Empirical rule (68-95-99.7) ---
 
-  zoom_plot_server("ch4_emp_plot", reactive({
-    var_name <- input$ch4_emp_var
-    req(var_name)
-    vals <- student_data[[var_name]]
-    m <- mean(vals)
-    s <- sd(vals)
-
-    band_alphas <- c(0.22, 0.14, 0.07)
-
-    p <- ggplot(data.frame(x = vals), aes(x = x))
-
-    # Pasy w tle (od najszerszego do najwęższego, żeby ±1 SD był na wierzchu)
-    for (k in 3:1) {
-      p <- p + annotate("rect",
-        xmin = m - k * s, xmax = m + k * s,
-        ymin = -Inf, ymax = Inf,
-        fill = upwr_accent, alpha = band_alphas[k]
-      )
-    }
-
-    # Histogram na wierzchu pasów
-    p <- p +
-      geom_histogram(aes(y = after_stat(density)),
-                     bins = 25, fill = upwr_cat["niebo"], color = "white", alpha = 0.85) +
-      geom_vline(xintercept = m, color = upwr_secondary, linewidth = 1.2, linetype = "solid") +
-      annotate("text", x = m, y = Inf, label = paste0("x̄ = ", round(m, 1)),
-               vjust = 1.5, hjust = -0.1, color = upwr_secondary, fontface = "bold", size = 4.5) +
-      annotate("text",
-               x = c(m - s, m + s, m - 2 * s, m + 2 * s, m - 3 * s, m + 3 * s),
-               y = -Inf,
-               label = c("-1 SD", "+1 SD", "-2 SD", "+2 SD", "-3 SD", "+3 SD"),
-               vjust = -0.5, hjust = c(1.1, -0.1, 1.1, -0.1, 1.1, -0.1),
-               size = 3.2, color = upwr_secondary, fontface = "italic") +
-      # Gęstość wydatków jest rzędu 1e-4: bez notacji naukowej.
-      scale_y_continuous(labels = function(y) format(y, scientific = FALSE,
-                                                     drop0trailing = TRUE)) +
-      labs(
-        x = variable_meta[[var_name]]$label,
-        y = "Gęstość"
-      ) +
-      theme()
-
-    p
-  }))
-
-  output$ch4_emp_text <- renderUI({
-    var_name <- input$ch4_emp_var
-    req(var_name)
-    vals <- student_data[[var_name]]
-    m <- mean(vals)
-    s <- sd(vals)
-
-    pct_in <- sapply(1:3, function(k) {
-      round(mean(vals >= m - k * s & vals <= m + k * s) * 100, 1)
-    })
-
-    diff_1sd <- abs(pct_in[1] - 68)
-    pct_txt <- paste0(" W pasach ±1, ±2 i ±3 SD leży ", lc_fmt(pct_in[1], 1), "%, ",
-                      lc_fmt(pct_in[2], 1), "% i ", lc_fmt(pct_in[3], 1),
-                      "% danych (reguła: 68%, 95% i 99.7%).")
-
-    if (diff_1sd < 5) {
-      lc_status(
-        tags$strong("Dobra zgodność z regułą."),
-        pct_txt
-      )
-    } else {
-      lc_status(
-        lc_verdict(tags$strong("Słaba zgodność z regułą."), type = "warning"),
-        pct_txt
-      )
-    }
-  })
+  # Ryc. 4.4 rysuje stat_charts.js; opisy w UI (ch4_emp_notes).
 
   # --- Widget 3: Boxplot builder ---
 
@@ -921,227 +904,14 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 3b: Group comparison ---
 
-  zoom_plot_server("ch4_grp_plot", reactive({
-    var_name <- input$ch4_grp_var
-    grp_name <- input$ch4_grp_by
-    req(var_name, grp_name)
+  # Ryc. 4.6 rysuje stat_charts.js; tabele dla każdej pary w UI (ch4_grp_notes).
 
-    df <- data.frame(
-      value = student_data[[var_name]],
-      group = student_data[[grp_name]]
-    )
-
-    var_label <- names(which(c("wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
-      "czas_dojazdu" = "Czas dojazdu (min)", "srednia_ocen" = "Średnia ocen") == var_name))
-    if (length(var_label) == 0) var_label <- var_name
-
-    grp_label <- ifelse(grp_name == "plec", "Płeć", "Kierunek")
-
-    p <- ggplot(df, aes(x = group, y = value, fill = group))
-
-    if (isTRUE(input$ch4_grp_violin)) {
-      p <- p + geom_violin(alpha = 0.4, color = NA) +
-        geom_boxplot(width = 0.2, alpha = 0.8, outlier.shape = NA)
-    } else {
-      p <- p + geom_boxplot(alpha = 0.7, outlier.color = upwr_accent, outlier.size = 3)
-    }
-
-    if (isTRUE(input$ch4_grp_points)) {
-      p <- p + geom_jitter(width = 0.15, alpha = 0.3, size = 1.5)
-    }
-
-    p + scale_fill_upwr() +
-      scale_x_discrete(labels = scales::label_wrap(12)) +
-      labs(x = grp_label, y = var_label) +
-            theme(legend.position = "none")
-  }))
-
-  output$ch4_grp_table <- renderUI({
-    var_name <- input$ch4_grp_var
-    grp_name <- input$ch4_grp_by
-    req(var_name, grp_name)
-
-    df <- data.frame(
-      value = student_data[[var_name]],
-      group = student_data[[grp_name]]
-    )
-
-    stats <- df %>%
-      group_by(group) %>%
-      summarise(
-        n = n(),
-        mean = round(mean(value), 2),
-        median = round(median(value), 2),
-        sd = round(sd(value), 2),
-        iqr = round(IQR(value), 2),
-        .groups = "drop"
-      ) %>%
-      mutate(group = as.character(group))
-
-    lc_table_split(stats,
-      cols = list(
-        lc_col("group", "Grupa", "row"),
-        lc_col("n", "n"),
-        lc_col("mean", "Średnia", digits = 2),
-        lc_col("median", "Mediana", digits = 2),
-        lc_col("sd", "SD", digits = 2),
-        lc_col("iqr", "IQR", digits = 2)
-      ),
-      groups = list(c("n", "mean", "median"), c("sd", "iqr")),
-      label = "Statystyki opisowe w grupach"
-    )
-  })
 
   # --- Widget 4: Spread measures comparison ---
 
-  ch4_comp_data <- reactiveVal(NULL)
-
-  observe({
-    if (is.null(ch4_comp_data())) {
-      ch4_comp_data(student_data$wzrost)
-    }
-  })
-
-  observeEvent(input$ch4_comp_add1, {
-    set.seed(NULL)
-    current <- ch4_comp_data()
-    outlier <- max(current) + 30 + runif(1, -5, 5)
-    ch4_comp_data(c(current, round(outlier, 1)))
-  })
-
-  observeEvent(input$ch4_comp_add5, {
-    set.seed(NULL)
-    current <- ch4_comp_data()
-    outliers <- sapply(1:5, function(i) max(current) + 30 + runif(1, -5, 5))
-    ch4_comp_data(c(current, round(outliers, 1)))
-  })
-
-  observeEvent(input$ch4_comp_reset, {
-    ch4_comp_data(student_data$wzrost)
-  })
-
-  zoom_plot_server("ch4_comp_plot", reactive({
-    vals <- ch4_comp_data()
-    if (is.null(vals)) return(NULL)
-
-    df <- data.frame(x = vals)
-    data_range <- range(vals)
-    q1 <- quantile(vals, 0.25)
-    q3 <- quantile(vals, 0.75)
-    iqr_val <- q3 - q1
-
-    ggplot(df, aes(x = x)) +
-      geom_histogram(bins = 30, fill = upwr_cat["niebo"], color = "white", alpha = 0.7) +
-      # Range
-      annotate("segment", x = data_range[1], xend = data_range[2],
-               y = -2, yend = -2, color = upwr_accent, linewidth = 2) +
-      annotate("text",
-               x = (data_range[1] + data_range[2]) / 2, y = -3.5,
-               label = paste0("Rozstęp = ", round(diff(data_range), 1)),
-               color = upwr_accent, size = 4, fontface = "bold") +
-      # IQR
-      annotate("segment", x = q1, xend = q3, y = -6, yend = -6,
-               color = upwr_cat["szalwia"], linewidth = 2) +
-      annotate("text", x = (q1 + q3) / 2, y = -7.5,
-               label = paste0("IQR = ", round(iqr_val, 1)),
-               color = upwr_cat["szalwia"], size = 4, fontface = "bold") +
-      labs(x = "Wzrost (cm)", y = "Liczebność") +
-            coord_cartesian(clip = "off") +
-      theme(plot.margin = margin(10, 10, 50, 10))
-  }))
-
-  output$ch4_comp_n <- renderUI({
-    vals <- ch4_comp_data()
-    if (is.null(vals)) return(NULL)
-    lc_readout("n", length(vals))
-  })
-
-  output$ch4_comp_table <- renderUI({
-    vals <- ch4_comp_data()
-    if (is.null(vals)) return(NULL)
-
-    df <- data.frame(
-      measure = c("Rozstęp", "IQR (rozstęp międzykwartylowy)",
-                  "Odchylenie standardowe (SD)",
-                  "Współczynnik zmienności (CV)"),
-      value = c(diff(range(vals)), IQR(vals), sd(vals), sd(vals) / mean(vals) * 100),
-      notes = c(
-        "Bardzo wrażliwy na wartości odstające — zależy tylko od min i max",
-        "Odporny na wartości odstające — oparty na kwartylach",
-        "Umiarkowanie wrażliwe — uwzględnia wszystkie dane",
-        "Bezjednostkowy — pozwala porównywać zmienność różnych zmiennych"
-      ),
-      stringsAsFactors = FALSE
-    )
-
-    lc_table(df,
-      cols = list(
-        lc_col("measure", "Miara", "row"),
-        lc_col("value", "Wartość", digits = c(1, 1, 2, 1),
-               suffix = c(" cm", " cm", " cm", "%")),
-        lc_col("notes", "Własności", "text")
-      ),
-      narrow = "stack-last"
-    )
-  })
+  # Ryc. 4.7 i 4.8 rysuje stat_charts.js; tabele w UI.
 
   # --- Widget 5: Coefficient of Variation ---
 
-  zoom_plot_server("ch4_sd_compare_plot", reactive({
-    vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
-    labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
-
-    stats <- data.frame(
-      Zmienna = factor(labels, levels = rev(labels)),
-      SD = sapply(vars, function(v) sd(student_data[[v]]))
-    )
-
-    ggplot(stats, aes(x = Zmienna, y = SD, fill = SD)) +
-      geom_col(alpha = 0.85, width = 0.6) +
-      scale_fill_upwr_seq(variant = "burgundy", guide = "none") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
-      coord_flip() +
-      labs(x = NULL, y = "Odchylenie standardowe (oryg. jednostki)") +
-      theme()
-  }))
-
-  zoom_plot_server("ch4_cv_plot", reactive({
-    vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
-    labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
-
-    stats <- data.frame(
-      Zmienna = factor(labels, levels = rev(labels)),
-      CV = sapply(vars, function(v) sd(student_data[[v]]) / mean(student_data[[v]]) * 100)
-    )
-
-    ggplot(stats, aes(x = Zmienna, y = CV, fill = CV)) +
-      geom_col(alpha = 0.85, width = 0.6) +
-      scale_fill_upwr_seq(variant = "burgundy", guide = "none") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-      coord_flip() +
-      labs(x = NULL, y = "Współczynnik zmienności (%)") +
-      theme()
-  }))
-
-  output$ch4_cv_table <- renderUI({
-    vars <- c("wzrost", "waga", "czas_dojazdu", "srednia_ocen")
-    labels <- c("Wzrost (cm)", "Waga (kg)", "Czas dojazdu (min)", "Średnia ocen")
-
-    lc_table(
-      data.frame(
-        var = labels,
-        mean = sapply(vars, function(v) mean(student_data[[v]])),
-        sd = sapply(vars, function(v) sd(student_data[[v]])),
-        cv = sapply(vars, function(v) sd(student_data[[v]]) / mean(student_data[[v]]) * 100)
-      ),
-      cols = list(
-        lc_col("var", "Zmienna", "row"),
-        lc_col("mean", "Średnia", digits = 2),
-        lc_col("sd", "SD", digits = 2),
-        lc_col("cv", "CV (%)", digits = 1)
-      ),
-      label = "Współczynnik zmienności czterech zmiennych"
-    )
-    })
 
 }

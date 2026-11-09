@@ -147,8 +147,10 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     Ryc. 2.1 i 4.2 oraz sceny SVG.
   - [x] Most ggplot → ECharts we wspólnym `statystyka/R/lc_ggplot_echarts.*`
     (2026-11-09); wykład 02 w całości na ECharts (tabela krzyżowa, pudełka).
-  - [ ] Statystyka 01: 30 wykresów R — najpierw spis do akceptacji
-    (most albo przepisanie w JS, kryterium offline i responsywności).
+  - [ ] Statystyka 01: wykresy ggplot przepisywane w JS na danych ankiety
+    (`stat_charts.js`, dane w stronie przez `survey_data.R`). Zrobione 23 z 30
+    (2026-11-09): słupki, histogramy i pudełka w rozdz. 1–5. Zostały ryciny
+    krokowe 3.1, 4.2, 4.3, 4.5, 5.1 oraz Ryc. 2.4 (słupki + mapa ciepła).
   - [ ] Statystyka 03: najpierw decyzje o prototypach `stop_proto_*`
     (12 z 29 wykresów R), potem port.
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).

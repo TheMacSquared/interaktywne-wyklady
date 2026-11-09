@@ -103,21 +103,19 @@ ch2_ui <- list(
       label = "Ryc. 2.2",
       title = "Czy kolejność kategorii ma znaczenie?",
 
-      lc_toolbar(
-        checkboxInput("ch2_ord_shuffle", "Losowa kolejność kategorii", value = FALSE)
-      ),
-      lc_plots(
-        tags$div(
-          tags$h4("Nominalna: kierunek studiów"),
-          lc_plot("ch2_ord_nom_plot", max_height = "300px")
-        ),
-        tags$div(
-          tags$h4("Porządkowa: zadowolenie"),
-          lc_plot("ch2_ord_ord_plot", max_height = "300px")
-        )
-      ),
-
-      uiOutput("ch2_ord_explanation")
+      lc01_stat_figure("order", charts = 2, ratio = "1.5/1", max_height = "300px",
+        headings = list("Nominalna: kierunek studiów", "Porządkowa: zadowolenie"),
+        control = checkboxInput("ch2_ord_shuffle", "Losowa kolejność kategorii", value = FALSE),
+        selected = "off", notes = list(
+          off = lc_status(
+            tags$strong("Domyślna kolejność:"),
+            " kierunki alfabetycznie (umownie), zadowolenie od „bardzo niezadowolony”
+             do „bardzo zadowolony”."),
+          on = lc_status(
+            lc_verdict(tags$strong("Losowa kolejność:"), type = "warning"),
+            " wykres kierunków znaczy to samo co wcześniej, a wykres zadowolenia
+             gubi porządek od „bardzo niezadowolony” do „bardzo zadowolony”.")
+        ))
     ),
 
     lc_p("Po przetasowaniu wykres kierunków mówi dokładnie to samo co wcześniej:
@@ -289,9 +287,10 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.5",
       title = "Dominanta — najczęściej występująca kategoria",
-      lc_action("ch2_mode_resample", "Losuj nowe proporcje", icon = "shuffle", variant = "solid"),
-      lc_plot("ch2_mode_plot", ratio = "1.8/1", max_height = "350px"),
-      uiOutput("ch2_mode_text")
+      lc01_stat_figure("mode", ratio = "1.8/1", max_height = "350px",
+        toolbar = lc01_stat_action("resample", "ch2_mode_resample", "Losuj nowe proporcje",
+                                   icon = "shuffle", variant = "solid"),
+        after = tags$div(`data-role` = "mode-text"))
     ),
 
     lc_p("W ankiecie dominantą kierunku jest Informatyka: 60 z 200 osób, czyli
@@ -332,14 +331,6 @@ ch2_server <- function(input, output, session) {
   ch2_freq_step <- lc_step_server("ch2_freq", input)$step
   ch2_scenario_idx <- reactiveVal(1)
   ch2_random_colors <- reactiveVal(NULL)
-  ch2_mode_data <- reactiveVal(NULL)
-
-  # --- Initialise reactive values that need data ---
-  observe({
-    if (is.null(ch2_mode_data())) {
-      ch2_mode_data(student_data$kierunek)
-    }
-  })
 
   # ========================================================================
   # Widget 1: Frequency table step-by-step
@@ -447,61 +438,8 @@ ch2_server <- function(input, output, session) {
   # Widget 1b: Nominal vs Ordinal comparison
   # ========================================================================
 
-  zoom_plot_server("ch2_ord_nom_plot", reactive({
-    df <- data.frame(kierunek = student_data$kierunek)
-    lvls <- levels(df$kierunek)
-    if (isTRUE(input$ch2_ord_shuffle)) {
-      lvls <- sample(lvls)
-    }
-    df$kierunek <- factor(df$kierunek, levels = lvls)
-    ggplot(df, aes(x = kierunek)) +
-      geom_bar(fill = type_colors["nominalna"], color = "white", alpha = 0.85) +
-      geom_text(stat = "count", aes(label = after_stat(count)),
-                vjust = -0.5, size = 5) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      labs(x = "Kierunek", y = "Liczebność") +
-      theme()
-  }))
+  # Ryc. 2.2 rysuje stat_charts.js; opis kolejności jest w UI dla obu stanów.
 
-  zoom_plot_server("ch2_ord_ord_plot", reactive({
-    df <- data.frame(zadowolenie = student_data$zadowolenie)
-    lvls <- levels(df$zadowolenie)
-    if (isTRUE(input$ch2_ord_shuffle)) {
-      lvls <- sample(lvls)
-    }
-    df$zadowolenie <- factor(df$zadowolenie, levels = lvls)
-    short_labels <- c(
-      "Bardzo niezadowolony" = "B. niezad.",
-      "Niezadowolony"        = "Niezad.",
-      "Neutralny"            = "Neutr.",
-      "Zadowolony"           = "Zad.",
-      "Bardzo zadowolony"    = "B. zad."
-    )
-    ggplot(df, aes(x = zadowolenie)) +
-      geom_bar(fill = type_colors["porzadkowa"], color = "white", alpha = 0.85) +
-      geom_text(stat = "count", aes(label = after_stat(count)),
-                vjust = -0.5, size = 5) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      scale_x_discrete(labels = function(x) short_labels[x]) +
-      labs(x = "Zadowolenie", y = "Liczebność") +
-      theme()
-  }))
-
-  output$ch2_ord_explanation <- renderUI({
-    if (isTRUE(input$ch2_ord_shuffle)) {
-      lc_status(
-        lc_verdict(tags$strong("Losowa kolejność:"), type = "warning"),
-        " wykres kierunków znaczy to samo co wcześniej, a wykres zadowolenia
-         gubi porządek od „bardzo niezadowolony” do „bardzo zadowolony”."
-      )
-    } else {
-      lc_status(
-        tags$strong("Domyślna kolejność:"),
-        " kierunki alfabetycznie (umownie), zadowolenie od „bardzo niezadowolony”
-         do „bardzo zadowolony”."
-      )
-    }
-  })
 
   # ========================================================================
   # Widget 2: Pie vs Bar — scenario comparison (ECharts)
@@ -736,54 +674,7 @@ ch2_server <- function(input, output, session) {
   # Widget 5: Mode (dominanta)
   # ========================================================================
 
-  observeEvent(input$ch2_mode_resample, {
-    probs <- runif(4)
-    probs <- probs / sum(probs)
-    new_data <- sample(
-      c("Informatyka", "Biologia", "Psychologia", "Ekonomia"),
-      200, replace = TRUE, prob = probs
-    )
-    ch2_mode_data(factor(new_data,
-      levels = c("Informatyka", "Biologia", "Psychologia", "Ekonomia")))
-  })
+  # Ryc. 2.5 (dominanta) losuje i rysuje stat_charts.js.
 
-  zoom_plot_server("ch2_mode_plot", reactive({
-    req(ch2_mode_data())
-    x <- ch2_mode_data()
-    df_counts <- as.data.frame(table(x))
-    names(df_counts) <- c("Kierunek", "n")
-    mode_cat <- df_counts$Kierunek[which.max(df_counts$n)]
-
-    df_counts$is_mode <- ifelse(df_counts$Kierunek == mode_cat,
-                                "Dominanta", "Inne")
-
-    ggplot(df_counts, aes(x = Kierunek, y = n, fill = is_mode)) +
-      geom_col(color = "white", width = 0.7, alpha = 0.9) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      scale_fill_manual(
-        values = c("Dominanta" = type_colors["nominalna"], "Inne" = upwr_rule),
-        guide = "none"
-      ) +
-      labs(x = "Kierunek", y = "Liczebność")
-  }))
-
-  output$ch2_mode_text <- renderUI({
-    req(ch2_mode_data())
-    x <- ch2_mode_data()
-    counts <- table(x)
-    mode_cat <- names(counts)[which.max(counts)]
-    mode_n   <- max(counts)
-    total_n  <- sum(counts)
-    mode_pct <- round(mode_n / total_n * 100, 1)
-
-    lc_status(
-      tags$b("Dominanta:"),
-      " ",
-      mode_cat,
-      tags$br(),
-      paste0("Występuje ", mode_n, " razy (", mode_pct, "% z ", total_n,
-             " obserwacji).")
-    )
-  })
 
 }

@@ -773,3 +773,108 @@ test("eksploratory CI (Ryc. 2.2, 3.4, 3.5): ECharts, klawiatura, presety i sprz�
   assert.equal(diff.el.querySelectorAll(".lc-chart-handle").length, 0, "uchwyt znika razem z widgetem");
   assert.equal(env.errors.length, 0);
 });
+
+test("ryciny statystyk z ankiety (01, rozdz. 3): kontrolka, opisy dla opcji i sprzątanie", () => {
+  const env = environment();
+  env.window.lc01Survey = { n: 6, columns: {
+    wzrost: { label: "Wzrost (cm)", type: "ilosciowa_ciagla", values: [160, 165, 170, 171, 175, 190] },
+    waga: { label: "Waga (kg)", type: "ilosciowa_ciagla", values: [50, 60, 61, 70, 80, 95] },
+    liczba_kursow: { label: "Liczba kursów", values: [3, 4, 4, 5, 5, 5] }
+  } };
+  env.load("01-typy-danych/modules/chart_utils.js");
+  env.load("01-typy-danych/modules/stat_charts.js");
+  const select = new Element("select", { value: "wzrost" });
+  const notes = ["wzrost", "waga"].map(v => new Element("div", { "data-when": v }));
+  const fig = root("lc01-stat", [root("lc01-stat-ctl", [select]), ecbox("0"), ...notes], { "data-fig": "mean" });
+  env.mount(fig);
+  assert.equal(env.errors.length, 0);
+  assert.equal(env.live.size, 1);
+  assert.deepEqual(notes.map(n => n.hidden), [false, true], "widoczny opis wybranej zmiennej");
+  const chart = [...env.live][0];
+  const before = chart.updates;
+  select.value = "waga";
+  fig.querySelector(".lc01-stat-ctl").emit("change");
+  assert.ok(chart.updates > before, "zmiana zmiennej przerysowuje wykres");
+  assert.deepEqual(notes.map(n => n.hidden), [true, false]);
+  // Dwa wykresy w jednej rycinie (Ryc. 3.7): słupki i histogram 15 przedziałów.
+  const radio = new Element("input", { type: "radio", value: "liczba_kursow", checked: "" });
+  const disc = root("lc01-stat", [root("lc01-stat-ctl", [radio]), ecbox("0"), ecbox("1")], { "data-fig": "disc" });
+  env.mount(disc);
+  assert.equal(env.live.size, 3);
+  env.unmount(fig); env.unmount(disc);
+  assert.equal(env.live.size, 0, "zmiana rozdziału zwalnia wykresy");
+  assert.equal(env.errors.length, 0);
+  // Reguła ggplot dla bins = k: 15 przedziałów niezgranych z liczbami całkowitymi.
+  const bins = env.window.lc01Stat.binsGgplot([0, 1, 2, 3, 9], 15);
+  assert.equal(bins.reduce((s, b) => s + b.n, 0), 5, "każda obserwacja trafia do jednego przedziału");
+  assert.ok(bins.some(b => b.n === 0), "są puste przedziały mimo braku luk w danych");
+});
+
+test("ryciny statystyk ze stanem (01): przyciski, pole wyboru i wartości w tabeli", () => {
+  const env = environment();
+  env.window.lc01Survey = { n: 8, columns: {
+    wzrost: { label: "Wzrost (cm)", values: [160, 165, 170, 171, 172, 175, 180, 190] },
+    kierunek: { label: "Kierunek studiów", levels: ["Biologia", "Ekonomia", "Informatyka", "Psychologia"],
+                values: [1, 2, 3, 3, 4, 3, 2, 1] },
+    zadowolenie: { label: "Zadowolenie", levels: ["Bardzo niezadowolony", "Niezadowolony", "Neutralny", "Zadowolony", "Bardzo zadowolony"],
+                   values: [1, 2, 3, 4, 5, 3, 3, 4] }
+  } };
+  env.load("01-typy-danych/modules/chart_utils.js");
+  env.load("01-typy-danych/modules/stat_charts.js");
+  // Ryc. 4.7: dopisanie wartości odstającej aktualizuje n i komórki tabeli.
+  const add = new Element("button", { "data-stat-act": "add1" }), reset = new Element("button", { "data-stat-act": "reset" });
+  const n = new Element("span", { "data-v": "n" }), range = new Element("span", { "data-v": "range" });
+  const comp = root("lc01-stat", [add, reset, ecbox("0"), n, range], { "data-fig": "comp" });
+  env.mount(comp);
+  assert.equal(n.textContent, "8"); assert.equal(range.textContent, "30.0 cm");
+  comp.emit("click", { target: add });
+  assert.equal(n.textContent, "9");
+  assert.ok(parseFloat(range.textContent) > 55, "nowa wartość leży ok. 30 cm nad maksimum");
+  comp.emit("click", { target: reset });
+  assert.equal(n.textContent, "8");
+  // Ryc. 2.5: losowanie daje 200 obserwacji i opis dominanty.
+  const text = new Element("div", { "data-role": "mode-text" }), again = new Element("button", { "data-stat-act": "resample" });
+  const mode = root("lc01-stat", [again, ecbox("0"), text], { "data-fig": "mode" });
+  env.mount(mode);
+  assert.match(text.innerHTML, /Dominanta:<\/b> Informatyka/);
+  mode.emit("click", { target: again });
+  assert.match(text.innerHTML, /z 200 obserwacji/);
+  // Ryc. 2.2: pole wyboru przełącza opis i kolejność.
+  const box = new Element("input", { type: "checkbox" });
+  const off = new Element("div", { "data-when": "off" }), on = new Element("div", { "data-when": "on" });
+  const order = root("lc01-stat", [root("lc01-stat-ctl", [box]), ecbox("0"), ecbox("1"), off, on], { "data-fig": "order" });
+  env.mount(order);
+  assert.deepEqual([off.hidden, on.hidden], [false, true]);
+  box.checked = true; order.querySelector(".lc01-stat-ctl").emit("change");
+  assert.deepEqual([off.hidden, on.hidden], [true, false]);
+  [comp, mode, order].forEach(x => env.unmount(x));
+  assert.equal(env.live.size, 0);
+  assert.equal(env.errors.length, 0);
+});
+
+test("pudełka w grupach (01, Ryc. 4.6): kilka kontrolek wybiera opis pary zmienna × grupy", () => {
+  const env = environment();
+  env.window.lc01Survey = { n: 6, columns: {
+    wzrost: { label: "Wzrost (cm)", values: [160, 165, 170, 175, 180, 150] },
+    waga: { label: "Waga (kg)", values: [50, 60, 70, 80, 90, 55] },
+    plec: { label: "Płeć", levels: ["Kobieta", "Mężczyzna"], values: [1, 1, 1, 2, 2, 1] },
+    kierunek: { label: "Kierunek", levels: ["A", "B"], values: [1, 2, 1, 2, 1, 2] }
+  } };
+  env.load("01-typy-danych/modules/chart_utils.js");
+  env.load("01-typy-danych/modules/stat_charts.js");
+  const select = new Element("select", { id: "ch4_grp_var", value: "wzrost" });
+  const by = new Element("input", { type: "radio", name: "ch4_grp_by", value: "plec", checked: "" });
+  const violin = new Element("input", { type: "checkbox", id: "ch4_grp_violin" });
+  const notes = ["wzrost|plec", "waga|plec"].map(k => new Element("div", { "data-when": k }));
+  const ctl = (child, attrs = {}) => root("lc01-stat-ctl", [child], attrs);
+  const fig = root("lc01-stat", [ctl(select), ctl(by, { id: "ch4_grp_by" }), ctl(violin), ecbox("0"), ...notes], { "data-fig": "groups" });
+  env.mount(fig);
+  assert.equal(env.errors.length, 0, String(env.errors[0] && env.errors[0][1] && env.errors[0][1].stack));
+  assert.deepEqual(notes.map(n => n.hidden), [false, true]);
+  select.value = "waga"; fig.querySelectorAll(".lc01-stat-ctl")[0].emit("change");
+  assert.deepEqual(notes.map(n => n.hidden), [true, false], "opis zależy od zmiennej i podziału");
+  violin.checked = true; fig.querySelectorAll(".lc01-stat-ctl")[2].emit("change");
+  assert.equal(env.errors.length, 0, "skrzypce rysują się bez błędu");
+  env.unmount(fig);
+  assert.equal(env.live.size, 0);
+});

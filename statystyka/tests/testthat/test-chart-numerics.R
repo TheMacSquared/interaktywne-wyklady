@@ -8,6 +8,15 @@ chart_numeric_cases <- function() {
   )
   fit_case <- function(x, y) list(x = array(x), y = array(y))
   list(
+    shape = lapply(list(
+      c(1, 2, 3, 4, 10), c(170.6, 170.7, 168, 181.2, 175, 162.4),
+      c(12, 15, 19, 22, 30, 41, 47, 55, 80, 120), c(-3, -1, 0, 0, 0, 1, 2, 8)
+    ), function(x) list(x = array(x), grid = array(seq(min(x) - 3, max(x) + 3, length.out = 64)))),
+    seeded = list(
+      list(kind = "normal", seed = 42, n = 20000, a = 165, b = 6),
+      list(kind = "gamma", seed = 42, n = 20000, a = 4, b = 1),
+      list(kind = "gamma", seed = 7, n = 20000, a = 0.6, b = 2)
+    ),
     statistics = lapply(list(
       c(170.6, 170.7), c(4200, 3800, 5100, 4000, 100000),
       c(8, -3, 8, 0, 12, -3, 4), rep(7, 6), 42, numeric(),
@@ -79,6 +88,31 @@ expect_chart_close <- function(actual, expected, abs_tol, rel_tol = 0, label) {
   ))
 }
 
+# Dokładna suma (algorytm Shewchuka, jak math.fsum w Pythonie). mean() w R
+# na procesorach bez rozszerzonej precyzji (np. Apple Silicon) traci 1 + 1
+# w c(1e16, 1, 1, -1e16) i daje 0 zamiast 0.5; wzorzec nie może zależeć od platformy.
+exact_sum <- function(x) {
+  partials <- numeric()
+  for (v in x) {
+    kept <- numeric()
+    for (p in partials) {
+      if (abs(v) < abs(p)) { t <- v; v <- p; p <- t }
+      hi <- v + p; lo <- p - (hi - v)
+      if (lo != 0) kept <- c(kept, lo)
+      v <- hi
+    }
+    partials <- c(kept, v)
+  }
+  sum(partials)
+}
+exact_mean <- function(x, trim = 0) {
+  if (!length(x)) return(NaN)
+  if (trim >= 0.5) return(median(x))
+  n <- length(x); lo <- floor(n * trim) + 1
+  s <- sort(x)[lo:(n + 1 - lo)]
+  exact_sum(s) / length(s)
+}
+
 testthat::test_that("statystyki opisowe JS są zgodne z R, także dla małych i nietypowych prób", {
   cases <- chart_numeric_cases()
   output <- run_chart_numerics(cases)
@@ -89,12 +123,12 @@ testthat::test_that("statystyki opisowe JS są zgodne z R, także dla małych i 
     trim <- numeric_values(case$trim)
     actual <- output$statistics[[i]]
     label <- paste("próba", i)
-    expect_chart_close(actual$mean, mean(x), 1e-12, 1e-14, paste(label, "średnia"))
+    expect_chart_close(actual$mean, exact_mean(x), 1e-12, 1e-14, paste(label, "średnia"))
     expect_chart_close(actual$median, median(x), 1e-12, 1e-14, paste(label, "mediana"))
     expected <- quantile(x, p, type = 7, names = FALSE)
     expect_chart_close(actual$quantiles, expected, 1e-12, 1e-14, paste(label, "kwantyle"))
     expect_chart_close(actual$sortedQuantiles, expected, 1e-12, 1e-14, paste(label, "kwantyle posortowane"))
-    expect_chart_close(actual$trimmedMeans, vapply(trim, function(t) mean(x, trim = t), numeric(1)),
+    expect_chart_close(actual$trimmedMeans, vapply(trim, function(t) exact_mean(x, t), numeric(1)),
                        1e-12, 1e-14, paste(label, "średnie ucięte"))
   }
 })
@@ -203,5 +237,33 @@ testthat::test_that("generatory JS zachowują parametry i kształt rozkładów R
       testthat::expect_true(actual$min >= a && actual$max <= b, info = label)
     }
     if (case$kind == "gamma") testthat::expect_true(actual$min >= 0, info = label)
+  }
+})
+
+testthat::test_that("SD, skośność, kurtoza i krzywa gęstości JS są zgodne z R (e1071 typ 3, nrd0)", {
+  cases <- chart_numeric_cases()
+  output <- run_chart_numerics(cases)
+  for (i in seq_along(cases$shape)) {
+    x <- numeric_values(cases$shape[[i]]$x); grid <- numeric_values(cases$shape[[i]]$grid)
+    got <- output$shape[[i]]; label <- paste("kształt", i)
+    n <- length(x); m <- mean(x); s <- sd(x)
+    expect_chart_close(got$sd, s, 1e-12, 1e-12, paste(label, "SD"))
+    expect_chart_close(got$skewness, mean((x - m)^3) / s^3, 1e-12, 1e-10, paste(label, "skośność"))
+    expect_chart_close(got$kurtosis, mean((x - m)^4) / s^4 - 3, 1e-12, 1e-10, paste(label, "kurtoza"))
+    expect_chart_close(got$bw, bw.nrd0(x), 1e-12, 1e-12, paste(label, "pasmo nrd0"))
+    bw <- bw.nrd0(x)
+    exact <- vapply(grid, function(t) mean(dnorm(t, x, bw)), numeric(1))
+    expect_chart_close(got$density, exact, 1e-12, 1e-10, paste(label, "gęstość dokładna"))
+    # density() przybliża przez FFT; dopuszczamy różnicę niewidoczną na wykresie.
+    approx <- stats::approx(density(x, bw = bw, n = 1024, from = min(grid), to = max(grid)), xout = grid)$y
+    expect_chart_close(got$density, approx, 2e-3 * max(exact), 0, paste(label, "gęstość vs density()"))
+  }
+  expected <- list(c(165, 6, 0), c(4, 2, 1), c(1.2, sqrt(0.6) * 2, 2 / sqrt(0.6)))
+  for (i in seq_along(cases$seeded)) {
+    got <- output$seeded[[i]]; e <- expected[[i]]; label <- paste("losowanie z ziarnem", i)
+    testthat::expect_true(isTRUE(got$repeatable), info = paste(label, "powtarzalność"))
+    expect_chart_close(got$mean, e[1], 0, 0.02, paste(label, "średnia"))
+    expect_chart_close(got$sd, e[2], 0, 0.03, paste(label, "SD"))
+    expect_chart_close(got$skewness, e[3], 0.06, 0.08, paste(label, "skośność"))
   }
 })

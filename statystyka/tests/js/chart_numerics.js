@@ -39,6 +39,16 @@ const output = {
     const density = U.kurtDensity(ek);
     return { density: x.map(density), upper: cutoffs.map(c => U.kurtUpper(density, c)) };
   }),
+  shape: (input.shape || []).map(({ x, grid }) => ({
+    sd: U.sd(x), skewness: U.skewness(x), kurtosis: U.kurtosis(x), bw: U.bwNrd0(x),
+    density: U.kde(x, grid[0], grid[grid.length - 1], grid.length).map(p => p[1])
+  })),
+  seeded: (input.seeded || []).map(({ kind, seed, n, a, b }) => {
+    const g = U.seeded(seed), values = kind === "normal" ? g.rnorm(n, a, b) : g.rgamma(n, a, b);
+    const again = kind === "normal" ? U.seeded(seed).rnorm(n, a, b) : U.seeded(seed).rgamma(n, a, b);
+    return { mean: U.mean(values), sd: U.sd(values), skewness: U.skewness(values),
+             repeatable: values.every((v, i) => v === again[i]) };
+  }),
   sampling: input.sampling.map(({ kind, n, a, b }) => {
     const generate = {
       normal: () => U.rnorm(a, b), gamma: () => U.rgammaInt(a, b),

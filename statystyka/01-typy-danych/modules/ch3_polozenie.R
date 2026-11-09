@@ -85,6 +85,58 @@ ch3_ops_ladder <- function() {
   )
 }
 
+# Ryc. 3.2, 3.3, 3.7, 3.8 rysuje stat_charts.js; opisy dla każdej opcji liczymy
+# tu z góry (dane ankiety są stałe), a przeglądarka pokazuje właściwy.
+ch3_mean_choices <- c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga", "Średnia ocen" = "srednia_ocen")
+ch3_median_choices <- c("Wzrost (cm)" = "wzrost", "Czas dojazdu (min)" = "czas_dojazdu",
+                        "Średnia ocen" = "srednia_ocen")
+ch3_disc_choices <- c("Liczba nieobecności" = "liczba_nieobecnosci", "Liczba kursów" = "liczba_kursow")
+
+ch3_mean_notes <- function() {
+  lapply(stats::setNames(nm = unname(ch3_mean_choices)), function(v) {
+    x <- student_data[[v]]
+    lc_status(paste0("$$\\bar{x} = \\frac{", round(sum(x), 1), "}{", length(x), "} = ",
+                     round(mean(x), 2), "$$"))
+  })
+}
+
+ch3_median_notes <- function() {
+  lapply(stats::setNames(nm = unname(ch3_median_choices)), function(v) {
+    x <- student_data[[v]]
+    lc_status(paste0("Mediana = ", round(median(x), 1)), " | Średnia = ", round(mean(x), 2),
+              " | Różnica = ", round(abs(mean(x) - median(x)), 2))
+  })
+}
+
+ch3_disc_notes <- function() {
+  lapply(stats::setNames(nm = unname(ch3_disc_choices)), function(v) {
+    x <- student_data[[v]]
+    mode_val <- as.numeric(names(sort(table(x), decreasing = TRUE))[1])
+    lc_readouts(
+      lc_readout("Średnia", lc_fmt(mean(x), 2)),
+      lc_readout("Mediana", median(x)),
+      lc_readout("Moda", mode_val),
+      lc_readout("SD", lc_fmt(sd(x), 2)),
+      lc_readout("Zakres", paste0(min(x), "–", max(x)))
+    )
+  })
+}
+
+ch3_modal_notes <- function() list(
+  unimodal = lc_status(
+    tags$b("Rozkład unimodalny: "), "jeden szczyt. ",
+    "Dla rozkładu symetrycznego moda ≈ średnia ≈ mediana. ",
+    "Większość statystyk opisowych zakłada właśnie taki rozkład."),
+  bimodal = lc_status(
+    lc_verdict(tags$b("Rozkład bimodalny: "), type = "warning"),
+    "dwa szczyty, osobno dla kobiet ", "i mężczyzn. Średnia całości wypada między szczytami, ",
+    "gdzie obserwacji jest niewiele."),
+  multimodal = lc_status(
+    lc_verdict(tags$b("Rozkład wielomodalny: "), type = "warning"),
+    "trzy szczyty = trzy podgrupy. ",
+    "Każda podgrupa (rowerzyści, pasażerowie autobusów, kierowcy) ", "ma własną typową wartość.")
+)
+
 ch3_ui <- list(
   id = "ch-polozenie", num = "03", title = "Statystyki położenia",
   content = tagList(
@@ -185,13 +237,10 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.2",
       title = "Średnia jako punkt równowagi",
-      selectInput("ch3_mean_var", "Zmienna:",
-        choices = c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
-                    "Średnia ocen" = "srednia_ocen"),
-        selected = "wzrost"
-      ),
-      lc_plot("ch3_mean_plot", max_height = "300px"),
-      uiOutput("ch3_mean_text")
+      lc01_stat_figure("mean", ratio = "2.4/1", max_height = "320px",
+        control = lc_group("Zmienna", lc_select("ch3_mean_var", ch3_mean_choices,
+                                                aria_label = "Zmienna")),
+        selected = "wzrost", notes = ch3_mean_notes())
     ),
 
     lc_p("Średni wzrost w naszej ankiecie wynosi 171.1 cm. Do sumy trafia każda
@@ -228,13 +277,10 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.3",
       title = "Mediana dzieli dane na pół",
-      selectInput("ch3_median_var", "Zmienna:",
-        choices = c("Wzrost (cm)" = "wzrost", "Czas dojazdu (min)" = "czas_dojazdu",
-                    "Średnia ocen" = "srednia_ocen"),
-        selected = "czas_dojazdu"
-      ),
-      lc_plot("ch3_median_plot", max_height = "300px"),
-      uiOutput("ch3_median_text")
+      lc01_stat_figure("median", ratio = "2.4/1", max_height = "320px",
+        control = lc_group("Zmienna", lc_select("ch3_median_var", ch3_median_choices,
+                                                selected = "czas_dojazdu", aria_label = "Zmienna")),
+        selected = "czas_dojazdu", notes = ch3_median_notes())
     ),
 
     lc_p("Porównaj obie miary dla dwóch zmiennych. Dla wzrostu mediana (170.6 cm)
@@ -412,22 +458,10 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.7",
       title = "Dyskretna vs ciągła — porównanie wizualizacji",
-      lc_toolbar(
-        lc_segmented("ch3_disc_var", "Zmienna dyskretna",
-          choices = c("Liczba nieobecności" = "liczba_nieobecnosci",
-                      "Liczba kursów" = "liczba_kursow")),
-        lc_readouts(uiOutput("ch3_disc_stats"))
-      ),
-      lc_plots(
-        tags$div(
-          tags$h4("Wykres słupkowy (poprawny)"),
-          lc_plot("ch3_disc_bar", max_height = "300px")
-        ),
-        tags$div(
-          tags$h4("Histogram (problematyczny)"),
-          lc_plot("ch3_disc_hist", max_height = "300px")
-        )
-      )
+      lc01_stat_figure("disc", charts = 2, ratio = "1.5/1", max_height = "300px",
+        headings = list("Wykres słupkowy (poprawny)", "Histogram (problematyczny)"),
+        control = lc_segmented("ch3_disc_var", "Zmienna dyskretna", choices = ch3_disc_choices),
+        selected = "liczba_nieobecnosci", notes = ch3_disc_notes())
     ),
 
     lc_p(gloss("wykres słupkowy", "Wykres słupkowy"), " rysuje osobny słupek dla każdej wartości: zero, jednej,
@@ -459,13 +493,11 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.8",
       title = "Unimodalny vs bimodalny vs wielomodalny",
-      lc_toolbar(
-        lc_segmented("ch3_modal_scenario", "Scenariusz",
+      lc01_stat_figure("modal", ratio = "1.9/1", max_height = "360px", legend = TRUE,
+        control = lc_segmented("ch3_modal_scenario", "Scenariusz",
           choices = c("Unimodalny" = "unimodal", "Bimodalny" = "bimodal",
-                      "Wielomodalny" = "multimodal"))
-      ),
-      lc_plot("ch3_modal_plot", ratio = "1.8/1", max_height = "350px"),
-      uiOutput("ch3_modal_text")
+                      "Wielomodalny" = "multimodal")),
+        selected = "unimodal", notes = ch3_modal_notes())
     ),
 
     lc_p("Kilka szczytów to zwykle znak, że w danych są pomieszane różne grupy.
@@ -867,103 +899,6 @@ ch3_server <- function(input, output, session) {
   })
 
   # --------------------------------------------------------------------------
-  # Widget 0a: Mean introduction
-  # --------------------------------------------------------------------------
-
-  zoom_plot_server("ch3_mean_plot", reactive({
-    var_name <- input$ch3_mean_var
-    req(var_name)
-    x <- student_data[[var_name]]
-    m <- mean(x)
-    var_labels <- c("wzrost" = "Wzrost (cm)", "waga" = "Waga (kg)",
-                    "srednia_ocen" = "Średnia ocen")
-    df <- data.frame(val = x)
-
-    ggplot(df, aes(x = val)) +
-      geom_histogram(bins = 25, fill = upwr_rule, color = "white", alpha = 0.8) +
-      geom_vline(xintercept = m, color = upwr_accent, linewidth = 1.5, linetype = "solid") +
-      annotate("text", x = m, y = Inf, label = paste0("Średnia = ", round(m, 2)),
-               vjust = 2, hjust = -0.1, color = upwr_accent, size = 5, fontface = "bold") +
-      annotate("segment", x = min(x), xend = m, y = -0.5, yend = -0.5,
-               color = upwr_cat["niebo"], linewidth = 2,
-               arrow = arrow(length = unit(0.2, "cm"), ends = "last")) +
-      annotate("segment", x = max(x), xend = m, y = -0.5, yend = -0.5,
-               color = upwr_cat["niebo"], linewidth = 2,
-               arrow = arrow(length = unit(0.2, "cm"), ends = "last")) +
-      labs(x = var_labels[var_name], y = "Liczebność") +
-      theme()
-  }))
-
-  output$ch3_mean_text <- renderUI({
-    var_name <- input$ch3_mean_var
-    req(var_name)
-    x <- student_data[[var_name]]
-    m <- mean(x)
-    s <- sum(x)
-    n <- length(x)
-    lc_status(
-      withMathJax(paste0(
-        "$$\\bar{x} = \\frac{", round(s, 1), "}{", n, "} = ", round(m, 2), "$$"
-      ))
-    )
-  })
-
-  # --------------------------------------------------------------------------
-  # Widget 0b: Median introduction
-  # --------------------------------------------------------------------------
-
-  zoom_plot_server("ch3_median_plot", reactive({
-    var_name <- input$ch3_median_var
-    req(var_name)
-    x <- student_data[[var_name]]
-    med <- median(x)
-    x_sorted <- sort(x)
-    n <- length(x_sorted)
-    n_below <- sum(x_sorted < med)
-    n_above <- sum(x_sorted > med)
-    var_labels <- c("wzrost" = "Wzrost (cm)", "czas_dojazdu" = "Czas dojazdu (min)",
-                    "srednia_ocen" = "Średnia ocen")
-    df <- data.frame(val = x)
-
-    ggplot(df, aes(x = val)) +
-      geom_histogram(bins = 25, fill = upwr_rule, color = "white", alpha = 0.8) +
-      geom_vline(xintercept = med, color = upwr_cat["indygo"], linewidth = 1.5) +
-      annotate("rect", xmin = min(x) - 1, xmax = med, ymin = -Inf, ymax = Inf,
-               fill = upwr_cat["niebo"], alpha = 0.08) +
-      annotate("rect", xmin = med, xmax = max(x) + 1, ymin = -Inf, ymax = Inf,
-               fill = upwr_accent, alpha = 0.08) +
-      annotate("text", x = (min(x) + med) / 2, y = Inf,
-               label = paste0("50% (", n_below, " obs.)"),
-               vjust = 2, color = upwr_secondary, size = 5, fontface = "bold") +
-      annotate("text", x = (max(x) + med) / 2, y = Inf,
-               label = paste0("50% (", n_above, " obs.)"),
-               vjust = 2, color = upwr_secondary, size = 5, fontface = "bold") +
-      annotate("text", x = med, y = Inf, label = paste0("Me = ", round(med, 1)),
-               vjust = 4, hjust = -0.1, color = upwr_cat["indygo"], size = 5, fontface = "bold") +
-      geom_histogram(bins = 25, fill = upwr_rule, color = "white", alpha = 0.8) +
-      geom_vline(xintercept = med, color = upwr_cat["indygo"], linewidth = 1.5) +
-      labs(x = var_labels[var_name], y = "Liczebność") +
-      theme()
-  }))
-
-  output$ch3_median_text <- renderUI({
-    var_name <- input$ch3_median_var
-    req(var_name)
-    x <- student_data[[var_name]]
-    med <- median(x)
-    m <- mean(x)
-    diff <- abs(m - med)
-
-    lc_status(
-      paste0("Mediana = ", round(med, 1)),
-      " | Średnia = ",
-      round(m, 2),
-      " | Różnica = ",
-      round(diff, 2)
-    )
-  })
-
-  # --------------------------------------------------------------------------
   # Widget 1b: Sixth observation -- formulas step by step
   # --------------------------------------------------------------------------
 
@@ -1051,128 +986,5 @@ ch3_server <- function(input, output, session) {
     )
   })
 
-  # --------------------------------------------------------------------------
-  # Widget 2b: Discrete variables
-
-  zoom_plot_server("ch3_disc_bar", reactive({
-    var_name <- input$ch3_disc_var
-    req(var_name)
-    vals <- student_data[[var_name]]
-    df <- data.frame(x = factor(vals))
-
-    ggplot(df, aes(x = x)) +
-      geom_bar(fill = type_colors["ilosciowa_dyskretna"], color = "white", alpha = 0.85) +
-      geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      labs(x = variable_meta[[var_name]]$label, y = "Liczebność") +
-      theme()
-  }))
-
-  zoom_plot_server("ch3_disc_hist", reactive({
-    var_name <- input$ch3_disc_var
-    req(var_name)
-    vals <- student_data[[var_name]]
-
-    ggplot(data.frame(x = vals), aes(x = x)) +
-      geom_histogram(bins = 15, fill = upwr_accent, color = "white", alpha = 0.6) +
-      labs(x = variable_meta[[var_name]]$label, y = "Liczebność") +
-      theme()
-  }))
-
-  output$ch3_disc_stats <- renderUI({
-    var_name <- input$ch3_disc_var
-    req(var_name)
-    vals <- student_data[[var_name]]
-
-    mode_val <- as.numeric(names(sort(table(vals), decreasing = TRUE))[1])
-
-    tagList(
-      lc_readout("Średnia", lc_fmt(mean(vals), 2)),
-      lc_readout("Mediana", median(vals)),
-      lc_readout("Moda", mode_val),
-      lc_readout("SD", lc_fmt(sd(vals), 2)),
-      lc_readout("Zakres", paste0(min(vals), "–", max(vals)))
-    )
-    })
-
-  # Widget 2c: Multimodality in continuous distributions
-  # --------------------------------------------------------------------------
-
-  zoom_plot_server("ch3_modal_plot", reactive({
-    scenario <- input$ch3_modal_scenario
-    req(scenario)
-
-    set.seed(42)
-    if (scenario == "unimodal") {
-      x <- rnorm(500, mean = 165, sd = 6)
-      df <- data.frame(val = x)
-      ggplot(df, aes(x = val)) +
-        geom_histogram(aes(y = after_stat(density)), bins = 30,
-                       fill = upwr_cat["niebo"], color = "white", alpha = 0.7) +
-        geom_density(linewidth = 1.2, color = upwr_secondary) +
-        geom_vline(xintercept = mean(x), color = upwr_accent, linewidth = 1, linetype = "dashed") +
-        annotate("text", x = mean(x) + 1, y = Inf, label = "moda ≈ średnia ≈ mediana",
-                 hjust = 0, vjust = 2, color = upwr_accent, size = 4.5, fontface = "bold") +
-        labs(x = "Wzrost kobiet (cm)", y = "Gęstość") +
-        theme()
-
-    } else if (scenario == "bimodal") {
-      x_k <- rnorm(250, mean = 162, sd = 5)
-      x_m <- rnorm(250, mean = 182, sd = 5)
-      df <- data.frame(val = c(x_k, x_m),
-                       grupa = rep(c("Kobiety", "Mężczyźni"), each = 250))
-      ggplot(df, aes(x = val)) +
-        geom_histogram(aes(y = after_stat(density)), bins = 35,
-                       fill = upwr_reference, color = "white", alpha = 0.5) +
-        geom_density(linewidth = 1.2, color = upwr_secondary) +
-        geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
-        scale_color_manual(values = c("Kobiety" = upwr_accent, "Mężczyźni" = upwr_col("niebo"))) +
-        labs(x = "Wzrost (cm)", y = "Gęstość", color = NULL) +
-                theme(legend.position = "top")
-
-    } else {
-      x1 <- rnorm(150, mean = 12, sd = 3)
-      x2 <- rnorm(120, mean = 25, sd = 4)
-      x3 <- rnorm(130, mean = 40, sd = 5)
-      df <- data.frame(val = c(x1, x2, x3),
-                       grupa = c(rep("Rower", 150), rep("Autobus", 120), rep("Auto", 130)))
-      ggplot(df, aes(x = val)) +
-        geom_histogram(aes(y = after_stat(density)), bins = 40,
-                       fill = upwr_reference, color = "white", alpha = 0.5) +
-        geom_density(linewidth = 1.2, color = upwr_secondary) +
-        geom_density(aes(color = grupa), linewidth = 0.8, linetype = "dashed") +
-        scale_color_manual(values = c("Rower" = upwr_col("szalwia"), "Autobus" = upwr_col("bursztyn"), "Auto" = upwr_accent)) +
-        labs(x = "Czas dojazdu (min)", y = "Gęstość", color = NULL) +
-                theme(legend.position = "top")
-    }
-  }))
-
-  output$ch3_modal_text <- renderUI({
-    scenario <- input$ch3_modal_scenario
-    req(scenario)
-
-    if (scenario == "unimodal") {
-      lc_status(
-        tags$b("Rozkład unimodalny: "),
-        "jeden szczyt. ",
-        "Dla rozkładu symetrycznego moda ≈ średnia ≈ mediana. ",
-        "Większość statystyk opisowych zakłada właśnie taki rozkład."
-      )
-    } else if (scenario == "bimodal") {
-      lc_status(
-        lc_verdict(tags$b("Rozkład bimodalny: "), type = "warning"),
-        "dwa szczyty, osobno dla kobiet ",
-        "i mężczyzn. Średnia całości wypada między szczytami, ",
-        "gdzie obserwacji jest niewiele."
-      )
-    } else {
-      lc_status(
-        lc_verdict(tags$b("Rozkład wielomodalny: "), type = "warning"),
-        "trzy szczyty = trzy podgrupy. ",
-        "Każda podgrupa (rowerzyści, pasażerowie autobusów, kierowcy) ",
-        "ma własną typową wartość."
-      )
-    }
-  })
 
 }

@@ -57,57 +57,6 @@ render_taxonomy <- function(highlight = NULL, revealed = character(0)) {
     theme(plot.margin = margin(10, 10, 10, 10))
 }
 
-render_good_plot <- function(x, label, type) {
-  col <- type_colors[type]
-  df <- data.frame(x = x)
-
-  if (type %in% c("nominalna", "porzadkowa")) {
-    # Przy kilku kategoriach długie etykiety łamiemy, przy wielu obracamy.
-    rotate <- nlevels(factor(x)) > 4
-    ggplot(df, aes(x = x)) +
-      geom_bar(fill = col, color = NA) +
-      geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
-      scale_x_discrete(labels = if (rotate) waiver() else scales::label_wrap(12)) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      labs(x = label, y = "Liczebność") +
-      theme(axis.text.x = element_text(angle = if (rotate) 30 else 0,
-                                       hjust = if (rotate) 1 else 0.5))
-  } else if (type == "ilosciowa_dyskretna") {
-    ggplot(df, aes(x = factor(x))) +
-      geom_bar(fill = col, color = NA) +
-      geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 4.5) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      labs(x = label, y = "Liczebność")
-  } else {
-    ggplot(df, aes(x = x)) +
-      geom_histogram(aes(y = after_stat(density)), bins = 20, fill = col, color = NA, alpha = 0.7) +
-      geom_density(color = col, fill = NA, linewidth = 1.2) +
-      labs(x = label, y = "Gęstość")
-  }
-}
-
-render_bad_plot <- function(x, label, type) {
-  df <- data.frame(x = x)
-  if (type %in% c("nominalna", "porzadkowa")) {
-    df$x_num <- as.numeric(factor(x))
-    ggplot(df, aes(x = x_num)) +
-      geom_histogram(bins = 10, fill = upwr_reference, color = NA) +
-      labs(x = paste0(label, " (zakodowane jako liczby)"), y = "Liczebność") +
-      theme(plot.title = element_text(color = upwr_accent),
-            plot.subtitle = element_text(color = upwr_accent, face = "italic"))
-  } else if (type == "ilosciowa_dyskretna") {
-    # Gęstość wygładza skończony zbiór wartości całkowitych w ciągłą krzywą.
-    ggplot(df, aes(x = x)) +
-      geom_density(fill = upwr_reference, color = NA, alpha = 0.8) +
-      labs(x = label, y = "Gęstość")
-  } else {
-    ggplot(df, aes(x = x)) +
-      geom_bar(fill = upwr_reference, width = 0.3) +
-      labs(x = label, y = "Liczebność") +
-      theme(axis.text.x = element_text(size = 5, angle = 90))
-  }
-}
-
 pie_vs_bar_scenarios <- list(
   list(
     name = "Duże różnice",

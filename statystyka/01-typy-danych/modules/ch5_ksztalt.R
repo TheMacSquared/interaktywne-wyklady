@@ -23,6 +23,19 @@ ch5_tools_map <- function() {
   )
 }
 
+# Ryc. 5.2, 5.3, 5.4 i histogram Ryc. 5.7 rysuje stat_charts.js; opisy dla
+# danych ankiety liczymy tu z góry (dla każdej zmiennej).
+ch5_skew_choices <- c("Wzrost" = "wzrost", "Czas dojazdu" = "czas_dojazdu",
+                      "Średnia ocen" = "srednia_ocen", "Liczba nieobecności" = "liczba_nieobecnosci")
+
+ch5_skew_notes <- function() {
+  lapply(stats::setNames(nm = unname(ch5_skew_choices)), function(v) {
+    vals <- student_data[[v]]; vals <- vals[!is.na(vals)]
+    p(paste0("Skośność = ", round(e1071::skewness(vals), 3)),
+      " | Średnia = ", round(mean(vals), 2), ", Mediana = ", round(median(vals), 2))
+  })
+}
+
 ch5_ui <- list(
   id = "ch-ksztalt", num = "05", title = "Kształt rozkładu",
   content = tagList(
@@ -102,12 +115,13 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.2",
       title = "Porównanie trzech typów skośności",
-      lc_plot("ch5_skew_comparison", max_height = "300px"),
-      uiOutput("ch5_skew_comparison_caption")
+      lc01_stat_figure("skewcmp", charts = 3, ratio = "1.1/1", max_height = "300px",
+        headings = list("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny"),
+        after = htmltools::tagAppendAttributes(lc_caption("Skośność: …"), `data-role` = "caption"))
     ),
 
-    lc_p("Rozkład prawostronnie skośny ma skośność około 0.99, jego lustrzane
-      odbicie około -0.99, a rozkład symetryczny wartość bliską zera. Znak
+    lc_p("Rozkład prawostronnie skośny ma skośność około 0.95, jego lustrzane
+      odbicie około -0.95, a rozkład symetryczny wartość bliską zera. Znak
       mówi, po której stronie leży dłuższy ogon, a wartość bezwzględna,
       jak silna jest asymetria. Jako orientacyjną skalę przyjmuje się
       często: poniżej 0.5 rozkład jest w przybliżeniu symetryczny, od 0.5
@@ -121,17 +135,10 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.3",
       title = "Sprawdź skośność w naszych danych",
-      selectInput("ch5_skew_var", "Wybierz zmienną:",
-        choices = c(
-          "Wzrost" = "wzrost",
-          "Czas dojazdu" = "czas_dojazdu",
-          "Średnia ocen" = "srednia_ocen",
-          "Liczba nieobecności" = "liczba_nieobecnosci"
-        ),
-        selected = "czas_dojazdu"
-      ),
-      lc_plot("ch5_skew_plot", ratio = "1.8/1", max_height = "350px"),
-      uiOutput("ch5_skew_info")
+      lc01_stat_figure("skew", ratio = "1.8/1", max_height = "350px", legend = TRUE,
+        control = lc_group("Zmienna", lc_select("ch5_skew_var", ch5_skew_choices,
+                                                selected = "czas_dojazdu", aria_label = "Zmienna")),
+        selected = "czas_dojazdu", notes = ch5_skew_notes())
     ),
 
     lc_p("Czas dojazdu ma skośność 1.02, czyli silną asymetrię prawostronną,
@@ -182,9 +189,7 @@ ch5_ui <- list(
       label = "Ryc. 5.4",
       title = "Wkład obserwacji: kwadrat i czwarta potęga",
       width_mode = "text",
-      tags$div(class = "proto-potegi",
-        lc_plot("ch5_proto_potegi", ratio = "2.2/1", max_height = "280px")
-      )
+      lc01_stat_figure("powers", ratio = "2.2/1", max_height = "300px", legend = TRUE)
     ),
 
     lc_p("W panelu poniżej porównujemy z rozkładem normalnym rozkład o tej
@@ -258,16 +263,16 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.7",
       title = "Pełna charakterystyka rozkładu",
-      lc_toolbar(
-        lc_segmented("ch5_full_var", "Zmienna",
+      # Histogram i pudełko rysuje przeglądarka; tabele zostają w R (te same wejścia).
+      lc01_stat_figure("full", legend = TRUE,
+        control = lc_segmented("ch5_full_var", "Zmienna",
           choices = c("Wzrost" = "wzrost", "Średnia ocen" = "srednia_ocen",
                       "Czas dojazdu" = "czas_dojazdu", "Waga" = "waga")),
         # Zestaw minimum albo pełny (dwie tabele obok siebie)
-        lc_segmented("ch5_full_set", "Zestaw",
-          choices = c("Minimum" = "min", "Pełny" = "full"), selected = "min")
-      ),
-      lc_plot("ch5_full_hist", ratio = "1.8/1", max_height = "350px"),
-      lc_plot("ch5_full_box", ratio = "5.2/1", max_height = "120px"),
+        toolbar = lc_segmented("ch5_full_set", "Zestaw",
+          choices = c("Minimum" = "min", "Pełny" = "full"), selected = "min"),
+        body = tagList(lc01_stat_chart(0, ratio = "1.8/1", max_height = "350px"),
+                       lc01_stat_chart(1, ratio = "5.2/1", max_height = "130px"))),
       uiOutput("ch5_full_table"),
       uiOutput("ch5_full_interpretation")
     ),
@@ -309,92 +314,7 @@ ch5_server <- function(input, output, session) {
   # Widget 1: Skewness
   # --------------------------------------------------------------------------
 
-  ch5_skew_data <- reactive({
-    req(input$ch5_skew_var)
-    vals <- student_data[[input$ch5_skew_var]]
-    vals <- vals[!is.na(vals)]
-    list(
-      values = vals,
-      label = variable_meta[[input$ch5_skew_var]]$label,
-      var_name = input$ch5_skew_var
-    )
-  })
-
-  ch5_skew_cmp <- reactive({
-    set.seed(42)
-    n_pts <- 5000
-    left_skew  <- -rgamma(n_pts, shape = 4, scale = 1)
-    symmetric  <- rnorm(n_pts, mean = 0, sd = 2)
-    right_skew <- rgamma(n_pts, shape = 4, scale = 1)
-
-    types <- c("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny")
-    df <- rbind(
-      data.frame(x = left_skew,  typ = types[1]),
-      data.frame(x = symmetric,  typ = types[2]),
-      data.frame(x = right_skew, typ = types[3])
-    )
-    df$typ <- factor(df$typ, levels = types)
-    skew <- setNames(
-      c(e1071::skewness(left_skew), e1071::skewness(symmetric), e1071::skewness(right_skew)),
-      types)
-    list(df = df, skew = skew)
-  })
-
-  output$ch5_skew_comparison_caption <- renderUI({
-    sk <- ch5_skew_cmp()$skew
-    lc_caption(paste0("Skośność: ",
-      paste(sprintf("%s %s", tolower(names(sk)), lc_fmt(sk, 2)), collapse = ", "), "."))
-  })
-
-  zoom_plot_server("ch5_skew_comparison", reactive({
-    df_cmp <- ch5_skew_cmp()$df
-
-    ggplot(df_cmp, aes(x = x)) +
-      geom_density(aes(fill = typ), alpha = 0.5, color = upwr_secondary, linewidth = 0.8) +
-      facet_wrap(~typ, scales = "free_x") +
-      scale_fill_manual(values = c(
-        "Lewostronnie skośny" = upwr_accent,
-        "Symetryczny" = upwr_col("szalwia"),
-        "Prawostronnie skośny" = upwr_col("niebo")
-      )) +
-      labs(x = "Wartość", y = "Gęstość") +
-      theme(legend.position = "none",
-            strip.text = element_text(face = "bold", size = 12))
-  }))
-
-  zoom_plot_server("ch5_skew_plot", reactive({
-    d <- ch5_skew_data()
-    vals <- d$values
-    m <- mean(vals)
-    med <- median(vals)
-    sk <- e1071::skewness(vals)
-
-    df <- data.frame(x = vals)
-
-    ggplot(df, aes(x = x)) +
-      geom_histogram(aes(y = after_stat(density)),
-        bins = 20, fill = upwr_cat["niebo"], color = "white", alpha = 0.6) +
-      geom_density(color = upwr_secondary, linewidth = 1) +
-      geom_vline(aes(xintercept = m, color = "Średnia"), linewidth = 1.2, linetype = "solid") +
-      geom_vline(aes(xintercept = med, color = "Mediana"), linewidth = 1.2, linetype = "dashed") +
-      scale_color_manual(name = NULL,
-        breaks = c("Średnia", "Mediana"),
-        values = stat_colors[c("Średnia", "Mediana")]) +
-      labs(x = d$label, y = "Gęstość") +
-      theme(legend.position = "top")
-  }))
-
-  output$ch5_skew_info <- renderUI({
-    d <- ch5_skew_data()
-    vals <- d$values
-    sk <- e1071::skewness(vals)
-    m <- mean(vals)
-    med <- median(vals)
-
-    p(paste0("Skośność = ", round(sk, 3)),
-      " | Średnia = ", round(m, 2),
-      ", Mediana = ", round(med, 2))
-  })
+  # Ryc. 5.2 i 5.3 rysuje stat_charts.js; opisy w UI (ch5_skew_notes).
 
   # Serwer widgetu krokowego
   ch5_sk_step <- lc_step_server("ch5_sk", input)$step
@@ -485,27 +405,6 @@ ch5_server <- function(input, output, session) {
       })
   })
 
-  # Słupki z² i z⁴ dla odległości 1, 2, 3 SD
-  zoom_plot_server("ch5_proto_potegi", reactive({
-    z <- 1:3
-    df <- data.frame(
-      z = rep(z, 2),
-      pot = factor(rep(c("z²", "z⁴"), each = 3), levels = c("z²", "z⁴")),
-      val = c(z^2, z^4)
-    )
-    ggplot(df, aes(x = factor(z), y = val, fill = pot)) +
-      geom_col(position = position_dodge(width = 0.7), width = 0.62) +
-      geom_text(aes(label = val), position = position_dodge(width = 0.7),
-                vjust = -0.4, family = lc_mono_family, colour = upwr_secondary,
-                size = 3.8) +
-      scale_fill_manual(values = c("z²" = upwr_reference, "z⁴" = upwr_col("terakota")),
-                        name = NULL) +
-      scale_x_discrete(labels = paste(z, "SD")) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      labs(x = "Odległość od średniej", y = "Wkład do sumy") +
-      theme(legend.position = "top", legend.text = element_text(size = 13),
-            panel.grid.major.x = element_blank())
-  }))
 
   # --------------------------------------------------------------------------
   # Widget 3: Full picture (Capstone)
@@ -521,44 +420,6 @@ ch5_server <- function(input, output, session) {
       var_name = input$ch5_full_var
     )
   })
-
-  zoom_plot_server("ch5_full_hist", reactive({
-    d <- ch5_full_data()
-    vals <- d$values
-    m <- mean(vals)
-    med <- median(vals)
-    df <- data.frame(x = vals)
-
-    ggplot(df, aes(x = x)) +
-      geom_histogram(aes(y = after_stat(density)),
-        bins = 20, fill = upwr_cat["niebo"], color = "white", alpha = 0.5) +
-      geom_density(color = upwr_secondary, linewidth = 1) +
-      geom_rug(color = upwr_secondary, alpha = 0.5) +
-      geom_vline(aes(xintercept = m, color = "Średnia"), linewidth = 1.1) +
-      geom_vline(aes(xintercept = med, color = "Mediana"), linewidth = 1.1, linetype = "dashed") +
-      scale_color_manual(name = NULL,
-        breaks = c("Średnia", "Mediana"),
-        values = stat_colors[c("Średnia", "Mediana")]) +
-      labs(x = d$label, y = "Gęstość") +
-      theme(legend.position = "top")
-  }))
-
-  zoom_plot_server("ch5_full_box", reactive({
-    d <- ch5_full_data()
-    df <- data.frame(x = d$values)
-
-    ggplot(df, aes(x = x)) +
-      geom_boxplot(fill = upwr_cat["niebo"], alpha = 0.4, color = upwr_secondary,
-        outlier.color = upwr_accent, outlier.size = 3) +
-      labs(x = d$label) +
-            theme(
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank()
-      )
-  }))
 
   output$ch5_full_table <- renderUI({
     d <- ch5_full_data()

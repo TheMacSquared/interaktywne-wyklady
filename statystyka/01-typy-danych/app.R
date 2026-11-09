@@ -66,6 +66,8 @@ lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "scene_helpers.R"),  local = TRUE)
+source(file.path(app_dir, "modules", "survey_data.R"),    local = TRUE)
+source(file.path(app_dir, "modules", "stat_figures.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch1_typy.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch2_jakosciowe.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_polozenie.R"),  local = TRUE)
@@ -115,6 +117,10 @@ app_extras <- tagList(
   includeScript(file.path(app_dir, "modules", "percentile_chart.js")),
   includeScript(file.path(app_dir, "modules", "guess_chart.js")),
   includeScript(file.path(app_dir, "modules", "kurtosis_chart.js")),
+  # Ryciny statystyk opisowych liczone w przeglądarce (stat_charts.js): rozdz. 1–5.
+  lc01_survey_script(),
+  includeScript(file.path(app_dir, "modules", "stat_charts.js")),
+  lc01_stat_styles(),
   tags$style(HTML("
     .lc-salary-hist, .lc-pctl-hist { position: relative; width: 100%; aspect-ratio: 2.6 / 1; max-height: 300px; touch-action: none; }
     .lc-salary-strip, .lc-pctl-box { position: relative; width: 100%; aspect-ratio: 6 / 1; min-height: 92px; max-height: 130px; touch-action: none; }

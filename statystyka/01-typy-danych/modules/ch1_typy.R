@@ -35,9 +35,7 @@ ch1_ui <- list(
       label = "Ryc. 1.1",
       title = "Średnia z kodów kierunków",
       width_mode = "text",
-      tags$div(class = "proto-kierunek-os",
-        lc_plot("ch1_proto_kierunek_os", ratio = "2.6/1", max_height = "260px")
-      )
+      lc01_stat_figure("kierunek", ratio = "2.6/1", max_height = "260px")
     ),
 
     # --- Widget 1: Taxonomy tree ---
@@ -144,46 +142,48 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.3",
       title = "Cztery typy zmiennych — jeden wykres na typ",
-      lc_toolbar(
-        checkboxInput("ch1_show_bad", "Pokaż źle dobrane wykresy", value = FALSE),
-        lc_step_nav("ch1_ex", c("Płeć", "Zadowolenie", "Liczba kursów", "Wzrost"), start = 1L)
-      ),
-      # Jeden typ zmiennej na slajd; kropki przełączają slajdy.
-      conditionalPanel("input.ch1_ex == 1",
-        tags$h4("Płeć · jakościowa nominalna"),
-        tags$p(
-          "Kategorie bez naturalnego porządku. Możemy liczyć, ile jest
-          obserwacji w każdej kategorii, ale nie możemy ich uporządkować
-          ani uśredniać."
+      lc01_stat_figure("types",
+        control = checkboxInput("ch1_show_bad", "Pokaż źle dobrane wykresy", value = FALSE),
+        toolbar = lc_step_nav("ch1_ex", c("Płeć", "Zadowolenie", "Liczba kursów", "Wzrost"), start = 1L),
+        body = tagList(
+        # Jeden typ zmiennej na slajd; kropki przełączają slajdy.
+        conditionalPanel("input.ch1_ex == 1",
+          tags$h4("Płeć · jakościowa nominalna"),
+          tags$p(
+            "Kategorie bez naturalnego porządku. Możemy liczyć, ile jest
+            obserwacji w każdej kategorii, ale nie możemy ich uporządkować
+            ani uśredniać."
+          ),
+          lc01_stat_chart(0, ratio = "2/1", max_height = "340px")
         ),
-        lc_plot("ch1_ex1_plot", ratio = "2/1", max_height = "340px")
-      ),
-      conditionalPanel("input.ch1_ex == 2",
-        tags$h4("Zadowolenie ze studiów · jakościowa porządkowa"),
-        tags$p(
-          "Kategorie z naturalnym porządkiem. Wiemy, że „Bardzo zadowolony”
-          jest wyżej niż „Zadowolony”, ale nie znamy dokładnych odległości
-          między kategoriami."
+        conditionalPanel("input.ch1_ex == 2",
+          tags$h4("Zadowolenie ze studiów · jakościowa porządkowa"),
+          tags$p(
+            "Kategorie z naturalnym porządkiem. Wiemy, że „Bardzo zadowolony”
+            jest wyżej niż „Zadowolony”, ale nie znamy dokładnych odległości
+            między kategoriami."
+          ),
+          lc01_stat_chart(1, ratio = "2/1", max_height = "340px")
         ),
-        lc_plot("ch1_ex2_plot", ratio = "2/1", max_height = "340px")
-      ),
-      conditionalPanel("input.ch1_ex == 3",
-        tags$h4("Liczba kursów · ilościowa dyskretna"),
-        tags$p(
-          "Wartości liczbowe, ale tylko całkowite. Możemy obliczać średnią
-          i ", gloss("odchylenie standardowe"), ". ", gloss("wykres słupkowy", "Wykres słupkowy"), " jest tu odpowiedni,
-          bo mamy skończoną liczbę wartości."
+        conditionalPanel("input.ch1_ex == 3",
+          tags$h4("Liczba kursów · ilościowa dyskretna"),
+          tags$p(
+            "Wartości liczbowe, ale tylko całkowite. Możemy obliczać średnią
+            i ", gloss("odchylenie standardowe"), ". ", gloss("wykres słupkowy", "Wykres słupkowy"), " jest tu odpowiedni,
+            bo mamy skończoną liczbę wartości."
+          ),
+          lc01_stat_chart(2, ratio = "2/1", max_height = "340px")
         ),
-        lc_plot("ch1_ex3_plot", ratio = "2/1", max_height = "340px")
-      ),
-      conditionalPanel("input.ch1_ex == 4",
-        tags$h4("Wzrost (cm) · ilościowa ciągła"),
-        tags$p(
-          "Wartości liczbowe, które mogą przyjmować dowolne wartości
-          z pewnego przedziału (także ułamkowe). ", gloss("histogram", "Histogram"), " grupuje
-          wartości w przedziały, gęstość wygładza rozkład."
-        ),
-        lc_plot("ch1_ex4_plot", ratio = "2/1", max_height = "340px")
+        conditionalPanel("input.ch1_ex == 4",
+          tags$h4("Wzrost (cm) · ilościowa ciągła"),
+          tags$p(
+            "Wartości liczbowe, które mogą przyjmować dowolne wartości
+            z pewnego przedziału (także ułamkowe). ", gloss("histogram", "Histogram"), " grupuje
+            wartości w przedziały, gęstość wygładza rozkład."
+          ),
+          lc01_stat_chart(3, ratio = "2/1", max_height = "340px")
+        )
+        )
       )
     ),
 
@@ -271,32 +271,8 @@ ch1_ui <- list(
 
 ch1_server <- function(input, output, session) {
 
-  # Liczebności kodów 1–4 i średnia kodów
-  zoom_plot_server("ch1_proto_kierunek_os", reactive({
-    lv <- c("Biologia", "Ekonomia", "Informatyka", "Psychologia")
-    code <- as.integer(factor(student_data$kierunek, levels = lv))
-    df <- data.frame(code = 1:4, n = tabulate(code, 4))
-    m <- mean(code)
-    col_nom <- type_colors[["nominalna"]]
-    y_top <- max(df$n) * 1.25
+  # Ryc. 1.1 i 1.3 rysuje stat_charts.js (dane ankiety w przeglądarce).
 
-    ggplot(df, aes(x = code, y = n)) +
-      geom_col(width = 0.42, fill = col_nom, alpha = 0.85) +
-      geom_text(aes(label = n), vjust = -0.5, family = lc_mono_family,
-                colour = upwr_secondary, size = 3.6) +
-      annotate("segment", x = m, xend = m, y = 0, yend = y_top * 0.88,
-               colour = upwr_accent, linewidth = 1.1, linetype = "22") +
-      annotate("point", x = m, y = 0, shape = 17, size = 4.5, colour = upwr_accent) +
-      annotate("text", x = m, y = y_top * 0.97, label = paste0("średnia = ", formatC(round(m * 100 + 1e-6) / 100, format = "f", digits = 2)),
-               family = lc_mono_family, colour = upwr_accent, size = 4,
-               fontface = "bold") +
-      scale_x_continuous(breaks = 1:4, labels = paste0(1:4, "\n", lv),
-                         limits = c(0.5, 4.5)) +
-      scale_y_continuous(limits = c(0, y_top), expand = expansion(mult = c(0, 0.02))) +
-      labs(x = NULL, y = "Liczba studentów") +
-      theme(panel.grid.major.x = element_blank(),
-            axis.text.x = element_text(size = 11, lineheight = 1.1))
-  }))
 
   ch1_selected_leaf <- reactiveVal(NULL)
 
@@ -347,38 +323,6 @@ ch1_server <- function(input, output, session) {
   })
 
   # --- Widget 2: Examples gallery ---
-
-  zoom_plot_server("ch1_ex1_plot", reactive({
-    if (input$ch1_show_bad) {
-      render_bad_plot(student_data$plec, "Płeć", "nominalna")
-    } else {
-      render_good_plot(student_data$plec, "Płeć", "nominalna")
-    }
-  }))
-
-  zoom_plot_server("ch1_ex2_plot", reactive({
-    if (input$ch1_show_bad) {
-      render_bad_plot(student_data$zadowolenie, "Zadowolenie", "porzadkowa")
-    } else {
-      render_good_plot(student_data$zadowolenie, "Zadowolenie", "porzadkowa")
-    }
-  }))
-
-  zoom_plot_server("ch1_ex3_plot", reactive({
-    if (input$ch1_show_bad) {
-      render_bad_plot(student_data$liczba_kursow, "Liczba kursów", "ilosciowa_dyskretna")
-    } else {
-      render_good_plot(student_data$liczba_kursow, "Liczba kursów", "ilosciowa_dyskretna")
-    }
-  }))
-
-  zoom_plot_server("ch1_ex4_plot", reactive({
-    if (input$ch1_show_bad) {
-      render_bad_plot(student_data$wzrost, "Wzrost (cm)", "ilosciowa_ciagla")
-    } else {
-      render_good_plot(student_data$wzrost, "Wzrost (cm)", "ilosciowa_ciagla")
-    }
-  }))
 
   # --- Widget 4: Dataset preview ---
 

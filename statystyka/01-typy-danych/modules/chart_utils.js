@@ -60,6 +60,94 @@
     return s * scale;
   }
 
+  // ---- Rozrzut i kształt (jak sd() w R i e1071 typu 3) -------------------------
+  function sd(x) {
+    var n = x.length; if (n < 2) return NaN;
+    var m = mean(x);
+    return Math.sqrt(sum(x.map(function (v) { return (v - m) * (v - m); })) / (n - 1));
+  }
+  // Moment centralny rzędu k podzielony przez s^k (s z mianownikiem n − 1).
+  function stdMoment(x, k) {
+    var n = x.length, m = mean(x), s = sd(x);
+    return sum(x.map(function (v) { return Math.pow((v - m) / s, k); })) / n;
+  }
+  function skewness(x) { return x.length < 3 ? NaN : stdMoment(x, 3); }
+  function kurtosis(x) { return x.length < 4 ? NaN : stdMoment(x, 4) - 3; }
+
+  // ---- Krzywa gęstości (jądro gaussowskie, pasmo nrd0 jak density() w R) -------
+  function bwNrd0(x) {
+    var hi = sd(x), lo = Math.min(hi, (quantile7(x, 0.75) - quantile7(x, 0.25)) / 1.34);
+    if (!(lo > 0)) lo = hi || Math.abs(x[0]) || 1;
+    return 0.9 * lo * Math.pow(x.length, -0.2);
+  }
+  // Gęstość w n punktach od lo do hi, liczona dokładnie (density() w R przybliża
+  // ją przez FFT; różnice są niewidoczne na wykresie). Zwraca [[x, y], ...].
+  function kde(x, lo, hi, n, bw) {
+    var h = bw || bwNrd0(x), k = n || 256, out = [], c = 1 / (x.length * h * Math.sqrt(2 * Math.PI));
+    for (var i = 0; i < k; i++) {
+      var t = lo + (hi - lo) * i / (k - 1), s = 0;
+      for (var j = 0; j < x.length; j++) { var z = (t - x[j]) / h; s += Math.exp(-0.5 * z * z); }
+      out.push([t, s * c]);
+    }
+    return out;
+  }
+
+  // ---- Losowanie z ziarnem ---------------------------------------------------
+  // Stałe scenariusze (dawniej set.seed() w R) mają powtarzalne dane. Sekwencje
+  // nie są identyczne z R; zgodne są rozkłady i parametry.
+  function seeded(seed) {
+    var state = seed >>> 0, spare2 = null;
+    function u() {  // mulberry32
+      state = (state + 0x6D2B79F5) >>> 0;
+      var t = state;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+    function norm(mu, s) {
+      var z;
+      if (spare2 !== null) { z = spare2; spare2 = null; } else {
+        var a = 1 - u(), b = u(), r = Math.sqrt(-2 * Math.log(a));
+        z = r * Math.cos(2 * Math.PI * b); spare2 = r * Math.sin(2 * Math.PI * b);
+      }
+      return mu + s * z;
+    }
+    // Gamma o dowolnym kształcie (Marsaglia–Tsang; kształt < 1 przez wzmocnienie).
+    function gamma(shape, scale) {
+      if (shape < 1) return gamma(shape + 1, scale) * Math.pow(u(), 1 / shape);
+      var d = shape - 1 / 3, c = 1 / Math.sqrt(9 * d);
+      for (;;) {
+        var z = norm(0, 1), v = 1 + c * z;
+        if (v <= 0) continue;
+        v = v * v * v;
+        var w = u();
+        if (w < 1 - 0.0331 * z * z * z * z || Math.log(w) < 0.5 * z * z + d * (1 - v + Math.log(v))) return d * v * scale;
+      }
+    }
+    function many(k, f) { var out = []; for (var i = 0; i < k; i++) out.push(f()); return out; }
+    return {
+      runif: function (a, b) { return a + (b - a) * u(); },
+      rnorm: function (k, mu, s) { return many(k, function () { return norm(mu, s); }); },
+      rgamma: function (k, shape, scale) { return many(k, function () { return gamma(shape, scale); }); }
+    };
+  }
+
+  // ---- Ankieta studencka (lc01_survey_script() w survey_data.R) -----------------
+  // Kolumna liczbowa: tablica liczb; czynnik: etykiety kategorii w kolejności poziomów.
+  function survey(name) {
+    var col = window.lc01Survey && window.lc01Survey.columns[name];
+    if (!col) throw new Error("lc01: brak kolumny ankiety " + name);
+    if (!col.levels) return col.values;
+    return col.values.map(function (code) { return col.levels[code - 1]; });
+  }
+  function surveyMeta(name) { return window.lc01Survey.columns[name]; }
+  // Liczebności kategorii w kolejności poziomów (jak table() w R).
+  function counts(values, levels) {
+    var n = levels.map(function () { return 0; });
+    values.forEach(function (v) { var i = levels.indexOf(v); if (i >= 0) n[i]++; });
+    return n;
+  }
+
   // ---- Pomocniki ECharts ------------------------------------------------------
   // Słupki histogramu jako seria custom: dane [l, r, n]. Wygląd w obiekcie o
   // (zmienianym przez widget): {fill, fillLeft, split, gap}; przy split słupek
@@ -124,6 +212,8 @@
 
   window.lc01 = {
     sorted: sorted, mean: mean, median: median, quantile7: quantile7, trimMean: trimMean,
+    sd: sd, skewness: skewness, kurtosis: kurtosis, bwNrd0: bwNrd0, kde: kde, seeded: seeded,
+    survey: survey, surveyMeta: surveyMeta, counts: counts,
     runif: runif, sampleInt: sampleInt, rnorm: rnorm, rgammaInt: rgammaInt,
     histSeries: histSeries, histData: histData, lineLabels: lineLabels, vline: vline,
     valueAt: valueAt, bins: bins
