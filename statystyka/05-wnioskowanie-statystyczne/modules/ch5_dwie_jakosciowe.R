@@ -53,6 +53,9 @@ ch5_ui <- list(
       p(withMathJax("\\(H_a:\\)"), " zmienne są powiązane")
     ),
 
+    # PROTOTYP 5E (2026-11-09): mandaty, świat bez związku (kadry przed wzorami)
+    p5("5E"),
+
     lc_p("Punktem odniesienia jest tabela, jakiej spodziewalibyśmy się przy
       prawdziwej H₀. Jeśli zmienne są niezależne, odsetek obserwacji w danej
       kolumnie powinien być w każdym wierszu taki sam jak w całej próbie. ",

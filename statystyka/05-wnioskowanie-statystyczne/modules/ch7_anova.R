@@ -89,6 +89,9 @@ ch7_ui <- list(
     # ========================================================================
     lc_h2("ch7-motywacja", "Dlaczego nie kilka testów t?"),
 
+    # PROTOTYP 5D (2026-11-09): żelki i trądzik, 20 testów
+    p5("5D"),
+
     lc_p("Najprostszy pomysł to wykonać ", gloss("test t", "test t"), " dla każdej
       pary grup. Przy trzech grupach A, B i C są to trzy porównania: A z B, A z C
       oraz B z C. Kłopot leży w tym, co oznacza ", gloss("poziom istotności"), ". Każdy test na

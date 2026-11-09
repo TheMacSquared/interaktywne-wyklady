@@ -170,6 +170,9 @@ ch1d_ui <- list(
       Obu błędów nie da się wyeliminować jednocześnie: czulszy czujnik rzadziej
       przegapia pożar, ale częściej włącza się bez powodu, a mniej czuły odwrotnie."),
 
+    # PROTOTYP 5A (2026-11-09): czujka dymu, próg czułości
+    p5("5A"),
+
     lc_p("Test statystyczny ma tę samą strukturę. Stany świata to „H₀ prawdziwa”
       i „H₀ fałszywa”, decyzje to „nie odrzucamy H₀” i „odrzucamy H₀”."),
 
@@ -257,6 +260,12 @@ ch1d_ui <- list(
       Niezacieniowana część burgundowej krzywej między liniami to \\(\\beta\\):
       prawdopodobieństwo, że mimo prawdziwego efektu średnia z próby nie wyjdzie
       poza wartości krytyczne."),
+
+    # PROTOTYP 5B (2026-11-09): moc w planowaniu powtórki badania z telefonem
+    lc_p("Ta sama zależność w pytaniu, które naprawdę stawia badacz: ile osób
+      zaprosić do powtórki eksperymentu z telefonem, jeśli spodziewamy się
+      różnicy 7 punktów?"),
+    p5("5B"),
 
     figure_panel(
       label = "Ryc. 3.1",
