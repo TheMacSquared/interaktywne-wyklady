@@ -261,12 +261,6 @@ ch1d_ui <- list(
       prawdopodobieństwo, że mimo prawdziwego efektu średnia z próby nie wyjdzie
       poza wartości krytyczne."),
 
-    # PROTOTYP 5B (2026-11-09): moc w planowaniu powtórki badania z telefonem
-    lc_p("Ta sama zależność w pytaniu, które naprawdę stawia badacz: ile osób
-      zaprosić do powtórki eksperymentu z telefonem, jeśli spodziewamy się
-      różnicy 7 punktów?"),
-    p5("5B"),
-
     figure_panel(
       label = "Ryc. 3.1",
       title = "Moc testu i błędy",

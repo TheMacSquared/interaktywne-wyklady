@@ -4,7 +4,6 @@
 // albo wewnątrz .p5-host (jeden obraz z suwakiem, bez kroków).
 // config.kind:
 //   "smoke"   5A czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
-//   "power"   5B planowanie powtórki badania z telefonem: n na grupę → moc
 //   "corr"    5C sen i ostatnia cyfra telefonu: r z grupek bez żadnego związku
 //   "jelly"   5D żelki i trądzik: 20 kolorów, 20 testów, seria z alarmem
 //   "tickets" 5E mandaty: świat bez związku → porównanie → χ² (kadry)
@@ -163,43 +162,6 @@
     }
     return { render: render, reset: function () { st.t = cfg.t || 32; render(); },
       range: function (name, v) { if (name === "t") { st.t = v; render(); } } };
-  };
-
-  // =========================================================================
-  // 5B — PLANOWANIE BADANIA: moc rośnie z n (piaskownica, jeden suwak)
-  // =========================================================================
-  KINDS.power = function (cfg, api) {
-    var D = cfg.delta, SA = cfg.sd_a, SB = cfg.sd_b, Z = cfg.z || 1.959964;
-    var st = { n: cfg.n || 20 };
-    var LO = -15, HI = 25, PL = 60, PR = 610, PT = 40, PB = 280;
-    var X = function (v) { return PL + (PR - PL) * (v - LO) / (HI - LO); };
-
-    function render() {
-      var g = api.stage; g.textContent = ""; api.low.textContent = "";
-      var n = st.n, se = Math.sqrt(SA * SA / n + SB * SB / n), c = Z * se;
-      var ymax = 1.12 * dnorm(0, 0, Math.sqrt(SA * SA / 120 + SB * SB / 120));
-      var Y = function (d) { return PB - (PB - PT) * Math.min(d, ymax) / ymax; };
-      var f0 = function (v) { return dnorm(v, 0, se); }, f1 = function (v) { return dnorm(v, D, se); };
-      var power = 1 - pnorm((c - D) / se) + pnorm((-c - D) / se);
-      svg("path", { d: areaPath(X, Y, f1, c, HI), class: "p5-area-power" }, g);
-      svg("path", { d: areaPath(X, Y, f0, LO, -c), class: "p5-area-fa" }, g);
-      svg("path", { d: areaPath(X, Y, f0, c, HI), class: "p5-area-fa" }, g);
-      svg("path", { d: curvePath(X, Y, f0, LO, HI), class: "p5-curve0" }, g);
-      svg("path", { d: curvePath(X, Y, f1, LO, HI), class: "p5-curve1" }, g);
-      [-c, c].forEach(function (v) {
-        if (v > LO && v < HI) svg("line", { x1: X(v), x2: X(v), y1: PT, y2: PB, class: "p5-crit" }, g);
-      });
-      svg("line", { x1: X(D), x2: X(D), y1: PT - 10, y2: PB, class: "lc-sc-param" }, g);
-      axisX(g, PL, PR, PB, LO, HI, 5, 0, "różnica średnich: plecak − biurko (pkt)");
-      readout(g, PL, PB + 66, [
-        { text: "n = " + n + " na grupę · SE = " + fmt(se, 1) + " pkt" },
-        { box: "p5-area-power", text: "moc: " + pct(power, 0) },
-        { box: "p5-area-fa", text: "α: 5%" }
-      ]);
-      if (api.status) api.status(n + " osób na grupę: moc " + pct(power, 0) + ".");
-    }
-    return { render: render, reset: function () { st.n = cfg.n || 20; render(); },
-      range: function (name, v) { if (name === "n") { st.n = Math.round(v); render(); } } };
   };
 
   // =========================================================================

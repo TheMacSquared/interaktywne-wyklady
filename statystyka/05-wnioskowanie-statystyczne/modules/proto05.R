@@ -3,7 +3,8 @@
 # Każdy prototyp ma złotą plakietkę „Prototyp <nr> · <rodzaj>”, jak w wykładzie 04.
 # Rysunek i obliczenia: modules/proto05.js (+ proto05.css), działają bez serwera R.
 # Lista propozycji: PUNKTY-STOP-PROPOZYCJA.md, decyzje: KOLEJKA-ZATWIERDZANIA.md.
-# Wstawki w tekście: p5("5A") … p5("5E"); teksty kroków: p5_server().
+# 5B odrzucony 2026-11-09 (dubel Ryc. 3.1).
+# Wstawki w tekście: p5("5A"), p5("5C") … p5("5E"); teksty kroków: p5_server().
 # Wymaga: lecture_layout.R (lc_step_widget, lc_toolbar, figure_panel), helpers.R.
 
 p5_panel <- function(num, kind, title, ..., width_mode = "text") {
@@ -57,14 +58,6 @@ p5_5A_ui <- p5_panel("5A", "scena", "Czujka dymu w akademiku",
       height = 410,
       aria = "Dwa rozkłady odczytu czujki dymu: zwykłe dni z tostami i prysznicem oraz pożar. Przesuwany próg czułości zmienia odsetek fałszywych alarmów i przeoczonych pożarów"),
     name = "t", label = "Próg czułości czujki", min = 10, max = 60, value = 32, step = 1)
-)
-
-# --- 5B: planowanie powtórki badania z telefonem (rozdz. 03, przy Ryc. 3.1) -----
-p5_5B_ui <- p5_panel("5B", "piaskownica", "Ile osób zaprosić do powtórki badania?",
-  p5_static("p5_power",
-    config = list(kind = "power", delta = 7, sd_a = 12, sd_b = 14, n = 20, height = 380,
-      aria = "Rozkład różnicy średnich koncentracji, gdy telefon nie ma znaczenia i gdy różnica wynosi 7 punktów; suwak liczby osób w grupie zwęża oba rozkłady i zmienia moc testu"),
-    name = "n", label = "Osób w każdej grupie", min = 5, max = 150, value = 20, step = 1)
 )
 
 # --- 5C: sen i ostatnia cyfra telefonu (rozdz. 06, przed testem korelacji) --------

@@ -14,7 +14,7 @@ shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
 | Rozdz. | Element | Status |
 |---|---|---|
 | 03 | Prototyp 5A „Czujka dymu w akademiku” | przyjęty (9.11), do poprawy grafiki; `type-error.jpg` zostaje |
-| 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | do oceny; obok Ryc. 3.1 |
+| 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | odrzucony (9.11), usunięty |
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | do oceny |
 | 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | do oceny; obok Ryc. 7.1 |
 | 09 | Prototyp 5D „Żelki i trądzik” | do oceny; przed Ryc. 9.1 |
@@ -29,9 +29,15 @@ dopracować grafiki. Czujka pod sufitem jest mała i mało czytelna,
 a ikony tostera i płomienia są szkicowe. `type-error.jpg` zostaje obok 5A,
 bo jest humorystyczny (decyzja 9.11).
 
-Do decyzji: czy 5B zastępuje Ryc. 3.1. 5B używa
-dwóch grup jak historia z telefonem; po przyjęciu trzeba przepisać dwa
-akapity opisu Ryc. 3.1 (σ = 13, μ₀ = 70).
+5B odrzucony i usunięty (9.11): dubel Ryc. 3.1, tak samo abstrakcyjny,
+z innego punktu widzenia, ale bez nowej puenty. Ryc. 3.1 zostaje.
+
+Otwarty pomysł zamiast 5B: rozbudować 5A o przełącznik „ile odczytów
+czujka uśrednia przed decyzją: 1 / 4 / 16”, widoczny dopiero w drugim kroku.
+Krzywe się zwężają, przy tym samym progu maleją oba błędy, a czułość czujki
+to moc. Wtedy Ryc. 3.1 tylko nazywa to, co sala zobaczyła na czujce. Do
+sprawdzenia: czy uśrednianie odczytów brzmi realnie i czy druga puenta nie
+rozmywa 5A.
 
 ### 2. 5E — mandaty (rozdz. 07)
 
