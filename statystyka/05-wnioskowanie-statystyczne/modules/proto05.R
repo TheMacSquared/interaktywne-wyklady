@@ -3,7 +3,7 @@
 # Każdy prototyp ma złotą plakietkę „Prototyp <nr> · <rodzaj>”, jak w wykładzie 04.
 # Rysunek i obliczenia: modules/proto05.js (+ proto05.css), działają bez serwera R.
 # Lista propozycji: PUNKTY-STOP-PROPOZYCJA.md, decyzje: KOLEJKA-ZATWIERDZANIA.md.
-# 5B (dubel Ryc. 3.1) i 5C (rozkład r z powtórzonych grupek) odrzucone 2026-11-09.
+# 5B (dubel Ryc. 3.1), 5C (rozkład r z powtórzonych grupek) i 5E-2 odrzucone 2026-11-09.
 # Wstawki w tekście: p5("5A"), p5("5D"), p5("5E"); teksty kroków: p5_server().
 # Wymaga: lecture_layout.R (lc_step_widget, lc_toolbar, figure_panel), helpers.R.
 
@@ -106,8 +106,7 @@ p5_5D_ui <- local({
 })
 
 # --- 5E: mandaty i świat bez związku (rozdz. 07, przed wzorami E i χ²) -----------
-# 5E-2: ta sama historia, dane i kadry, ale wygląd ludzików z karteczkami
-# ze sceny „Kto dostaje mandat?” (wykład 02, Ryc. 2.1), którą studenci znają.
+# 5E-2 (ten sam scenariusz w ludzikach z wykładu 02) odrzucony 2026-11-09: za dużo szczegółów.
 p5_tickets_config <- local({
   obs <- matrix(c(30, 70, 50, 50), nrow = 2, byrow = TRUE)
   list(kind = "tickets", obs = obs, exp = outer(rowSums(obs), colSums(obs)) / sum(obs),
@@ -119,10 +118,6 @@ p5_tickets_steps <- c("Kontrole", "Świat bez związku", "Porównaj", "Jedna lic
 p5_5E_ui <- p5_panel("5E", "scena", "Mandaty: jak by było, gdyby płeć nie miała znaczenia?",
   p5_scene_widget("p5_tickets", "200 kontroli drogowych, 100 kobiet i 100 mężczyzn",
     steps = p5_tickets_steps, config = c(p5_tickets_config, list(height = 450))))
-
-p5_5E2_ui <- p5_panel("5E-2", "scena", "Mandaty: jak by było, gdyby płeć nie miała znaczenia?",
-  p5_scene_widget("p5_tickets2", "200 kontroli drogowych, 100 kobiet i 100 mężczyzn",
-    steps = p5_tickets_steps, config = c(p5_tickets_config, list(look = "people", height = 480))))
 
 # --- teksty kroków ------------------------------------------------------------
 p5_server <- function(input, output, session) {
@@ -140,7 +135,7 @@ p5_server <- function(input, output, session) {
       w pasie, jedna poza nim. Przy 20 podgrupach i α = 0.05 tyle właśnie daje
       przypadek.")
   ))
-  p5_tickets_texts <- list(
+  scene_texts(input, output, "p5_tickets", list(
     tagList("Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet
       i 50 mężczyzn."),
     tagList("Gdyby płeć nie miała znaczenia, w obu grupach mandat dostawałby ten sam
@@ -149,7 +144,5 @@ p5_server <- function(input, output, session) {
       10 nadmiarowych. Tyle samo różnią się komórki bez mandatu."),
     tagList("Każdą różnicę podnosimy do kwadratu i dzielimy przez liczbę oczekiwaną.
       Suma czterech wkładów to statystyka χ².")
-  )
-  scene_texts(input, output, "p5_tickets", p5_tickets_texts)
-  scene_texts(input, output, "p5_tickets2", p5_tickets_texts)
+  ))
 }

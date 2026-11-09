@@ -55,12 +55,3 @@
 .p5-chi { fill: var(--upwr-accent); opacity: .85; }
 .p5-chi.is-no { opacity: .45; }
 .lc-sc-halo { fill: var(--upwr-accent); opacity: .16; }
-
-/* 5E-2: ludziki ze sceny „stop” z wykładu 02 (płeć = niebo / bursztyn, mandat = akcent, pouczenie = szałwia) */
-.p5-person.is-k, .p5-rowname.is-k { fill: var(--upwr-cat-niebo); }
-.p5-person.is-m, .p5-rowname.is-m { fill: var(--upwr-cat-bursztyn); }
-.p5-ticket { stroke-width: 1.4; }
-.p5-ticket.is-fine { fill: var(--upwr-accent); stroke: var(--upwr-surface); }
-.p5-ticket.is-warn { fill: var(--upwr-surface); stroke: var(--upwr-sage); }
-.p5-ticket.is-exp { fill: var(--upwr-accent-tint); stroke: var(--upwr-accent); stroke-dasharray: 2 1.5; }
-.p5-rowname { font: 600 14px var(--upwr-sans); }

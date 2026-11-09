@@ -16,8 +16,8 @@ shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
 | 03 | Prototyp 5A „Czujka dymu w akademiku” | przyjęty (9.11), do poprawy grafiki; `type-error.jpg` zostaje |
 | 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | odrzucony (9.11), usunięty |
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | odrzucony (9.11), usunięty |
-| 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | do oceny; obok Ryc. 7.1 |
-| 07 | Prototyp 5E-2: 5E w wyglądzie ludzików z karteczkami (scena „stop” z 02) | do oceny; wariant wyglądu 5E |
+| 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | przyjęty (9.11) |
+| 07 | Prototyp 5E-2: 5E w wyglądzie ludzików z karteczkami (scena „stop” z 02) | odrzucony (9.11), usunięty |
 | 09 | Prototyp 5D „Żelki i trądzik” | przyjęty (9.11) po przebudowie, z cytowaniem xkcd 882 |
 | 09 | Sceny `jars`, `worlds`, `stress` (8.10) | czekają na ocenę (5F) |
 
@@ -51,8 +51,9 @@ pouczenia; oczekiwany mandat to karteczka z przerywanym brzegiem.
 Pierwsza wersja 5E-2 (dane 02: 70 kierowców, χ² = 1.30) odrzucona 9.11:
 miała zostać tylko oprawa, nie dane.
 
-Do decyzji: który wygląd zostaje. Po decyzji usunąć drugi wariant
-i Ryc. 7.1, przenieść wzory E i χ² za scenę.
+Decyzja (9.11): zostaje 5E, bo jest czytelniejszy; 5E-2 miał za dużo
+szczegółów i został usunięty. Do zrobienia przy wdrożeniu: usunąć Ryc. 7.1
+(trzy tabele) i przenieść wzory E i χ² za scenę.
 
 ### 3. 5C — korelacja (rozdz. 06)
 

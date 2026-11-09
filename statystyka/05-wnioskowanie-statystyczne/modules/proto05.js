@@ -6,7 +6,6 @@
 //   "smoke"   5A czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
 //   "jelly"   5D żelki i trądzik: jedna chmura wyników cięta na 20 podgrup kolorów (kadry)
 //   "tickets" 5E mandaty: świat bez związku → porównanie → χ² (kadry)
-//            cfg.look = "people": 5E-2, ludziki z karteczkami jak w scenie „stop” z wykładu 02
 // Sterowanie: [data-sc-act] go | m10 | m100 | m1000, [data-sc-opt] "nazwa:wartość",
 // input[data-p5-range] "nazwa" (suwak, wartość liczbowa). Rysuje SVG bez serwera R.
 (function () {
@@ -270,20 +269,9 @@
   // =========================================================================
   KINDS.tickets = function (cfg, api) {
     var O = cfg.obs, E = cfg.exp, ROWS = cfg.rows, N = cfg.n_row;  // O[i] = [mandat, brak], E jak O
-    var PEOPLE = cfg.look === "people";
-    var BLK = [[50, "is-k"], [345, "is-m"]], TOP = 64, DX = 24, DY = PEOPLE ? 27 : 21, S = 22;
+    var BLK = [[50, "is-k"], [345, "is-m"]], TOP = 64, DX = 24, DY = 21;
 
-    function cell(i, k) { return { x: BLK[i][0] + (k % 10) * DX + 12, y: TOP + Math.floor(k / 10) * DY + (PEOPLE ? 18 : 10) }; }
-
-    // 5E-2: ludzik w kolorze płci z karteczką (mandat / pouczenie / oczekiwany mandat),
-    // ta sama oprawa co scena „Kto dostaje mandat?” w wykładzie 02
-    function driver(g, x, y, sexCls, badge) {
-      var q = svg("g", { class: "p5-person " + sexCls }, g);
-      svg("circle", { cx: x, cy: y - S * 0.8, r: S * 0.17 }, q);
-      svg("rect", { x: x - S * 0.18, y: y - S * 0.6, width: S * 0.36, height: S * 0.6, rx: S * 0.13 }, q);
-      svg("rect", { x: x + S * 0.12, y: y - S * 0.52, width: S * 0.26, height: S * 0.34, rx: S * 0.04,
-        class: "p5-ticket is-" + badge }, q);
-    }
+    function cell(i, k) { return { x: BLK[i][0] + (k % 10) * DX + 12, y: TOP + Math.floor(k / 10) * DY + 10 }; }
 
     function render() {
       var step = api.step(), g = api.stage, lo = api.low;
@@ -292,26 +280,25 @@
       for (var i = 0; i < 2; i++) {
         var obs = O[i][0], exp = E[i][0];
         var shown = step === 2 ? exp : obs;
-        svg("text", { x: BLK[i][0], y: TOP - 18, class: PEOPLE ? "p5-rowname " + BLK[i][1] : "lc-sc-rowlab" }, g,
+        svg("text", { x: BLK[i][0], y: TOP - 18, class: "lc-sc-rowlab" }, g,
           ROWS[i] + " · " + (step === 2 ? "oczekiwane " + fmt(exp, 0) + " z " + N : obs + " z " + N + " z mandatem"));
         for (var k = 0; k < N; k++) {
           var c = cell(i, k), on = k < shown;
-          if (PEOPLE) driver(g, c.x, c.y, BLK[i][1], on ? (step === 2 ? "exp" : "fine") : "warn");
-          else svg("circle", { cx: c.x, cy: c.y, r: 8,
+          svg("circle", { cx: c.x, cy: c.y, r: 8,
             class: "p5-driver" + (on ? (step === 2 ? " is-exp" : " is-ticket") : "") }, g);
           if (step >= 3) {
             // brakujące (oczekiwane, a nie ma) i nadmiarowe (są, a nie oczekiwane)
-            var rc = PEOPLE ? { cx: c.x + 1, cy: c.y - S * 0.45, r: S * 0.55 } : { cx: c.x, cy: c.y, r: 10.5 };
+            var rc = { cx: c.x, cy: c.y, r: 10.5 };
             if (k >= obs && k < exp) svg("circle", Object.assign({ class: "p5-ring is-gap" }, rc), g);
             if (k >= exp && k < obs) svg("circle", Object.assign({ class: "p5-ring is-extra" }, rc), g);
           }
         }
       }
-      var y = TOP + 10 * DY + (PEOPLE ? 18 : 26);
+      var y = TOP + 10 * DY + 26;
       if (step === 1) {
-        readout(g, 50, y, [{ box: PEOPLE ? "p5-ticket is-fine" : "p5-driver is-ticket", text: "mandat" }, { text: "łącznie " + total + " mandatów na " + all + " kontroli" }]);
+        readout(g, 50, y, [{ box: "p5-driver is-ticket", text: "mandat" }, { text: "łącznie " + total + " mandatów na " + all + " kontroli" }]);
       } else if (step === 2) {
-        readout(g, 50, y, [{ box: PEOPLE ? "p5-ticket is-exp" : "p5-driver is-exp", text: "oczekiwany mandat" },
+        readout(g, 50, y, [{ box: "p5-driver is-exp", text: "oczekiwany mandat" },
           { text: total + " / " + all + " = " + pct(total / all, 0) + " w każdej grupie" }]);
       } else {
         readout(g, 50, y, [{ text: ROWS[0] + ": " + O[0][0] + " zamiast " + fmt(E[0][0], 0) },

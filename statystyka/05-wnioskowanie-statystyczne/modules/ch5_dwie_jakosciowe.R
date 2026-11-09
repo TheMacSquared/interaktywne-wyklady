@@ -56,9 +56,6 @@ ch5_ui <- list(
     # PROTOTYP 5E (2026-11-09): mandaty, świat bez związku (kadry przed wzorami)
     p5("5E"),
 
-    # PROTOTYP 5E-2 (2026-11-09): ta sama historia w oprawie sceny „stop” z wykładu 02
-    p5("5E2"),
-
     lc_p("Punktem odniesienia jest tabela, jakiej spodziewalibyśmy się przy
       prawdziwej H₀. Jeśli zmienne są niezależne, odsetek obserwacji w danej
       kolumnie powinien być w każdym wierszu taki sam jak w całej próbie. ",
