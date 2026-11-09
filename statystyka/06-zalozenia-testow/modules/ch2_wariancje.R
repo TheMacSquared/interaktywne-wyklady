@@ -204,6 +204,25 @@ ch2_ui <- lecture_chapter(
       w około 5.2%. Ponieważ średnie w panelu zawsze różnią się o 5, oba testy przy
       domyślnych ustawieniach odrzucają H₀ w podobnej części losowań, około 60%."),
 
+    # PROTOTYP 6D (2026-11-09, przebudowa sceny z 2026-10-08): dwie zmiany w hali,
+    # Student i Welch na tych samych pomiarach, klamry s i s_p pokazują mechanizm
+    lc_p("Co się dzieje, gdy grupy nie są równe, sprawdza brygadzista w hali
+      montażowej. Na zmianie chaotycznej pracuje mniej osób, na spokojnej więcej."),
+
+    p6_panel("6D", "scena", "Dwie zmiany w hali",
+      scene_widget("ch2_hala", "Dwie zmiany w hali: Student i Welch na tych samych pomiarach",
+        steps = c("Pomiar", "Dwa werdykty", "Powtarzamy", "Poziom α"),
+        labels = rep("Zmierz obie zmiany", 4),
+        options = list(
+          list(name = "n", label = "Osób: chaotyczna – spokojna",
+               values = c("50–50" = "eq", "20–80" = "few", "80–20" = "many"), selected = "few")
+        ),
+        config = list(kind = "welch", mu = 100, sd_chaos = 20, sd_calm = 5, alpha = 0.05,
+                      layouts = list(eq = c(50, 50), few = c(20, 80), many = c(80, 20)),
+                      layout = "few", height = 470,
+                      aria = "Brygadzista mierzy czasy montażu na dwóch zmianach o tej samej średniej; te same pomiary ocenia test Studenta i test Welcha, a dwa liczniki zbierają odsetki fałszywych alarmów"))
+    ),
+
     lc_p("Kłopot pojawia się, gdy grupy mają różne liczebności. W symulacji
       z 20 obserwacjami w grupie o odchyleniu 20 i 80 obserwacjami w grupie o odchyleniu 5, przy równych średnich,
       test Studenta odrzuca prawdziwą H₀ w około 29% losowań zamiast w 5%.
@@ -212,27 +231,6 @@ ch2_ui <- lecture_chapter(
       i większy rozrzut ma liczniejsza grupa, test Studenta prawie nigdy nie
       odrzuca H₀ (około 0.1%) i traci moc. Test Welcha w obu układach trzyma
       się poziomu 5%."),
-
-    lc_p("Tę symulację możesz powtórzyć sam na dwóch zmianach w hali montażowej."),
-
-    # PROTOTYP SCENY (2026-10-08): dwie zmiany w hali, Student vs Welch
-    figure_panel(
-      label = "Prototyp sceny",
-      width_mode = "text",
-      scene_widget("ch2_hala", "Dwie zmiany w hali: ile fałszywych alarmów daje test",
-        steps = c("Pomiar", "Werdykt", "Powtarzamy", "Poziom α"),
-        labels = rep("Zmierz obie zmiany", 4),
-        options = list(
-          list(name = "n", label = "Osób: chaotyczna – spokojna",
-               values = c("50–50" = "eq", "20–80" = "few", "80–20" = "many"), selected = "few"),
-          list(name = "test", label = "Test t",
-               values = c("Student" = "student", "Welch" = "welch"), selected = "student", from = 2)
-        ),
-        config = list(kind = "welch", mu = 100, sd_chaos = 20, sd_calm = 5, alpha = 0.05,
-                      layouts = list(eq = c(50, 50), few = c(20, 80), many = c(80, 20)),
-                      layout = "few", test = "student", height = 470,
-                      aria = "Brygadzista mierzy czasy montażu na dwóch zmianach, lampka pokazuje werdykt testu t, a licznik i histogram p-wartości zbierają odsetek fałszywych alarmów"))
-    ),
 
     lc_p("Pierwszy z tych układów można ustawić na Ryc. 2.1: grupa A z 20
       obserwacjami i odchyleniem 20, grupa B z 80 obserwacjami i odchyleniem 5.
@@ -289,15 +287,15 @@ ch2_ui <- lecture_chapter(
 ch2_server <- function(input, output, session) {
 
   scene_texts(input, output, "ch2_hala", list(
-    tagList("Na chaotycznej zmianie czasy montażu mają duży rozrzut, na spokojnej mały.
-      Zmierz kilka razy i patrz, jak skaczą kreski średnich."),
-    tagList("Lampka to werdykt testu t przy α = 0.05. Obie zmiany mają tę samą prawdziwą średnią,
-      więc każda czerwona lampka to fałszywy alarm."),
-    tagList("Każdy pomiar trafia do histogramu p-wartości, a pasek zbiera odsetek alarmów.
-      Dokładaj pomiarów, potem zmień liczebności i test. Przełącznik czyści licznik."),
-    tagList("Przerywana kreska to α = 5%: tyle alarmów obiecuje test, a słupki histogramu mają być
-      równe. Student dotrzymuje tego tylko przy równych zmianach: przy 20–80 alarmuje w około 29%
-      pomiarów, przy 80–20 prawie nigdy. Welch trzyma 5% w każdym układzie.")
+    tagList("Brygadzista mierzy czasy montażu na obu zmianach. Klamra pod pasem
+      to rozrzut zmiany: na chaotycznej duży, na spokojnej mały."),
+    tagList("Te same pomiary oceniają dwa testy t. Przerywana klamra to rozrzut
+      wspólny, który test Studenta przypisuje obu zmianom naraz. Przy 20–80
+      jest wyraźnie węższy niż prawdziwy rozrzut chaotycznej zmiany."),
+    tagList("Mierz wiele razy. Oba testy dostają te same dane, każdy ma swój
+      licznik alarmów. Zmiana liczebności zmian czyści liczniki."),
+    tagList("Obie zmiany mają tę samą średnią, więc każdy alarm jest fałszywy.
+      Porównaj liczniki z α = 5% w każdym układzie liczebności.")
   ))
 
   ch2_data <- reactiveVal(NULL)

@@ -43,3 +43,29 @@
 .lc-sc-ptok.is-alarm { fill: var(--upwr-accent); }
 .lc-sc-ptok.is-ok { fill: var(--upwr-cat-szalwia, #3f8f5f); }
 .lc-sc-ptok.is-bar { stroke: none; opacity: .8; }
+
+/* PROTOTYPY 6A–6E (2026-11-09) */
+.lc-sc-verdict.is-sm { font-size: 12px; }
+.lc-sc-dim { opacity: .5; }
+.lc-sc-sd { stroke-width: 2.5; }
+.lc-sc-sd.is-chaos { stroke: var(--upwr-single-alt); }
+.lc-sc-sd.is-calm { stroke: var(--upwr-cat-niebo); }
+.lc-sc-sdp { stroke: var(--upwr-ink-soft); stroke-width: 2; stroke-dasharray: 4 3; }
+.lc-sc-dens { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1; }
+.lc-sc-norm { stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
+.lc-sc-plot { stroke: var(--upwr-rule); stroke-width: 1; }
+.lc-sc-plot.is-a { fill: var(--upwr-sage-tint); }
+.lc-sc-plot.is-b { fill: var(--upwr-single-alt-tint); }
+.lc-sc-pl { opacity: .8; }
+.lc-sc-pl.pc0, .lc-sc-pmean.pc0 { fill: var(--upwr-cat-indygo); }
+.lc-sc-pl.pc1, .lc-sc-pmean.pc1 { fill: var(--upwr-cat-terakota); }
+.lc-sc-pl.pc2, .lc-sc-pmean.pc2 { fill: var(--upwr-cat-kurkuma); }
+.lc-sc-pl.pc3, .lc-sc-pmean.pc3 { fill: var(--upwr-cat-wrzos); }
+.lc-sc-pmean { stroke: var(--upwr-ink); stroke-width: 1.5; }
+.lc-sc-qper { fill: var(--upwr-ink-subtle); }
+.lc-sc-qper.is-mark { fill: var(--upwr-accent); }
+.lc-sc-ghost { fill: none; stroke: var(--upwr-ink); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.lc-sc-qqline { stroke: var(--upwr-ink-soft); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.lc-sc-qpt { fill: var(--upwr-cat-niebo); opacity: .85; }
+.lc-sc-qpt.is-mark { fill: var(--upwr-accent); opacity: 1; }
+.lc-sc-frame { fill: none; stroke: var(--upwr-rule-soft); }

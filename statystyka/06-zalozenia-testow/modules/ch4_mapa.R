@@ -36,6 +36,24 @@ ch4_ui <- lecture_chapter(
       razy, nie pomaga żadna alternatywa z kolumny po prawej. Trzeba wybrać
       metodę, która tę zależność uwzględnia, jak test dla par."),
 
+    # PROTOTYP 6E (2026-11-09): pseudoreplikacja na poletkach
+    p6_panel("6E", "scena", "Sto roślin czy cztery poletka?",
+      scene_widget("ch4_p6e", "Agronom porównuje dwa nawozy na poletkach",
+        steps = c("Pole", "Dwa werdykty", "Powtarzamy", "Poziom α"),
+        labels = rep("Załóż doświadczenie", 4),
+        config = list(kind = "plots", mu = 50, tau = 3, sigma = 5, k = 4, m = 25,
+                      alpha = 0.05, height = 470,
+                      aria = "Dwa nawozy, po cztery poletka, na każdym 25 roślin; te same dane analizowane jako 100 roślin na nawóz albo 4 średnie poletek, z licznikami fałszywych alarmów"))
+    ),
+
+    lc_p("Oba nawozy działają tak samo. Analiza, która liczy każdą roślinę jako
+      osobną obserwację, ogłasza różnicę w mniej więcej połowie doświadczeń,
+      bo rośliny z jednego poletka dzielą glebę, wodę i światło i rosną
+      podobnie. Sto roślin z czterech poletek to nie sto niezależnych
+      informacji. Analiza na średnich poletek trzyma się 5%. O liczbie
+      obserwacji w teście decyduje liczba niezależnych jednostek, którym
+      przydzielono nawóz, a nie liczba pomiarów."),
+
     lc_p("Tabele czyta się od lewej do prawej. Kolumna z założeniami mówi, czego
       metoda potrzebuje, kolumna diagnostyki — czym to ocenić, a ostatnia
       kolumna — po co sięgnąć, gdy założenie wyraźnie zawodzi. Diagnostykę
@@ -398,6 +416,17 @@ ch4_ui <- lecture_chapter(
 # ============================================================================
 
 ch4_server <- function(input, output, session) {
+
+  # PROTOTYP 6E: teksty kroków
+  scene_texts(input, output, "ch4_p6e", list(
+    tagList("Nawóz A trafił na cztery poletka, nawóz B na cztery inne. Na każdym
+      mierzymy 25 roślin. Kolor to poletko, romb to średnia poletka."),
+    tagList("Te same dane oceniają dwie analizy: test t na 100 roślinach na nawóz
+      i test t na 4 średnich poletek na nawóz."),
+    tagList("Zakładaj wiele doświadczeń. Każda analiza ma swój licznik alarmów."),
+    tagList("Oba nawozy dają tę samą średnią wysokość, więc każdy alarm jest
+      fałszywy. Porównaj liczniki z α = 5%.")
+  ))
 
   method_info <- list(
     t_one = list(

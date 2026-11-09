@@ -87,3 +87,40 @@ scene_texts <- function(input, output, id, texts) {
   step <- lc_step_server(id, input)$step
   output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
 }
+
+# ============================================================================
+# PROTOTYPY PUNKTÓW STOP 6A–6E (2026-11-09)
+# ============================================================================
+# Złota plakietka „Prototyp <nr> · <rodzaj>”, jak w wykładzie 04. Lista
+# propozycji i kolejka decyzji: PUNKTY-STOP-PROPOZYCJA.md, KOLEJKA-ZATWIERDZANIA.md.
+
+p6_panel <- function(num, kind, title = NULL, ..., width_mode = "text") {
+  figure_panel(label = paste0("Prototyp ", num, " · ", kind), title = title,
+    color = upwr_single_alt, width_mode = width_mode, ...)
+}
+
+# 6B: kwantyle teoretyczne i pierwsza grupa 20 osób (stała, żeby kadry były powtarzalne).
+p6_qq_config <- function(n = 20, mu = 172, sd = 9, seed = 64) {
+  set.seed(seed)
+  list(kind = "qq", q = round(qnorm(ppoints(n)), 4), mu = mu, sd = sd,
+       heights = round(rnorm(n, mu, sd), 1), height = 470,
+       aria = "Dwadzieścia osób staje w kolejce według wzrostu, obok konturów idealnej kolejki z rozkładu normalnego; pary wzrost i miejsce w kolejce tworzą wykres kwantyl-kwantyl")
+}
+
+# 6C: pula losowań masy jabłek (lekko prawoskośny rozkład) dla n = 20 i n = 2000,
+# z wynikiem testu Shapiro-Wilka i prostą przez kwartyle (jak qqline). Dla n = 2000
+# na wykres idzie 150 równomiernie wybranych punktów z posortowanej próby.
+p6_sw_pool <- function(k = 30, seed = 2611, shape = 10, scale = 6, shift = 120) {
+  set.seed(seed)
+  one <- function(n) {
+    x <- sort(shift + scale * rgamma(n, shape))
+    q <- qnorm(ppoints(n))
+    idx <- if (n > 200) unique(round(seq(1, n, length.out = 150))) else seq_len(n)
+    sw <- shapiro.test(x)
+    qy <- quantile(x, c(0.25, 0.75), names = FALSE); qx <- qnorm(c(0.25, 0.75))
+    b <- diff(qy) / diff(qx)
+    list(n = n, q = round(q[idx], 4), y = round(x[idx], 2),
+         W = unname(sw$statistic), p = sw$p.value, a = qy[1] - b * qx[1], b = b)
+  }
+  lapply(seq_len(k), function(i) list(small = one(20), big = one(2000)))
+}

@@ -112,6 +112,29 @@ ch1_ui <- lecture_chapter(
       tylko „czy ich kształt jest na tyle daleki od normalnego, że zagraża
       wnioskom przy tej liczebności”. Odpowiedź zaczyna się od wykresu."),
 
+    # PROTOTYP 6A (2026-11-09): skośne czasy naprawy a norma, n = 5 / 15 / 50
+    lc_p("Jak duża musi być próba, żeby skośność przestała szkodzić, najlepiej
+      zobaczyć na kontroli, która powtarza się co tydzień."),
+
+    p6_panel("6A", "symulacja", "Serwis: czy naprawy trzymają normę?",
+      scene_widget("ch1_p6a", "Kierownik serwisu sprawdza normę czasu naprawy",
+        steps = c("Kontrola", "Werdykt", "Powtarzamy", "Poziom α"),
+        labels = rep("Skontroluj naprawy", 4),
+        options = list(
+          list(name = "n", label = "Napraw w kontroli",
+               values = c("5" = "5", "15" = "15", "50" = "50"), selected = "5")
+        ),
+        config = list(kind = "repair", norm = 30, shift = 10, ns = c(5, 15, 50), n = 5,
+                      alpha = 0.05, height = 470,
+                      aria = "Kierownik serwisu losuje naprawy, porównuje ich średni czas z normą 30 minut testem t i zbiera odsetek fałszywych alarmów osobno dla 5, 15 i 50 napraw"))
+    ),
+
+    lc_p("Średni czas naprawy wynosi dokładnie 30 minut, więc każdy alarm jest
+      fałszywy. Przy 5 naprawach w kontroli test t alarmuje w około 12% kontroli
+      zamiast w 5%, przy 15 w około 9%, a przy 50 w około 6%. Pojedyncze czasy
+      są tak samo skośne przy każdym n; zmienia się tylko kształt rozkładu
+      średniej, który z rosnącą próbą zbliża się do normalnego."),
+
     # ========================================================================
     # WIDGET 1: Wizualne sprawdzanie normalności
     # ========================================================================
@@ -129,6 +152,15 @@ ch1_ui <- lecture_chapter(
       około 2.3 odchylenia powyżej. Na osi poziomej są te oczekiwane położenia
       (", gloss("kwantyl", "kwantyle"), " teoretyczne, w odchyleniach standardowych), na osi pionowej
       faktyczne wartości (kwantyle próbkowe). Każdy punkt to jedna obserwacja."),
+
+    # PROTOTYP 6B (2026-11-09): kolejka do wykresu Q-Q
+    p6_panel("6B", "pojęcie", "Wykres Q-Q to dwie kolejki obok siebie",
+      scene_widget("ch1_p6b", "Kolejka według wzrostu i kolejka idealna",
+        steps = c("Kolejka", "Według wzrostu", "Idealna kolejka", "Wykres Q-Q"),
+        labels = rep("Nowa grupa", 4),
+        more = NULL,
+        config = p6_qq_config())
+    ),
 
     lc_p("Jeśli rozkład jest normalny, punkty układają się wzdłuż prostej. Prosta
       na wykresie przechodzi przez punkty odpowiadające pierwszemu i trzeciemu
@@ -225,6 +257,17 @@ ch1_ui <- lecture_chapter(
       title = "Jak często Shapiro-Wilk odrzuca normalność",
       width_mode = "text",
       lc_plot("ch1_sw_power", ratio = "16/10")
+    ),
+
+    # PROTOTYP 6C (2026-11-09): ten sam rozkład, n = 20 i n = 2000
+    p6_panel("6C", "przypadek brzegowy", "Ten sam kształt, inny werdykt",
+      scene_widget("ch1_p6c", "Masa jabłek z jednego sadu: 20 sztuk i 2000 sztuk",
+        steps = c("20 jabłek", "2000 jabłek"),
+        labels = rep("Nowy zbiór", 2),
+        more = NULL,
+        config = list(kind = "sw", pool = p6_sw_pool(), ymin = 120, ymax = 300,
+                      alpha = 0.05, height = 420,
+                      aria = "Dwa wykresy kwantyl-kwantyl masy jabłek z tego samego lekko skośnego rozkładu: przy 20 sztukach test Shapiro-Wilka zwykle nie odrzuca normalności, przy 2000 odrzuca ją zawsze"))
     ),
 
     lc_p("Test normalności ma więc tę samą słabość co każdy test istotności: jego
@@ -326,6 +369,37 @@ ch1_ui <- lecture_chapter(
 # ============================================================================
 
 ch1_server <- function(input, output, session) {
+
+  # PROTOTYPY 6A–6C: teksty kroków
+  scene_texts(input, output, "ch1_p6a", list(
+    tagList("Karty serwisowe pokazują typowy rozkład czasów naprawy: większość trwa
+      kwadrans, kilka ciągnie się ponad godzinę. Kierownik bierze kilka napraw
+      i porównuje ich średni czas z normą."),
+    tagList("Lampka to werdykt testu t jednej próby przy α = 0.05: czy średni czas
+      różni się od normy 30 minut."),
+    tagList("Kontroluj wiele razy. Każda liczba napraw w kontroli ma własny licznik
+      alarmów; przełącznik wybiera, który się zapełnia."),
+    tagList("Prawdziwa średnia to dokładnie 30 minut, więc każdy alarm jest fałszywy.
+      Porównaj liczniki z obiecanym α = 5%.")
+  ))
+
+  scene_texts(input, output, "ch1_p6b", list(
+    tagList("Dwadzieścia osób stoi w przypadkowej kolejności. Najniższa i najwyższa
+      są wyróżnione."),
+    tagList("Ustawiamy je od najniższej do najwyższej. Każda osoba ma teraz swoje
+      miejsce w kolejce."),
+    tagList("Kontury to idealna kolejka: wzrost, jaki miałaby osoba na tym miejscu,
+      gdyby wzrost miał rozkład normalny o tej samej średniej i odchyleniu."),
+    tagList("Każda osoba staje się punktem: w poziomie miejsce w idealnej kolejce,
+      w pionie prawdziwy wzrost. Gdy kolejki się zgadzają, punkty leżą na prostej.")
+  ))
+
+  scene_texts(input, output, "ch1_p6c", list(
+    tagList("Dwadzieścia jabłek z sadu. Punkty lekko odginają się od prostej,
+      ale test Shapiro-Wilka zwykle nie widzi powodu, by odrzucić normalność."),
+    tagList("Dwa tysiące jabłek z tego samego sadu: wykres wygina się tak samo,
+      a test odrzuca normalność za każdym razem. Zmienił się tylko rozmiar próby.")
+  ))
 
   zoom_plot_server("ch1_sw_power", reactive(ch1_sw_power_fn()),
     alt = "Odsetek odrzuceń normalności w teście Shapiro-Wilka w zależności od liczebności próby dla czterech rozkładów")
