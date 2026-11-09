@@ -29,12 +29,6 @@
 .p5-bread { fill: #c99a5b; }
 .p5-flame { fill: var(--upwr-accent); }
 
-/* 5C: rozrzut i stos r */
-.p5-pt { fill: var(--upwr-cat-niebo); opacity: .8; }
-.p5-big { font: 700 26px var(--upwr-mono); fill: var(--upwr-ink); }
-.p5-tok { fill: var(--upwr-cat-niebo); opacity: .85; }
-.p5-mid { fill: var(--upwr-sage-tint); opacity: .7; }
-
 /* 5D: żelki */
 .p5-bean { stroke: var(--upwr-ink-soft); stroke-width: 1; }
 .p5-headline { fill: var(--upwr-accent); }

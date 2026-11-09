@@ -59,9 +59,6 @@ ch4_ui <- list(
     # ========================================================================
     lc_h2("ch4-test", "Od współczynnika do testu"),
 
-    # PROTOTYP 5C (2026-11-09): r z grupek bez żadnego związku
-    p5("5C"),
-
     lc_p("Współczynnik \\(r\\) z próby jest ", gloss("estymator", "estymatorem"), " korelacji w populacji,
       oznaczanej grecką literą \\(\\rho\\) (ro). Jak każda statystyka z próby,
       \\(r\\) zmienia się od próby do próby. Nawet gdy w populacji związku nie ma

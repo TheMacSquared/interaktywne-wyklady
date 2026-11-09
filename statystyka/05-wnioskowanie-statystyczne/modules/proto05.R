@@ -3,8 +3,8 @@
 # Każdy prototyp ma złotą plakietkę „Prototyp <nr> · <rodzaj>”, jak w wykładzie 04.
 # Rysunek i obliczenia: modules/proto05.js (+ proto05.css), działają bez serwera R.
 # Lista propozycji: PUNKTY-STOP-PROPOZYCJA.md, decyzje: KOLEJKA-ZATWIERDZANIA.md.
-# 5B odrzucony 2026-11-09 (dubel Ryc. 3.1).
-# Wstawki w tekście: p5("5A"), p5("5C") … p5("5E"); teksty kroków: p5_server().
+# 5B (dubel Ryc. 3.1) i 5C (rozkład r z powtórzonych grupek) odrzucone 2026-11-09.
+# Wstawki w tekście: p5("5A"), p5("5D"), p5("5E"); teksty kroków: p5_server().
 # Wymaga: lecture_layout.R (lc_step_widget, lc_toolbar, figure_panel), helpers.R.
 
 p5_panel <- function(num, kind, title, ..., width_mode = "text") {
@@ -60,17 +60,6 @@ p5_5A_ui <- p5_panel("5A", "scena", "Czujka dymu w akademiku",
     name = "t", label = "Próg czułości czujki", min = 10, max = 60, value = 32, step = 1)
 )
 
-# --- 5C: sen i ostatnia cyfra telefonu (rozdz. 06, przed testem korelacji) --------
-p5_5C_ui <- p5_panel("5C", "scena", "Sen i ostatnia cyfra telefonu",
-  p5_scene_widget("p5_corr", "Studentka pyta grupki znajomych o sen i numer telefonu",
-    steps = c("Grupka", "Kolejne grupki", "Zakres"),
-    action = "Zapytaj grupkę",
-    options = list(list(name = "n", label = "Znajomych w grupce",
-      values = c("10" = "10", "40" = "40", "200" = "200"), selected = "40")),
-    config = list(kind = "corr", n = 40, height = 500,
-      aria = "Wykres rozrzutu godzin snu i ostatniej cyfry numeru telefonu w grupce znajomych z wartością r, a pod nim stos wartości r z kolejnych grupek"))
-)
-
 # --- 5D: żelki i trądzik (rozdz. 09, przed problemem porównań wielokrotnych) -----
 # Kolory żelków to kolory materiału (SCENY.md: własne kolory dla materiałów).
 p5_jelly_colors <- c("#c43d2f", "#2aa65e", "#2e6fd1", "#f0c419", "#e5832a", "#8b47ab", "#f78fb3",
@@ -103,14 +92,6 @@ p5_5E_ui <- local({
 
 # --- teksty kroków ------------------------------------------------------------
 p5_server <- function(input, output, session) {
-  scene_texts(input, output, "p5_corr", list(
-    tagList("Studentka pyta grupkę znajomych, ile śpią i jaka jest ostatnia cyfra ich
-      numeru telefonu. Te dwie rzeczy nie mają ze sobą nic wspólnego, a r i tak nie wychodzi zero."),
-    tagList("Każda kolejna grupka daje inne r, które odkłada się na stos. Zmień liczbę
-      znajomych w grupce: stos zaczyna się od nowa."),
-    tagList("Zaznaczony pas to środkowe 95% grupek. Tyle może wyjść samo z przypadku,
-      gdy związku nie ma (ρ = 0). Przy 10 osobach pas jest szeroki, przy 200 wąski.")
-  ))
   scene_texts(input, output, "p5_jelly", list(
     tagList("Ogólnie żelki nie mają związku z trądzikiem. Badacz sprawdza więc każdy
       kolor osobno, testem przy α = 0.05. Lampka zapala się, gdy p < 0.05."),

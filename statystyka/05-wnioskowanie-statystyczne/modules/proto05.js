@@ -4,7 +4,6 @@
 // albo wewnątrz .p5-host (jeden obraz z suwakiem, bez kroków).
 // config.kind:
 //   "smoke"   5A czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
-//   "corr"    5C sen i ostatnia cyfra telefonu: r z grupek bez żadnego związku
 //   "jelly"   5D żelki i trądzik: 20 kolorów, 20 testów, seria z alarmem
 //   "tickets" 5E mandaty: świat bez związku → porównanie → χ² (kadry)
 // Sterowanie: [data-sc-act] go | m10 | m100 | m1000, [data-sc-opt] "nazwa:wartość",
@@ -162,101 +161,6 @@
     }
     return { render: render, reset: function () { st.t = cfg.t || 32; render(); },
       range: function (name, v) { if (name === "t") { st.t = v; render(); } } };
-  };
-
-  // =========================================================================
-  // 5C — SEN I OSTATNIA CYFRA TELEFONU: r bez żadnego związku (historia z powtórzeniem)
-  // =========================================================================
-  KINDS.corr = function (cfg, api) {
-    var st = { n: Number(cfg.n || 40), rs: [], last: null };
-    var NB = 40, PL = 60, PR = 610, BASE = 450, SP = [70, 330, 36, 226];  // x0, x1, y0, y1 rozrzutu
-
-    function corr(x, y) {
-      var n = x.length, mx = 0, my = 0, i;
-      for (i = 0; i < n; i++) { mx += x[i]; my += y[i]; }
-      mx /= n; my /= n;
-      var sxy = 0, sxx = 0, syy = 0;
-      for (i = 0; i < n; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) * (x[i] - mx); syy += (y[i] - my) * (y[i] - my); }
-      return sxy / Math.sqrt(sxx * syy);
-    }
-    function group() {
-      var x = [], y = [], jx = [];
-      for (var i = 0; i < st.n; i++) {
-        x.push(Math.max(4, Math.min(10, 7 + 1.1 * rnorm())));
-        y.push(Math.floor(Math.random() * 10));
-        jx.push(Math.random() * 2 - 1);
-      }
-      return { x: x, y: y, jx: jx, r: corr(x, y) };
-    }
-    function bin(r) { return Math.max(0, Math.min(NB - 1, Math.floor((r + 1) / 2 * NB))); }
-    function bx(i) { return PL + (PR - PL) * (i + 0.5) / NB; }
-    function rx(r) { return PL + (PR - PL) * (r + 1) / 2; }
-
-    function drawScatter(g, d, u) {
-      var X = function (v) { return SP[0] + (SP[1] - SP[0]) * (v - 4) / 6; };
-      var Y = function (v) { return SP[3] - (SP[3] - SP[2]) * (v + 0.5) / 10; };
-      svg("rect", { x: SP[0], y: SP[2], width: SP[1] - SP[0], height: SP[3] - SP[2], class: "p5-frame" }, g);
-      [4, 6, 8, 10].forEach(function (v) {
-        svg("text", { x: X(v), y: SP[3] + 16, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(v));
-      });
-      [0, 3, 6, 9].forEach(function (v) {
-        svg("text", { x: SP[0] - 8, y: Y(v) + 4, "text-anchor": "end", class: "lc-sc-tick" }, g, String(v));
-      });
-      svg("text", { x: SP[1], y: SP[3] + 34, "text-anchor": "end", class: "lc-sc-axtitle" }, g, "sen (godz.)");
-      svg("text", { x: SP[0] - 34, y: SP[2] - 10, class: "lc-sc-axtitle" }, g, "ostatnia cyfra numeru");
-      if (!d) return;
-      var lim = u === undefined ? d.x.length : Math.round(u * d.x.length);
-      for (var i = 0; i < lim; i++) {
-        svg("circle", { cx: X(d.x[i]), cy: Y(d.y[i]) + 4 * d.jx[i], r: st.n > 100 ? 2.6 : 4, class: "p5-pt" }, g);
-      }
-      if (u === undefined || u >= 1) {
-        svg("text", { x: 380, y: 130, class: "p5-big" }, g, "r = " + fmt(d.r, 2));
-        svg("text", { x: 380, y: 156, class: "lc-sc-n" }, g, st.n + " znajomych");
-      }
-    }
-
-    function drawStack(g, step) {
-      var counts = new Array(NB).fill(0);
-      st.rs.forEach(function (r) { counts[bin(r)] += 1; });
-      var mx = Math.max.apply(null, counts.concat([1]));
-      var u = Math.min(9, 150 / Math.max(mx, 8));
-      axisX(g, PL, PR, BASE, -1, 1, 0.5, 1, "r z grupki", rx);
-      for (var i = 0; i < NB; i++) {
-        if (!counts[i]) continue;
-        if (u >= 7) {
-          for (var c = 1; c <= counts[i]; c++) svg("circle", { cx: bx(i), cy: BASE - u * (c - 0.5) - 1, r: u * 0.45, class: "p5-tok" }, g);
-        } else {
-          var bw = (PR - PL) / NB * 0.8;
-          svg("rect", { x: bx(i) - bw / 2, y: BASE - u * counts[i], width: bw, height: u * counts[i], class: "p5-tok" }, g);
-        }
-      }
-      svg("text", { x: PL, y: 284, class: "lc-sc-n" }, g, "grupek: " + st.rs.length);
-      if (step >= 3 && st.rs.length >= 20) {
-        var s = st.rs.slice().sort(function (a, b) { return a - b; });
-        var lo = s[Math.floor(0.025 * (s.length - 1))], hi = s[Math.ceil(0.975 * (s.length - 1))];
-        svg("line", { x1: rx(0), x2: rx(0), y1: 292, y2: BASE, class: "lc-sc-param" }, g);
-        svg("text", { x: PL + 130, y: 284, class: "lc-sc-n" }, g,
-          "95% grupek: r od " + fmt(lo, 2) + " do " + fmt(hi, 2) + " · ρ = 0");
-        g.insertBefore(svg("rect", { x: rx(lo), y: 292, width: rx(hi) - rx(lo), height: BASE - 292, class: "p5-mid" }), g.firstChild);
-      }
-    }
-
-    function render(d, u) {
-      var step = api.step(), g = api.stage; g.textContent = ""; api.low.textContent = "";
-      drawScatter(g, d === undefined ? st.last : d, u);
-      if (step >= 2) drawStack(api.low, step);
-    }
-    function commit(d) { st.rs.push(d.r); st.last = d; }
-    return {
-      render: function () { render(); },
-      reset: function () { st.rs = []; st.last = null; render(); },
-      opt: function (name, v) { if (name === "n") { st.n = Number(v); st.rs = []; st.last = null; render(); } },
-      go: function (done) {
-        var d = group();
-        tween(900, function (u) { render(d, u); }, function () { commit(d); render(); done(); });
-      },
-      many: function (m, done) { for (var i = 0; i < m; i++) commit(group()); render(); done(); }
-    };
   };
 
   // =========================================================================

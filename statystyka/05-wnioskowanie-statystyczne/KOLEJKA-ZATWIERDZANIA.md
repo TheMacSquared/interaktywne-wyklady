@@ -15,7 +15,7 @@ shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
 |---|---|---|
 | 03 | Prototyp 5A „Czujka dymu w akademiku” | przyjęty (9.11), do poprawy grafiki; `type-error.jpg` zostaje |
 | 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | odrzucony (9.11), usunięty |
-| 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | do oceny |
+| 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | odrzucony (9.11), usunięty |
 | 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | do oceny; obok Ryc. 7.1 |
 | 09 | Prototyp 5D „Żelki i trądzik” | do oceny; przed Ryc. 9.1 |
 | 09 | Sceny `jars`, `worlds`, `stress` (8.10) | czekają na ocenę (5F) |
@@ -46,8 +46,15 @@ przyjęciu: usunąć Ryc. 7.1 i przenieść wzory E i χ² za scenę.
 
 ### 3. 5C — korelacja (rozdz. 06)
 
-Zastępuje zdanie z liczbą ±0.31 w tekście. Po przyjęciu: skrócić akapit
-„Od współczynnika do testu”.
+Odrzucony i usunięty (9.11). Historia była sztuczna, a stos r z kolejnych
+grupek to rozkład próbkowy w nowym kostiumie: sugeruje, że trzeba zbierać
+wiele prób po 40 osób. Rozkład pod H₀ ma już Ryc. 3.2 (p-wartość) i krok po
+kroku Ryc. 6.1. Zdanie o ±0.31 w tekście zostaje.
+
+Otwarty pomysł: przypadek z jedną próbą. Kierownik Bananpolu ma 10 dni
+pomiarów temperatury w hali i liczby braków, r = 0.5, i chce kupić
+klimatyzację; test daje p = 0.14. To samo r z 40 dni daje p = 0.001.
+Forma przykładów, bez powtarzania prób.
 
 ### 4. 5D — żelki (rozdz. 09)
 
