@@ -69,13 +69,16 @@ p5_jelly_names <- c("czerwone", "zielone", "niebieskie", "żółte", "pomarańcz
                     "różowe", "brązowe", "białe", "czarne", "turkusowe", "limonkowe", "bordowe",
                     "beżowe", "szare", "miętowe", "łososiowe", "oliwkowe", "granatowe", "złote")
 
+# Stała seria: jeden kolor (zielone) poniżej α, pozostałe p powyżej; badanie ogólne p = 0.58.
+p5_jelly_p <- c(0.62, 0.031, 0.48, 0.91, 0.27, 0.74, 0.39, 0.083, 0.56, 0.19,
+                0.85, 0.33, 0.67, 0.12, 0.95, 0.44, 0.71, 0.24, 0.58, 0.36)
+
 p5_5D_ui <- p5_panel("5D", "scena", "Żelki i trądzik",
-  p5_scene_widget("p5_jelly", "Badacz sprawdza, czy żelki któregoś koloru wywołują trądzik",
-    steps = c("Seria kolorów", "Powtarzamy serie", "Ile to jest"),
-    action = "Zbadaj 20 kolorów",
+  p5_scene_widget("p5_jelly", "Badacz sprawdza, czy żelki wywołują trądzik",
+    steps = c("Pytanie", "Kolor po kolorze", "Gazeta", "Cała seria"),
     config = list(kind = "jelly", colors = p5_jelly_colors, names = p5_jelly_names,
-      alpha = 0.05, height = 410,
-      aria = "Dwadzieścia żelków w różnych kolorach, pod każdym lampka testu przy alfa 0.05; licznik zbiera odsetek serii, w których zapaliła się co najmniej jedna lampka"))
+      p = p5_jelly_p, hit = 1L, p_all = 0.58, alpha = 0.05, height = 350,
+      aria = "Badanie żelków: najpierw wszystkie razem bez związku, potem 20 kolorów po kolei z jednym alarmem przy zielonych, potem gazeta pokazuje tylko zielone żelki, na koniec cała seria: 1 alarm na 20 testów"))
 )
 
 # --- 5E: mandaty i świat bez związku (rozdz. 07, przed wzorami E i χ²) -----------
@@ -93,12 +96,14 @@ p5_5E_ui <- local({
 # --- teksty kroków ------------------------------------------------------------
 p5_server <- function(input, output, session) {
   scene_texts(input, output, "p5_jelly", list(
-    tagList("Ogólnie żelki nie mają związku z trądzikiem. Badacz sprawdza więc każdy
-      kolor osobno, testem przy α = 0.05. Lampka zapala się, gdy p < 0.05."),
-    tagList("Żaden kolor naprawdę nie działa. Powtarzaj całe serie po 20 kolorów
-      i patrz, jak często choć jedna lampka się zapala."),
-    tagList("Jeden test myli się w 5% przypadków. Seria 20 testów daje choć jeden
-      fałszywy alarm w około 64% serii. Tytuł w gazecie pochodzi z tej serii.")
+    tagList("Badacz sprawdza, czy osoby jedzące żelki mają więcej trądziku. Wynik:
+      brak związku. Może więc któryś kolor?"),
+    tagList("Bada każdy z 20 kolorów osobno, testem przy α = 0.05. Lampka zapala się
+      na czerwono, gdy p < 0.05. Przy zielonych żelkach się zapaliła."),
+    tagList("Tak wynik widzi czytelnik gazety: jeden kolor, jedno badanie i p poniżej
+      0.05. Wygląda przekonująco."),
+    tagList("Cała seria: 19 kolorów bez alarmu i jeden z alarmem. Przy 20 testach
+      i α = 0.05 przypadek daje średnio jeden fałszywy alarm, a tyle właśnie wyszło.")
   ))
   scene_texts(input, output, "p5_tickets", list(
     tagList("Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet

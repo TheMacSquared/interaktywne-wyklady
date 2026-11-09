@@ -17,7 +17,7 @@ shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
 | 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | odrzucony (9.11), usunięty |
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | odrzucony (9.11), usunięty |
 | 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | do oceny; obok Ryc. 7.1 |
-| 09 | Prototyp 5D „Żelki i trądzik” | do oceny; przed Ryc. 9.1 |
+| 09 | Prototyp 5D „Żelki i trądzik” | przebudowany 9.11 (kadry), do oceny |
 | 09 | Sceny `jars`, `worlds`, `stress` (8.10) | czekają na ocenę (5F) |
 
 ## Kolejka
@@ -58,8 +58,12 @@ Forma przykładów, bez powtarzania prób.
 
 ### 4. 5D — żelki (rozdz. 09)
 
-Puenta jest bliska Ryc. 9.1, ale 9.1 liczy wzór, a 5D pokazuje historię.
-Do decyzji: czy scena nie jest za „gazetowa” i czy nagłówek ma zostać.
+Przebudowany 9.11 po pierwszej ocenie: lampki i licznik serii były
+niezrozumiałe, a powtarzanie serii znów było symulacją. Teraz cztery kadry
+ze stałymi danymi: pytanie ogólne (p = 0.58) → 20 kolorów po kolei, jeden
+alarm przy zielonych (p = 0.031) → gazeta pokazuje tylko zielone → cała
+seria: 20 testów × 5% = średnio 1 fałszywy alarm. Motyw z xkcd 882
+(„Significant”), grafika własna. Ryc. 9.1 zaraz po scenie daje wzór 64%.
 
 ### 5. Decyzje bez prototypu
 

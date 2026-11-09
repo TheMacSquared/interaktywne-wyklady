@@ -10,8 +10,6 @@
 .p5-lamp { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
 .p5-lamp.is-alarm { fill: var(--upwr-accent); stroke: var(--upwr-accent); }
 .p5-lamp.is-ok { fill: var(--upwr-cat-szalwia, #3f8f5f); stroke: var(--upwr-cat-szalwia, #3f8f5f); }
-.p5-track { fill: var(--upwr-surface-sunken); stroke: var(--upwr-rule); }
-.p5-gauge { fill: var(--upwr-accent); opacity: .85; }
 .p5-frame { fill: none; stroke: var(--upwr-rule-soft); }
 .p5-sign { fill: var(--upwr-ink-soft); }
 .p5-sign-t { font: 700 12px var(--upwr-mono); fill: var(--upwr-surface); letter-spacing: .08em; }
@@ -31,8 +29,13 @@
 
 /* 5D: żelki */
 .p5-bean { stroke: var(--upwr-ink-soft); stroke-width: 1; }
-.p5-headline { fill: var(--upwr-accent); }
-.p5-headline-t { font: 700 13px var(--upwr-sans); fill: var(--upwr-surface); letter-spacing: .02em; }
+.p5-bean.is-dim { opacity: .35; }
+.p5-paper { fill: #fbf8f1; stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.p5-masthead { font: 700 22px var(--upwr-serif); fill: #2b2b2b; letter-spacing: .06em; }
+.p5-rule { stroke: #2b2b2b; stroke-width: 1.5; }
+.p5-head { font: 700 19px var(--upwr-sans); fill: #2b2b2b; }
+.lc-sc-n.is-alarm { fill: var(--upwr-accent); font-weight: 600; }
+.lc-sc-sub { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
 
 /* 5E: kierowcy i mandaty */
 .p5-driver { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1; }

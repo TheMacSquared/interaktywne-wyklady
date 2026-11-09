@@ -4,7 +4,7 @@
 // albo wewnątrz .p5-host (jeden obraz z suwakiem, bez kroków).
 // config.kind:
 //   "smoke"   5A czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
-//   "jelly"   5D żelki i trądzik: 20 kolorów, 20 testów, seria z alarmem
+//   "jelly"   5D żelki i trądzik: pytanie → kolor po kolorze → gazeta → cała seria (kadry)
 //   "tickets" 5E mandaty: świat bez związku → porównanie → χ² (kadry)
 // Sterowanie: [data-sc-act] go | m10 | m100 | m1000, [data-sc-opt] "nazwa:wartość",
 // input[data-p5-range] "nazwa" (suwak, wartość liczbowa). Rysuje SVG bez serwera R.
@@ -92,23 +92,6 @@
     svg("circle", { cx: x, cy: y, r: r,
       class: !on ? "p5-lamp" : state ? "p5-lamp is-alarm" : "p5-lamp is-ok" }, g);
   }
-  function gauge(g, o) {
-    var rate = o.N ? o.hits / o.N : 0;
-    var gx = function (r) { return o.x0 + (o.x1 - o.x0) * Math.min(r, o.max) / o.max; };
-    svg("text", { x: o.x0, y: o.y - 8, class: "lc-sc-n" }, g,
-      o.label + ": " + o.N + " · " + o.hitLabel + ": " + (o.N ? pct(rate) : "—"));
-    svg("rect", { x: o.x0, y: o.y, width: o.x1 - o.x0, height: 12, rx: 3, class: "p5-track" }, g);
-    if (o.N) svg("rect", { x: o.x0, y: o.y, width: Math.max(2, gx(rate) - o.x0), height: 12, rx: 3, class: "p5-gauge" }, g);
-    (o.ticks || []).forEach(function (t, i, a) {
-      svg("text", { x: gx(t), y: o.y + 26, "text-anchor": i === 0 ? "start" : i === a.length - 1 ? "end" : "middle",
-        class: "lc-sc-tick" }, g, pct(t, 0));
-    });
-    (o.marks || []).forEach(function (m) {
-      var x = gx(m);
-      svg("line", { x1: x, x2: x, y1: o.y - 4, y2: o.y + 16, class: "lc-sc-param" }, g);
-    });
-  }
-
   var KINDS = {};
 
   // =========================================================================
@@ -164,74 +147,91 @@
   };
 
   // =========================================================================
-  // 5D — ŻELKI I TRĄDZIK: 20 kolorów, 20 testów przy α = 0.05
-  // H₀ prawdziwa dla każdego koloru, więc p-wartość ciągłego testu ma rozkład
-  // jednostajny: losujemy ją wprost (to samo co test t na danych bez efektu).
+  // 5D — ŻELKI I TRĄDZIK (kadry, dane stałe z R): pytanie ogólne → kolor po
+  // kolorze → co widzi czytelnik gazety → cała seria. Jeden alarm na 20 testów
+  // to tyle, ile daje sam przypadek przy α = 0.05.
   // =========================================================================
   KINDS.jelly = function (cfg, api) {
-    var COLORS = cfg.colors, NAMES = cfg.names, K = COLORS.length, ALPHA = cfg.alpha || 0.05;
-    var st = { series: 0, hit: 0, last: null };
+    var COLORS = cfg.colors, NAMES = cfg.names, P = cfg.p, K = COLORS.length, ALPHA = cfg.alpha || 0.05;
+    var HIT = cfg.hit, P_ALL = cfg.p_all;
+    var st = { last: 0, token: 0 };
 
-    function series() {
-      var p = [];
-      for (var i = 0; i < K; i++) p.push(Math.random());
-      var first = -1;
-      for (i = 0; i < K; i++) if (p[i] < ALPHA) { first = i; break; }
-      return { p: p, first: first };
+    function bean(g, x, y, i, s, cls) {
+      s = s || 1;
+      svg("ellipse", { cx: x, cy: y, rx: 18 * s, ry: 11 * s, transform: "rotate(-18 " + x + " " + y + ")",
+        fill: COLORS[i], class: "p5-bean" + (cls ? " " + cls : "") }, g);
     }
     function beanX(i) { return 70 + (i % 10) * 54; }
-    function beanY(i) { return i < 10 ? 110 : 190; }
+    function beanY(i) { return i < 10 ? 120 : 210; }
 
-    function drawStage(g, step, d, upto) {
+    function sign(g) {
       svg("rect", { x: 14, y: 12, width: 196, height: 24, rx: 4, class: "p5-sign" }, g);
       svg("text", { x: 112, y: 29, "text-anchor": "middle", class: "p5-sign-t" }, g, "BADANIE: ŻELKI");
+    }
+
+    // kadr 1: wszystkie żelki razem, jedno badanie
+    function question(g) {
+      sign(g);
+      var k = 0;
+      for (var r = 0; r < 4; r++) for (var c = 0; c < 5; c++) {
+        var x = 250 + c * 34 + (r % 2) * 17, y = 110 + r * 26;
+        bean(g, x, y, k++ % K, 0.9);
+      }
+      lampAt(g, 320, 250, false, 12);
+      svg("text", { x: 320, y: 284, "text-anchor": "middle", class: "lc-sc-n" }, g, "p = " + fmt(P_ALL, 2));
+      svg("text", { x: 320, y: 304, "text-anchor": "middle", class: "lc-sc-sub" }, g, "brak związku");
+    }
+
+    // kadry 2 i 4: rząd kolorów z lampkami; upto = ile już przebadano
+    function series(g, upto, focus) {
+      sign(g);
       for (var i = 0; i < K; i++) {
         var x = beanX(i), y = beanY(i);
-        svg("ellipse", { cx: x, cy: y, rx: 18, ry: 11, transform: "rotate(-18 " + x + " " + y + ")",
-          fill: COLORS[i], class: "p5-bean" }, g);
-        var tested = d && i < upto;
-        lampAt(g, x, y + 30, tested ? d.p[i] < ALPHA : null, 6);
-      }
-      if (d && upto >= K) {
-        if (d.first >= 0) {
-          svg("rect", { x: 230, y: 230, width: 396, height: 34, rx: 4, class: "p5-headline" }, g);
-          svg("text", { x: 428, y: 253, "text-anchor": "middle", class: "p5-headline-t" }, g,
-            NAMES[d.first].toUpperCase() + " ŻELKI A TRĄDZIK: JEST ZWIĄZEK!");
-          svg("text", { x: 70, y: 252, class: "lc-sc-n" }, g, "p = " + fmt(d.p[d.first], 3));
-        } else {
-          svg("text", { x: 70, y: 252, class: "lc-sc-n" }, g, "żaden kolor nie dał alarmu");
+        bean(g, x, y, i, 1, focus && i !== HIT ? "is-dim" : "");
+        lampAt(g, x, y + 32, i < upto ? P[i] < ALPHA : null, 6);
+        if (i < upto && i === HIT) {
+          svg("text", { x: x, y: y + 56, "text-anchor": "middle", class: "lc-sc-n is-alarm" }, g, "p = " + fmt(P[i], 3));
         }
       }
     }
-    function drawLow(g, step) {
-      if (step < 2) return;
-      gauge(g, { x0: 60, x1: 610, y: 320, label: "serii po 20 kolorów", hitLabel: "z co najmniej jednym alarmem",
-        N: st.series, hits: st.hit, max: 1, ticks: [0, 0.25, 0.5, 0.75, 1],
-        marks: step >= 3 ? [ALPHA, 1 - Math.pow(1 - ALPHA, K)] : [] });
-      if (step >= 3) {
-        readout(g, 60, 392, [
-          { dash: "lc-sc-param", text: "jeden test: " + pct(ALPHA, 0) + " · " + K + " testów: " + pct(1 - Math.pow(1 - ALPHA, K), 0) }
-        ]);
+
+    // kadr 3: tylko to, co trafia do gazety
+    function paper(g) {
+      svg("rect", { x: 120, y: 30, width: 400, height: 290, rx: 4, class: "p5-paper" }, g);
+      svg("text", { x: 320, y: 64, "text-anchor": "middle", class: "p5-masthead" }, g, "KURIER NAUKOWY");
+      svg("line", { x1: 140, x2: 500, y1: 76, y2: 76, class: "p5-rule" }, g);
+      svg("text", { x: 320, y: 112, "text-anchor": "middle", class: "p5-head" }, g,
+        NAMES[HIT].toUpperCase() + " ŻELKI");
+      svg("text", { x: 320, y: 140, "text-anchor": "middle", class: "p5-head" }, g, "A TRĄDZIK: JEST ZWIĄZEK!");
+      bean(g, 320, 210, HIT, 2.6);
+      svg("text", { x: 320, y: 290, "text-anchor": "middle", class: "lc-sc-n" }, g,
+        "p = " + fmt(P[HIT], 3) + " < 0.05");
+    }
+
+    function draw(step, upto) {
+      var g = api.stage; g.textContent = ""; api.low.textContent = "";
+      if (step === 1) question(g);
+      else if (step === 2) series(g, upto === undefined ? K : upto, false);
+      else if (step === 3) paper(g);
+      else {
+        series(g, K, false);
+        var hits = P.filter(function (p) { return p < ALPHA; }).length;
+        readout(g, 70, 330, [{ text: K + " testów × " + pct(ALPHA, 0) + " = średnio " + fmt(K * ALPHA, 0) +
+          " fałszywy alarm · tutaj: " + hits }]);
       }
     }
-    function render(d, upto) {
-      var step = api.step();
-      api.stage.textContent = ""; api.low.textContent = "";
-      var dd = d === undefined ? st.last : d;
-      drawStage(api.stage, step, dd, upto === undefined ? K : upto);
-      drawLow(api.low, step);
+
+    function render() {
+      var step = api.step(), tok = ++st.token;
+      if (step === 2 && st.last !== 2 && !REDUCE) {
+        st.last = 2;
+        tween(2400, function (u) { if (tok === st.token) draw(2, Math.floor(u * K + 1e-9)); }, function () {});
+      } else {
+        st.last = step;
+        draw(step);
+      }
     }
-    function commit(d) { st.series += 1; if (d.first >= 0) st.hit += 1; st.last = d; }
-    return {
-      render: function () { render(); },
-      reset: function () { st.series = 0; st.hit = 0; st.last = null; render(); },
-      opt: function () {},
-      go: function (done) {
-        var d = series();
-        tween(REDUCE ? 0 : 2200, function (u) { render(d, Math.floor(u * K + 1e-9)); }, function () { commit(d); render(); done(); });
-      },
-      many: function (m, done) { for (var i = 0; i < m; i++) commit(series()); render(); done(); }
-    };
+    return { render: render, reset: function () { st.last = 0; render(); }, opt: function () {} };
   };
 
   // =========================================================================
