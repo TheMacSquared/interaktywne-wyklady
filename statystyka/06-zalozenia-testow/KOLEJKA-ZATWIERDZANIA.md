@@ -13,7 +13,7 @@ shiny::runApp("statystyka/06-zalozenia-testow", port = 8756)
 
 | Rozdz. | Element | Status |
 |---|---|---|
-| 1 | Prototyp 6A „Serwis: czy naprawy trzymają normę?” | do oceny |
+| 1 | Prototyp 6A „Serwis: czy naprawy trzymają normę?” | odrzucony (9.11), usunięty |
 | 1 | Prototyp 6B „Wykres Q-Q to dwie kolejki obok siebie” | do oceny |
 | 1 | Prototyp 6C „Ten sam kształt, inny werdykt” | do oceny |
 | 2 | Prototyp 6D „Dwie zmiany w hali” (przebudowa sceny z 8.10) | do oceny |
@@ -29,10 +29,9 @@ akapit „Pierwszy z tych układów można ustawić na Ryc. 2.1…” można skr
 
 ### 2. 6A — serwis (rozdz. 1)
 
-Puenta: odporność zależy od n. Pytanie do decyzji: czy test jednej próby
-(norma) jest dobrym nośnikiem, skoro rozdział mówi głównie o dwóch grupach.
-Przy dwóch grupach o tym samym kształcie test t trzyma 5% nawet przy n = 5,
-więc tam nie ma czego pokazać.
+Odrzucony i usunięty (9.11): puenta „odporność testu t zależy od n” nie
+jest dobra, a obraz nie mówił, kiedy zapala się lampka. Akapit o
+odporności w rozdz. 1 zostaje bez obrazu.
 
 ### 3. 6E — poletka (rozdz. 4)
 

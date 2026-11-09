@@ -30,7 +30,7 @@ z R (`p6_sw_pool()`, `p6_qq_config()` w `modules/helpers.R`).
 
 | ID | Gdzie | Rodzaj / moment | Puenta | Co robi obraz |
 |---|---|---|---|---|
-| 6A | rozdz. 1, po akapicie o odporności | symulacja, wprowadzenie | Skośność pojedynczych czasów szkodzi testowi t przy małej próbie, a z rosnącym n przestaje. | Kierownik serwisu porównuje średni czas napraw z normą 30 min (prawdziwa średnia = 30). Czasy: 10 min + wykładniczy o średniej 20. Liczniki osobno dla n = 5 / 15 / 50: ok. 12% / 9% / 6% alarmów. |
+| 6A | rozdz. 1, po akapicie o odporności | symulacja | — | Odrzucony 9.11 i usunięty: słaba puenta, niejasne, kiedy zapala się lampka. |
 | 6B | rozdz. 1, po opisie budowy Q-Q | pojęcie (kadry) | Wykres Q-Q to kolejka danych postawiona obok kolejki idealnej. | 20 osób → według wzrostu → kontury idealnej kolejki (x̄ + s·z) → punkty Q-Q; najniższa i najwyższa osoba wyróżnione na każdym kadrze. |
 | 6C | rozdz. 1, po Ryc. 1.3 | przypadek brzegowy (dwa światy) | Ten sam lekki odchył, a werdykt Shapiro-Wilka zależy od n. | Masa jabłek z jednego sadu (120 + 6·Gamma(10)): przy n = 20 mediana p ≈ 0.34, przy n = 2000 p < 0.001 zawsze. Wspólne skale obu wykresów. |
 | 6D | rozdz. 2, przed akapitem z 29% / 0.1% | scena (przebudowa hali) | Przy nierównych n wspólny rozrzut Studenta kłamie, Welch nie. | Te same pomiary idą do obu testów: dwie lampki, dwa liczniki. Klamry pod pasami: s każdej zmiany i przerywana klamra s_p. Usunięte: przełącznik testu zerujący licznik i histogram p (druga puenta). |

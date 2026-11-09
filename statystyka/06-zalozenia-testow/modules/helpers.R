@@ -89,7 +89,7 @@ scene_texts <- function(input, output, id, texts) {
 }
 
 # ============================================================================
-# PROTOTYPY PUNKTÓW STOP 6A–6E (2026-11-09)
+# PROTOTYPY PUNKTÓW STOP 6B–6E (2026-11-09; 6A odrzucony)
 # ============================================================================
 # Złota plakietka „Prototyp <nr> · <rodzaj>”, jak w wykładzie 04. Lista
 # propozycji i kolejka decyzji: PUNKTY-STOP-PROPOZYCJA.md, KOLEJKA-ZATWIERDZANIA.md.

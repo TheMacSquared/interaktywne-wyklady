@@ -112,28 +112,6 @@ ch1_ui <- lecture_chapter(
       tylko „czy ich kształt jest na tyle daleki od normalnego, że zagraża
       wnioskom przy tej liczebności”. Odpowiedź zaczyna się od wykresu."),
 
-    # PROTOTYP 6A (2026-11-09): skośne czasy naprawy a norma, n = 5 / 15 / 50
-    lc_p("Jak duża musi być próba, żeby skośność przestała szkodzić, najlepiej
-      zobaczyć na kontroli, która powtarza się co tydzień."),
-
-    p6_panel("6A", "symulacja", "Serwis: czy naprawy trzymają normę?",
-      scene_widget("ch1_p6a", "Kierownik serwisu sprawdza normę czasu naprawy",
-        steps = c("Kontrola", "Werdykt", "Powtarzamy", "Poziom α"),
-        labels = rep("Skontroluj naprawy", 4),
-        options = list(
-          list(name = "n", label = "Napraw w kontroli",
-               values = c("5" = "5", "15" = "15", "50" = "50"), selected = "5")
-        ),
-        config = list(kind = "repair", norm = 30, shift = 10, ns = c(5, 15, 50), n = 5,
-                      alpha = 0.05, height = 470,
-                      aria = "Kierownik serwisu losuje naprawy, porównuje ich średni czas z normą 30 minut testem t i zbiera odsetek fałszywych alarmów osobno dla 5, 15 i 50 napraw"))
-    ),
-
-    lc_p("Średni czas naprawy wynosi dokładnie 30 minut, więc każdy alarm jest
-      fałszywy. Przy 5 naprawach w kontroli test t alarmuje w około 12% kontroli
-      zamiast w 5%, przy 15 w około 9%, a przy 50 w około 6%. Pojedyncze czasy
-      są tak samo skośne przy każdym n; zmienia się tylko kształt rozkładu
-      średniej, który z rosnącą próbą zbliża się do normalnego."),
 
     # ========================================================================
     # WIDGET 1: Wizualne sprawdzanie normalności
@@ -370,19 +348,7 @@ ch1_ui <- lecture_chapter(
 
 ch1_server <- function(input, output, session) {
 
-  # PROTOTYPY 6A–6C: teksty kroków
-  scene_texts(input, output, "ch1_p6a", list(
-    tagList("Karty serwisowe pokazują typowy rozkład czasów naprawy: większość trwa
-      kwadrans, kilka ciągnie się ponad godzinę. Kierownik bierze kilka napraw
-      i porównuje ich średni czas z normą."),
-    tagList("Lampka to werdykt testu t jednej próby przy α = 0.05: czy średni czas
-      różni się od normy 30 minut."),
-    tagList("Kontroluj wiele razy. Każda liczba napraw w kontroli ma własny licznik
-      alarmów; przełącznik wybiera, który się zapełnia."),
-    tagList("Prawdziwa średnia to dokładnie 30 minut, więc każdy alarm jest fałszywy.
-      Porównaj liczniki z obiecanym α = 5%.")
-  ))
-
+  # PROTOTYPY 6B–6C: teksty kroków (6A odrzucony 2026-11-09)
   scene_texts(input, output, "ch1_p6b", list(
     tagList("Dwadzieścia osób stoi w przypadkowej kolejności. Najniższa i najwyższa
       są wyróżnione."),

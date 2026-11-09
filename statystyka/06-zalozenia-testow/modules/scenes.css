@@ -44,15 +44,13 @@
 .lc-sc-ptok.is-ok { fill: var(--upwr-cat-szalwia, #3f8f5f); }
 .lc-sc-ptok.is-bar { stroke: none; opacity: .8; }
 
-/* PROTOTYPY 6A–6E (2026-11-09) */
+/* PROTOTYPY 6B–6E (2026-11-09; 6A odrzucony) */
 .lc-sc-verdict.is-sm { font-size: 12px; }
 .lc-sc-dim { opacity: .5; }
 .lc-sc-sd { stroke-width: 2.5; }
 .lc-sc-sd.is-chaos { stroke: var(--upwr-single-alt); }
 .lc-sc-sd.is-calm { stroke: var(--upwr-cat-niebo); }
 .lc-sc-sdp { stroke: var(--upwr-ink-soft); stroke-width: 2; stroke-dasharray: 4 3; }
-.lc-sc-dens { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1; }
-.lc-sc-norm { stroke: var(--upwr-ink-soft); stroke-width: 1.5; }
 .lc-sc-plot { stroke: var(--upwr-rule); stroke-width: 1; }
 .lc-sc-plot.is-a { fill: var(--upwr-sage-tint); }
 .lc-sc-plot.is-b { fill: var(--upwr-single-alt-tint); }

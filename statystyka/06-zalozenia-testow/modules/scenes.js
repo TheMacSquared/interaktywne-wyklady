@@ -1,9 +1,8 @@
 // Sceny wykładu 06: konkretne doświadczenie → werdykt testu → odsetek fałszywych alarmów.
 // Kontener: .lc-sc[data-config] wewnątrz widgetu krokowego (.lc-stepper).
-// config.kind (PROTOTYPY 6A–6E, 2026-11-09):
+// config.kind (PROTOTYPY 6B–6E, 2026-11-09; 6A odrzucony):
 //   "welch"   6D brygadzista mierzy dwie zmiany o tej samej średniej i różnym rozrzucie;
 //             te same dane idą do testu Studenta i Welcha (dwie lampki, dwa liczniki)
-//   "repair"  6A skośne czasy naprawy a norma; test t jednej próby przy n = 5/15/50
 //   "plots"   6E dwa nawozy na poletkach; rośliny jako obserwacje a średnie poletek
 //   "qq"      6B kolejka 20 osób → idealna kolejka → wykres Q-Q (kadry)
 //   "sw"      6C Shapiro-Wilk na tym samym rozkładzie przy n = 20 i n = 2000
@@ -332,127 +331,6 @@
       render: render,
       reset: function () { st.runs = []; st.N = 0; st.aS = 0; st.aW = 0; st.last = null; render(); },
       opt: function (name, v) { if (name === "n" && LAY[v]) st.lay = v; this.reset(); },
-      go: rep.go, many: rep.many
-    };
-  };
-
-  // =========================================================================
-  // PROTOTYP 6A — SERWIS: czasy naprawy są skośne, kierownik sprawdza normę
-  // Prawdziwa średnia równa się normie (H₀ prawdziwa). Test t jednej próby.
-  // Każde n ma własny licznik; przełącznik zmienia aktywny licznik.
-  // =========================================================================
-  KINDS.repair = function (cfg, api) {
-    var NORM = cfg.norm || 30, SHIFT = cfg.shift || 10, SCALE = NORM - SHIFT, ALPHA = cfg.alpha || 0.05;
-    var NS = cfg.ns || [5, 15, 50];
-    var SX0 = 190, SX1 = 610, XMIN = 0, XMAX = 140, DTOP = 56, DBASE = 118, ROW = 140, BAND = 10, AXY = 166;
-    var st = { n: String(cfg.n || NS[0]), runs: [], cnt: {}, last: null };
-    NS.forEach(function (n) { st.cnt[n] = { N: 0, a: 0 }; });
-
-    function xOf(v) { return SX0 + (SX1 - SX0) * (Math.max(XMIN, Math.min(XMAX, v)) - XMIN) / (XMAX - XMIN); }
-    // czas naprawy: 10 min przygotowania + czas wykładniczy o średniej 20 min
-    function draw1() { return SHIFT - SCALE * Math.log(1 - Math.random()); }
-
-    function measure() {
-      var n = Number(st.n), x = [], j = [];
-      for (var i = 0; i < n; i++) { x.push(draw1()); j.push(Math.random() * 2 - 1); }
-      var M = meanVar(x), t = (M.m - NORM) / Math.sqrt(M.v / n), p = p2(t, n - 1);
-      return { x: x, j: j, m: M.m, p: p, alarm: p < ALPHA, n: n };
-    }
-
-    function drawStage(g, step, d, u) {
-      personAt(g, 62, 96, "SERWIS MASZYN");
-      var done = u === undefined || u >= 1;
-      lampAt(g, 92, 214, step >= 2 && d && done ? d.alarm : null, "", ["poza normą!", "w normie"]);
-      // rozkład czasów naprawy z kart serwisowych
-      var pts = ["M", xOf(SHIFT), DBASE];
-      for (var v = SHIFT; v <= XMAX; v += 2) {
-        var f = Math.exp(-(v - SHIFT) / SCALE);
-        pts.push("L", xOf(v), DBASE - (DBASE - DTOP) * f);
-      }
-      pts.push("L", xOf(XMAX), DBASE, "Z");
-      svg("path", { d: pts.join(" "), class: "lc-sc-dens" }, g);
-      svg("rect", { x: SX0, y: ROW - BAND - 4, width: SX1 - SX0, height: 2 * BAND + 8, rx: 4, class: "lc-sc-band" }, g);
-      var nx = xOf(NORM);
-      svg("line", { x1: nx, x2: nx, y1: DTOP - 12, y2: AXY, class: "lc-sc-norm" }, g);
-      svg("text", { x: nx + 6, y: DTOP - 14, class: "lc-sc-th-t" }, g, "norma " + NORM + " min");
-      if (d) {
-        var lim = done ? d.x.length : Math.round(u * d.x.length);
-        for (var i = 0; i < lim; i++) {
-          svg("circle", { cx: xOf(d.x[i]), cy: ROW + d.j[i] * BAND * 0.8, r: 3.6, class: "lc-sc-wdot is-chaos" }, g);
-        }
-        if (done) {
-          var mx = xOf(d.m);
-          svg("line", { x1: mx, x2: mx, y1: ROW - BAND - 4, y2: ROW + BAND + 4, class: "lc-sc-mean" }, g);
-        }
-      }
-      var ticks = [];
-      for (var w = 0; w <= XMAX; w += 20) ticks.push({ x: xOf(w), label: String(w) });
-      axisX(g, SX0, SX1, AXY, ticks);
-      svg("text", { x: SX1, y: AXY + 34, "text-anchor": "end", class: "lc-sc-axtitle" }, g, "czas naprawy (min)");
-      if (d && done) {
-        svg("text", { x: SX0, y: AXY + 34, class: "lc-sc-n" }, g,
-          "n = " + d.n + " · x̄ = " + fmt(d.m, 1) + " min" + (step >= 2 ? " · " + pEq(d.p) : ""));
-      }
-      if (step >= 4) {
-        svg("line", { x1: nx, x2: nx, y1: DTOP - 12, y2: AXY, class: "lc-sc-param" }, g);
-      }
-    }
-
-    function drawLow(g, step) {
-      if (step >= 3) {
-        NS.forEach(function (n, k) {
-          var c = st.cnt[n];
-          gaugeRow(g, { x0: 60, x1: 610, y: 290 + k * 58, label: "n = " + n, N: c.N, alarms: c.a, max: 0.3,
-            ticks: k === NS.length - 1 ? [0, 0.1, 0.2, 0.3] : null, alpha: ALPHA, showAlpha: step >= 4,
-            dim: String(n) !== st.n, unit: "kontroli" });
-        });
-        if (step >= 4) {
-          svg("line", { x1: 60, x2: 82, y1: 452, y2: 452, class: "lc-sc-param" }, g);
-          svg("text", { x: 90, y: 457, class: "lc-sc-n" }, g, "μ = " + NORM + " min · α = " + fmt(100 * ALPHA, 0) + "%");
-        }
-        return;
-      }
-      if (!st.runs.length) return;
-      var X = [30, 130, 250, 370];
-      svg("text", { x: X[0], y: 290, class: "lc-sc-th-t" }, g, "kontrola");
-      svg("text", { x: X[1], y: 290, class: "lc-sc-th-t" }, g, "n");
-      svg("text", { x: X[2], y: 290, class: "lc-sc-th-t" }, g, "x̄ (min)");
-      if (step >= 2) svg("text", { x: X[3], y: 290, class: "lc-sc-th-t" }, g, "p-wartość");
-      st.runs.slice(-6).reverse().forEach(function (d, i) {
-        var y = 316 + i * 24, g2 = svg("g", { opacity: 1 - i * 0.13 }, g);
-        svg("text", { x: X[0], y: y, class: "lc-sc-log" }, g2, String(d.no));
-        svg("text", { x: X[1], y: y, class: "lc-sc-log" }, g2, String(d.n));
-        svg("text", { x: X[2], y: y, class: "lc-sc-log" }, g2, fmt(d.m, 1));
-        if (step >= 2) {
-          svg("circle", { cx: X[3] + 6, cy: y - 5, r: 6, class: d.alarm ? "lc-sc-lamp is-alarm" : "lc-sc-lamp is-ok" }, g2);
-          svg("text", { x: X[3] + 18, y: y, class: "lc-sc-log" + (d.alarm ? " is-alarm" : "") }, g2, pFmt(d.p));
-        }
-      });
-    }
-
-    function render() {
-      var step = api.step();
-      api.stage.textContent = ""; api.low.textContent = "";
-      drawStage(api.stage, step, st.last);
-      drawLow(api.low, step);
-    }
-    var no = 0;
-    function commit(d) {
-      var c = st.cnt[d.n]; c.N += 1; if (d.alarm) c.a += 1;
-      no += 1;
-      st.runs.push({ no: no, n: d.n, m: d.m, p: d.p, alarm: d.alarm });
-      if (st.runs.length > 6) st.runs.shift();
-      st.last = d;
-    }
-    var rep = repeater(api, st, measure, commit, render, drawStage);
-    return {
-      render: render,
-      reset: function () {
-        NS.forEach(function (n) { st.cnt[n] = { N: 0, a: 0 }; });
-        st.runs = []; st.last = null; no = 0; render();
-      },
-      // zmiana n nie czyści liczników: każde n ma własny
-      opt: function (name, v) { if (name === "n" && st.cnt[v]) { st.n = String(v); st.last = null; render(); } },
       go: rep.go, many: rep.many
     };
   };
