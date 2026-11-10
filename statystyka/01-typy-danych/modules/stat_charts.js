@@ -104,6 +104,18 @@
     var mix = [16, 8, 0].map(function (sh) { return Math.round((a >> sh & 255) * (1 - f) + (b >> sh & 255) * f); });
     return "#" + mix.map(function (c) { return (c < 16 ? "0" : "") + c.toString(16); }).join("");
   }
+  // Kolor z gradientu: stops = kolory, at = położenia 0..1 (domyślnie równe odstępy).
+  function gradient(stops, at, t) {
+    var pos = at || stops.map(function (c, i) { return i / (stops.length - 1); });
+    t = Math.max(0, Math.min(1, t));
+    var i = 0; while (i < pos.length - 2 && t > pos[i + 1]) i++;
+    var f = pos[i + 1] > pos[i] ? (t - pos[i]) / (pos[i + 1] - pos[i]) : 0;
+    var a = parseInt(stops[i].slice(1), 16), b = parseInt(stops[i + 1].slice(1), 16);
+    return "#" + [16, 8, 0].map(function (sh) {
+      var c = Math.round((a >> sh & 255) * (1 - f) + (b >> sh & 255) * f);
+      return (c < 16 ? "0" : "") + c.toString(16);
+    }).join("");
+  }
   function status(html) { return '<div class="lc-status" role="status" aria-live="polite">' + html + "</div>"; }
   function setValue(root, key, text) {
     root.querySelectorAll('[data-v="' + key + '"]').forEach(function (n) { n.textContent = text; });
@@ -892,6 +904,56 @@
           }));
       }
     },
+    // Ryc. 2.4 — te same dane w różnych paletach: słupki kierunków (k = 0)
+    // i mapa gęstości wzrost × waga (k = 1, jak stat_density_2d z ggplot2).
+    colors: {
+      SAFE: ["#e6194B", "#3cb44b", "#4363d8", "#f58231", "#911eb4", "#42d4f4", "#f032e6", "#bfef45", "#fabed4", "#469990",
+             "#dcbeff", "#9A6324", "#800000", "#aaffc3", "#808000", "#000075", "#a9a9a9", "#e6beff", "#ffd8b1", "#fffac8"],
+      palette: function (name, P, random) {
+        if (random) return { cat: random, seq: random.slice(0, 3) };
+        var lv = U.surveyMeta("kierunek").levels;
+        return {
+          neutral: { cat: [P.ref, P.ref, P.ref, P.ref], seq: ["#f6f3ee", P.rule, P.ref, "#3d3833"] },
+          highlight: { cat: lv.map(function (t) { return t === "Informatyka" ? P.accent : P.rule; }),
+                       seq: ["#f6f3ee", P.rule, P.rule, P.accent], at: [0, 0.5, 0.8, 1] },
+          viridis: { cat: ["#440154", "#31688e", "#35b779", "#fde725"], seq: ["#440154", "#3b528b", "#21918c", "#5ec962", "#fde725"] },
+          brewer: { cat: ["#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3"], seq: ["#ffffd9", "#c7e9b4", "#41b6c4", "#225ea8", "#081d58"] },
+          okabe_ito: { cat: ["#E69F00", "#56B4E9", "#009E73", "#CC79A7"], seq: ["#eef5fa", "#0072B2"] },
+          jupwr: { cat: ["#9c3b4a", "#d99a5b", "#3f6f9e", "#7a9b8e"], seq: ["#fbe3e5", "#eec79a", "#d99a5b", "#c85264", "#9c3b4a", "#6e2632"] }
+        }[name];
+      },
+      init: function (state) {
+        var x = U.survey("wzrost"), y = U.survey("waga");
+        var lims = [Math.min.apply(null, x), Math.max.apply(null, x), Math.min.apply(null, y), Math.max.apply(null, y)];
+        state.grid = U.kde2d(x, y, 60, lims);
+        state.zmax = Math.max.apply(null, state.grid.z.map(function (r) { return Math.max.apply(null, r); }));
+      },
+      // Zmiana palety kasuje losowe kolory (jak dawniej w R).
+      prepare: function (state, v) { if (state.pal !== v) { state.random = null; state.pal = v; } },
+      act: function (state) { state.random = shuffle(this.SAFE).slice(0, 4); },
+      noteKey: function (vals, state) { return state.random ? "random" : vals.ch2_color_palette; },
+      draw: function (v, P, k, state) {
+        var pal = this.palette(v, P, state.random);
+        if (k === 0) {
+          var lv = U.surveyMeta("kierunek").levels, n = U.counts(U.survey("kierunek"), lv);
+          var rows = catRows(n, 0.7), top = Math.max.apply(null, n) * 1.15;
+          var short = { Biologia: "Biol.", Ekonomia: "Ekon.", Informatyka: "Inf.", Psychologia: "Psych." };
+          return { x: [0.4, 4.6], y: [0, top], xName: "Kierunek", yName: "Liczebność", noXGrid: true,
+                   xLabels: catLabels(lv, function (t) { return short[t]; }),
+                   layers: [{ type: "bins", data: rows, colors: pal.cat }].concat(countTexts(rows, top, P)),
+                   aria: "Liczebności kierunków w wybranej palecie kolorów" };
+        }
+        var g = state.grid, dx = (g.x[1] - g.x[0]) / 2, dy = (g.y[1] - g.y[0]) / 2, items = [];
+        g.x.forEach(function (gx, i) { g.y.forEach(function (gy, j) {
+          items.push({ r: [gx - dx, gx + dx, gy - dy, gy + dy], color: gradient(pal.seq, pal.at, g.z[i][j] / state.zmax) });
+        }); });
+        return { x: [g.x[0] - dx, g.x[g.x.length - 1] + dx], y: [g.y[0] - dy, g.y[g.y.length - 1] + dy],
+                 xName: "Wzrost (cm)", yName: "Waga (kg)", noXGrid: true, noYGrid: true,
+                 layers: [{ type: "cells", items: items }],
+                 legend: { title: "Liczba osób", from: "mało", to: "dużo", stops: pal.seq, at: pal.at },
+                 aria: "Mapa gęstości wzrostu i wagi w wybranej palecie: najwięcej osób około 170 cm i 65 kg" };
+      }
+    },
   };
 
   // ---- Rysunek opisu --------------------------------------------------------
@@ -960,6 +1022,16 @@
                      shape: { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]) },
                      style: { fill: L.fill ? C.alpha(L.fill, L.alpha == null ? 1 : L.alpha) : "none",
                               stroke: L.stroke || null, lineWidth: L.lineWidth || 1 } };
+          } });
+      } else if (L.type === "cells") {
+        // Komórki mapy: items [{r: [x0, x1, y0, y1], color}] — kolor już policzony.
+        series.push({ type: "custom", silent: true, z: 1, clip: true, data: L.items.map(function (r, i) { return [i]; }),
+          renderItem: function (params, api) {
+            var it = L.items[params.dataIndex], a = api.coord([it.r[0], it.r[3]]), b = api.coord([it.r[1], it.r[2]]);
+            return { type: "rect", x: 0, y: 0,
+                     shape: { x: Math.floor(Math.min(a[0], b[0])), y: Math.floor(Math.min(a[1], b[1])),
+                              width: Math.ceil(Math.abs(b[0] - a[0])) + 1, height: Math.ceil(Math.abs(b[1] - a[1])) + 1 },
+                     style: { fill: it.color } };
           } });
       } else if (L.type === "arrows") {
         series.push({ type: "lines", coordinateSystem: "cartesian2d", silent: true, z: 4,
@@ -1083,6 +1155,18 @@
 
   function legendItems(legend, items) {
     legend.textContent = "";
+    if (items && !Array.isArray(items)) {
+      // Skala barw: tytuł, „mało” — gradient — „dużo”.
+      var at = items.at || items.stops.map(function (c, i) { return i / (items.stops.length - 1); });
+      var css = items.stops.map(function (c, i) { return c + " " + Math.round(at[i] * 100) + "%"; }).join(", ");
+      var wrap = document.createElement("span"), bar = document.createElement("span");
+      wrap.className = "lc01-legend-item lc01-colorbar";
+      bar.className = "lc01-colorbar-bar"; bar.style.setProperty("background", "linear-gradient(to right, " + css + ")");
+      wrap.appendChild(document.createTextNode(items.title + ": " + items.from));
+      wrap.appendChild(bar); wrap.appendChild(document.createTextNode(items.to));
+      legend.appendChild(wrap); legend.hidden = false;
+      return;
+    }
     (items || []).forEach(function (it) {
       var item = document.createElement("span"), sw = document.createElement("span");
       item.className = "lc01-legend-item";
@@ -1145,7 +1229,7 @@
         if (!spec) return;
         chart.setOption(option(spec, P, fs, els[k].clientWidth || 640), true);
         els[k].setAttribute("aria-label", spec.aria);
-        if (k === 0 && legend) legendItems(legend, spec.legend);
+        if (legend && (k === 0 || spec.legend)) legendItems(legend, spec.legend);
       });
       if (fig.update) fig.update(root, state, v);
       if (stepper && fig.text) {
@@ -1156,7 +1240,7 @@
         var tbl = root.querySelector('[data-role="table"]');
         if (tbl) tbl.innerHTML = fig.table(state, v, vals, st);
       }
-      var key = fig.noteKey ? fig.noteKey(vals) : v;
+      var key = fig.noteKey ? fig.noteKey(vals, state) : v;
       root.querySelectorAll("[data-when]").forEach(function (n) { n.hidden = n.getAttribute("data-when") !== key; });
     }
     for (var k = 0; k < els.length; k++) {

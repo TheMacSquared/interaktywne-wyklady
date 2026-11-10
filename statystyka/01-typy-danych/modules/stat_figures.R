@@ -64,6 +64,8 @@ lc01_stat_styles <- function() tags$style(HTML("
   .lc01-stat-slider { min-width: min(100%, 14em); flex: 1 1 14em; }
   .lc01-stat-slider input[type='range'] { width: 100%; accent-color: var(--upwr-accent); cursor: pointer; }
   .lc01-stat-slider output { font-family: var(--upwr-mono); color: var(--upwr-ink); }
+  .lc01-colorbar { gap: .5em; }
+  .lc01-colorbar-bar { display: inline-block; width: 9em; height: .7em; border: 1px solid var(--upwr-rule); }
   .lc01-box-sw { display: inline-block; width: .9em; height: .9em; margin-right: .4em;
     background: var(--lc-sw); vertical-align: middle; }
 "))

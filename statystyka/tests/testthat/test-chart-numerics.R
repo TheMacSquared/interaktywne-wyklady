@@ -12,6 +12,9 @@ chart_numeric_cases <- function() {
       c(1, 2, 3, 4, 10), c(170.6, 170.7, 168, 181.2, 175, 162.4),
       c(12, 15, 19, 22, 30, 41, 47, 55, 80, 120), c(-3, -1, 0, 0, 0, 1, 2, 8)
     ), function(x) list(x = array(x), grid = array(seq(min(x) - 3, max(x) + 3, length.out = 64)))),
+    kde2d = list(list(x = array(c(160, 165, 170, 172, 181, 190, 168, 175)),
+                      y = array(c(55, 60, 66, 70, 80, 92, 58, 74)), n = 7,
+                      lims = array(c(155, 195, 50, 95)))),
     seeded = list(
       list(kind = "normal", seed = 42, n = 20000, a = 165, b = 6),
       list(kind = "gamma", seed = 42, n = 20000, a = 4, b = 1),
@@ -266,4 +269,14 @@ testthat::test_that("SD, skośność, kurtoza i krzywa gęstości JS są zgodne 
     expect_chart_close(got$sd, e[2], 0, 0.03, paste(label, "SD"))
     expect_chart_close(got$skewness, e[3], 0.06, 0.08, paste(label, "skośność"))
   }
+})
+
+testthat::test_that("gęstość dwuwymiarowa JS jest zgodna z MASS::kde2d", {
+  cases <- chart_numeric_cases()
+  output <- run_chart_numerics(cases)
+  case <- cases$kde2d[[1]]
+  ref <- MASS::kde2d(numeric_values(case$x), numeric_values(case$y), n = case$n,
+                     lims = numeric_values(case$lims))$z
+  got <- do.call(rbind, lapply(output$kde2d[[1]], numeric_values))
+  expect_chart_close(as.vector(got), as.vector(ref), 1e-15, 1e-10, "kde2d")
 })

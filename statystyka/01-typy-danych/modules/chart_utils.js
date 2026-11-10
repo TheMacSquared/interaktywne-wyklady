@@ -92,6 +92,26 @@
     return out;
   }
 
+  // ---- Gęstość dwuwymiarowa jak MASS::kde2d (pasmo bandwidth.nrd, ggplot2) -----
+  function bwNrd(x) {
+    var h = (quantile7(x, 0.75) - quantile7(x, 0.25)) / 1.34;
+    return 4 * 1.06 * Math.min(sd(x), h) * Math.pow(x.length, -0.2);
+  }
+  // Siatka n × n na prostokącie lims = [x0, x1, y0, y1]; z[i][j] dla gx[i], gy[j].
+  function kde2d(x, y, n, lims) {
+    var hx = bwNrd(x) / 4, hy = bwNrd(y) / 4, gx = [], gy = [], i, j, k;
+    for (i = 0; i < n; i++) { gx.push(lims[0] + (lims[1] - lims[0]) * i / (n - 1)); gy.push(lims[2] + (lims[3] - lims[2]) * i / (n - 1)); }
+    var phi = function (t) { return Math.exp(-0.5 * t * t) / Math.sqrt(2 * Math.PI); };
+    var ax = gx.map(function (g) { return x.map(function (v) { return phi((g - v) / hx); }); });
+    var ay = gy.map(function (g) { return y.map(function (v) { return phi((g - v) / hy); }); });
+    var c = 1 / (x.length * hx * hy), z = [];
+    for (i = 0; i < n; i++) {
+      z.push([]);
+      for (j = 0; j < n; j++) { var acc = 0; for (k = 0; k < x.length; k++) acc += ax[i][k] * ay[j][k]; z[i].push(acc * c); }
+    }
+    return { x: gx, y: gy, z: z };
+  }
+
   // ---- Losowanie z ziarnem ---------------------------------------------------
   // Stałe scenariusze (dawniej set.seed() w R) mają powtarzalne dane. Sekwencje
   // nie są identyczne z R; zgodne są rozkłady i parametry.
@@ -213,6 +233,7 @@
   window.lc01 = {
     sorted: sorted, mean: mean, median: median, quantile7: quantile7, trimMean: trimMean,
     sd: sd, skewness: skewness, kurtosis: kurtosis, bwNrd0: bwNrd0, kde: kde, seeded: seeded,
+    bwNrd: bwNrd, kde2d: kde2d,
     survey: survey, surveyMeta: surveyMeta, counts: counts,
     runif: runif, sampleInt: sampleInt, rnorm: rnorm, rgammaInt: rgammaInt,
     histSeries: histSeries, histData: histData, lineLabels: lineLabels, vline: vline,

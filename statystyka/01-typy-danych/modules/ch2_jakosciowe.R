@@ -209,35 +209,28 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.4",
       title = "Jak kolory zmieniają percepcję danych",
-      lc_toolbar(
-        selectInput("ch2_color_palette", "Paleta kolorów",
-          choices = list(
-            "Kolor jako komunikat" = c(
-              "Neutralna (szara)" = "neutral",
-              "Wyróżnienie jednej kategorii" = "highlight"
-            ),
-            "Palety standardowe" = c(
-              "Viridis" = "viridis",
-              "ColorBrewer (Set2 / YlGnBu)" = "brewer",
-              "Okabe-Ito (dla daltonistów)" = "okabe_ito",
-              "jUPWR (jamovi)" = "jupwr"
-            )
-          ),
-          selected = "neutral"
-        ),
-        lc_action("ch2_color_random", "Losowe kolory", icon = "shuffle", variant = "outline")
-      ),
-      lc_plots(pair = TRUE,
-        tags$div(
-          tags$h4("Kategorie: kierunek studiów"),
-          lc_plot("ch2_color_plot")
-        ),
-        tags$div(
-          tags$h4("Dane ciągłe: wzrost × waga"),
-          lc_plot("ch2_color_heat")
-        )
-      ),
-      uiOutput("ch2_color_caption")
+      # Obie połówki rysuje stat_charts.js: wspólna paleta i losowanie kolorów.
+      lc01_stat_figure("colors", legend = TRUE,
+        control = lc_group("Paleta kolorów", lc_select("ch2_color_palette",
+          list("Kolor jako komunikat" = c("Neutralna (szara)" = "neutral",
+                                          "Wyróżnienie jednej kategorii" = "highlight"),
+               "Palety standardowe" = c("Viridis" = "viridis", "ColorBrewer (Set2 / YlGnBu)" = "brewer",
+                                        "Okabe-Ito (dla daltonistów)" = "okabe_ito", "jUPWR (jamovi)" = "jupwr")),
+          selected = "neutral", aria_label = "Paleta kolorów")),
+        toolbar = lc01_stat_action("random", "ch2_color_random", "Losowe kolory", icon = "shuffle",
+                                   variant = "outline"),
+        body = lc_plots(pair = TRUE,
+          tags$div(tags$h4("Kategorie: kierunek studiów"), lc01_stat_chart(0, ratio = "1.25/1", max_height = "360px")),
+          tags$div(tags$h4("Dane ciągłe: wzrost × waga"), lc01_stat_chart(1, ratio = "1.25/1", max_height = "360px"))),
+        selected = "neutral", notes = lapply(list(
+          neutral = "Neutralna: wszystkie kategorie równe, gęstość tylko jasnością szarości.",
+          highlight = "Wyróżnienie: uwaga przyciągana do Informatyki i do najgęstszego obszaru mapy.",
+          viridis = "Viridis: percepcyjnie równomierna, czytelna w skali szarości i dla daltonistów.",
+          brewer = "ColorBrewer: Set2 dla kategorii, YlGnBu dla wartości ciągłych.",
+          okabe_ito = "Okabe-Ito: paleta tylko dla kategorii; mapa w odcieniach jej niebieskiego.",
+          jupwr = "jUPWR: paleta wykresów z jamovi używanego na zajęciach.",
+          random = "Losowe kolory: słupki dostają przypadkowe wagi, a mapa skalę bez porządku jasności."
+        ), lc_caption))
     ),
 
     lc_p("Dane są za każdym razem te same: 60 osób na Informatyce, 51 na Biologii,
@@ -330,7 +323,6 @@ ch2_server <- function(input, output, session) {
 
   ch2_freq_step <- lc_step_server("ch2_freq", input)$step
   ch2_scenario_idx <- reactiveVal(1)
-  ch2_random_colors <- reactiveVal(NULL)
 
   # ========================================================================
   # Widget 1: Frequency table step-by-step
@@ -556,118 +548,7 @@ ch2_server <- function(input, output, session) {
     )
   })
 
-  # ========================================================================
-  # Widget 4: Color manipulation demo
-  # ========================================================================
-
-  observeEvent(input$ch2_color_random, {
-    # Paleta o gwarantowanym kontraście na białym tle
-    safe_colors <- c(
-      "#e6194B", "#3cb44b", "#4363d8", "#f58231", "#911eb4",
-      "#42d4f4", "#f032e6", "#bfef45", "#fabed4", "#469990",
-      "#dcbeff", "#9A6324", "#800000", "#aaffc3", "#808000",
-      "#000075", "#a9a9a9", "#e6beff", "#ffd8b1", "#fffac8"
-    )
-    ch2_random_colors(sample(safe_colors, 4))
-  })
-
-  # Reset random colors when palette selector changes
-  observeEvent(input$ch2_color_palette, {
-    ch2_random_colors(NULL)
-  })
-
-  # Każda paleta ma wersję dla kategorii (cat, 4 kolory w kolejności
-  # poziomów kierunku) i dla danych ciągłych (seq, kotwice od niskich
-  # do wysokich wartości; opcjonalnie seq_at — położenie kotwic 0..1).
-  ch2_palette <- reactive({
-    levels_order <- levels(student_data$kierunek)
-    rand_cols <- ch2_random_colors()
-
-    if (!is.null(rand_cols)) {
-      return(list(
-        cat = rand_cols, seq = rand_cols[1:3],
-        note = "Losowe kolory: słupki dostają przypadkowe wagi, a mapa skalę
-          bez porządku jasności."
-      ))
-    }
-
-    switch(input$ch2_color_palette,
-      neutral = list(
-        cat = rep(upwr_reference, 4),
-        seq = c("#f6f3ee", upwr_rule, upwr_reference, "#3d3833"),
-        note = "Neutralna: wszystkie kategorie równe, gęstość tylko jasnością szarości."
-      ),
-      highlight = list(
-        cat = ifelse(levels_order == "Informatyka", upwr_accent, upwr_rule),
-        seq = c("#f6f3ee", upwr_rule, upwr_rule, upwr_accent),
-        seq_at = c(0, 0.5, 0.8, 1),
-        note = "Wyróżnienie: uwaga przyciągana do Informatyki i do najgęstszego
-          obszaru mapy."
-      ),
-      viridis = list(
-        cat = c("#440154", "#31688e", "#35b779", "#fde725"),
-        seq = c("#440154", "#3b528b", "#21918c", "#5ec962", "#fde725"),
-        note = "Viridis: percepcyjnie równomierna, czytelna w skali szarości
-          i dla daltonistów."
-      ),
-      brewer = list(
-        cat = c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3"),
-        seq = c("#ffffd9", "#c7e9b4", "#41b6c4", "#225ea8", "#081d58"),
-        note = "ColorBrewer: Set2 dla kategorii, YlGnBu dla wartości ciągłych."
-      ),
-      okabe_ito = list(
-        cat = c("#E69F00", "#56B4E9", "#009E73", "#CC79A7"),
-        seq = c("#eef5fa", "#0072B2"),
-        note = "Okabe-Ito: paleta tylko dla kategorii; mapa w odcieniach jej
-          niebieskiego."
-      ),
-      # Motyw „jUPWR jasny” z jamovi-upwr (jmvcore/R/themes.R): main dla
-      # kategorii, ciepla (odwrócona: od jasnych do ciemnych) dla gęstości.
-      jupwr = list(
-        cat = c("#9c3b4a", "#d99a5b", "#3f6f9e", "#7a9b8e"),
-        seq = rev(c("#6e2632", "#9c3b4a", "#c85264", "#d99a5b", "#eec79a", "#fbe3e5")),
-        note = "jUPWR: paleta wykresów z jamovi używanego na zajęciach."
-      )
-    )
-  })
-
-  output$ch2_color_caption <- renderUI({
-    lc_caption(ch2_palette()$note)
-  })
-
-  zoom_plot_server("ch2_color_plot", reactive({
-    df_counts <- as.data.frame(table(student_data$kierunek))
-    names(df_counts) <- c("Kierunek", "n")
-    fill_colors <- setNames(ch2_palette()$cat, levels(student_data$kierunek))
-
-    ggplot(df_counts, aes(x = Kierunek, y = n, fill = Kierunek)) +
-      geom_col(color = "white", width = 0.7) +
-      geom_text(aes(label = n), vjust = -0.5, size = 5) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-      scale_fill_manual(values = fill_colors, guide = "none") +
-      scale_x_discrete(labels = c("Biologia" = "Biol.", "Ekonomia" = "Ekon.",
-                                  "Informatyka" = "Inf.", "Psychologia" = "Psych.")) +
-      labs(x = "Kierunek", y = "Liczebność")
-  }))
-
-  zoom_plot_server("ch2_color_heat", reactive({
-    pal <- ch2_palette()
-
-    ggplot(student_data, aes(x = wzrost, y = waga)) +
-      stat_density_2d(aes(fill = after_stat(density)), geom = "raster",
-                      contour = FALSE, n = 120) +
-      scale_fill_gradientn(
-        colours = pal$seq, values = pal$seq_at,
-        breaks = function(lim) lim, labels = c("mało", "dużo"),
-        name = "Liczba osób",
-        guide = guide_colourbar(title.position = "top", title.hjust = 0.5,
-                                barwidth = unit(9, "lines"), barheight = unit(0.6, "lines"))
-      ) +
-      scale_x_continuous(expand = c(0, 0)) +
-      scale_y_continuous(expand = c(0, 0)) +
-      labs(x = "Wzrost (cm)", y = "Waga (kg)") +
-      theme(legend.position = "bottom")
-  }))
+  # Ryc. 2.4 (palety kolorów) rysuje stat_charts.js.
 
 
   # ========================================================================

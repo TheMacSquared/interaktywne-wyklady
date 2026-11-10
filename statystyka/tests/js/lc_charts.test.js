@@ -915,3 +915,29 @@ test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę;
   assert.equal(env.live.size, 0);
   assert.equal(env.errors.length, 0);
 });
+
+test("palety kolorów (01, Ryc. 2.4): losowanie i zmiana palety przełączają opis i mapę", () => {
+  const env = environment();
+  env.window.lc01Survey = { n: 6, columns: {
+    kierunek: { label: "Kierunek", levels: ["Biologia", "Ekonomia", "Informatyka", "Psychologia"], values: [1, 2, 3, 3, 4, 1] },
+    wzrost: { label: "Wzrost (cm)", values: [160, 165, 170, 175, 180, 185] },
+    waga: { label: "Waga (kg)", values: [55, 60, 66, 70, 80, 90] }
+  } };
+  env.load("01-typy-danych/modules/chart_utils.js");
+  env.load("01-typy-danych/modules/stat_charts.js");
+  const select = new Element("select", { id: "ch2_color_palette", value: "neutral" });
+  const random = new Element("button", { "data-stat-act": "random" });
+  const legend = new Element("div", { class: "lc01-legend" });
+  const notes = ["neutral", "viridis", "random"].map(k => new Element("div", { "data-when": k }));
+  const fig = root("lc01-stat", [root("lc01-stat-ctl", [select]), random, legend, ecbox("0"), ecbox("1"), ...notes], { "data-fig": "colors" });
+  env.mount(fig);
+  assert.equal(env.errors.length, 0);
+  assert.deepEqual(notes.map(n => n.hidden), [false, true, true]);
+  assert.equal(legend.hidden, false, "skala barw mapy jest widoczna");
+  fig.emit("click", { target: random });
+  assert.deepEqual(notes.map(n => n.hidden), [true, true, false], "losowe kolory mają własny opis");
+  select.value = "viridis"; fig.querySelector(".lc01-stat-ctl").emit("change");
+  assert.deepEqual(notes.map(n => n.hidden), [true, false, true], "zmiana palety kasuje losowe kolory");
+  env.unmount(fig);
+  assert.equal(env.live.size, 0);
+});

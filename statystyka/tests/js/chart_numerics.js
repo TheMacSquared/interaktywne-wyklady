@@ -43,6 +43,7 @@ const output = {
     sd: U.sd(x), skewness: U.skewness(x), kurtosis: U.kurtosis(x), bw: U.bwNrd0(x),
     density: U.kde(x, grid[0], grid[grid.length - 1], grid.length).map(p => p[1])
   })),
+  kde2d: (input.kde2d || []).map(({ x, y, n, lims }) => U.kde2d(x, y, n, lims).z),
   seeded: (input.seeded || []).map(({ kind, seed, n, a, b }) => {
     const g = U.seeded(seed), values = kind === "normal" ? g.rnorm(n, a, b) : g.rgamma(n, a, b);
     const again = kind === "normal" ? U.seeded(seed).rnorm(n, a, b) : U.seeded(seed).rgamma(n, a, b);
