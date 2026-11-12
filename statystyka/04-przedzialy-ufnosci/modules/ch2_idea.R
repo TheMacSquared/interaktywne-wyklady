@@ -52,6 +52,60 @@ ch2_ui <- list(
       colors = c("accent", "param")
     ),
 
+    # Pełne wyprowadzenie: od standaryzacji przez algebrę nierówności do t*.
+    lc_more("Wyprowadzenie krok po kroku",
+
+      lc_p("Zapiszmy to przejście dla dowolnego poziomu ufności. Poziom ufności
+        oznaczamy 1 − α, więc dla 95% α = 0.05. Liczba \\(z_{\\alpha/2}\\) to
+        wartość, powyżej której leży α/2 rozkładu normalnego standardowego.
+        Dla 95% powyżej leży 0.025, a poniżej minus tej wartości drugie 0.025,
+        stąd \\(z_{0.025} = 1.96\\)."),
+
+      lc_p("Krok 1. Standaryzujemy średnią: odejmujemy jej środek μ i dzielimy
+        przez błąd standardowy. Z centralnego twierdzenia granicznego wynik ma
+        w przybliżeniu rozkład normalny standardowy:"),
+      lc_formula_box("$$Z = \\frac{\\bar{X} - \\mu}{\\sigma/\\sqrt{n}} \\sim N(0,\\,1)$$"),
+
+      lc_p("Krok 2. W rozkładzie N(0, 1) środkowy pas od \\(-z_{\\alpha/2}\\)
+        do \\(z_{\\alpha/2}\\) ma prawdopodobieństwo 1 − α:"),
+      lc_formula_box("$$P\\left(-z_{\\alpha/2} \\le Z \\le z_{\\alpha/2}\\right) = 1 - \\alpha$$"),
+
+      lc_p("Krok 3. W miejsce Z wstawiamy jego definicję:"),
+      lc_formula_box("$$P\\left(-z_{\\alpha/2} \\le \\frac{\\bar{X} - \\mu}{\\sigma/\\sqrt{n}} \\le z_{\\alpha/2}\\right) = 1 - \\alpha$$"),
+
+      lc_p("Krok 4. Mnożymy wszystkie trzy części przez \\(\\sigma/\\sqrt{n}\\).
+        Ta liczba jest dodatnia, więc kierunek nierówności się nie zmienia:"),
+      lc_formula_box("$$P\\left(-z_{\\alpha/2} \\cdot \\frac{\\sigma}{\\sqrt{n}} \\le \\bar{X} - \\mu \\le z_{\\alpha/2} \\cdot \\frac{\\sigma}{\\sqrt{n}}\\right) = 1 - \\alpha$$"),
+
+      lc_p("Krok 5. Odejmujemy \\(\\bar{X}\\) od wszystkich trzech części,
+        żeby w środku zostało samo μ, na razie ze znakiem minus:"),
+      lc_formula_box("$$P\\left(-\\bar{X} - z_{\\alpha/2} \\cdot \\frac{\\sigma}{\\sqrt{n}} \\le -\\mu \\le -\\bar{X} + z_{\\alpha/2} \\cdot \\frac{\\sigma}{\\sqrt{n}}\\right) = 1 - \\alpha$$"),
+
+      lc_p("Krok 6. Mnożymy przez −1. Mnożenie przez liczbę ujemną odwraca
+        nierówności, więc lewy i prawy koniec zamieniają się miejscami:"),
+      lc_formula_box("$$P\\left(\\bar{X} - z_{\\alpha/2} \\cdot \\frac{\\sigma}{\\sqrt{n}} \\le \\mu \\le \\bar{X} + z_{\\alpha/2} \\cdot \\frac{\\sigma}{\\sqrt{n}}\\right) = 1 - \\alpha$$"),
+
+      lc_p("Na każdym kroku zmieniał się tylko zapis, a zdarzenie pozostawało to
+        samo, dlatego prawdopodobieństwo wciąż wynosi 1 − α. Po wylosowaniu
+        próby wstawiamy zaobserwowaną średnią \\(\\bar{x}\\) i dostajemy
+        przedział \\(\\bar{x} \\pm z_{\\alpha/2} \\cdot \\sigma/\\sqrt{n}\\).
+        Dla α = 0.05 jest to wzór z 1.96 zapisany powyżej."),
+
+      lc_p("Krok 7. Gdy σ nie znamy, w kroku 1 wstawiamy odchylenie standardowe
+        z próby s. Taka statystyka nie ma już rozkładu normalnego, tylko rozkład
+        t-Studenta z n − 1 stopniami swobody. Dokładnie tak jest, gdy wartości
+        w populacji mają rozkład normalny, a w przybliżeniu także w innych
+        przypadkach, jeśli próba jest duża:"),
+      lc_formula_box("$$T = \\frac{\\bar{X} - \\mu}{s/\\sqrt{n}} \\sim t_{n-1}$$"),
+
+      lc_p("Kroki 2–6 przebiegają tak samo, tylko w miejsce \\(z_{\\alpha/2}\\)
+        wchodzi kwantyl rozkładu t, \\(t^* = t_{\\alpha/2,\\,n-1}\\):"),
+      lc_formula_box("$$\\bar{x} \\pm t_{\\alpha/2,\\,n-1} \\cdot \\frac{s}{\\sqrt{n}}$$"),
+
+      lc_p("Przy n = 25 i 95% ufności \\(t_{0.025,\\,24} = 2.06\\). Z tego wzoru
+        korzystają scena z siatkami w następnej sekcji i rozdział 3.")
+    ),
+
     # Ta sama odległość czytana od μ i od x̄ (Ryc. 2.1, fig_2a_ui w figures_ch2.R)
     fig("2a"),
 
