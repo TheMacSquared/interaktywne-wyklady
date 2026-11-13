@@ -160,8 +160,10 @@ pełna biblioteka). Do zakończenia migracji obie biblioteki działają obok
 siebie w tym samym `lcCharts`; nowe i przepisywane widgety używają ECharts.
 Stan: wykłady 01, 02, 03 i 05 bez Chart.js; zostaje 04 (warianty B, ECharts
 ma już Ryc. 4.2).
-Analiza ryzyka zostaje na razie przy Chart.js (osobna decyzja). Wykresy R,
-których na razie nie przenosimy, są w wersji offline zamrożone.
+Analiza ryzyka przechodzi na ECharts wykład po wykładzie (decyzja 2026-11-13,
+pilot: 04 — sceny i wszystkie wykresy, ryciny `lcSF`); wykresy Chart.js w 05
+działają obok. Wykresy R, których na razie nie przenosimy, są w wersji offline
+zamrożone.
 
 - Wykres to `<div class="lc-ec" data-role="…" role="img" aria-label="…">`
   zamiast `<canvas>`; rozmiar nadaje kontener w CSS (`position: absolute;

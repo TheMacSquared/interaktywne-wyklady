@@ -415,14 +415,16 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             answer = "(a) \\(\\approx 0.133\\); (b) \\(\\approx 0.273\\); (c) \\(\\approx 0.677\\); (d) \\(\\approx 0.323\\). Mniej więcej jedna partia na trzy ma trzy lub więcej niesprawnych zaworów."
           ),
           risk_try("przy \\(n = 10\\), \\(p = 0.2\\) i \\(k = 2\\) odczytaj wynik dla „Dokładnie k”. Potem przełącz na „Co najmniej k” i ustaw \\(k = 3\\). Na koniec przesuń \\(p\\) do 0.5, a potem do 0.9, i obserwuj, jak przesuwa się cały rozkład."),
-          risk_widget_panel(
-            "Rozkład", "Liczba niesprawnych zaworów",
-            tagList(
-              lc_slider("p4_n", "n", 5, 25, 10, 1), lc_slider("p4_p", "p", 0, 1, .2, .01),
-              lc_slider("p4_k", "k", 0, 10, 2, 1),
-              selectInput("p4_query", "Pytanie", c("Dokładnie k" = "exactly", "Co najmniej k" = "at_least", "Najwyżej k" = "at_most"))
-            ),
-            "p4_binom", "p4_binom_stats"
+          figure_panel(label = "Rozkład", title = "Liczba niesprawnych zaworów", width_mode = "wide",
+            lc_sf_figure("p4_binom",
+              control = list(
+                lc_sf_slider("p4_n", "n", 5, 25, 10, 1), lc_sf_slider("p4_p", "p", 0, 1, .2, .01),
+                lc_sf_slider("p4_k", "k", 0, 10, 2, 1),
+                lc_segmented("p4_query", "Pytanie", c("Dokładnie k" = "exactly", "Co najmniej k" = "at_least",
+                  "Najwyżej k" = "at_most"))
+              ),
+              toolbar = lc_readouts(p4_sf_read("bi1", "Prawdopodobieństwo", upwr_accent)),
+              ratio = "2/1", max_height = "380px", legend = TRUE)
           ),
           "Przy domyślnych ustawieniach (\\(n = 10\\), \\(p = 0.2\\)) widget pokazuje 0.302 dla „dokładnie 2” i 0.322 dla „co najmniej 3”. Rozkład jest prawostronnie skośny: nie może zejść poniżej zera, ale ciągnie się w prawo — jak partia stu zaworów z przykładu 4.5, tylko na mniejszej liczbie prób. Przy \\(p = 0.5\\) staje się symetryczny wokół 5, a przy \\(p = 0.9\\) odwraca się: skupia się przy 10 i ciągnie w lewo.",
           risk_check("p4_chk_ogon",
@@ -448,9 +450,16 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
         id = "powtorzenia", title = "Średnia nie jest prognozą",
         body = list(
           risk_try("odczytaj, jak wysoki jest słupek przy dwóch wadach w porównaniu z pozostałymi. Histogram pokazuje 500 partii po \\(n = 100\\) zaworów przy \\(p = 0.02\\), więc linia wartości oczekiwanej stoi przy 2. Potem kilka razy wylosuj partie od nowa ikoną ze strzałkami: parametry się nie zmieniają, więc każda różnica między histogramami to sama losowość. Zwróć uwagę, co się przesuwa, a co zostaje."),
-          risk_widget_panel(
-            "Powtórzenia", "500 partii przy tych samych parametrach",
-            lc_action("p4_batches_redraw", icon = "shuffle", variant = "ghost", aria_label = "Wylosuj jeszcze raz"), "p4_batches_plot", "p4_batches_stats"
+          figure_panel(label = "Powtórzenia", title = "500 partii przy tych samych parametrach", width_mode = "wide",
+            lc_sf_figure("p4_batches",
+              toolbar = tagList(
+                lc_sf_action("redraw", "p4_batches_redraw", icon = "shuffle", variant = "ghost", aria_label = "Wylosuj jeszcze raz"),
+                lc_readouts(p4_sf_read("ba1", "E(X)"), p4_sf_read("ba2", "Średnia w symulacji", upwr_accent),
+                  p4_sf_read("ba3", "Dokładnie 2"), p4_sf_read("ba4", "Zakres"))
+              ),
+              ratio = "2/1", max_height = "380px",
+              # Pierwsze losowanie ze stałym ziarnem (liczby w narracji), kolejne w przeglądarce.
+              config = list(first = local({ set.seed(2404); rbinom(500, 100, 0.02) })))
           ),
           "Przy \\(n = 100\\) i \\(p = 0.02\\) prawie wszystkie z 500 symulowanych partii mają od 0 do kilku niesprawnych zaworów. Najczęstszy wynik to dokładnie dwie wady: model daje mu około 27% partii, czyli wciąż mniejszość. Zero wad powinno mieć około 13% partii, a średnia z symulacji ląduje bardzo blisko linii \\(E(X) = 2\\). Każde losowanie daje trochę inne liczby; stabilny jest środek histogramu, a pojedyncze partie rozrzucają się wokół niego szeroko.",
           p4_proto_batches_ui,
@@ -523,9 +532,11 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             answer = "(a) \\(\\approx 0.867\\); (b) 35 kontroli; (c) 114 kontroli. Przejście od „raczej zobaczymy wadę” do „prawie na pewno zobaczymy” wymaga ponad trzykrotnie więcej prób."
           ),
           risk_try("przy \\(p = 0.02\\) odczytaj wartość dla \\(n = 100\\) i porównaj z przykładem 4.7(a). Następnie zmniejsz \\(p\\) do 0.005 i sprawdź, jak zmienia się kształt krzywej i wartość dla \\(n = 100\\)."),
-          risk_widget_panel(
-            "Krzywa", "Ryzyko wraz z liczbą prób",
-            lc_slider("p4_curve_p", "p niesprawności", .001, .10, .02, .001), "p4_one", "p4_one_stats"
+          figure_panel(label = "Krzywa", title = "Ryzyko wraz z liczbą prób", width_mode = "wide",
+            lc_sf_figure("p4_one",
+              control = lc_sf_slider("p4_curve_p", "p niesprawności", .001, .10, .02, .001),
+              toolbar = lc_readouts(p4_sf_read("on1", "Dla n=100", upwr_accent)),
+              ratio = "2/1", max_height = "380px")
           ),
           "Krzywa rośnie szybko na początku i coraz wolniej zbliża się do 1: każda kolejna próba dokłada coraz mniej, bo dopełnienie \\((1 - p)^{n}\\) maleje geometrycznie. Przy \\(p = 0.005\\) wartość dla \\(n = 100\\) spada do około 0.394, ale na prawym końcu wykresu, przy \\(n = 300\\), sięga już około 0.778. Czterokrotnie mniejsze p nie daje czterokrotnie mniejszego ryzyka serii.",
           risk_check("p4_chk_jedna",
@@ -737,65 +748,7 @@ proby_server <- function(input, output, session) {
       messages[[input$p4_scenario]]
     )
   })
-  # k nie może przekroczyć n: zakres suwaka k idzie za n.
-  observeEvent(input$p4_n, {
-    updateSliderInput(session, "p4_k", max = input$p4_n, value = min(input$p4_k, input$p4_n))
-  }, ignoreInit = TRUE)
-  binom_plot <- reactive({
-    x <- 0:input$p4_n
-    dat <- data.frame(x, p = dbinom(x, input$p4_n, input$p4_p))
-    selected <- switch(input$p4_query,
-      exactly = x == input$p4_k,
-      at_least = x >= input$p4_k,
-      at_most = x <= input$p4_k
-    )
-    dat$part <- ifelse(selected, "Odpowiedź", "Pozostałe")
-    ggplot(dat, aes(x, p, fill = part)) +
-      geom_col() +
-      scale_fill_manual(values = c(Odpowiedź = upwr_accent, Pozostałe = upwr_reference)) +
-      scale_x_continuous(breaks = function(l) seq(0, input$p4_n, by = if (input$p4_n > 15) 2 else 1)) +
-      labs(x = "Liczba niesprawnych", y = "Prawdopodobieństwo", fill = NULL) +
-      theme_upwr()
-  })
-  zoom_plot_server("p4_binom", binom_plot, alt = "Słupkowy rozkład dwumianowy z wyróżnionym zakresem odpowiedzi.")
-  output$p4_binom_stats <- renderUI({
-    k <- min(input$p4_k, input$p4_n)
-    tagList(
-      lc_readout("Prawdopodobieństwo", risk_fmt_p(risk_binomial_probability(input$p4_n, input$p4_p, k, input$p4_query)), color = upwr_accent)
-    )
-  })
-  # Pierwsze losowanie ze stałym ziarnem (liczby w narracji), kolejne po każdym kliknięciu.
-  batches <- reactive({
-    if (input$p4_batches_redraw == 0) set.seed(2404)
-    rbinom(500, 100, 0.02)
-  })
-  batches_plot <- reactive(ggplot(data.frame(x = batches()), aes(x)) +
-    geom_histogram(binwidth = 1, boundary = -.5, fill = upwr_secondary, colour = "white") +
-    geom_vline(xintercept = 2, colour = upwr_accent, linewidth = 1) +
-    scale_x_continuous(breaks = 0:12) +
-    coord_cartesian(xlim = c(-0.5, 9.5), ylim = c(0, 170)) +
-    labs(x = "Liczba niesprawnych", y = "Liczba partii") +
-    theme_upwr())
-  zoom_plot_server("p4_batches_plot", batches_plot, alt = "Histogram liczby niesprawnych w wielu partiach z linią wartości oczekiwanej.")
-  output$p4_batches_stats <- renderUI(tagList(
-    lc_readout("E(X)", 2),
-    lc_readout("Średnia w symulacji", sprintf("%.2f", mean(batches())), color = upwr_accent),
-    lc_readout("Dokładnie 2", sprintf("%.0f%%", 100 * mean(batches() == 2))),
-    lc_readout("Zakres", paste(range(batches()), collapse = "–"))
-  ))
-  one_plot <- reactive({
-    n <- 1:300
-    ggplot(data.frame(n, p = vapply(n, risk_at_least_one, numeric(1), p = input$p4_curve_p)), aes(n, p)) +
-      geom_line(colour = upwr_accent, linewidth = 1.1) +
-      labs(x = "Liczba prób", y = "P(X ≥ 1)") +
-      theme_upwr()
-  })
-  zoom_plot_server("p4_one", one_plot, alt = "Rosnąca krzywa prawdopodobieństwa co najmniej jednej niesprawności.")
-  output$p4_one_stats <- renderUI(tagList(
-    lc_readout("Dla n=100", risk_fmt_p(risk_at_least_one(100, input$p4_curve_p)), color = upwr_accent)
-  ))
+  # Rozkład, Powtórzenia i Krzywa rysuje przeglądarka (modules/wykresy.js).
   risk_assessment_server("p4", proby_quiz, input, output)
   p4_proto_charts_server(input, output, session)
-  p4_proto_scenes_server(input, output, session)
-  p4_proto_tally_server(input, output, session)
 }

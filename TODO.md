@@ -133,7 +133,9 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   most `ci_echarts.R` / `ci_echarts.js` (obliczenia w R, rysunek w JS).
   - [ ] Migracja statystyki z Chart.js na ECharts (decyzja 2026-11-05:
     renderer SVG, canvas dla tysięcy punktów; pełny `echarts.min.js`
-    z cdnjs; analiza ryzyka zostaje przy Chart.js). Wspólna obsługa
+    z cdnjs). Analiza ryzyka od 2026-11-13 też na ECharts: 04 w całości
+    (sceny `sceny.js`, wykresy `wykresy.js` na `lcSF`, offline 7.5 → 3.1 MB);
+    dalej 05 → 03 → 02 → 01. Wspólna obsługa
     w `lc_charts.js` gotowa. Wykłady 01, 02, 03 i 05 w całości na ECharts
     (2026-11-05; mostek offline `widgets/01-ch2-jakosciowe.js` też), 04 od
     2026-11-09. Wykłady statystyki nie ładują już Chart.js (poza

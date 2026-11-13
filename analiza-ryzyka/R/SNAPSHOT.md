@@ -17,3 +17,10 @@ sekcja „Wzór ze znacznikami” w `shared_styles.css` i plik `lc_formula.js`
 skopiowane ze `statystyka/R/` bez zmian. `risk_formula()` w `risk_block.R`
 przyjmuje `notes` / `note_colors` / `above` i wtedy rysuje wzór ze znacznikami
 z numerem przy prawej krawędzi (styl `.lc-fa-tex > .lc-formula-num`).
+
+Synchronizacja 13 listopada 2026 r.: `lc_charts.js` (ECharts obok Chart.js:
+`chart()`, `ecAxis()`, `ecPointer()`, `ecName()`), `lc_stat_figures.R` / `.js`
+(silnik rycin liczonych w przeglądarce, `window.lcSF`) i `lc_dist.js`
+(rozkłady i losowanie, `window.lcDist`) skopiowane ze `statystyka/R/` bez zmian
+poza nagłówkiem. Wykresy Chart.js w 05 działają po staremu; wykresy 04
+korzystają z `lcSF` na ECharts 6.1.0, więc działają też offline.

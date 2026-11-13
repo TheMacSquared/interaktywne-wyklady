@@ -41,6 +41,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "bananpol.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_math.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_block.R"), local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_wykresy.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_sceny.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_tabliczka.R"), local = TRUE)
@@ -59,7 +60,17 @@ ui <- lecture_page(
   # Zapisy matematyczne w zwykłym tekście (\\( … \\) w akapicie albo punkcie listy)
   # dostają jasne tło z ramką, żeby było je widać na rzutniku. Wzory numerowane
   # i opisy pod nimi stoją w <div>, więc reguła ich nie dotyczy.
-  header_extras = tags$style(HTML("
+  # Sceny (modules/sceny.js) i wykresy (modules/wykresy.js, ECharts przez lcSF)
+  # rysuje przeglądarka, bez obliczeń w R, więc działają też offline.
+  header_extras = tagList(
+    includeScript(file.path(app_dir, "modules", "sceny.js")),
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
+    includeScript(file.path(project_root, "R", "lc_dist.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "wykresy.js")),
+    lc_sf_styles(),
+    tags$style(HTML("
     :is(p, li) > .MathJax {
       background: var(--upwr-surface);
       border: 1px solid var(--upwr-rule);
@@ -69,7 +80,7 @@ ui <- lecture_page(
     }
     /* Ramki rozpychają wyjustowany tekst, więc akapity z matematyką wyrównujemy do lewej. */
     :is(p, li):has(> .MathJax) { text-align: left; }
-  "))
+  ")))
 )
 
 server <- function(input, output, session) {
