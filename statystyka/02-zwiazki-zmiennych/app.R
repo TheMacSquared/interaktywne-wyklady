@@ -45,7 +45,9 @@ source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
 source(file.path(project_root, "R", "shared.R"),         local = TRUE)
 source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "ankieta.R"),        local = TRUE)
-source(file.path(project_root, "R", "lc_ggplot_echarts.R"), local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
+# Ankieta w przeglądarce (window.lc01Survey): ten sam eksport co w wykładzie 01.
+source(file.path(project_root, "01-typy-danych", "modules", "survey_data.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
 
@@ -71,15 +73,22 @@ ui <- lecture_page(
   module_label  = "Statystyka",
   chapters      = .chapters,
   # Sceny SVG (kontrola drogowa, pensje w branżach, staż a pensja): rozdz. 2–4.
-  # ECharts do wykresów rozrzutu (Ryc. 4.3, 4.4, 5.3, 5.4): scatter_charts.js.
+  # ECharts do wykresów rozrzutu (Ryc. 4.3, 4.4, 5.3, 5.4): scatter_charts.js;
+  # tabela krzyżowa i pudełka w grupach (Ryc. 2.2, 3.2): survey_charts.js.
   header_extras = tagList(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
-    # Wykresy ggplot w ECharts (Ryc. tabeli krzyżowej i pudełek): most z R/.
-    includeScript(file.path(project_root, "R", "lc_ggplot_echarts.js")),
     includeScript(file.path(app_dir, "modules", "scatter_charts.js")),
+    # Ryciny na danych ankiety liczone w przeglądarce (Ryc. 2.2 i 3.2):
+    # dane i rachunki jak w wykładzie 01 (survey_data.R, chart_utils.js),
+    # rysunek: wspólny silnik lc_stat_figures.js.
+    lc01_survey_script(),
+    includeScript(file.path(project_root, "01-typy-danych", "modules", "chart_utils.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "survey_charts.js")),
+    lc_sf_styles(),
     tags$style(HTML("
       .lc-scat-canvas { position: relative; aspect-ratio: 1.8 / 1; touch-action: none; }
       .lc-scat-canvas > .lc-ec { position: absolute; inset: 0; }

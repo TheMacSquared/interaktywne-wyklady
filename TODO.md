@@ -147,17 +147,16 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     Ryc. 2.1 i 4.2 oraz sceny SVG.
   - [x] Most ggplot → ECharts we wspólnym `statystyka/R/lc_ggplot_echarts.*`
     (2026-11-09); wykład 02 w całości na ECharts (tabela krzyżowa, pudełka).
+    Od 2026-11-13 wykład 02 działa w całości offline: tabela krzyżowa i pudełka
+    w `survey_charts.js` na danych ankiety z wykładu 01; mostu już nie ładuje.
   - [x] Statystyka 01: wszystkie 30 wykresów ggplot przepisane w JS na danych
     ankiety (`stat_charts.js`, dane w stronie przez `survey_data.R`), 2026-11-10.
     Ryciny działają offline; opisy dla danych ankiety liczone w R z góry.
-  - [ ] Statystyka 03: wykresy R przepisywane w JS (prototypy przyjęte
-    2026-11-06). Etap 1 (2026-11-10): 11 rycin rozkładów teoretycznych
-    (Ryc. 3.4, 3.8, 3.11, 3.12, 4.6, 4.8, 5.2, 5.6, 5.11, 5.12, 5.14) we wspólnym
-    silniku `statystyka/R/lc_stat_figures.*` z rozkładami `R/lc_dist.js`.
-    Etap 2a (2026-11-13): symulacje rozdziałów głównych (Ryc. 1.3, 1.4, 3.1,
-    4.1, 6.4) w `modules/sim_charts.js`, losowanie `lcDist.rng()` i `lcDist.kde`.
-    Zostało 12, wszystkie w `stops_*`: etap 2b — symulacje (1.1, rozdz. 3–6),
-    etap 3 — loterie z rozdz. 2.
+  - [x] Statystyka 03: wszystkie wykresy R przepisane w JS (2026-11-13). Rozkłady
+    teoretyczne w `dist_charts.js`, symulacje w `sim_charts.js`, punkty stop
+    w `stops12/34/56_charts.js`, wspólny silnik `statystyka/R/lc_stat_figures.*`,
+    rozkłady i losowanie `R/lc_dist.js`. Ryc. 1.2 (lejek) nadal dostaje serie
+    z serwera.
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).
   - [ ] Statystyka 03 offline, Ryc. 1.2 (lejek): odczyty przechodzą zapisane
     stany, ale wykres zostaje pusty — serie przychodzą z serwera

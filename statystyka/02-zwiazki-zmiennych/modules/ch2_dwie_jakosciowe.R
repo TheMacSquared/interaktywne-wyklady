@@ -75,37 +75,49 @@ ch2_ui <- list(
       label = "Ryc. 2.2",
       title = "Tabela krzyżowa",
       width_mode = "text",
-      lc_toolbar(
-        lc_group("Wiersze × kolumny",
-          tags$div(class = "lc-xt-pair",
-            lc_select("ch2_cross_row", cross_choices, selected = "plec",
-                      aria_label = "Zmienna w wierszach"),
-            tags$span(class = "lc-xt-times", `aria-hidden` = "true", "×"),
-            lc_select("ch2_cross_col", cross_choices, selected = "kierunek",
-                      aria_label = "Zmienna w kolumnach"),
-            lc_action("ch2_cross_swap", icon = "shuffle", variant = "ghost",
-                      aria_label = "Zamień wiersze z kolumnami")
-          )
-        ),
-        tags$div(class = "lc-push",
-          lc_segmented("ch2_cross_type", NULL,
-            choices = c("Liczebności" = "counts",
-                        "% wierszowe" = "row_pct",
-                        "% kolumnowe" = "col_pct"),
-            selected = "counts"
+      # Tabela, podpis, legenda i wykres liczą się w przeglądarce
+      # (survey_charts.js, rycina „d02-xt”); kliknięcie komórki zmienia odczyt.
+      lc_sf_figure("d02-xt", bare = TRUE, config = list(
+          labels = as.list(setNames(names(cross_choices), cross_choices)),
+          short = list(kierunek = list(Biologia = "Biol.", Ekonomia = "Ekon.",
+                                       Informatyka = "Inf.", Psychologia = "Psych."))),
+        body = tagList(
+          lc_toolbar(
+            lc_group("Wiersze × kolumny",
+              tags$div(class = "lc-xt-pair",
+                lc_sf_ctl(lc_select("ch2_cross_row", cross_choices, selected = "plec",
+                                    aria_label = "Zmienna w wierszach")),
+                tags$span(class = "lc-xt-times", `aria-hidden` = "true", "×"),
+                lc_sf_ctl(lc_select("ch2_cross_col", cross_choices, selected = "kierunek",
+                                    aria_label = "Zmienna w kolumnach")),
+                lc_sf_action("swap", "ch2_cross_swap", icon = "shuffle", variant = "ghost",
+                             aria_label = "Zamień wiersze z kolumnami")
+              )
+            ),
+            tags$div(class = "lc-push",
+              lc_sf_ctl(lc_segmented("ch2_cross_type", NULL,
+                choices = c("Liczebności" = "counts",
+                            "% wierszowe" = "row_pct",
+                            "% kolumnowe" = "col_pct"),
+                selected = "counts"
+              ))
+            )
+          ),
+          tags$div(`data-role` = "table"),
+          tags$div(`data-role` = "caption", `aria-live` = "polite"),
+          tags$div(class = "lc-xt-bar is-plain",
+            tags$div(`data-role` = "legend"),
+            lc_sf_ctl(lc_segmented("ch2_cross_chart", NULL,
+              choices = c("Słupki" = "bar", "Mapa ciepła" = "heatmap"),
+              selected = "bar"
+            ))
+          ),
+          tags$div(style = "position:relative",
+            tags$div(class = "lc-sf-zoom", lc_chart_zoom_button()),
+            lc_sf_chart(0, ratio = "2.2/1", max_height = "440px")
           )
         )
-      ),
-      uiOutput("ch2_cross_table"),
-      uiOutput("ch2_cross_caption"),
-      tags$div(class = "lc-xt-bar is-plain",
-        uiOutput("ch2_cross_legend", inline = TRUE),
-        lc_segmented("ch2_cross_chart", NULL,
-          choices = c("Słupki" = "bar", "Mapa ciepła" = "heatmap"),
-          selected = "bar"
-        )
-      ),
-      lc_ec_plot_ui("ch2_cross_plot")
+      )
     ),
 
     lc_p("Same liczebności łatwo źle odczytać, tak jak w kontroli drogowej.
@@ -155,147 +167,6 @@ ch2_server <- function(input, output, session) {
       i 31% mężczyzn: różnica jest, ale dużo mniejsza, niż sugerowały liczby.")
   ))
 
-  # ========================================================================
-  # Tabela krzyżowa (ankieta)
-  # ========================================================================
-
-  cross_labels <- c("plec" = "Płeć", "kierunek" = "Kierunek", "grupa_krwi" = "Grupa krwi")
-  cross_short <- list(kierunek = c("Biologia" = "Biol.", "Ekonomia" = "Ekon.",
-                                   "Informatyka" = "Inf.", "Psychologia" = "Psych."))
-  cross_measure <- c("counts" = "n", "row_pct" = "row", "col_pct" = "col")
-  cross_target <- reactiveVal(c(1L, 1L))
-  cross_prev <- reactiveVal(c(row = "plec", col = "kierunek"))
-
-  # Ta sama zmienna w wierszach i kolumnach: druga lista dostaje poprzednią
-  # wartość pierwszej (zmiana wybranej zmiennej działa jak zamiana).
-  observeEvent(list(input$ch2_cross_row, input$ch2_cross_col), {
-    r <- input$ch2_cross_row
-    k <- input$ch2_cross_col
-    req(r, k)
-    p <- cross_prev()
-    if (identical(r, k)) {
-      if (!identical(r, p[["row"]])) {
-        k <- p[["row"]]
-        updateSelectInput(session, "ch2_cross_col", selected = k)
-      } else {
-        r <- p[["col"]]
-        updateSelectInput(session, "ch2_cross_row", selected = r)
-      }
-    }
-    cross_prev(c(row = r, col = k))
-  })
-
-  observeEvent(input$ch2_cross_swap, {
-    updateSelectInput(session, "ch2_cross_row", selected = input$ch2_cross_col)
-  })
-
-  output$ch2_cross_legend <- renderUI({
-    tbl <- cross_tab()
-    if (identical(input$ch2_cross_chart, "heatmap")) return(NULL)
-    lc_legend(cross_labels[[input$ch2_cross_col]], colnames(tbl), upwr_cat_n(ncol(tbl)))
-  })
-  observeEvent(input$ch2_cross_cell, cross_target(as.integer(input$ch2_cross_cell)))
-
-  cross_tab <- reactive({
-    row_var <- input$ch2_cross_row
-    col_var <- input$ch2_cross_col
-    req(row_var, col_var, row_var != col_var)
-    table(student_data[[row_var]], student_data[[col_var]])
-  })
-
-  cross_cell <- reactive({
-    tbl <- cross_tab()
-    target <- cross_target()
-    if (target[1] > nrow(tbl) || target[2] > ncol(tbl)) target <- c(1L, 1L)
-    target
-  })
-
-  output$ch2_cross_table <- renderUI({
-    tbl <- cross_tab()
-    col_levels <- colnames(tbl)
-    short <- cross_short[[input$ch2_cross_col]]
-    lc_crosstab(tbl,
-      measure = cross_measure[[input$ch2_cross_type]],
-      target = cross_cell(),
-      row_name = cross_labels[[input$ch2_cross_row]],
-      col_name = cross_labels[[input$ch2_cross_col]],
-      short_labels = if (!is.null(short)) unname(short[col_levels]),
-      input_id = "ch2_cross_cell",
-      lead = FALSE
-    )
-  })
-
-  output$ch2_cross_caption <- renderUI({
-    tbl <- cross_tab()
-    target <- cross_cell()
-    i <- target[1]
-    j <- target[2]
-    count <- tbl[i, j]
-    row_name <- rownames(tbl)[i]
-    col_name <- colnames(tbl)[j]
-    q <- function(x) paste0("„", x, "”")
-    text <- switch(input$ch2_cross_type,
-      counts = tagList(paste0(q(row_name), " i ", q(col_name), ": "), tags$b(count),
-        paste0(" osób, czyli ", lc_fmt(count / sum(tbl) * 100, 1), "% całej próby.")),
-      row_pct = tagList(paste0("W wierszu ", q(row_name), " "),
-        tags$b(paste0(lc_fmt(count / sum(tbl[i, ]) * 100, 1), "%")),
-        paste0(" osób to ", q(col_name), " (", count, " z ", sum(tbl[i, ]), ").")),
-      col_pct = tagList(paste0("W kolumnie ", q(col_name), " "),
-        tags$b(paste0(lc_fmt(count / sum(tbl[, j]) * 100, 1), "%")),
-        paste0(" osób to ", q(row_name), " (", count, " z ", sum(tbl[, j]), ")."))
-    )
-    lc_caption(tone = "info", text)
-  })
-
-  lc_ec_plot_server("ch2_cross_plot", reactive({
-    row_var <- input$ch2_cross_row
-    col_var <- input$ch2_cross_col
-    chart_type <- input$ch2_cross_chart
-    req(row_var, col_var, row_var != col_var)
-
-    df <- data.frame(
-      row = student_data[[row_var]],
-      col = student_data[[col_var]]
-    )
-
-    if (!is.null(chart_type) && chart_type == "heatmap") {
-      tbl <- table(df$row, df$col)
-      if (input$ch2_cross_type == "row_pct") {
-        tbl <- prop.table(tbl, margin = 1) * 100
-        fill_label <- "% wierszowy"
-      } else if (input$ch2_cross_type == "col_pct") {
-        tbl <- prop.table(tbl, margin = 2) * 100
-        fill_label <- "% kolumnowy"
-      } else {
-        fill_label <- "Liczebność"
-      }
-      heat_df <- as.data.frame(as.table(tbl))
-      names(heat_df) <- c("Wiersz", "Kolumna", "Wartosc")
-
-      # Wartości w komórkach zamiast legendy barw (wykres ECharts nie ma legendy).
-      pct <- input$ch2_cross_type %in% c("row_pct", "col_pct")
-      heat_df$etykieta <- if (pct) paste0(lc_fmt(heat_df$Wartosc, 1), "%") else lc_fmt(heat_df$Wartosc, 0)
-      heat_df$ciemne <- heat_df$Wartosc > mean(range(heat_df$Wartosc))
-
-      ggplot(heat_df, aes(x = Kolumna, y = Wiersz, fill = Wartosc)) +
-        geom_tile(color = "white", linewidth = 1.5) +
-        geom_text(aes(label = etykieta, colour = ciemne), size = 4.2, show.legend = FALSE) +
-        scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = upwr_ink), guide = "none") +
-        scale_fill_upwr_seq(variant = "burgundy", name = fill_label) +
-        scale_x_discrete(labels = scales::label_wrap(12)) +
-        scale_y_discrete(labels = scales::label_wrap(12)) +
-        labs(x = cross_labels[[col_var]], y = cross_labels[[row_var]]) +
-        theme(
-          panel.grid = element_blank(),
-          axis.text = element_text(size = 12)
-        )
-    } else {
-      ggplot(df, aes(x = row, fill = col)) +
-        geom_bar(position = "dodge", alpha = 0.85, color = "white") +
-        scale_fill_upwr() +
-        scale_x_discrete(labels = scales::label_wrap(12)) +
-        labs(x = cross_labels[[row_var]], y = "Liczebność", fill = cross_labels[[col_var]]) +
-        theme(legend.position = "none")
-    }
-  }), alt = "Liczebności dwóch zmiennych jakościowych z ankiety: słupki obok siebie albo mapa ciepła z wartościami w komórkach")
+  # Tabela krzyżowa z ankiety (Ryc. 2.2) liczy się w przeglądarce:
+  # survey_charts.js, rycina „d02-xt”.
 }

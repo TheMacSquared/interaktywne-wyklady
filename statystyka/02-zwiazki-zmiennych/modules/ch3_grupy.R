@@ -77,17 +77,24 @@ ch3_ui <- list(
       label = "Ryc. 3.2",
       title = "Zmienna ilościowa w grupach",
       width_mode = "text",
-      lc_toolbar(
-        lc_group("Zmienna",
-          lc_select("ch3_num", ch3_num_choices, selected = "wzrost",
-                    aria_label = "Zmienna ilościowa")),
-        lc_group("Grupy",
-          lc_select("ch3_grp", ch3_grp_choices, selected = "plec",
-                    aria_label = "Zmienna dzieląca na grupy"))
-      ),
-      lc_ec_plot_ui("ch3_box_plot", ratio = "2/1"),
-      uiOutput("ch3_box_table"),
-      uiOutput("ch3_box_caption")
+      # Wykres, tabela i podpis liczą się w przeglądarce (survey_charts.js,
+      # rycina „d02-box”).
+      lc_sf_figure("d02-box", ratio = "2/1", max_height = "440px",
+        config = list(num = as.list(setNames(names(ch3_num_choices), ch3_num_choices)),
+                      grp = as.list(setNames(names(ch3_grp_choices), ch3_grp_choices))),
+        control = list(
+          lc_group("Zmienna",
+            lc_select("ch3_num", ch3_num_choices, selected = "wzrost",
+                      aria_label = "Zmienna ilościowa")),
+          lc_group("Grupy",
+            lc_select("ch3_grp", ch3_grp_choices, selected = "plec",
+                      aria_label = "Zmienna dzieląca na grupy"))
+        ),
+        after = tagList(
+          tags$div(`data-role` = "table"),
+          tags$div(`data-role` = "caption")
+        )
+      )
     ),
 
     lc_p("Wzrost i płeć są wyraźnie związane: mediana wzrostu wynosi 166.0 cm
@@ -122,58 +129,6 @@ ch3_server <- function(input, output, session) {
       różnią się położeniem i szerokością, ale wyraźnie na siebie zachodzą.")
   ))
 
-  ch3_df <- reactive({
-    v <- input$ch3_num
-    g <- input$ch3_grp
-    req(v, g)
-    data.frame(y = student_data[[v]], grupa = droplevels(factor(student_data[[g]])))
-  })
-
-  ch3_stats <- reactive({
-    df <- ch3_df()
-    do.call(rbind, lapply(split(df$y, df$grupa), function(x)
-      data.frame(n = length(x), mean = mean(x), med = median(x), sd = sd(x))))
-  })
-
-  lc_ec_plot_server("ch3_box_plot", reactive({
-    df <- ch3_df()
-    k <- nlevels(df$grupa)
-    v_label <- names(ch3_num_choices)[ch3_num_choices == input$ch3_num]
-    g_label <- names(ch3_grp_choices)[ch3_grp_choices == input$ch3_grp]
-    set.seed(1)
-    ggplot(df, aes(x = y, y = grupa, color = grupa)) +
-      geom_boxplot(outlier.shape = NA, fill = NA, color = upwr_secondary, width = 0.55) +
-      geom_jitter(height = 0.18, width = 0, size = 1.8, alpha = 0.6) +
-      scale_color_manual(values = upwr_cat_n(k), guide = "none") +
-      scale_y_discrete(limits = rev, labels = scales::label_wrap(12)) +
-      labs(x = v_label, y = g_label)
-  }), alt = "Wykres pudełkowy wybranej zmiennej ilościowej w grupach, z punktami pojedynczych osób")
-
-  output$ch3_box_table <- renderUI({
-    st <- ch3_stats()
-    digits <- if (input$ch3_num %in% c("srednia_ocen")) 2 else 1
-    df <- data.frame(grupa = rownames(st), n = st$n, mean = st$mean, med = st$med, sd = st$sd,
-                     stringsAsFactors = FALSE)
-    lc_table(df, list(
-      lc_col("grupa", names(ch3_grp_choices)[ch3_grp_choices == input$ch3_grp], "row"),
-      lc_col("n", "n"),
-      lc_col("mean", "Średnia", digits = digits, short = "x̄", desc = "średnia"),
-      lc_col("med", "Mediana", digits = digits, short = "Me", desc = "mediana"),
-      lc_col("sd", "Odchylenie standardowe", digits = digits, short = "SD", desc = "odchylenie standardowe")
-    ))
-  })
-
-  output$ch3_box_caption <- renderUI({
-    # Małe grupy (np. 6 osób, które nie podały płci) mają przypadkowe mediany,
-    # więc podpis porównuje tylko grupy liczące co najmniej 20 osób.
-    st <- ch3_stats()
-    st <- st[st$n >= 20, , drop = FALSE]
-    digits <- if (input$ch3_num %in% c("srednia_ocen")) 2 else 1
-    hi <- which.max(st$med)
-    lo <- which.min(st$med)
-    lc_caption(tone = "info",
-      paste0("Największa różnica median w grupach od 20 osób: ", rownames(st)[hi],
-             " − ", rownames(st)[lo], " = "),
-      tags$b(lc_fmt(st$med[hi] - st$med[lo], digits)), ".")
-  })
+  # Pudełka w grupach z ankiety (Ryc. 3.2) liczą się w przeglądarce:
+  # survey_charts.js, rycina „d02-box”.
 }
