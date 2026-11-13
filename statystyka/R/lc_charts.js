@@ -1,7 +1,7 @@
-// Wspólna obsługa wykresów JS (Chart.js i ECharts w trakcie migracji).
-// Ładować po bibliotece wykresów, przed skryptami widgetów.
+// Wspólna obsługa wykresów JS (ECharts).
+// Ładować po echarts.min.js, przed skryptami widgetów.
 // onReady(selector, init) wiąże zasoby z kontenerem tworzonym przez renderUI.
-// create() (Chart.js), chart() (ECharts), listen(), onTheme(), onDispose()
+// chart(), listen(), onTheme(), onDispose()
 // zwalniają je po usunięciu kontenera.
 (function () {
   "use strict";
@@ -43,15 +43,14 @@
     delete root.dataset.ready;
   }
 
-  // Chart.js: destroy(); ECharts: dispose() i odłączenie obserwatora rozmiaru.
+  // ECharts: dispose() i odłączenie obserwatora rozmiaru.
   function release(chart) {
     if (chart.__lcResize) chart.__lcResize.disconnect();
-    if (typeof chart.destroy === "function") chart.destroy();
-    else if (typeof chart.dispose === "function") chart.dispose();
+    if (typeof chart.dispose === "function") chart.dispose();
   }
 
   function libraryLoaded() {
-    return typeof window.Chart !== "undefined" || typeof window.echarts !== "undefined";
+    return typeof window.echarts !== "undefined";
   }
 
   function scan() {
@@ -80,13 +79,6 @@
   function onReady(selector, init) {
     registrations.push({ selector: selector, init: init });
     scan();
-  }
-
-  function create(canvas, config) {
-    var widget = owner(canvas);
-    var chart = new window.Chart(canvas, config);
-    widget.charts.add(chart);
-    return chart;
   }
 
   // ECharts w elemencie .lc-ec. Domyślnie SVG (ostry obraz przy lupie i na
@@ -196,25 +188,7 @@
     };
   }
 
-  function styleAxes(chart, colors, options) {
-    var P = colors || palette();
-    // chart.options zawiera resolvery Proxy. Przypisanie ich z powrotem do
-    // konfiguracji psuje m.in. skalę logarytmiczną; edytujemy surowe opcje.
-    var scales = chart.config.options.scales;
-    Object.keys(scales).forEach(function (k) {
-      var s = scales[k];
-      if (s.display === false) return;
-      s.grid = Object.assign({}, s.grid || {}, { color: P.ruleSoft });
-      s.border = Object.assign({}, s.border || {}, { color: P.rule });
-      var fontSize = options && options.fontSize || 12;
-      s.ticks = Object.assign({}, s.ticks || {}, { color: P.subtle, font: { family: P.mono, size: fontSize } });
-      if (options && options.includeBounds !== undefined) s.ticks.includeBounds = options.includeBounds;
-      if (k === "x" && options && options.maxRotation !== undefined) s.ticks.maxRotation = options.maxRotation;
-      if (s.title) { s.title.color = P.subtle; s.title.font = { family: P.mono, size: options && options.titleSize || fontSize }; }
-    });
-  }
-
-  // Styl osi ECharts z tokenów motywu; odpowiednik styleAxes() dla Chart.js.
+  // Styl osi ECharts z tokenów motywu.
   // Zwraca obiekt do scalenia z konfiguracją osi (xAxis / yAxis).
   function ecAxis(colors, fontSize, extra) {
     var P = colors || palette(), size = fontSize || 12;
@@ -240,7 +214,7 @@
     return { x: clamp(v[0], xRange), y: clamp(v[1], yRange), rawX: v[0], rawY: v[1], px: px, py: py };
   }
 
-  // Nazwa osi ECharts zawinięta do szerokości wykresu (jak axisTitle w Chart.js).
+  // Nazwa osi ECharts zawinięta do szerokości wykresu.
   function ecName(text, width, fontSize) { return axisTitle(text, width, fontSize).join("\n"); }
 
   function axisFontSize(root) {
@@ -407,11 +381,11 @@
   });
 
   window.lcCharts = {
-    onReady: onReady, create: create, chart: chart, ecAxis: ecAxis, ecPointer: ecPointer, ecName: ecName,
+    onReady: onReady, chart: chart, ecAxis: ecAxis, ecPointer: ecPointer, ecName: ecName,
     destroy: destroy, listen: listen,
     onTheme: onTheme, onDispose: onDispose, onMessage: onMessage,
     tween: tween, cancelTween: cancelTween,
-    token: token, alpha: alpha, palette: palette, styleAxes: styleAxes, normalCdf: normalCdf,
+    token: token, alpha: alpha, palette: palette, normalCdf: normalCdf,
     linearFit: fit, normalQuantile: normalQuantile,
     axisFontSize: axisFontSize, zoomControl: zoomControl,
     handleLayer: handleLayer, keyValue: keyValue,

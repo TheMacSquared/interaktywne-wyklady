@@ -187,8 +187,7 @@
     var val = tile.getAttribute("data-quiz-choice");
     box.setAttribute("data-answered", val === box.getAttribute("data-correct") ? "correct" : "wrong");
     var tiles = box.querySelector(".quiz-tiles");
-    // Siatka kafelków ma display: grid, który przebija atrybut hidden.
-    if (tiles) { tiles.hidden = true; tiles.style.display = "none"; }
+    if (tiles) tiles.hidden = true;
     box.querySelectorAll("[data-quiz-feedback]").forEach(function (n) {
       n.hidden = n.getAttribute("data-quiz-feedback") !== val;
     });

@@ -19,6 +19,8 @@ ch2_quiz_correct <- "C"
 
 ch2_quiz_ui <- function() {
   tags$div(class = "c04-quiz", `data-correct` = ch2_quiz_correct,
+    # Siatka kafelków ma display: grid, które przebiłoby atrybut hidden.
+    tags$style(HTML(".c04-quiz [hidden] { display: none !important; }")),
     div(class = "quiz-tiles quiz-cols-4",
       lapply(ch2_quiz_choices, function(opt) {
         tags$button(type = "button", class = "btn btn-default quiz-tile", `data-quiz-choice` = opt$value,

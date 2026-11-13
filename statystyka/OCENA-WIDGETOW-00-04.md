@@ -184,7 +184,7 @@ osobnym kandydatem do większego widoku SVG, po rozstrzygnięciu jego treści.
 
 Największa potencjalna korzyść dotyczy czytelności, nie nowych uchwytów.
 Od 2026-11-09 wszystkie wykresy wykładu rysuje ECharts (eksploratory
-w `ci_explorers.js`, wykresy ggplot przez wspólny most `R/lc_ggplot_echarts.*`), więc numery
+w `ci_explorers.js`, pozostałe od 2026-11-13 na silniku lcSF, bez serwera), więc numery
 rycin poniżej sprzed tej daty mogą się różnić od obecnych.
 Sceny „Zmierz grupkę” i „Zarzuć siatkę” mają przyciski i SVG, jak w wykładzie 00.
 

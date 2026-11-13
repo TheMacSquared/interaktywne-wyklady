@@ -1,5 +1,5 @@
 // Testy cyklu życia bez przeglądarki: prawdziwe skrypty widgetów, kontrolowany DOM
-// i atrapa renderera Chart.js. Uruchamianie: node statystyka/tests/js/lc_charts.test.js
+// i atrapa ECharts. Uruchamianie: node statystyka/tests/js/lc_charts.test.js
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 const { Element, environment, canvas, ecbox, root, press, statRoot } = require("./harness");
@@ -8,11 +8,11 @@ test("usunięcie i powrót zwalniają wykresy, zdarzenia i callbacki motywu", ()
   const env = environment(), C = env.window.lcCharts;
   let paints = 0, clicks = 0;
   C.onReady(".widget", el => {
-    for (const cv of el.querySelectorAll("canvas")) C.create(cv, { data: {}, options: {} });
+    for (const box of el.querySelectorAll(".lc-ec")) C.chart(box, {});
     C.onTheme(el, () => paints++);
     C.listen(el, "click", () => clicks++);
   });
-  const el = root("widget", [canvas("a"), canvas("b")]);
+  const el = root("widget", [ecbox("a"), ecbox("b")]);
   for (let i = 0; i < 20; i++) {
     env.mount(el);
     env.mutations();
@@ -28,27 +28,12 @@ test("usunięcie i powrót zwalniają wykresy, zdarzenia i callbacki motywu", ()
   assert.equal(env.errors.length, 0);
 });
 
-test("stylowanie osi edytuje konfigurację, zachowując funkcje skali logarytmicznej", () => {
-  const env = environment(), C = env.window.lcCharts;
-  const callback = value => String(value), afterBuildTicks = axis => axis;
-  const scales = { x: { type: "logarithmic", ticks: { callback }, afterBuildTicks }, y: { min: 0 } };
-  const chart = { config: { options: { scales } }, options: new Proxy({}, {
-    get() { throw new Error("Nie przypisuj resolvera Chart.js do surowej konfiguracji"); }
-  }) };
-  C.styleAxes(chart, null, { fontSize: 21 });
-  C.styleAxes(chart, null, { fontSize: 14 });
-  assert.equal(scales.x.ticks.callback, callback);
-  assert.equal(scales.x.afterBuildTicks, afterBuildTicks);
-  assert.equal(scales.x.type, "logarithmic");
-  assert.equal(scales.x.ticks.font.size, 14);
-});
-
 test("niekompletny lub błędny widget można zainicjować ponownie", () => {
   const env = environment(), C = env.window.lcCharts;
-  const el = root("widget", [canvas("a")]);
+  const el = root("widget", [ecbox("a")]);
   let attempt = 0;
   C.onReady(".widget", node => {
-    C.create(node.querySelector("canvas"), { data: {}, options: {} });
+    C.chart(node.querySelector(".lc-ec"), {});
     if (++attempt === 1) throw new Error("inicjalizacja przerwana");
   });
   env.mount(el);
@@ -62,8 +47,8 @@ test("niekompletny lub błędny widget można zainicjować ponownie", () => {
 
 test("nowa animacja zastępuje starą, a usunięcie widgetu anuluje klatki", () => {
   const env = environment(), C = env.window.lcCharts;
-  const el = root("widget", [canvas("a")]);
-  C.onReady(".widget", node => { C.create(node.querySelector("canvas"), { data: {}, options: {} }); });
+  const el = root("widget", [ecbox("a")]);
+  C.onReady(".widget", node => { C.chart(node.querySelector(".lc-ec"), {}); });
   env.mount(el);
   let value = 0, completed = 0;
   C.tween(el, 0, 1, v => { value = v; }, () => completed++);
@@ -197,7 +182,7 @@ test("dystrybuanta łączy wykresy i chroni wybór klawiaturowy przed hoverem", 
   assert.equal(env.errors.length, 0);
 });
 
-test("kwantyl ukrywa odpowiedź po zmianie i wyłącza uchwyt w trybie p", () => {
+test("kwantyl ukrywa odpowiedź po zmianie, a w trybie p uchwyt przesuwa pole", () => {
   const env = environment();
   env.load("03-rozklady-prawdopodobienstwa/modules/quantile_chart.js");
   const modeX = new Element("button", { "data-q-mode": "x" });
@@ -212,11 +197,16 @@ test("kwantyl ukrywa odpowiedź po zmianie i wyłącza uchwyt w trybie p", () =>
   press(handle, "ArrowRight"); assert.equal(p.textContent, "?");
   assert.equal(x.textContent, "1.5");
   assert.equal(handle.getAttribute("aria-valuetext"), "x = 1.5 cm");
+  // Tryb p (od „kwantyl przeciąganiem”): uchwyt zostaje i przesuwa pole co 0.01, szukany jest x.
   el.emit("click", { target: modeP });
-  assert.equal(handle.hidden, true); assert.equal(x.textContent, "?");
-  const old = handle.getAttribute("aria-valuenow");
-  press(handle, "ArrowRight"); assert.equal(handle.getAttribute("aria-valuenow"), old);
-  el.emit("click", { target: modeX }); assert.equal(handle.hidden, false);
+  assert.notEqual(handle.hidden, true); assert.equal(x.textContent, "?");
+  assert.match(handle.getAttribute("aria-valuetext"), /^p = /);
+  const old = Number(handle.getAttribute("aria-valuenow"));
+  press(handle, "ArrowRight");
+  assert.ok(Math.abs(Number(handle.getAttribute("aria-valuenow")) - old - 0.01) < 1e-9, "strzałka zmienia p o 0.01");
+  assert.equal(x.textContent, "?");
+  el.emit("click", { target: modeX });
+  assert.match(handle.getAttribute("aria-valuetext"), /^x = .* cm$/);
   assert.equal(env.errors.length, 0);
 });
 
@@ -517,42 +507,6 @@ test("kalkulator z: pola i wynik zostają po powiększeniu, niepoprawne σ nie p
   assert.equal(JSON.stringify([...env.live].map(ch=>ch.data)),before);
 });
 
-
-test("konstruktor CI podpina lupę poza wykresem bez pętli inicjalizacji", () => {
-  const env = environment();
-  const axis = {range:[0,1],breaks:[0,1],labels:["0","1"],name:"",show:true};
-  const spec = {panels:[{box:[0,0,1,1],x:axis,y:axis,label:"",elements:[
-    {type:"line",coords:[[.2,.5],[.8,.5]],color:"#222",fill:"transparent",alpha:1,width:2,size:3,shape:"16",dash:"solid"},
-    {type:"point",coords:[.5,.5],color:"#222",fill:"transparent",alpha:1,width:1,size:5,shape:"18",dash:"solid"}
-  ]}],color_keys:{}};
-  const source = new Element("span", {"data-ec-spec":JSON.stringify(spec)});
-  const config = root("lc-ec-plot-config", [source]);
-  const plot = root("lc-ec-plot", [ecbox("ci"),config]);
-  const button = new Element("button", {"data-lc-chart-zoom":"true"});
-  const stepper = root("lc-stepper", [button,plot]);
-  env.load("R/lc_ggplot_echarts.js");
-  env.mount(stepper);
-  assert.equal(env.errors.length,0,"lupa poza korzeniem wykresu nie może przerwać inicjalizacji");
-  assert.equal(env.live.size,1);
-  const series = [...env.live][0].series.get("panel-0");
-  for (let i=0;i<2;i++) {
-    const rendered = series.renderItem({dataIndex:i},{coord:p=>[p[0]*1000,p[1]*500]});
-    assert.ok(rendered.clipPath.shape.width>500,"obszar przycięcia musi mieć szerokość panelu, nie grubość kreski");
-    assert.ok(rendered.children.length>0);
-    // Element o tym samym indeksie mógł wcześniej być napisem z przesunięciem x/y.
-    assert.equal(rendered.x,0,"grupa zeruje przesunięcie po poprzednim napisie");
-    assert.equal(rendered.y,0);
-    assert.equal(rendered.children[0].x,0,"kształt zeruje przesunięcie po poprzednim napisie");
-  }
-  for(let i=0;i<5;i++) env.mutations();
-  assert.equal(env.charts.length,1,"kolejne mutacje DOM nie tworzą ponownie wykresu");
-  button.emit("click");
-  assert.equal(stepper.dataset.lcChartLarge,"true");
-  env.unmount(stepper);
-  assert.equal(env.live.size,0);
-  assert.equal(button.listeners.get("click").size,0,"sprzątanie usuwa obsługę zewnętrznego przycisku");
-  assert.equal(env.errors.length,0);
-});
 
 test("eksploratory CI (Ryc. 2.2, 3.4, 3.5): ECharts, klawiatura, presety i sprzątanie", () => {
   const env = environment();

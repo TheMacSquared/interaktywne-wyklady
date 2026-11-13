@@ -57,6 +57,7 @@ for (.f in c("common", paste0("ch", 1:5))) {
 }
 source(file.path(app_dir, "modules", "ci_explorers.R"), local = TRUE)
 source(file.path(app_dir, "modules", "visual_scenes.R"), local = TRUE)
+source(file.path(app_dir, "modules", "cases_common.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_estymacja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_idea.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch3_srednia.R"),   local = TRUE)

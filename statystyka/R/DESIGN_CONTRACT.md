@@ -172,8 +172,7 @@ zamrożone.
   widgetu. Renderer domyślnie `"svg"` (ostry przy lupie i na rzutniku);
   `"canvas"` tylko dla wykresów z tysiącami punktów. Obserwator rozmiaru
   wywołuje `resize()` i `onResize(chart)`, np. do ustawienia uchwytów.
-- `ecAxis(palette, fontSize, extra)` zwraca styl osi z tokenów motywu
-  (odpowiednik `styleAxes()`); widget scala go przez `setOption()` w funkcji
+- `ecAxis(palette, fontSize, extra)` zwraca styl osi z tokenów motywu; widget scala go przez `setOption()` w funkcji
   wywoływanej z `onTheme()`.
 - Serie mają `id`, a zmiany danych idą przez `setOption({series: [{id, data}]})`.
   Pozycje uchwytów i przeliczenie kursora: `convertToPixel` /
@@ -193,26 +192,13 @@ zamrożone.
 - Build offline wbudowuje `echarts.min.js` w plik (`build_offline.R`);
   widget z `data-ready` jest odtwarzany z czystej kopii, więc działa bez serwera.
 
-### Wykresy ggplot w ECharts (`R/lc_ggplot_echarts.R`)
+### Wykresy ggplot w ECharts — most usunięty
 
-Gdy wykres ma zostać w ggplot, a ma wyglądać i skalować się jak pozostałe
-wykresy JS, używamy mostu: `lc_ec_plot_ui(id, ratio)` zamiast `lc_plot()`
-i `lc_ec_plot_server(id, reactive(p), alt)` zamiast `zoom_plot_server()`.
-R liczy `ggplot_build()`, a `R/lc_ggplot_echarts.js` rysuje te same elementy
-na osiach ECharts (SVG, motyw, lupa, skalowanie napisów). Wykład ładuje
-`lc_ggplot_echarts.R` przez `source()` oraz `lc_ggplot_echarts.js` po
-`lc_charts.js`.
-
-- Most wymaga serwera R. Wykres, który musi działać offline albo reagować
-  płynnie na przeciąganie, piszemy wprost w JS (np. eksploratory w 04).
-- Obsługiwane geometrie są wymienione w nagłówku pliku R; nieznana geometria
-  przerywa rysowanie komunikatem `lc_ec_plot: nieobsługiwana geometria`.
-- Legendy nie są rysowane. Opis kolorów należy do tekstu, odczytów albo
-  samego wykresu (np. wartości w kafelkach mapy ciepła).
-- Etykiety tekstowe i nierówne podziałki (np. ±1.96, ±2.78) stoją dokładnie
-  na podziałkach z R; skrajne etykiety, które nie są podziałką, są ukryte.
-- Wzorce: statystyka 02 — tabela krzyżowa i pudełka; 04 — Ryc. 1.1–1.4,
-  3.1–3.3, 5.1–5.5.
+Most `R/lc_ggplot_echarts.*` (R liczył `ggplot_build()`, JS rysował w ECharts)
+usunięto 13 listopada 2026, gdy przestał go używać ostatni wykład (04). Wymagał
+serwera R, więc ryciny zostawały w wersji offline zamrożone. Nowe ryciny piszemy
+na silniku lcSF (sekcja wyżej); kod mostu jest w historii git (przed commitem
+usuwającym, np. `git show 623aff3:statystyka/R/lc_ggplot_echarts.R`).
 
 ### Ryciny liczone w przeglądarce (`R/lc_stat_figures.R` / `.js`)
 
@@ -268,7 +254,7 @@ jest dostępne jako `window.lcCharts`:
 - `onMessage(name, callback)` rejestruje kanał sesji Shiny. Ostatnie dane
   przechowuje skrypt widgetu i odtwarza je w `onReady()`, niezależnie od tego,
   czy wiadomość dotarła przed wstawieniem kontenera, czy po nim.
-- `token`, `alpha`, `palette`, `styleAxes`, `fmt`, `fmtSigned`, `round` i
+- `token`, `alpha`, `palette`, `ecAxis`, `fmt`, `fmtSigned`, `round` i
   `normalCdf` zawierają wspólne kolory, style osi, formatowanie liczb oraz
   dotychczasowe przybliżenie dystrybuanty normalnej. Specyficzne opcje osi
   pozostają w skrypcie widgetu.
@@ -278,7 +264,7 @@ jest dostępne jako `window.lcCharts`:
 - `lc_chart_zoom_button()` tworzy małą lupę w pasku widgetu, a
   `lcCharts.zoomControl(root)` obsługuje jej stan. `axisFontSize(root)` dobiera
   rozmiar napisów do tekstu i powiększenia; przekazujemy go do
-  `styleAxes(chart, null, {fontSize: ...})`. Wspólny obserwator odświeża style
+  `ecAxis(null, fontSize)`. Wspólny obserwator odświeża style
   po zmianie motywu, S/M/L i lokalnego powiększenia.
 - `handleLayer(root)` tworzy warstwę uchwytów oraz komunikat dla czytnika
   ekranu. `layer.add(canvas, {label, hint, onKey, onPointerDown, role, orientation})`

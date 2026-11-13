@@ -4,7 +4,7 @@
 
 # ============================================================================
 # PRZYKŁADY A1–C1 (case studies): rycina lcSF „s4-case” (sf_examples.js)
-# Wspólne części (s4_case_*) są w ch3_srednia.R; tu dane i opisy proporcji.
+# Wspólne części (s4_case_*) są w cases_common.R; tu dane i opisy proporcji.
 # ============================================================================
 
 ch4_case_ci_prop <- function(x, n, conf = 0.95) {
@@ -281,14 +281,17 @@ ch4_case_ui <- function(case_id) {
 
 # Ryc. 4.1 i 4.3 (s04-pstep, s04-pdstep): kilka wykresów lcSF w siatce o stałej
 # proporcji, jak układ patchwork w R. Wykres wypełnia swoją komórkę siatki.
-s04_grid <- function(columns, ratio, max_height, ..., rows = 1) {
+s04_grid <- function(columns, ratio, max_height, ..., rows = 1, zoom_columns = columns) {
   tagList(
-    # Lupa (data-lc-chart-large): siatka rośnie jak pojedyncze wykresy lcSF (min. 24em na wiersz).
+    # Lupa (data-lc-chart-large): siatka rośnie jak pojedyncze wykresy lcSF (min. 24em na wiersz);
+    # zoom_columns poszerza kolumnę, gdy większe napisy by się w niej nie zmieściły.
     tags$style(".lc-sf[data-lc-chart-large='true'] .s04-grid { max-height: none !important;
-                aspect-ratio: auto !important; min-height: calc(24em * var(--s04-rows, 1)) !important; }"),
+                aspect-ratio: auto !important; min-height: calc(24em * var(--s04-rows, 1)) !important;
+                grid-template-columns: var(--s04-zoom-cols) !important; }"),
     tags$div(class = "s04-grid", style = paste0("display:grid;grid-template-columns:", columns,
                           ";grid-auto-rows:1fr;gap:.4em;aspect-ratio:", ratio,
-                          ";max-height:", max_height, ";min-height:18em;--s04-rows:", rows, ";"), ...))
+                          ";max-height:", max_height, ";min-height:18em;--s04-rows:", rows,
+                          ";--s04-zoom-cols:", zoom_columns, ";"), ...))
 }
 s04_grid_chart <- function(k, rows = 1) {
   tags$div(class = "lc-sf-chart", `data-k` = k,
@@ -473,7 +476,7 @@ ch4_ui <- list(
           lc_sf_action("new", "ch4_dstep_new_sample", "Nowe próby", icon = "shuffle",
                        variant = "outline"), lc_chart_zoom_button()
         ),
-        body = s04_grid("1fr 2fr", "2/1", "460px", rows = 2,
+        body = s04_grid("1fr 2fr", "2/1", "460px", rows = 2, zoom_columns = "1.5fr 2fr",
                         s04_grid_chart(0, rows = 2), s04_grid_chart(1), s04_grid_chart(2))
       ))
     ),
