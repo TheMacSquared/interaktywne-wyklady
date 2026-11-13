@@ -134,6 +134,38 @@
     return Math.exp(lgamma((df + 1) / 2) - lgamma(df / 2) - 0.5 * Math.log(df * Math.PI) -
                     (df + 1) / 2 * Math.log1p(x * x / df));
   }
+  // Regularyzowana niekompletna beta I_x(a, b): ułamek łańcuchowy (Numerical Recipes, betacf).
+  function pbetaReg(x, a, b) {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    var bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log1p(-x));
+    if (x > (a + 1) / (a + b + 2)) return 1 - pbetaReg(1 - x, b, a);
+    var qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap, TINY = 1e-300;
+    if (Math.abs(d) < TINY) d = TINY;
+    d = 1 / d; var h = d;
+    for (var m = 1; m <= 1000; m++) {
+      var m2 = 2 * m, aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+      d = 1 + aa * d; if (Math.abs(d) < TINY) d = TINY;
+      c = 1 + aa / c; if (Math.abs(c) < TINY) c = TINY;
+      d = 1 / d; h *= d * c;
+      aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+      d = 1 + aa * d; if (Math.abs(d) < TINY) d = TINY;
+      c = 1 + aa / c; if (Math.abs(c) < TINY) c = TINY;
+      d = 1 / d; var del = d * c; h *= del;
+      if (Math.abs(del - 1) < 1e-15) break;
+    }
+    return bt * h / a;
+  }
+  // pt(x, df) i qt(p, df) z R (rozkład t Studenta).
+  function pt(x, df) {
+    var tail = 0.5 * pbetaReg(df / (df + x * x), df / 2, 0.5);
+    return x >= 0 ? 1 - tail : tail;
+  }
+  function qt(p, df) {
+    if (p === 0.5) return 0;
+    if (p < 0.5) return -qt(1 - p, df);
+    return invert(function (x) { return pt(x, df); }, p, 0, 2);
+  }
   function dchisq(x, df) {
     if (x < 0) return 0;
     if (x === 0) return df < 2 ? Infinity : df === 2 ? 0.5 : 0;
@@ -310,7 +342,7 @@
     dnorm: dnorm, pnorm: pnorm, qnorm: qnorm,
     dbinom: dbinom, dpois: dpois, ppois: ppois, qpois: qpois,
     dgeom: dgeom, qgeom: qgeom, dunif: dunif, dexp: dexp, qexp: qexp,
-    dt: dt, dchisq: dchisq, pchisq: pchisq, qchisq: qchisq,
+    dt: dt, pt: pt, qt: qt, dchisq: dchisq, pchisq: pchisq, qchisq: qchisq,
     dlnorm: dlnorm, qlnorm: qlnorm, dgamma: dgamma, pgamma: pgamma, dbeta: dbeta, seq: seq,
     rng: rng, r: rng(), bwNrd0: bwNrd0, kde: kde
   };

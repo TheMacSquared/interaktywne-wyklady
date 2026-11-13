@@ -946,3 +946,17 @@ test("silnik lcSF: etykiety yLabels przy krańcach, kolejność warstw, tabela z
   env.unmount(fig);
   assert.equal(env.errors.length, 0);
 });
+
+test("lcDist: pt i qt zgodne z R (rozkład t, wykład 04)", () => {
+  const env = environment();
+  env.load("R/lc_dist.js");
+  const D = env.window.lcDist;
+  // Wartości z R: qt(p, df), pt(x, df).
+  for (const [p, df, r] of [[0.975, 1, 12.7062047], [0.975, 5, 2.5705818], [0.975, 29, 2.0452296],
+                            [0.995, 9, 3.2498355], [0.025, 10, -2.2281389], [0.975, 1000, 1.9623391]]) {
+    assert.ok(Math.abs(D.qt(p, df) - r) < 1e-6, `qt(${p}, ${df})`);
+  }
+  assert.equal(D.qt(0.5, 7), 0);
+  assert.ok(Math.abs(D.pt(2, 5) - 0.9490303) < 1e-7);
+  assert.ok(Math.abs(D.pt(-1.5, 3) - 0.1152919) < 1e-7);
+});

@@ -50,6 +50,7 @@ lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
 source(file.path(project_root, "R", "lc_ggplot_echarts.R"), local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ci_construction.R"), local = TRUE)
 # Ryciny wstawiane w tekst: przed rozdziałami, bo rozdziały wstawiają ich UI.
 for (.f in c("common", paste0("ch", 1:5))) {
@@ -90,6 +91,13 @@ ui <- lecture_page(
     lapply(file.path(app_dir, "modules", c("fig_ch2.js", "fig_ch4.js", "ci_construction.js",
                                            "ci_explorers.js")),
            includeScript),
+    # Ryciny liczone w przeglądarce: silnik lcSF, rozkłady lcDist, ryciny wykładu.
+    includeScript(file.path(project_root, "R", "lc_dist.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    lapply(file.path(app_dir, "modules", c("sf_ch12.js", "sf_steps.js", "sf_examples.js",
+                                           "sf_ch5.js")),
+           includeScript),
+    lc_sf_styles(),
     tags$style(HTML("
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
       .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
