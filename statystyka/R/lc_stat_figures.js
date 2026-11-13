@@ -21,7 +21,7 @@
 //   line {data:[[x,y]], color, width, dash, fill, fillAlpha}  — krzywa (z polem)
 //   segment, arrow(s), point(s), rect(s), segs, polygon, box, rug, cells
 //   text {x, y, text, color, align, valign, bold, mono, size, halo}  (y = "top": przy górnej krawędzi)
-// Inne klucze opisu: xTicks, xLabels, yLabels, xLabelEvery, xInt, noXGrid, noYGrid, hideY, alignLeft.
+// Inne klucze opisu: xBig, xTicks, xLabels, yLabels, xLabelEvery, xInt, noXGrid, noYGrid, hideY, alignLeft.
 (function () {
   "use strict";
   var C = window.lcCharts;
@@ -241,6 +241,8 @@
     var xa = C.ecAxis(P, fs, { type: "value", min: spec.x[0], max: spec.x[1],
       name: spec.xName ? C.ecName(spec.xName, Math.max(250, W - 40), fs) : "", nameGap: Math.round(fs * 2.2) });
     xa.axisLabel.formatter = function (v) { return lcFmt(v, 6); };
+    // xBig: liczby z odstępem tysięcy (np. 12 000 zł).
+    if (spec.xBig) xa.axisLabel.formatter = function (v) { return C.fmt(v, 0, true); };
     xa.axisLine.onZero = false;
     // Krańce osi to granice przedziałów, zwykle nie podziałki: bez etykiet przy krawędzi.
     xa.axisLabel.showMinLabel = !!spec.xTicks; xa.axisLabel.showMaxLabel = !!spec.xTicks;

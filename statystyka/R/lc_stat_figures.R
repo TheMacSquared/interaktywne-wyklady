@@ -65,10 +65,11 @@ lc_sf_ctl <- function(tag) {
 }
 
 # Natywny suwak z odczytem wartości (wartość i zakres ustawia przeglądarka).
-lc_sf_slider <- function(id, label, min, max, value, step) {
+# suffix: jednostka za odczytem (np. " min").
+lc_sf_slider <- function(id, label, min, max, value, step, suffix = NULL) {
   tags$div(class = "lc-grp lc-sf-ctl lc-sf-slider",
     tags$label(`for` = id, class = "lc-grp-l", label, " ",
-               tags$output(`data-value` = id, value)),
+               tags$output(`data-value` = id, value), suffix),
     tags$input(id = id, type = "range", min = min, max = max, value = value, step = step))
 }
 

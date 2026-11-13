@@ -160,6 +160,11 @@
     return 1 - Math.exp(-x + a * Math.log(x) - lg) * h;
   }
   function pchisq(x, df) { return pgammaReg(df / 2, x / 2); }
+  // pgamma(x, shape, scale = s, lower.tail) z R.
+  function pgamma(x, shape, scale, lower) {
+    var p = x <= 0 ? 0 : pgammaReg(shape, x / scale);
+    return lower === false ? 1 - p : p;
+  }
   // Kwantyl przez bisekcję na monotonicznej dystrybuancie.
   function invert(cdf, p, lo, hi) {
     while (cdf(hi) < p) hi *= 2;
@@ -306,7 +311,7 @@
     dbinom: dbinom, dpois: dpois, ppois: ppois, qpois: qpois,
     dgeom: dgeom, qgeom: qgeom, dunif: dunif, dexp: dexp, qexp: qexp,
     dt: dt, dchisq: dchisq, pchisq: pchisq, qchisq: qchisq,
-    dlnorm: dlnorm, qlnorm: qlnorm, dgamma: dgamma, dbeta: dbeta, seq: seq,
+    dlnorm: dlnorm, qlnorm: qlnorm, dgamma: dgamma, pgamma: pgamma, dbeta: dbeta, seq: seq,
     rng: rng, r: rng(), bwNrd0: bwNrd0, kde: kde
   };
 })();
