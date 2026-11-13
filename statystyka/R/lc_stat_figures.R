@@ -88,6 +88,8 @@ lc_sf_slider <- function(id, label, min, max, value, step, suffix = NULL) {
 
 lc_sf_styles <- function() tags$style(HTML("
   .lc-sf { position: relative; }
+  /* Rycina chowa elementy atrybutem hidden; style przycisków (display) by go przebiły. */
+  .lc-sf [hidden] { display: none !important; }
   .lc-sf-zoom { position: absolute; right: .3em; top: .3em; z-index: 3; }
   .lc-sf-chart { position: relative; width: 100%; min-height: 14em; }
   .lc-sf-chart.is-strip { min-height: 7em; }
