@@ -292,6 +292,10 @@
     }
   };
 
+  // Pomocniki dla innych plików rycin wykładu (stops*_charts.js).
+  window.lc03Sim = { max: max, min: min, mean: mean, sd: sd, range: range, tab: tab, empty: empty,
+                     bars: bars, labels: labels, cat: cat, resample: resample };
+
   S.register({ "d03-emp": FIGS.emp, "d03-freq": FIGS.freq, "d03-unif": FIGS.unif,
                "d03-hist": FIGS.hist, "d03-ctg": FIGS.ctg });
 })();

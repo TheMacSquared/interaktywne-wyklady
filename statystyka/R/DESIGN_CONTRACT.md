@@ -323,7 +323,7 @@ starego płótna jako singletonu ani nie tworzymy osobnych obserwatorów DOM
 i motywu w każdym widgecie. Lokalna logika dydaktyczna, generowanie danych
 i specjalne wtyczki rysujące pozostają w plikach wykładu.
 
-Regresje cyklu życia sprawdza `node statystyka/tests/js/lc_charts.test.js`.
+Regresje cyklu życia sprawdza `node --test statystyka/tests/js/*.test.js` (atrapa DOM: `tests/js/harness.js`).
 Testy są też uruchamiane przez testthat, jeśli Node.js jest dostępny;
 Node.js nie jest zależnością uruchomieniową wykładów.
 

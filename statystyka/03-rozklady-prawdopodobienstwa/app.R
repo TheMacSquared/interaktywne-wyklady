@@ -87,6 +87,10 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "dist_charts.js")),
     # Symulacje (dawniej losowanie na serwerze): Ryc. 1.3, 1.4, 3.1, 4.1, 6.4.
     includeScript(file.path(app_dir, "modules", "sim_charts.js")),
+    # Punkty stop (stops_*.R) rysowane w przeglądarce.
+    includeScript(file.path(app_dir, "modules", "stops12_charts.js")),
+    includeScript(file.path(app_dir, "modules", "stops34_charts.js")),
+    includeScript(file.path(app_dir, "modules", "stops56_charts.js")),
     lc_sf_styles(),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
     includeScript(file.path(app_dir, "modules", "lejek_chart.js")),
