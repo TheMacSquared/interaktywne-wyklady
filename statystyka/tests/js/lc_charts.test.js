@@ -999,3 +999,95 @@ test("ryciny rozkładów (03): scenariusze z pól wyboru, podpisy, presety i pol
   assert.equal(env.live.size, 0);
   assert.equal(env.errors.length, 0);
 });
+
+test("symulacje (03): losowanie lcDist, histogram ggplot i ryciny Ryc. 1.3–6.4 bez serwera", () => {
+  const env = environment();
+  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("03-rozklady-prawdopodobienstwa/modules/sim_charts.js");
+  const D = env.window.lcDist, S = env.window.lcSF, F = S.figures;
+  // Generatory z ziarnem: średnie i SD zgodne z rozkładami.
+  const g = D.rng(7), N = 20000;
+  const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
+  const sdv = a => { const m = avg(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1)); };
+  for (const [name, draw, mu, sd] of [
+    ["norm", () => g.norm(170, 8), 170, 8], ["exp", () => g.exp(0.5), 2, 2],
+    ["gamma", () => g.gamma(3, 10), 30, Math.sqrt(300)], ["beta", () => g.beta(0.5, 0.5), 0.5, Math.sqrt(1 / 8)],
+    ["pois", () => g.pois(3), 3, Math.sqrt(3)], ["binom", () => g.binom(10, 0.6), 6, Math.sqrt(2.4)],
+    ["choose", () => g.choose([0.1, 0.1, 0.1, 0.1, 0.1, 0.5]), 4.5, Math.sqrt(3.25)]]) {
+    const x = g.many(N, draw);
+    assert.ok(Math.abs(avg(x) - mu) < 4 * sd / Math.sqrt(N), `${name}: średnia ${avg(x)}`);
+    assert.ok(Math.abs(sdv(x) / sd - 1) < 0.04, `${name}: SD ${sdv(x)}`);
+  }
+  const g1 = D.rng(1), g2 = D.rng(1);
+  assert.deepEqual(Array.from(g1.many(3, g1.u)), Array.from(g2.many(3, g2.u)), "ziarno daje powtarzalny ciąg");
+  // Gęstość jądrowa z odbiciem: pole ≈ 1, przy brzegu bez zapaści do połowy.
+  const ux = g.many(4000, () => g.unif(0, 10)), k = D.kde(ux, 0, 10, 501, null, [0, 10]);
+  const area = k.slice(1).reduce((s, p, i) => s + (p[0] - k[i][0]) * (p[1] + k[i][1]) / 2, 0);
+  assert.ok(Math.abs(area - 1) < 0.02, `pole KDE ${area}`);
+  assert.ok(k[0][1] > 0.08, "odbicie podnosi gęstość przy brzegu");
+  // Histogram ggplot: wszystkie obserwacje w przedziałach, k przedziałów.
+  const b = S.binsGgplot([0, 1, 2, 3, 9], 5);
+  assert.equal(b.length, 5);
+  assert.equal(b.reduce((s, r) => s + r.n, 0), 5);
+
+  const P = env.window.lcCharts.palette();
+  const run = (name, vals, step) => {
+    const fig = F[name], state = {};
+    if (fig.init) fig.init(state);
+    fig.prepare(state, null, vals);
+    return { fig, state, spec: k => fig.draw(null, P, k || 0, state, vals, step) };
+  };
+  // Ryc. 1.3: próba ciągła i dyskretna, warstwy włączane polami wyboru.
+  let r = run("d03-emp", { ch1_emp_dist: "normal", ch1_emp_n: "200", ch1_show_hist: "on", ch1_show_density: "on" });
+  assert.equal(r.state.data.length, 200);
+  assert.deepEqual(Array.from(r.spec().layers, l => l.type), ["bins", "line"]);
+  const first = r.state.data;
+  r.fig.prepare(r.state, null, { ch1_emp_dist: "normal", ch1_emp_n: "200" });
+  assert.equal(r.state.data, first, "te same ustawienia nie losują od nowa");
+  r.fig.act(r.state, "new"); r.fig.prepare(r.state, null, { ch1_emp_dist: "normal", ch1_emp_n: "200" });
+  assert.notEqual(r.state.data, first, "przycisk losuje nową próbę");
+  r = run("d03-emp", { ch1_emp_dist: "poisson", ch1_emp_n: "400", ch1_show_hist: "off", ch1_show_density: "off" });
+  assert.match(r.spec().aria, /Włącz/);
+  // Ryc. 1.4: częstości sumują się do 1, podpis z największą różnicą.
+  r = run("d03-freq", { ch1_scenario: "loaded", ch1_n_obs: "1000" });
+  const bars = r.spec().layers[0].data;
+  assert.equal(bars.length, 6);
+  assert.ok(Math.abs(bars.reduce((s, q) => s + q[2], 0) - 1) < 1e-12);
+  const diff = new Element("span", { "data-v": "diff" }), host = root("lc-sf", [diff]);
+  r.fig.update(host, r.state);
+  assert.match(diff.textContent, /^Maksymalna różnica między częstością a prawdopodobieństwem: 0\.\d{3}/);
+  // Ryc. 3.1: k słupków dla monety i kostki 12-ściennej.
+  assert.equal(run("d03-unif", { ch3_unif_type: "d12", ch3_unif_n: "500" }).spec().layers[0].data.length, 12);
+  // Ryc. 4.1: kroki 1–7, stała oś X, krzywa w krokach 6–7.
+  const steps = [1, 2, 3, 4, 5, 6, 7].map(s => run("d03-hist", { ch4_step_dist: "exp", ch4_step_n: "500" }, s));
+  steps.forEach((h, i) => {
+    const sp = h.spec();
+    assert.ok(sp.layers.length > 0, `krok ${i + 1}`);
+    if (i >= 1 && i <= 3) assert.equal(sp.layers[0].data.length, [5, 15, 30][i - 1]);
+  });
+  const kd = steps[6].spec().layers[0].data;
+  assert.ok(kd.every(p => p[0] >= steps[6].state.frame.xlim[0] && p[1] >= 0));
+  assert.match(F["d03-hist"].text(null, null, null, 5), /łączne pole słupków wynosi 1/);
+  // Ryc. 6.4: zbieranie średnich, czyszczenie po zmianie n, odczyty.
+  r = run("d03-ctg", { ch6_pop_dist: "exponential", ch6_sample_size: "5" });
+  assert.match(r.spec(1).aria, /Pobierz/);
+  r.fig.act(r.state, "take1000");
+  assert.equal(r.state.means.length, 1000);
+  const ctgLayers = Array.from(r.spec(1).layers, l => l.type);
+  assert.deepEqual(ctgLayers, ["bins", "line", "vline"]);
+  const sdOut = new Element("span", { "data-v": "sd" }), seOut = new Element("span", { "data-v": "se" });
+  r.fig.update(root("lc-sf", [sdOut, seOut]), r.state);
+  assert.equal(seOut.textContent, "0.894");
+  assert.ok(Math.abs(Number(sdOut.textContent) - 0.894) < 0.08, `SD średnich ${sdOut.textContent}`);
+  r.fig.act(r.state, "take1"); assert.equal(r.state.means.length, 1001);
+  r.fig.prepare(r.state, null, { ch6_pop_dist: "exponential", ch6_sample_size: "10" });
+  assert.equal(r.state.means.length, 0, "zmiana n czyści średnie");
+  r.fig.act(r.state, "take1"); r.fig.act(r.state, "take1");
+  assert.equal(r.spec(1).layers[0].type, "points", "kilka średnich jako kropki");
+  for (const dist of ["uniform", "bimodal", "u_shape", "die"]) {
+    const c = run("d03-ctg", { ch6_pop_dist: dist, ch6_sample_size: "5" });
+    const sp = c.spec(0);
+    assert.ok(sp.layers[0].data.every(p => p.every(Number.isFinite)), `${dist}: skończone punkty`);
+  }
+  assert.equal(env.errors.length, 0);
+});

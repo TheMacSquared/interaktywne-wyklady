@@ -201,14 +201,13 @@ ch3_ui <- list(
       label = "Ryc. 3.1",
       title = "Symulacja: moneta i kostka",
       full_width = TRUE,
-      lc_toolbar(
-        lc_segmented("ch3_unif_type", "Eksperyment", choices = c("Moneta (2 wyniki)" = "coin",
-                        "Kostka (6 wyników)" = "die",
-                        "Kostka 12-ścienna" = "d12"), selected = "die"),
-        lc_slider("ch3_unif_n", "Liczba prób", 10, 5000, 100, 10),
-        lc_action("ch3_unif_sim", "Symuluj", variant = "solid")
-      ),
-      lc_plot("ch3_unif_plot", max_height = "350px")
+      lc_sf_figure("d03-unif", max_height = "350px",
+        control = list(
+          lc_segmented("ch3_unif_type", "Eksperyment", choices = c("Moneta (2 wyniki)" = "coin",
+                          "Kostka (6 wyników)" = "die",
+                          "Kostka 12-ścienna" = "d12"), selected = "die"),
+          lc_sf_slider("ch3_unif_n", "Liczba prób", 10, 5000, 100, 10)),
+        toolbar = lc_sf_action("sim", "ch3_unif_sim", "Symuluj", variant = "solid"))
     ),
 
     lc_p("Przy 100 rzutach słupki wyraźnie odstają od linii 1/6: jedne ściany
@@ -565,32 +564,6 @@ ch3_server <- function(input, output, session) {
       pierwsza szóstka pada już w pierwszym rzucie, a średnio czekamy na nią 6 rzutów.")
   ))
 
-  # --- Widget 1: Jednostajny dyskretny (bez zmian) ---
-  ch3_unif_data <- reactive({
-    input$ch3_unif_sim
-    req(input$ch3_unif_type, input$ch3_unif_n)
-    type <- input$ch3_unif_type
-    k    <- switch(type, "coin" = 2, "die" = 6, "d12" = 12)
-    list(obs = sample(1:k, input$ch3_unif_n, replace = TRUE), k = k, n = input$ch3_unif_n)
-  })
-
-  zoom_plot_server("ch3_unif_plot", reactive({
-    d <- ch3_unif_data()
-
-    df <- data.frame(x = factor(d$obs, levels = 1:d$k))
-    freq_df <- df %>% count(x, .drop = FALSE) %>% mutate(rel = n / sum(n))
-
-    ggplot(freq_df, aes(x = x, y = rel)) +
-      geom_col(fill = col_uniform, color = "white", alpha = 0.7) +
-      geom_hline(yintercept = 1/d$k, color = unname(upwr_cat["terakota"]), linewidth = 1, linetype = "dashed") +
-      geom_point(aes(y = 1/d$k), color = unname(upwr_cat["terakota"]), size = 3) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           
-           x = "Wynik", y = "Częstość względna") +
-      theme_upwr()
-  }))
-
-  # Ryc. 3.4, 3.8, 3.11, 3.12 rysuje dist_charts.js w przeglądarce.
+  # Ryc. 3.1 losuje i rysuje sim_charts.js, Ryc. 3.4, 3.8, 3.11, 3.12 — dist_charts.js.
 
 }

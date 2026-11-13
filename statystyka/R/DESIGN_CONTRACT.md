@@ -231,12 +231,17 @@ pasy, punkty, odcinki, pudełka, tekst), a silnik rysuje go w ECharts SVG.
   w `data-config`); stałe opisy dla każdej opcji liczymy w R z góry
   (`notes`, `data-when`).
 - Rozkłady prawdopodobieństwa: `R/lc_dist.js` (`window.lcDist`: d*, p*, q*
-  zgodne z R; test w `tests/testthat/test-chart-numerics.R`).
+  zgodne z R; test w `tests/testthat/test-chart-numerics.R`). Symulacje losują
+  w przeglądarce: `lcDist.r` (albo `lcDist.rng(ziarno)` dla stałych danych),
+  gęstość jądrowa `lcDist.kde` (z odbiciem przy granicach), histogram jak
+  `geom_histogram(bins = k)`: `lcSF.binsGgplot`. Próbę losujemy od nowa, gdy
+  zmienia się rozkład lub liczebność, i przyciskiem `lc_sf_action`.
 - Wykład ładuje `lc_stat_figures.R` przez `source()`, a w `header_extras` po
   `lc_charts.js`: `lc_dist.js` (gdy potrzebny), `lc_stat_figures.js`, własne
   ryciny i `lc_sf_styles()`.
 - Wzorce: statystyka 01 — `stat_charts.js` (ankieta, ryciny krokowe);
-  03 — `dist_charts.js` (rozkłady teoretyczne, presety suwaków).
+  03 — `dist_charts.js` (rozkłady teoretyczne, presety suwaków), `sim_charts.js`
+  (symulacje: próba a model, krokowy histogram, CTG).
 
 Wykłady używające wykresów JS ładują `R/lc_charts.js` w `header_extras`, po
 bibliotece wykresów i przed skryptami poszczególnych widgetów. Wspólne API

@@ -2,6 +2,7 @@
 // dystrybuanty i kwantyle zgodne z R (d*, p*, q*) z dokładnością rzędu 1e-12
 // (sprawdza tests/testthat/test-chart-numerics.R). Konwencje jak w R, poza
 // dgeom/qgeom: numer próby z pierwszym sukcesem (1, 2, …), jak w wykładzie 03.
+// Do symulacji: losowanie lcDist.rng() / lcDist.r i wygładzanie jądrowe lcDist.kde.
 (function () {
   "use strict";
   var LOG_SQRT_2PI = 0.9189385332046728, SQRT2 = Math.SQRT2;
@@ -184,12 +185,128 @@
     return out;
   }
 
+  // dgamma(x, shape, scale = s) i dbeta(x, a, b) z R.
+  function dgamma(x, shape, scale) {
+    if (x < 0) return 0;
+    if (x === 0) return shape < 1 ? Infinity : shape === 1 ? 1 / scale : 0;
+    return Math.exp((shape - 1) * Math.log(x) - x / scale - lgamma(shape) - shape * Math.log(scale));
+  }
+  function dbeta(x, a, b) {
+    if (x < 0 || x > 1) return 0;
+    if (x === 0 || x === 1) return Infinity;
+    return Math.exp((a - 1) * Math.log(x) + (b - 1) * Math.log1p(-x) + lgamma(a + b) - lgamma(a) - lgamma(b));
+  }
+
+  // ---- Losowanie (symulacje dawniej liczone w R) -------------------------------
+  // rng() losuje przez Math.random, rng(ziarno) powtarzalnie (mulberry32).
+  // Sekwencje nie są identyczne z R; zgodne są rozkłady.
+  function rng(seed) {
+    var state = seed >>> 0, spare = null;
+    var u = seed == null ? function () { return Math.random(); } : function () {
+      state = (state + 0x6D2B79F5) >>> 0;
+      var t = state;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    function norm(mu, sd) {
+      var z;
+      if (spare !== null) { z = spare; spare = null; } else {
+        var a = 1 - u(), b = u(), r = Math.sqrt(-2 * Math.log(a));
+        z = r * Math.cos(2 * Math.PI * b); spare = r * Math.sin(2 * Math.PI * b);
+      }
+      return (mu || 0) + (sd == null ? 1 : sd) * z;
+    }
+    // Marsaglia–Tsang; kształt < 1 przez wzmocnienie.
+    function gamma(shape, scale) {
+      if (shape < 1) return gamma(shape + 1, scale) * Math.pow(u(), 1 / shape);
+      var d = shape - 1 / 3, c = 1 / Math.sqrt(9 * d);
+      for (;;) {
+        var z = norm(), v = 1 + c * z;
+        if (v <= 0) continue;
+        v = v * v * v;
+        var w = u();
+        if (w < 1 - 0.0331 * z * z * z * z || Math.log(w) < 0.5 * z * z + d * (1 - v + Math.log(v))) return d * v * scale;
+      }
+    }
+    function pois(lambda) {
+      // Knuth dla małych λ; dla dużych suma niezależnych Poissonów o λ ≤ 30.
+      if (lambda > 30) { var s = 0, rest = lambda; while (rest > 0) { s += pois(Math.min(30, rest)); rest -= 30; } return s; }
+      var L = Math.exp(-lambda), k = 0, p = 1;
+      do { k++; p *= u(); } while (p > L);
+      return k - 1;
+    }
+    function binom(n, p) { var k = 0; for (var i = 0; i < n; i++) if (u() < p) k++; return k; }
+    // Indeks od 1 według wag (sample(1:k, prob = w) w R).
+    function choose(w) {
+      var total = 0, i; for (i = 0; i < w.length; i++) total += w[i];
+      var r = u() * total;
+      for (i = 0; i < w.length; i++) { r -= w[i]; if (r < 0) return i + 1; }
+      return w.length;
+    }
+    function many(k, f) { var out = new Array(k); for (var i = 0; i < k; i++) out[i] = f(); return out; }
+    return {
+      u: u, norm: norm, gamma: gamma, pois: pois, binom: binom, choose: choose, many: many,
+      unif: function (a, b) { return a + (b - a) * u(); },
+      exp: function (rate) { return -Math.log(1 - u()) / rate; },
+      beta: function (a, b) { var x = gamma(a, 1); return x / (x + gamma(b, 1)); },
+      int: function (k) { return 1 + Math.floor(u() * k); }   // sample.int(k, 1)
+    };
+  }
+
+  // ---- Wygładzanie jądrowe jak geom_density (bw.nrd0, jądro gaussowskie) --------
+  function quantile7(s, p) {
+    var h = (s.length - 1) * p, j = Math.floor(h);
+    return j + 1 < s.length ? s[j] + (h - j) * (s[j + 1] - s[j]) : s[j];
+  }
+  function bwNrd0(x) {
+    var n = x.length, m = 0, v = 0, i;
+    for (i = 0; i < n; i++) m += x[i];
+    m /= n;
+    for (i = 0; i < n; i++) v += (x[i] - m) * (x[i] - m);
+    var s = x.slice().sort(function (a, b) { return a - b; });
+    var hi = Math.sqrt(v / (n - 1)), lo = Math.min(hi, (quantile7(s, 0.75) - quantile7(s, 0.25)) / 1.34);
+    if (!(lo > 0)) lo = hi || Math.abs(x[0]) || 1;
+    return 0.9 * lo * Math.pow(n, -0.2);
+  }
+  // Gęstość w k punktach od lo do hi. bounds [a, b]: odbicie jądra przy brzegach
+  // (geom_density(bounds = …)); poza [a, b] gęstość 0. Duże próby liczymy na
+  // siatce 1024 przedziałów (jak density() w R), co wystarcza na wykresie.
+  function kde(x, lo, hi, k, bw, bounds) {
+    var h = bw || bwNrd0(x), n = x.length, a = bounds ? bounds[0] : -Infinity, b = bounds ? bounds[1] : Infinity;
+    var pts = x, wts = null, i, j;
+    if (n > 2000) {
+      var mn = Infinity, mx = -Infinity;
+      for (i = 0; i < n; i++) { if (x[i] < mn) mn = x[i]; if (x[i] > mx) mx = x[i]; }
+      var G = 1024, step = (mx - mn) / G || 1, cnt = new Array(G + 1).fill(0);
+      for (i = 0; i < n; i++) cnt[Math.round((x[i] - mn) / step)]++;
+      pts = []; wts = [];
+      for (i = 0; i <= G; i++) if (cnt[i]) { pts.push(mn + i * step); wts.push(cnt[i]); }
+    }
+    var c = 1 / (n * h * Math.sqrt(2 * Math.PI)), out = [];
+    function add(t, p) { var z = (t - p) / h; return Math.exp(-0.5 * z * z); }
+    for (i = 0; i < k; i++) {
+      var t = lo + (hi - lo) * i / (k - 1), s = 0;
+      if (t >= a && t <= b) {
+        for (j = 0; j < pts.length; j++) {
+          var w = wts ? wts[j] : 1, p = pts[j], g = add(t, p);
+          if (isFinite(a)) g += add(t, 2 * a - p);
+          if (isFinite(b)) g += add(t, 2 * b - p);
+          s += w * g;
+        }
+      }
+      out.push([t, s * c]);
+    }
+    return out;
+  }
+
   window.lcDist = {
     lgamma: lgamma, lchoose: lchoose, erf: erf, erfc: erfc,
     dnorm: dnorm, pnorm: pnorm, qnorm: qnorm,
     dbinom: dbinom, dpois: dpois, ppois: ppois, qpois: qpois,
     dgeom: dgeom, qgeom: qgeom, dunif: dunif, dexp: dexp, qexp: qexp,
     dt: dt, dchisq: dchisq, pchisq: pchisq, qchisq: qchisq,
-    dlnorm: dlnorm, qlnorm: qlnorm, seq: seq
+    dlnorm: dlnorm, qlnorm: qlnorm, dgamma: dgamma, dbeta: dbeta, seq: seq,
+    rng: rng, r: rng(), bwNrd0: bwNrd0, kde: kde
   };
 })();

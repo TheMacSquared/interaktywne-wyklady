@@ -113,21 +113,21 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.1",
       full_width = TRUE,
-      lc_step_widget("ch4_step",
+      lc_sf_figure("d03-hist", bare = TRUE, body = lc_step_widget("ch4_step",
         title = "Od histogramu do krzywej gęstości",
         steps = c("Surowe dane", "Histogram (5 binów)", "Więcej binów (15)",
                   "Jeszcze więcej (30)", "Skala gęstości", "Krzywa gęstości",
                   "Tylko PDF"),
         toolbar = lc_toolbar(
-          selectInput("ch4_step_dist", "Rozkład źródłowy",
+          lc_sf_ctl(lc_group("Rozkład źródłowy", lc_select("ch4_step_dist",
             choices = c("Normalny" = "normal", "Wykładniczy" = "exp",
                         "Jednostajny" = "unif"),
-            selected = "normal"
-          ),
-          lc_slider("ch4_step_n", "Wielkość próby", 50, 10000, 500, 50)
+            selected = "normal", aria_label = "Rozkład źródłowy"))),
+          lc_sf_slider("ch4_step_n", "Wielkość próby", 50, 10000, 500, 50),
+          lc_chart_zoom_button()
         ),
-        plot_id = "ch4_step_plot"
-      )
+        body = lc_sf_chart(0, ratio = "2.5/1", max_height = "400px")
+      ))
     ),
 
     lc_p("Kluczowy jest krok piąty. Na osi Y nie ma już liczebności, tylko
@@ -463,118 +463,6 @@ ch4_server <- function(input, output, session) {
       λ = 4 na godzinę.")
   ))
 
-  # --- Widget 1: Krok po kroku ---
-  # Krok widgetu (1..7) żyje w przeglądarce; zmiana rozkładu lub próby nie cofa kroku.
-  ch4_step <- lc_step_server("ch4_step", input)$step
-
-  ch4_sample_data <- reactive({
-    req(input$ch4_step_n, input$ch4_step_dist)
-    switch(input$ch4_step_dist,
-      "normal" = rnorm(input$ch4_step_n, mean = 5, sd = 1.5),
-      "exp"    = rexp(input$ch4_step_n, rate = 0.5),
-      "unif"   = runif(input$ch4_step_n, min = 0, max = 10)
-    )
-  })
-
-  # Granice dziedziny dla wygładzenia (kroki 6–7): krzywa nie wychodzi poza
-  # możliwe wartości, a odbicie jądra poprawia jej wysokość przy brzegu.
-  ch4_step_bounds <- reactive({
-    switch(input$ch4_step_dist,
-      "normal" = c(-Inf, Inf),
-      "exp"    = c(0, Inf),
-      "unif"   = c(0, 10)
-    )
-  })
-
-  # Stała rama z pełnej próby: oś X wspólna dla kroków, oś Y wspólna dla
-  # kroków na skali gęstości (5–7). Zapas 14% mieści skrajne słupki 5 binów.
-  ch4_step_frame <- reactive({
-    data <- ch4_sample_data()
-    df <- data.frame(x = data)
-    x_pad <- diff(range(data)) * 0.14
-    hist_max <- function(bins, stat) {
-      max(layer_data(ggplot(df, aes(x = x)) + geom_histogram(bins = bins))[[stat]])
-    }
-    kde_max <- max(layer_data(ggplot(df, aes(x = x)) +
-                                geom_density(bounds = ch4_step_bounds()))$density)
-    dens_max <- max(hist_max(30, "density"), kde_max)
-    list(
-      xlim = range(data) + c(-x_pad, x_pad),
-      count_max = c(`5` = hist_max(5, "count"), `15` = hist_max(15, "count"),
-                    `30` = hist_max(30, "count")),
-      dens_max = dens_max
-    )
-  })
-
-  zoom_plot_server("ch4_step_plot", reactive({
-    step <- ch4_step()
-    data <- ch4_sample_data()
-    fr <- ch4_step_frame()
-
-    df <- data.frame(x = data)
-    count_frame <- function(bins) {
-      step_frame(xlim = fr$xlim, ylim = c(0, fr$count_max[[as.character(bins)]] * 1.08))
-    }
-    dens_frame <- step_frame(xlim = fr$xlim, ylim = c(0, fr$dens_max * 1.08))
-
-    if (step == 1) {
-      ggplot(df, aes(x = x)) +
-        step_layer(geom_rug, "data", alpha = 0.3) +
-        scale_y_continuous() +
-        labs(x = "Wartość", y = "") +
-        step_frame(xlim = fr$xlim, ylim = c(0, 1), y_axis = FALSE)
-    } else if (step == 2) {
-      ggplot(df, aes(x = x)) +
-        step_result(geom_histogram, bins = 5) +
-        step_layer(geom_rug, "background") +
-        labs(x = "Wartość", y = "Liczebność") +
-        count_frame(5)
-    } else if (step == 3) {
-      ggplot(df, aes(x = x)) +
-        step_result(geom_histogram, bins = 15) +
-        labs(x = "Wartość", y = "Liczebność") +
-        count_frame(15)
-    } else if (step == 4) {
-      ggplot(df, aes(x = x)) +
-        step_result(geom_histogram, bins = 30) +
-        labs(x = "Wartość", y = "Liczebność") +
-        count_frame(30)
-    } else if (step == 5) {
-      ggplot(df, aes(x = x)) +
-        step_result(geom_histogram, mapping = aes(y = after_stat(density)), bins = 30) +
-        labs(x = "Wartość", y = "Gęstość") +
-        dens_frame
-    } else if (step == 6) {
-      ggplot(df, aes(x = x)) +
-        step_result(geom_histogram, mapping = aes(y = after_stat(density)), bins = 30,
-                    alpha = 0.5) +
-        step_layer(geom_density, "new", linewidth = 1.5,
-                   bounds = ch4_step_bounds()) +
-        labs(x = "Wartość", y = "Gęstość") +
-        dens_frame
-    } else {
-      ggplot(df, aes(x = x)) +
-        step_layer(geom_density, "known", fill = STEP_ROLES$data$colour,
-                   linewidth = 1.2, alpha = 0.3, bounds = ch4_step_bounds()) +
-        labs(x = "Wartość", y = "Gęstość f(x)") +
-        dens_frame
-    }
-  }))
-
-  output$ch4_step_text <- renderUI({
-    step <- ch4_step()
-    texts <- c(
-      "Każda kreska to jedna obserwacja. Przy setkach kresek trudno ocenić, gdzie jest ich najwięcej.",
-      "5 binów — widać ogólny zarys, ale mało szczegółów.",
-      "15 binów — kształt staje się wyraźniejszy.",
-      "30 binów — więcej szczegółów, ale słupki są nierówne.",
-      "Oś Y w skali gęstości — łączne pole słupków wynosi 1.",
-      "Gładka krzywa przybliża kształt histogramu.",
-      "Zostaje sama krzywa gęstości f(x). Pole pod nią wynosi 1."
-    )
-    texts[step]
-  })
-
-  # Ryc. 4.6 i 4.8 rysuje dist_charts.js w przeglądarce.
+  # Ryc. 4.1 losuje i rysuje sim_charts.js, Ryc. 4.6 i 4.8 — dist_charts.js.
 
 }

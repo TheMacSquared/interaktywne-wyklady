@@ -104,24 +104,20 @@ ch1_ui <- list(
       label = "Ryc. 1.3",
       title = "Histogram (dane) vs krzywa gęstości (model)",
       full_width = TRUE,
-      lc_toolbar(
-        selectInput("ch1_emp_dist", "Rozkład źródłowy",
+      lc_sf_figure("d03-emp", max_height = "380px",
+        control = list(
+          lc_group("Rozkład źródłowy", lc_select("ch1_emp_dist",
             choices = c(
               "Wzrost studentów (normalny, ciągła)"            = "normal",
               "Czas dojazdu (skośny, ciągła)"                  = "skewed",
               "Książki przeczytane w semestrze (Poissona, dyskretna)" = "poisson",
               "Trafione pytania w teście (dwumianowy, dyskretna)"     = "binomial"
             ),
-            selected = "normal"
-          ),
-        lc_slider("ch1_emp_n", "Wielkość próby", 20, 5000, 200, 20),
-        lc_action("ch1_emp_resample", "Losuj nową próbę", icon = "shuffle", variant = "solid"),
-        tags$div(class = "lc-checks",
+            selected = "normal", aria_label = "Rozkład źródłowy")),
+          lc_sf_slider("ch1_emp_n", "Wielkość próby", 20, 5000, 200, 20),
           checkboxInput("ch1_show_hist", "Dane z próby (histogram lub słupki)", value = TRUE),
-          checkboxInput("ch1_show_density", "Model (krzywa gęstości lub prawdopodobieństwa)", value = FALSE)
-        )
-      ),
-      lc_plot("ch1_emp_vs_theo", max_height = "380px")
+          checkboxInput("ch1_show_density", "Model (krzywa gęstości lub prawdopodobieństwa)", value = FALSE)),
+        toolbar = lc_sf_action("new", "ch1_emp_resample", "Losuj nową próbę", icon = "shuffle", variant = "solid"))
     ),
 
     lc_p("Wzrost losujemy z rozkładu normalnego o średniej 170 cm
@@ -162,17 +158,16 @@ ch1_ui <- list(
       label = "Ryc. 1.4",
       title = "Porównanie: teoria vs obserwacja",
       full_width = TRUE,
-      lc_toolbar(
-        lc_segmented("ch1_scenario", "Scenariusz", choices = c(
+      lc_sf_figure("d03-freq", max_height = "350px", legend = TRUE,
+        control = list(
+          lc_segmented("ch1_scenario", "Scenariusz", choices = c(
               "Uczciwa kostka"   = "fair",
               "Obciążona kostka" = "loaded",
               "Moneta"           = "coin"
             ), selected = "fair"),
-        lc_slider("ch1_n_obs", "Liczba obserwacji", 10, 5000, 100, 10),
-        lc_action("ch1_resample", "Losuj ponownie", icon = "shuffle", variant = "solid")
-      ),
-      lc_plot("ch1_freq_vs_prob", max_height = "350px"),
-      uiOutput("ch1_freq_vs_prob_text")
+          lc_sf_slider("ch1_n_obs", "Liczba obserwacji", 10, 5000, 100, 10)),
+        toolbar = lc_sf_action("new", "ch1_resample", "Losuj ponownie", icon = "shuffle", variant = "solid"),
+        after = lc_caption(lc_sf_value("diff", "")))
     ),
 
     lc_p("Przy 100 rzutach uczciwą kostką największa różnica przekracza 0.05
@@ -259,194 +254,7 @@ ch1_ui <- list(
 # Chapter 1 Server
 # --------------------------------------------------------------------------
 
-# Zmienna dyskretna: słupki częstości z próby i prawdopodobieństwa modelu.
-ch1_emp_discrete_plot <- function(d, show_hist, show_dens) {
-  k <- switch(d$dist, poisson = 0:12, binomial = 0:10)
-  pmf <- switch(d$dist,
-    poisson  = dpois(k, lambda = 3),
-    binomial = dbinom(k, size = 10, prob = 0.6)
-  )
-  freq <- tabulate(d$data + 1, nbins = length(k)) / d$n
-  ymax <- max(c(freq, pmf)) * 1.12
-
-  p <- ggplot()
-  if (show_hist) {
-    p <- p + geom_col(data = data.frame(x = k, y = freq), aes(x, y),
-                      fill = unname(upwr_cat["niebo"]), alpha = 0.6, width = 0.8)
-  }
-  if (show_dens) {
-    model <- data.frame(x = k, y = pmf)
-    p <- p + geom_linerange(data = model, aes(x = x, ymin = 0, ymax = y),
-                            color = unname(upwr_cat["terakota"]), linewidth = 1) +
-      geom_point(data = model, aes(x, y), color = unname(upwr_cat["terakota"]), size = 3)
-  }
-  p + coord_cartesian(xlim = c(min(k) - 0.6, max(k) + 0.6), ylim = c(0, ymax)) +
-    scale_x_continuous(breaks = k) +
-    labs(x = "Wartość (liczba całkowita)", y = "Częstość względna") +
-    theme_upwr()
-}
-
 ch1_server <- function(input, output, session) {
 
-  # --- Widget 0: Rozkład empiryczny vs teoretyczny ---
-  emp_resample_trigger <- reactiveVal(0)
-  observeEvent(input$ch1_emp_resample, emp_resample_trigger(emp_resample_trigger() + 1))
-
-  ch1_emp_data <- reactive({
-    emp_resample_trigger()
-    req(input$ch1_emp_n, input$ch1_emp_dist)
-    n <- input$ch1_emp_n
-    dist <- input$ch1_emp_dist
-    data <- switch(dist,
-      "normal"  = rnorm(n, mean = 170, sd = 8),
-      "skewed"   = rgamma(n, shape = 3, scale = 10) + 5,
-      "poisson"  = rpois(n, lambda = 3),
-      "binomial" = rbinom(n, size = 10, prob = 0.6)
-    )
-    list(data = data, dist = dist, n = n)
-  })
-
-  zoom_plot_server("ch1_emp_vs_theo", reactive({
-    d <- ch1_emp_data()
-
-    show_hist <- input$ch1_show_hist
-    show_dens <- input$ch1_show_density
-
-    if (!show_hist && !show_dens) {
-      return(ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Włącz przynajmniej jedną warstwę",
-                 size = 6, color = upwr_reference) +
-        theme_void())
-    }
-
-    if (d$dist %in% c("poisson", "binomial")) {
-      return(ch1_emp_discrete_plot(d, show_hist, show_dens))
-    }
-
-    df <- data.frame(x = d$data)
-
-    # Zakres teoretyczny osi X
-    theo_xlim <- switch(d$dist,
-      "normal"  = c(170 - 4*8, 170 + 4*8),   # mu +/- 4*sigma
-      "skewed"  = c(0, 5 + qgamma(0.999, shape = 3, scale = 10)),
-      "uniform" = c(0.5, 6.5)
-    )
-    # Zakres empiryczny
-    emp_xlim <- range(d$data)
-    # Weź szerszy z dwóch
-    x_lo <- min(theo_xlim[1], emp_xlim[1])
-    x_hi <- max(theo_xlim[2], emp_xlim[2])
-    x_margin <- (x_hi - x_lo) * 0.05
-    fixed_xlim <- c(x_lo - x_margin, x_hi + x_margin)
-
-    x_seq <- seq(fixed_xlim[1], fixed_xlim[2], length.out = 500)
-
-    theo_y <- switch(d$dist,
-      "normal"  = dnorm(x_seq, mean = 170, sd = 8),
-      "skewed"  = dgamma(x_seq - 5, shape = 3, scale = 10),
-      "uniform" = dunif(x_seq, min = 1, max = 6)
-    )
-    theo_y[is.na(theo_y) | theo_y < 0] <- 0
-    df_theo <- data.frame(x = x_seq, y = theo_y)
-
-    # Stałe breaks oparte na danych (niezależne od osi)
-    n_bins <- min(50, max(10, d$n / 10))
-    bin_breaks <- seq(min(d$data), max(d$data), length.out = n_bins + 1)
-
-    # Zakres Y: max z gęstości teoretycznej i histogramu
-    theo_ymax <- max(theo_y)
-    hist_obj <- hist(d$data, breaks = bin_breaks, plot = FALSE)
-    hist_ymax <- max(hist_obj$density)
-    fixed_ymax <- max(theo_ymax, hist_ymax) * 1.08
-
-    dist_label <- switch(d$dist,
-      "normal"  = "Rozkład normalny N(170, 8)",
-      "skewed"  = "Rozkład gamma (skośny)",
-      "uniform" = "Rozkład jednostajny U(1, 6)"
-    )
-
-    p <- ggplot()
-
-    if (show_hist) {
-      p <- p + geom_histogram(data = df, aes(x = x, y = after_stat(density)),
-                               breaks = bin_breaks,
-                               fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.6)
-    }
-
-    if (show_dens) {
-      p <- p + geom_line(data = df_theo, aes(x = x, y = y),
-                          color = unname(upwr_cat["terakota"]), linewidth = 1.8) +
-        geom_area(data = df_theo, aes(x = x, y = y),
-                  fill = unname(upwr_cat["terakota"]), alpha = 0.1)
-    }
-
-    p + coord_cartesian(xlim = fixed_xlim, ylim = c(0, fixed_ymax)) +
-    labs(
-      
-      
-      x = "Wartość", y = "Gęstość"
-    ) +
-    theme_upwr()
-  }))
-
-  # --- Widget 2: Częstości vs prawdopodobieństwo ---
-  freq_data <- reactive({
-    input$ch1_resample
-    req(input$ch1_n_obs, input$ch1_scenario)
-    n        <- input$ch1_n_obs
-    scenario <- input$ch1_scenario
-    if (scenario == "fair") {
-      list(obs = sample(1:6, n, replace = TRUE), theo = rep(1/6, 6), labels = as.character(1:6))
-    } else if (scenario == "loaded") {
-      probs <- c(0.1, 0.1, 0.1, 0.1, 0.1, 0.5)
-      list(obs = sample(1:6, n, replace = TRUE, prob = probs), theo = probs, labels = as.character(1:6))
-    } else {
-      list(obs = sample(c(1, 2), n, replace = TRUE), theo = c(0.5, 0.5), labels = c("Orzeł", "Reszka"))
-    }
-  })
-
-  zoom_plot_server("ch1_freq_vs_prob", reactive({
-    fd <- freq_data()
-
-    n_levels <- length(fd$labels)
-    tab <- table(factor(fd$obs, levels = 1:n_levels)) / length(fd$obs)
-
-    df_obs <- data.frame(
-      outcome = factor(fd$labels, levels = fd$labels),
-      value = as.numeric(tab)
-    )
-    df_theo <- data.frame(
-      outcome = factor(fd$labels, levels = fd$labels),
-      value = fd$theo
-    )
-
-    ggplot() +
-      geom_col(data = df_obs, aes(x = outcome, y = value, fill = "Obserwowane"),
-               alpha = 0.85, color = "white") +
-      geom_line(data = df_theo, aes(x = outcome, y = value, color = "Teoretyczne", group = 1),
-                linewidth = 1.2) +
-      geom_point(data = df_theo, aes(x = outcome, y = value, color = "Teoretyczne"),
-                 size = 4) +
-      scale_fill_manual(values = c("Obserwowane" = unname(upwr_cat["niebo"])), name = "") +
-      scale_color_manual(values = c("Teoretyczne" = unname(upwr_cat["terakota"])), name = "") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "Wynik", y = "Proporcja / Prawdopodobieństwo") +
-      theme_upwr() +
-      theme(legend.position = "top")
-  }))
-
-  output$ch1_freq_vs_prob_text <- renderUI({
-    fd <- freq_data()
-    n <- length(fd$obs)
-    max_diff <- max(abs(table(factor(fd$obs, levels = 1:length(fd$labels))) / n - fd$theo))
-
-    lc_caption(
-      paste0("Maksymalna różnica między częstością a prawdopodobieństwem: ",
-             sprintf("%.3f", max_diff),
-             if (max_diff < 0.05) " — dobra zgodność" else " — słabsza zgodność")
-    )
-  })
-
+  # Ryc. 1.3 i 1.4 losuje i rysuje sim_charts.js w przeglądarce.
 }

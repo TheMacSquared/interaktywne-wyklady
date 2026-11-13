@@ -84,8 +84,28 @@
           a = api.coord([api.value(0), api.value(2)]); b = api.coord([api.value(1), 0]);
           shape = { x: a[0] + 0.5, y: a[1], width: Math.max(0, b[0] - a[0] - 1), height: b[1] - a[1] };
         }
-        return { type: "rect", x: 0, y: 0, shape: shape, style: { fill: color, opacity: L.alpha == null ? 1 : L.alpha } };
+        // stroke: obrys słupka (krawędź jak colour w geom_histogram), nieprzezroczysty.
+        if (!L.stroke) return { type: "rect", x: 0, y: 0, shape: shape, style: { fill: color, opacity: L.alpha == null ? 1 : L.alpha } };
+        return { type: "rect", x: 0, y: 0, shape: shape,
+                 style: { fill: L.alpha == null ? color : C.alpha(color, L.alpha), stroke: L.stroke, lineWidth: L.lineWidth || 0.8 } };
       } };
+  }
+
+  // Histogram jak geom_histogram(bins = k): szerokość = rozstęp / (k − 1), przedziały
+  // domknięte z prawej. Zwraca [{l, r, n}]; wysokości liczy rycina (liczebność, gęstość).
+  function binsGgplot(values, k) {
+    var lo = Infinity, hi = -Infinity, i;
+    for (i = 0; i < values.length; i++) { if (values[i] < lo) lo = values[i]; if (values[i] > hi) hi = values[i]; }
+    if (!(hi > lo)) return [{ l: lo - 0.5, r: lo + 0.5, n: values.length }];
+    var w = (hi - lo) / (k - 1), boundary = w / 2;
+    var origin = boundary + Math.floor((lo - boundary) / w) * w, out = [];
+    for (var e = origin; e <= hi + (1 - 1e-8) * w; e += w) out.push({ l: e, r: e + w, n: 0 });
+    out.pop();
+    values.forEach(function (v) {
+      var j = Math.max(0, Math.min(out.length - 1, Math.ceil((v - origin) / w - 1e-9) - 1));
+      out[j].n++;
+    });
+    return out;
   }
 
   function option(spec, P, fs, W) {
@@ -404,5 +424,6 @@
   }
 
   window.lcSF = { register: register, figures: FIGURES, option: option, fmt: lcFmt, status: status,
-                  setValue: setValue, esc: esc, table: lcTable, legendItems: legendItems };
+                  setValue: setValue, esc: esc, table: lcTable, legendItems: legendItems,
+                  binsGgplot: binsGgplot };
 })();

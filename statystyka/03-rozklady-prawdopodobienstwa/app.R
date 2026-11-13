@@ -85,6 +85,8 @@ ui <- lecture_page(
     includeScript(file.path(project_root, "R", "lc_dist.js")),
     includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
     includeScript(file.path(app_dir, "modules", "dist_charts.js")),
+    # Symulacje (dawniej losowanie na serwerze): Ryc. 1.3, 1.4, 3.1, 4.1, 6.4.
+    includeScript(file.path(app_dir, "modules", "sim_charts.js")),
     lc_sf_styles(),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
     includeScript(file.path(app_dir, "modules", "lejek_chart.js")),

@@ -219,25 +219,33 @@ ch6_ui <- list(
       label = "Ryc. 6.4",
       title = "Symulacja: średnie z dowolnego rozkładu → normalny",
       full_width = TRUE,
-      lc_toolbar(
-        selectInput("ch6_pop_dist", "Rozkład populacji",
-          choices = c(
-            "Jednostajny"         = "uniform",
-            "Wykładniczy (skośny)" = "exponential",
-            "Dwumodalny"          = "bimodal",
-            "U-kształtny"          = "u_shape",
-            "Kostka (dyskretny)"  = "die"
-          ),
-          selected = "exponential"
-        ),
-        lc_slider("ch6_sample_size", "Wielkość próby (n)", 1, 100, 5, 1),
-        lc_action_group(ch6_take_1 = "1", ch6_take_100 = "100", ch6_take_1000 = "1000",
-                        label = "Pobierz próby"),
-        lc_action("ch6_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-        lc_readouts(uiOutput("ch6_sample_count"), uiOutput("ch6_means_stats"))
-      ),
-      lc_plot("ch6_pop_plot", ratio = "4/1", max_height = "180px"),
-      lc_plot("ch6_means_plot", max_height = "300px")
+      lc_sf_figure("d03-ctg",
+        control = list(
+          lc_group("Rozkład populacji", lc_select("ch6_pop_dist",
+            choices = c(
+              "Jednostajny"         = "uniform",
+              "Wykładniczy (skośny)" = "exponential",
+              "Dwumodalny"          = "bimodal",
+              "U-kształtny"          = "u_shape",
+              "Kostka (dyskretny)"  = "die"
+            ),
+            selected = "exponential", aria_label = "Rozkład populacji")),
+          lc_sf_slider("ch6_sample_size", "Wielkość próby (n)", 1, 100, 5, 1)),
+        toolbar = tagList(
+          lc_group("Pobierz próby",
+            tags$div(class = "lc-seg", role = "group", `aria-label` = "Pobierz próby",
+              tags$button(type = "button", `data-stat-act` = "take1", "1"),
+              tags$button(type = "button", `data-stat-act` = "take100", "100"),
+              tags$button(type = "button", `data-stat-act` = "take1000", "1000"))),
+          lc_sf_action("reset", "ch6_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+          lc_readouts(
+            lc_readout("Prób", lc_sf_value("count", "0"), color = unname(upwr_cat["niebo"])),
+            lc_readout("Śr. średnich", lc_sf_value("mean"), color = unname(upwr_cat["niebo"])),
+            lc_readout("SD średnich", lc_sf_value("sd"), color = upwr_secondary),
+            lc_readout("Teoretyczne SD (σ/√n)", lc_sf_value("se", "0.894"), color = unname(upwr_cat["bursztyn"])))),
+        body = tagList(
+          lc_sf_chart(0, ratio = "4/1", max_height = "180px"),
+          lc_sf_chart(1, ratio = "2/1", max_height = "300px")))
     ),
 
     lc_p("Przy ustawieniach startowych populacja ma ", gloss("rozkład wykładniczy"), " z μ = 2
@@ -378,112 +386,7 @@ ch6_server <- function(input, output, session) {
       lc_fmt(scene_rating$mu, 1), ".")
   ))
 
-  # --- Widget 1: Eksperyment CTG ---
-  collected_means <- reactiveVal(numeric(0))
-
-  take_samples <- function(k) {
-    n <- input$ch6_sample_size
-    dist <- input$ch6_pop_dist
-    new_means <- replicate(k, {
-      samp <- generate_population_sample(dist, n)
-      mean(samp)
-    })
-    collected_means(c(collected_means(), new_means))
-  }
-
-  observeEvent(input$ch6_take_1, take_samples(1))
-  observeEvent(input$ch6_take_100, take_samples(100))
-  observeEvent(input$ch6_take_1000, take_samples(1000))
-  observeEvent(input$ch6_reset, collected_means(numeric(0)))
-
-  # Reset przy zmianie rozkładu lub n
-  observeEvent(c(input$ch6_pop_dist, input$ch6_sample_size), {
-    collected_means(numeric(0))
-  })
-
-  output$ch6_sample_count <- renderUI({
-    n <- length(collected_means())
-    lc_readout("Prób", n, color = unname(upwr_cat["niebo"]))
-  })
-
-  zoom_plot_server("ch6_pop_plot", reactive({
-    dist <- input$ch6_pop_dist
-    dist_label <- dist_names_pl[dist]
-
-    if (dist == "die") {
-      df <- data.frame(x = 1:6, prob = rep(1/6, 6))
-      ggplot(df, aes(x = factor(x), y = prob)) +
-        geom_col(fill = unname(upwr_cat["bursztyn"]), color = "white", alpha = 0.85, width = 0.6) +
-        scale_y_continuous(limits = c(0, 0.3), expand = expansion(mult = c(0, 0))) +
-        labs(x = "", y = "P(X = k)") +
-        theme_upwr(base_size = 11)
-    } else {
-      data <- generate_population_sample(dist, 10000)
-      df <- data.frame(x = data)
-      ggplot(df, aes(x = x)) +
-        geom_density(fill = unname(upwr_cat["bursztyn"]), color = upwr_secondary, alpha = 0.5, linewidth = 0.8) +
-        labs(x = "", y = "Gęstość") +
-        theme_upwr(base_size = 11)
-    }
-  }))
-
-  zoom_plot_server("ch6_means_plot", reactive({
-    means <- collected_means()
-
-    if (length(means) == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Pobierz próby przyciskiem powyżej",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      dist <- input$ch6_pop_dist
-      n <- input$ch6_sample_size
-      params <- get_population_params(dist)
-      theo_mu <- params$mu
-      theo_sd <- params$sigma / sqrt(n)
-
-      df <- data.frame(x = means)
-
-      p <- ggplot(df, aes(x = x))
-
-      if (length(means) >= 5) {
-        p <- p + geom_histogram(aes(y = after_stat(density)),
-                                bins = min(50, max(10, length(means) / 5)),
-                                fill = unname(upwr_cat["niebo"]), color = "white", alpha = 0.7)
-      } else {
-        p <- p + geom_dotplot(fill = unname(upwr_cat["niebo"]), alpha = 0.7, binwidth = theo_sd / 3)
-      }
-
-      if (length(means) >= 30 && theo_sd > 0) {
-        x_range <- seq(min(means) - theo_sd, max(means) + theo_sd, length.out = 200)
-        norm_df <- data.frame(x = x_range, y = dnorm(x_range, theo_mu, theo_sd))
-        p <- p + geom_line(data = norm_df, aes(x = x, y = y),
-                           color = unname(upwr_cat["terakota"]), linewidth = 1.5, linetype = "solid")
-      }
-
-      p + geom_vline(xintercept = theo_mu, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
-        labs(x = "Średnia z próby", y = "Gęstość") +
-        theme_upwr()
-    }
-  }))
-
-  output$ch6_means_stats <- renderUI({
-    means <- collected_means()
-    req(length(means) >= 2)
-
-    dist <- input$ch6_pop_dist
-    n <- input$ch6_sample_size
-    params <- get_population_params(dist)
-    theo_sd <- params$sigma / sqrt(n)
-
-    tagList(
-      lc_readout("Śr. średnich", round(mean(means), 3), color = unname(upwr_cat["niebo"])),
-      lc_readout("SD średnich", round(sd(means), 3), color = upwr_secondary),
-      lc_readout("Teoretyczne SD (σ/√n)", round(theo_sd, 3), color = unname(upwr_cat["bursztyn"]))
-    )
-  })
-
+  # Ryc. 6.4 (symulacja CTG) losuje i rysuje sim_charts.js w przeglądarce.
   # Ryc. 6.5 (mapa zbieżności) rysuje ec_proto.js z danych w data-config.
 
 }
