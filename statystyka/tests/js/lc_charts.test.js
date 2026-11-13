@@ -914,3 +914,34 @@ test("symulacje (03): losowanie lcDist, histogram ggplot i ryciny Ryc. 1.3–6.4
   }
   assert.equal(env.errors.length, 0);
 });
+
+test("silnik lcSF: etykiety yLabels przy krańcach, kolejność warstw, tabela ze skrótami, binsWidth, akcja z kontenerem", () => {
+  const env = environment();
+  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  const S = env.window.lcSF, P = env.window.lcCharts.palette();
+  const opt = S.option({ x: [0, 1], y: [0.5, 3.5], yLabels: { 1: "A", 2: "B", 3: "C" },
+    layers: [{ type: "points", data: [[0.5, 1]], color: "#000", size: 15 },
+             { type: "points", data: [[0.5, 1]], color: "#fff", size: 9 }] }, P, 12, 600);
+  assert.equal(opt.yAxis.axisLabel.showMinLabel, true, "dolna kategoria ma etykietę");
+  assert.ok(opt.series[1].z > opt.series[0].z, "późniejsza warstwa na wierzchu");
+  assert.equal(opt.series[0].progressive, 0);
+  const html = S.table([{ label: "Grupa", row: true }, { label: "Średnia", short: "x̄", desc: "średnia", digits: 1 }], [["A", 1.25]]);
+  assert.match(html, /<div class="lc-tbl-block"><div class="lc-tbl-key"><span><b>x̄<\/b> średnia<\/span><\/div><table/);
+  assert.match(html, /<abbr title="Średnia">x̄<\/abbr>/);
+  // binsWidth jak geom_histogram(binwidth): domyślnie granice w połowie, z boundary = 0 na wielokrotnościach.
+  const half = Array.from(S.binsWidth([5.93, 6.04, 6.06, 6.15], 0.1), b => [+b.l.toFixed(2), b.n]);
+  assert.deepEqual(half, [[5.85, 1], [5.95, 1], [6.05, 2]], "granice 5.85, 5.95, 6.05, 6.15 (boundary w/2)");
+  assert.equal(Array.from(S.binsWidth([5.93, 6.04, 6.06, 6.15], 0.1)).reduce((s, b) => s + b.n, 0), 4);
+  const zero = Array.from(S.binsWidth([0.2, 1, 1.5, 3], 1, 0), b => [b.l, b.r, b.n]);
+  assert.deepEqual(zero, [[0, 1, 2], [1, 2, 1], [2, 3, 1]], "przedziały (a, b], pierwszy z lewym końcem");
+  // Akcja dostaje kontener ryciny.
+  let got = null;
+  S.register({ demo_act: { act: (state, a, rootEl) => { got = [a, rootEl]; }, draw: () => null } });
+  const btn = new Element("button", { "data-stat-act": "go" });
+  const fig = root("lc-sf", [btn, ecbox("0")], { "data-fig": "demo_act" });
+  env.mount(fig);
+  fig.emit("click", { target: btn });
+  assert.equal(got[0], "go"); assert.equal(got[1], fig);
+  env.unmount(fig);
+  assert.equal(env.errors.length, 0);
+});

@@ -8,8 +8,11 @@
 # Dane dla ryciny (np. scenariusze) przechodzą w config jako JSON (data-config).
 
 # Pojedynczy wykres; k to numer wykresu w rycinie (od 0).
+# Niskie paski (ratio szersze niż 3/1, np. oś czasu 5/1) dostają mniejszą
+# minimalną wysokość, żeby min-height nie przebijał max_height.
 lc_sf_chart <- function(k = 0, ratio = "2/1", max_height = "340px") {
-  tags$div(class = "lc-sf-chart", `data-k` = k,
+  r <- vapply(strsplit(ratio, "/", fixed = TRUE), function(p) as.numeric(p[1]) / as.numeric(p[2]), 0)
+  tags$div(class = if (isTRUE(r > 3)) "lc-sf-chart is-strip" else "lc-sf-chart", `data-k` = k,
     style = paste0("aspect-ratio:", ratio, ";max-height:", max_height),
     tags$div(class = "lc-ec", `data-chart` = k, role = "img", `aria-label` = "Wykres"))
 }
@@ -17,6 +20,16 @@ lc_sf_chart <- function(k = 0, ratio = "2/1", max_height = "340px") {
 # Przycisk obsługiwany w przeglądarce (np. losowanie): data-stat-act = akcja.
 lc_sf_action <- function(act, ...) {
   htmltools::tagAppendAttributes(lc_action(...), `data-stat-act` = act)
+}
+
+# Grupa przycisków obsługiwanych w przeglądarce, jak lc_action_group() bez Shiny:
+# lc_sf_action_group("Pobierz próby", take1 = "1", take100 = "100").
+lc_sf_action_group <- function(label, ...) {
+  acts <- list(...)
+  stopifnot(length(acts) > 0, !is.null(names(acts)), all(nzchar(names(acts))))
+  lc_group(label,
+    tags$div(class = "lc-seg", role = "group", `aria-label` = label,
+      lapply(names(acts), function(a) tags$button(type = "button", `data-stat-act` = a, acts[[a]]))))
 }
 
 # Wartość wypełniana przez JS (odczyt, komórka tabeli).
@@ -77,12 +90,16 @@ lc_sf_styles <- function() tags$style(HTML("
   .lc-sf { position: relative; }
   .lc-sf-zoom { position: absolute; right: .3em; top: .3em; z-index: 3; }
   .lc-sf-chart { position: relative; width: 100%; min-height: 14em; }
+  .lc-sf-chart.is-strip { min-height: 7em; }
+  .lc-sf[data-lc-chart-large='true'] .lc-sf-chart.is-strip { min-height: 9em; }
+  .lc-sf-chart > .lc-ec { position: absolute; inset: 0; }
   .lc-sf[data-lc-chart-large='true'] .lc-sf-chart { max-height: none !important; min-height: 24em; }
   .lc-sf-legend { display: flex; flex-wrap: wrap; gap: .4em 1.4em; margin: .4em 0 0;
     font-size: .9em; color: var(--upwr-ink-soft); }
   .lc-sf-legend-item { display: inline-flex; align-items: center; }
   .lc-sf-slider { min-width: min(100%, 14em); flex: 1 1 14em; }
   .lc-sf-slider input[type='range'] { width: 100%; accent-color: var(--upwr-accent); cursor: pointer; }
+  .lc-sf-slider output { display: inline; }
   .lc-sf-slider output { font-family: var(--upwr-mono); color: var(--upwr-ink); }
   .lc-sf-colorbar { gap: .5em; }
   .lc-sf-colorbar-bar { display: inline-block; width: 9em; height: .7em; border: 1px solid var(--upwr-rule); }

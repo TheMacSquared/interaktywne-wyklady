@@ -12,7 +12,7 @@
 //     [data-stat-act]       — przyciski obsługiwane przez figure.act
 //
 // Figura: funkcja draw(v, P, k) albo obiekt {init(state, root), prepare(state, v,
-// vals, root), act(state, akcja), draw(v, P, k, state, vals, krok), update(root,
+// vals, root), act(state, akcja, root), draw(v, P, k, state, vals, krok), update(root,
 // state, v), text, table, noteKey}. state.config to JSON z data-config.
 // draw zwraca opis: x, y (zakresy), xName, yName, legend, aria i warstwy:
 //   bins {data:[[l,r,y]], color, alpha}     — słupki histogramu / kategorii
@@ -62,10 +62,17 @@
       } else body = esc(v == null ? "" : v);
       return "<" + tag + ' class="n" data-label="' + esc(c.label) + '">' + body + "</" + tag + ">";
     }
-    var head = cols.map(function (c) { return '<th scope="col"' + (c.row ? "" : ' class="n"') + ">" + esc(c.label) + "</th>"; }).join("");
+    // short/desc jak lc_col() w R: skrót w nagłówku (<abbr>), objaśnienia nad tabelą.
+    var head = cols.map(function (c) {
+      var lab = c.short ? '<abbr title="' + esc(c.label) + '">' + esc(c.short) + "</abbr>" : esc(c.label);
+      return '<th scope="col"' + (c.row ? "" : ' class="n"') + ">" + lab + "</th>";
+    }).join("");
+    var keyed = cols.filter(function (c) { return c.short && c.desc; });
+    var key = keyed.length ? '<div class="lc-tbl-key">' + keyed.map(function (c) {
+      return "<span><b>" + esc(c.short) + "</b> " + esc(c.desc) + "</span>"; }).join("") + "</div>" : "";
     var body = rows.map(function (r) { return "<tr>" + cols.map(function (c, j) { return cell(r[j], c, j, "td"); }).join("") + "</tr>"; }).join("");
     var tail = foot ? "<tfoot><tr>" + cols.map(function (c, j) { return cell(foot[j], c, j, "td"); }).join("") + "</tr></tfoot>" : "";
-    return '<div class="lc-tbl-block"><table class="lc-tbl is-fit"><thead><tr>' + head + "</tr></thead><tbody>" +
+    return '<div class="lc-tbl-block">' + key + '<table class="lc-tbl is-fit"><thead><tr>' + head + "</tr></thead><tbody>" +
            body + "</tbody>" + tail + "</table></div>";
   }
   // round() z R: zaokrąglenie do d miejsc, wypisane bez końcowych zer.
@@ -93,6 +100,22 @@
 
   // Histogram jak geom_histogram(bins = k): szerokość = rozstęp / (k − 1), przedziały
   // domknięte z prawej. Zwraca [{l, r, n}]; wysokości liczy rycina (liczebność, gęstość).
+  // Histogram jak geom_histogram(binwidth = w, boundary = b): granice w b + k·w
+  // (domyślnie b = w/2, jak w ggplot), przedziały domknięte z prawej. Zwraca [{l, r, n}].
+  function binsWidth(values, w, boundary) {
+    var lo = Infinity, hi = -Infinity, i;
+    for (i = 0; i < values.length; i++) { if (values[i] < lo) lo = values[i]; if (values[i] > hi) hi = values[i]; }
+    var b0 = boundary == null ? w / 2 : boundary;
+    var origin = b0 + Math.floor((lo - b0) / w) * w;
+    var k = Math.max(1, Math.ceil((hi - origin) / w - 1e-9)), out = [];
+    for (i = 0; i < k; i++) out.push({ l: origin + i * w, r: origin + (i + 1) * w, n: 0 });
+    values.forEach(function (v) {
+      var j = Math.max(0, Math.min(k - 1, Math.ceil((v - origin) / w - 1e-9) - 1));
+      out[j].n++;
+    });
+    return out;
+  }
+
   function binsGgplot(values, k) {
     var lo = Infinity, hi = -Infinity, i;
     for (i = 0; i < values.length; i++) { if (values[i] < lo) lo = values[i]; if (values[i] > hi) hi = values[i]; }
@@ -230,13 +253,23 @@
           position: top ? (T.align === "left" ? "insideTopLeft" : T.align === "right" ? "insideTopRight" : "insideTop") :
                     T.valign === "middle" ? (T.align === "left" ? "right" : T.align === "right" ? "left" : "inside") :
                     (T.align === "left" ? "insideBottomLeft" : T.align === "right" ? "insideBottomRight" : "top"),
-          distance: top ? 0 : 4, offset: top ? [T.align === "left" ? 6 : T.align === "right" ? -6 : 0, 6] :
-                    (T.align === "left" ? [4, 0] : T.align === "right" ? [-4, 0] : [0, 0]),
+          // Napis obok punktu (middle + left/right) odsuwamy przez distance, nie offset:
+          // offset przesuwa sam tekst, a tło halo zostawało w miejscu.
+          distance: top ? 0 : (T.valign === "middle" && (T.align === "left" || T.align === "right")) ? 8 : 4,
+          offset: top ? [T.align === "left" ? 6 : T.align === "right" ? -6 : 0, 6] :
+                  T.valign === "middle" ? [0, 0] :
+                  (T.align === "left" ? [4, 0] : T.align === "right" ? [-4, 0] : [0, 0]),
           fontSize: size, fontWeight: T.bold ? 600 : 400, fontStyle: T.italic ? "italic" : "normal",
           fontFamily: T.mono ? P.mono : sans,
           // halo: tło pod napisem, gdy napis leży na linii lub polu.
           backgroundColor: T.halo ? C.alpha(P.surface, 0.85) : undefined,
           padding: T.halo ? [1, 4] : 0, borderRadius: T.halo ? 3 : 0 } });
+    });
+    // Warstwy o tym samym z: późniejsza na wierzchu (kolejność warstw opisu, napisy na końcu). Bez
+    // rysowania progresywnego, które dla dużych serii punktów psuło kolejność.
+    series.forEach(function (sr, i) {
+      sr.z = (sr.z == null ? 2 : sr.z) + i / 1000;
+      if (sr.type === "scatter") sr.progressive = 0;
     });
     var xa = C.ecAxis(P, fs, { type: "value", min: spec.x[0], max: spec.x[1],
       name: spec.xName ? C.ecName(spec.xName, Math.max(250, W - 40), fs) : "", nameGap: Math.round(fs * 2.2) });
@@ -280,7 +313,9 @@
     if (spec.yLabels) {
       var yt = Object.keys(spec.yLabels).map(Number);
       ya.axisLabel.customValues = yt; ya.axisTick.customValues = yt;
-      ya.axisLabel.showMaxLabel = true; ya.axisLabel.hideOverlap = false; ya.axisLabel.fontFamily = sans;
+      // Etykiety kategorii: wszystkie, także przy krańcach osi (oś nie musi startować od 0).
+      ya.axisLabel.showMaxLabel = true; ya.axisLabel.showMinLabel = true;
+      ya.axisLabel.hideOverlap = false; ya.axisLabel.fontFamily = sans;
       ya.axisLabel.formatter = function (v) { return spec.yLabels[Math.round(v)] || ""; };
     }
     if (spec.noYGrid) ya.splitLine = { show: false };
@@ -405,7 +440,7 @@
     if (fig.act) C.listen(root, "click", function (e) {
       var btn = e.target.closest && e.target.closest("[data-stat-act]");
       if (!btn) return;
-      fig.act(state, btn.getAttribute("data-stat-act"));
+      fig.act(state, btn.getAttribute("data-stat-act"), root);
       draw();
     });
     // Odczyt suwaka lc_sf_slider (output[data-value=id]) nadąża za wartością.
@@ -427,5 +462,5 @@
 
   window.lcSF = { register: register, figures: FIGURES, option: option, fmt: lcFmt, status: status,
                   setValue: setValue, esc: esc, table: lcTable, legendItems: legendItems,
-                  binsGgplot: binsGgplot };
+                  binsGgplot: binsGgplot, binsWidth: binsWidth };
 })();

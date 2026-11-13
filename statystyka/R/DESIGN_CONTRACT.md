@@ -225,8 +225,12 @@ pasy, punkty, odcinki, pudełka, tekst), a silnik rysuje go w ECharts SVG.
   `<select>`, `lc_segmented`, `checkboxInput` (`"on"`/`"off"`),
   `checkboxGroupInput` (lista zaznaczonych wartości) i `lc_sf_slider`
   (natywny suwak; `lc_slider` z Shiny nie działa bez serwera).
-- Przyciski `lc_sf_action(akcja, …)` obsługuje `figure.act`; odczyty
-  `lc_sf_value(klucz)` wypełnia JS (`lcSF.setValue`).
+- Przyciski `lc_sf_action(akcja, …)` i grupy `lc_sf_action_group(etykieta, akcja = "napis", …)` obsługuje `figure.act(state, akcja, root)`;
+  odczyty `lc_sf_value(klucz)` wypełnia JS (`lcSF.setValue`). Tabele:
+  `lcSF.table(cols, rows)`, kolumny jak `lc_col()` (także `short` i `desc`).
+- Warstwy rysują się w kolejności opisu (późniejsza na wierzchu), etykiety
+  `yLabels` są widoczne także przy krańcach osi. Wykres szerszy niż 3/1
+  (`lc_sf_chart(ratio = "5/1")`) dostaje mniejszą minimalną wysokość.
 - Dane i definicje (np. scenariusze) przechodzą przez `config` (JSON
   w `data-config`); stałe opisy dla każdej opcji liczymy w R z góry
   (`notes`, `data-when`).
@@ -234,7 +238,8 @@ pasy, punkty, odcinki, pudełka, tekst), a silnik rysuje go w ECharts SVG.
   zgodne z R; test w `tests/testthat/test-chart-numerics.R`). Symulacje losują
   w przeglądarce: `lcDist.r` (albo `lcDist.rng(ziarno)` dla stałych danych),
   gęstość jądrowa `lcDist.kde` (z odbiciem przy granicach), histogram jak
-  `geom_histogram(bins = k)`: `lcSF.binsGgplot`. Próbę losujemy od nowa, gdy
+  `geom_histogram(bins = k)`: `lcSF.binsGgplot`, jak `binwidth = w`:
+  `lcSF.binsWidth(x, w, boundary)`. Próbę losujemy od nowa, gdy
   zmienia się rozkład lub liczebność, i przyciskiem `lc_sf_action`.
 - Wykład ładuje `lc_stat_figures.R` przez `source()`, a w `header_extras` po
   `lc_charts.js`: `lc_dist.js` (gdy potrzebny), `lc_stat_figures.js`, własne
