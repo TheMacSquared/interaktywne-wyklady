@@ -1,0 +1,27 @@
+testthat::test_that("lc_sf_figure oznacza kontrolki i przekazuje config jako JSON bez pól NULL", {
+  suppressPackageStartupMessages(library(shiny))
+  env <- new.env(parent = globalenv())
+  sys.source(file.path(stat_root, "R", "palette.R"), env)
+  sys.source(file.path(stat_root, "R", "lecture_layout.R"), env)
+  sys.source(file.path(stat_root, "R", "lc_stat_figures.R"), env)
+  fig <- env$lc_sf_figure("demo",
+    control = list(shiny::checkboxInput("a", "A"), env$lc_sf_slider("b", "B", 0, 1, 0.5, 0.1)),
+    config = list(n = 3, defs = list(x = list(label = "X", p = 0.25))), legend = TRUE)
+  html <- as.character(fig)
+  testthat::expect_match(html, 'class="lc-sf"', fixed = TRUE)
+  testthat::expect_equal(lengths(regmatches(html, gregexpr("lc-sf-ctl", html))), 2)
+  cfg <- regmatches(html, regexpr('data-config="[^"]*"', html))
+  cfg <- gsub("&quot;", '"', sub('^data-config="(.*)"$', "\\1", cfg), fixed = TRUE)
+  cfg <- jsonlite::fromJSON(gsub("&amp;", "&", cfg, fixed = TRUE))
+  testthat::expect_equal(cfg$n, 3)
+  testthat::expect_equal(cfg$defs$x$p, 0.25)
+
+  sys.source(file.path(stat_root, "03-rozklady-prawdopodobienstwa", "modules", "dist_figures.R"), env)
+  defs <- list(s1 = list(label = "B(10, 0.5)", n = 10, p = 0.5), s2 = list(label = "B(20, 0.25)", n = 20, p = 0.25))
+  sc <- env$d03_scenarios(defs, function(s) paste0(s$label, ": E(X) = ", s$n * s$p))
+  testthat::expect_equal(unname(vapply(sc, `[[`, "", "color")), env$upwr_cat_n(2))
+  testthat::expect_equal(sc$s2$stats, "B(20, 0.25): E(X) = 5")
+  ov <- as.character(env$d03_overlay("sc", defs, "s1", function(s) s$label, "binom", x_name = "k"))
+  testthat::expect_match(ov, 'data-fig="d03-pmf"', fixed = TRUE)
+  testthat::expect_false(grepl("normal", ov, fixed = TRUE), info = "brak pola normal zamiast {}")
+})

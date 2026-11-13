@@ -103,7 +103,7 @@ ch2_ui <- list(
       label = "Ryc. 2.2",
       title = "Czy kolejność kategorii ma znaczenie?",
 
-      lc01_stat_figure("order", charts = 2, ratio = "1.5/1", max_height = "300px",
+      lc_sf_figure("order", charts = 2, ratio = "1.5/1", max_height = "300px",
         headings = list("Nominalna: kierunek studiów", "Porządkowa: zadowolenie"),
         control = checkboxInput("ch2_ord_shuffle", "Losowa kolejność kategorii", value = FALSE),
         selected = "off", notes = list(
@@ -210,18 +210,18 @@ ch2_ui <- list(
       label = "Ryc. 2.4",
       title = "Jak kolory zmieniają percepcję danych",
       # Obie połówki rysuje stat_charts.js: wspólna paleta i losowanie kolorów.
-      lc01_stat_figure("colors", legend = TRUE,
+      lc_sf_figure("colors", legend = TRUE,
         control = lc_group("Paleta kolorów", lc_select("ch2_color_palette",
           list("Kolor jako komunikat" = c("Neutralna (szara)" = "neutral",
                                           "Wyróżnienie jednej kategorii" = "highlight"),
                "Palety standardowe" = c("Viridis" = "viridis", "ColorBrewer (Set2 / YlGnBu)" = "brewer",
                                         "Okabe-Ito (dla daltonistów)" = "okabe_ito", "jUPWR (jamovi)" = "jupwr")),
           selected = "neutral", aria_label = "Paleta kolorów")),
-        toolbar = lc01_stat_action("random", "ch2_color_random", "Losowe kolory", icon = "shuffle",
+        toolbar = lc_sf_action("random", "ch2_color_random", "Losowe kolory", icon = "shuffle",
                                    variant = "outline"),
         body = lc_plots(pair = TRUE,
-          tags$div(tags$h4("Kategorie: kierunek studiów"), lc01_stat_chart(0, ratio = "1.25/1", max_height = "360px")),
-          tags$div(tags$h4("Dane ciągłe: wzrost × waga"), lc01_stat_chart(1, ratio = "1.25/1", max_height = "360px"))),
+          tags$div(tags$h4("Kategorie: kierunek studiów"), lc_sf_chart(0, ratio = "1.25/1", max_height = "360px")),
+          tags$div(tags$h4("Dane ciągłe: wzrost × waga"), lc_sf_chart(1, ratio = "1.25/1", max_height = "360px"))),
         selected = "neutral", notes = lapply(list(
           neutral = "Neutralna: wszystkie kategorie równe, gęstość tylko jasnością szarości.",
           highlight = "Wyróżnienie: uwaga przyciągana do Informatyki i do najgęstszego obszaru mapy.",
@@ -280,8 +280,8 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.5",
       title = "Dominanta — najczęściej występująca kategoria",
-      lc01_stat_figure("mode", ratio = "1.8/1", max_height = "350px",
-        toolbar = lc01_stat_action("resample", "ch2_mode_resample", "Losuj nowe proporcje",
+      lc_sf_figure("mode", ratio = "1.8/1", max_height = "350px",
+        toolbar = lc_sf_action("resample", "ch2_mode_resample", "Losuj nowe proporcje",
                                    icon = "shuffle", variant = "solid"),
         after = tags$div(`data-role` = "mode-text"))
     ),

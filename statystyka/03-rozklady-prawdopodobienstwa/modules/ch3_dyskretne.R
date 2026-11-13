@@ -99,6 +99,41 @@ ch3_discrete_map <- function() {
   )
 }
 
+# Definicje scenariuszy
+ch3_binom_defs <- list(
+  binom_1 = list(label = "Moneta: B(10, 0.5)", n = 10, p = 0.5),
+  binom_2 = list(label = "Egzamin: B(20, 0.25)", n = 20, p = 0.25),
+  binom_3 = list(label = "Jakość: B(50, 0.1)", n = 50, p = 0.1),
+  binom_4 = list(label = "Sukces: B(20, 0.7)", n = 20, p = 0.7)
+)
+
+ch3_pois_defs <- list(
+  pois_1 = list(label = "Wypadki: λ = 0.5", lambda = 0.5),
+  pois_2 = list(label = "Błędy: λ = 2", lambda = 2),
+  pois_3 = list(label = "Klienci: λ = 5", lambda = 5),
+  pois_4 = list(label = "Wiadomości: λ = 10", lambda = 10)
+)
+
+ch3_geom_defs <- list(
+  geom_1 = list(label = "Rzadkie: p = 0.05", p = 0.05),
+  geom_2 = list(label = "Szóstka: p = 1/6", p = round(1/6, 4)),
+  geom_3 = list(label = "Częste: p = 0.3", p = 0.3),
+  geom_4 = list(label = "Moneta: p = 0.5", p = 0.5)
+)
+
+
+# Podpisy pod rycinami scenariuszy (E(X) i SD), liczone raz dla każdego scenariusza.
+ch3_binom_stat <- function(s) {
+  paste0(s$label, ":  E(X) = ", round(s$n * s$p, 1), ",  SD = ", round(sqrt(s$n * s$p * (1 - s$p)), 2))
+}
+ch3_pois_stat <- function(s) {
+  paste0(s$label, ":  E(X) = Var(X) = ", s$lambda, ",  SD = ", round(sqrt(s$lambda), 2))
+}
+ch3_geom_stat <- function(s) {
+  paste0(s$label, ":  E(X) = ", round(1 / s$p, 1), ",  SD = ", round(sqrt((1 - s$p) / s$p^2), 2))
+}
+ch3_compare_titles <- c("Jednostajny (kostka)", "Dwumianowy B(20, 0.3)", "Poissona Pois(4)", "Geometryczny Geom(0.2)")
+
 ch3_ui <- list(
   id = "ch-dyskretne", num = "03", title = "Rozkłady dyskretne",
   content = tagList(
@@ -249,19 +284,8 @@ ch3_ui <- list(
       label = "Ryc. 3.4",
       title = "Rozkład dwumianowy B(n, p)",
       full_width = TRUE,
-      lc_toolbar(
-        checkboxGroupInput("ch3_binom_scenarios", "Scenariusze",
-            choices = c(
-              "Moneta: B(10, 0.5)" = "binom_1",
-              "Egzamin: B(20, 0.25)" = "binom_2",
-              "Jakość: B(50, 0.1)" = "binom_3",
-              "Sukces: B(20, 0.7)" = "binom_4"
-            ),
-            selected = "binom_1"
-          )
-      ),
-      lc_plot("ch3_binom_plot", max_height = "400px"),
-      uiOutput("ch3_binom_stats")
+      d03_overlay("ch3_binom_scenarios", ch3_binom_defs, "binom_1", ch3_binom_stat, "binom",
+                  x_name = "Liczba sukcesów (k)", y_name = "P(X = k)")
     ),
 
     lc_p("Rozkład B(10, 0.5) jest symetryczny wokół 5, bo przy p = 0.5 sukces
@@ -344,19 +368,8 @@ ch3_ui <- list(
       label = "Ryc. 3.8",
       title = "Rozkład Poissona Pois(λ)",
       full_width = TRUE,
-      lc_toolbar(
-        checkboxGroupInput("ch3_pois_scenarios", "Scenariusze",
-            choices = c(
-              "Wypadki: λ = 0.5" = "pois_1",
-              "Błędy: λ = 2" = "pois_2",
-              "Klienci: λ = 5" = "pois_3",
-              "Wiadomości: λ = 10" = "pois_4"
-            ),
-            selected = "pois_2"
-          )
-      ),
-      lc_plot("ch3_pois_plot", max_height = "400px"),
-      uiOutput("ch3_pois_stats")
+      d03_overlay("ch3_pois_scenarios", ch3_pois_defs, "pois_2", ch3_pois_stat, "pois",
+                  x_name = "Liczba zdarzeń (k)", y_name = "P(X = k)")
     ),
 
     lc_p("Parametr λ jednocześnie przesuwa i poszerza rozkład, bo wartość
@@ -426,19 +439,8 @@ ch3_ui <- list(
       label = "Ryc. 3.11",
       title = "Rozkład geometryczny Geom(p)",
       full_width = TRUE,
-      lc_toolbar(
-        checkboxGroupInput("ch3_geom_scenarios", "Scenariusze",
-            choices = c(
-              "Rzadkie: p = 0.05" = "geom_1",
-              "Szóstka: p = 1/6" = "geom_2",
-              "Częste: p = 0.3" = "geom_3",
-              "Moneta: p = 0.5" = "geom_4"
-            ),
-            selected = "geom_2"
-          )
-      ),
-      lc_plot("ch3_geom_plot", max_height = "400px"),
-      uiOutput("ch3_geom_stats")
+      d03_overlay("ch3_geom_scenarios", ch3_geom_defs, "geom_2", ch3_geom_stat, "geom",
+                  x_name = "Numer próby (k)", y_name = "P(X = k)")
     ),
 
     lc_p("Każdy rozkład geometryczny ma najwyższy słupek przy k = 1, a kolejne
@@ -470,9 +472,13 @@ ch3_ui <- list(
       label = "Ryc. 3.12",
       title = "Cztery rozkłady obok siebie",
       full_width = TRUE,
-      checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
-      checkboxInput("ch3_compare_show_sd", "Pokaż ± odchylenie standardowe (pas)", value = FALSE),
-      lc_plot("ch3_compare_plot", ratio = "1.8/1", max_height = "350px")
+      lc_sf_figure("d03-compare", ratio = "1.5/1", max_height = "260px", charts = 4,
+        headings = ch3_compare_titles,
+        control = list(
+          checkboxInput("ch3_compare_show_ev", "Pokaż wartość oczekiwaną (linia)", value = FALSE),
+          checkboxInput("ch3_compare_show_sd", "Pokaż ± odchylenie standardowe (pas)", value = FALSE)),
+        config = list(titles = ch3_compare_titles,
+                      colors = as.list(upwr_cat[c("niebo", "bursztyn", "szalwia", "indygo")])))
     ),
 
     lc_p("Rozkład jednostajny jest płaski: E(X) = 3.5 i SD ≈ 1.71.
@@ -516,28 +522,6 @@ ch3_ui <- list(
 # --------------------------------------------------------------------------
 # Chapter 3 Server
 # --------------------------------------------------------------------------
-
-# Definicje scenariuszy
-ch3_binom_defs <- list(
-  binom_1 = list(label = "Moneta: B(10, 0.5)", n = 10, p = 0.5),
-  binom_2 = list(label = "Egzamin: B(20, 0.25)", n = 20, p = 0.25),
-  binom_3 = list(label = "Jakość: B(50, 0.1)", n = 50, p = 0.1),
-  binom_4 = list(label = "Sukces: B(20, 0.7)", n = 20, p = 0.7)
-)
-
-ch3_pois_defs <- list(
-  pois_1 = list(label = "Wypadki: λ = 0.5", lambda = 0.5),
-  pois_2 = list(label = "Błędy: λ = 2", lambda = 2),
-  pois_3 = list(label = "Klienci: λ = 5", lambda = 5),
-  pois_4 = list(label = "Wiadomości: λ = 10", lambda = 10)
-)
-
-ch3_geom_defs <- list(
-  geom_1 = list(label = "Rzadkie: p = 0.05", p = 0.05),
-  geom_2 = list(label = "Szóstka: p = 1/6", p = round(1/6, 4)),
-  geom_3 = list(label = "Częste: p = 0.3", p = 0.3),
-  geom_4 = list(label = "Moneta: p = 0.5", p = 0.5)
-)
 
 ch3_server <- function(input, output, session) {
 
@@ -607,200 +591,6 @@ ch3_server <- function(input, output, session) {
       theme_upwr()
   }))
 
-  # --- Widget 2: Dwumianowy — scenariusze overlay ---
-  zoom_plot_server("ch3_binom_plot", reactive({
-    selected <- input$ch3_binom_scenarios
-    req(length(selected) > 0)
-
-    dfs <- lapply(seq_along(selected), function(i) {
-      s <- ch3_binom_defs[[selected[i]]]
-      x_vals <- 0:s$n
-      probs <- dbinom(x_vals, s$n, s$p)
-      data.frame(x = x_vals, prob = probs, scenario = s$label)
-    })
-    df <- do.call(rbind, dfs)
-    df$scenario <- factor(df$scenario, levels = sapply(ch3_binom_defs[selected], `[[`, "label"))
-
-    n_sel <- length(selected)
-    colors <- setNames(upwr_cat_n(n_sel),
-                       sapply(ch3_binom_defs[selected], `[[`, "label"))
-
-    dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
-
-    ggplot(df, aes(x = x, y = prob, color = scenario)) +
-      geom_point(size = 4, alpha = 0.85, position = dodge) +
-      geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
-      scale_color_manual(values = colors, name = NULL) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "Liczba sukcesów (k)", y = "P(X = k)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }))
-
-  output$ch3_binom_stats <- renderUI({
-    selected <- input$ch3_binom_scenarios
-    req(length(selected) > 0)
-
-    stats <- lapply(selected, function(id) {
-      s <- ch3_binom_defs[[id]]
-      mu <- s$n * s$p
-      sigma <- sqrt(s$n * s$p * (1 - s$p))
-      paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sigma, 2))
-    })
-    tags$ul(lapply(stats, tags$li))
-  })
-
-  # --- Widget 3: Poissona — scenariusze overlay ---
-  zoom_plot_server("ch3_pois_plot", reactive({
-    selected <- input$ch3_pois_scenarios
-    req(length(selected) > 0)
-
-    # Wspólny zakres x dla wszystkich scenariuszy
-    x_max <- max(sapply(selected, function(id) qpois(0.999, ch3_pois_defs[[id]]$lambda)))
-
-    dfs <- lapply(seq_along(selected), function(i) {
-      s <- ch3_pois_defs[[selected[i]]]
-      x_vals <- 0:x_max
-      probs <- dpois(x_vals, s$lambda)
-      data.frame(x = x_vals, prob = probs, scenario = s$label)
-    })
-    df <- do.call(rbind, dfs)
-    df$scenario <- factor(df$scenario, levels = sapply(ch3_pois_defs[selected], `[[`, "label"))
-
-    n_sel <- length(selected)
-    colors <- setNames(upwr_cat_n(n_sel),
-                       sapply(ch3_pois_defs[selected], `[[`, "label"))
-    dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
-
-    ggplot(df, aes(x = x, y = prob, color = scenario)) +
-      geom_point(size = 4, alpha = 0.85, position = dodge) +
-      geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
-      scale_color_manual(values = colors, name = NULL) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "Liczba zdarzeń (k)", y = "P(X = k)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }))
-
-  output$ch3_pois_stats <- renderUI({
-    selected <- input$ch3_pois_scenarios
-    req(length(selected) > 0)
-
-    stats <- lapply(selected, function(id) {
-      s <- ch3_pois_defs[[id]]
-      paste0(s$label, ":  E(X) = Var(X) = ", s$lambda,
-             ",  SD = ", round(sqrt(s$lambda), 2))
-    })
-    tags$ul(lapply(stats, tags$li))
-  })
-
-  # --- Widget 4: Geometryczny — scenariusze overlay ---
-  zoom_plot_server("ch3_geom_plot", reactive({
-    selected <- input$ch3_geom_scenarios
-    req(length(selected) > 0)
-
-    # Wspólny zakres x, ograniczony do 40
-    x_max <- min(40, max(sapply(selected, function(id) {
-      qgeom(0.999, ch3_geom_defs[[id]]$p) + 1
-    })))
-
-    dfs <- lapply(seq_along(selected), function(i) {
-      s <- ch3_geom_defs[[selected[i]]]
-      x_vals <- 1:x_max
-      probs <- dgeom(x_vals - 1, s$p)
-      data.frame(x = x_vals, prob = probs, scenario = s$label)
-    })
-    df <- do.call(rbind, dfs)
-    df$scenario <- factor(df$scenario, levels = sapply(ch3_geom_defs[selected], `[[`, "label"))
-
-    n_sel <- length(selected)
-    colors <- setNames(upwr_cat_n(n_sel),
-                       sapply(ch3_geom_defs[selected], `[[`, "label"))
-    dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
-
-    ggplot(df, aes(x = x, y = prob, color = scenario)) +
-      geom_point(size = 4, alpha = 0.85, position = dodge) +
-      geom_segment(aes(xend = x, yend = 0), linewidth = 1, alpha = 0.6, position = dodge) +
-      scale_color_manual(values = colors, name = NULL) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "Numer próby (k)", y = "P(X = k)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }))
-
-  output$ch3_geom_stats <- renderUI({
-    selected <- input$ch3_geom_scenarios
-    req(length(selected) > 0)
-
-    stats <- lapply(selected, function(id) {
-      s <- ch3_geom_defs[[id]]
-      mu <- 1 / s$p
-      sigma <- sqrt((1 - s$p) / s$p^2)
-      paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sigma, 2))
-    })
-    tags$ul(lapply(stats, tags$li))
-  })
-
-  # --- Widget 5: Porównanie (bez zmian) ---
-  zoom_plot_server("ch3_compare_plot", reactive({
-    show_ev <- input$ch3_compare_show_ev
-    show_sd <- input$ch3_compare_show_sd
-
-    # Jednostajny: kostka
-    x1 <- 1:6; p1 <- rep(1/6, 6)
-    mu1 <- 3.5; sd1 <- sqrt(35/12)
-    df1 <- data.frame(x = x1, prob = p1, dist = "Jednostajny\n(kostka)")
-
-    # Dwumianowy: B(20, 0.3)
-    x2 <- 0:20; p2 <- dbinom(x2, 20, 0.3)
-    mu2 <- 6; sd2 <- sqrt(20*0.3*0.7)
-    keep2 <- p2 > 0.001
-    df2 <- data.frame(x = x2[keep2], prob = p2[keep2], dist = "Dwumianowy\nB(20, 0.3)")
-
-    # Poissona: Pois(4)
-    x3 <- 0:15; p3 <- dpois(x3, 4)
-    mu3 <- 4; sd3 <- 2
-    keep3 <- p3 > 0.001
-    df3 <- data.frame(x = x3[keep3], prob = p3[keep3], dist = "Poissona\nPois(4)")
-
-    # Geometryczny: Geom(0.2)
-    x4 <- 1:25; p4 <- dgeom(x4 - 1, 0.2)
-    mu4 <- 1/0.2; sd4 <- sqrt((1 - 0.2) / 0.2^2)
-    keep4 <- p4 > 0.001
-    df4 <- data.frame(x = x4[keep4], prob = p4[keep4], dist = "Geometryczny\nGeom(0.2)")
-
-    df_all <- rbind(df1, df2, df3, df4)
-    df_all$dist <- factor(df_all$dist,
-                          levels = c("Jednostajny\n(kostka)", "Dwumianowy\nB(20, 0.3)",
-                                     "Poissona\nPois(4)", "Geometryczny\nGeom(0.2)"))
-
-    stats_df <- data.frame(
-      dist = levels(df_all$dist),
-      mu = c(mu1, mu2, mu3, mu4),
-      sd = c(sd1, sd2, sd3, sd4)
-    )
-
-    pl <- ggplot(df_all, aes(x = x, y = prob)) +
-      geom_col(aes(fill = dist), color = "white", alpha = 0.85, width = 0.7, show.legend = FALSE) +
-      facet_wrap(~dist, scales = "free_x", nrow = 2) +
-      scale_fill_manual(values = c(col_uniform, col_binomial, col_poisson, col_geometric)) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-      labs(x = "Wartość", y = "Prawdopodobieństwo") +
-      theme_upwr(base_size = 13)
-
-    if (show_ev) {
-      pl <- pl + geom_vline(data = stats_df, aes(xintercept = mu),
-                            color = unname(upwr_cat["terakota"]), linewidth = 1, linetype = "dashed")
-    }
-    if (show_sd) {
-      pl <- pl + geom_rect(data = stats_df,
-                           aes(xmin = mu - sd, xmax = mu + sd, ymin = 0, ymax = Inf),
-                           inherit.aes = FALSE, fill = unname(upwr_cat["terakota"]), alpha = 0.08)
-    }
-    pl
-  }))
+  # Ryc. 3.4, 3.8, 3.11, 3.12 rysuje dist_charts.js w przeglądarce.
 
 }

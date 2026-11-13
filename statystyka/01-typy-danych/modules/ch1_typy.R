@@ -35,7 +35,7 @@ ch1_ui <- list(
       label = "Ryc. 1.1",
       title = "Średnia z kodów kierunków",
       width_mode = "text",
-      lc01_stat_figure("kierunek", ratio = "2.6/1", max_height = "260px")
+      lc_sf_figure("kierunek", ratio = "2.6/1", max_height = "260px")
     ),
 
     # --- Widget 1: Taxonomy tree ---
@@ -142,7 +142,7 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.3",
       title = "Cztery typy zmiennych — jeden wykres na typ",
-      lc01_stat_figure("types",
+      lc_sf_figure("types",
         control = checkboxInput("ch1_show_bad", "Pokaż źle dobrane wykresy", value = FALSE),
         toolbar = lc_step_nav("ch1_ex", c("Płeć", "Zadowolenie", "Liczba kursów", "Wzrost"), start = 1L),
         body = tagList(
@@ -154,7 +154,7 @@ ch1_ui <- list(
             obserwacji w każdej kategorii, ale nie możemy ich uporządkować
             ani uśredniać."
           ),
-          lc01_stat_chart(0, ratio = "2/1", max_height = "340px")
+          lc_sf_chart(0, ratio = "2/1", max_height = "340px")
         ),
         conditionalPanel("input.ch1_ex == 2",
           tags$h4("Zadowolenie ze studiów · jakościowa porządkowa"),
@@ -163,7 +163,7 @@ ch1_ui <- list(
             jest wyżej niż „Zadowolony”, ale nie znamy dokładnych odległości
             między kategoriami."
           ),
-          lc01_stat_chart(1, ratio = "2/1", max_height = "340px")
+          lc_sf_chart(1, ratio = "2/1", max_height = "340px")
         ),
         conditionalPanel("input.ch1_ex == 3",
           tags$h4("Liczba kursów · ilościowa dyskretna"),
@@ -172,7 +172,7 @@ ch1_ui <- list(
             i ", gloss("odchylenie standardowe"), ". ", gloss("wykres słupkowy", "Wykres słupkowy"), " jest tu odpowiedni,
             bo mamy skończoną liczbę wartości."
           ),
-          lc01_stat_chart(2, ratio = "2/1", max_height = "340px")
+          lc_sf_chart(2, ratio = "2/1", max_height = "340px")
         ),
         conditionalPanel("input.ch1_ex == 4",
           tags$h4("Wzrost (cm) · ilościowa ciągła"),
@@ -181,7 +181,7 @@ ch1_ui <- list(
             z pewnego przedziału (także ułamkowe). ", gloss("histogram", "Histogram"), " grupuje
             wartości w przedziały, gęstość wygładza rozkład."
           ),
-          lc01_stat_chart(3, ratio = "2/1", max_height = "340px")
+          lc_sf_chart(3, ratio = "2/1", max_height = "340px")
         )
         )
       )

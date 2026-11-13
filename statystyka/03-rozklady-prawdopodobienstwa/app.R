@@ -47,7 +47,10 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 # Globalne defaulty ggplot2 — motyw upwr + IBM Plex Sans + kolory geom-ów
 lc_apply_ggplot_defaults()
 
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
+# Ryciny rozkładów teoretycznych liczone w przeglądarce (dist_charts.js).
+source(file.path(app_dir, "modules", "dist_figures.R"),  local = TRUE)
 # Prototypy punktów stop (2026-10-29): przed rozdziałami, bo ich UI wstawiamy w tekst.
 for (.f in c("common", paste0("ch", 1:6), "ch2_var", "ch5_z", "ch5_calc", "ec")) {
   source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
@@ -78,6 +81,11 @@ ui <- lecture_page(
   header_extras = tagList(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
+    # Ryciny liczone w przeglądarce: silnik lcSF, rozkłady lcDist, ryciny wykładu.
+    includeScript(file.path(project_root, "R", "lc_dist.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "dist_charts.js")),
+    lc_sf_styles(),
     includeScript(file.path(app_dir, "modules", "cdf_chart.js")),
     includeScript(file.path(app_dir, "modules", "lejek_chart.js")),
     includeScript(file.path(app_dir, "modules", "area_chart.js")),

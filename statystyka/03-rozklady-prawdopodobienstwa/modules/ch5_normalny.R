@@ -64,6 +64,22 @@ ch5_lnorm_defs <- list(
   lnorm_4 = list(label = "Duża zmienność: LogN(1, 1)", mu = 1, sigma = 1)
 )
 
+# Podpisy pod rycinami scenariuszy (E(X), SD, mediana).
+ch5_t_stat <- function(s) {
+  mu_text <- if (s$df > 1) "E(X) = 0" else "E(X) = niezdef."
+  sd_text <- if (s$df > 2) paste0("SD = ", round(sqrt(s$df / (s$df - 2)), 2)) else "SD = ∞"
+  paste0(s$label, ":  ", mu_text, ",  ", sd_text)
+}
+ch5_chisq_stat <- function(s) {
+  paste0(s$label, ":  E(X) = ", s$df, ",  SD = ", round(sqrt(2 * s$df), 2))
+}
+ch5_lnorm_stat <- function(s) {
+  ev <- exp(s$mu + s$sigma^2 / 2)
+  sd_val <- sqrt((exp(s$sigma^2) - 1) * exp(2 * s$mu + s$sigma^2))
+  paste0(s$label, ":  E(X) = ", round(ev, 1), ",  Me = ", round(exp(s$mu), 1), ",  SD = ", round(sd_val, 1))
+}
+
+
 ch5_ui <- list(
   id = "ch-normalny", num = "05", title = "Rozkład normalny",
   content = tagList(
@@ -142,17 +158,26 @@ ch5_ui <- list(
       label = "Ryc. 5.2",
       title = "Eksploracja N(μ, σ)",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch5_mu", "μ (średnia)", -10, 10, 0, 0.5),
-        lc_slider("ch5_sigma", "σ (odch. std.)", 0.5, 5, 1, 0.1),
-        lc_action("ch5_preset_std", "N(0, 1)", variant = "outline"),
-        lc_action("ch5_preset_wzrost_k", "Wzrost kobiet", variant = "outline"),
-        lc_action("ch5_preset_iq", "IQ", variant = "outline"),
-        lc_action("ch5_preset_temp", "Temp. ciała", variant = "outline"),
-        checkboxInput("ch5_show_empirical", "Reguła 68–95–99.7", value = TRUE),
-        lc_readouts(uiOutput("ch5_explore_stats"))
-      ),
-      lc_plot("ch5_explore_plot", max_height = "400px")
+      lc_sf_figure("d03-normal", max_height = "400px",
+        control = list(
+          lc_sf_slider("ch5_mu", "μ (średnia)", -10, 10, 0, 0.5),
+          lc_sf_slider("ch5_sigma", "σ (odch. std.)", 0.5, 5, 1, 0.1),
+          checkboxInput("ch5_show_empirical", "Reguła 68–95–99.7", value = TRUE)),
+        toolbar = tagList(
+          lc_sf_action("std", "ch5_preset_std", "N(0, 1)", variant = "outline"),
+          lc_sf_action("wzrost_k", "ch5_preset_wzrost_k", "Wzrost kobiet", variant = "outline"),
+          lc_sf_action("iq", "ch5_preset_iq", "IQ", variant = "outline"),
+          lc_sf_action("temp", "ch5_preset_temp", "Temp. ciała", variant = "outline"),
+          lc_readouts(
+            lc_readout("μ", lc_sf_value("mu", "0"), color = col_normal),
+            lc_readout("σ", lc_sf_value("sigma", "1"), color = upwr_secondary),
+            lc_readout("68%", lc_sf_value("i68", "[-1, 1]"), color = unname(upwr_cat["bursztyn"])))),
+        # Presety: wartość, min, max i krok suwaków μ i σ.
+        config = list(presets = list(
+          std      = list(mu = c(-10, 10, 0, 0.5),    sigma = c(0.5, 5, 1, 0.1)),
+          wzrost_k = list(mu = c(140, 200, 166, 1),   sigma = c(1, 15, 6, 0.5)),
+          iq       = list(mu = c(50, 150, 100, 1),    sigma = c(1, 30, 15, 0.5)),
+          temp     = list(mu = c(34, 40, 36.6, 0.1),  sigma = c(0.1, 2, 0.4, 0.1)))))
     ),
 
     lc_p("Zmiana μ przesuwa krzywą wzdłuż osi, nie zmieniając jej kształtu.
@@ -295,20 +320,18 @@ ch5_ui <- list(
       label = "Ryc. 5.6",
       title = "Kalkulator prawdopodobieństw N(0, 1)",
       full_width = TRUE,
-      lc_toolbar(
-        lc_segmented("ch5_prob_type", "Typ pytania", choices = c(
-            "P(Z < a)" = "less",
-            "P(Z > a)" = "greater",
-            "P(a < Z < b)" = "between"
-          ), selected = "between"),
-        lc_slider("ch5_prob_a", "a", -4, 4, -1, 0.05),
-        conditionalPanel(
-          condition = "input.ch5_prob_type == 'between'",
-          lc_slider("ch5_prob_b", "b", -4, 4, 1, 0.05)
-        ),
-        lc_readouts(uiOutput("ch5_prob_result"))
-      ),
-      lc_plot("ch5_prob_plot", max_height = "300px")
+      lc_sf_figure("d03-zprob", max_height = "300px",
+        control = list(
+          lc_segmented("ch5_prob_type", "Typ pytania", choices = c(
+              "P(Z < a)" = "less",
+              "P(Z > a)" = "greater",
+              "P(a < Z < b)" = "between"
+            ), selected = "between"),
+          lc_sf_slider("ch5_prob_a", "a", -4, 4, -1, 0.05),
+          htmltools::tagAppendAttributes(lc_sf_slider("ch5_prob_b", "b", -4, 4, 1, 0.05), `data-role` = "b")),
+        toolbar = lc_readouts(
+          lc_readout(lc_sf_value("plabel", "P(-1 < Z < 1)"), lc_sf_value("p", "0.6827"), color = col_normal),
+          lc_readout("Procent", lc_sf_value("pct", "68.27%"), color = upwr_secondary)))
     ),
 
     lc_p("Ustawienie startowe, P(-1 < Z < 1) = 0.6827, to pierwsza liczba
@@ -404,19 +427,7 @@ ch5_ui <- list(
       label = "Ryc. 5.11",
       title = "Rozkład χ²(df)",
       full_width = TRUE,
-      lc_toolbar(
-        checkboxGroupInput("ch5_chisq_scenarios", "Scenariusze",
-            choices = c(
-              "χ²(df=2)" = "chisq_1",
-              "χ²(df=5)" = "chisq_2",
-              "χ²(df=10)" = "chisq_3",
-              "χ²(df=20)" = "chisq_4"
-            ),
-            selected = "chisq_2"
-          )
-      ),
-      lc_plot("ch5_chisq_plot", max_height = "400px"),
-      uiOutput("ch5_chisq_stats")
+      d03_overlay("ch5_chisq_scenarios", ch5_chisq_defs, "chisq_2", ch5_chisq_stat, "chisq")
     ),
 
     lc_p("Panel pokazuje, co dzieje się przy większej liczbie składników. Dla
@@ -466,20 +477,9 @@ ch5_ui <- list(
       label = "Ryc. 5.12",
       title = "Rozkład t-Studenta t(df)",
       full_width = TRUE,
-      lc_toolbar(
-        checkboxGroupInput("ch5_t_scenarios", "Scenariusze",
-            choices = c(
-              "t(df=1) — Cauchy" = "t_1",
-              "t(df=3)" = "t_2",
-              "t(df=5)" = "t_3",
-              "t(df=30) ≈ normalny" = "t_4"
-            ),
-            selected = c("t_2", "t_4")
-          ),
-        checkboxInput("ch5_t_show_normal", "Pokaż N(0, 1) jako odniesienie", value = TRUE)
-      ),
-      lc_plot("ch5_t_plot", max_height = "400px"),
-      uiOutput("ch5_t_stats")
+      d03_overlay("ch5_t_scenarios", ch5_t_defs, c("t_2", "t_4"), ch5_t_stat, "t",
+        extra = checkboxInput("ch5_t_show_normal", "Pokaż N(0, 1) jako odniesienie", value = TRUE),
+        normal = "ch5_t_show_normal")
     ),
 
     lc_p("Krzywa t(30) prawie pokrywa się z N(0, 1), a t(3) ma wyraźnie niższy
@@ -542,19 +542,7 @@ ch5_ui <- list(
       label = "Ryc. 5.14",
       title = "Rozkład LogN(μ, σ)",
       full_width = TRUE,
-      lc_toolbar(
-        checkboxGroupInput("ch5_lnorm_scenarios", "Scenariusze",
-            choices = c(
-              "Czas reakcji: LogN(0, 0.3)" = "lnorm_1",
-              "Ceny akcji: LogN(1, 0.5)" = "lnorm_2",
-              "Dochody: LogN(2, 0.8)" = "lnorm_3",
-              "Duża zmienność: LogN(1, 1)" = "lnorm_4"
-            ),
-            selected = "lnorm_2"
-          )
-      ),
-      lc_plot("ch5_lnorm_plot", max_height = "400px"),
-      uiOutput("ch5_lnorm_stats")
+      d03_overlay("ch5_lnorm_scenarios", ch5_lnorm_defs, "lnorm_2", ch5_lnorm_stat, "lnorm")
     ),
 
     lc_p("Prawy ogon sprawia, że wartość oczekiwana jest zawsze większa od mediany. Dla LogN(1, 0.5) mediana wynosi
@@ -629,305 +617,8 @@ ch5_server <- function(input, output, session) {
       do liczby osi: 2 przy lądowisku, 3 przy balkonie.")
   ))
 
-  # --- Presety ---
-  observeEvent(input$ch5_preset_std, {
-    updateSliderInput(session, "ch5_mu", value = 0)
-    updateSliderInput(session, "ch5_sigma", value = 1)
-  })
-  observeEvent(input$ch5_preset_wzrost_k, {
-    updateSliderInput(session, "ch5_mu", value = 166, min = 140, max = 200)
-    updateSliderInput(session, "ch5_sigma", value = 6, min = 1, max = 15)
-  })
-  observeEvent(input$ch5_preset_iq, {
-    updateSliderInput(session, "ch5_mu", value = 100, min = 50, max = 150)
-    updateSliderInput(session, "ch5_sigma", value = 15, min = 1, max = 30)
-  })
-  observeEvent(input$ch5_preset_temp, {
-    updateSliderInput(session, "ch5_mu", value = 36.6, min = 34, max = 40)
-    updateSliderInput(session, "ch5_sigma", value = 0.4, min = 0.1, max = 2)
-  })
+  # Ryc. 5.2 i 5.6 (z presetami i odczytami) rysuje dist_charts.js w przeglądarce.
 
-  # --- Widget 1: Eksploracja ---
-  zoom_plot_server("ch5_explore_plot", reactive({
-    mu <- input$ch5_mu
-    sigma <- input$ch5_sigma
-    show_emp <- input$ch5_show_empirical
-
-    x_seq <- seq(mu - 4*sigma, mu + 4*sigma, length.out = 500)
-    df <- data.frame(x = x_seq, y = dnorm(x_seq, mu, sigma))
-
-    p <- ggplot(df, aes(x = x, y = y)) +
-      geom_line(color = col_normal, linewidth = 1.5)
-
-    if (show_emp) {
-      # 1 SD
-      shade1 <- data.frame(
-        x = seq(mu - sigma, mu + sigma, length.out = 200),
-        y = dnorm(seq(mu - sigma, mu + sigma, length.out = 200), mu, sigma)
-      )
-      p <- p + geom_area(data = shade1, aes(x = x, y = y),
-                         fill = col_normal, alpha = 0.4)
-
-      # 2 SD
-      shade2l <- data.frame(
-        x = seq(mu - 2*sigma, mu - sigma, length.out = 100),
-        y = dnorm(seq(mu - 2*sigma, mu - sigma, length.out = 100), mu, sigma)
-      )
-      shade2r <- data.frame(
-        x = seq(mu + sigma, mu + 2*sigma, length.out = 100),
-        y = dnorm(seq(mu + sigma, mu + 2*sigma, length.out = 100), mu, sigma)
-      )
-      p <- p +
-        geom_area(data = shade2l, aes(x = x, y = y), fill = col_normal, alpha = 0.25) +
-        geom_area(data = shade2r, aes(x = x, y = y), fill = col_normal, alpha = 0.25)
-
-      # 3 SD
-      shade3l <- data.frame(
-        x = seq(mu - 3*sigma, mu - 2*sigma, length.out = 100),
-        y = dnorm(seq(mu - 3*sigma, mu - 2*sigma, length.out = 100), mu, sigma)
-      )
-      shade3r <- data.frame(
-        x = seq(mu + 2*sigma, mu + 3*sigma, length.out = 100),
-        y = dnorm(seq(mu + 2*sigma, mu + 3*sigma, length.out = 100), mu, sigma)
-      )
-      p <- p +
-        geom_area(data = shade3l, aes(x = x, y = y), fill = col_normal, alpha = 0.12) +
-        geom_area(data = shade3r, aes(x = x, y = y), fill = col_normal, alpha = 0.12)
-
-      # Etykiety
-      y_top <- dnorm(mu, mu, sigma)
-      p <- p +
-        annotate("text", x = mu, y = y_top * 0.6, label = "68%",
-                 size = 5, fontface = "bold", color = upwr_secondary) +
-        annotate("text", x = mu, y = y_top * 0.35, label = "95%",
-                 size = 4.5, color = upwr_secondary) +
-        annotate("text", x = mu, y = y_top * 0.15, label = "99.7%",
-                 size = 4, color = upwr_reference)
-    }
-
-    p + geom_vline(xintercept = mu, color = upwr_secondary, linetype = "dashed") +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr()
-  }))
-
-  output$ch5_explore_stats <- renderUI({
-    mu <- input$ch5_mu
-    sigma <- input$ch5_sigma
-    tagList(
-      lc_readout("μ", mu, color = col_normal),
-      lc_readout("σ", sigma, color = upwr_secondary),
-      lc_readout("68%", paste0("[", round(mu - sigma, 1), ", ",
-                                round(mu + sigma, 1), "]"), color = unname(upwr_cat["bursztyn"]))
-    )
-  })
-
-  # --- Widget 4: Kalkulator prawdopodobieństw ---
-  zoom_plot_server("ch5_prob_plot", reactive({
-    type <- input$ch5_prob_type
-    a <- input$ch5_prob_a
-    b <- if (type == "between") input$ch5_prob_b else NULL
-
-    x_seq <- seq(-4, 4, length.out = 500)
-    df <- data.frame(x = x_seq, y = dnorm(x_seq))
-
-    p <- ggplot(df, aes(x = x, y = y)) +
-      geom_line(color = upwr_secondary, linewidth = 1.2)
-
-    if (type == "less") {
-      shade <- data.frame(x = x_seq[x_seq <= a], y = dnorm(x_seq[x_seq <= a]))
-      prob <- pnorm(a)
-      p <- p + geom_area(data = shade, fill = unname(upwr_cat["niebo"]), alpha = 0.4) +
-        geom_vline(xintercept = a, color = unname(upwr_cat["terakota"]), linetype = "dashed")
-    } else if (type == "greater") {
-      shade <- data.frame(x = x_seq[x_seq >= a], y = dnorm(x_seq[x_seq >= a]))
-      prob <- 1 - pnorm(a)
-      p <- p + geom_area(data = shade, fill = unname(upwr_cat["terakota"]), alpha = 0.4) +
-        geom_vline(xintercept = a, color = unname(upwr_cat["terakota"]), linetype = "dashed")
-    } else {
-      shade <- data.frame(x = x_seq[x_seq >= a & x_seq <= b],
-                          y = dnorm(x_seq[x_seq >= a & x_seq <= b]))
-      prob <- pnorm(b) - pnorm(a)
-      p <- p + geom_area(data = shade, fill = col_normal, alpha = 0.4) +
-        geom_vline(xintercept = a, color = unname(upwr_cat["terakota"]), linetype = "dashed") +
-        geom_vline(xintercept = b, color = unname(upwr_cat["terakota"]), linetype = "dashed")
-    }
-
-    p + annotate("text", x = 0, y = 0.2,
-                 label = sprintf("P = %.4f", prob),
-                 size = 6, fontface = "bold", color = upwr_secondary) +
-      labs( x = "z", y = "f(z)") +
-      theme_upwr()
-  }))
-
-  output$ch5_prob_result <- renderUI({
-    type <- input$ch5_prob_type
-    a <- input$ch5_prob_a
-    b <- if (type == "between") input$ch5_prob_b else NULL
-
-    prob <- switch(type,
-      "less" = pnorm(a),
-      "greater" = 1 - pnorm(a),
-      "between" = pnorm(b) - pnorm(a)
-    )
-
-    label <- switch(type,
-      "less" = paste0("P(Z < ", a, ")"),
-      "greater" = paste0("P(Z > ", a, ")"),
-      "between" = paste0("P(", a, " < Z < ", b, ")")
-    )
-
-    tagList(
-      lc_readout(label, sprintf("%.4f", prob), color = col_normal),
-      lc_readout("Procent", paste0(sprintf("%.2f", prob * 100), "%"), color = upwr_secondary)
-    )
-  })
-
-  # --- Ryc. 5.12: t-Studenta — scenariusze overlay ---
-  zoom_plot_server("ch5_t_plot", reactive({
-    selected <- input$ch5_t_scenarios
-    show_normal <- input$ch5_t_show_normal
-    req(length(selected) > 0 || show_normal)
-
-    x_seq <- seq(-5, 5, length.out = 500)
-
-    dfs <- lapply(seq_along(selected), function(i) {
-      s <- ch5_t_defs[[selected[i]]]
-      data.frame(x = x_seq, y = dt(x_seq, df = s$df), scenario = s$label)
-    })
-    df <- do.call(rbind, dfs)
-
-    n_sel <- length(selected)
-    colors <- setNames(upwr_cat_n(n_sel),
-                       sapply(ch5_t_defs[selected], `[[`, "label"))
-
-    if (show_normal) {
-      df_norm <- data.frame(x = x_seq, y = dnorm(x_seq), scenario = "N(0, 1)")
-      df <- rbind(df, df_norm)
-      colors <- c(colors, "N(0, 1)" = "#999999")
-    }
-
-    df$scenario <- factor(df$scenario, levels = unique(df$scenario))
-
-    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
-      geom_area(alpha = 0.15, position = "identity") +
-      geom_line(linewidth = 1.2) +
-      scale_color_manual(values = colors, name = NULL) +
-      scale_fill_manual(values = colors, guide = "none") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }))
-
-  output$ch5_t_stats <- renderUI({
-    selected <- input$ch5_t_scenarios
-    req(length(selected) > 0)
-
-    stats <- lapply(selected, function(id) {
-      s <- ch5_t_defs[[id]]
-      mu_text <- if (s$df > 1) "E(X) = 0" else "E(X) = niezdef."
-      sd_text <- if (s$df > 2) {
-        paste0("SD = ", round(sqrt(s$df / (s$df - 2)), 2))
-      } else "SD = ∞"
-      paste0(s$label, ":  ", mu_text, ",  ", sd_text)
-    })
-    tags$ul(lapply(stats, tags$li))
-  })
-
-  # --- Ryc. 5.11: Chi-kwadrat — scenariusze overlay ---
-  zoom_plot_server("ch5_chisq_plot", reactive({
-    selected <- input$ch5_chisq_scenarios
-    req(length(selected) > 0)
-
-    x_max <- max(sapply(selected, function(id) qchisq(0.99, ch5_chisq_defs[[id]]$df)))
-    x_seq <- seq(0.01, x_max, length.out = 500)
-
-    dfs <- lapply(seq_along(selected), function(i) {
-      s <- ch5_chisq_defs[[selected[i]]]
-      data.frame(x = x_seq, y = dchisq(x_seq, df = s$df), scenario = s$label)
-    })
-    df <- do.call(rbind, dfs)
-    df$scenario <- factor(df$scenario, levels = sapply(ch5_chisq_defs[selected], `[[`, "label"))
-
-    n_sel <- length(selected)
-    colors <- setNames(upwr_cat_n(n_sel),
-                       sapply(ch5_chisq_defs[selected], `[[`, "label"))
-
-    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
-      geom_area(alpha = 0.15, position = "identity") +
-      geom_line(linewidth = 1.2) +
-      scale_color_manual(values = colors, name = NULL) +
-      scale_fill_manual(values = colors, guide = "none") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }))
-
-  output$ch5_chisq_stats <- renderUI({
-    selected <- input$ch5_chisq_scenarios
-    req(length(selected) > 0)
-
-    stats <- lapply(selected, function(id) {
-      s <- ch5_chisq_defs[[id]]
-      paste0(s$label, ":  E(X) = ", s$df, ",  SD = ", round(sqrt(2 * s$df), 2))
-    })
-    tags$ul(lapply(stats, tags$li))
-  })
-
-  # --- Ryc. 5.14: Log-normalny — scenariusze overlay ---
-  zoom_plot_server("ch5_lnorm_plot", reactive({
-    selected <- input$ch5_lnorm_scenarios
-    req(length(selected) > 0)
-
-    # Oblicz wspólny zakres x na podstawie wybranych scenariuszy
-    x_max <- max(sapply(selected, function(id) {
-      s <- ch5_lnorm_defs[[id]]
-      qlnorm(0.99, s$mu, s$sigma)
-    }))
-
-    x_seq <- seq(0.001, x_max, length.out = 500)
-
-    dfs <- lapply(seq_along(selected), function(i) {
-      s <- ch5_lnorm_defs[[selected[i]]]
-      data.frame(x = x_seq, y = dlnorm(x_seq, s$mu, s$sigma), scenario = s$label)
-    })
-    df <- do.call(rbind, dfs)
-    df$scenario <- factor(df$scenario, levels = sapply(ch5_lnorm_defs[selected], `[[`, "label"))
-
-    n_sel <- length(selected)
-    colors <- setNames(upwr_cat_n(n_sel),
-                       sapply(ch5_lnorm_defs[selected], `[[`, "label"))
-
-    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
-      geom_area(alpha = 0.15, position = "identity") +
-      geom_line(linewidth = 1.2) +
-      scale_color_manual(values = colors, name = NULL) +
-      scale_fill_manual(values = colors, guide = "none") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }))
-
-  output$ch5_lnorm_stats <- renderUI({
-    selected <- input$ch5_lnorm_scenarios
-    req(length(selected) > 0)
-
-    stats <- lapply(selected, function(id) {
-      s <- ch5_lnorm_defs[[id]]
-      ev <- exp(s$mu + s$sigma^2 / 2)
-      med <- exp(s$mu)
-      sd_val <- sqrt((exp(s$sigma^2) - 1) * exp(2 * s$mu + s$sigma^2))
-      paste0(s$label, ":  E(X) = ", round(ev, 1),
-             ",  Me = ", round(med, 1),
-             ",  SD = ", round(sd_val, 1))
-    })
-    tags$ul(lapply(stats, tags$li))
-  })
+  # Ryc. 5.11, 5.12 i 5.14 rysuje dist_charts.js w przeglądarce.
 
 }

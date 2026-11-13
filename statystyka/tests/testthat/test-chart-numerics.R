@@ -1,5 +1,35 @@
 # Referencje liczy R przy każdym uruchomieniu. JS uruchamia te same funkcje,
 # których używają widgety; brak kopii ich algorytmów w testach.
+# Rozkłady lcDist: nazwa funkcji JS, argumenty i odpowiednik w R.
+chart_dist_specs <- function() {
+  xs <- c(-6, -3.2, -1.5, -0.3, 0, 0.2, 1.1, 2.7, 5, 8.3)
+  xp <- c(0.001, 0.01, 0.3, 1, 2.5, 6, 12, 25, 60)
+  ps <- c(1e-10, 1e-4, 0.001, 0.02, 0.1, 0.3, 0.5, 0.7, 0.975, 0.99, 0.999, 0.99999)
+  grid <- function(...) unname(as.list(as.data.frame(t(expand.grid(..., KEEP.OUT.ATTRS = FALSE)))))
+  list(
+    list(fn = "dnorm", args = grid(xs, c(0, 1.5), c(0.4, 2)), r = function(a) dnorm(a[1], a[2], a[3])),
+    list(fn = "pnorm", args = grid(c(xs, -38, 38), 0, 1), r = function(a) pnorm(a[1], a[2], a[3])),
+    list(fn = "qnorm", args = grid(ps, c(0, 100), c(1, 15)), r = function(a) qnorm(a[1], a[2], a[3])),
+    list(fn = "dbinom", args = grid(0:50, c(10, 20, 50), c(0.1, 0.25, 0.5, 0.7)), r = function(a) dbinom(a[1], a[2], a[3])),
+    list(fn = "dpois", args = grid(0:40, c(0.5, 2, 5, 10)), r = function(a) dpois(a[1], a[2])),
+    list(fn = "qpois", args = grid(c(0.5, 0.99, 0.999), c(0.5, 2, 5, 10)), r = function(a) qpois(a[1], a[2])),
+    list(fn = "dgeom", args = grid(1:40, c(0.05, round(1 / 6, 4), 0.3, 0.5)), r = function(a) dgeom(a[1] - 1, a[2])),
+    list(fn = "qgeom", args = grid(c(0.5, 0.99, 0.999), c(0.05, round(1 / 6, 4), 0.2, 0.3, 0.5)), r = function(a) qgeom(a[1], a[2]) + 1),
+    list(fn = "dexp", args = grid(xp, c(0.3, 1, 2, 5)), r = function(a) dexp(a[1], a[2])),
+    list(fn = "qexp", args = grid(ps, c(0.3, 1, 5)), r = function(a) qexp(a[1], a[2])),
+    list(fn = "dt", args = grid(xs, c(1, 3, 5, 30)), r = function(a) dt(a[1], a[2])),
+    list(fn = "dchisq", args = grid(xp, c(1, 2, 3, 5, 10, 20)), r = function(a) dchisq(a[1], a[2])),
+    list(fn = "pchisq", args = grid(xp, c(1, 2, 3, 5, 10, 20)), r = function(a) pchisq(a[1], a[2])),
+    list(fn = "qchisq", args = grid(c(0.01, 0.5, 0.95, 0.99), c(1, 2, 3, 5, 10, 20)), r = function(a) qchisq(a[1], a[2])),
+    list(fn = "dlnorm", args = grid(xp, c(0, 1, 2), c(0.3, 0.8, 1)), r = function(a) dlnorm(a[1], a[2], a[3])),
+    list(fn = "qlnorm", args = grid(ps, c(0, 1, 8.5), c(0.3, 0.7, 1)), r = function(a) qlnorm(a[1], a[2], a[3])),
+    list(fn = "lgamma", args = grid(c(0.1, 0.5, 1, 1.5, 3.3, 10.5, 25, 100, 171.5)), r = function(a) lgamma(a[1]))
+  )
+}
+chart_dist_cases <- function() {
+  lapply(chart_dist_specs(), function(s) list(fn = s$fn, args = lapply(s$args, function(a) as.list(as.double(a)))))
+}
+
 chart_numeric_cases <- function() {
   array <- function(x) unname(as.list(as.double(x)))
   stat_case <- function(x) list(
@@ -46,6 +76,7 @@ chart_numeric_cases <- function() {
     kurtosis = lapply(c(seq(-1.2, 6, by = 0.2), -0.010001, -0.01, 0.01, 0.010001), function(ek) {
       list(ek = ek, x = array(c(-5, -2.5, -1, 0, 1, 2.5, 5)), cutoffs = array(c(0, 1, 2.5, 5)))
     }),
+    dist = chart_dist_cases(),
     sampling = list(
       list(kind = "normal", n = 20000, a = 170, b = 8),
       list(kind = "gamma", n = 20000, a = 1, b = 5),
@@ -279,4 +310,17 @@ testthat::test_that("gęstość dwuwymiarowa JS jest zgodna z MASS::kde2d", {
                      lims = numeric_values(case$lims))$z
   got <- do.call(rbind, lapply(output$kde2d[[1]], numeric_values))
   expect_chart_close(as.vector(got), as.vector(ref), 1e-15, 1e-10, "kde2d")
+})
+
+testthat::test_that("rozkłady lcDist (wykład 03) są zgodne z d*, p*, q* z R", {
+  cases <- chart_numeric_cases()
+  output <- run_chart_numerics(cases)
+  specs <- chart_dist_specs()
+  for (i in seq_along(specs)) {
+    s <- specs[[i]]
+    ref <- vapply(s$args, function(a) s$r(as.double(a)), numeric(1))
+    got <- numeric_values(output$dist[[i]])
+    # Kwantyle liczone bisekcją lub sumowaniem: błąd względny poniżej 1e-12.
+    expect_chart_close(got, ref, 1e-300, 1e-12, s$fn)
+  }
 })

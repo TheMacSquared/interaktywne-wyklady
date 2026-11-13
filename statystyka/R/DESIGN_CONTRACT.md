@@ -212,6 +212,32 @@ na osiach ECharts (SVG, motyw, lupa, skalowanie napisów). Wykład ładuje
 - Wzorce: statystyka 02 — tabela krzyżowa i pudełka; 04 — Ryc. 1.1–1.4,
   3.1–3.3, 5.1–5.5.
 
+### Ryciny liczone w przeglądarce (`R/lc_stat_figures.R` / `.js`)
+
+Wykres zastępujący `zoom_plot_server()`, który ma działać offline, piszemy
+jako rycinę wspólnego silnika `window.lcSF`. W R stawiamy kontener
+`lc_sf_figure("nazwa", control, toolbar, config, notes, legend, charts, …)`;
+w JS wykład rejestruje rycinę `lcSF.register({ nazwa: figura })`. Figura
+zwraca opis rysunku (zakresy, nazwy osi, warstwy: słupki, linie z polem,
+pasy, punkty, odcinki, pudełka, tekst), a silnik rysuje go w ECharts SVG.
+
+- Kontrolki zostają zwykłymi wejściami w klasie `lc-sf-ctl`: natywny
+  `<select>`, `lc_segmented`, `checkboxInput` (`"on"`/`"off"`),
+  `checkboxGroupInput` (lista zaznaczonych wartości) i `lc_sf_slider`
+  (natywny suwak; `lc_slider` z Shiny nie działa bez serwera).
+- Przyciski `lc_sf_action(akcja, …)` obsługuje `figure.act`; odczyty
+  `lc_sf_value(klucz)` wypełnia JS (`lcSF.setValue`).
+- Dane i definicje (np. scenariusze) przechodzą przez `config` (JSON
+  w `data-config`); stałe opisy dla każdej opcji liczymy w R z góry
+  (`notes`, `data-when`).
+- Rozkłady prawdopodobieństwa: `R/lc_dist.js` (`window.lcDist`: d*, p*, q*
+  zgodne z R; test w `tests/testthat/test-chart-numerics.R`).
+- Wykład ładuje `lc_stat_figures.R` przez `source()`, a w `header_extras` po
+  `lc_charts.js`: `lc_dist.js` (gdy potrzebny), `lc_stat_figures.js`, własne
+  ryciny i `lc_sf_styles()`.
+- Wzorce: statystyka 01 — `stat_charts.js` (ankieta, ryciny krokowe);
+  03 — `dist_charts.js` (rozkłady teoretyczne, presety suwaków).
+
 Wykłady używające wykresów JS ładują `R/lc_charts.js` w `header_extras`, po
 bibliotece wykresów i przed skryptami poszczególnych widgetów. Wspólne API
 jest dostępne jako `window.lcCharts`:

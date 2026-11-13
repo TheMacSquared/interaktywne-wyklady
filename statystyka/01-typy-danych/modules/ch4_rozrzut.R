@@ -49,7 +49,7 @@ ch4_comp_table_ui <- function() {
               "Umiarkowanie wrażliwe — uwzględnia wszystkie dane",
               "Bezjednostkowy — pozwala porównywać zmienność różnych zmiennych"),
     stringsAsFactors = FALSE)
-  df$value <- lapply(names(start), function(k) lc01_stat_value(k, start[[k]]))
+  df$value <- lapply(names(start), function(k) lc_sf_value(k, start[[k]]))
   lc_table(df[c("measure", "value", "notes")],
     cols = list(lc_col("measure", "Miara", "row"), lc_col("value", "Wartość"),
                 lc_col("notes", "Własności", "text")),
@@ -212,14 +212,14 @@ ch4_ui <- list(
 
     figure_panel(
       label = "Ryc. 4.2",
-      lc01_stat_figure("sd", bare = TRUE, body = lc_step_widget("ch4_sd",
+      lc_sf_figure("sd", bare = TRUE, body = lc_step_widget("ch4_sd",
         title = "Obliczanie odchylenia standardowego",
         steps = c("Dane", "Odchylenia od średniej", "Wariancja i SD"),
         toolbar = lc_toolbar(
-          lc01_stat_action("new", "ch4_sd_new", "Losuj nowy zestaw", variant = "outline"),
+          lc_sf_action("new", "ch4_sd_new", "Losuj nowy zestaw", variant = "outline"),
           lc_chart_zoom_button()
         ),
-        body = lc01_stat_chart(0, ratio = "2/1", max_height = "420px"),
+        body = lc_sf_chart(0, ratio = "2/1", max_height = "420px"),
         extra = tags$div(`data-role` = "table")
       ))
     ),
@@ -248,7 +248,7 @@ ch4_ui <- list(
       label = "Ryc. 4.3",
       title = "Reguła 68–95–99.7 na rozkładzie normalnym",
       width_mode = "text",
-      lc01_stat_figure("regula", ratio = "2.2/1", max_height = "300px")
+      lc_sf_figure("regula", ratio = "2.2/1", max_height = "300px")
     ),
 
     lc_p("Panel nakłada te trzy pasy na ", gloss("histogram"), " wybranej zmiennej z ankiety
@@ -257,7 +257,7 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.4",
       title = "Reguła 68–95–99.7 — czy zawsze działa?",
-      lc01_stat_figure("emp", ratio = "1.7/1", max_height = "400px",
+      lc_sf_figure("emp", ratio = "1.7/1", max_height = "400px",
         control = lc_group("Zmienna", lc_select("ch4_emp_var", ch4_emp_choices, aria_label = "Zmienna")),
         selected = "wzrost", notes = ch4_emp_notes())
     ),
@@ -315,18 +315,18 @@ ch4_ui <- list(
       label = "Ryc. 4.5",
       # Krok 6: niskie pudełko (wykres 0) nad histogramem (wykres 1).
       tags$style(HTML("
-        #ch4_bp[data-lc-step='6'] .lc01-stat-chart[data-k='0'] { aspect-ratio: 5 / 1 !important; min-height: 6em; }
+        #ch4_bp[data-lc-step='6'] .lc-sf-chart[data-k='0'] { aspect-ratio: 5 / 1 !important; min-height: 6em; }
       ")),
-      lc01_stat_figure("bp", bare = TRUE, body = lc_step_widget("ch4_bp",
+      lc_sf_figure("bp", bare = TRUE, body = lc_step_widget("ch4_bp",
         title = "Wykres pudełkowy — budowa krok po kroku",
         steps = c("Surowe dane", "Mediana", "Kwartyle i pudełko",
                   "Granice 1.5 IQR", "Wąsy i odstające", "Gotowy wykres"),
         toolbar = lc_toolbar(
-          lc01_stat_action("new", "ch4_bp_new", "Losuj nowe dane", variant = "outline"),
+          lc_sf_action("new", "ch4_bp_new", "Losuj nowe dane", variant = "outline"),
           lc_chart_zoom_button()
         ),
-        body = tagList(lc01_stat_chart(0, ratio = "2/1", max_height = "420px"),
-                       lc01_stat_chart(1, ratio = "2.4/1", max_height = "340px"))
+        body = tagList(lc_sf_chart(0, ratio = "2/1", max_height = "420px"),
+                       lc_sf_chart(1, ratio = "2.4/1", max_height = "340px"))
       ))
     ),
 
@@ -357,16 +357,16 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.6",
       title = "Wykresy pudełkowe w grupach",
-      lc01_stat_figure("groups", ratio = "1.6/1", max_height = "400px",
+      lc_sf_figure("groups", ratio = "1.6/1", max_height = "400px",
         control = lc_group("Zmienna ilościowa", lc_select("ch4_grp_var", ch4_grp_choices,
                                                           aria_label = "Zmienna ilościowa")),
         toolbar = tagList(
           htmltools::tagAppendAttributes(lc_segmented("ch4_grp_by", "Grupuj wg",
-            choices = c("Płeć" = "plec", "Kierunek" = "kierunek")), class = "lc01-stat-ctl"),
+            choices = c("Płeć" = "plec", "Kierunek" = "kierunek")), class = "lc-sf-ctl"),
           htmltools::tagAppendAttributes(checkboxInput("ch4_grp_violin", "Pokaż wykres skrzypcowy", value = FALSE),
-                                         class = "lc01-stat-ctl"),
+                                         class = "lc-sf-ctl"),
           htmltools::tagAppendAttributes(checkboxInput("ch4_grp_points", "Pokaż punkty", value = TRUE),
-                                         class = "lc01-stat-ctl")
+                                         class = "lc-sf-ctl")
         ),
         selected = "wzrost|plec", notes = ch4_grp_notes())
     ),
@@ -402,12 +402,12 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.7",
       title = "Porównanie miar rozrzutu i ich odporności",
-      lc01_stat_figure("comp", ratio = "1.8/1", max_height = "380px",
+      lc_sf_figure("comp", ratio = "1.8/1", max_height = "380px",
         toolbar = tagList(
-          lc01_stat_action("add1", "ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
-          lc01_stat_action("add5", "ch4_comp_add5", "Dodaj 5 wartości odstających", variant = "solid"),
-          lc01_stat_action("reset", "ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-          lc_readouts(lc_readout("n", lc01_stat_value("n", nrow(student_data))))
+          lc_sf_action("add1", "ch4_comp_add1", "Dodaj wartość odstającą (+30 cm)", variant = "solid"),
+          lc_sf_action("add5", "ch4_comp_add5", "Dodaj 5 wartości odstających", variant = "solid"),
+          lc_sf_action("reset", "ch4_comp_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+          lc_readouts(lc_readout("n", lc_sf_value("n", nrow(student_data))))
         ),
         after = ch4_comp_table_ui())
     ),
@@ -461,7 +461,7 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.8",
       title = "Porównanie zmienności między zmiennymi",
-      lc01_stat_figure("spread", charts = 2, ratio = "1.4/1", max_height = "350px",
+      lc_sf_figure("spread", charts = 2, ratio = "1.4/1", max_height = "350px",
         headings = list("SD: wartości nieporównywalne", "CV: wartości porównywalne"),
         after = ch4_cv_table_ui())
     ),

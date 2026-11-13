@@ -43,6 +43,30 @@ ch4_event_timeline <- function(t = ch4_event_times, hours = 4) {
   )
 }
 
+ch4_unif_defs <- list(
+  unif_1 = list(label = "U(0, 10)", a = 0, b = 10),
+  unif_2 = list(label = "U(2, 8)", a = 2, b = 8),
+  unif_3 = list(label = "U(0, 2)", a = 0, b = 2),
+  unif_4 = list(label = "U(4, 6)", a = 4, b = 6)
+)
+
+ch4_exp_defs <- list(
+  exp_1 = list(label = "Awarie: λ = 0.3/dzień", lambda = 0.3),
+  exp_2 = list(label = "Wiadomości: λ = 1/godz", lambda = 1),
+  exp_3 = list(label = "Zgłoszenia: λ = 2/godz", lambda = 2),
+  exp_4 = list(label = "Połączenia: λ = 5/min", lambda = 5)
+)
+
+
+# Podpisy pod rycinami scenariuszy (E(X) i SD).
+ch4_unif_stat <- function(s) {
+  paste0(s$label, ":  E(X) = ", round((s$a + s$b) / 2, 1), ",  SD = ", round(sqrt((s$b - s$a)^2 / 12), 2))
+}
+ch4_exp_stat <- function(s) {
+  mu <- 1 / s$lambda
+  paste0(s$label, ":  E(X) = 1/λ = ", round(mu, 2), ",  SD = ", round(mu, 2))
+}
+
 ch4_ui <- list(
   id = "ch-ciagle", num = "04", title = "Rozkłady ciągłe",
   content = tagList(
@@ -289,19 +313,7 @@ ch4_ui <- list(
       label = "Ryc. 4.6",
       title = "Rozkład jednostajny U(a, b)",
       full_width = TRUE,
-      lc_toolbar(
-        checkboxGroupInput("ch4_unif_scenarios", "Scenariusze",
-            choices = c(
-              "U(0, 10)" = "unif_1",
-              "U(2, 8)" = "unif_2",
-              "U(0, 2)" = "unif_3",
-              "U(4, 6)" = "unif_4"
-            ),
-            selected = "unif_1"
-          )
-      ),
-      lc_plot("ch4_unif_plot", max_height = "350px"),
-      uiOutput("ch4_unif_stats")
+      d03_overlay("ch4_unif_scenarios", ch4_unif_defs, "unif_1", ch4_unif_stat, "unif", max_height = "350px")
     ),
 
     lc_p("Im szerszy przedział, tym niższy prostokąt: U(0, 10) ma wysokość 0.1,
@@ -366,19 +378,7 @@ ch4_ui <- list(
       label = "Ryc. 4.8",
       title = "Rozkład wykładniczy Exp(λ)",
       full_width = TRUE,
-      lc_toolbar(
-        checkboxGroupInput("ch4_exp_scenarios", "Scenariusze",
-            choices = c(
-              "Awarie: λ = 0.3/dzień" = "exp_1",
-              "Wiadomości: λ = 1/godz" = "exp_2",
-              "Zgłoszenia: λ = 2/godz" = "exp_3",
-              "Połączenia: λ = 5/min" = "exp_4"
-            ),
-            selected = "exp_2"
-          )
-      ),
-      lc_plot("ch4_exp_plot", max_height = "350px"),
-      uiOutput("ch4_exp_stats")
+      d03_overlay("ch4_exp_scenarios", ch4_exp_defs, "exp_2", ch4_exp_stat, "exp", max_height = "350px")
     ),
 
     lc_p("Krótkie czasy oczekiwania są najczęstsze, długie zdarzają się
@@ -441,19 +441,6 @@ ch4_ui <- list(
 # Definicje scenariuszy
 # --------------------------------------------------------------------------
 
-ch4_unif_defs <- list(
-  unif_1 = list(label = "U(0, 10)", a = 0, b = 10),
-  unif_2 = list(label = "U(2, 8)", a = 2, b = 8),
-  unif_3 = list(label = "U(0, 2)", a = 0, b = 2),
-  unif_4 = list(label = "U(4, 6)", a = 4, b = 6)
-)
-
-ch4_exp_defs <- list(
-  exp_1 = list(label = "Awarie: λ = 0.3/dzień", lambda = 0.3),
-  exp_2 = list(label = "Wiadomości: λ = 1/godz", lambda = 1),
-  exp_3 = list(label = "Zgłoszenia: λ = 2/godz", lambda = 2),
-  exp_4 = list(label = "Połączenia: λ = 5/min", lambda = 5)
-)
 
 # --------------------------------------------------------------------------
 # Chapter 4 Server
@@ -588,91 +575,6 @@ ch4_server <- function(input, output, session) {
     texts[step]
   })
 
-  # --- Widget 3: Jednostajny — scenariusze overlay ---
-  zoom_plot_server("ch4_unif_plot", reactive({
-    selected <- input$ch4_unif_scenarios
-    req(length(selected) > 0)
-
-    dfs <- lapply(seq_along(selected), function(i) {
-      s <- ch4_unif_defs[[selected[i]]]
-      x_seq <- seq(-1, 12, length.out = 1000)
-      y_seq <- dunif(x_seq, s$a, s$b)
-      data.frame(x = x_seq, y = y_seq, scenario = s$label)
-    })
-    df <- do.call(rbind, dfs)
-    df$scenario <- factor(df$scenario, levels = sapply(ch4_unif_defs[selected], `[[`, "label"))
-
-    n_sel <- length(selected)
-    colors <- setNames(upwr_cat_n(n_sel),
-                       sapply(ch4_unif_defs[selected], `[[`, "label"))
-
-    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
-      geom_area(alpha = 0.15, position = "identity") +
-      geom_line(linewidth = 1.2) +
-      scale_color_manual(values = colors, name = NULL) +
-      scale_fill_manual(values = colors, guide = "none") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }))
-
-  output$ch4_unif_stats <- renderUI({
-    selected <- input$ch4_unif_scenarios
-    req(length(selected) > 0)
-
-    stats <- lapply(selected, function(id) {
-      s <- ch4_unif_defs[[id]]
-      mu <- (s$a + s$b) / 2
-      sd_val <- sqrt((s$b - s$a)^2 / 12)
-      paste0(s$label, ":  E(X) = ", round(mu, 1), ",  SD = ", round(sd_val, 2))
-    })
-    tags$ul(lapply(stats, tags$li))
-  })
-
-  # --- Widget 3b: Wykładniczy — scenariusze overlay ---
-  zoom_plot_server("ch4_exp_plot", reactive({
-    selected <- input$ch4_exp_scenarios
-    req(length(selected) > 0)
-
-    x_max <- max(sapply(selected, function(id) qexp(0.99, ch4_exp_defs[[id]]$lambda)))
-
-    dfs <- lapply(seq_along(selected), function(i) {
-      s <- ch4_exp_defs[[selected[i]]]
-      x_seq <- seq(0, x_max, length.out = 500)
-      y_seq <- dexp(x_seq, rate = s$lambda)
-      data.frame(x = x_seq, y = y_seq, scenario = s$label)
-    })
-    df <- do.call(rbind, dfs)
-    df$scenario <- factor(df$scenario, levels = sapply(ch4_exp_defs[selected], `[[`, "label"))
-
-    n_sel <- length(selected)
-    colors <- setNames(upwr_cat_n(n_sel),
-                       sapply(ch4_exp_defs[selected], `[[`, "label"))
-
-    ggplot(df, aes(x = x, y = y, color = scenario, fill = scenario)) +
-      geom_area(alpha = 0.15, position = "identity") +
-      geom_line(linewidth = 1.2) +
-      scale_color_manual(values = colors, name = NULL) +
-      scale_fill_manual(values = colors, guide = "none") +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(
-           x = "x", y = "f(x)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }))
-
-  output$ch4_exp_stats <- renderUI({
-    selected <- input$ch4_exp_scenarios
-    req(length(selected) > 0)
-
-    stats <- lapply(selected, function(id) {
-      s <- ch4_exp_defs[[id]]
-      mu <- 1 / s$lambda
-      paste0(s$label, ":  E(X) = 1/λ = ", round(mu, 2), ",  SD = ", round(mu, 2))
-    })
-    tags$ul(lapply(stats, tags$li))
-  })
+  # Ryc. 4.6 i 4.8 rysuje dist_charts.js w przeglądarce.
 
 }

@@ -11,10 +11,10 @@ const context = vm.createContext({
   window, document,
   MutationObserver: class { observe() {} }
 });
-for (const file of ["R/lc_charts.js", "01-typy-danych/modules/chart_utils.js", "01-typy-danych/modules/kurtosis_chart.js"]) {
+for (const file of ["R/lc_charts.js", "01-typy-danych/modules/chart_utils.js", "01-typy-danych/modules/kurtosis_chart.js", "R/lc_dist.js"]) {
   vm.runInContext(fs.readFileSync(path.join(statRoot, file), "utf8"), context, { filename: file });
 }
-const C = window.lcCharts, U = window.lc01;
+const C = window.lcCharts, U = window.lc01, D = window.lcDist;
 // Stały strumień wejściowy eliminuje losową niestabilność testów rozkładów.
 // Nie porównujemy sekwencji z set.seed() w R: generatory mają inne algorytmy.
 vm.runInContext(`Math.random = (function () {
@@ -50,6 +50,8 @@ const output = {
     return { mean: U.mean(values), sd: U.sd(values), skewness: U.skewness(values),
              repeatable: values.every((v, i) => v === again[i]) };
   }),
+  // Rozkłady lcDist (wykład 03): każda funkcja na siatce argumentów i parametrów.
+  dist: input.dist.map(({ fn, args }) => args.map(a => D[fn].apply(null, a))),
   sampling: input.sampling.map(({ kind, n, a, b }) => {
     const generate = {
       normal: () => U.rnorm(a, b), gamma: () => U.rgammaInt(a, b),

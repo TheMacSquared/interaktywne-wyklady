@@ -150,8 +150,12 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   - [x] Statystyka 01: wszystkie 30 wykresów ggplot przepisane w JS na danych
     ankiety (`stat_charts.js`, dane w stronie przez `survey_data.R`), 2026-11-10.
     Ryciny działają offline; opisy dla danych ankiety liczone w R z góry.
-  - [ ] Statystyka 03: najpierw decyzje o prototypach `stop_proto_*`
-    (12 z 29 wykresów R), potem port.
+  - [ ] Statystyka 03: wykresy R przepisywane w JS (prototypy przyjęte
+    2026-11-06). Etap 1 (2026-11-10): 11 rycin rozkładów teoretycznych
+    (Ryc. 3.4, 3.8, 3.11, 3.12, 4.6, 4.8, 5.2, 5.6, 5.11, 5.12, 5.14) we wspólnym
+    silniku `statystyka/R/lc_stat_figures.*` z rozkładami `R/lc_dist.js`.
+    Zostało 18: etap 2 — symulacje (rozdz. 1, 3.3, 4.4, 6 i przypadki
+    `stop_proto_*`), etap 3 — loterie z rozdz. 2.
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).
   - [ ] Statystyka 03 offline, Ryc. 1.2 (lejek): odczyty przechodzą zapisane
     stany, ale wykres zostaje pusty — serie przychodzą z serwera
@@ -170,11 +174,8 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     ich nie podają: m.in. wzrost N(178, 7), IQ N(100, 15), zarobki LogN
     z medianą 6000 zł, usterki kabla Pois(2), PM10 z medianą 30 µg/m³,
     trzęsienia ziemi Exp(15 lat), pliki LogN(mediana 0.5 MB, σ log 1.5).
-  - [ ] Statystyka 03, rozdz. 6: decyzje o pozostałych prototypach —
-    „Prototyp sceny” (Zapytaj grupkę), 6b „Grupka przyjaciół” i D2 „Drzewo
-    rodu rozkładów” (nowy układ 2026-11-05: dwumianowy i Poisson obok siebie
-    jako „ile sukcesów?”, geometryczny i wykładniczy jako „ile czekać?”).
-    Sprawdzić też, czy osadzony film (jvoxEYmQHNM) to ten o smokach i królikach.
+  - [ ] Statystyka 03, rozdz. 6 (prototypy przyjęte 2026-11-06):
+    sprawdzić, czy osadzony film (jvoxEYmQHNM) to ten o smokach i królikach.
 
 - [ ] Przejrzeć widgety aktywnych wykładów i wskazać, które skorzystają na
   sterowaniu klawiaturą (Tab, strzałki, większy krok z Shiftem, Home/End),

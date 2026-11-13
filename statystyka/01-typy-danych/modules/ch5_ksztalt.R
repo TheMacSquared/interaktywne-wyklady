@@ -91,15 +91,15 @@ ch5_ui <- list(
 
     figure_panel(
       label = "Ryc. 5.1",
-      lc01_stat_figure("sk", bare = TRUE, body = lc_step_widget("ch5_sk",
+      lc_sf_figure("sk", bare = TRUE, body = lc_step_widget("ch5_sk",
         title = "Obliczanie skośności",
         steps = c("Dane", "Standaryzacja", "Trzecie potęgi", "Bilans"),
         toolbar = lc_toolbar(
-          lc01_stat_ctl(lc_segmented("ch5_sk_var", "Zmienna",
+          lc_sf_ctl(lc_segmented("ch5_sk_var", "Zmienna",
             choices = c("Czas dojazdu" = "czas_dojazdu", "Wzrost" = "wzrost"))),
           lc_chart_zoom_button()
         ),
-        body = lc01_stat_chart(0, ratio = "2.2/1", max_height = "400px")
+        body = lc_sf_chart(0, ratio = "2.2/1", max_height = "400px")
       ))
     ),
 
@@ -115,7 +115,7 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.2",
       title = "Porównanie trzech typów skośności",
-      lc01_stat_figure("skewcmp", charts = 3, ratio = "1.1/1", max_height = "300px",
+      lc_sf_figure("skewcmp", charts = 3, ratio = "1.1/1", max_height = "300px",
         headings = list("Lewostronnie skośny", "Symetryczny", "Prawostronnie skośny"),
         after = htmltools::tagAppendAttributes(lc_caption("Skośność: …"), `data-role` = "caption"))
     ),
@@ -135,7 +135,7 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.3",
       title = "Sprawdź skośność w naszych danych",
-      lc01_stat_figure("skew", ratio = "1.8/1", max_height = "350px", legend = TRUE,
+      lc_sf_figure("skew", ratio = "1.8/1", max_height = "350px", legend = TRUE,
         control = lc_group("Zmienna", lc_select("ch5_skew_var", ch5_skew_choices,
                                                 selected = "czas_dojazdu", aria_label = "Zmienna")),
         selected = "czas_dojazdu", notes = ch5_skew_notes())
@@ -189,7 +189,7 @@ ch5_ui <- list(
       label = "Ryc. 5.4",
       title = "Wkład obserwacji: kwadrat i czwarta potęga",
       width_mode = "text",
-      lc01_stat_figure("powers", ratio = "2.2/1", max_height = "300px", legend = TRUE)
+      lc_sf_figure("powers", ratio = "2.2/1", max_height = "300px", legend = TRUE)
     ),
 
     lc_p("W panelu poniżej porównujemy z rozkładem normalnym rozkład o tej
@@ -209,7 +209,7 @@ ch5_ui <- list(
             lc_readout(tags$span(`data-role` = "type", "Mezokurtyczny"),
                        tags$span(`data-role` = "ek", "0.0"),
                        color = "var(--upwr-cat-szalwia)", swatch = TRUE),
-            lc_readout(tagList(tags$i(class = "lc01-line-sw is-dashed", `aria-hidden` = "true",
+            lc_readout(tagList(tags$i(class = "lc-sf-line-sw is-dashed", `aria-hidden` = "true",
                                        style = "--lc-sw:var(--upwr-reference);"), "Rozkład normalny"), "0.0",
                        color = "var(--upwr-reference)")
           ),
@@ -264,15 +264,15 @@ ch5_ui <- list(
       label = "Ryc. 5.7",
       title = "Pełna charakterystyka rozkładu",
       # Histogram i pudełko rysuje przeglądarka; tabele zostają w R (te same wejścia).
-      lc01_stat_figure("full", legend = TRUE,
+      lc_sf_figure("full", legend = TRUE,
         control = lc_segmented("ch5_full_var", "Zmienna",
           choices = c("Wzrost" = "wzrost", "Średnia ocen" = "srednia_ocen",
                       "Czas dojazdu" = "czas_dojazdu", "Waga" = "waga")),
         # Zestaw minimum albo pełny (dwie tabele obok siebie)
         toolbar = lc_segmented("ch5_full_set", "Zestaw",
           choices = c("Minimum" = "min", "Pełny" = "full"), selected = "min"),
-        body = tagList(lc01_stat_chart(0, ratio = "1.8/1", max_height = "350px"),
-                       lc01_stat_chart(1, ratio = "5.2/1", max_height = "130px"))),
+        body = tagList(lc_sf_chart(0, ratio = "1.8/1", max_height = "350px"),
+                       lc_sf_chart(1, ratio = "5.2/1", max_height = "130px"))),
       uiOutput("ch5_full_table"),
       uiOutput("ch5_full_interpretation")
     ),

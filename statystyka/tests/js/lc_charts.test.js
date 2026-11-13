@@ -782,10 +782,10 @@ test("ryciny statystyk z ankiety (01, rozdz. 3): kontrolka, opisy dla opcji i sp
     liczba_kursow: { label: "Liczba kursów", values: [3, 4, 4, 5, 5, 5] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { value: "wzrost" });
   const notes = ["wzrost", "waga"].map(v => new Element("div", { "data-when": v }));
-  const fig = root("lc01-stat", [root("lc01-stat-ctl", [select]), ecbox("0"), ...notes], { "data-fig": "mean" });
+  const fig = root("lc-sf", [root("lc-sf-ctl", [select]), ecbox("0"), ...notes], { "data-fig": "mean" });
   env.mount(fig);
   assert.equal(env.errors.length, 0);
   assert.equal(env.live.size, 1);
@@ -793,12 +793,12 @@ test("ryciny statystyk z ankiety (01, rozdz. 3): kontrolka, opisy dla opcji i sp
   const chart = [...env.live][0];
   const before = chart.updates;
   select.value = "waga";
-  fig.querySelector(".lc01-stat-ctl").emit("change");
+  fig.querySelector(".lc-sf-ctl").emit("change");
   assert.ok(chart.updates > before, "zmiana zmiennej przerysowuje wykres");
   assert.deepEqual(notes.map(n => n.hidden), [true, false]);
   // Dwa wykresy w jednej rycinie (Ryc. 3.7): słupki i histogram 15 przedziałów.
   const radio = new Element("input", { type: "radio", value: "liczba_kursow", checked: "" });
-  const disc = root("lc01-stat", [root("lc01-stat-ctl", [radio]), ecbox("0"), ecbox("1")], { "data-fig": "disc" });
+  const disc = root("lc-sf", [root("lc-sf-ctl", [radio]), ecbox("0"), ecbox("1")], { "data-fig": "disc" });
   env.mount(disc);
   assert.equal(env.live.size, 3);
   env.unmount(fig); env.unmount(disc);
@@ -820,11 +820,11 @@ test("ryciny statystyk ze stanem (01): przyciski, pole wyboru i wartości w tabe
                    values: [1, 2, 3, 4, 5, 3, 3, 4] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   // Ryc. 4.7: dopisanie wartości odstającej aktualizuje n i komórki tabeli.
   const add = new Element("button", { "data-stat-act": "add1" }), reset = new Element("button", { "data-stat-act": "reset" });
   const n = new Element("span", { "data-v": "n" }), range = new Element("span", { "data-v": "range" });
-  const comp = root("lc01-stat", [add, reset, ecbox("0"), n, range], { "data-fig": "comp" });
+  const comp = root("lc-sf", [add, reset, ecbox("0"), n, range], { "data-fig": "comp" });
   env.mount(comp);
   assert.equal(n.textContent, "8"); assert.equal(range.textContent, "30.0 cm");
   comp.emit("click", { target: add });
@@ -834,7 +834,7 @@ test("ryciny statystyk ze stanem (01): przyciski, pole wyboru i wartości w tabe
   assert.equal(n.textContent, "8");
   // Ryc. 2.5: losowanie daje 200 obserwacji i opis dominanty.
   const text = new Element("div", { "data-role": "mode-text" }), again = new Element("button", { "data-stat-act": "resample" });
-  const mode = root("lc01-stat", [again, ecbox("0"), text], { "data-fig": "mode" });
+  const mode = root("lc-sf", [again, ecbox("0"), text], { "data-fig": "mode" });
   env.mount(mode);
   assert.match(text.innerHTML, /Dominanta:<\/b> Informatyka/);
   mode.emit("click", { target: again });
@@ -842,10 +842,10 @@ test("ryciny statystyk ze stanem (01): przyciski, pole wyboru i wartości w tabe
   // Ryc. 2.2: pole wyboru przełącza opis i kolejność.
   const box = new Element("input", { type: "checkbox" });
   const off = new Element("div", { "data-when": "off" }), on = new Element("div", { "data-when": "on" });
-  const order = root("lc01-stat", [root("lc01-stat-ctl", [box]), ecbox("0"), ecbox("1"), off, on], { "data-fig": "order" });
+  const order = root("lc-sf", [root("lc-sf-ctl", [box]), ecbox("0"), ecbox("1"), off, on], { "data-fig": "order" });
   env.mount(order);
   assert.deepEqual([off.hidden, on.hidden], [false, true]);
-  box.checked = true; order.querySelector(".lc01-stat-ctl").emit("change");
+  box.checked = true; order.querySelector(".lc-sf-ctl").emit("change");
   assert.deepEqual([off.hidden, on.hidden], [true, false]);
   [comp, mode, order].forEach(x => env.unmount(x));
   assert.equal(env.live.size, 0);
@@ -861,19 +861,19 @@ test("pudełka w grupach (01, Ryc. 4.6): kilka kontrolek wybiera opis pary zmien
     kierunek: { label: "Kierunek", levels: ["A", "B"], values: [1, 2, 1, 2, 1, 2] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { id: "ch4_grp_var", value: "wzrost" });
   const by = new Element("input", { type: "radio", name: "ch4_grp_by", value: "plec", checked: "" });
   const violin = new Element("input", { type: "checkbox", id: "ch4_grp_violin" });
   const notes = ["wzrost|plec", "waga|plec"].map(k => new Element("div", { "data-when": k }));
-  const ctl = (child, attrs = {}) => root("lc01-stat-ctl", [child], attrs);
-  const fig = root("lc01-stat", [ctl(select), ctl(by, { id: "ch4_grp_by" }), ctl(violin), ecbox("0"), ...notes], { "data-fig": "groups" });
+  const ctl = (child, attrs = {}) => root("lc-sf-ctl", [child], attrs);
+  const fig = root("lc-sf", [ctl(select), ctl(by, { id: "ch4_grp_by" }), ctl(violin), ecbox("0"), ...notes], { "data-fig": "groups" });
   env.mount(fig);
   assert.equal(env.errors.length, 0, String(env.errors[0] && env.errors[0][1] && env.errors[0][1].stack));
   assert.deepEqual(notes.map(n => n.hidden), [false, true]);
-  select.value = "waga"; fig.querySelectorAll(".lc01-stat-ctl")[0].emit("change");
+  select.value = "waga"; fig.querySelectorAll(".lc-sf-ctl")[0].emit("change");
   assert.deepEqual(notes.map(n => n.hidden), [true, false], "opis zależy od zmiennej i podziału");
-  violin.checked = true; fig.querySelectorAll(".lc01-stat-ctl")[2].emit("change");
+  violin.checked = true; fig.querySelectorAll(".lc-sf-ctl")[2].emit("change");
   assert.equal(env.errors.length, 0, "skrzypce rysują się bez błędu");
   env.unmount(fig);
   assert.equal(env.live.size, 0);
@@ -883,16 +883,16 @@ test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę;
   const env = environment();
   env.window.lc01Survey = { n: 0, columns: {} };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const stepper = (id, charts, extra = []) => {
     const text = new Element("div", { id: id + "_text" });
-    const boxes = charts.map(k => root("lc01-stat-chart", [ecbox(String(k))], { "data-k": String(k) }));
+    const boxes = charts.map(k => root("lc-sf-chart", [ecbox(String(k))], { "data-k": String(k) }));
     const st = root("lc-stepper", [...boxes, text, ...extra], { id, "data-lc-step": "1" });
     return { st, text, boxes };
   };
   const table = new Element("div", { "data-role": "table" }), again = new Element("button", { "data-stat-act": "new" });
   const sd = stepper("ch4_sd", [0], [table, again]);
-  const fig = root("lc01-stat", [sd.st], { "data-fig": "sd" });
+  const fig = root("lc-sf", [sd.st], { "data-fig": "sd" });
   env.mount(fig);
   assert.equal(env.errors.length, 0);
   assert.match(sd.text.innerHTML, /Dziesięć pomiarów/);
@@ -905,7 +905,7 @@ test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę;
   assert.notEqual(table.innerHTML, before, "nowy zestaw zmienia tabelę");
   // Ryc. 4.5: drugi wykres (histogram) widoczny tylko w kroku 6.
   const bp = stepper("ch4_bp", [0, 1]);
-  const fig2 = root("lc01-stat", [bp.st], { "data-fig": "bp" });
+  const fig2 = root("lc-sf", [bp.st], { "data-fig": "bp" });
   env.mount(fig2);
   assert.equal(bp.boxes[1].hidden, true);
   bp.st.setAttribute("data-lc-step", "6"); env.theme(bp.st);
@@ -924,20 +924,78 @@ test("palety kolorów (01, Ryc. 2.4): losowanie i zmiana palety przełączają o
     waga: { label: "Waga (kg)", values: [55, 60, 66, 70, 80, 90] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { id: "ch2_color_palette", value: "neutral" });
   const random = new Element("button", { "data-stat-act": "random" });
-  const legend = new Element("div", { class: "lc01-legend" });
+  const legend = new Element("div", { class: "lc-sf-legend" });
   const notes = ["neutral", "viridis", "random"].map(k => new Element("div", { "data-when": k }));
-  const fig = root("lc01-stat", [root("lc01-stat-ctl", [select]), random, legend, ecbox("0"), ecbox("1"), ...notes], { "data-fig": "colors" });
+  const fig = root("lc-sf", [root("lc-sf-ctl", [select]), random, legend, ecbox("0"), ecbox("1"), ...notes], { "data-fig": "colors" });
   env.mount(fig);
   assert.equal(env.errors.length, 0);
   assert.deepEqual(notes.map(n => n.hidden), [false, true, true]);
   assert.equal(legend.hidden, false, "skala barw mapy jest widoczna");
   fig.emit("click", { target: random });
   assert.deepEqual(notes.map(n => n.hidden), [true, true, false], "losowe kolory mają własny opis");
-  select.value = "viridis"; fig.querySelector(".lc01-stat-ctl").emit("change");
+  select.value = "viridis"; fig.querySelector(".lc-sf-ctl").emit("change");
   assert.deepEqual(notes.map(n => n.hidden), [true, false, true], "zmiana palety kasuje losowe kolory");
   env.unmount(fig);
   assert.equal(env.live.size, 0);
+});
+
+test("ryciny rozkładów (03): scenariusze z pól wyboru, podpisy, presety i pole pod N(0, 1)", () => {
+  const env = environment();
+  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("03-rozklady-prawdopodobienstwa/modules/dist_charts.js");
+  // Ryc. 3.4: grupa pól wyboru daje listę zaznaczonych scenariuszy.
+  const cfg = { dist: "binom", xName: "k", yName: "P", defs: {
+    b1: { label: "B(10, 0.5)", n: 10, p: 0.5, color: "#2d3b3d", stats: "B(10, 0.5): E(X) = 5" },
+    b2: { label: "B(20, 0.25)", n: 20, p: 0.25, color: "#c08540", stats: "B(20, 0.25): E(X) = 5" } } };
+  const boxes = ["b1", "b2"].map(v => { const b = new Element("input", { type: "checkbox", value: v }); b.checked = v === "b1"; return b; });
+  const stats = new Element("ul", { "data-role": "stats" }), legend = new Element("div", { class: "lc-sf-legend" });
+  const fig = root("lc-sf", [root("lc-sf-ctl", boxes, { id: "sc" }), legend, ecbox("0"), stats],
+                   { "data-fig": "d03-pmf", "data-config": JSON.stringify(cfg) });
+  env.mount(fig);
+  assert.equal(env.errors.length, 0);
+  assert.equal(env.live.size, 1);
+  assert.match(stats.innerHTML, /B\(10, 0.5\): E\(X\) = 5/);
+  assert.doesNotMatch(stats.innerHTML, /B\(20/);
+  const chart = [...env.live][0], before = chart.updates;
+  boxes[1].checked = true; fig.querySelector(".lc-sf-ctl").emit("change");
+  assert.ok(chart.updates > before, "zaznaczenie scenariusza przerysowuje wykres");
+  assert.equal((stats.innerHTML.match(/<li>/g) || []).length, 2);
+  // Bez scenariuszy wykres znika zamiast rzucać błąd (dawne req()).
+  boxes.forEach(b => { b.checked = false; }); fig.querySelector(".lc-sf-ctl").emit("change");
+  assert.equal(stats.hidden, true);
+  assert.equal(env.errors.length, 0);
+
+  // Ryc. 5.2: preset ustawia zakres, krok i wartość suwaków bez serwera.
+  const slider = (id, min, max, value, step) => root("lc-sf-ctl", [
+    new Element("output", { "data-value": id }), new Element("input", { id, type: "range", min, max, value, step })]);
+  const mu = slider("ch5_mu", -10, 10, 0, 0.5), sigma = slider("ch5_sigma", 0.5, 5, 1, 0.1);
+  const emp = new Element("input", { type: "checkbox", id: "ch5_show_empirical" }); emp.checked = true;
+  const iq = new Element("button", { "data-stat-act": "iq" });
+  const read = ["mu", "sigma", "i68"].map(k => new Element("span", { "data-v": k }));
+  const presets = { iq: { mu: [50, 150, 100, 1], sigma: [1, 30, 15, 0.5] } };
+  const normal = root("lc-sf", [mu, sigma, root("lc-sf-ctl", [emp]), iq, ...read, ecbox("0")],
+                      { "data-fig": "d03-normal", "data-config": JSON.stringify({ presets }) });
+  env.mount(normal);
+  assert.equal(read[2].textContent, "[-1, 1]");
+  normal.emit("click", { target: iq });
+  assert.equal(normal.querySelector("#ch5_mu").value, "100");
+  assert.equal(normal.querySelector("#ch5_sigma").getAttribute("max"), "30");
+  assert.deepEqual(read.map(r => r.textContent), ["100", "15", "[85, 115]"]);
+
+  // Ryc. 5.6: pole P(a < Z < b), suwak b tylko dla przedziału.
+  // Atrapa DOM nie zna :checked, więc zaznaczona opcja stoi pierwsza.
+  const seg = root("lc-sf-ctl", ["between", "less"].map(v => new Element("input", { type: "radio", value: v })));
+  const a = slider("ch5_prob_a", -4, 4, -1, 0.05), b = slider("ch5_prob_b", -4, 4, 1, 0.05);
+  b.setAttribute("data-role", "b");
+  const out = ["plabel", "p", "pct"].map(k => new Element("span", { "data-v": k }));
+  const zfig = root("lc-sf", [seg, a, b, ...out, ecbox("0")], { "data-fig": "d03-zprob" });
+  env.mount(zfig);
+  assert.deepEqual(out.map(o => o.textContent), ["P(-1 < Z < 1)", "0.6827", "68.27%"]);
+  assert.equal(b.hidden, false);
+  env.unmount(fig); env.unmount(normal); env.unmount(zfig);
+  assert.equal(env.live.size, 0);
+  assert.equal(env.errors.length, 0);
 });

@@ -34,7 +34,7 @@ ch3_reset_button <- function(label) {
 # Etykieta z próbką linii (ciągła / przerywana / kropkowana) zamiast legendy wykresu.
 ch3_line_label <- function(label, color, style = NULL) {
   col <- if (color == "accent") "var(--upwr-accent)" else paste0("var(--upwr-cat-", color, ")")
-  tagList(tags$i(class = paste("lc01-line-sw", style), `aria-hidden` = "true",
+  tagList(tags$i(class = paste("lc-sf-line-sw", style), `aria-hidden` = "true",
                  style = paste0("--lc-sw:", col, ";")), label)
 }
 
@@ -175,26 +175,26 @@ ch3_ui <- list(
       label = "Ryc. 3.1",
       # Stosy (kroki 5–6) i trzy histogramy pod sobą (krok 7) potrzebują więcej wysokości.
       tags$style(HTML("
-        #ch3_hist[data-lc-step='5'] .lc01-stat-chart[data-k='0'],
-        #ch3_hist[data-lc-step='6'] .lc01-stat-chart[data-k='0'] { aspect-ratio: 1.8 / 1 !important; max-height: 460px !important; }
-        #ch3_hist[data-lc-step='7'] .lc01-stat-chart { aspect-ratio: 3.6 / 1 !important; min-height: 9em; }
+        #ch3_hist[data-lc-step='5'] .lc-sf-chart[data-k='0'],
+        #ch3_hist[data-lc-step='6'] .lc-sf-chart[data-k='0'] { aspect-ratio: 1.8 / 1 !important; max-height: 460px !important; }
+        #ch3_hist[data-lc-step='7'] .lc-sf-chart { aspect-ratio: 3.6 / 1 !important; min-height: 9em; }
       ")),
-      lc01_stat_figure("hist", bare = TRUE, body = lc_step_widget("ch3_hist",
+      lc_sf_figure("hist", bare = TRUE, body = lc_step_widget("ch3_hist",
         title = "Budowa histogramu",
         steps = c("Surowe dane", "Posortuj dane", "Podziel na przedziały",
                   "Przypisz do binów", "Zlicz obserwacje", "Zbuduj słupki",
                   "Wpływ szerokości binu"),
         toolbar = lc_toolbar(
-          lc01_stat_ctl(lc_group("Zmienna", lc_select("ch3_hist_var",
+          lc_sf_ctl(lc_group("Zmienna", lc_select("ch3_hist_var",
             c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
               "Czas dojazdu (min)" = "czas_dojazdu", "Średnia ocen" = "srednia_ocen"),
             aria_label = "Zmienna"))),
-          lc_step_from(3, lc01_stat_slider("ch3_hist_bin_width", "Szerokość binu", 1, 15, 5, 1)),
+          lc_step_from(3, lc_sf_slider("ch3_hist_bin_width", "Szerokość binu", 1, 15, 5, 1)),
           lc_chart_zoom_button()
         ),
-        body = tagList(lc01_stat_chart(0, ratio = "2.5/1", max_height = "420px"),
-                       lc01_stat_chart(1, ratio = "3.6/1", max_height = "240px"),
-                       lc01_stat_chart(2, ratio = "3.6/1", max_height = "240px")),
+        body = tagList(lc_sf_chart(0, ratio = "2.5/1", max_height = "420px"),
+                       lc_sf_chart(1, ratio = "3.6/1", max_height = "240px"),
+                       lc_sf_chart(2, ratio = "3.6/1", max_height = "240px")),
         extra = tags$div(`data-role` = "table")
       ))
     ),
@@ -237,7 +237,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.2",
       title = "Średnia jako punkt równowagi",
-      lc01_stat_figure("mean", ratio = "2.4/1", max_height = "320px",
+      lc_sf_figure("mean", ratio = "2.4/1", max_height = "320px",
         control = lc_group("Zmienna", lc_select("ch3_mean_var", ch3_mean_choices,
                                                 aria_label = "Zmienna")),
         selected = "wzrost", notes = ch3_mean_notes())
@@ -277,7 +277,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.3",
       title = "Mediana dzieli dane na pół",
-      lc01_stat_figure("median", ratio = "2.4/1", max_height = "320px",
+      lc_sf_figure("median", ratio = "2.4/1", max_height = "320px",
         control = lc_group("Zmienna", lc_select("ch3_median_var", ch3_median_choices,
                                                 selected = "czas_dojazdu", aria_label = "Zmienna")),
         selected = "czas_dojazdu", notes = ch3_median_notes())
@@ -458,7 +458,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.7",
       title = "Dyskretna vs ciągła — porównanie wizualizacji",
-      lc01_stat_figure("disc", charts = 2, ratio = "1.5/1", max_height = "300px",
+      lc_sf_figure("disc", charts = 2, ratio = "1.5/1", max_height = "300px",
         headings = list("Wykres słupkowy (poprawny)", "Histogram (problematyczny)"),
         control = lc_segmented("ch3_disc_var", "Zmienna dyskretna", choices = ch3_disc_choices),
         selected = "liczba_nieobecnosci", notes = ch3_disc_notes())
@@ -493,7 +493,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.8",
       title = "Unimodalny vs bimodalny vs wielomodalny",
-      lc01_stat_figure("modal", ratio = "1.9/1", max_height = "360px", legend = TRUE,
+      lc_sf_figure("modal", ratio = "1.9/1", max_height = "360px", legend = TRUE,
         control = lc_segmented("ch3_modal_scenario", "Scenariusz",
           choices = c("Unimodalny" = "unimodal", "Bimodalny" = "bimodal",
                       "Wielomodalny" = "multimodal")),

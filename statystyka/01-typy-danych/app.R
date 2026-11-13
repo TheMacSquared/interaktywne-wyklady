@@ -67,7 +67,7 @@ lc_apply_ggplot_defaults()
 source(file.path(app_dir, "modules", "helpers.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "scene_helpers.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "survey_data.R"),    local = TRUE)
-source(file.path(app_dir, "modules", "stat_figures.R"),   local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_typy.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch2_jakosciowe.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_polozenie.R"),  local = TRUE)
@@ -119,8 +119,9 @@ app_extras <- tagList(
   includeScript(file.path(app_dir, "modules", "kurtosis_chart.js")),
   # Ryciny statystyk opisowych liczone w przeglądarce (stat_charts.js): rozdz. 1–5.
   lc01_survey_script(),
+  includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
   includeScript(file.path(app_dir, "modules", "stat_charts.js")),
-  lc01_stat_styles(),
+  lc_sf_styles(),
   tags$style(HTML("
     .lc-salary-hist, .lc-pctl-hist { position: relative; width: 100%; aspect-ratio: 2.6 / 1; max-height: 300px; touch-action: none; }
     .lc-salary-strip, .lc-pctl-box { position: relative; width: 100%; aspect-ratio: 6 / 1; min-height: 92px; max-height: 130px; touch-action: none; }
@@ -139,10 +140,6 @@ app_extras <- tagList(
     .lc-salary .lc-action:disabled, .lc-guess .lc-action:disabled { opacity: .35; }
     .lc-pctl .lc-seg button[aria-pressed='true'], .lc-kurt .lc-seg button[aria-pressed='true'] {
       background: var(--upwr-accent); color: var(--upwr-surface); }
-    .lc01-line-sw { display: inline-block; width: 1.5em; height: 0; margin-right: .4em;
-      border-top: 3px solid var(--lc-sw); vertical-align: middle; }
-    .lc01-line-sw.is-dashed { border-top-style: dashed; }
-    .lc01-line-sw.is-dotted { border-top-style: dotted; }
   ")),
   includeScript(file.path(app_dir, "modules", "scenario_chart.js")),
   tags$style(HTML("
