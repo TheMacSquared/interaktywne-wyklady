@@ -300,7 +300,7 @@ ch3_ui <- list(
       pokazuje sytuację odwrotną: przy p powyżej 0.5 środek przesuwa się
       w prawo, do E(X) = 14, a dłuższy ogon pojawia się po lewej stronie."),
 
-    # Ryc. 3.5: przypadek „Spotkanie na szlaku” (prototyp 3g, zaakceptowany 2026-10-29)
+    # Ryc. 3.5: przypadek „Spotkanie na szlaku” (stops_ch3.R)
     lc_p("Na koniec historia z gór."),
 
     s3p_3g_ui,
@@ -331,7 +331,7 @@ ch3_ui <- list(
     lc_p("Zanim przejdziemy do sklepu, prawdziwa historia: w 1944 roku ten rozkład
       odpowiedział na pytanie, które niepokoiło cały Londyn."),
 
-    # Ryc. 3.6: prototyp 3a (2026-10-29)
+    # Ryc. 3.6: scena „Czy V-1 celowały?” (stops_ch3.R)
     s3p_3a_ui,
 
     lc_p("Zobaczmy to na przykładzie sklepu. Klienci wchodzą w losowych momentach,
@@ -390,7 +390,7 @@ ch3_ui <- list(
     lc_p("Model Poissona sprawdza się na prawdziwych danych. Klasyczny przykład
       pochodzi z dziewiętnastowiecznej armii pruskiej."),
 
-    # Ryc. 3.9: prototyp 3b (2026-10-29)
+    # Ryc. 3.9: przypadek „Konie Bortkiewicza” (stops_ch3.R)
     s3p_3b_ui,
 
     # ========================================================================

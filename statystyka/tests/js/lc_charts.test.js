@@ -558,9 +558,9 @@ test("dwie krzywe: niezależne średnie, odwrotny kierunek odchylenia i reset",(
  assert.equal(b.getAttribute("role"),"button");el.emit("click",{target:reset});assert.equal(dots()[0][0],166);assert.equal(dots()[0][1],original[0][1]);assert.equal(env.errors.length,0);
 });
 
-test("prototypy E1–E2: mapa wybiera n klawiaturą, przedział liczy dane i model", () => {
+test("ryciny ECharts (03): mapa wybiera n klawiaturą, przedział liczy dane i model", () => {
   const env = environment();
-  env.load("03-rozklady-prawdopodobienstwa/modules/ec_proto.js");
+  env.load("03-rozklady-prawdopodobienstwa/modules/ec_charts.js");
   const rows = [1, 2, 3].map(n => [0.1 * n, 0.5 * n, 0.1 * n]);
   const base = { key: "a", short: "A", unit: "g", axis: "Oś", story: "", one: "jedna", many: "wielu", mu: 0.5, sd: 0.3, skew: 1, xlo: 0, xhi: 1, rows, tv: [0.3, 0.2, 0.1],
     sims: 10, bins: 2, counts: [[6, 4], [5, 5], [4, 6]] };

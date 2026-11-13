@@ -1,15 +1,12 @@
-# PROTOTYPY PUNKTÓW STOP (2026-10-29) — wspólne elementy ----------------------
+# PUNKTY STOP WYKŁADU 03 — wspólne elementy ----------------------------------
 #
-# Każdy prototyp ma złotą plakietkę „Prototyp <nr> · <rodzaj>”, numer jak
-# w burzy mózgów (1a … 6d, D1, D2). Stare ryciny zostają obok do porównania.
-# Pliki: stop_proto_ch1.R … stop_proto_ch6.R (ch6 zawiera też domknięcia D1, D2).
+# Ryciny-punkty stop są w plikach stops_ch1.R … stops_ch6.R (rozdziały)
+# i stops_ec.R (ryciny ECharts z danymi liczonymi w R). Prefiks s3p_ w nazwach.
 # Wymaga: palette.R, theme_upwr.R, shared.R, lecture_layout.R, helpers.R.
 
-# proto = FALSE: prototyp zaakceptowany, zwykła plakietka rodzaju.
-s3p_panel <- function(num, kind, title, ..., width_mode = "wide", proto = TRUE) {
-  if (!proto) return(figure_panel(label = kind, title = title, width_mode = width_mode, ...))
-  figure_panel(label = paste0("Prototyp ", num, " · ", kind), title = title,
-    color = upwr_single_alt, width_mode = width_mode, ...)
+# Panel punktu stop: plakietka „Ryc. X.Y”, tytuł, treść.
+s3p_panel <- function(kind, title, ..., width_mode = "wide") {
+  figure_panel(label = kind, title = title, width_mode = width_mode, ...)
 }
 
 # Tekst kroku widgetu krokowego: lista napisów (albo funkcji bez argumentów).

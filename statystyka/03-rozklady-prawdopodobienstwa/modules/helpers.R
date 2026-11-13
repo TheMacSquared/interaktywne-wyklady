@@ -67,7 +67,7 @@ plot_pdf <- function(density_fn, xlim, fill_color = unname(upwr_cat["szalwia"]),
 
 
 # ============================================================================
-# Sceny (scenes.js, PROTOTYPY 2026-10-08): doświadczenie z życia → zmienna → rozkład
+# Sceny (scenes.js): doświadczenie z życia → zmienna → rozkład
 # Wzorzec jak scene_widget() w statystyce 00; obok exp_widget() (experiment.js).
 # ============================================================================
 

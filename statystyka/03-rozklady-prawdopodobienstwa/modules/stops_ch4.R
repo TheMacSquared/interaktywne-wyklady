@@ -1,12 +1,8 @@
-# PROTOTYPY PUNKTÓW STOP — rozdział 4 (2026-10-29) ---------------------------
-#   Ryc. 4.2 „Ile osób ma dokładnie 170 cm?”: od 2026-11-05 wariant ECharts „lupa”
-#             (s3p_4aa_ui w stop_proto_ec.R); tu zostaje populacja s3p_4a_pop.
-#   s3p_4b_ui — Ryc. 4.5 „Kwantyl: odwrotne pytanie” (zaakceptowany 2026-10-29; ECharts, quantile_chart.js;
-#               od 2026-11-06 w obu trybach granicę przeciąga się po wykresie)
-#   s3p_4c_ui — Ryc. 4.10 „Paradoks autobusu” (zaakceptowany 2026-10-29)
-#   Usunięty 2026-10-29: 4d „Guinness i Gosset”.
-#   Usunięty 2026-11-06: 4e „Stos kwadratów” (zastąpiła go scena „Dron z GPS”, Ryc. 5.10 w ch5_normalny.R).
-#   s3p_4f_ui — „Losowe podwyżki” (zaakceptowany 2026-10-29; od 2026-11-06 w rozdz. 5 jako Ryc. 5.13)
+# PUNKTY STOP — rozdział 4 (i Ryc. 5.13) ---------------------------------------
+#   s3p_4a_pop — populacja dla Ryc. 4.2 „Ile osób ma dokładnie 170 cm?” (s3p_4aa_ui w stops_ec.R)
+#   s3p_4b_ui  — Ryc. 4.5 „Kwantyl: odwrotne pytanie” (ECharts, quantile_chart.js)
+#   s3p_4c_ui  — Ryc. 4.10 „Paradoks autobusu”
+#   s3p_4f_ui  — Ryc. 5.13 „Losowe podwyżki” (w rozdziale 5)
 # Serwer: s3p_ch4_server(input, output, session).
 
 # ============================================================================
@@ -29,7 +25,7 @@ s3p_4b_seg <- function(attr, choices, selected) {
     }))
 }
 
-s3p_4b_ui <- s3p_panel("4b", "Ryc. 4.5", "Kwantyl: odwrotne pytanie", proto = FALSE,
+s3p_4b_ui <- s3p_panel("Ryc. 4.5", "Kwantyl: odwrotne pytanie",
   tags$div(class = "lc-quant", `data-mu` = "170", `data-sd` = "8", `data-x` = "178",
     `data-lo` = "140", `data-hi` = "200",
     lc_toolbar(
@@ -50,7 +46,7 @@ s3p_4b_ui <- s3p_panel("4b", "Ryc. 4.5", "Kwantyl: odwrotne pytanie", proto = FA
 # (4c) SYMULACJA „PARADOKS AUTOBUSU”
 # ============================================================================
 
-s3p_4c_ui <- s3p_panel("4c", "Ryc. 4.10", "Paradoks autobusu", proto = FALSE,
+s3p_4c_ui <- s3p_panel("Ryc. 4.10", "Paradoks autobusu",
   lc_toolbar(
     lc_segmented("s3p_4c_mode", "Autobusy", choices = c("Co 10 min, punktualnie" = "regular",
       "Średnio co 10 min, losowo" = "random")),
@@ -67,7 +63,7 @@ s3p_4c_ui <- s3p_panel("4c", "Ryc. 4.10", "Paradoks autobusu", proto = FALSE,
 # (4f) SYMULACJA „LOSOWE PODWYŻKI”
 # ============================================================================
 
-s3p_4f_ui <- s3p_panel("4f", "Ryc. 5.13", "Losowe podwyżki", proto = FALSE,
+s3p_4f_ui <- s3p_panel("Ryc. 5.13", "Losowe podwyżki",
   lc_toolbar(
     lc_action_group(label = "Czas", s3p_4f_y1 = "+1 rok", s3p_4f_y10 = "+10 lat"),
     lc_action("s3p_4f_reset", icon = "reset", variant = "ghost", aria_label = "Od nowa"),

@@ -1,7 +1,6 @@
-# RYC. 5.4 KALKULATOR Z-SCORE (prototyp 5.4-A, zaakceptowany 2026-10-29) ------------
-# Chart.js (zscore_chart.js, data-mode = "two"): pola μ, σ, x w jednej linii, dwa
+# RYC. 5.4 KALKULATOR Z-SCORE ---------------------------------------------------
+# zscore_chart.js (data-mode = "two"): pola μ, σ, x w jednej linii, dwa
 # wyrównane wykresy (skala x i skala z), jedna linia wzoru z = (x − μ)/σ. Bez serwera.
-# Usunięte warianty: 5.4-B „Jedna krzywa, dwie osie”, 5.4-C „Odchudzony ggplot”.
 
 # Pole liczbowe bez Shiny, czytane przez zscore_chart.js.
 s3p_54_field <- function(label, role, value) {
@@ -10,8 +9,8 @@ s3p_54_field <- function(label, role, value) {
                              value = value, step = "any", style = "width: 7em;"))
 }
 
-s3p_54_js <- function(num, title, mode, canvases) {
-  s3p_panel(num, "Ryc. 5.4", title, proto = FALSE,
+s3p_54_js <- function(title, mode, canvases) {
+  s3p_panel("Ryc. 5.4", title,
     tags$div(class = "lc-zcalc", `data-mode` = mode,
       lc_toolbar(
         s3p_54_field("μ", "mu", 65), s3p_54_field("σ", "sd", 10), s3p_54_field("x", "x", 80),
@@ -24,7 +23,7 @@ s3p_54_js <- function(num, title, mode, canvases) {
   )
 }
 
-s3p_54a_ui <- s3p_54_js("5.4-A", "Kalkulator z-score", "two", tagList(
+s3p_54a_ui <- s3p_54_js("Kalkulator z-score", "two", tagList(
   tags$div(class = "s3p-54-canvas", tags$div(class = "lc-ec", role = "img", `data-role` = "x", `aria-label` = "Wartość x w oryginalnej skali")),
   tags$div(class = "s3p-54-canvas", tags$div(class = "lc-ec", role = "img", `data-role` = "z", `aria-label` = "Ta sama obserwacja na skali z"))))
 

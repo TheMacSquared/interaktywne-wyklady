@@ -51,9 +51,9 @@ source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
 # Ryciny rozkładów teoretycznych liczone w przeglądarce (dist_charts.js).
 source(file.path(app_dir, "modules", "dist_figures.R"),  local = TRUE)
-# Prototypy punktów stop (2026-10-29): przed rozdziałami, bo ich UI wstawiamy w tekst.
+# Punkty stop (stops_*.R): przed rozdziałami, bo ich UI wstawiamy w tekst.
 for (.f in c("common", paste0("ch", 1:6), "ch2_var", "ch5_z", "ch5_calc", "ec")) {
-  source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
+  source(file.path(app_dir, "modules", paste0("stops_", .f, ".R")), local = TRUE)
 }
 source(file.path(app_dir, "modules", "ch1_most.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch2_ev_var.R"),    local = TRUE)
@@ -96,15 +96,15 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "duel_chart.js")),
     includeScript(file.path(app_dir, "modules", "zscore_chart.js")),
     includeScript(file.path(app_dir, "modules", "cases_chart.js")),
-    # Prototypy E1–E2: możliwości ECharts (mapa zbieżności, zaznaczanie przedziału)
-    includeScript(file.path(app_dir, "modules", "ec_proto.js")),
+    # Ryciny ECharts z danymi z R: Ryc. 4.2 (lupa), 5.7 (zaznacz przedział), 6.5 (mapa zbieżności)
+    includeScript(file.path(app_dir, "modules", "ec_charts.js")),
     # Quiz: przykładowa realizacja po odpowiedzi (histogram i rozkład teoretyczny)
     includeScript(file.path(app_dir, "modules", "quiz_chart.js")),
     s3p_ec_css,
     s3p_4ax_css,
     s3p_54_css,
     includeScript(file.path(app_dir, "modules", "experiment.js")),
-    # Sceny „od intuicji do formalizmu” (PROTOTYPY 2026-10-08)
+    # Sceny „od intuicji do formalizmu” (scenes.js, scenes.css)
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
     s3p_css,
@@ -262,7 +262,7 @@ server <- function(input, output, session) {
   ch8_server(input, output, session)
   ch9_server(input, output, session)
 
-  # Prototypy punktów stop (2026-10-29)
+  # Punkty stop (stops_*.R)
   s3p_ch1_server(input, output, session)
   s3p_ch2_server(input, output, session)
   s3p_ch2_var_server(input, output, session)

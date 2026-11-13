@@ -1,7 +1,6 @@
-# RYC. 5.5 „KTO BARDZIEJ WYJĄTKOWY?” (prototyp 5c-C, zaakceptowany 2026-10-29) ------
-# Chart.js (duel_chart.js): cztery pary, widok „dwie skale” z przeciąganiem wartości
-# albo „wspólna skala z”. Bez serwera. Usunięte warianty: 5c-A „Dwie skale → jedna”,
-# 5c-B „Tylko wspólna oś”.
+# RYC. 5.5 „KTO BARDZIEJ WYJĄTKOWY?” --------------------------------------------
+# duel_chart.js: cztery pary, widok „dwie skale” z przeciąganiem wartości
+# albo „wspólna skala z”. Bez serwera.
 
 s3p_z_pairs <- list(
   list(short = "Wzrost", q = "Kto jest bardziej wyjątkowo wysoki w swojej grupie?",
@@ -24,7 +23,7 @@ s3p_z_of <- function(o) (o$x - o$mu) / o$sd
 # (5c-C) POJEDYNEK — Chart.js, przełącznik widoku
 # ============================================================================
 
-s3p_5cc_ui <- s3p_panel("5c-C", "Ryc. 5.5", "Kto bardziej wyjątkowy?", proto = FALSE,
+s3p_5cc_ui <- s3p_panel("Ryc. 5.5", "Kto bardziej wyjątkowy?",
   tags$div(class = "lc-duel",
     `data-config` = jsonlite::toJSON(s3p_z_pairs, auto_unbox = TRUE, digits = NA),
     lc_toolbar(

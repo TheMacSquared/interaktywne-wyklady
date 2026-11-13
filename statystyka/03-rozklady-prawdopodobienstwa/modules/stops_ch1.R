@@ -1,10 +1,7 @@
-# PROTOTYPY PUNKTÓW STOP — rozdział 1 (2026-10-29) ---------------------------
-#   s3p_11a_ui — Ryc. 1.1 „Stos kostek” (zaakceptowany 2026-10-29)
-#   s3p_11c_ui — Ryc. 1.2 „Lejek” (zaakceptowany 2026-10-29)
-#   s3p_15b_ui — Ryc. 1.5 „Rozkład czy nie?” (zaakceptowany 2026-10-29; zastąpił „Zbuduj własny rozkład”)
-#   Oba zastąpiły dawną Ryc. 1.1 (dwa wykresy w jednym panelu). Usunięte:
-#   1a „Kto wejdzie następny?” (dublował Ryc. 1.1), 1.1-B „Cała sala rzuca”,
-#   1b „Kursy bukmachera”, 1c „Kostka uczciwa i obciążona” (prawie to samo co Ryc. 1.1–1.2).
+# PUNKTY STOP — rozdział 1 -----------------------------------------------------
+#   s3p_11a_ui — Ryc. 1.1 „Stos kostek”
+#   s3p_11c_ui — Ryc. 1.2 „Lejek”
+#   s3p_15b_ui — Ryc. 1.5 „Rozkład czy nie?”
 # Serwer: s3p_ch1_server(input, output, session).
 
 # ============================================================================
@@ -14,7 +11,7 @@
 # (1.1-A) „Stos kostek”: każdy rzut to kafelek w kolumnie swojej ścianki.
 s3p_11a_tiles_max <- 60
 
-s3p_11a_ui <- s3p_panel("1.1-A", "Ryc. 1.1", "Stos kostek", proto = FALSE,
+s3p_11a_ui <- s3p_panel("Ryc. 1.1", "Stos kostek",
   lc_toolbar(
     lc_action_group(label = "Rzuć kostką", s3p_11a_r1 = "+1", s3p_11a_r6 = "+6",
                     s3p_11a_r60 = "+60", s3p_11a_r600 = "+600"),
@@ -30,7 +27,7 @@ s3p_11c_len <- 1000
 # Punkty na skali log, w których rysujemy serie (Chart.js, lejek_chart.js).
 s3p_11c_nn <- unique(round(exp(seq(0, log(s3p_11c_len), length.out = 200))))
 
-s3p_11c_ui <- s3p_panel("1.1-C", "Ryc. 1.2", "Lejek", proto = FALSE,
+s3p_11c_ui <- s3p_panel("Ryc. 1.2", "Lejek",
   tags$div(class = "lc-lejek",
     lc_toolbar(
       lc_action_group(label = "Seria 1000 rzutów", s3p_11c_s1 = "+1", s3p_11c_s10 = "+10"),
@@ -46,7 +43,7 @@ s3p_11c_ui <- s3p_panel("1.1-C", "Ryc. 1.2", "Lejek", proto = FALSE,
 )
 
 # ============================================================================
-# RYC. 1.5 „ROZKŁAD CZY NIE?” — galeria bez suwaków (prototyp 1.5-B)
+# RYC. 1.5 „ROZKŁAD CZY NIE?” — galeria bez suwaków
 # ============================================================================
 
 s3p_15b_cards <- list(
@@ -60,7 +57,7 @@ s3p_15b_cards <- list(
        ok = TRUE, why = "Pięć ścianek po 0.1 i szóstka 0.5: razem 5 · 0.1 + 0.5 = 1. Wyniki nie muszą być równo prawdopodobne.")
 )
 
-s3p_15b_ui <- s3p_panel("1.5-B", "Ryc. 1.5", "Rozkład czy nie?", proto = FALSE,
+s3p_15b_ui <- s3p_panel("Ryc. 1.5", "Rozkład czy nie?",
   tags$style(HTML("
     .s3p-15b-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1em; margin: .6em 0; }
     @media (max-width: 640px) { .s3p-15b-grid { grid-template-columns: minmax(0, 1fr); } }

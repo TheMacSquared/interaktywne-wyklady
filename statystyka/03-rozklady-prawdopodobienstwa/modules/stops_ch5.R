@@ -1,9 +1,7 @@
-# PROTOTYPY PUNKTÓW STOP — rozdział 5 (2026-10-29) ---------------------------
-#   s3p_5a_ui — Ryc. 5.8 „Rozkład normalny w sześciu kierunkach” (zaakceptowany 2026-10-29;
-#               Chart.js, cases_chart.js; zastąpiła „Batonik 50 g”)
-#   Usunięty 2026-10-29: 5b „Czarny poniedziałek 1987”.
-#   (5c przeniesiony do stop_proto_ch5_z.R jako trzy warianty 5c-A/B/C)
-#   s3p_5d_ui — Ryc. 5.9 „Normalny czy nie?” (zaakceptowany 2026-10-29; dane z ankiety)
+# PUNKTY STOP — rozdział 5 -----------------------------------------------------
+#   s3p_5a_ui — Ryc. 5.8 „Rozkład normalny w sześciu kierunkach” (cases_chart.js)
+#   s3p_5d_ui — Ryc. 5.9 „Normalny czy nie?” (dane z ankiety)
+#   Ryc. 5.4 i 5.5: stops_ch5_calc.R i stops_ch5_z.R.
 # Serwer: s3p_ch5_server(input, output, session).
 
 # ============================================================================
@@ -32,7 +30,7 @@ s3p_5a_cases <- list(
        q = "Jaki odsetek batoników waży mniej niż 50 g z etykiety?")
 )
 
-s3p_5a_ui <- s3p_panel("5a", "Ryc. 5.8", "Rozkład normalny w sześciu kierunkach", proto = FALSE,
+s3p_5a_ui <- s3p_panel("Ryc. 5.8", "Rozkład normalny w sześciu kierunkach",
   tags$div(class = "lc-cases", `data-config` = jsonlite::toJSON(s3p_5a_cases, auto_unbox = TRUE, digits = NA),
     lc_toolbar(
       lc_group("Kierunek", tags$div(class = "lc-seg", role = "group",
@@ -75,7 +73,7 @@ s3p_5d_vars <- local({
   )
 })
 
-s3p_5d_ui <- s3p_panel("5d", "Ryc. 5.9", "Normalny czy nie?", proto = FALSE,
+s3p_5d_ui <- s3p_panel("Ryc. 5.9", "Normalny czy nie?",
   lc_toolbar(
     lc_group("Zmienna z ankiety", lc_select("s3p_5d_var",
       choices = setNames(names(s3p_5d_vars), vapply(s3p_5d_vars, `[[`, "", "lab")))),

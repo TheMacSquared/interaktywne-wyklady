@@ -1,4 +1,4 @@
-// Kalkulator z-score w ECharts (prototypy 5.4-A i 5.4-B). Pola μ, σ, x
+// Kalkulator z-score w ECharts (Ryc. 5.4). Pola μ, σ, x
 // ([data-role="mu|sd|x"] — zwykłe <input type="number">), x także przeciągany po wykresie.
 // data-mode="two": dwa wykresy pod sobą (skala x i skala z, wyrównane);
 // data-mode="dual": jedna krzywa z dwiema osiami pod spodem (x i z).

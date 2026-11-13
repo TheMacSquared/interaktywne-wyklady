@@ -55,7 +55,7 @@ ch2_ev_var_ui <- list(
 
     lc_p("Zacznijmy od zdrapki kupionej w kiosku."),
 
-    # SCENA (prototyp 2026-10-08, zaakceptowany 2026-10-29): Zdrap los (E(X) na dłuższą metę, ryzyko jako rozrzut)
+    # SCENA: Zdrap los (E(X) na dłuższą metę, ryzyko jako rozrzut)
     figure_panel(
       label = "Ryc. 2.1",
       width_mode = "text",
@@ -77,7 +77,7 @@ ch2_ev_var_ui <- list(
       i linię E na wykresie. Gry mają różne stawki, więc wykres pokazuje, ile
       średnio wraca z każdej postawionej złotówki."),
 
-    # Ryc. 2.2: prototyp 2a (2026-10-29) zastąpił dawną „Grę w loterie” A–D
+    # Ryc. 2.2: „Ile wraca z 1 zł” (stops_ch2.R)
     s3p_2a_ui,
 
     lc_p("Po kilku grach średnia skacze. W zdrapce pierwsza gra daje 0, 4, 10
@@ -100,7 +100,7 @@ ch2_ev_var_ui <- list(
       ujemną wartość oczekiwaną. Panel pokazuje rok z telefonem za 3000 zł bez
       polisy i z polisą, a suwak zmienia wysokość składki."),
 
-    # Ryc. 2.3: prototyp 2c (2026-10-29), przypadek brzegowy E(X)
+    # Ryc. 2.3: „Ubezpieczenie telefonu”, przypadek brzegowy E(X) (stops_ch2.R)
     s3p_2c_ui,
 
     # ========================================================================
@@ -113,7 +113,7 @@ ch2_ev_var_ui <- list(
       i trasa przez centrum, średnio szybsza, ale nieprzewidywalna. Suwak ustawia,
       ile czasu zostało do egzaminu."),
 
-    # Ryc. 2.4: prototyp 2b (2026-10-29), wprowadzenie wariancji
+    # Ryc. 2.4: „Dwie trasy na egzamin”, wprowadzenie wariancji (stops_ch2.R)
     s3p_2b_ui,
 
     lc_p("Ruletka, zdrapka i Lotto różnią się nie tylko wartością oczekiwaną.
@@ -148,7 +148,7 @@ ch2_ev_var_ui <- list(
       60, 80 albo 100 zł, każdą kwotę z prawdopodobieństwem 1/6. Każde kliknięcie
       to jedna gra w każdą z loterii, a kropka to jedna wypłata."),
 
-    # Ryc. 2.5: prototyp 2.4-B (2026-10-29) zastąpił histogramy trzech loterii
+    # Ryc. 2.5: „Pasy wypłat” (stops_ch2_var.R)
     s3p_24b_ui,
 
     lc_p("Trzy chmury mają ten sam środek, a zupełnie różną szerokość. W loterii A
@@ -220,7 +220,7 @@ ch2_ev_var_ui <- list(
 
 ch2_ev_var_server <- function(input, output, session) {
 
-  # --- PROTOTYP SCENY (2026-10-08): Zdrap los ---
+  # --- Scena: Zdrap los ---
   tk <- scene_tickets$main
   scene_texts(input, output, "ch2_zdrapka", list(
     tagList("W kiosku los kosztuje ", lc_fmt(scene_ticket_price), " zł. Na zdrapce można wygrać 4, 10 albo 100 zł,

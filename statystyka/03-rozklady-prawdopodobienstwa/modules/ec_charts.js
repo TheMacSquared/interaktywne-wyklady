@@ -1,5 +1,5 @@
-// Prototypy E1–E2 (2026-11-05): możliwości ECharts w drugiej części wykładu.
-// Dane liczy R (data-config w stop_proto_ec.R); tu tylko rysowanie i interakcja.
+// Ryciny ECharts drugiej części wykładu: Ryc. 4.2, 5.7, 6.5.
+// Dane liczy R (data-config w stops_ec.R); tu tylko rysowanie i interakcja.
 //
 // Ryc. 6.5 „Mapa zbieżności” (.lc-ecmap): heatmapa gęstości średniej (wiersz = n,
 //   kolor = gęstość względem maksimum wiersza, visualMap) i pod nią histogram

@@ -1,4 +1,4 @@
-/* Sceny wykładu 03 (scenes.js) — PROTOTYPY 2026-10-08 */
+/* Sceny wykładu 03 (scenes.js) */
 .lc-sc-svg { display: block; width: 100%; height: auto; }
 .lc-sc-axis { stroke: var(--upwr-ink-subtle); }
 .lc-sc-grid { stroke: var(--upwr-rule-soft); }
@@ -64,7 +64,7 @@
 .lc-sc-cabin-floor { stroke: var(--upwr-ink); stroke-width: 3; }
 .lc-sc-limit { stroke: var(--upwr-ink-soft); stroke-width: 2.5; }
 
-/* góra i szlaki (PROTOTYP 2026-10-29) */
+/* góra i szlaki */
 .lc-sc-mount { fill: var(--upwr-sage-tint); stroke: var(--upwr-rule); stroke-width: 1; }
 .lc-sc-trail { stroke: var(--upwr-ink-subtle); stroke-width: 2; stroke-dasharray: 4 4; opacity: .55; }
 .lc-sc-trail.is-used { stroke: var(--upwr-ink); opacity: .9; }

@@ -1,7 +1,6 @@
-# RYC. 2.5 „PASY WYPŁAT” (prototyp 2.4-B, zaakceptowany 2026-10-29) -----------
-# Trzy loterie o tym samym E(X) = 50 zł i różnym rozrzucie; C dyskretna (kostka).
-#   s3p_24b_ui — Ryc. 2.5 „Pasy wypłat” (zaakceptowany 2026-10-29; zastąpił histogramy loterii)
-#   Usunięte warianty: 2.4-A „Portfele graczy”, 2.4-C „Model bez symulacji”.
+# PUNKT STOP — rozdział 2, wariancja --------------------------------------------
+#   s3p_24b_ui — Ryc. 2.5 „Pasy wypłat”: trzy loterie o tym samym E(X) = 50 zł
+#   i różnym rozrzucie; C dyskretna (kostka).
 # Serwer: s3p_ch2_var_server(input, output, session).
 
 s3p_24_lots <- list(
@@ -20,7 +19,7 @@ s3p_24_draw <- function(key, n) {
 # (2.4-B) PASY WYPŁAT
 # ============================================================================
 
-s3p_24b_ui <- s3p_panel("2.4-B", "Ryc. 2.5", "Pasy wypłat", proto = FALSE,
+s3p_24b_ui <- s3p_panel("Ryc. 2.5", "Pasy wypłat",
   lc_toolbar(
     lc_action_group(label = "Zagraj w każdą loterię", s3p_24b_g1 = "+1", s3p_24b_g10 = "+10", s3p_24b_g100 = "+100"),
     lc_action("s3p_24b_reset", icon = "reset", variant = "ghost", aria_label = "Od nowa"),

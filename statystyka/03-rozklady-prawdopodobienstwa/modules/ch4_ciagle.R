@@ -173,7 +173,7 @@ ch4_ui <- list(
       na przedziale od 0 do 0.5 ma f(x) = 2 na całym przedziale, a mimo to pole
       pod nim wynosi 2 · 0.5 = 1."),
 
-    # Ryc. 4.2: lupa w ECharts (zaakceptowana 2026-11-05, ec_proto.js)
+    # Ryc. 4.2: lupa w ECharts (stops_ec.R, ec_charts.js)
     s3p_4aa_ui,
 
     lc_p("Wróćmy do wzrostu z Ryc. 4.2. Skoro pytanie o dokładnie 170 cm nie ma
@@ -273,7 +273,7 @@ ch4_ui <- list(
       ", gloss("mediana", "Mediana"), " jest kwantylem rzędu 0.5, a ", gloss("percentyl", "percentyle"), " z wykładu 01 to kwantyle
       wyrażone w procentach."),
 
-    # Ryc. 4.5: prototyp 4b (zaakceptowany 2026-10-29)
+    # Ryc. 4.5: „Kwantyl: odwrotne pytanie” (stops_ch4.R)
     s3p_4b_ui,
 
     # ========================================================================
@@ -420,7 +420,7 @@ ch4_ui <- list(
     lc_p("Bezpamięciowość ma zaskakujący skutek na przystanku. Porównajmy dwie
       linie, w których autobus odjeżdża średnio co 10 minut."),
 
-    # Ryc. 4.10: prototyp 4c (zaakceptowany 2026-10-29)
+    # Ryc. 4.10: „Paradoks autobusu” (stops_ch4.R)
     s3p_4c_ui,
 
     lc_p("Rozkład normalny pojawiał się w tym rozdziale kilka razy, na

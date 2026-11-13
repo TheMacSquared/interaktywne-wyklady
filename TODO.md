@@ -156,7 +156,7 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     silniku `statystyka/R/lc_stat_figures.*` z rozkładami `R/lc_dist.js`.
     Etap 2a (2026-11-13): symulacje rozdziałów głównych (Ryc. 1.3, 1.4, 3.1,
     4.1, 6.4) w `modules/sim_charts.js`, losowanie `lcDist.rng()` i `lcDist.kde`.
-    Zostało 12, wszystkie w `stop_proto_*`: etap 2b — symulacje (1.1, rozdz. 3–6),
+    Zostało 12, wszystkie w `stops_*`: etap 2b — symulacje (1.1, rozdz. 3–6),
     etap 3 — loterie z rozdz. 2.
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).
   - [ ] Statystyka 03 offline, Ryc. 1.2 (lejek): odczyty przechodzą zapisane

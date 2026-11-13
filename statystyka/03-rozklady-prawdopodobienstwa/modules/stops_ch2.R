@@ -1,7 +1,7 @@
-# PROTOTYPY PUNKTÓW STOP — rozdział 2 (2026-10-29) ---------------------------
-#   s3p_2a_ui — Ryc. 2.2 „Ile wraca z 1 zł” (zaakceptowany 2026-10-29; zastąpił „Grę w loterie” A–D)
-#   s3p_2b_ui — Ryc. 2.4 „Dwie trasy na egzamin” (zaakceptowany 2026-10-29)
-#   s3p_2c_ui — Ryc. 2.3 „Ubezpieczenie telefonu” (zaakceptowany 2026-10-29; zastąpił „Punkt równowagi”)
+# PUNKTY STOP — rozdział 2 -----------------------------------------------------
+#   s3p_2a_ui — Ryc. 2.2 „Ile wraca z 1 zł”
+#   s3p_2c_ui — Ryc. 2.3 „Ubezpieczenie telefonu”
+#   s3p_2b_ui — Ryc. 2.4 „Dwie trasy na egzamin”
 # Serwer: s3p_ch2_server(input, output, session).
 
 # ============================================================================
@@ -27,7 +27,7 @@ s3p_2a_ev <- function(g) sum(g$prize * g$p)
 # Rozkład wygranej jednej gry: wartości i prawdopodobieństwa (z brakiem wygranej).
 s3p_2a_outcomes <- function(gm) list(x = c(0, gm$prize), p = c(1 - sum(gm$p), gm$p))
 
-s3p_2a_ui <- s3p_panel("2a", "Ryc. 2.2", "Ile wraca z 1 zł", proto = FALSE,
+s3p_2a_ui <- s3p_panel("Ryc. 2.2", "Ile wraca z 1 zł",
   lc_toolbar(
     lc_segmented("s3p_2a_game", "Gra", choices = c("Ruletka" = "roulette", "Zdrapka" = "scratch",
       "Lotto" = "lotto", "Zestawienie" = "all")),
@@ -56,7 +56,7 @@ s3p_2b_routes <- list(
 s3p_2b_shape <- function(r) (r$mean / r$sd)^2
 s3p_2b_scale <- function(r) r$sd^2 / r$mean
 
-s3p_2b_ui <- s3p_panel("2b", "Ryc. 2.4", "Dwie trasy na egzamin", proto = FALSE,
+s3p_2b_ui <- s3p_panel("Ryc. 2.4", "Dwie trasy na egzamin",
   lc_toolbar(
     lc_slider("s3p_2b_dead", "Masz na dojazd", 20, 70, 35, 1, suffix = " min"),
     lc_readouts(uiOutput("s3p_2b_read"))
@@ -72,7 +72,7 @@ s3p_2b_ui <- s3p_panel("2b", "Ryc. 2.4", "Dwie trasy na egzamin", proto = FALSE,
 s3p_2c_phone <- 3000
 s3p_2c_risk <- 0.05
 
-s3p_2c_ui <- s3p_panel("2c", "Ryc. 2.3", "Ubezpieczenie telefonu", proto = FALSE,
+s3p_2c_ui <- s3p_panel("Ryc. 2.3", "Ubezpieczenie telefonu",
   lc_toolbar(
     lc_slider("s3p_2c_premium", "Składka roczna", 50, 400, 250, 10, suffix = " zł"),
     lc_readouts(uiOutput("s3p_2c_read"))

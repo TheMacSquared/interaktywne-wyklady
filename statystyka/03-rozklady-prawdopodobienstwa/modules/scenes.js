@@ -1,4 +1,4 @@
-// Sceny wykładu 03 (PROTOTYPY 2026-10-08): doświadczenie z życia → zmienna → rozkład / model.
+// Sceny wykładu 03: doświadczenie z życia → zmienna → rozkład / model.
 // Kontener: .lc-sc[data-config] wewnątrz widgetu krokowego (.lc-stepper). Wzorzec init/KINDS
 // jak w statystyce 00 (scenes.js), obok istniejącego experiment.js (.lc-exp), z którym nie koliduje.
 // config.kind:

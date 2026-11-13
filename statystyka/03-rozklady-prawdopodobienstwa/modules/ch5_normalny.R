@@ -268,7 +268,7 @@ ch5_ui <- list(
       80 punktów przy średniej 65 i SD 10. Wartość x można też przeciągnąć
       po górnym wykresie."),
 
-    # Ryc. 5.4: prototyp 5.4-A (zaakceptowany 2026-10-29; Chart.js, zscore_chart.js)
+    # Ryc. 5.4: kalkulator z-score (stops_ch5_calc.R, zscore_chart.js)
     s3p_54a_ui,
 
     lc_p("Wynik 80 punktów daje z = (80 - 65)/10 = 1.5: półtora odchylenia
@@ -282,7 +282,7 @@ ch5_ui <- list(
       w ten sam rozkład N(0, 1), więc odsetki w pasach muszą być wszędzie
       takie same. Wystarczy je raz policzyć dla N(0, 1)."),
 
-    # Ryc. 5.5: prototyp 5c-C (zaakceptowany 2026-10-29)
+    # Ryc. 5.5: „Kto bardziej wyjątkowy?” (stops_ch5_z.R)
     lc_p("Standaryzacja pozwala porównywać wartości mierzone na różnych skalach.
       Panel zestawia cztery takie pary. Przełącznik pokazuje je albo w ich
       własnych skalach, albo na wspólnej skali z."),
@@ -353,14 +353,14 @@ ch5_ui <- list(
     lc_p("Rozkład normalny pracuje w wielu dziedzinach. Galeria zestawia sześć
       przypadków z różnych kierunków studiów; próg można przesuwać po wykresie."),
 
-    # Ryc. 5.8: prototyp 5a (zaakceptowany 2026-10-29; Chart.js, cases_chart.js)
+    # Ryc. 5.8: sześć kierunków (stops_ch5.R, cases_chart.js)
     s3p_5a_ui,
 
     lc_p("Nie każda zmienna ma jednak rozkład normalny. Galeria porównuje zmienne
       z ankiety z krzywą normalną o tej samej średniej i tym samym odchyleniu
       standardowym."),
 
-    # Ryc. 5.9: prototyp 5d (zaakceptowany 2026-10-29)
+    # Ryc. 5.9: „Normalny czy nie?” (stops_ch5.R)
     s3p_5d_ui,
 
     # ========================================================================
@@ -515,7 +515,7 @@ ch5_ui <- list(
 
     lc_p("Skąd bierze się taki ogon, widać na symulacji pensji."),
 
-    # Ryc. 5.13: „Losowe podwyżki” (s3p_4f_ui, stop_proto_ch4.R)
+    # Ryc. 5.13: „Losowe podwyżki” (s3p_4f_ui, stops_ch4.R)
     s3p_4f_ui,
 
     lc_formula_annotated(

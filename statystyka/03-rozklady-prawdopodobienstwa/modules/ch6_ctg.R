@@ -322,7 +322,7 @@ ch6_ui <- list(
       które się sumują. Żaden z tych wpływów nie musi mieć rozkładu normalnego,
       normalny jest dopiero ich łączny efekt."),
 
-    # PROTOTYP PUNKTU STOP (2026-10-29)
+    # Ryc. 6.6: piaskownica „Grupka przyjaciół” (stops_ch6.R)
     s3p_6b_ui,
 
     lc_p("W praktyce mamy zwykle jedną próbę i jedną średnią, a μ nie znamy. CTG mówi,
@@ -331,7 +331,7 @@ ch6_ui <- list(
       daje ", gloss("przedział ufności"), ", któremu poświęcony jest wykład 04.
       Zobaczymy tam też, co zrobić, gdy σ również trzeba oszacować z danych."),
 
-    # PROTOTYP PUNKTU STOP (2026-10-29)
+    # Ryc. 6.7: domknięcie „Drzewo rodu rozkładów” (stops_ch6.R)
     lc_h2("ch6-domkniecie", "Domknięcie wykładu"),
 
     s3p_d2_ui,
@@ -376,7 +376,7 @@ ch6_server <- function(input, output, session) {
       przeciążenia; porównaj je z odsetkiem z symulacji.")
   ))
 
-  # --- PROTOTYP SCENY (2026-10-08): Zapytaj grupkę ---
+  # --- Scena: Zapytaj grupkę ---
   scene_texts(input, output, "ch6_grupka", list(
     tagList("Pytasz 5 losowych osób z roku: jak oceniasz prowadzącego w skali od 1 do 10? ",
       tags$code("X̄", .noWS = "outside"), " to średnia ocena grupki. Zapytaj kilka grupek."),
@@ -387,6 +387,6 @@ ch6_server <- function(input, output, session) {
   ))
 
   # Ryc. 6.4 (symulacja CTG) losuje i rysuje sim_charts.js w przeglądarce.
-  # Ryc. 6.5 (mapa zbieżności) rysuje ec_proto.js z danych w data-config.
+  # Ryc. 6.5 (mapa zbieżności) rysuje ec_charts.js z danych w data-config.
 
 }

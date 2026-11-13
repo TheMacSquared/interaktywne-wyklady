@@ -1,9 +1,7 @@
-# PROTOTYPY PUNKTÓW STOP — rozdział 3 (2026-10-29) ---------------------------
-#   s3p_3a_ui — Ryc. 3.6 „Czy V-1 celowały?” (zaakceptowany 2026-10-29)
-#   s3p_3b_ui — Ryc. 3.9 „Konie Bortkiewicza” (zaakceptowany 2026-10-29)
-#   s3p_3g_ui — Ryc. 3.5 „Spotkanie na szlaku” (zaakceptowany 2026-10-29; scena w scenes.js, kind = "trail")
-#   Usunięte 2026-10-29: 3c „Reklamacje seriami”, 3d „Wadliwe sztuki parami”, 3e „Monte Carlo, 1913”,
-#   3f „Zgadnij rozkład”.
+# PUNKTY STOP — rozdział 3 -----------------------------------------------------
+#   s3p_3g_ui — Ryc. 3.5 „Spotkanie na szlaku” (scena w scenes.js, kind = "trail")
+#   s3p_3a_ui — Ryc. 3.6 „Czy V-1 celowały?”
+#   s3p_3b_ui — Ryc. 3.9 „Konie Bortkiewicza”
 # Serwer: s3p_ch3_server(input, output, session).
 
 # ============================================================================
@@ -16,7 +14,7 @@ s3p_v1_obs <- c(229, 211, 93, 35, 7, 1)
 s3p_v1_lambda <- 537 / 576
 s3p_v1_exp <- 576 * c(dpois(0:4, s3p_v1_lambda), ppois(4, s3p_v1_lambda, lower.tail = FALSE))
 
-s3p_3a_ui <- s3p_panel("3a", "Ryc. 3.6", "Czy V-1 celowały?", proto = FALSE,
+s3p_3a_ui <- s3p_panel("Ryc. 3.6", "Czy V-1 celowały?",
   lc_step_widget("s3p_3a",
     steps = c("Mapa trafień", "Siatka", "Zliczenia", "Losowo?"),
     toolbar = lc_toolbar(lc_action("s3p_3a_shuffle", "Rozrzuć 537 trafień losowo", icon = "shuffle")),
@@ -33,7 +31,7 @@ s3p_3a_ui <- s3p_panel("3a", "Ryc. 3.6", "Czy V-1 celowały?", proto = FALSE,
 s3p_bk_k <- 0:4
 s3p_bk_obs <- c(109, 65, 22, 3, 1)
 
-s3p_3b_ui <- s3p_panel("3b", "Ryc. 3.9", "Konie Bortkiewicza", proto = FALSE,
+s3p_3b_ui <- s3p_panel("Ryc. 3.9", "Konie Bortkiewicza",
   lc_step_widget("s3p_3b",
     steps = c("Dane", "Średnia i wariancja", "Model Pois(λ)"),
     plot_id = "s3p_3b_plot", ratio = "2.2/1"
@@ -50,7 +48,7 @@ s3p_3g_cfg <- list(kind = "trail", mountain = "Ślęża", trails = 5, pairs = 6,
   marks = I(c("czerwony", "niebieski", "zielony", "żółty", "czarny")),
   aria = "Góra z pięcioma szlakami; pary turystów wybierają szlaki losowo i spotykają się na tym samym szlaku; histogram liczby spotkanych par")
 
-s3p_3g_ui <- s3p_panel("3g", "Ryc. 3.5", "Spotkanie na szlaku", width_mode = "text", proto = FALSE,
+s3p_3g_ui <- s3p_panel("Ryc. 3.5", "Spotkanie na szlaku", width_mode = "text",
   scene_widget("s3p_3g", NULL,
     steps = c("Dwóch kolegów", "Zawody", "Wiele zawodów", "Model"),
     labels = c("Ruszają", "Rozegraj zawody", "Rozegraj zawody", "Rozegraj zawody"),

@@ -1,12 +1,12 @@
-# RYCINY ECHARTS (2026-11-05): druga część wykładu ----------------------------
-#   s3p_e1_ui — Ryc. 6.5 „Mapa zbieżności” (zaakceptowana 2026-11-05, zastąpiła
-#               dawne Ryc. 6.3, 6.4 i prototyp 6d; od 2026-11-06 numer 6.4, od 2026-11-13 numer 6.5): heatmapa gęstości średniej dla
-#               n = 1…40 i histogram 2000 wylosowanych średnich dla wybranego n.
-#   s3p_e2_ui — Ryc. 5.7 „Zaznacz przedział” (zaakceptowana 2026-11-05): histogram
-#               masy jabłek, zaznaczanie przedziału myszą i przybliżanie ogonów.
+# RYCINY ECHARTS Z DANYMI Z R ----------------------------------------------------
+#   s3p_4aa_ui — Ryc. 4.2 „Ile osób ma dokładnie 170 cm?” (lupa)
+#   s3p_e2_ui  — Ryc. 5.7 „Zaznacz przedział”: histogram masy jabłek, zaznaczanie
+#                przedziału myszą i przybliżanie ogonów.
+#   s3p_e1_ui  — Ryc. 6.5 „Mapa zbieżności”: heatmapa gęstości średniej dla
+#                n = 1…40 i histogram 2000 wylosowanych średnich dla wybranego n.
 # Wszystkie dane liczy R przy budowie strony (data-config); widgety rysuje
-# ec_proto.js w przeglądarce, więc działają też w wersji offline bez serwera.
-# Wymaga: stop_proto_common.R (s3p_panel), lecture_layout.R.
+# ec_charts.js w przeglądarce, więc działają też w wersji offline bez serwera.
+# Wymaga: stops_common.R (s3p_panel), lecture_layout.R.
 
 # Ziarno tylko dla tych danych; globalny strumień losowy zostaje bez zmian.
 s3p_ec_seed <- function(seed, expr) {
@@ -105,7 +105,7 @@ s3p_e1_dist_group <- function() {
 }
 
 # Mapa (heatmapa) z podpisami pierwszego i ostatniego wiersza.
-s3p_e1_ui <- s3p_panel("6.4", "Ryc. 6.5", "Mapa zbieżności", proto = FALSE,
+s3p_e1_ui <- s3p_panel("Ryc. 6.5", "Mapa zbieżności",
   tags$div(class = "lc-ecmap",
     `data-config` = s3p_e1_json,
     lc_toolbar(
@@ -137,7 +137,7 @@ s3p_e2_config <- s3p_ec_seed(20261105, {
        lo = 90, hi = 300, bin = 5, a = 160, b = 200)
 })
 
-s3p_e2_ui <- s3p_panel("5.7", "Ryc. 5.7", "Zaznacz przedział", proto = FALSE,
+s3p_e2_ui <- s3p_panel("Ryc. 5.7", "Zaznacz przedział",
   tags$div(class = "lc-brushx",
     `data-config` = jsonlite::toJSON(s3p_e2_config, auto_unbox = TRUE, digits = NA),
     lc_toolbar(
@@ -200,7 +200,7 @@ s3p_4ax_read <- function() {
     lc_readout("Odsetek", tags$span(`data-role` = "pct", "–")))
 }
 
-s3p_4aa_ui <- s3p_panel("4a", "Ryc. 4.2", "Ile osób ma dokładnie 170 cm?", proto = FALSE,
+s3p_4aa_ui <- s3p_panel("Ryc. 4.2", "Ile osób ma dokładnie 170 cm?",
   tags$div(class = "lc-zoom170", `data-config` = jsonlite::toJSON(s3p_4ax_config, auto_unbox = TRUE),
     lc_toolbar(s3p_4ax_seg(), s3p_4ax_read(), lc_chart_zoom_button()),
     tags$div(class = "lc-zoom170-canvas",

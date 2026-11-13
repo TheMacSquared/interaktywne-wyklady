@@ -1,4 +1,4 @@
-// Galeria przypadków z rozkładem normalnym (prototyp 5a): przyciski przypadków,
+// Galeria przypadków z rozkładem normalnym (Ryc. 5.8): przyciski przypadków,
 // gęstość N(μ, σ), próg przeciągany po wykresie i zacieniony ogon.
 // data-config (JSON z R): [{short, story, q, axis, unit, mu, sd, t, tail, step}], tail = "lower" | "upper"
 // | "outside" (oba ogony dalej niż |t − μ| od μ). Kontener .lc-cases z <div class="lc-ec" data-role="pdf">,
