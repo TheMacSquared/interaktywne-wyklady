@@ -123,6 +123,13 @@ scene_rating <- list(vals = 1:10,
 scene_rating$mu    <- sum(scene_rating$vals * scene_rating$probs)
 scene_rating$sigma <- sqrt(sum((scene_rating$vals - scene_rating$mu)^2 * scene_rating$probs))
 
+# Winda „1000 kg lub 13 osób” (rozdz. 6, suma rozkładów normalnych): waga osoby N(80, 12),
+# S = suma wag 13 osób ~ N(13 · 80, 12 · √13). lo/hi/bin/tick: oś histogramu sum w scenie.
+scene_lift <- list(n = 13, mu = 80, sigma = 12, limit = 1000,
+                   lo = 860, hi = 1220, bin = 10, tick = 40)
+scene_lift$mean_s <- scene_lift$n * scene_lift$mu
+scene_lift$sd_s   <- scene_lift$sigma * sqrt(scene_lift$n)
+scene_lift$p_over <- 1 - pnorm(scene_lift$limit, scene_lift$mean_s, scene_lift$sd_s)
 # Zdrapka z kiosku (rozdz. 2).
 scene_tickets <- list(
   main  = list(name = "ZDRAPKA", prizes = c(0, 4, 10, 100), probs = c(0.65, 0.25, 0.08, 0.02),

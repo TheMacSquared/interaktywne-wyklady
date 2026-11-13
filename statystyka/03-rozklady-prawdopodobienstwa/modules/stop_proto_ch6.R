@@ -1,6 +1,6 @@
 # PROTOTYPY PUNKTÓW STOP — rozdział 6 i domknięcie wykładu (2026-10-29) ------
-#   s3p_6b_ui — Ryc. 6.5 piaskownica „Grupka przyjaciół” (przypadek brzegowy: zależność; przyjęta 2026-11-06)
-#   s3p_d2_ui — Ryc. 6.6 domknięcie „Drzewo rodu rozkładów” (przyjęte 2026-11-06; 2026-11-05: dwumianowy i Poisson
+#   s3p_6b_ui — Ryc. 6.6 piaskownica „Grupka przyjaciół” (przypadek brzegowy: zależność; przyjęta 2026-11-06)
+#   s3p_d2_ui — Ryc. 6.7 domknięcie „Drzewo rodu rozkładów” (przyjęte 2026-11-06; 2026-11-05: dwumianowy i Poisson
 #               obok siebie jako „ile sukcesów?” w próbach i w czasie, bez strzałki
 #               przybliżenia; geometryczny i wykładniczy jako „ile czekać?”)
 # Usunięte 2026-11-05: 6a (Galton; rozdział otwiera film), 6c (Cauchy), D1, 6d.
@@ -10,7 +10,7 @@
 # (6b) PIASKOWNICA „GRUPKA PRZYJACIÓŁ”
 # ============================================================================
 
-s3p_6b_ui <- s3p_panel("6b", "Ryc. 6.5", "Grupka przyjaciół", proto = FALSE,
+s3p_6b_ui <- s3p_panel("6b", "Ryc. 6.6", "Grupka przyjaciół", proto = FALSE,
   lc_toolbar(
     lc_slider("s3p_6b_rho", "Jak bardzo grupka myśli podobnie (ρ)", 0, 0.8, 0, 0.1),
     lc_segmented("s3p_6b_n", "Osób w grupce", choices = c("5" = "5", "10" = "10", "30" = "30"), selected = "10"),
@@ -87,7 +87,7 @@ s3p_d2_svg <- local({
     edges, boxes, '</svg>'))
 })
 
-s3p_d2_ui <- s3p_panel("D2", "Ryc. 6.6", "Drzewo rodu rozkładów", proto = FALSE,
+s3p_d2_ui <- s3p_panel("D2", "Ryc. 6.7", "Drzewo rodu rozkładów", proto = FALSE,
   s3p_d2_svg,
   lc_caption("Górne dwa wiersze to te same pytania zadane w dwóch sytuacjach: ile sukcesów i ile czekać — w policzalnych próbach albo w czasie lub przestrzeni, gdzie sukcesów może być dowolnie wiele. Strzałka prowadzi od rozkładu do tego, który z niego powstaje. Liczby sukcesów przy dużym n lub λ zbiegają się w rozkładzie normalnym (CTG), a z niego wyrastają rozkłady potrzebne do wnioskowania.")
 )

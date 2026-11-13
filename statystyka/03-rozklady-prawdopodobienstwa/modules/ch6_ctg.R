@@ -40,6 +40,86 @@ ch6_ui <- list(
       )
     ),
 
+    # ========================================================================
+    # Suma rozkładów normalnych: winda (scena przed CTG)
+    # ========================================================================
+    lc_h2("ch6-suma", "Suma rozkładów normalnych: winda"),
+
+    lc_p("Zanim przejdziemy do średnich, zajmijmy się sumą. W windzie wisi tabliczka:
+      udźwig 1000 kg lub 13 osób. Czy 13 dorosłych mieści się w tym limicie? Załóżmy,
+      że waga jednej osoby ma rozkład normalny N(80, 12), czyli średnio 80 kg
+      z odchyleniem standardowym 12 kg, a osoby wsiadają do windy niezależnie od siebie."),
+
+    # Ryc. 6.1 — scena „Winda” (suma 13 wag normalnych, przeciążenie)
+    figure_panel(
+      label = "Ryc. 6.1",
+      title = "Winda: 13 osób i limit 1000 kg",
+      width_mode = "text",
+      scene_widget("ch6_winda", NULL,
+        steps = c("Jeden kurs", "Wiele kursów", "Model"),
+        labels = c("Wpuść 13 osób", "Wpuść 13 osób", "Wpuść 13 osób"),
+        more_from = 2,
+        config = c(list(kind = "lift", height = 428,
+                        aria = "Trzynaście osób o losowej wadze wsiada do windy o udźwigu 1000 kg; histogram łącznej wagi z kolejnych kursów"),
+                   scene_lift[c("n", "mu", "sigma", "limit", "lo", "hi", "bin", "tick")]))
+    ),
+
+    lc_p("Przeciążenie nie jest rzadkim pechem. Zdarza się w ponad czterech kursach
+      na pięć: ", paste0("P(S > 1000) = ", lc_fmt(scene_lift$p_over, 3), "."), " Powód widać już
+      w średnich: 13 · 80 = 1040 kg, więc przeciętny komplet przekracza limit.
+      Normy dźwigowe liczą 75 kg na osobę (1000 / 75 ≈ 13.3, stąd 13 osób),
+      a przeciętny dorosły waży dziś więcej."),
+
+    lc_p("Histogram sum układa się w dzwon, i nie jest to przybliżenie. Suma
+      niezależnych zmiennych o rozkładach normalnych ma dokładnie rozkład normalny.
+      Dla n osób o wadze N(μ, σ) jego parametry to:"),
+
+    lc_formula_annotated(
+      "S = X_1 + X_2 + \\dots + X_n \\sim N\\left(⟦1|n\\mu⟧,\\ ⟦2|\\sigma\\sqrt{n}⟧\\right)",
+      notes  = list("wartość oczekiwana sumy", "odchylenie standardowe sumy"),
+      colors = c("param", "wrzos")
+    ),
+
+    lc_more("Wyprowadzenie krok po kroku",
+
+      lc_p("Krok 1. Wartość oczekiwana sumy to suma wartości oczekiwanych.
+        Ta reguła obowiązuje zawsze, także dla zmiennych zależnych:"),
+      lc_formula_box(withMathJax("$$E(S) = E(X_1) + \\dots + E(X_{13}) = 13 \\cdot 80 = 1040 \\text{ kg}$$")),
+
+      lc_p("Krok 2. Dla zmiennych niezależnych dodają się wariancje, a nie
+        odchylenia standardowe. Wariancja jednej wagi to 12² = 144 kg²:"),
+      lc_formula_box(withMathJax("$$Var(S) = Var(X_1) + \\dots + Var(X_{13}) = 13 \\cdot 144 = 1872 \\ \\mathrm{kg}^2$$")),
+
+      lc_p("Krok 3. Odchylenie standardowe to pierwiastek z wariancji, więc
+        pierwiastek z n wychodzi przed σ:"),
+      lc_formula_box(withMathJax("$$SD(S) = \\sqrt{13 \\cdot 12^2} = 12\\sqrt{13} = 43.3 \\text{ kg}$$")),
+
+      lc_p("Krok 4. Suma zmiennych normalnych jest normalna. Obie liczby
+        wstawiamy jako parametry rozkładu normalnego:"),
+      lc_formula_annotated(
+        "S \\sim N\\left(⟦1|13 \\cdot 80⟧,\\ ⟦2|12\\sqrt{13}⟧\\right) = N(1040,\\ 43.3)",
+        notes  = list("E(S) z kroku 1", "SD(S) z kroku 3"),
+        colors = c("param", "wrzos")
+      ),
+
+      lc_p("Krok 5. Standaryzujemy limit tak jak w rozdziale 5:"),
+      lc_formula_box(withMathJax("$$z = \\frac{1000 - 1040}{43.3} = -0.92$$")),
+
+      lc_p("Krok 6. Szukamy pola na prawo od z pod krzywą N(0, 1):"),
+      lc_formula_box(withMathJax(paste0("$$P(S > 1000) = P(Z > -0.92) = ",
+        lc_fmt(scene_lift$p_over, 3), "$$")))
+    ),
+
+    lc_p("To samo pytanie można zadać o średnią wagę w kabinie. Warunek S > 1000 kg
+      oznacza to samo co X̄ = S / 13 > 76.9 kg. Po podzieleniu przez 13 dostajemy
+      X̄ ~ N(80, 12 / √13) = N(80, 3.33) i to samo prawdopodobieństwo ",
+      paste0(lc_fmt(scene_lift$p_over, 3), "."), " Odchylenie σ / √n wróci za chwilę jako błąd
+      standardowy."),
+
+    lc_p("Zostaje jedno założenie: wagi dorosłych nie mają dokładnie rozkładu
+      normalnego, bo ich rozkład jest prawoskośny. Czy wynik dla windy nadal
+      obowiązuje? Odpowiada na to centralne twierdzenie graniczne."),
+
     lc_h2("ch6-ctg", "Centralne Twierdzenie Graniczne (CTG)"),
 
     lc_p("W rozdziale 2 ", gloss("średnia"), " z próby x̄ była przybliżeniem ", gloss("wartość oczekiwana", "wartości oczekiwanej"), " E(X),
@@ -52,9 +132,9 @@ ch6_ui <- list(
 
     lc_p("Zobaczmy to na ocenach prowadzącego."),
 
-    # Ryc. 6.1 — scena „Zapytaj grupkę” (średnia z grupy, CTG)
+    # Ryc. 6.2 — scena „Zapytaj grupkę” (średnia z grupy, CTG)
     figure_panel(
-      label = "Ryc. 6.1",
+      label = "Ryc. 6.2",
       title = "Zapytaj grupkę: od jednej oceny do rozkładu średniej",
       width_mode = "text",
       scene_widget("ch6_grupka", NULL,
@@ -118,7 +198,7 @@ ch6_ui <- list(
       z krzywą normalną."),
 
     figure_panel(
-      label = "Ryc. 6.2",
+      label = "Ryc. 6.3",
       width_mode = "text",
       exp_widget("ch6_sumdice", "Suma oczek z n kostek", "Rzuć kostkami",
         list(kind = "sumdice", n = 1, xTitle = "X, czyli suma oczek",
@@ -136,7 +216,7 @@ ch6_ui <- list(
       lub n czyści zebrane średnie."),
 
     figure_panel(
-      label = "Ryc. 6.3",
+      label = "Ryc. 6.4",
       title = "Symulacja: średnie z dowolnego rozkładu → normalny",
       full_width = TRUE,
       lc_toolbar(
@@ -217,7 +297,7 @@ ch6_ui <- list(
     ),
 
     # ========================================================================
-    # Dlaczego to działa — intuicja (obraz: mapa Ryc. 6.4)
+    # Dlaczego to działa — intuicja (obraz: mapa Ryc. 6.5)
     # ========================================================================
     lc_h2("ch6-dlaczego", "Dlaczego to działa? — intuicja"),
 
@@ -226,7 +306,7 @@ ch6_ui <- list(
       z kilku obserwacji, duże musiałyby być prawie wszystkie naraz, a to zdarza się
       rzadko. Zwykle wartości duże mieszają się z małymi i odchylenia w przeciwne
       strony się znoszą. Im więcej obserwacji uśredniamy, tym silniej to działa.
-      Na mapie Ryc. 6.4 widać to jako prawy ogon, który blednie z wiersza na wiersz."),
+      Na mapie Ryc. 6.5 widać to jako prawy ogon, który blednie z wiersza na wiersz."),
 
     lc_p("To samo dotyczy sum, bo suma n obserwacji to n razy ich średnia. Dlatego
       rozkład normalny opisuje tak wiele zjawisk: wzrost człowieka, błąd pomiaru czy
@@ -263,7 +343,7 @@ ch6_ui <- list(
 
 ch6_server <- function(input, output, session) {
 
-  # --- Ryc. 6.2: suma n kostek → rozkład normalny (experiment.js) ---
+  # --- Ryc. 6.3: suma n kostek → rozkład normalny (experiment.js) ---
   X <- exp_X
   exp_texts(input, output, "ch6_sumdice", list(
     tagList("Rzucamy n kostkami naraz i dodajemy oczka. Liczbę kostek można zmienić w każdej chwili
@@ -275,6 +355,17 @@ ch6_server <- function(input, output, session) {
     tagList("Częstości zbliżają się do rozkładu sumy, a przy większej liczbie kostek ten rozkład
       pokrywa się z krzywą normalną. Dla jednej kostki krzywa wyraźnie nie pasuje, a o tym mówi CTG:
       przybliżenie poprawia się wraz ze wzrostem n.")
+  ))
+
+  # --- Ryc. 6.1: scena „Winda” (suma rozkładów normalnych) ---
+  scene_texts(input, output, "ch6_winda", list(
+    tagList("Do windy wsiada 13 losowych osób. Waga każdej ma rozkład N(80, 12), a ",
+      tags$code("S", .noWS = "outside"), " to łączna waga w kabinie. Wpuść kilka kompletów."),
+    tagList("Każdy kurs spada żetonem nad swoją sumą. Pionowa linia to limit 1000 kg,
+      a słupki za nią to kursy z przeciążeniem. Dołóż 100 i 1000."),
+    tagList("Krzywa to rozkład normalny sumy wokół E(", tags$code("S", .noWS = "outside"),
+      ") = 1040 kg. Pole pod krzywą na prawo od limitu to prawdopodobieństwo
+      przeciążenia; porównaj je z odsetkiem z symulacji.")
   ))
 
   # --- PROTOTYP SCENY (2026-10-08): Zapytaj grupkę ---
@@ -393,6 +484,6 @@ ch6_server <- function(input, output, session) {
     )
   })
 
-  # Ryc. 6.4 (mapa zbieżności) rysuje ec_proto.js z danych w data-config.
+  # Ryc. 6.5 (mapa zbieżności) rysuje ec_proto.js z danych w data-config.
 
 }

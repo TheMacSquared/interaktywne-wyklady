@@ -57,6 +57,13 @@
 /* przełączniki scen nie kurczą się (dłuższe podpisy niż same liczby) */
 .lc-stepper:has(.lc-sc) .lc-stepper-head .lc-toolbar > .lc-step-ctl:has([data-sc-opt]) { flex: 0 1 auto; }
 
+/* winda (rozdz. 6, suma rozkładów normalnych) */
+.lc-sc-plate { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-subtle); stroke-width: 1.2; }
+.lc-sc-plate-t { font: 700 12px var(--upwr-mono); fill: var(--upwr-ink-soft); letter-spacing: .08em; }
+.lc-sc-cabin { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.lc-sc-cabin-floor { stroke: var(--upwr-ink); stroke-width: 3; }
+.lc-sc-limit { stroke: var(--upwr-ink-soft); stroke-width: 2.5; }
+
 /* góra i szlaki (PROTOTYP 2026-10-29) */
 .lc-sc-mount { fill: var(--upwr-sage-tint); stroke: var(--upwr-rule); stroke-width: 1; }
 .lc-sc-trail { stroke: var(--upwr-ink-subtle); stroke-width: 2; stroke-dasharray: 4 4; opacity: .55; }

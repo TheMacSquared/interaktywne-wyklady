@@ -5,6 +5,7 @@
 //   "group"   ocena prowadzącego (1–10) od 5 losowych osób, X̄ grupki (rozkład średniej, CTG)
 //   "scratch" zdrapka z kiosku, X = wygrana (E(X) jako średnia na dłuższą metę, SD jako rozrzut)
 //   "trail"   spotkanie na szlaku: pary na 5 szlakach, X = liczba spotkanych par ~ B(6, 0.2)
+//   "lift"    winda „1000 kg lub 13 osób”: S = suma wag 13 osób N(80, 12) (suma normalnych)
 // Sterowanie:
 //   [data-sc-act]  go | m10 | m100 | m1000 (przycisk go zmienia podpis wg kroku: data-labels)
 //   [data-sc-opt]  "nazwa:wartość" (przełączniki opcji)
@@ -610,6 +611,157 @@
         var c;
         for (var i = 0; i < m; i++) { c = compete(); add(c); }
         commit(c); st.comp = c; render(); done();
+      }
+    };
+  };
+
+  // =========================================================================
+  // LIFT: winda „1000 kg lub 13 osób”, 13 losowych osób o wadze N(80, 12), S = łączna waga
+  // (suma rozkładów normalnych; wstęp do CTG).
+  // =========================================================================
+  KINDS.lift = function (cfg, api) {
+    var N = cfg.n, MU = cfg.mu, SIG = cfg.sigma, LIM = cfg.limit;
+    var MS = N * MU, SD = SIG * Math.sqrt(N);
+    var LO = cfg.lo, HI = cfg.hi, BW = cfg.bin, NB = Math.round((HI - LO) / BW), TICK = cfg.tick;
+    var PL = 74, PR = 616, PT = 214, PB = 350, RX = W / 2, RY = 152;
+    var CL = 24, CR = W - 24, CT = 40, CB = 124;
+    var st, yfun = null;
+
+    function fresh() { st = { counts: new Array(NB).fill(0), k: 0, over: 0, last: null, log: [] }; }
+    fresh();
+
+    function rnorm() {
+      var u = 1 - Math.random(), v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    function one() {
+      var w = [], s = 0;
+      for (var i = 0; i < N; i++) { var x = Math.round(MU + SIG * rnorm()); w.push(x); s += x; }
+      return { w: w, sum: s };
+    }
+    // przedziały (a, a + BW]: słupek od 1000 kg zawiera tylko S > 1000, jak licznik przeciążeń
+    function binOf(s) { return Math.max(0, Math.min(NB - 1, Math.ceil((s - LO) / BW) - 1)); }
+    function px(x) { return PL + (PR - PL) * (x - LO) / (HI - LO); }
+    function pOver() {
+      // P(S > LIM) z rozkładu normalnego (przybliżenie erf, błąd < 1.5e-7)
+      var z = (LIM - MS) / (SD * Math.SQRT2), t = 1 / (1 + 0.3275911 * Math.abs(z));
+      var e = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z * z);
+      var erf = z >= 0 ? e : -e;
+      return 0.5 * (1 - erf);
+    }
+    function add(o) {
+      st.k += 1; st.counts[binOf(o.sum)] += 1;
+      if (o.sum > LIM) st.over += 1;
+    }
+    function commit(o) {
+      o.no = st.k; st.last = o;
+      st.log.unshift(o); if (st.log.length > 5) st.log.pop();
+    }
+
+    function drawStage(o, shown) {
+      var g = api.stage;
+      g.textContent = "";
+      svg("rect", { x: W / 2 - 112, y: 4, width: 224, height: 26, rx: 4, class: "lc-sc-plate" }, g);
+      svg("text", { x: W / 2, y: 22, "text-anchor": "middle", class: "lc-sc-plate-t" }, g,
+        "UDŹWIG " + LIM + " kg · " + N + " OSÓB");
+      svg("rect", { x: CL, y: CT, width: CR - CL, height: CB - CT, rx: 3, class: "lc-sc-cabin" }, g);
+      svg("line", { x1: CL, x2: CR, y1: CB, y2: CB, class: "lc-sc-cabin-floor" }, g);
+      var dx = (CR - CL - 20) / N, s = 0;
+      for (var i = 0; i < N; i++) {
+        var cx = CL + 10 + dx * (i + 0.5), known = o && i < shown;
+        if (known) {
+          var f = Math.max(0.7, Math.min(1.35, o.w[i] / MU));
+          var q = svg("g", { class: "lc-sc-person" }, g);
+          svg("circle", { cx: cx, cy: 74, r: 7 }, q);
+          svg("rect", { x: cx - 8 * f, y: 83, width: 16 * f, height: 38, rx: 6 }, q);
+          svg("text", { x: cx, y: 60, "text-anchor": "middle", class: "lc-sc-ans is-small" }, g, String(o.w[i]));
+          s += o.w[i];
+        }
+      }
+      if (o && shown > 0) {
+        svg("text", { x: RX, y: RY, "text-anchor": "middle", class: "lc-sc-read" + (s > LIM ? "" : " is-plain") }, g,
+          "S = " + s + " kg" + (s > LIM ? " > " + LIM : ""));
+      }
+    }
+
+    function drawLog() {
+      var g = api.low, y0 = 206;
+      st.log.forEach(function (o, ri) {
+        var q = svg("g", { opacity: 1 - ri * 0.15 }, g), y = y0 + ri * 28, hit = o.sum > LIM;
+        svg("text", { x: 190, y: y, class: "lc-sc-log" }, q, "kurs " + o.no);
+        svg("text", { x: 400, y: y, "text-anchor": "end", class: "lc-sc-log" + (hit ? " is-hit" : " is-x") }, q, "S = " + o.sum + " kg");
+      });
+      if (st.k) readout(g, y0 + 5 * 28 + 8, [{ text: "przeciążonych: " + st.over + " z " + st.k }]);
+    }
+
+    function drawHist() {
+      var g = api.low, rel = api.step() >= 3, tot = st.k;
+      var vals = st.counts.map(function (c) { return rel ? (tot ? c / (tot * BW) : 0) : c; });
+      var top = Math.max.apply(null, vals);
+      if (rel) top = Math.max(top, normPdf(MS, MS, SD));
+      var ax = rel ? niceAxis(top * 1.08, 4) : niceAxis(Math.max(top * 1.12, 5), 4);
+      var y = yfun = yGrid(g, PL, PR, PT, PB, ax), i, x;
+      var bw = (PR - PL) * BW / (HI - LO);
+      vals.forEach(function (v, j) {
+        var x0 = LO + j * BW;
+        if (v > 0) svg("rect", { x: px(x0) + 0.5, y: y(v), width: bw - 1, height: PB - y(v),
+          class: "lc-sc-bar" + (x0 >= LIM ? " is-hit" : "") }, g);
+      });
+      svg("line", { x1: px(LIM), x2: px(LIM), y1: PT - 4, y2: PB, class: "lc-sc-limit" }, g);
+      if (rel) {
+        var pts = [];
+        for (i = 0; i <= 300; i++) { x = LO + (HI - LO) * i / 300; pts.push(px(x) + "," + y(normPdf(x, MS, SD))); }
+        svg("polyline", { points: pts.join(" "), class: "lc-sc-curve", fill: "none" }, g);
+        svg("line", { x1: px(MS), x2: px(MS), y1: PT, y2: PB, class: "lc-sc-param" }, g);
+      }
+      for (x = Math.ceil(LO / TICK) * TICK; x <= HI; x += TICK) {
+        svg("line", { x1: px(x), x2: px(x), y1: PB, y2: PB + 5, class: "lc-sc-axis" }, g);
+        svg("text", { x: px(x), y: PB + 19, "text-anchor": "middle", class: "lc-sc-tick" }, g, String(x));
+      }
+      svg("text", { x: (PL + PR) / 2, y: PB + 38, "text-anchor": "middle", class: "lc-sc-axtitle" }, g,
+        "S, łączna waga " + N + " osób (kg)");
+      yTitle(g, 16, PT, PB, rel ? "skala gęstości" : "liczba kursów");
+      var share = tot ? fmt(st.over / tot, 3) : "—";
+      if (rel) {
+        readout(g, PB + 62, [
+          { mark: markDash(g), text: "E(S) = " + MS + " kg" },
+          { text: "P(S > " + LIM + ") = " + fmt(pOver(), 3) },
+          { text: "w symulacji: " + share }
+        ]);
+      } else {
+        readout(g, PB + 62, [
+          { text: "przeciążonych: " + st.over + " z " + tot + (tot ? " (" + fmt(100 * st.over / tot, 1) + "%)" : "") }
+        ]);
+      }
+    }
+
+    function render() {
+      api.low.textContent = "";
+      drawStage(st.last, st.last ? N : 0);
+      if (!st.last) emptyNote(api.stage, 92, "Kabina czeka na pasażerów");
+      if (api.step() >= 2) drawHist(); else drawLog();
+    }
+
+    return {
+      render: render,
+      reset: function () { fresh(); render(); },
+      opt: function () {},
+      go: function (done) {
+        var o = one();
+        tween(1400, function (uu) { drawStage(o, Math.min(N, Math.floor((N + 1) * uu))); }, function () {
+          var j = binOf(o.sum);
+          var land = function () { add(o); commit(o); render(); done(); };
+          if (api.step() >= 2 && yfun) {
+            drawStage(o, N);
+            var h = api.step() >= 3 ? (st.counts[j] + 1) / ((st.k + 1) * BW) : st.counts[j] + 1;
+            fly(api, RX, RY + 6, px(LO + (j + 0.5) * BW), Math.max(PT, yfun(h)) - 8, 420, land);
+          } else land();
+        });
+      },
+      many: function (m, done) {
+        var o;
+        for (var i = 0; i < m; i++) { o = one(); add(o); }
+        commit(o); render(); done();
       }
     };
   };
