@@ -708,7 +708,7 @@ test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę;
   env.load("01-typy-danych/modules/chart_utils.js");
   env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const stepper = (id, charts, extra = []) => {
-    const text = new Element("div", { id: id + "_text" });
+    const text = new Element("div", { id: id + "_text", class: "shiny-html-output shiny-bound-output recalculating" });
     const boxes = charts.map(k => root("lc-sf-chart", [ecbox(String(k))], { "data-k": String(k) }));
     const st = root("lc-stepper", [...boxes, text, ...extra], { id, "data-lc-step": "1" });
     return { st, text, boxes };
@@ -719,6 +719,7 @@ test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę;
   env.mount(fig);
   assert.equal(env.errors.length, 0);
   assert.match(sd.text.innerHTML, /Dziesięć pomiarów/);
+  assert.equal(sd.text.getAttribute("class"), "", "tekst kroku przestaje być wyjściem Shiny (bez wiecznego .recalculating)");
   assert.equal(table.innerHTML, "", "tabela dopiero od kroku 2");
   sd.st.setAttribute("data-lc-step", "3"); env.theme(sd.st);
   assert.match(sd.text.innerHTML, /Wariancja/);

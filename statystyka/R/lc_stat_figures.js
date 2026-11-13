@@ -397,6 +397,14 @@
     // w #<id>_text, tabela w [data-role="table"]. Wykres zwracający null jest ukrywany.
     var stepper = root.querySelector(".lc-stepper");
     function step() { return stepper ? Number(stepper.getAttribute("data-lc-step")) || 1 : null; }
+    // Tekst kroku pisze przeglądarka, więc #<id>_text nie jest wyjściem Shiny: serwer
+    // nigdy go nie wypełni, a Shiny zostawiłby je wyszarzone (.recalculating) na stałe.
+    var stepOut = stepper && fig.text ? root.querySelector("#" + stepper.getAttribute("id") + "_text") : null;
+    if (stepOut) {
+      var S = window.Shiny;
+      if (S && S.unbindAll && stepOut.classList.contains("shiny-bound-output")) S.unbindAll(stepOut.parentNode);
+      stepOut.classList.remove("shiny-html-output", "shiny-bound-output", "recalculating");
+    }
     function typeset(el) {
       var MJ = window.MathJax;
       if (MJ && MJ.Hub && MJ.Hub.Queue) MJ.Hub.Queue(["Typeset", MJ.Hub, el]);
@@ -417,10 +425,7 @@
         if (legend && (k === 0 || spec.legend)) legendItems(legend, spec.legend);
       });
       if (fig.update) fig.update(root, state, v);
-      if (stepper && fig.text) {
-        var out = root.querySelector("#" + stepper.getAttribute("id") + "_text");
-        if (out) { out.innerHTML = fig.text(state, v, vals, st); typeset(out); }
-      }
+      if (stepOut) { stepOut.innerHTML = fig.text(state, v, vals, st); typeset(stepOut); }
       if (fig.table) {
         var tbl = root.querySelector('[data-role="table"]');
         if (tbl) tbl.innerHTML = fig.table(state, v, vals, st);

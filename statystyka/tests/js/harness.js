@@ -17,7 +17,12 @@ class Element {
     this.connected = false;
     this.style = { setProperty() {} };
     this.value = attrs.value || "";
-    this.classList = { contains: (cls) => (this.attrs.class || "").split(" ").includes(cls) };
+    const classes = () => (this.attrs.class || "").split(" ").filter(Boolean);
+    this.classList = {
+      contains: (cls) => classes().includes(cls),
+      add: (...cls) => { this.attrs.class = [...new Set([...classes(), ...cls])].join(" "); },
+      remove: (...cls) => { this.attrs.class = classes().filter(c => !cls.includes(c)).join(" "); },
+    };
     for (const [key, value] of Object.entries(attrs)) this.setAttribute(key, value);
     children.forEach(child => this.appendChild(child));
   }
