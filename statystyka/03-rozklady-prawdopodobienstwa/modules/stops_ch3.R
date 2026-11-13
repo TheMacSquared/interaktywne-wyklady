@@ -1,7 +1,7 @@
 # PUNKTY STOP — rozdział 3 -----------------------------------------------------
 #   s3p_3g_ui — Ryc. 3.5 „Spotkanie na szlaku” (scena w scenes.js, kind = "trail")
-#   s3p_3a_ui — Ryc. 3.6 „Czy V-1 celowały?”
-#   s3p_3b_ui — Ryc. 3.9 „Konie Bortkiewicza”
+#   s3p_3a_ui — Ryc. 3.6 „Czy V-1 celowały?” (w przeglądarce, stops34_charts.js)
+#   s3p_3b_ui — Ryc. 3.9 „Konie Bortkiewicza” (w przeglądarce, stops34_charts.js)
 # Serwer: s3p_ch3_server(input, output, session).
 
 # ============================================================================
@@ -14,12 +14,35 @@ s3p_v1_obs <- c(229, 211, 93, 35, 7, 1)
 s3p_v1_lambda <- 537 / 576
 s3p_v1_exp <- 576 * c(dpois(0:4, s3p_v1_lambda), ppois(4, s3p_v1_lambda, lower.tail = FALSE))
 
+s3p_3a_texts <- c(
+  "Lato 1944. Na południowy Londyn spadają pociski V-1. Mieszkańcy widzą na mapie skupiska trafień i są pewni, że Niemcy celują w konkretne dzielnice. Rozrzuć trafienia losowo kilka razy: skupiska pojawiają się także bez celowania.",
+  "Analityk R.D. Clarke dzieli mapę na 576 kwadratów po 0.25 km² i liczy trafienia w każdym. Jeśli pociski celują, powinno być dużo pustych kwadratów i kilka bardzo zatłoczonych.",
+  "Prawdziwe dane: 229 kwadratów bez trafienia, 211 z jednym, 93 z dwoma, 35 z trzema, 7 z czterema i jeden z pięcioma lub więcej. Czy to wygląda na celowanie?",
+  "Kółka pokazują, czego się spodziewać, gdy każdy pocisk spada w zupełnie losowe miejsce. Zgodność jest prawie idealna. V-1 nie celowały, a skupiska były dziełem przypadku: losowość wygląda na skupiska."
+)
+
+# Rycina krokowa w przeglądarce (stops34_charts.js, "s3p-v1"). Kroki 1–2: kwadratowa mapa.
 s3p_3a_ui <- s3p_panel("Ryc. 3.6", "Czy V-1 celowały?",
-  lc_step_widget("s3p_3a",
-    steps = c("Mapa trafień", "Siatka", "Zliczenia", "Losowo?"),
-    toolbar = lc_toolbar(lc_action("s3p_3a_shuffle", "Rozrzuć 537 trafień losowo", icon = "shuffle")),
-    plot_id = "s3p_3a_plot", ratio = "1.6/1"
-  )
+  tags$style(HTML("
+    #s3p_3a[data-lc-step='1'] .lc-sf-chart, #s3p_3a[data-lc-step='2'] .lc-sf-chart {
+      aspect-ratio: 1 / 1 !important; max-width: 470px; max-height: none !important; margin: 0 auto; }
+    .s3p-sf-note { margin: .3em 0 0; text-align: center; font-size: .9em; color: var(--upwr-ink-soft); }
+    .s3p-sf-note:empty { display: none; }
+    #s3p_3a .lc-sf-legend { justify-content: center; }
+    #s3p_3a .lc-stepper-head .lc-toolbar > .lc-action { flex: 0 0 auto; white-space: nowrap; }
+  ")),
+  lc_sf_figure("s3p-v1", bare = TRUE,
+    config = list(obs = s3p_v1_obs, exp = s3p_v1_exp, texts = s3p_3a_texts),
+    body = lc_step_widget("s3p_3a",
+      steps = c("Mapa trafień", "Siatka", "Zliczenia", "Losowo?"),
+      toolbar = lc_toolbar(
+        lc_sf_action("shuffle", "s3p_3a_shuffle", "Rozrzuć 537 trafień losowo", icon = "shuffle"),
+        lc_chart_zoom_button()),
+      body = tagList(
+        lc_sf_chart(0, ratio = "1.6/1", max_height = "470px"),
+        tags$div(class = "lc-sf-legend", hidden = NA),
+        tags$p(class = "s3p-sf-note", lc_sf_value("v1_note", "")))
+    ))
 )
 
 # ============================================================================
@@ -31,11 +54,27 @@ s3p_3a_ui <- s3p_panel("Ryc. 3.6", "Czy V-1 celowały?",
 s3p_bk_k <- 0:4
 s3p_bk_obs <- c(109, 65, 22, 3, 1)
 
+s3p_bk_mean <- sum(s3p_bk_k * s3p_bk_obs) / 200
+s3p_bk_var <- sum((s3p_bk_k - s3p_bk_mean)^2 * s3p_bk_obs) / 199
+
+s3p_3b_texts <- c(
+  "Władysław Bortkiewicz, statystyk z Petersburga, zebrał w 1898 roku dane z pruskiej armii: 10 korpusów kawalerii przez 20 lat, razem 200 korpuso-lat. W każdym policzył żołnierzy zabitych kopnięciem konia.",
+  sprintf("Razem 122 zgony na 200 korpuso-lat: średnia %s. Wariancja wynosi %s, czyli prawie tyle samo. Równość E(X) = Var(X) to znak rozpoznawczy rozkładu Poissona.",
+    lc_fmt(s3p_bk_mean, 2), lc_fmt(s3p_bk_var, 2)),
+  "Kółka to oczekiwane liczby z Pois(0.61): 108.7, 66.3, 20.2, 4.1 i 0.6. Rzadkie, niezależne zdarzenia w wielu jednostkach dają rozkład Poissona nawet wtedy, gdy chodzi o konie."
+)
+
+# Rycina krokowa w przeglądarce (stops34_charts.js, "s3p-horses").
 s3p_3b_ui <- s3p_panel("Ryc. 3.9", "Konie Bortkiewicza",
-  lc_step_widget("s3p_3b",
-    steps = c("Dane", "Średnia i wariancja", "Model Pois(λ)"),
-    plot_id = "s3p_3b_plot", ratio = "2.2/1"
-  )
+  lc_sf_figure("s3p-horses", bare = TRUE,
+    config = list(k = s3p_bk_k, obs = s3p_bk_obs, mean = s3p_bk_mean,
+                  exp = 200 * dpois(s3p_bk_k, s3p_bk_mean), texts = s3p_3b_texts,
+                  label = sprintf("średnia %s, wariancja %s", lc_fmt(s3p_bk_mean, 2), lc_fmt(s3p_bk_var, 2))),
+    body = lc_step_widget("s3p_3b",
+      steps = c("Dane", "Średnia i wariancja", "Model Pois(λ)"),
+      toolbar = lc_toolbar(lc_chart_zoom_button()),
+      body = lc_sf_chart(0, ratio = "2.2/1", max_height = "420px")
+    ))
 )
 
 # ============================================================================
@@ -63,81 +102,7 @@ s3p_3g_ui <- s3p_panel("Ryc. 3.5", "Spotkanie na szlaku", width_mode = "text",
 
 s3p_ch3_server <- function(input, output, session) {
 
-  # --- 3a -------------------------------------------------------------------
-  step_3a <- lc_step_server("s3p_3a", input)$step
-  hits <- reactiveVal({ set.seed(1944); data.frame(x = runif(537, 0, 24), y = runif(537, 0, 24)) })
-  observeEvent(input$s3p_3a_shuffle, hits(data.frame(x = runif(537, 0, 24), y = runif(537, 0, 24))))
-
-  zoom_plot_server("s3p_3a_plot", reactive({
-    step <- step_3a()
-    if (step <= 2) {
-      h <- hits()
-      p <- ggplot(h, aes(x, y))
-      if (step == 2) {
-        cnt <- as.data.frame(table(cx = floor(h$x), cy = floor(h$y)))
-        cnt$cx <- as.numeric(as.character(cnt$cx)); cnt$cy <- as.numeric(as.character(cnt$cy))
-        p <- p + geom_tile(data = cnt, aes(cx + 0.5, cy + 0.5, fill = pmin(Freq, 4)), colour = upwr_rule,
-                           inherit.aes = FALSE) +
-          scale_fill_gradient(low = "white", high = upwr_cat[["terakota"]], name = "Trafienia", breaks = 0:4,
-                              labels = c(0:3, "4+"))
-      }
-      return(p + geom_point(size = 1.3, colour = upwr_ink, alpha = 0.8) +
-        coord_equal(xlim = c(0, 24), ylim = c(0, 24), expand = FALSE) +
-        labs(x = NULL, y = NULL, subtitle = "Południowy Londyn, 1944 · 537 trafień (położenia losowe, nie historyczne)") +
-        theme_upwr(grid = "none") + theme(axis.text = element_blank()))
-    }
-    d <- data.frame(k = factor(c(0:4, "5+"), levels = c(0:4, "5+")), obs = s3p_v1_obs, exp = s3p_v1_exp)
-    p <- ggplot(d, aes(k)) +
-      geom_col(aes(y = obs), fill = upwr_secondary, alpha = 0.85, width = 0.7) +
-      geom_text(aes(y = obs, label = obs), vjust = -0.4) +
-      scale_y_continuous(limits = c(0, 260)) +
-      labs(x = "Liczba trafień w kwadracie", y = "Liczba kwadratów") + theme_upwr(grid = "y")
-    if (step == 4) {
-      p <- p + geom_point(aes(y = exp), shape = 21, fill = "white", colour = upwr_accent, size = 4, stroke = 1.6) +
-        labs(subtitle = "Słupki: Londyn 1944 · kółka: 537 trafień rozrzuconych zupełnie losowo")
-    }
-    p
-  }))
-
-  s3p_step_text(output, "s3p_3a", step_3a, list(
-    "Lato 1944. Na południowy Londyn spadają pociski V-1. Mieszkańcy widzą na mapie skupiska trafień i są pewni, że Niemcy celują w konkretne dzielnice. Rozrzuć trafienia losowo kilka razy: skupiska pojawiają się także bez celowania.",
-    "Analityk R.D. Clarke dzieli mapę na 576 kwadratów po 0.25 km² i liczy trafienia w każdym. Jeśli pociski celują, powinno być dużo pustych kwadratów i kilka bardzo zatłoczonych.",
-    "Prawdziwe dane: 229 kwadratów bez trafienia, 211 z jednym, 93 z dwoma, 35 z trzema, 7 z czterema i jeden z pięcioma lub więcej. Czy to wygląda na celowanie?",
-    "Kółka pokazują, czego się spodziewać, gdy każdy pocisk spada w zupełnie losowe miejsce. Zgodność jest prawie idealna. V-1 nie celowały, a skupiska były dziełem przypadku: losowość wygląda na skupiska."
-  ))
-
-  # --- 3b -------------------------------------------------------------------
-  step_3b <- lc_step_server("s3p_3b", input)$step
-  bk_mean <- sum(s3p_bk_k * s3p_bk_obs) / 200
-  bk_var <- sum((s3p_bk_k - bk_mean)^2 * s3p_bk_obs) / 199
-
-  zoom_plot_server("s3p_3b_plot", reactive({
-    step <- step_3b()
-    d <- data.frame(k = s3p_bk_k, obs = s3p_bk_obs, exp = 200 * dpois(s3p_bk_k, bk_mean))
-    p <- ggplot(d, aes(k)) +
-      geom_col(aes(y = obs), fill = upwr_secondary, alpha = 0.85, width = 0.7) +
-      geom_text(aes(y = obs, label = obs), vjust = -0.4) +
-      scale_y_continuous(limits = c(0, 125)) +
-      labs(x = "Zabici kopnięciem konia w korpusie w ciągu roku", y = "Liczba korpuso-lat") +
-      theme_upwr(grid = "y")
-    if (step >= 2) {
-      p <- p + geom_vline(xintercept = bk_mean, colour = upwr_accent, linetype = "22", linewidth = 0.9) +
-        annotate("text", x = bk_mean, y = 118, hjust = -0.05, colour = upwr_accent, fontface = "bold",
-                 label = sprintf("średnia %s, wariancja %s", lc_fmt(bk_mean, 2), lc_fmt(bk_var, 2)))
-    }
-    if (step >= 3) {
-      p <- p + geom_point(aes(y = exp), shape = 21, fill = "white", colour = upwr_accent, size = 4, stroke = 1.6) +
-        geom_text(aes(y = exp, label = lc_fmt(exp, 1)), colour = upwr_accent, hjust = -0.6, size = 3.5)
-    }
-    p
-  }))
-
-  s3p_step_text(output, "s3p_3b", step_3b, list(
-    "Władysław Bortkiewicz, statystyk z Petersburga, zebrał w 1898 roku dane z pruskiej armii: 10 korpusów kawalerii przez 20 lat, razem 200 korpuso-lat. W każdym policzył żołnierzy zabitych kopnięciem konia.",
-    sprintf("Razem 122 zgony na 200 korpuso-lat: średnia %s. Wariancja wynosi %s, czyli prawie tyle samo. Równość E(X) = Var(X) to znak rozpoznawczy rozkładu Poissona.",
-      lc_fmt(bk_mean, 2), lc_fmt(bk_var, 2)),
-    "Kółka to oczekiwane liczby z Pois(0.61): 108.7, 66.3, 20.2, 4.1 i 0.6. Rzadkie, niezależne zdarzenia w wielu jednostkach dają rozkład Poissona nawet wtedy, gdy chodzi o konie."
-  ))
+  # Ryc. 3.6 i 3.9 liczy przeglądarka (stops34_charts.js).
 
   # --- 3g -------------------------------------------------------------------
   scene_texts(input, output, "s3p_3g", list(

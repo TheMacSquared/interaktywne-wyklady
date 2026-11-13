@@ -1,6 +1,6 @@
 # PUNKTY STOP — rozdział 5 -----------------------------------------------------
 #   s3p_5a_ui — Ryc. 5.8 „Rozkład normalny w sześciu kierunkach” (cases_chart.js)
-#   s3p_5d_ui — Ryc. 5.9 „Normalny czy nie?” (dane z ankiety)
+#   s3p_5d_ui — Ryc. 5.9 „Normalny czy nie?” (dane z ankiety; stops56_charts.js)
 #   Ryc. 5.4 i 5.5: stops_ch5_calc.R i stops_ch5_z.R.
 # Serwer: s3p_ch5_server(input, output, session).
 
@@ -73,14 +73,19 @@ s3p_5d_vars <- local({
   )
 })
 
+# Rycina liczona w przeglądarce (stops56_charts.js, „s3p-normal”): dane w config,
+# opis wybranej zmiennej w notes.
 s3p_5d_ui <- s3p_panel("Ryc. 5.9", "Normalny czy nie?",
-  lc_toolbar(
-    lc_group("Zmienna z ankiety", lc_select("s3p_5d_var",
-      choices = setNames(names(s3p_5d_vars), vapply(s3p_5d_vars, `[[`, "", "lab")))),
-    lc_readouts(uiOutput("s3p_5d_read"))
-  ),
-  lc_plot("s3p_5d_plot", ratio = "2.4/1"),
-  uiOutput("s3p_5d_caption")
+  lc_sf_figure("s3p-normal", ratio = "2.4/1", legend = TRUE, selected = "hk",
+    control = lc_group("Zmienna z ankiety", lc_select("s3p_5d_var",
+      choices = setNames(names(s3p_5d_vars), vapply(s3p_5d_vars, `[[`, "", "lab")),
+      selected = "hk", aria_label = "Zmienna z ankiety")),
+    toolbar = lc_readouts(
+      lc_readout("Poza μ ± 2σ", lc_sf_value("tail"), color = upwr_accent),
+      lc_readout("Model normalny", "4.6%"),
+      lc_readout("Skośność", lc_sf_value("skew"))),
+    config = list(vars = lapply(s3p_5d_vars, function(it) list(lab = it$lab, x = I(it$x[!is.na(it$x)])))),
+    notes = lapply(s3p_5d_vars, function(it) lc_caption(it$note)))
 )
 
 # ============================================================================
@@ -88,26 +93,5 @@ s3p_5d_ui <- s3p_panel("Ryc. 5.9", "Normalny czy nie?",
 # ============================================================================
 
 s3p_ch5_server <- function(input, output, session) {
-
-  # --- 5d -------------------------------------------------------------------
-  var_5d <- reactive(s3p_5d_vars[[input$s3p_5d_var %||% "hk"]])
-
-  output$s3p_5d_read <- renderUI({
-    v <- var_5d()$x; m <- mean(v); s <- sd(v)
-    tagList(lc_readout("Poza μ ± 2σ", s3p_pct(mean(abs(v - m) > 2 * s)), color = upwr_accent),
-            lc_readout("Model normalny", "4.6%"),
-            lc_readout("Skośność", lc_fmt(mean((v - m)^3) / s^3, 2)))
-  })
-
-  zoom_plot_server("s3p_5d_plot", reactive({
-    it <- var_5d(); v <- it$x; m <- mean(v); s <- sd(v)
-    x <- seq(min(v, m - 3.5 * s), max(v, m + 3.5 * s), length.out = 400)
-    ggplot(data.frame(v = v), aes(v)) +
-      geom_histogram(aes(y = after_stat(density)), bins = 30, fill = upwr_secondary, alpha = 0.75, colour = "white") +
-      geom_line(data = data.frame(x = x, y = dnorm(x, m, s)), aes(x, y), colour = upwr_accent, linewidth = 1.2) +
-      labs(x = it$lab, y = "Gęstość", subtitle = "Krzywa: rozkład normalny o tej samej średniej i SD") +
-      theme_upwr(grid = "y")
-  }))
-
-  output$s3p_5d_caption <- renderUI(lc_caption(var_5d()$note))
+  # Ryc. 5.9 liczy się w przeglądarce (stops56_charts.js); app.R wywołuje tę funkcję.
 }

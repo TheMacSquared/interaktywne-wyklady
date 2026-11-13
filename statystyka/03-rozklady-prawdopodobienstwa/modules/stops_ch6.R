@@ -1,5 +1,6 @@
 # PUNKTY STOP — rozdział 6 i domknięcie wykładu ----------------------------------
-#   s3p_6b_ui — Ryc. 6.6 piaskownica „Grupka przyjaciół” (przypadek brzegowy: zależność)
+#   s3p_6b_ui — Ryc. 6.6 piaskownica „Grupka przyjaciół” (przypadek brzegowy: zależność;
+#               stops56_charts.js)
 #   s3p_d2_ui — Ryc. 6.7 domknięcie „Drzewo rodu rozkładów”: dwumianowy i Poisson
 #               obok siebie jako „ile sukcesów?” w próbach i w czasie,
 #               geometryczny i wykładniczy jako „ile czekać?”
@@ -9,14 +10,20 @@
 # (6b) PIASKOWNICA „GRUPKA PRZYJACIÓŁ”
 # ============================================================================
 
+# Rycina liczona w przeglądarce (stops56_charts.js, „s3p-friends”): symulacja
+# z ziarnem losowana od nowa przy zmianie ρ lub n.
 s3p_6b_ui <- s3p_panel("Ryc. 6.6", "Grupka przyjaciół",
-  lc_toolbar(
-    lc_slider("s3p_6b_rho", "Jak bardzo grupka myśli podobnie (ρ)", 0, 0.8, 0, 0.1),
-    lc_segmented("s3p_6b_n", "Osób w grupce", choices = c("5" = "5", "10" = "10", "30" = "30"), selected = "10"),
-    lc_readouts(uiOutput("s3p_6b_read"))
-  ),
-  lc_plot("s3p_6b_plot", ratio = "2.4/1"),
-  uiOutput("s3p_6b_caption")
+  lc_sf_figure("s3p-friends", ratio = "2.4/1", legend = TRUE, selected = "indep",
+    control = list(
+      lc_sf_slider("s3p_6b_rho", "Jak bardzo grupka myśli podobnie (ρ)", 0, 0.8, 0, 0.1),
+      lc_segmented("s3p_6b_n", "Osób w grupce", choices = c("5" = "5", "10" = "10", "30" = "30"), selected = "10")),
+    toolbar = lc_readouts(
+      lc_readout("SE z symulacji", lc_sf_value("se_sim"), color = upwr_accent),
+      lc_readout("σ / √n", lc_sf_value("se_ctg")),
+      lc_readout("Ile niezależnych osób to jest", lc_sf_value("n_eff"))),
+    notes = list(
+      indep = lc_caption("Gdy oceny w grupce są niezależne, histogram średnich pasuje do krzywej CTG."),
+      dep = lc_caption("Pytamy grupkę przyjaciół, którzy siedzą razem i rozmawiają o zajęciach: ich oceny są do siebie podobne. Średnie rozjeżdżają się szerzej, niż obiecuje σ/√n, a dziesięć zgodnych osób jest warte tyle, co kilka niezależnych. CTG wymaga niezależności.")))
 )
 
 # ============================================================================
@@ -96,37 +103,5 @@ s3p_d2_ui <- s3p_panel("Ryc. 6.7", "Drzewo rodu rozkładów",
 # ============================================================================
 
 s3p_ch6_server <- function(input, output, session) {
-
-  # --- 6b -------------------------------------------------------------------
-  means_6b <- reactive({
-    rho <- input$s3p_6b_rho %||% 0; n <- as.integer(input$s3p_6b_n %||% "10")
-    set.seed(3602)
-    g <- rnorm(3000); e <- matrix(rnorm(3000 * n), 3000)
-    6 + 2 * (sqrt(rho) * g + sqrt(1 - rho) * rowMeans(e))
-  })
-
-  output$s3p_6b_read <- renderUI({
-    rho <- input$s3p_6b_rho %||% 0; n <- as.integer(input$s3p_6b_n %||% "10")
-    tagList(lc_readout("SE z symulacji", lc_fmt(sd(means_6b()), 2), color = upwr_accent),
-            lc_readout("σ / √n", lc_fmt(2 / sqrt(n), 2)),
-            lc_readout("Ile niezależnych osób to jest", lc_fmt(n / (1 + (n - 1) * rho), 1)))
-  })
-
-  zoom_plot_server("s3p_6b_plot", reactive({
-    m <- means_6b(); n <- as.integer(input$s3p_6b_n %||% "10")
-    x <- seq(1, 11, length.out = 400)
-    ggplot(data.frame(m = m), aes(m)) +
-      geom_histogram(aes(y = after_stat(density)), binwidth = 0.1, fill = upwr_secondary, alpha = 0.75, colour = "white") +
-      geom_line(data = data.frame(x = x, y = dnorm(x, 6, 2 / sqrt(n))), aes(x, y), colour = upwr_accent, linewidth = 1.2) +
-      coord_cartesian(xlim = c(2, 10)) +
-      labs(x = "Średnia ocena prowadzącego w grupce (1–10)", y = "Gęstość",
-           subtitle = "Słupki: 3000 grupek · krzywa: obietnica CTG, N(μ, σ/√n)") + theme_upwr(grid = "y")
-  }))
-
-  output$s3p_6b_caption <- renderUI({
-    lc_caption(if ((input$s3p_6b_rho %||% 0) == 0)
-      "Gdy oceny w grupce są niezależne, histogram średnich pasuje do krzywej CTG."
-    else "Pytamy grupkę przyjaciół, którzy siedzą razem i rozmawiają o zajęciach: ich oceny są do siebie podobne. Średnie rozjeżdżają się szerzej, niż obiecuje σ/√n, a dziesięć zgodnych osób jest warte tyle, co kilka niezależnych. CTG wymaga niezależności.")
-  })
-
+  # Ryc. 6.6 liczy się w przeglądarce (stops56_charts.js); app.R wywołuje tę funkcję.
 }

@@ -232,11 +232,7 @@ ch6_ui <- list(
             selected = "exponential", aria_label = "Rozkład populacji")),
           lc_sf_slider("ch6_sample_size", "Wielkość próby (n)", 1, 100, 5, 1)),
         toolbar = tagList(
-          lc_group("Pobierz próby",
-            tags$div(class = "lc-seg", role = "group", `aria-label` = "Pobierz próby",
-              tags$button(type = "button", `data-stat-act` = "take1", "1"),
-              tags$button(type = "button", `data-stat-act` = "take100", "100"),
-              tags$button(type = "button", `data-stat-act` = "take1000", "1000"))),
+          lc_sf_action_group("Pobierz próby", take1 = "1", take100 = "100", take1000 = "1000"),
           lc_sf_action("reset", "ch6_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
           lc_readouts(
             lc_readout("Prób", lc_sf_value("count", "0"), color = unname(upwr_cat["niebo"])),

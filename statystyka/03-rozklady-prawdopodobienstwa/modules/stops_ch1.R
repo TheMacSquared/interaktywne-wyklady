@@ -9,17 +9,22 @@
 # ============================================================================
 
 # (1.1-A) „Stos kostek”: każdy rzut to kafelek w kolumnie swojej ścianki.
+# Rzuty, kafelki i słupki liczy przeglądarka (stops12_charts.js, d03-dice).
 s3p_11a_tiles_max <- 60
 
 s3p_11a_ui <- s3p_panel("Ryc. 1.1", "Stos kostek",
-  lc_toolbar(
-    lc_action_group(label = "Rzuć kostką", s3p_11a_r1 = "+1", s3p_11a_r6 = "+6",
-                    s3p_11a_r60 = "+60", s3p_11a_r600 = "+600"),
-    lc_action("s3p_11a_reset", icon = "reset", variant = "ghost", aria_label = "Wyzeruj rzuty"),
-    lc_readouts(uiOutput("s3p_11a_read"))
-  ),
-  lc_plot("s3p_11a_plot", ratio = "2.2/1"),
-  uiOutput("s3p_11a_caption")
+  lc_sf_figure("d03-dice", ratio = "2.2/1", max_height = "440px", legend = TRUE,
+    config = list(tiles_max = s3p_11a_tiles_max, captions = list(
+      few = "Kilka rzutów: kolumny są nierówne, niektórych ścianek jeszcze nie ma. Z tak małej próby nie odgadniemy modelu.",
+      tiles = "Kolumny rosną w różnym tempie, ale wszystkie trzymają się blisko linii n/6. Bezwzględne różnice wysokości nie znikają, za to rosną wolniej niż same kolumny.",
+      bars = "W skali odsetków różnice topnieją: słupki przylegają do 1/6. Częstości z danych zbliżają się do rozkładu prawdopodobieństwa.")),
+    toolbar = tagList(
+      lc_sf_action_group("Rzuć kostką", r1 = "+1", r6 = "+6", r60 = "+60", r600 = "+600"),
+      lc_sf_action("reset", "s3p_11a_reset", icon = "reset", variant = "ghost", aria_label = "Wyzeruj rzuty"),
+      lc_readouts(
+        lc_readout("Rzuty", lc_sf_value("n", "0")),
+        lc_readout("Ostatni", lc_sf_value("last"), color = upwr_accent))),
+    after = tags$div(`data-role` = "caption", hidden = NA, lc_caption(lc_sf_value("cap", ""))))
 )
 
 # (1.1-C) „Lejek”: częstość szóstki w wielu seriach na tle 1/6 ± 2·SE.
@@ -83,64 +88,7 @@ s3p_15b_ui <- s3p_panel("Ryc. 1.5", "Rozkład czy nie?",
 
 s3p_ch1_server <- function(input, output, session) {
 
-  # --- 1.1-A ----------------------------------------------------------------
-  rolls_a <- reactiveVal(integer(0))
-  add_a <- function(n) rolls_a(c(rolls_a(), sample.int(6, n, replace = TRUE)))
-  observeEvent(input$s3p_11a_r1, add_a(1))
-  observeEvent(input$s3p_11a_r6, add_a(6))
-  observeEvent(input$s3p_11a_r60, add_a(60))
-  observeEvent(input$s3p_11a_r600, add_a(600))
-  observeEvent(input$s3p_11a_reset, rolls_a(integer(0)))
-
-  output$s3p_11a_read <- renderUI({
-    r <- rolls_a()
-    tagList(lc_readout("Rzuty", length(r)),
-            lc_readout("Ostatni", if (length(r)) tail(r, 1) else "–", color = upwr_accent))
-  })
-
-  zoom_plot_server("s3p_11a_plot", reactive({
-    r <- rolls_a(); n <- length(r)
-    if (n == 0) {
-      return(ggplot() + annotate("text", 3.5, 0, label = "Rzuć kostką: każdy rzut położy kafelek nad swoją ścianką",
-        colour = upwr_reference, size = 5) + theme_void())
-    }
-    if (n <= s3p_11a_tiles_max) {
-      d <- data.frame(face = r, h = ave(r, r, FUN = seq_along), last = seq_len(n) == n)
-      ymax <- max(10, max(d$h) + 1)
-      return(ggplot(d, aes(face, h)) +
-        geom_tile(aes(fill = last), width = 0.8, height = 0.86, colour = "white") +
-        geom_text(aes(label = face), colour = "white", fontface = "bold", size = 3.6) +
-        geom_hline(yintercept = n / 6 + 0.5, linetype = "22", colour = upwr_accent) +
-        annotate("text", x = 6.55, y = n / 6 + 0.5, label = "n/6", colour = upwr_accent, vjust = -0.4,
-                 hjust = 0, fontface = "bold") +
-        scale_fill_manual(values = c(`FALSE` = upwr_secondary, `TRUE` = upwr_accent), guide = "none") +
-        scale_x_continuous(breaks = 1:6, limits = c(0.5, 7)) +
-        scale_y_continuous(breaks = function(l) pretty(c(0, l[2]))) +
-        coord_cartesian(ylim = c(0.5, ymax)) +
-        labs(x = "Liczba oczek", y = "Liczba rzutów",
-             subtitle = "Każdy kafelek to jeden rzut · linia: tyle, ile każdej ścianki „należałoby się”") +
-        theme_upwr(grid = "y"))
-    }
-    d <- data.frame(face = 1:6, f = tabulate(r, 6) / n)
-    ggplot(d, aes(face, f)) +
-      geom_col(fill = upwr_secondary, alpha = 0.85, width = 0.8) +
-      geom_text(aes(label = lc_fmt(f, 3)), vjust = -0.5) +
-      geom_hline(yintercept = 1/6, linetype = "22", colour = upwr_accent) +
-      annotate("text", x = 6.55, y = 1/6, label = "1/6", colour = upwr_accent, vjust = -0.4, hjust = 0, fontface = "bold") +
-      scale_x_continuous(breaks = 1:6, limits = c(0.5, 7)) +
-      coord_cartesian(ylim = c(0, 0.3)) +
-      labs(x = "Liczba oczek", y = "Częstość względna",
-           subtitle = sprintf("%d rzutów: kafelków za dużo, słupki pokazują odsetki", n)) +
-      theme_upwr(grid = "y")
-  }))
-
-  output$s3p_11a_caption <- renderUI({
-    n <- length(rolls_a())
-    if (n == 0) return(NULL)
-    lc_caption(if (n <= 12) "Kilka rzutów: kolumny są nierówne, niektórych ścianek jeszcze nie ma. Z tak małej próby nie odgadniemy modelu."
-      else if (n <= s3p_11a_tiles_max) "Kolumny rosną w różnym tempie, ale wszystkie trzymają się blisko linii n/6. Bezwzględne różnice wysokości nie znikają, za to rosną wolniej niż same kolumny."
-      else "W skali odsetków różnice topnieją: słupki przylegają do 1/6. Częstości z danych zbliżają się do rozkładu prawdopodobieństwa.")
-  })
+  # Ryc. 1.1 „Stos kostek” liczy przeglądarka (stops12_charts.js).
 
   # --- 1.1-C ----------------------------------------------------------------
   series_c <- reactiveVal(list())
