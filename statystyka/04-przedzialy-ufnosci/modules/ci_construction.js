@@ -1,23 +1,82 @@
-/* Ryc. 3.2–3.3: dotychczasowy układ i kroki, wektorowy renderer ECharts. */
+/* Ryc. 3.2–3.3: dotychczasowy układ i kroki, wektorowy renderer ECharts.
+   Próby, statystyki i tekst kroku liczy przeglądarka (działa offline): pierwsza próba
+   z banku policzonego w R (ci_construction_bank), „Nowa próba” losuje przez lcDist. */
 (function () {
   'use strict';
   const C = window.lcCharts;
   if (!C) return;
-  const latest = {}, active = {};
-  ['mean', 'diff'].forEach(kind => C.onMessage('ci-construction-' + kind, data => {
-    latest[kind] = data;
-    if (active[kind]) active[kind](data);
-  }));
+  const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const variance = xs => { const m = mean(xs); return xs.reduce((a, b) => a + (b - m) * (b - m), 0) / (xs.length - 1); };
+  // Jak ci_construction_stats() w R: średnia (różnica), SE, df (Welch), t*, granice 95% CI.
+  function stats(x, y) {
+    let center = mean(x), se = Math.sqrt(variance(x) / x.length), df = x.length - 1;
+    if (y) {
+      const a = variance(x) / x.length, b = variance(y) / y.length;
+      center -= mean(y); se = Math.sqrt(a + b);
+      df = (a + b) * (a + b) / (a * a / (x.length - 1) + b * b / (y.length - 1));
+    }
+    const t = window.lcDist.qt(0.975, df);
+    return {x, y: y || null, mean: center, se, df, t, lower: center - t * se, upper: center + t * se};
+  }
+  function sample(diff) {
+    const r = window.lcDist.r, draw = (n, mu, sd) => r.many(n, () => r.norm(mu, sd));
+    return diff ? stats(draw(25, 178, 7), draw(25, 165, 6)) : stats(draw(25, 170, 10));
+  }
+  // round(v, d) z R: bez końcowych zer.
+  const rd = (v, d) => { const s = v.toFixed(d); return s.indexOf('.') < 0 ? s : s.replace(/0+$/, '').replace(/\.$/, ''); };
+  // Tekst kroku jak dawny output$ch3_step_text / ch3_dstep_text w R. Wzory jako HTML,
+  // bo wersja offline nie ma MathJax (wzory wstawiane dynamicznie zostałyby surowym TeX-em).
+  const XB = '<i>x̄</i>', xb = (k) => '<i>x̄</i><sub>' + k + '</sub>';
+  function stepText(d, step, diff) {
+    if (!diff) {
+      const s = d.se * Math.sqrt(d.x.length), n = d.x.length, me = d.t * d.se;
+      if (step === 1) return n + ' pomiarów wzrostu, każda kropka to jedna osoba. ' + XB + ' = ' + rd(d.mean, 2) +
+        ' cm, <i>s</i> = ' + rd(s, 2) + ' cm.';
+      if (step === 2) return 'Średnia z próby ' + XB + ' = ' + rd(d.mean, 2) +
+        ' cm to estymata punktowa μ. Inna próba dałaby inną wartość.';
+      if (step === 3) return '<i>SE</i> = <i>s</i>/√<i>n</i> = ' + rd(s, 2) + '/√' + n + ' = ' + rd(d.se, 2) +
+        ' cm. Pasek ' + XB + ' ± <i>SE</i> to tylko około 67% ufności.';
+      const covers = d.mean - me <= 170 && 170 <= d.mean + me;
+      return '<i>t</i>* = ' + rd(d.t, 3) + ' (df = ' + (n - 1) + '), <i>ME</i> = ' + rd(d.t, 3) + ' · ' + rd(d.se, 2) +
+        ' = ' + rd(me, 2) + ' cm. 95% CI: [' + rd(d.mean - me, 2) + ' ; ' + rd(d.mean + me, 2) + ']. ' +
+        (covers ? 'Ten przedział zawiera μ = 170 cm.' : 'Ten przedział nie zawiera μ = 170 cm.');
+    }
+    const n1 = d.x.length, n2 = d.y.length, s1 = Math.sqrt(variance(d.x)), s2 = Math.sqrt(variance(d.y));
+    const me = d.t * d.se;
+    if (step === 1) return n1 + ' mężczyzn (niebieskie punkty) i ' + n2 + ' kobiet (bursztynowe). Każdy punkt to jedna osoba.';
+    if (step === 2) return xb(1) + ' = ' + rd(mean(d.x), 2) + ' cm, ' + xb(2) + ' = ' + rd(mean(d.y), 2) +
+      ' cm. Każda średnia ma własną niepewność.';
+    if (step === 3) return xb(1) + ' − ' + xb(2) + ' = ' + rd(d.mean, 2) +
+      ' cm. Dolny panel to skala różnicy: linia 0 oznacza brak różnicy.';
+    if (step === 4) return '<i>SE</i> = √(' + rd(s1, 2) + '²/' + n1 + ' + ' + rd(s2, 2) + '²/' + n2 + ') = ' + rd(d.se, 2) +
+      ' cm, mniej niż suma SE obu średnich (' + rd(s1 / Math.sqrt(n1) + s2 / Math.sqrt(n2), 2) + ' cm).';
+    const lower = d.mean - me, upper = d.mean + me;
+    return 'df Welcha ≈ ' + rd(d.df, 1) + ', <i>t</i>* = ' + rd(d.t, 3) + ', <i>ME</i> = ' + rd(d.t, 3) + ' · ' +
+      rd(d.se, 2) + ' = ' + rd(me, 2) + ' cm. 95% CI: [' + rd(lower, 2) + ' ; ' + rd(upper, 2) + '] cm. ' +
+      (lower <= 0 && 0 <= upper ? 'Przedział obejmuje 0.' :
+        'Przedział nie obejmuje 0: mężczyźni są średnio wyżsi o co najmniej ' + rd(lower, 1) + ' cm.');
+  }
+  function typeset(el) {
+    const MJ = window.MathJax;
+    if (MJ && MJ.Hub && MJ.Hub.Queue) MJ.Hub.Queue(['Typeset', MJ.Hub, el]);
+    else if (MJ && MJ.typesetPromise) MJ.typesetPromise([el]);
+  }
+  window.lcCiConstruction = {stats, stepText};
   C.onReady('#ch3_step, #ch3_dstep', function (root) {
     const holder = root.querySelector('.ci-construction');
     if (!holder) return false;
     const kind = holder.dataset.kind, diff = kind === 'diff';
     const bank = JSON.parse(holder.dataset.config), el = holder.querySelector('.lc-ec');
-    let data = latest[kind] || bank[0], index = 0;
+    let data = bank[0], lastText = '';
+    // Tekst kroku pisze przeglądarka: #<id>_text nie jest wyjściem Shiny (jak w lcSF).
+    const textEl = root.querySelector('#' + root.id + '_text');
+    if (textEl) {
+      if (window.Shiny && window.Shiny.unbindAll && textEl.classList.contains('shiny-bound-output'))
+        window.Shiny.unbindAll(textEl.parentNode);
+      textEl.classList.remove('shiny-html-output', 'shiny-bound-output', 'recalculating');
+    }
     const chart = C.chart(el, {}, {renderer: 'svg'});
     const f = n => n.toFixed(2), avg = xs => xs.reduce((a,b) => a+b,0)/xs.length;
-    const connected = () => !!(window.Shiny && window.Shiny.shinyapp &&
-      window.Shiny.shinyapp.$socket && window.Shiny.shinyapp.$socket.readyState === 1);
     function draw() {
       const d = data, step = Number(root.dataset.lcStep) || 1;
       const P = C.palette(), fs = C.axisFontSize(root), series = [];
@@ -105,30 +164,19 @@
       el.setAttribute('aria-label', (diff?'Różnica średnich':'Średnia')+'; krok '+step+
         '. Estymata '+f(d.mean)+' cm, SE '+f(d.se)+' cm'+
         (step===(diff?5:4)?', 95% CI od '+f(d.lower)+' do '+f(d.upper)+' cm.':'.'));
-      if(!connected()) {
-        const text=root.querySelector('#'+root.id+'_text');
-        if(text) {
-          const centerStep=diff?3:2, seStep=centerStep+1, ciStep=centerStep+2;
-          const parts=[diff?'Dwie próby po 25 osób.':'25 pomiarów wzrostu.'];
-          if(diff&&step>=2) parts.push('x̄₁ = '+f(avg(d.x))+' cm; x̄₂ = '+f(avg(d.y))+' cm.');
-          if(step>=centerStep) parts.push((diff?'Różnica':'Średnia')+' = '+f(d.mean)+' cm.');
-          if(step>=seStep) parts.push('SE = '+f(d.se)+' cm.');
-          if(step>=ciStep) parts.push('t* = '+d.t.toFixed(3)+'; 95% CI: ['+f(d.lower)+'; '+f(d.upper)+'] cm.');
-          text.textContent=parts.join(' ');
-        }
+      if (textEl) {
+        const html = stepText(d, step, diff);
+        if (html !== lastText) { lastText = html; textEl.innerHTML = html; typeset(textEl); }
       }
     }
-    const receive = d => { data=d; draw(); };
-    active[kind]=receive;
     const observer=new MutationObserver(draw);
     observer.observe(root,{attributes:true,attributeFilter:['data-lc-step','data-lc-chart-large']});
     const newButton=root.querySelector('[id$="_new_sample"]');
-    const next=()=>{if(!connected()){index=(index+1)%bank.length;data=bank[index];draw();}};
+    const next=()=>{data=sample(diff);draw();};
     C.listen(newButton,'click',next);
     C.zoomControl(root); C.onTheme(root,draw);
     C.onDispose(root,()=>{
       observer.disconnect(); newButton.removeEventListener('click',next);
-      if(active[kind]===receive) delete active[kind];
     });
     draw();
   });

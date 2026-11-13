@@ -2,6 +2,43 @@
 # CHAPTER 2: Idea przedziałów ufności
 # ============================================================================
 
+# Ryc. 2.3: quiz z kafelkami. Jedna odpowiedź: po wyborze kafelki znikają, a pojawia
+# się komentarz do wybranej litery. Obsługa w przeglądarce (sf_ch12.js, .c04-quiz),
+# więc quiz działa także bez serwera.
+ch2_quiz_choices <- list(
+  list(value = "A", text = "Jest 95% prawdopodobieństwa, że μ leży w [165, 175]",
+       feedback = "μ jest stałe, a nie losowe. Losowy jest przedział, zanim wylosujemy próbę."),
+  list(value = "B", text = "95% danych z populacji leży w [165, 175]",
+       feedback = "Przedział dotyczy parametru (średniej), a nie pojedynczych obserwacji."),
+  list(value = "C", text = "Gdybyśmy powtarzali badanie, 95% tak skonstruowanych przedziałów zawierałoby μ",
+       feedback = "Poziom ufności opisuje metodę, nie konkretny wynik."),
+  list(value = "D", text = "Jesteśmy w 95% pewni, że średnia z próby leży w [165, 175]",
+       feedback = "Średnia z próby jest środkiem przedziału, więc leży w nim zawsze.")
+)
+ch2_quiz_correct <- "C"
+
+ch2_quiz_ui <- function() {
+  tags$div(class = "c04-quiz", `data-correct` = ch2_quiz_correct,
+    div(class = "quiz-tiles quiz-cols-4",
+      lapply(ch2_quiz_choices, function(opt) {
+        tags$button(type = "button", class = "btn btn-default quiz-tile", `data-quiz-choice` = opt$value,
+          div(class = "tile-letter", opt$value),
+          div(class = "tile-text", opt$text)
+        )
+      })
+    ),
+    lapply(ch2_quiz_choices, function(opt) {
+      tags$div(`data-quiz-feedback` = opt$value, hidden = NA,
+        if (identical(opt$value, ch2_quiz_correct)) {
+          lc_status(lc_verdict(tags$strong("Poprawnie."), type = "ok"), p(opt$feedback))
+        } else {
+          lc_status(lc_verdict(tags$strong("Nie do końca."), type = "danger"), p(opt$feedback),
+                    p(paste0("Poprawna odpowiedź to ", ch2_quiz_correct, ".")))
+        })
+    })
+  )
+}
+
 ch2_ui <- list(
   id    = "ch-idea",
   num   = "02",
@@ -186,8 +223,7 @@ ch2_ui <- list(
       label = "Ryc. 2.3", title = "Quiz: interpretacja CI",
       full_width = TRUE,
       p("Wybierz poprawną interpretację:"),
-      uiOutput("ch2_quiz_options"),
-      uiOutput("ch2_quiz_feedback")
+      ch2_quiz_ui()
     ),
 
     lc_p("Poprawne jest zdanie C, bo mówi o metodzie. Zdanie A brzmi podobnie
@@ -250,68 +286,5 @@ ch2_server <- function(input, output, session) {
       a pojedyncza siatka albo złapała, albo nie.")
   ))
 
-  # --- Widget 1: Quiz (tiles) ---
-  ch2_quiz_answered <- reactiveVal(FALSE)
-  ch2_quiz_selected <- reactiveVal(NULL)
-
-  ch2_quiz_choices <- list(
-    list(letter = "A", value = "A",
-         text = "Jest 95% prawdopodobieństwa, że μ leży w [165, 175]"),
-    list(letter = "B", value = "B",
-         text = "95% danych z populacji leży w [165, 175]"),
-    list(letter = "C", value = "C",
-         text = "Gdybyśmy powtarzali badanie, 95% tak skonstruowanych przedziałów zawierałoby μ"),
-    list(letter = "D", value = "D",
-         text = "Jesteśmy w 95% pewni, że średnia z próby leży w [165, 175]")
-  )
-
-  output$ch2_quiz_options <- renderUI({
-    if (ch2_quiz_answered()) return(NULL)
-    div(class = "quiz-tiles quiz-cols-4",
-      lapply(ch2_quiz_choices, function(opt) {
-        actionButton(paste0("ch2_tile_", opt$value),
-          tagList(
-            div(class = "tile-letter", opt$letter),
-            div(class = "tile-text", opt$text)
-          ),
-          class = "quiz-tile"
-        )
-      })
-    )
-  })
-
-  observe({
-    for (opt in ch2_quiz_choices) {
-      local({
-        val <- opt$value
-        observeEvent(input[[paste0("ch2_tile_", val)]], {
-          if (ch2_quiz_answered()) return()
-          ch2_quiz_selected(val)
-          ch2_quiz_answered(TRUE)
-        }, ignoreInit = TRUE)
-      })
-    }
-  })
-
-  output$ch2_quiz_feedback <- renderUI({
-    req(ch2_quiz_answered())
-    answer <- ch2_quiz_selected()
-    if (answer == "C") {
-      lc_status(
-        lc_verdict(tags$strong("Poprawnie."), type = "ok"),
-        p("Poziom ufności opisuje metodę, nie konkretny wynik.")
-      )
-    } else {
-      feedback <- switch(answer,
-        "A" = "μ jest stałe, a nie losowe. Losowy jest przedział, zanim wylosujemy próbę.",
-        "B" = "Przedział dotyczy parametru (średniej), a nie pojedynczych obserwacji.",
-        "D" = "Średnia z próby jest środkiem przedziału, więc leży w nim zawsze."
-      )
-      lc_status(
-        lc_verdict(tags$strong("Nie do końca."), type = "danger"),
-        p(feedback),
-        p("Poprawna odpowiedź to C.")
-      )
-    }
-  })
+  # Ryc. 2.3 (quiz) obsługuje przeglądarka: ch2_quiz_ui() i sf_ch12.js.
 }
