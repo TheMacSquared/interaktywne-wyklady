@@ -45,7 +45,29 @@
   }
   // Decyzja w quizie: odrzucamy, gdy p < α.
   function quizAnswer(sc) { return sc.p < sc.alpha ? "reject" : "fail_to_reject"; }
-  root.lcS05 = { phoneData: phoneData, nullDiffs: nullDiffs, simP: simP, power: power, quizAnswer: quizAnswer };
+  // Test t jednej próby: statystyki opisowe, t i p (dwustronne albo w jedną stronę).
+  function tOne(x, mu0, alternative) {
+    var n = x.length, m = T.mean(x), s = T.sd(x), se = s / Math.sqrt(n), t = (m - mu0) / se, df = n - 1;
+    var p = alternative === "less" ? D.pt(t, df) : alternative === "greater" ? 1 - D.pt(t, df) : 2 * D.pt(-Math.abs(t), df);
+    return { n: n, mean: m, sd: s, se: se, t: t, df: df, p: p };
+  }
+  // Histogram na 15 równych przedziałach od min do max (pierwszy z lewym końcem), jak hist() w R.
+  function hist15(x) {
+    var lo = Math.min.apply(null, x), hi = Math.max.apply(null, x), w = (hi - lo) / 15, counts = [], i;
+    for (i = 0; i < 15; i++) counts.push(0);
+    x.forEach(function (v) { counts[Math.max(0, Math.min(14, Math.ceil((v - lo) / w - 1e-9) - 1))] += 1; });
+    return counts.map(function (c, j) { return [lo + j * w, lo + (j + 1) * w, c]; });
+  }
+  // Wartości krytyczne rozkładu statystyki testowej (α = 0.05) i funkcja „w obszarze odrzucenia”.
+  function critical(type, df, alternative) {
+    if (type === "chisq") { var c = D.qchisq(0.95, df); return { values: [c], reject: function (x) { return x >= c; } }; }
+    if (alternative === "greater") { var g = D.qt(0.95, df); return { values: [g], reject: function (x) { return x >= g; } }; }
+    if (alternative === "less") { var l = D.qt(0.05, df); return { values: [l], reject: function (x) { return x <= l; } }; }
+    var t2 = D.qt(0.975, df);
+    return { values: [-t2, t2], reject: function (x) { return Math.abs(x) >= t2; } };
+  }
+  root.lcS05 = { phoneData: phoneData, nullDiffs: nullDiffs, simP: simP, power: power, quizAnswer: quizAnswer,
+                 tOne: tOne, hist15: hist15, critical: critical };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -173,6 +195,133 @@
             S.esc(cmp + ", zatem " + (correct === "reject" ? "odrzucamy H₀" : "nie mamy podstaw do odrzucenia H₀") + ".") + "</p>");
     }
   };
+
+  // ---- Wspólne części rycin „test krok po kroku” (rozdziały 4–9) ----------------
+  // Role elementów jak STEP_ROLES w shared/theme_upwr.R: nowy element kroku w akcencie
+  // i grubszą linią, znany w kolorze pomocniczym, tło w kolorze danych.
+  function roleColor(P, role) { return role === "new" ? P.accent : role === "known" ? P.secondary : P.niebo; }
+  function roleWidth(role) { return role === "new" ? 1.8 : 1.1; }
+  function stepRole(step, from) { return step === from ? "new" : "known"; }
+  function b(x) { return "<b>" + S.esc(String(x)) + "</b>"; }
+  var fmt = S.fmt;
+  // Etykieta przy pionowej linii: po prawej albo po lewej stronie (jak hjust = -0.1 / 1.1).
+  function lineLabel(x, y, text, color, right) {
+    return { type: "text", x: x, y: y, text: text, color: color, bold: true, align: right ? "left" : "right", valign: "middle" };
+  }
+  // Werdykt kroku decyzji: step_verdict() z helpers.R.
+  function verdictHtml(p) {
+    var sig = p < 0.05;
+    return '<span class="lc-status-' + (sig ? "danger" : "ok") + '">' + (sig ? "Odrzucamy H₀" : "Brak podstaw do odrzucenia H₀") + "</span>. " +
+      (p < 0.001 ? "p < " + b("0.001") : "p = " + b(fmt(p, 3))) + (sig ? " < α = 0.05 — wynik istotny statystycznie." : " ≥ α = 0.05 — wynik nieistotny statystycznie.");
+  }
+  // Rozkład statystyki testowej pod H₀ ze statystyką z próby (phase "stat") i obszarem
+  // odrzucenia (phase "decision"): step_null_plot() z helpers.R.
+  function nullPlot(P, stat, df, type, alternative, phase) {
+    var chisq = type === "chisq", half = Math.max(4, Math.abs(stat) * 1.1 + 0.5);
+    var x0 = chisq ? 0 : -half, x1 = chisq ? Math.max(stat * 2, 15) : half, span = x1 - x0;
+    var dens = chisq ? function (x) { return D.dchisq(x, df); } : function (x) { return D.dt(x, df); };
+    var crit = critical(type, df, alternative || "two.sided"), curve = [], top = 0, i, x, y;
+    for (i = 0; i < 600; i++) { x = x0 + span * i / 599; y = dens(x); curve.push([x, y]); if (isFinite(y) && x >= x0 + span * 0.02) top = Math.max(top, y); }
+    top *= 1.25;
+    curve = curve.map(function (p) { return [p[0], Math.min(isFinite(p[1]) ? p[1] : top, top)]; });
+    var role = phase === "stat" ? "new" : "known", layers = [];
+    if (phase === "decision") {
+      // Obszar odrzucenia w akcencie, reszta w kolorze tła; granice jako linie pomocnicze.
+      var part = [];
+      curve.forEach(function (p, j) {
+        if (crit.reject(p[0])) part.push(p);
+        if ((!crit.reject(p[0]) || j === curve.length - 1) && part.length) {
+          layers.push({ type: "line", data: part, color: P.accent, width: 0, fill: P.accent, fillAlpha: 0.3 }); part = [];
+        }
+      });
+      layers.push({ type: "line", data: curve.filter(function (p) { return !crit.reject(p[0]); }), color: P.niebo, width: 0, fill: P.niebo, fillAlpha: 0.22 });
+      crit.values.forEach(function (c) { layers.push({ type: "vline", x: c, color: P.accent, width: 1.8, dash: [4, 4] }); });
+      if (!chisq && crit.values.length === 2) {
+        var mid = (crit.values[1] + x1) / 2;
+        layers.push({ type: "text", x: 0, y: top * 0.45, text: "nie odrzucamy H₀", color: P.secondary, bold: true, valign: "middle" });
+        layers.push({ type: "text", x: -mid, y: top * 0.25, text: "Hₐ", color: P.accent, bold: true, valign: "middle" });
+        layers.push({ type: "text", x: mid, y: top * 0.25, text: "Hₐ", color: P.accent, bold: true, valign: "middle" });
+      }
+    }
+    layers.push({ type: "line", data: curve, color: P.secondary, width: 1.1 });
+    layers.push({ type: "vline", x: stat, color: roleColor(P, role), width: roleWidth(role) });
+    layers.push(lineLabel(stat, top * 0.93, (chisq ? "χ²" : "t") + " = " + fmt(stat, 3), roleColor(P, role), !(stat > x0 + 0.7 * span)));
+    return { x: [x0, x1], y: [0, top], layers: layers, xName: "Statystyka testowa", yName: "Gęstość",
+             aria: "Rozkład statystyki testowej pod hipotezą zerową z zaznaczoną statystyką z próby." };
+  }
+
+  // ---- Rozdział 4: jedna zmienna ilościowa (test t jednej próby) ----------------
+  // Jedna wspólna próba dla testu dwustronnego (s05_t1) i jednostronnego (s05_t1b).
+  // Próbka pamięta scenariusz i n: po ich zmianie jest nieaktualna i ryciny wracają do stanu pustego.
+  store.t1 = null;
+  function t1Controls() {
+    var sc = document.getElementById("ch2_scenario"), n = document.getElementById("ch2_n");
+    return { scenario: sc ? sc.value : "concentration", n: n ? Number(n.value) : 40 };
+  }
+  function t1Sample() {
+    var c = t1Controls(), s = store.t1;
+    return s && s.scenario === c.scenario && s.n === c.n ? s.values : null;
+  }
+  // Histogram danych (kroki 1–2): rama z danych i μ₀, wspólna dla obu kroków.
+  function t1Hist(P, x, mu0, xlab, step) {
+    var bins = hist15(x), top = 0, m = T.mean(x);
+    bins.forEach(function (r) { top = Math.max(top, r[2]); });
+    top *= 1.3;
+    var lo = Math.min(Math.min.apply(null, x), mu0), hi = Math.max(Math.max.apply(null, x), mu0), pad = (hi - lo) * 0.06;
+    var layers = [{ type: "bins", data: bins, color: P.niebo, alpha: 0.7, stroke: P.ink }];
+    if (step >= 2) {
+      // μ₀ znamy z hipotezy; średnia z próby jest nowa w kroku 2.
+      var right = m >= mu0, role = stepRole(step, 2);
+      layers.push({ type: "vline", x: mu0, color: P.secondary, width: 1.1, dash: [4, 4] });
+      layers.push({ type: "vline", x: m, color: roleColor(P, role), width: roleWidth(role) });
+      layers.push(lineLabel(mu0, top * 0.92, "μ₀ = " + mu0, P.secondary, !right));
+      layers.push(lineLabel(m, top * 0.92, "x̄ = " + fmt(m, 2), roleColor(P, role), right));
+    }
+    return { x: [lo - pad, hi + pad], y: [0, top], layers: layers, xName: xlab, yName: "Liczba", aria: "Histogram wylosowanej próby." };
+  }
+  function t1Fig(oneSided) {
+    return {
+      act: function (state, action, el) {
+        if (oneSided) return;
+        var c = t1Controls(), par = state.config.scenarios[c.scenario];
+        store.t1 = { scenario: c.scenario, n: c.n, values: rng.many(c.n, function () { return rng.norm(par.mu_true, par.sd); }) };
+      },
+      draw: function (v, P, k, state, vals, step) {
+        var x = t1Sample();
+        if (!x) return null;
+        var par = state.config.scenarios[t1Controls().scenario];
+        if (step <= 2) return t1Hist(P, x, par.mu0, par.xlab, step);
+        var alt = oneSided ? par.alt : "two.sided", r = tOne(x, par.mu0, alt);
+        return nullPlot(P, r.t, r.df, "t", alt, step === 3 ? "stat" : "decision");
+      },
+      text: function (state, v, vals, step) {
+        var x = t1Sample();
+        if (!x) return "";
+        var par = state.config.scenarios[t1Controls().scenario], mu0 = par.mu0;
+        var r = tOne(x, mu0, oneSided ? par.alt : "two.sided");
+        if (!oneSided) {
+          if (step === 1) return "Mamy próbę " + b(r.n) + " obserwacji. Chcemy sprawdzić, czy średnia różni się od μ₀ = " + b(mu0) + ".";
+          if (step === 2) return "x̄ = " + b(fmt(r.mean, 2)) + ", s = " + b(fmt(r.sd, 2)) + ", SE = s/√n = " + b(fmt(r.se, 2)) +
+            ". Różnica między x̄ a μ₀: " + b(fmt(r.mean - mu0, 2)) + ". Żeby ocenić, czy to dużo, odnosimy ją do SE.";
+          if (step === 3) return "t = (" + fmt(r.mean, 2) + " − " + mu0 + ") / " + fmt(r.se, 2) + " = " + b(fmt(r.t, 3)) +
+            ". Statystyka t mówi: średnia z próby jest " + b(fmt(Math.abs(r.t), 1)) + " błędów standardowych od μ₀.";
+          return verdictHtml(r.p);
+        }
+        if (step === 1) return "n = " + b(r.n) + " (te same dane co wyżej). Pytamy, czy średnia jest " +
+          (par.alt === "less" ? "mniejsza" : "większa") + " niż μ₀ = " + b(mu0) + ".";
+        if (step === 2) return "x̄ = " + b(fmt(r.mean, 2)) + ", s = " + b(fmt(r.sd, 2)) + ", SE = s/√n = " + b(fmt(r.se, 2)) +
+          ", t = " + b(fmt(r.t, 3)) + " — te same wartości co w teście dwustronnym.";
+        if (step === 3) return "t = " + b(fmt(r.t, 3)) + ". W teście jednostronnym patrzymy tylko na " +
+          (par.alt === "less" ? "lewy" : "prawy") + " ogon rozkładu.";
+        return "Jednostronnie: " + verdictHtml(r.p);
+      },
+      // Test jednostronny korzysta z próby i kontrolek testu dwustronnego: odświeżamy go przy każdej zmianie.
+      update: function () { if (!oneSided) notify(["s05_t1b"]); },
+      noteKey: function () { return t1Sample() ? "data" : "empty"; }
+    };
+  }
+  figures.s05_t1 = t1Fig(false);
+  figures.s05_t1b = t1Fig(true);
 
   S.register(figures);
 })();

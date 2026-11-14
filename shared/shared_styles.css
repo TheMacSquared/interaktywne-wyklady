@@ -1967,7 +1967,7 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-toolbar .lc-push{margin-left:auto}
 .lc-figure-panel>*+.lc-toolbar{margin-top:1.4em}
 /* Szeroki wzór (MathJax 2 i 3) przewija się w poziomie zamiast wylewać się z panelu. */
-.lc-figure-panel .MathJax_Display,.lc-figure-panel mjx-container[display="true"]{max-width:100%;overflow-x:auto;overflow-y:hidden}
+.lc-figure-panel .MathJax_Display,.lc-figure-panel .MathJax_SVG_Display,.lc-figure-panel mjx-container[display="true"]{max-width:100%;overflow-x:auto;overflow-y:hidden}
 .lc-toolbar .form-group,.lc-toolbar .shiny-input-container{margin:0}
 /* Pole wyboru w pasku ma szerokość treści, żeby inne elementy (np. kropki kroków) zmieściły się w tym samym rzędzie. */
 .lc-toolbar>.shiny-input-container:has(>.checkbox){width:auto!important;flex:0 1 auto}
@@ -2259,7 +2259,8 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-note-b pre,.lc-more-b pre{margin:.3em 0;font:.9em/1.5 var(--upwr-mono);background:var(--upwr-surface-sunken);padding:.5em .7em;overflow-x:auto;white-space:pre}
 
 /* Ramka wzoru z samym tekstem (np. hipotezy H₀/H₁): do lewej, zwykły rozmiar */
-.lc-formula-box:not(:has(.MathJax,.MathJax_Display,mjx-container,.lc-formula-row)){text-align:left;font-size:.94em}
+/* .MathJax_SVG: wzory złożone przy budowaniu strony statycznej (scripts/build_static.R). */
+.lc-formula-box:not(:has(.MathJax,.MathJax_Display,.MathJax_SVG,.MathJax_SVG_Display,mjx-container,.lc-formula-row)){text-align:left;font-size:.94em}
 .lc-formula-box>p{margin:.2em 0}
 
 /* Pułapka — jedyny wypełniony blok tekstowy, max 1 na sekcję */

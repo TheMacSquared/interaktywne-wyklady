@@ -386,26 +386,5 @@ ch2h_ui <- list(
 # SERVER
 # ============================================================================
 
-ch2h_server <- function(input, output, session) {
-
-  # --- Widget: Jednostronny vs dwustronny ---
-  observe({
-    req(input$ch2h_alpha, input$ch2h_sided)
-    alpha <- input$ch2h_alpha
-    sided <- input$ch2h_sided
-
-    crit <- if (sided == "two.sided") {
-      qnorm(1 - alpha / 2)
-    } else if (sided == "greater") {
-      qnorm(1 - alpha)
-    } else {
-      qnorm(alpha)
-    }
-
-    session$sendCustomMessage("ws_sided_chart", list(
-      id = "ch2h_sided_chart",
-      sided = sided,
-      crit = crit
-    ))
-  })
-}
+# Rozdział nie ma logiki serwera: Ryc. 2.4 rysuje ws_charts.js z kontrolek strony.
+ch2h_server <- function(input, output, session) {}

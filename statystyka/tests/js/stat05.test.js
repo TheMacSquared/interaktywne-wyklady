@@ -36,3 +36,23 @@ test("rozdział 1: moc testu jak w R i decyzja w quizie", () => {
   assert.equal(Z.quizAnswer({ p: 0.06, alpha: 0.01 }), "fail_to_reject");
   assert.equal(Z.quizAnswer({ p: 0.05, alpha: 0.05 }), "fail_to_reject");            // p = α: nie odrzucamy
 });
+
+test("rozdział 4: test t jednej próby, histogram kroków i wartości krytyczne", () => {
+  // R: x <- c(71.2, 68.4, 75.1, 80.3, 66.7, 73.9, 69.5, 77.8); t.test(x, mu = 70)
+  //    t = 1.7056, df = 7, p-value = 0.1319; alternative = "greater": 0.0659; "less": 0.9341
+  const x = [71.2, 68.4, 75.1, 80.3, 66.7, 73.9, 69.5, 77.8];
+  const two = Z.tOne(x, 70, "two.sided");
+  close(two.t, 1.705573, 1e-5, "t"); assert.equal(two.df, 7); close(two.p, 0.1318561, 1e-6, "p dwustronne");
+  close(Z.tOne(x, 70, "greater").p, 0.0659281, 1e-6, "p prawostronne");
+  close(Z.tOne(x, 70, "less").p, 0.9340719, 1e-6, "p lewostronne");
+  const bins = Z.hist15(x);
+  assert.equal(bins.length, 15);
+  assert.equal(bins.reduce((s, b) => s + b[2], 0), 8);
+  assert.equal(bins[0][2], 1); assert.equal(bins[14][2], 1);       // minimum w pierwszym, maksimum w ostatnim przedziale
+  // R: qt(.975, 39) = 2.022691; qt(.95, 39) = 1.684875; qchisq(.95, 3) = 7.814728
+  close(Z.critical("t", 39, "two.sided").values[1], 2.022691, 1e-5, "qt dwustronne");
+  close(Z.critical("t", 39, "greater").values[0], 1.684875, 1e-5, "qt prawostronne");
+  close(Z.critical("t", 39, "less").values[0], -1.684875, 1e-5, "qt lewostronne");
+  close(Z.critical("chisq", 3).values[0], 7.814728, 1e-5, "qchisq");
+  assert.ok(Z.critical("t", 39, "less").reject(-2) && !Z.critical("t", 39, "less").reject(2));
+});

@@ -109,6 +109,14 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   w skryptach wykładów 03–05 analizy ryzyka i w statystyce nie było pod tym
   kątem sprawdzane.
 - [ ] Faza 5: statystyka 05–06 (29 wykresów R; Shapiro, Levene). Gotowe: 06
+  **05 w toku** (15 listopada 2026): bez serwera są rozdziały logiki testu
+  (`ch1_logika.R`), hipotez (`ch2_hipotezy.R`) i jednej zmiennej ilościowej
+  (`ch2_jedna_ilosciowa.R`); zostały `ch3_jedna_jakosciowa.R`,
+  `ch4_korelacja.R`, `ch5_dwie_jakosciowe.R`, `ch6_dwie_grupy.R`,
+  `ch7_anova.R`, `ch10_sila_efektu.R` (stan: `Rscript scripts/check_static_ready.R
+  --details 05-wnioskowanie-statystyczne`). Wspólne części rycin „test krok po
+  kroku” (rozkład statystyki testowej, werdykt, role kroków) są w
+  `05-…/modules/figures.js`. Wykład częściowo przeniesiony działa pod Shiny.
   (6 wykresów; dane losowane na jednej rycinie testują panele obok — wspólny
   magazyn w `modules/figures.js` i zdarzenie `lc:sf-redraw`; stan przed
   losowaniem i warianty wyniku w elementach `[data-when]`).
@@ -124,6 +132,10 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   podzbiór predyktorów; przycisk „Dopasuj” zniknął, bo model zmienia się od razu).
 - [ ] Drugi test losowy bez ziarna: `statystyka/tests/js/stops34.test.js` zawiódł raz
   na pięć uruchomień (15 listopada 2026), bez związku ze zmienianym kodem.
+- [x] Ramki wzorów (`.lc-formula-box`) na stronach statycznych były wyrównane do lewej
+  i mniejsze niż pod Shiny: reguła w `shared_styles.css` nie znała klasy `MathJax_SVG`
+  wzorów złożonych przy budowaniu (poprawione 15 listopada 2026; dotyczyło wszystkich
+  zbudowanych wykładów, więc strony trzeba zbudować ponownie).
 - [ ] `scripts/check_static_page.R` nie zauważa ryciny, która przy każdym
   rysowaniu rzuca wyjątek (silnik łapie go i ponawia, strona się zawiesza):
   wykrywa to `scripts/migracja/gdzie_wisi.R`. Dodać taki test do kontroli strony.
