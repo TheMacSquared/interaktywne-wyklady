@@ -1,6 +1,6 @@
 // Ryciny rozkładów teoretycznych wykładu 03 liczone w przeglądarce (dawniej
-// ggplot na serwerze). Silnik: window.lcSF (statystyka/R/lc_stat_figures.js),
-// rozkłady: window.lcDist (statystyka/R/lc_dist.js). Scenariusze, kolory
+// ggplot na serwerze). Silnik: window.lcSF (shared/lc_stat_figures.js),
+// rozkłady: window.lcDist (shared/lc_dist.js). Scenariusze, kolory
 // i podpisy przychodzą z R w data-config (jedno źródło definicji).
 //
 //   pmf    — lizaki P(X = k) kilku scenariuszy (Ryc. 3.4, 3.8, 3.11)

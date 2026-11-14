@@ -86,8 +86,12 @@
     var tocList = sidebar.querySelector("[data-lc-toc-for='" + chapterId + "']");
     if (!tocList) return;
 
-    // Szukaj sekcji rozdziału w #lc-main (renderUI może wstawić wrapper div)
-    var section = main.querySelector("[data-lc-chapter-content]");
+    // Sekcja rozdziału w #lc-main. Kurs z chapter_mode "all" ma w stronie wszystkie
+    // rozdziały, więc szukamy po id; przy "single" jest jedna sekcja, a zanim renderUI
+    // podmieni treść, może to być jeszcze poprzedni rozdział.
+    var section = document.getElementById(chapterId) ||
+      main.querySelector("[data-lc-chapter-content]");
+    tocList.replaceChildren();
 
     var headings = section
       ? Array.from(section.querySelectorAll(
@@ -138,7 +142,8 @@
     if (!main || !sidebar || !scrollSpyChapterId) return;
 
     var scrollTop = main.scrollTop + 80;
-    var section   = main.querySelector("[data-lc-chapter-content]");
+    var section   = document.getElementById(scrollSpyChapterId) ||
+      main.querySelector("[data-lc-chapter-content]");
     if (!section) return;
 
     var headings = Array.from(

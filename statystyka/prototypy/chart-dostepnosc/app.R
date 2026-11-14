@@ -16,11 +16,14 @@ library(dplyr)
 }
 app_dir <- .find_app_dir()
 project_root <- normalizePath(file.path(app_dir, "..", ".."))
+shared_root <- file.path(dirname(project_root), "shared")
 
-source(file.path(project_root, "R", "palette.R"), local = TRUE)
-source(file.path(project_root, "R", "theme_upwr.R"), local = TRUE)
-source(file.path(project_root, "R", "shared.R"), local = TRUE)
-source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+source(file.path(project_root, "R", "course.R"), local = TRUE)
+
+source(file.path(shared_root, "palette.R"), local = TRUE)
+source(file.path(shared_root, "theme_upwr.R"), local = TRUE)
+source(file.path(shared_root, "shared.R"), local = TRUE)
+source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
 area_readouts <- function() {
@@ -60,7 +63,7 @@ ui <- lecture_page(
   module_label = "Prototyp", chapters = .chapters,
   header_extras = tagList(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
-    includeScript(file.path(project_root, "R", "lc_charts.js")),
+    includeScript(file.path(shared_root, "lc_charts.js")),
     includeScript(file.path(project_root, "03-rozklady-prawdopodobienstwa", "modules", "area_chart.js")),
     includeCSS(file.path(app_dir, "prototype.css"))
   )

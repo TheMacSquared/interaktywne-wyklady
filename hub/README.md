@@ -19,7 +19,7 @@ Pliki do dwukliku uruchamiają `hub/start.R`, który przed startem:
 
 - sprawdza wersję R (≥ 4.1) i pakiety huba (`shiny`, `processx`) — bez nich kończy
   z gotowym poleceniem `install.packages(...)`
-- zbiera pakiety wykładów parserem R z `app.R`, `modules/` i `<przedmiot>/R/`
+- zbiera pakiety wykładów parserem R z `app.R`, `modules/`, `<przedmiot>/R/` i `shared/`
   (bez uruchamiania kodu; pakiety za `requireNamespace()` mają fallback i są pomijane),
   wypisuje, których wykładów dotyczą braki, i pyta, czy je zainstalować; odmowa
   nie blokuje huba — nie zadziałają tylko wykłady z brakami
@@ -52,7 +52,8 @@ wykłady naraz — nie zostają procesy trzymające porty.
 
 Nic nie trzeba robić. Hub skanuje repo przy starcie i po kliknięciu
 „Odśwież listę": wykładem jest każdy katalog `<przedmiot>/<wyklad>/app.R`
-w przedmiocie mającym własne `R/lecture_layout.R`. Tytuł, numer i moduł hub
+w przedmiocie mającym `R/course.R` (kursy na wspólnym rdzeniu `shared/`) albo własne
+`R/lecture_layout.R` (statystyka 2). Tytuł, numer i moduł hub
 czyta z wywołania `lecture_page()`, a liczbę rozdziałów z `.chapters` — oba
 przez parser R, nie przez uruchamianie kodu.
 

@@ -1,7 +1,7 @@
 testthat::test_that("tryby paneli zachowują zgodność istniejących wywołań", {
   env <- new.env(parent = asNamespace("shiny"))
-  sys.source(file.path(risk_root, "R", "palette.R"), env)
-  sys.source(file.path(risk_root, "R", "lecture_layout.R"), env)
+  sys.source(file.path(dirname(risk_root), "shared", "palette.R"), env)
+  sys.source(file.path(dirname(risk_root), "shared", "lecture_layout.R"), env)
   html <- function(x) htmltools::renderTags(x)$html
   testthat::expect_match(html(env$figure_panel("Test", full_width = TRUE)), "lc-full")
   testthat::expect_false(grepl("lc-panel-text", html(env$figure_panel("Test"))))

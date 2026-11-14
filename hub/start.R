@@ -69,17 +69,21 @@ scan_files <- function(files) {
   found
 }
 
-# Przedmiot to katalog z R/lecture_layout.R, wykład to <przedmiot>/<wykład>/app.R
-# — ten sam warunek co hub_discover() w hub/R/discovery.R.
+# Przedmiot to katalog z R/course.R (rdzeń w shared/) albo R/lecture_layout.R,
+# wykład to <przedmiot>/<wykład>/app.R — ten sam warunek co hub_discover()
+# w hub/R/discovery.R.
 lecture_requirements <- function(repo_root) {
   base_packages <- rownames(installed.packages(priority = "base"))
   subjects <- list.dirs(repo_root, recursive = FALSE)
-  subjects <- subjects[file.exists(file.path(subjects, "R", "lecture_layout.R"))]
+  subjects <- subjects[file.exists(file.path(subjects, "R", "course.R")) |
+                       file.exists(file.path(subjects, "R", "lecture_layout.R"))]
 
   result <- list()
   for (subject in subjects) {
-    shared <- scan_files(list.files(file.path(subject, "R"), pattern = "[.]R$",
-                                    full.names = TRUE))
+    shared_dirs <- file.path(subject, "R")
+    if (file.exists(file.path(subject, "R", "course.R")))
+      shared_dirs <- c(shared_dirs, file.path(repo_root, "shared"))
+    shared <- scan_files(list.files(shared_dirs, pattern = "[.]R$", full.names = TRUE))
     apps <- list.dirs(subject, recursive = FALSE)
     apps <- apps[file.exists(file.path(apps, "app.R"))]
     for (app in apps) {

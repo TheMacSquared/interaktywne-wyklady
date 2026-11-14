@@ -5,7 +5,7 @@ const { environment, Element, root } = require("./harness");
 
 function load() {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   env.load("04-przedzialy-ufnosci/modules/sf_examples.js");
   const fig = env.window.lcSF.figures["s4-case"], P = env.window.lcCharts.palette();
   const run = config => {

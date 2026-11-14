@@ -3,7 +3,7 @@
 #
 # Uwaga: to nie jest wykład, tylko infrastruktura zajęciowa, więc świadomie
 # nie używa lecture_page() ani DESIGN_CONTRACT.md. Paletę bierze z
-# statystyka/R/palette.R, żeby wizualnie należeć do tej samej rodziny.
+# shared/palette.R, żeby wizualnie należeć do tej samej rodziny.
 
 library(shiny)
 

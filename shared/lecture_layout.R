@@ -1,52 +1,43 @@
 # lecture_layout.R
-# Shared layout functions dla interaktywnych wykładów.
-# Kanoniczny shell dla wykładów w nowym designie.
-# Używanie: source(file.path(project_root, "R", "lecture_layout.R"), local=TRUE)
+# Wspólny layout interaktywnych wykładów (rdzeń w shared/).
+# Używanie w app.R:
+#   source(file.path(project_root, "R", "course.R"), local = TRUE)
+#   source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
 
-# Przechwytuje project_root w momencie source() — parent.frame() to środowisko
-# skryptu wywołującego, gdzie project_root jest zdefiniowane.
-.LC_PROJ_ROOT <- local({
-  env <- parent.frame(2)  # 2: source() → eval() → tu
-  if (exists("project_root", envir = env, inherits = FALSE))
-    get("project_root", envir = env)
-  else {
-    # Fallback: lokalizacja tego pliku → ../..
-    ofile <- tryCatch(normalizePath(sys.frame(sys.nframe())$ofile),
-                      error = function(e) NULL)
-    if (!is.null(ofile)) dirname(dirname(ofile)) else getwd()
-  }
+# Zmienne skryptu wywołującego w momencie source(): plik jest wykonywany
+# w środowisku, w którym app.R zdefiniował project_root, shared_root i .LC_COURSE.
+.lc_caller_var <- function(name, default) {
+  env <- environment(.lc_caller_var)
+  if (exists(name, envir = env, inherits = TRUE)) get(name, envir = env, inherits = TRUE)
+  else default
+}
+
+# Katalog przedmiotu (pliki kursu w <przedmiot>/R/).
+.LC_PROJ_ROOT <- .lc_caller_var("project_root", getwd())
+
+# Katalog wspólnego rdzenia: shared/ obok katalogów przedmiotów.
+.LC_SHARED_ROOT <- .lc_caller_var(
+  "shared_root", file.path(dirname(.LC_PROJ_ROOT), "shared")
+)
+
+# ============================================================================
+# KONFIGURACJA KURSU (moduły i wykłady — top nav): <przedmiot>/R/course.R
+# ============================================================================
+
+# Wartości domyślne dla pól, których kurs nie ustawił (np. w testach komponentów).
+.LC_COURSE <- local({
+  cfg <- list(title = "Wykłady", logo_mark = "W", modules = list(),
+              lecture_module = list(), chapter_mode = "single",
+              plot_scaling = FALSE, styles = character(0))
+  user <- .lc_caller_var(".LC_COURSE", list())
+  cfg[names(user)] <- user
+  cfg
 })
 
-# ============================================================================
-# KONFIGURACJA KURSÓW (moduły i wykłady — top nav)
-# ============================================================================
-
-.LC_MODULES <- list(
-  list(num = "01", slug = "jezyk",       title = "Język ryzyka",         short = "Język",      href = "#"),
-  list(num = "02", slug = "warunki",     title = "Warunki",              short = "Warunki",    href = "#"),
-  list(num = "03", slug = "alarm",       title = "Alarm i prawda",       short = "Bayes",      href = "#"),
-  list(num = "04", slug = "proby",       title = "Wiele prób",           short = "Próby",      href = "#"),
-  list(num = "05", slug = "oczekiwanie", title = "Do zdarzenia",         short = "Czekanie",   href = "#"),
-  list(num = "06", slug = "prog",        title = "Zmienność i próg",     short = "Próg",       href = "#"),
-  list(num = "07", slug = "czas-zycia",  title = "Czas życia",           short = "Czas życia", href = "#"),
-  list(num = "08", slug = "systemy",     title = "Niezawodność systemu", short = "Systemy",    href = "#"),
-  list(num = "09", slug = "fta",         title = "Drzewo błędów",        short = "FTA",        href = "#"),
-  list(num = "10", slug = "decyzja",     title = "Od modelu do decyzji", short = "Decyzja",    href = "#")
-)
+.LC_MODULES <- .LC_COURSE$modules
 
 # Mapowanie lecture_id → slug modułu
-.LC_LECTURE_MODULE <- list(
-  "jezyk-ryzyka"          = "jezyk",
-  "warunki"               = "warunki",
-  "alarm-i-prawda"        = "alarm",
-  "wiele-prob"            = "proby",
-  "do-zdarzenia"          = "oczekiwanie",
-  "zmiennosc-i-prog"      = "prog",
-  "czas-zycia"            = "czas-zycia",
-  "niezawodnosc-systemu"  = "systemy",
-  "drzewo-bledow"         = "fta",
-  "model-do-decyzji"      = "decyzja"
-)
+.LC_LECTURE_MODULE <- .LC_COURSE$lecture_module
 
 # ============================================================================
 # Przełączanie wykładów z górnego paska (tylko gdy wykład uruchomił hub)
@@ -125,10 +116,10 @@ module_tabs <- function(current_slug = NULL) {
     href   = if (nzchar(.lc_hub_url)) .lc_hub_url else "#",
     target = if (nzchar(.lc_hub_url)) "wyklady_hub" else NULL,
     title  = if (nzchar(.lc_hub_url)) "Powrót do spisu wykładów" else NULL,
-    tags$div(class = "lc-tabs-logo-mark", "R"),
+    tags$div(class = "lc-tabs-logo-mark", .LC_COURSE$logo_mark),
     tags$div(
       class = "lc-tabs-logo-text",
-      tags$div(class = "lc-tabs-logo-title", "Analiza ryzyka"),
+      tags$div(class = "lc-tabs-logo-title", .LC_COURSE$title),
       tags$div(class = "lc-tabs-logo-sub",   "Skrypt wykładowy")
     )
   )
@@ -240,7 +231,8 @@ lecture_page <- function(lecture_id      = NULL,
   current_module <- if (!is.null(lecture_id))
     .LC_LECTURE_MODULE[[lecture_id]] else NULL
 
-  proj_root <- .LC_PROJ_ROOT
+  proj_root   <- .LC_PROJ_ROOT
+  shared_root <- .LC_SHARED_ROOT
 
   # Buduj sidebar: lista rozdziałów (przyciski jako Shiny action-button)
   nav_chapters <- lapply(seq_along(chapters), function(i) {
@@ -371,14 +363,16 @@ lecture_page <- function(lecture_id      = NULL,
         });")
       ),
       withMathJax(),
-      includeCSS(file.path(proj_root, "R", "shared_styles.css")),
-      # Paleta UPWr jako CSS custom properties — źródło wartości: R/palette.R.
+      includeCSS(file.path(shared_root, "shared_styles.css")),
+      # Arkusze kursu: elementy własne przedmiotu i świadome odstępstwa od rdzenia.
+      lapply(.LC_COURSE$styles, function(f) includeCSS(file.path(proj_root, "R", f))),
+      # Paleta UPWr jako CSS custom properties — źródło wartości: shared/palette.R.
       # Wstrzyknięte po shared_styles.css, żeby wartości z palette.R miały
       # pierwszeństwo nad wartościami fallbackowymi w CSS.
       .lc_palette_css(),
       # Tryb halloweenowy wyłączony (bez przycisku H, bez trybu wg daty); kod zostaje na przyszły rok.
-      includeCSS(file.path(proj_root, "R", "halloween.css")),
-      includeScript(file.path(proj_root, "R", "halloween.js")),
+      includeCSS(file.path(shared_root, "halloween.css")),
+      includeScript(file.path(shared_root, "halloween.js")),
       tags$script(HTML("
 (function() {
   try {
@@ -393,10 +387,10 @@ lecture_page <- function(lecture_id      = NULL,
   } catch (e) {}
 })();
       ")),
-      includeScript(file.path(proj_root, "R", "shared_toc.js")),
-      includeScript(file.path(proj_root, "R", "lc_widgets.js")),
-      includeScript(file.path(proj_root, "R", "lc_formula.js")),
-      includeScript(file.path(proj_root, "R", "lc_dragdrop.js")),
+      includeScript(file.path(shared_root, "shared_toc.js")),
+      includeScript(file.path(shared_root, "lc_widgets.js")),
+      includeScript(file.path(shared_root, "lc_dragdrop.js")),
+      includeScript(file.path(shared_root, "lc_formula.js")),
       tags$script(HTML("
 function lcUpdateTabsScrollState(list) {
   if (!list) return;
@@ -516,22 +510,37 @@ lecture_server <- function(chapters, input, output, session) {
     if (length(idx) > 0) lc_idx(idx[[1]])
   }, ignoreInit = TRUE)
 
-  # Montujemy kontrolki raz: ukrycie rozdziału zachowuje wartości wejść.
-  # Wszystkie rozdziały inicjalizują parametry także przy wejściu przez skrót.
-  output$lc__active_index <- renderText(lc_idx())
-  outputOptions(output, "lc__active_index", suspendWhenHidden = FALSE)
-  output$lc__chapter_content <- renderUI({
-    tagList(lapply(seq_along(chs), function(i) {
-      ch <- chs[[i]]
-      conditionalPanel(
-        condition = sprintf("output.lc__active_index == '%d'", i),
-        tags$section(
-          id = ch$id, class = "lc-chapter lc-content-wrap",
-          `data-lc-chapter-content` = "true", ch$content
+  if (identical(.LC_COURSE$chapter_mode, "all")) {
+    # Montujemy kontrolki raz: ukrycie rozdziału zachowuje wartości wejść.
+    # Wszystkie rozdziały inicjalizują parametry także przy wejściu przez skrót.
+    output$lc__active_index <- renderText(lc_idx())
+    outputOptions(output, "lc__active_index", suspendWhenHidden = FALSE)
+    output$lc__chapter_content <- renderUI({
+      tagList(lapply(seq_along(chs), function(i) {
+        ch <- chs[[i]]
+        conditionalPanel(
+          condition = sprintf("output.lc__active_index == '%d'", i),
+          tags$section(
+            id = ch$id, class = "lc-chapter lc-content-wrap",
+            `data-lc-chapter-content` = "true", ch$content
+          )
         )
-      )
-    }))
-  })
+      }))
+    })
+  } else {
+    # Renderuj aktywny rozdział
+    output$lc__chapter_content <- renderUI({
+      idx <- lc_idx()
+      ch  <- chs[[idx]]
+      # withMathJax(): wzory w rozdziale wstawianym przez renderUI trzeba złożyć po wstawieniu.
+      withMathJax(tags$section(
+        id    = ch$id,
+        class = "lc-chapter lc-content-wrap",
+        `data-lc-chapter-content` = "true",
+        ch$content
+      ))
+    })
+  }
 
   # Powiadamiaj JS o zmianie aktywnego rozdziału (setActiveChapter → sidebar + TOC)
   observe({
@@ -668,64 +677,33 @@ lc_widget_layout <- function(controls, content, layout = c("above", "beside")) {
 }
 
 
-# Ćwiczenie „przypisz karty do pól" — przeciąganie myszą i obsługa klawiatury.
-# Logika po stronie klienta jest w R/lc_dragdrop.js, style w shared_styles.css.
-# Do serwera trafia `input[[input_id]]` — lista `kod_pola = id_karty`
-# zawierająca wyłącznie pola już wypełnione.
-#
-#   items  data.frame z kolumnami `id` i `text` (kolejność = kolejność w puli)
-#   zones  nazwany wektor `kod = "Etykieta"`
-#   colors wektor kolorów równoległy do `zones` (opcjonalny)
-lc_drop_match <- function(input_id, items, zones, colors = NULL,
-                          hint = paste(
-                            "Przeciągnij kartę do właściwego pola.",
-                            "Bez myszy: Enter podnosi kartę, strzałki wybierają pole,",
-                            "Enter upuszcza, Escape anuluje, Delete odsyła kartę do puli."
-                          ),
-                          reset_label = "Zacznij od nowa",
-                          actions = NULL, class = NULL) {
-  stopifnot(all(c("id", "text") %in% names(items)), length(zones) > 0)
-  if (is.null(colors)) colors <- rep(upwr_accent, length(zones))
-  stopifnot(length(colors) == length(zones))
+# Mała lupa Chart.js; stan i zdarzenia obsługuje lcCharts.zoomControl(root).
+lc_chart_zoom_button <- function() {
+  tags$button(type = "button", class = "lc-chart-zoom",
+    `data-lc-chart-zoom` = "true", `aria-pressed` = "false",
+    `aria-label` = "Powiększ wykres i napisy", title = "Powiększ wykres i napisy",
+    HTML(paste0(
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ',
+      'stroke-linecap="round" aria-hidden="true" focusable="false">',
+      '<circle cx="10" cy="10" r="6.5"></circle><path d="M15 15l5 5M7 10h6"></path>',
+      '<path class="lc-chart-zoom-plus" d="M10 7v6"></path></svg>'
+    )))
+}
 
-  cards <- lapply(seq_len(nrow(items)), function(i) {
-    tags$div(
-      class = "lc-dm-card",
-      draggable = "true",
-      tabindex = "0",
-      role = "button",
-      `aria-pressed` = "false",
-      `data-lc-dm-item` = items$id[[i]],
-      `data-lc-dm-order` = i,
-      items$text[[i]]
-    )
-  })
-
-  fields <- lapply(seq_along(zones), function(i) {
-    tags$div(
-      class = "lc-dm-zone",
-      style = paste0("--lc-dm-color:", colors[[i]], ";"),
-      `data-lc-dm-zone` = names(zones)[[i]],
-      tags$div(class = "lc-dm-zone-label", unname(zones)[[i]]),
-      tags$div(class = "lc-dm-slot")
-    )
-  })
-
+# Wykres z natywnym trybem pełnoekranowym.
+# UI-only wrapper wokół plotOutput(); server używa zwykłego output$... <- renderPlot().
+lc_plot_fullscreen <- function(outputId, height = "300px", width = "100%",
+                               label = "Pełny ekran", ...) {
   tags$div(
-    class = paste(c("lc-dm", class), collapse = " "),
-    `data-lc-dm-input` = input_id,
-    tags$p(class = "lc-dm-hint", hint),
-    tags$div(class = "lc-dm-pool", cards),
-    tags$div(class = "lc-dm-zones", fields),
-    tags$div(class = "lc-dm-status", role = "status", `aria-live` = "polite"),
-    tags$div(class = "lc-dm-actions",
-      tags$button(
-        type = "button",
-        class = "btn lc-btn-outline lc-dm-reset",
-        `data-lc-dm-reset` = "true",
-        reset_label
-      ),
-      actions
+    class = "lc-plot-fullscreen-wrap",
+    shiny::plotOutput(outputId, height = height, width = width, ...),
+    tags$button(
+      class = "lc-plot-fullscreen-btn",
+      type = "button",
+      title = label,
+      `aria-label` = label,
+      `data-lc-fullscreen-toggle` = "true",
+      HTML("&#x26F6;")
     )
   )
 }
@@ -736,7 +714,7 @@ lc_formula_box <- function(...) {
 }
 
 # Wzór ze znacznikami: części wzoru w kolorach, pod wzorem opisy połączone
-# z nimi strzałkami (rysuje R/lc_formula.js). Część wzoru oznaczamy w TeX-u
+# z nimi strzałkami (rysuje shared/lc_formula.js). Część wzoru oznaczamy w TeX-u
 # jako ⟦k|...⟧, gdzie k to numer opisu w `notes`; części się nie zagnieżdżają.
 # Numeruj od lewej do prawej, żeby strzałki się nie krzyżowały.
 # notes: lista; element to tekst albo list(sym = "TeX", text = "opis").
@@ -919,7 +897,7 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
 
 # ============================================================================
 # .lc_palette_css() — generuje blok <style> z tokenami --upwr-* pobieranymi
-# z R/palette.R. Wstrzykiwane w tags$head przez lecture_page() po includeCSS.
+# z shared/palette.R. Wstrzykiwane w tags$head przez lecture_page() po includeCSS.
 # Jedno źródło prawdy dla wszystkich kolorów projektu (ggplot + CSS + inline).
 #
 # Tokeny pochodne (tints/hovers) są wyliczane z palet sekwencyjnych, żeby nie
@@ -1020,7 +998,7 @@ html[data-lc-theme=\"dark\"] {
 # Źródło: handoffy „Widgety v2” i „Tabele v2”. Style obejmują każdy
 # figure_panel(); tabele lc_table() działają też w toku tekstu.
 # Logika klienta (kroki, wartość suwaka, klikalne komórki) jest w
-# R/lc_widgets.js. Kod tej sekcji jest identyczny we wszystkich kursach.
+# shared/lc_widgets.js. Kod tej sekcji jest identyczny we wszystkich kursach.
 # ============================================================================
 
 .lc_icon_paths <- list(
@@ -1105,6 +1083,29 @@ lc_segmented <- function(input_id, label = NULL, choices, selected = NULL,
   )
 }
 
+# Lista rozwijana (natywny <select>) w stylu v2. choices jak w selectInput().
+lc_select <- function(input_id, choices, selected = NULL, aria_label = NULL) {
+  sel <- shiny::selectInput(input_id, label = NULL, choices = choices,
+                            selected = selected, selectize = FALSE, width = "100%")
+  if (!is.null(aria_label)) {
+    sel <- htmltools::tagQuery(sel)$find("select")$addAttrs(`aria-label` = aria_label)$allTags()
+  }
+  tags$div(class = "lc-select", sel)
+}
+
+# Legenda kolorów w HTML: tytuł + próbki. Używana nad wykresem zamiast legendy ggplot.
+lc_legend <- function(title, labels, colours) {
+  tags$div(class = "lc-legend", role = "list",
+    tags$span(class = "lc-legend-t", title),
+    lapply(seq_along(labels), function(i) {
+      tags$span(class = "lc-legend-i", role = "listitem",
+        tags$i(class = "lc-th-swatch", `aria-hidden` = "true",
+               style = paste0("--lc-sw:", colours[[i]], ";")),
+        labels[[i]])
+    })
+  )
+}
+
 # Grupa akcji jako jeden segment, np. +1 · +10 · +100 · +1000.
 # Argumenty: nazwane id = etykieta, np. lc_action_group(ch1_roll_1 = "+1").
 lc_action_group <- function(..., label = NULL) {
@@ -1139,7 +1140,7 @@ lc_fmt <- function(x, digits = 0, big_mark = "") {
   }, character(1), USE.NAMES = FALSE)
 }
 
-# Suwak v2: wartość w etykiecie (aktualizuje R/lc_widgets.js), min i max pod
+# Suwak v2: wartość w etykiecie (aktualizuje shared/lc_widgets.js), min i max pod
 # torem, bez siatki. digits domyślnie z kroku suwaka (także domyślnego kroku Shiny).
 lc_slider <- function(input_id, label, min, max, value, step = NULL,
                       digits = NULL, suffix = "") {
@@ -1191,20 +1192,90 @@ lc_caption <- function(..., tone = NULL) {
 # Wykres z wysokością z proporcji kontenera zamiast stałej wysokości w px.
 # Serwer bez zmian: zoom_plot_server() rysuje w rozmiarze kontenera.
 # max_height (np. "560px") tylko dla wykresów, które potrzebują więcej niż 440 px.
-lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL, max_height = NULL) {
+lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL, max_height = NULL,
+                    click = NULL) {
   style <- paste0(c(
     if (!is.null(ratio)) paste0("--lc-plot-ratio:", ratio, ";"),
     if (!is.null(ratio_narrow)) paste0("--lc-plot-ratio-narrow:", ratio_narrow, ";"),
     if (!is.null(max_height)) paste0("--lc-plot-max:", max_height, ";")
   ), collapse = "")
   tags$div(class = "lc-plot", style = if (nzchar(style)) style,
-    zoom_plot_ui(plot_id, height = "100%")
+    zoom_plot_ui(plot_id, height = "100%", click = click)
   )
 }
 
 # Dwa wykresy obok siebie od 760 px kontenera, pod sobą na węższym.
-lc_plots <- function(...) {
-  tags$div(class = "lc-plots", ...)
+# pair = TRUE: obok siebie już od 560 px (para do bezpośredniego porównania).
+lc_plots <- function(..., pair = FALSE) {
+  tags$div(class = paste(c("lc-plots", if (isTRUE(pair)) "is-pair"), collapse = " "), ...)
+}
+
+# Ćwiczenie „przypisz karty do pól" — przeciąganie myszą i obsługa klawiatury.
+# Logika po stronie klienta jest w lc_dragdrop.js, style w shared_styles.css.
+# Do serwera trafia `input[[input_id]]` — lista `kod_pola = id_karty`
+# zawierająca wyłącznie pola już wypełnione.
+#
+#   items  data.frame z kolumnami `id` i `text` (kolejność = kolejność w puli)
+#   zones  nazwany wektor `kod = "Etykieta"`
+#   colors wektor kolorów równoległy do `zones` (opcjonalny)
+#   item_colors wektor kolorów równoległy do wierszy `items` (opcjonalny);
+#          karta dostaje kolorowy pasek i lekkie tło, także po upuszczeniu
+lc_drop_match <- function(input_id, items, zones, colors = NULL,
+                          item_colors = NULL,
+                          hint = paste(
+                            "Przeciągnij kartę do właściwego pola.",
+                            "Bez myszy: Enter podnosi kartę, strzałki wybierają pole,",
+                            "Enter upuszcza, Escape anuluje, Delete odsyła kartę do puli."
+                          ),
+                          reset_label = "Zacznij od nowa",
+                          actions = NULL, class = NULL) {
+  stopifnot(all(c("id", "text") %in% names(items)), length(zones) > 0)
+  if (is.null(colors)) colors <- rep(upwr_accent, length(zones))
+  stopifnot(length(colors) == length(zones))
+  stopifnot(is.null(item_colors) || length(item_colors) == nrow(items))
+
+  cards <- lapply(seq_len(nrow(items)), function(i) {
+    tags$div(
+      class = "lc-dm-card",
+      draggable = "true",
+      tabindex = "0",
+      role = "button",
+      `aria-pressed` = "false",
+      `data-lc-dm-item` = items$id[[i]],
+      `data-lc-dm-order` = i,
+      style = if (!is.null(item_colors))
+        paste0("--lc-dm-item-color:", item_colors[[i]], ";"),
+      items$text[[i]]
+    )
+  })
+
+  fields <- lapply(seq_along(zones), function(i) {
+    tags$div(
+      class = "lc-dm-zone",
+      style = paste0("--lc-dm-color:", colors[[i]], ";"),
+      `data-lc-dm-zone` = names(zones)[[i]],
+      tags$div(class = "lc-dm-zone-label", unname(zones)[[i]]),
+      tags$div(class = "lc-dm-slot")
+    )
+  })
+
+  tags$div(
+    class = paste(c("lc-dm", class), collapse = " "),
+    `data-lc-dm-input` = input_id,
+    tags$p(class = "lc-dm-hint", hint),
+    tags$div(class = "lc-dm-pool", cards),
+    tags$div(class = "lc-dm-zones", fields),
+    tags$div(class = "lc-dm-status", role = "status", `aria-live` = "polite"),
+    tags$div(class = "lc-dm-actions",
+      tags$button(
+        type = "button",
+        class = "btn lc-btn-outline lc-dm-reset",
+        `data-lc-dm-reset` = "true",
+        reset_label
+      ),
+      actions
+    )
+  )
 }
 
 # Pusty stan wykresu lub tabeli: tekst w przerywanej ramce.
@@ -1235,7 +1306,7 @@ lc_compare_rows <- function(rows) {
 
 # Nawigacja kroków demonstracji. Wartość input$<id>: numer kroku (0 = start).
 # Nie da się cofnąć poniżej kroku `start` (start = 1: bez pustego stanu).
-# Stan trzyma klient (R/lc_widgets.js); lc_update_step() ustawia go z serwera.
+# Stan trzyma klient (shared/lc_widgets.js); lc_update_step() ustawia go z serwera.
 lc_step_nav <- function(input_id, steps, start = 0L,
                         start_label = "Zacznij", next_label = "Dalej") {
   tags$div(
@@ -1521,7 +1592,7 @@ lc_table <- function(df, cols = NULL, foot = NULL, caption = NULL, number = NULL
   )
 }
 
-# Pasek stronicowania pod tabelą. Logika przycisków: R/lc_widgets.js.
+# Pasek stronicowania pod tabelą. Logika przycisków: shared/lc_widgets.js.
 .lc_pager <- function(page, n_pages, from, to, total, page_size, page_input = NULL) {
   nav_button <- function(to_page, label, icon, disabled) {
     tags$button(type = "button", class = "lc-action is-ghost is-icon",
@@ -1779,21 +1850,8 @@ lc_verdict <- function(..., type = c("ok", "warning", "danger", "info")) {
   tags$span(class = paste0("lc-status-", type), ...)
 }
 
-# Mała lupa Chart.js; stan i zdarzenia obsługuje lcCharts.zoomControl(root).
-lc_chart_zoom_button <- function() {
-  tags$button(type = "button", class = "lc-chart-zoom",
-    `data-lc-chart-zoom` = "true", `aria-pressed` = "false",
-    `aria-label` = "Powiększ wykres i napisy", title = "Powiększ wykres i napisy",
-    HTML(paste0(
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ',
-      'stroke-linecap="round" aria-hidden="true" focusable="false">',
-      '<circle cx="10" cy="10" r="6.5"></circle><path d="M15 15l5 5M7 10h6"></path>',
-      '<path class="lc-chart-zoom-plus" d="M10 7v6"></path></svg>'
-    )))
-}
-
 # Przełączniki drugorzędne (np. hipotezy): jeden aktywny albo żaden.
-# Wartość w input$<input_id> (NULL, gdy nic nie wybrano). Logika: R/lc_widgets.js.
+# Wartość w input$<input_id> (NULL, gdy nic nie wybrano). Logika: shared/lc_widgets.js.
 lc_chips <- function(input_id, choices, label = NULL) {
   ch <- .lc_choices(choices)
   tags$div(class = "lc-chips", `data-lc-chips` = input_id,
@@ -1816,7 +1874,7 @@ em_ <- function(...) tags$em(..., .noWS = "outside")
 # (kropki): pasek z numerami i nazwami kroków, gdy nazwy niosą narrację.
 # Układ: tytuł + sterowanie, pasek kroków, wykres o stałej proporcji, opis
 # kroku i nawigacja. Kroki od 1. Serwer czyta input$<id>_step (lc_step_server),
-# opis kroku renderuje output$<id>_text jako tekst inline. Logika: R/lc_widgets.js.
+# opis kroku renderuje output$<id>_text jako tekst inline. Logika: shared/lc_widgets.js.
 # Widget bez wykresu (np. tabela budowana krok po kroku): body zamiast plot_id.
 # above: treść między paskiem kroków a wykresem (np. tabela i odczyty w rzędzie).
 lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NULL,

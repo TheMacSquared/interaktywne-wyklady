@@ -559,7 +559,7 @@ test("ryciny statystyk z ankiety (01, rozdz. 3): kontrolka, opisy dla opcji i sp
     liczba_kursow: { label: "Liczba kursów", values: [3, 4, 4, 5, 5, 5] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { value: "wzrost" });
   const notes = ["wzrost", "waga"].map(v => new Element("div", { "data-when": v }));
   const fig = root("lc-sf", [root("lc-sf-ctl", [select]), ecbox("0"), ...notes], { "data-fig": "mean" });
@@ -597,7 +597,7 @@ test("ryciny statystyk ze stanem (01): przyciski, pole wyboru i wartości w tabe
                    values: [1, 2, 3, 4, 5, 3, 3, 4] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   // Ryc. 4.7: dopisanie wartości odstającej aktualizuje n i komórki tabeli.
   const add = new Element("button", { "data-stat-act": "add1" }), reset = new Element("button", { "data-stat-act": "reset" });
   const n = new Element("span", { "data-v": "n" }), range = new Element("span", { "data-v": "range" });
@@ -638,7 +638,7 @@ test("pudełka w grupach (01, Ryc. 4.6): kilka kontrolek wybiera opis pary zmien
     kierunek: { label: "Kierunek", levels: ["A", "B"], values: [1, 2, 1, 2, 1, 2] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { id: "ch4_grp_var", value: "wzrost" });
   const by = new Element("input", { type: "radio", name: "ch4_grp_by", value: "plec", checked: "" });
   const violin = new Element("input", { type: "checkbox", id: "ch4_grp_violin" });
@@ -660,7 +660,7 @@ test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę;
   const env = environment();
   env.window.lc01Survey = { n: 0, columns: {} };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const stepper = (id, charts, extra = []) => {
     const text = new Element("div", { id: id + "_text", class: "shiny-html-output shiny-bound-output recalculating" });
     const boxes = charts.map(k => root("lc-sf-chart", [ecbox(String(k))], { "data-k": String(k) }));
@@ -702,7 +702,7 @@ test("palety kolorów (01, Ryc. 2.4): losowanie i zmiana palety przełączają o
     waga: { label: "Waga (kg)", values: [55, 60, 66, 70, 80, 90] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { id: "ch2_color_palette", value: "neutral" });
   const random = new Element("button", { "data-stat-act": "random" });
   const legend = new Element("div", { class: "lc-sf-legend" });
@@ -722,7 +722,7 @@ test("palety kolorów (01, Ryc. 2.4): losowanie i zmiana palety przełączają o
 
 test("ryciny rozkładów (03): scenariusze z pól wyboru, podpisy, presety i pole pod N(0, 1)", () => {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   env.load("03-rozklady-prawdopodobienstwa/modules/dist_charts.js");
   // Ryc. 3.4: grupa pól wyboru daje listę zaznaczonych scenariuszy.
   const cfg = { dist: "binom", xName: "k", yName: "P", defs: {
@@ -780,7 +780,7 @@ test("ryciny rozkładów (03): scenariusze z pól wyboru, podpisy, presety i pol
 
 test("symulacje (03): losowanie lcDist, histogram ggplot i ryciny Ryc. 1.3–6.4 bez serwera", () => {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   env.load("03-rozklady-prawdopodobienstwa/modules/sim_charts.js");
   const D = env.window.lcDist, S = env.window.lcSF, F = S.figures;
   // Generatory z ziarnem: średnie i SD zgodne z rozkładami.
@@ -872,7 +872,7 @@ test("symulacje (03): losowanie lcDist, histogram ggplot i ryciny Ryc. 1.3–6.4
 
 test("silnik lcSF: etykiety yLabels przy krańcach, kolejność warstw, tabela ze skrótami, binsWidth, akcja z kontenerem", () => {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   const S = env.window.lcSF, P = env.window.lcCharts.palette();
   const opt = S.option({ x: [0, 1], y: [0.5, 3.5], yLabels: { 1: "A", 2: "B", 3: "C" },
     layers: [{ type: "points", data: [[0.5, 1]], color: "#000", size: 15 },
@@ -903,7 +903,7 @@ test("silnik lcSF: etykiety yLabels przy krańcach, kolejność warstw, tabela z
 
 test("lcDist: pt i qt zgodne z R (rozkład t, wykład 04)", () => {
   const env = environment();
-  env.load("R/lc_dist.js");
+  env.load("../shared/lc_dist.js");
   const D = env.window.lcDist;
   // Wartości z R: qt(p, df), pt(x, df).
   for (const [p, df, r] of [[0.975, 1, 12.7062047], [0.975, 5, 2.5705818], [0.975, 29, 2.0452296],

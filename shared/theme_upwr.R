@@ -2,14 +2,22 @@
 # theme_upwr() — motyw ggplot2 spójny z paletą UPWr
 # ==============================================================================
 #
-# Wymaga: R/palette.R (stałe upwr_*)
+# Wymaga: shared/palette.R (stałe upwr_*)
 # Używa: ggplot2
 #
-# Krój: base_family ustawia lc_apply_ggplot_defaults() w R/shared.R (IBM Plex
-# Sans z R/fonts/, rysowany przez ragg); cyfry w etykietach: lc_mono_family.
+# Krój: base_family ustawia lc_apply_ggplot_defaults() w shared/shared.R (IBM Plex
+# Sans z shared/fonts/, rysowany przez ragg); cyfry w etykietach: lc_mono_family.
+#
+# Rozmiary: kurs z .LC_COURSE$plot_scaling = TRUE dostaje mniejszą bazę (11 pt)
+# i mniejsze osie/legendę, bo zoom_plot_server() skaluje tam cały tekst wykresu.
 #
 # ==============================================================================
 
+
+# Czy kurs skaluje tekst wykresów w zoom_plot_server() (patrz <kurs>/R/course.R).
+.upwr_plot_scaling <- function() {
+  exists(".LC_COURSE") && isTRUE(.LC_COURSE$plot_scaling)
+}
 
 #' Motyw UPWr dla ggplot2
 #'
@@ -19,11 +27,12 @@
 #' @param panel czy rysować ramkę panelu
 #'
 #' @return obiekt theme()
-theme_upwr <- function(base_size   = 14,
+theme_upwr <- function(base_size   = if (.upwr_plot_scaling()) 11 else 14,
                        base_family = "",
                        grid        = c("both", "x", "y", "none"),
                        panel       = FALSE) {
   grid <- match.arg(grid)
+  sc <- .upwr_plot_scaling()
 
   t <- ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
@@ -39,8 +48,8 @@ theme_upwr <- function(base_size   = 14,
       # Osie
       axis.line  = ggplot2::element_line(color = upwr_reference, linewidth = 0.4),
       axis.ticks = ggplot2::element_line(color = upwr_reference, linewidth = 0.3),
-      axis.text  = ggplot2::element_text(color = upwr_ink_soft, size = ggplot2::rel(1.0)),
-      axis.title = ggplot2::element_text(color = upwr_ink,      size = ggplot2::rel(1.15)),
+      axis.text  = ggplot2::element_text(color = upwr_ink_soft, size = ggplot2::rel(if (sc) 0.85 else 1.0)),
+      axis.title = ggplot2::element_text(color = upwr_ink,      size = ggplot2::rel(if (sc) 0.95 else 1.15)),
 
       # Tytuły
       plot.title = ggplot2::element_text(
@@ -67,8 +76,8 @@ theme_upwr <- function(base_size   = 14,
       # Legenda
       legend.background = ggplot2::element_blank(),
       legend.key        = ggplot2::element_blank(),
-      legend.title      = ggplot2::element_text(color = upwr_ink,      size = ggplot2::rel(1.0)),
-      legend.text       = ggplot2::element_text(color = upwr_ink_soft, size = ggplot2::rel(1.0)),
+      legend.title      = ggplot2::element_text(color = upwr_ink,      size = ggplot2::rel(if (sc) 0.85 else 1.0)),
+      legend.text       = ggplot2::element_text(color = upwr_ink_soft, size = ggplot2::rel(if (sc) 0.8 else 1.0)),
       legend.position   = "right",
 
       # Panele (facets)
@@ -76,7 +85,7 @@ theme_upwr <- function(base_size   = 14,
       strip.text       = ggplot2::element_text(
         color  = upwr_ink,
         face   = "italic",
-        size   = ggplot2::rel(1.0),
+        size   = ggplot2::rel(if (sc) 0.9 else 1.0),
         margin = ggplot2::margin(t = 4, b = 4)
       ),
 

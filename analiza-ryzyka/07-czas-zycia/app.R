@@ -5,9 +5,9 @@ library(ggplot2)
 library(dplyr)
 
 .find_app_dir <- function() {
-  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/lecture_layout.R.
+  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/course.R.
   has_project_root <- function(dir) {
-    file.exists(file.path(dirname(dir), "R", "lecture_layout.R"))
+    file.exists(file.path(dirname(dir), "R", "course.R"))
   }
 
   candidates <- character(0)
@@ -33,15 +33,18 @@ library(dplyr)
 
 app_dir <- .find_app_dir()
 project_root <- dirname(app_dir)
+shared_root <- file.path(dirname(project_root), "shared")
 
-source(file.path(project_root, "R", "palette.R"), local = TRUE)
-source(file.path(project_root, "R", "theme_upwr.R"), local = TRUE)
-source(file.path(project_root, "R", "shared.R"), local = TRUE)
-source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+source(file.path(project_root, "R", "course.R"), local = TRUE)
+
+source(file.path(shared_root, "palette.R"), local = TRUE)
+source(file.path(shared_root, "theme_upwr.R"), local = TRUE)
+source(file.path(shared_root, "shared.R"), local = TRUE)
+source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "bananpol.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_math.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_block.R"), local = TRUE)
-source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"), local = TRUE)
 # Prototypy punktów stop (PUNKTY-STOP-PROPOZYCJA.md): wspólne narzędzia, potem
 # pliki grup; block.R wpina obiekty przez c7p_get().
 source(file.path(app_dir, "modules", "stop_proto_common.R"), local = TRUE)
@@ -68,9 +71,9 @@ ui <- lecture_page(
     includeCSS(file.path(app_dir, "assets", "pilot.css")),
     includeScript(file.path(app_dir, "modules", "sceny.js")),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
-    includeScript(file.path(project_root, "R", "lc_charts.js")),
-    includeScript(file.path(project_root, "R", "lc_dist.js")),
-    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    includeScript(file.path(shared_root, "lc_charts.js")),
+    includeScript(file.path(shared_root, "lc_dist.js")),
+    includeScript(file.path(shared_root, "lc_stat_figures.js")),
     lc_sf_styles(),
     # Grupy rc i ri mają tylko kadry policzone w R (bez pliku JS).
     lapply(c("ra", "rb", "rd", "re", "rf", "rg", "rh"), function(f) includeScript(file.path(app_dir, "modules", paste0("proto_", f, ".js"))))

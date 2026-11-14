@@ -27,9 +27,9 @@ script_dir <- function() {
 
 project_root <- normalizePath(file.path(script_dir(), ".."), mustWork = TRUE)
 
-source(file.path(project_root, "R", "palette.R"))
-source(file.path(project_root, "R", "theme_upwr.R"))
-source(file.path(project_root, "R", "shared.R"))
+source(file.path(dirname(project_root), "shared", "palette.R"))
+source(file.path(dirname(project_root), "shared", "theme_upwr.R"))
+source(file.path(dirname(project_root), "shared", "shared.R"))
 lc_apply_ggplot_defaults()
 
 assets_dir <- file.path(project_root, "02-zwiazki-zmiennych", "assets")

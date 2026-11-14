@@ -118,8 +118,11 @@ hub_discover <- function(repo_root) {
     subject <- basename(dirname(dir))
     folder  <- basename(dir)
 
-    # Przedmiot musi mieć własny system layoutu — inaczej to nie jest wykład.
-    if (!file.exists(file.path(dirname(dir), "R", "lecture_layout.R"))) return(NULL)
+    # Przedmiot to katalog z konfiguracją kursu dla wspólnego rdzenia shared/
+    # (R/course.R) albo z własnym systemem layoutu (R/lecture_layout.R, np.
+    # statystyka-2) — inaczej to nie jest wykład.
+    if (!any(file.exists(file.path(dirname(dir), "R",
+                                   c("course.R", "lecture_layout.R"))))) return(NULL)
 
     txt <- .hub_read_app(path)
     title <- .hub_field(txt, "lecture_title")

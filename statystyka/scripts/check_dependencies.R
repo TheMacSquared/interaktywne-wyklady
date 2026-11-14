@@ -15,8 +15,10 @@ script_dir <- function() {
 subject_root <- normalizePath(file.path(script_dir(), ".."), mustWork = TRUE)
 app_dirs <- sort(list.dirs(subject_root, recursive = FALSE, full.names = TRUE))
 app_dirs <- app_dirs[file.exists(file.path(app_dirs, "app.R"))]
-shared_files <- list.files(file.path(subject_root, "R"), pattern = "[.]R$",
-                           full.names = TRUE)
+# Pliki wspólne: konfiguracja kursu w R/ oraz rdzeń w shared/ obok katalogu kursu.
+shared_files <- list.files(c(file.path(subject_root, "R"),
+                             file.path(dirname(subject_root), "shared")),
+                           pattern = "[.]R$", full.names = TRUE)
 
 scan_expr <- function(expr, required = character(), optional = character()) {
   if (!is.call(expr) && !is.expression(expr) && !is.pairlist(expr)) {

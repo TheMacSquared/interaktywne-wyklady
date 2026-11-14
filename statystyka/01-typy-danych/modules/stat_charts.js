@@ -2,7 +2,7 @@
 // wykresy ggplot rysowane na serwerze. Dane: ankieta (window.lc01Survey)
 // albo losowanie z ziarnem; rachunki: window.lc01 (chart_utils.js).
 //
-// Kontener i rysunek: wspólny silnik window.lcSF (statystyka/R/lc_stat_figures.js,
+// Kontener i rysunek: wspólny silnik window.lcSF (shared/lc_stat_figures.js,
 // R: lc_sf_figure()). Tu tylko ryciny wykładu 01, rejestrowane w lcSF.
 (function () {
   "use strict";

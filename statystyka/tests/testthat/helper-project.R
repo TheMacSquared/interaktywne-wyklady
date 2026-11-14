@@ -6,7 +6,7 @@ if (!nzchar(stat_root)) {
 
 load_module_helpers <- function(relative_path) {
   env <- new.env(parent = globalenv())
-  sys.source(file.path(stat_root, "R", "palette.R"), envir = env)
+  sys.source(file.path(dirname(stat_root), "shared", "palette.R"), envir = env)
   sys.source(file.path(stat_root, relative_path), envir = env)
   env
 }

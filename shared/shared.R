@@ -1,10 +1,10 @@
 # ============================================================================
 # WSPOLNE FUNKCJE POMOCNICZE
-# Zrodlowane przez kazdy app.R po ustaleniu app_dir i project_root
+# Zrodlowane przez kazdy app.R po ustaleniu app_dir, project_root i shared_root
 # ============================================================================
 
-# Paleta kolorów UPWr + motyw ggplot2 są sourcowane z R/palette.R i
-# R/theme_upwr.R. Role semantyczne (upwr_accent/single/secondary/reference),
+# Paleta kolorów UPWr + motyw ggplot2 są sourcowane z shared/palette.R i
+# shared/theme_upwr.R. Role semantyczne (upwr_accent/single/secondary/reference),
 # paleta kategoryczna (upwr_cat), skale ciągłe (upwr_seq_*, upwr_div,
 # upwr_ord*), theme_upwr(). Sourcowanie odbywa się w app.R po ustaleniu
 # project_root — patrz typy-danych/app.R.
@@ -16,12 +16,12 @@ lc_mono_family <- "mono"
 #' Ustaw globalny motyw i defaulty geom-ów dla całej apki.
 #' Wywołać raz w app.R po sourcowaniu palette.R + theme_upwr.R.
 lc_apply_ggplot_defaults <- function() {
-  # IBM Plex Sans i IBM Plex Mono z R/fonts/ (OFL), te same co na stronie,
+  # IBM Plex Sans i IBM Plex Mono z shared/fonts/ (OFL), te same co na stronie,
   # rejestrowane w systemfonts i rysowane przez ragg. Plex Sans ma grekę,
   # indeksy dolne i znaki łączące; Plex Mono tylko cyfry, łacinę i μ.
   # Glify spoza kroju ragg bierze z kroju systemowego (showtext tego nie potrafi).
   base_family <- ""
-  font_dir <- file.path(project_root, "R", "fonts")
+  font_dir <- file.path(shared_root, "fonts")
   if (requireNamespace("ragg", quietly = TRUE) &&
       requireNamespace("systemfonts", quietly = TRUE) &&
       file.exists(file.path(font_dir, "IBMPlexSans-Regular.ttf"))) {
@@ -209,12 +209,48 @@ zoom_plot_ui <- function(id, height = "300px", width = "100%", ...) {
   )
 }
 
+# Skalowanie wykresów (.LC_COURSE$plot_scaling = TRUE; dziś analiza ryzyka).
+# Czcionki wykresu: w tekście 1.1x, w oknie powiększenia 1.5x (osie i podpisy
+# czytelne z sali). Wykresy renderujemy z res = 96, zgodnie z showtext_opts(dpi = 96)
+# w lc_apply_ggplot_defaults(); przy domyślnym res = 72 cały tekst wychodził
+# o jedną czwartą mniejszy, niż wynika ze skali.
+zoom_plot_font_scale_inline <- 1.1
+zoom_plot_font_scale_modal  <- 1.5
+zoom_plot_res               <- 96
+
+# Tytuł, podtytuł i podpis łamiemy tak, żeby mieściły się w szerokości wykresu
+# (ggplot sam ich nie łamie, a w wąskiej kolumnie widżetu byłyby ucięte).
+# Przybliżenie: średnia szerokość znaku to ok. 0,55 wysokości czcionki.
+wrap_plot_labels <- function(p, width_px, k) {
+  if (is.null(width_px) || !is.finite(width_px) || width_px <= 0) return(p)
+  labs_now <- ggplot2::get_labs(p)
+  wrap_one <- function(txt, rel_size) {
+    if (!is.character(txt) || length(txt) != 1L || is.na(txt)) return(txt)
+    px_per_char <- 0.55 * 11 * k * rel_size * 96 / 72
+    n <- max(12L, floor((width_px - 16) / px_per_char))
+    paste(strwrap(txt, width = n), collapse = "\n")
+  }
+  p <- p + ggplot2::labs(
+    title    = wrap_one(labs_now$title, 1.3),
+    subtitle = wrap_one(labs_now$subtitle, 1.0),
+    caption  = wrap_one(labs_now$caption, 0.8)
+  )
+  # W wąskim wykresie legenda z boku zabiera połowę szerokości, a etykiety osi
+  # nachodzą na siebie — legenda idzie pod wykres, kolidujące etykiety znikają.
+  if (width_px < 480) {
+    p <- p + ggplot2::theme(legend.position = "bottom", legend.direction = "vertical") +
+      ggplot2::guides(x = ggplot2::guide_axis(check.overlap = TRUE))
+  }
+  p
+}
+
 zoom_plot_server <- function(id, plot_fn,
                              alt = "Wykres ilustrujący omawiane zagadnienie") {
+  scaling <- exists(".LC_COURSE") && isTRUE(.LC_COURSE$plot_scaling)
   moduleServer(id, function(input, output, session) {
-    draw <- function() {
-      p <- plot_fn()
-      if (inherits(p, c("grob", "gtable"))) {
+    # Wykres złożony jako grob/gtable rysujemy sami; ggplot i patchwork drukuje renderPlot.
+    draw <- function(p) {
+      if (inherits(p, c("grob", "gtable")) && !inherits(p, "ggplot")) {
         grid::grid.newpage()
         grid::grid.draw(p)
         invisible(NULL)
@@ -223,7 +259,41 @@ zoom_plot_server <- function(id, plot_fn,
       }
     }
 
-    output$plot <- renderPlot(draw(), alt = alt)
+    if (scaling) {
+      # showtext liczy rozmiar czcionek względem swojego dpi, a Shiny renderuje
+      # obraz z res * pixelratio (na ekranach retina 2x) — bez dopasowania tekst
+      # wychodzi o połowę mniejszy. Ustawiamy dpi zanim wykresy się narysują.
+      observe({
+        ratio <- session$clientData$pixelratio
+        if (!is.null(ratio) && requireNamespace("showtext", quietly = TRUE)) {
+          showtext::showtext_opts(dpi = zoom_plot_res * ratio)
+        }
+      }, priority = 100)
+    }
+
+    scaled_plot <- function(k, out_id) {
+      p <- plot_fn()
+      if (inherits(p, "ggplot")) {
+        p <- wrap_plot_labels(
+          p, session$clientData[[paste0("output_", session$ns(out_id), "_width")]], k
+        )
+        # Legenda w theme_upwr ma rel(0.8–0.85) — na sali za małe,
+        # więc w wykresach wykładu rysujemy ją w pełnym rozmiarze tekstu.
+        p <- p + ggplot2::theme(
+          text         = ggplot2::element_text(size = 11 * k),
+          legend.text  = ggplot2::element_text(size = ggplot2::rel(1)),
+          legend.title = ggplot2::element_text(size = ggplot2::rel(1))
+        )
+      }
+      draw(p)
+    }
+
+    if (scaling) {
+      output$plot <- renderPlot(scaled_plot(zoom_plot_font_scale_inline, "plot"),
+                                res = zoom_plot_res, alt = alt)
+    } else {
+      output$plot <- renderPlot(draw(plot_fn()), alt = alt)
+    }
 
     observeEvent(input$zoom, {
       showModal(modalDialog(
@@ -234,6 +304,11 @@ zoom_plot_server <- function(id, plot_fn,
       ))
     }, ignoreInit = TRUE)
 
-    output$plot_modal <- renderPlot(draw(), alt = alt)
+    if (scaling) {
+      output$plot_modal <- renderPlot(scaled_plot(zoom_plot_font_scale_modal, "plot_modal"),
+                                      res = zoom_plot_res, alt = alt)
+    } else {
+      output$plot_modal <- renderPlot(draw(plot_fn()), alt = alt)
+    }
   })
 }

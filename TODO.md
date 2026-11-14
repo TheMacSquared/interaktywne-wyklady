@@ -6,7 +6,7 @@ w gicie.
 Jak przypisać zadanie:
 
 - **Globalne** — zmienia wspólne komponenty, konwencje lub testy używane przez
-  więcej niż jeden kurs (np. snapshoty `statystyka/R/` i `analiza-ryzyka/R/`).
+  więcej niż jeden kurs (np. wspólny rdzeń `shared/`).
 - **Cały kurs** — zmienia wspólne `R/` jednego kursu albo dotyczy wszystkich
   jego wykładów.
 - **Wykład** — zmienia tylko katalog jednego wykładu.
@@ -37,13 +37,36 @@ Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
 ## Globalne
 
+### Wspólny rdzeń `shared/`
+
+Stan (14 listopada 2026, gałąź `statyczny-js`): statystyka i analiza ryzyka
+ładują layout, paletę, style i biblioteki JS z `shared/`; w `<kurs>/R/` zostały
+`course.R`, pliki przedmiotowe i (analiza ryzyka) `course_styles.css`. Opis:
+`shared/README.md`. Statystyka 2 ma nadal własny snapshot.
+
+- [ ] **Decyzja:** odstępstwa analizy ryzyka w `analiza-ryzyka/R/course_styles.css`
+  (sekcja „Odstępstwa od rdzenia”): wciśnięty segment w kolorze akcentu, dwa
+  wykresy obok siebie od 640 px (rdzeń 760 px), szersze pola `lc_drop_match`
+  (rdzeń: kolumny 120 px). Każde: zostawić, przyjąć zachowanie rdzenia albo
+  przenieść do rdzenia dla obu kursów.
+- [ ] **Decyzja:** przełączniki `.LC_COURSE` (`chapter_mode`, `plot_scaling`)
+  zachowują dawne zachowanie każdego kursu. Znikają razem z serwerem Shiny;
+  do tego czasu można je ujednolicić albo zostawić.
+- [ ] Uzgodnić `analiza-ryzyka/R/DESIGN_CONTRACT.md` z `shared/DESIGN_CONTRACT.md`:
+  zostawić w kursie tylko reguły własne (`risk_*`, nagłówki rozdziałów).
+- [ ] Testy rdzenia (`test-widgets-v2.R`, `test-panel-layout.R`) są w dwóch
+  kopiach w `<kurs>/tests/`; przenieść do jednego miejsca.
+- [ ] Build offline w `przedmioty/*/skrypt/build/build_offline.R` czyta czcionki
+  z `<kurs>/R/fonts` i śledzi zmiany w `<kurs>/R`; na tej gałęzi wymaga
+  wskazania `shared/` (albo znika razem z przejściem na strony statyczne).
+
 ### Migracja widgetów do v2
 
 Stan:
 
-- Komponenty v2 (widgety, tabele, bloki tekstu) są we wspólnym `R/`
-  (`lecture_layout.R`, `shared_styles.css`, `lc_widgets.js`), identyczne we
-  wszystkich kursach. Zasady: `R/DESIGN_CONTRACT.md`.
+- Komponenty v2 (widgety, tabele, bloki tekstu) są we wspólnym `shared/`
+  (`lecture_layout.R`, `shared_styles.css`, `lc_widgets.js`); statystyka 2 ma
+  własną kopię w `statystyka-2/R/`. Zasady: `shared/DESIGN_CONTRACT.md`.
 - Audyt z 3 października 2026 (`statystyka/scripts/audit_panels.R`,
   24 aplikacje, 1440 i 390 px, stan po wejściu do rozdziału, bez interakcji):
   510 paneli, 405 bez starych elementów, 0 wylewa się na telefonie,
@@ -122,12 +145,12 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 - [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
   wspólnym komponentem.
 - [ ] Więcej wykresów JS (ECharts). Kryterium (2026-11-05, zasada
-  w `statystyka/R/DESIGN_CONTRACT.md`): wykres JS działa w wersji
+  w `shared/DESIGN_CONTRACT.md`): wykres JS działa w wersji
   offline dla studentów (`przedmioty/statystyka/skrypt/`, bez serwera R)
   i zwiększa responsywność, więc wierne odtworzenie wykresu R też jest
   zyskiem — nie tylko widgety ggplot + suwak. Prowadzący potwierdził na
   zajęciach, że wykresy Chart.js są wyraźnie bardziej responsywne niż
-  renderowane w Shiny (2026-10-29). Wspólna obsługa: `statystyka/R/lc_charts.js`.
+  renderowane w Shiny (2026-10-29). Wspólna obsługa: `shared/lc_charts.js`.
   Stan 2026-11-09: statystyka 01, 02, 03, 04 i 05 na ECharts. W 04 wszystkie
   ryciny rysuje ECharts: eksploratory w `ci_explorers.js`, wykresy ggplot przez
   most `ci_echarts.R` / `ci_echarts.js` (obliczenia w R, rysunek w JS).
@@ -160,7 +183,7 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     na ECharts (2026-11-09). Ryciny rysowane przez most `ci_echarts` nadal
     potrzebują serwera R do obliczeń; w pełni offline działają eksploratory,
     Ryc. 2.1 i 4.2 oraz sceny SVG.
-  - [x] Most ggplot → ECharts we wspólnym `statystyka/R/lc_ggplot_echarts.*`
+  - [x] Most ggplot → ECharts we wspólnym `shared/lc_ggplot_echarts.*`
     (2026-11-09); wykład 02 w całości na ECharts (tabela krzyżowa, pudełka).
     Od 2026-11-13 wykład 02 działa w całości offline: tabela krzyżowa i pudełka
     w `survey_charts.js` na danych ankiety z wykładu 01; mostu już nie ładuje.
@@ -169,8 +192,8 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     Ryciny działają offline; opisy dla danych ankiety liczone w R z góry.
   - [x] Statystyka 03: wszystkie wykresy R przepisane w JS (2026-11-13). Rozkłady
     teoretyczne w `dist_charts.js`, symulacje w `sim_charts.js`, punkty stop
-    w `stops12/34/56_charts.js`, wspólny silnik `statystyka/R/lc_stat_figures.*`,
-    rozkłady i losowanie `R/lc_dist.js`. Ryc. 1.2 (lejek) nadal dostaje serie
+    w `stops12/34/56_charts.js`, wspólny silnik `shared/lc_stat_figures.*`,
+    rozkłady i losowanie `shared/lc_dist.js`. Ryc. 1.2 (lejek) nadal dostaje serie
     z serwera.
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).
   - [ ] Statystyka 03 offline, Ryc. 1.2 (lejek): odczyty przechodzą zapisane
@@ -183,7 +206,7 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     (`lcCharts` ustawia `data-ready`, build wstawia czystą kopię z pristine.js).
   - [ ] Wersje offline statystyki (`przedmioty/statystyka/skrypt/`): przebudować
     00, 04, 06–10 (`build_offline.R --check`). 03 wymaga tylko `--stamp --only=03`
-    — po zrzucie zmienił się wyłącznie `R/DESIGN_CONTRACT.md`. 01, 02, 03 (treść)
+    — po zrzucie zmienił się wyłącznie `shared/DESIGN_CONTRACT.md`. 01, 02, 03 (treść)
     i 05 aktualne na 2026-11-05.
   - [ ] Statystyka 03, quiz: przejrzeć parametry przykładowych realizacji
     (pole `example` w `modules/quiz_rozklady.json`). Część dobrana, bo pytania
@@ -197,7 +220,7 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   sterowaniu klawiaturą (Tab, strzałki, większy krok z Shiftem, Home/End),
   skalowaniu napisów wraz z S/M/L oraz lokalnym powiększeniu wykresu małą,
   ujednoliconą lupą z boku. Wzorzec: statystyka 03, Ryc. 4.3
-  (`modules/area_chart.js`, `lc_chart_zoom_button()`, `R/lc_charts.js`).
+  (`modules/area_chart.js`, `lc_chart_zoom_button()`, `shared/lc_charts.js`).
   Dobierać mechanizmy do celu dydaktycznego; zachować minimalizm. Pola liczbowe
   dodawać tylko tam, gdzie dokładna wartość jest istotna, nie automatycznie
   w demonstracjach pojęć (zaakceptowane 2026-10-31).
@@ -214,11 +237,11 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 ### Zapis liczb: kropka dziesiętna i zwykły minus
 
 Decyzja: wszędzie kropka dziesiętna i zwykły minus `-`, jak w R i jamovi.
-Helpery v2 (`lc_fmt()`, `lc_num()`, `lc_pval()`, `R/lc_widgets.js`) już
+Helpery v2 (`lc_fmt()`, `lc_num()`, `lc_pval()`, `shared/lc_widgets.js`) już
 to stosują.
 
 - [x] Przestawić stare formatery na kropkę: `format_p_value()` / `format_p()` /
-  `ui_p_value()` we wspólnym `R/shared.R`, `risk_format_probability()` i
+  `ui_p_value()` we wspólnym `shared/shared.R`, `risk_format_probability()` i
   lokalne formatery analizy ryzyka.
 - [ ] Przejrzeć teksty wykładów we wszystkich kursach i zamienić przecinek
   dziesiętny na kropkę (np. „p = 0,10” w analizie ryzyka 05 obok widgetu

@@ -13,17 +13,19 @@
 
 ```text
 interaktywne-wyklady/
+├── shared/               # wspólny rdzeń statystyki i analizy ryzyka
 ├── statystyka/
-│   ├── R/
+│   ├── R/                # course.R + pliki własne kursu
 │   ├── scripts/
 │   ├── README.md
 │   └── */app.R
 ├── statystyka-2/
-│   ├── R/
+│   ├── R/                # własny, osobny snapshot layoutu
 │   ├── scripts/
 │   ├── tests/
 │   └── */app.R
 ├── analiza-ryzyka/
+│   ├── R/                # course.R, course_styles.css + pliki własne kursu
 │   └── */app.R
 └── deprecated/
     └── ekonometria/
@@ -31,17 +33,17 @@ interaktywne-wyklady/
 
 Statystyka 2 (`statystyka-2/`) zawiera symulacje, Bayesa, materiały kierunkowe i szeregi czasowe. Ma własny snapshot `R/`, skrypty i testy. Podstawowy kurs nie wymaga zależności tej części.
 
-Materiały statystyczne są samowystarczalnym zestawem w `statystyka/`. Wspólne komponenty statystyki są w `statystyka/R/`, a narzędzia pomocnicze w `statystyka/scripts/`.
+Statystyka i analiza ryzyka korzystają z jednego wspólnego rdzenia w `shared/` (layout, paleta, motyw wykresów, style, biblioteki JS). Zmianę rdzenia robi się raz, dla obu kursów. Katalog `<kurs>/R/` zawiera tylko to, co własne dla kursu: `course.R` (nazwa, logo, mapa wykładów, tryb rozdziałów), ewentualny `course_styles.css` (elementy kursu i świadome odstępstwa od rdzenia) oraz pliki przedmiotowe. Opis w `shared/README.md`. Narzędzia pomocnicze statystyki są w `statystyka/scripts/`.
 
 Ekonometria jest archiwalna i znajduje się w `deprecated/ekonometria/`. Nie należy traktować jej jako aktywnego przedmiotu ani włączać do huba lub kontroli aktywnych wykładów. Materiały pozostają dostępne jako referencja.
 
 ## Konwencje kodowania
 
-Kanoniczne reguły designu dla istniejącej statystyki są w `statystyka/R/DESIGN_CONTRACT.md`. Przy pracy nad wykładami statystycznymi traktuj ten dokument jako nadrzędny kontrakt.
+Kanoniczne reguły designu są w `shared/DESIGN_CONTRACT.md`. Przy pracy nad wykładami traktuj ten dokument jako nadrzędny kontrakt; reguły własne analizy ryzyka uzupełnia `analiza-ryzyka/R/DESIGN_CONTRACT.md`.
 
 ### Struktura aplikacji Shiny
 
-Każda aplikacja wykładowa ma używać systemu layoutu z właściwego katalogu przedmiotu, np. `statystyka/R/lecture_layout.R` dla statystyki. Nie twórz nowych aplikacji na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
+Każda aplikacja wykładowa statystyki i analizy ryzyka ma używać systemu layoutu z `shared/lecture_layout.R` (statystyka 2: z własnego `statystyka-2/R/`). Nie twórz nowych aplikacji na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
 
 ```r
 # Tytuł aplikacji
@@ -56,13 +58,15 @@ library(dplyr)
 # ============================================================================
 
 app_dir <- .find_app_dir()
-subject_root <- dirname(app_dir)
-project_root <- subject_root
+project_root <- dirname(app_dir)
+shared_root <- file.path(dirname(project_root), "shared")
 
-source(file.path(project_root, "R", "palette.R"),        local = TRUE)
-source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
-source(file.path(project_root, "R", "shared.R"),         local = TRUE)
-source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+source(file.path(project_root, "R", "course.R"), local = TRUE)
+
+source(file.path(shared_root, "palette.R"),        local = TRUE)
+source(file.path(shared_root, "theme_upwr.R"),     local = TRUE)
+source(file.path(shared_root, "shared.R"),         local = TRUE)
+source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
 
@@ -93,7 +97,7 @@ server <- function(input, output, session) {
 shinyApp(ui = ui, server = server)
 ```
 
-Istniejące aplikacje statystyczne używają `project_root <- dirname(app_dir)` i ten wzorzec pozostaje poprawny po przeniesieniu do `statystyka/`.
+`project_root` to katalog kursu (`dirname(app_dir)`), a `shared_root` to `shared/` obok katalogów kursów. `.find_app_dir()` rozpoznaje katalog kursu po pliku `R/course.R`.
 
 ### Nazewnictwo
 

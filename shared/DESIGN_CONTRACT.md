@@ -4,11 +4,11 @@ Ten dokument opisuje docelowy system dla interaktywnych wykładów. Nie jest ins
 
 ## Zakres
 
-Kontrakt dotyczy wszystkich aplikacji w `statystyka/` opartych o `lecture_page()`. Lista aplikacji znajduje się w [README przedmiotu](../README.md).
+Kontrakt dotyczy wszystkich aplikacji w `statystyka/` i `analiza-ryzyka/` opartych o `lecture_page()`. Listy aplikacji znajdują się w [README statystyki](../statystyka/README.md) i [README analizy ryzyka](../analiza-ryzyka/README.md). Reguły własne analizy ryzyka (komponenty `risk_*`, nagłówki rozdziałów) uzupełnia `analiza-ryzyka/R/DESIGN_CONTRACT.md`.
 
 ## Shell Aplikacji
 
-Każdy wykład używa `lecture_page()` z `R/lecture_layout.R`. Rozdziały są listami tworzonymi przez `lecture_chapter()` albo jawne listy z polami `id`, `num`, `title`, `content`.
+Każdy wykład używa `lecture_page()` z `shared/lecture_layout.R`. Rozdziały są listami tworzonymi przez `lecture_chapter()` albo jawne listy z polami `id`, `num`, `title`, `content`.
 
 Kanoniczny `app.R`:
 
@@ -80,7 +80,7 @@ W nowym kodzie nie dodajemy:
 - `theme_educational()` i `theme_minimal()` jako lokalnego standardu wizualizacji
 - lokalnego `includeCSS()` dla wspólnego layoutu
 
-Jeżeli dynamiczny `renderUI()` potrzebuje komunikatu statusu, najpierw dodaj mały komponent w `R/lecture_layout.R`, zamiast przywracać klasę z poprzedniego systemu.
+Jeżeli dynamiczny `renderUI()` potrzebuje komunikatu statusu, najpierw dodaj mały komponent w `shared/lecture_layout.R`, zamiast przywracać klasę z poprzedniego systemu.
 
 Migracja dawnych fragmentów powinna iść wprost:
 
@@ -112,14 +112,14 @@ Dwa kroje z rodziny IBM Plex (licencja OFL), te same na stronie i na wykresach:
   zostają w Plex Sans.
 
 Strona ładuje kroje z Google Fonts (`lecture_page()` i `shared_styles.css`).
-Wykresy rysuje ragg z plików w `R/fonts/`, rejestrowanych w
+Wykresy rysuje ragg z plików w `shared/fonts/`, rejestrowanych w
 `lc_apply_ggplot_defaults()`; cyfry w etykietach wykresu:
 `geom_text(family = lc_mono_family)`. `--upwr-serif` to alias `--upwr-sans`;
 nie dodajemy innych krojów.
 
 ## Kolory i Wykresy
 
-Źródłem prawdy dla kolorów jest `R/palette.R`.
+Źródłem prawdy dla kolorów jest `shared/palette.R`.
 
 Stosuj:
 
@@ -194,13 +194,13 @@ zamrożone.
 
 ### Wykresy ggplot w ECharts — most usunięty
 
-Most `R/lc_ggplot_echarts.*` (R liczył `ggplot_build()`, JS rysował w ECharts)
+Most `shared/lc_ggplot_echarts.*` (R liczył `ggplot_build()`, JS rysował w ECharts)
 usunięto 13 listopada 2026, gdy przestał go używać ostatni wykład (04). Wymagał
 serwera R, więc ryciny zostawały w wersji offline zamrożone. Nowe ryciny piszemy
 na silniku lcSF (sekcja wyżej); kod mostu jest w historii git (przed commitem
-usuwającym, np. `git show 623aff3:statystyka/R/lc_ggplot_echarts.R`).
+usuwającym, np. `git show 623aff3:shared/lc_ggplot_echarts.R`).
 
-### Ryciny liczone w przeglądarce (`R/lc_stat_figures.R` / `.js`)
+### Ryciny liczone w przeglądarce (`shared/lc_stat_figures.R` / `.js`)
 
 Wykres zastępujący `zoom_plot_server()`, który ma działać offline, piszemy
 jako rycinę wspólnego silnika `window.lcSF`. W R stawiamy kontener
@@ -222,7 +222,7 @@ pasy, punkty, odcinki, pudełka, tekst), a silnik rysuje go w ECharts SVG.
 - Dane i definicje (np. scenariusze) przechodzą przez `config` (JSON
   w `data-config`); stałe opisy dla każdej opcji liczymy w R z góry
   (`notes`, `data-when`).
-- Rozkłady prawdopodobieństwa: `R/lc_dist.js` (`window.lcDist`: d*, p*, q*
+- Rozkłady prawdopodobieństwa: `shared/lc_dist.js` (`window.lcDist`: d*, p*, q*
   zgodne z R; test w `tests/testthat/test-chart-numerics.R`). Symulacje losują
   w przeglądarce: `lcDist.r` (albo `lcDist.rng(ziarno)` dla stałych danych),
   gęstość jądrowa `lcDist.kde` (z odbiciem przy granicach), histogram jak
@@ -236,7 +236,7 @@ pasy, punkty, odcinki, pudełka, tekst), a silnik rysuje go w ECharts SVG.
   03 — `dist_charts.js` (rozkłady teoretyczne, presety suwaków), `sim_charts.js`
   (symulacje: próba a model, krokowy histogram, CTG).
 
-Wykłady używające wykresów JS ładują `R/lc_charts.js` w `header_extras`, po
+Wykłady używające wykresów JS ładują `shared/lc_charts.js` w `header_extras`, po
 bibliotece wykresów i przed skryptami poszczególnych widgetów. Wspólne API
 jest dostępne jako `window.lcCharts`:
 
@@ -341,7 +341,7 @@ strumieniu liczb losowych; nie wymagamy zgodności sekwencji z `set.seed()` w R.
 
 ## CSS
 
-`R/shared_styles.css` jest CSS-em nowego systemu. Nie dodajemy do niego fallbacków dla starych klas.
+`shared/shared_styles.css` jest CSS-em nowego systemu. Nie dodajemy do niego fallbacków dla starych klas.
 
 Style specyficzne dla jednego wykładu mogą trafić do `header_extras`, ale powinny:
 
@@ -391,8 +391,8 @@ sterowania w kolumnach, które automatycznie przechodzą do jednego rzędu piono
 ## Widgety v2 i tabele v2
 
 Nowe i przebudowywane widgety oraz tabele korzystają z komponentów v2
-(sekcja „WIDGETY V2 I TABELE V2” w `R/lecture_layout.R`, style w
-`R/shared_styles.css`, logika klienta w `R/lc_widgets.js`). Sekcja jest
+(sekcja „WIDGETY V2 I TABELE V2” w `shared/lecture_layout.R`, style w
+`shared/shared_styles.css`, logika klienta w `shared/lc_widgets.js`). Sekcja jest
 identyczna we wszystkich kursach; zmiany wprowadzamy równolegle.
 
 Style v2 obejmują każdy `figure_panel()`; nie ma osobnej flagi. Elementy
@@ -594,7 +594,7 @@ Zasady wspólne: kroki od 1 (bez pustego kroku startowego, chyba że widget
 celowo zaczyna od pustego stanu), zmiana kontrolki nie zmienia kroku, reset
 wraca do kroku 1, bez osobnego licznika „Krok X z N” na szerokim ekranie.
 
-Gramatyka wykresu krokowego (`R/theme_upwr.R`): każdy element ma w danym
+Gramatyka wykresu krokowego (`shared/theme_upwr.R`): każdy element ma w danym
 kroku jedną rolę — `data` (niebo), `group` (bursztyn, druga kategoria),
 `new` (burgund, tylko w kroku wprowadzenia), `known` (grafit, z wcześniejszych
 kroków), `background` (niebo, mocno przezroczyste). Kontury słupków i pudełek

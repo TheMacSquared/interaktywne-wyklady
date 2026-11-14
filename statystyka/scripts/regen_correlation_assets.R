@@ -30,8 +30,8 @@ script_dir <- function() {
 
 project_root <- normalizePath(file.path(script_dir(), ".."), mustWork = TRUE)
 
-source(file.path(project_root, "R", "palette.R"))
-source(file.path(project_root, "R", "theme_upwr.R"))
+source(file.path(dirname(project_root), "shared", "palette.R"))
+source(file.path(dirname(project_root), "shared", "theme_upwr.R"))
 
 ggplot2::theme_set(theme_upwr())
 

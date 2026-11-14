@@ -26,9 +26,9 @@ type_labels <- c(
 
 # Ustal katalog aplikacji niezaleznie od sposobu uruchomienia
 .find_app_dir <- function() {
-  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/lecture_layout.R.
+  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/course.R.
   has_project_root <- function(dir) {
-    file.exists(file.path(dirname(dir), "R", "lecture_layout.R"))
+    file.exists(file.path(dirname(dir), "R", "course.R"))
   }
 
   candidates <- character(0)
@@ -54,11 +54,14 @@ type_labels <- c(
 app_dir <- .find_app_dir()
 
 project_root <- dirname(app_dir)
+shared_root <- file.path(dirname(project_root), "shared")
 
-source(file.path(project_root, "R", "palette.R"),          local = TRUE)
-source(file.path(project_root, "R", "theme_upwr.R"),       local = TRUE)
-source(file.path(project_root, "R", "shared.R"),           local = TRUE)
-source(file.path(project_root, "R", "lecture_layout.R"),   local = TRUE)
+source(file.path(project_root, "R", "course.R"), local = TRUE)
+
+source(file.path(shared_root, "palette.R"),          local = TRUE)
+source(file.path(shared_root, "theme_upwr.R"),       local = TRUE)
+source(file.path(shared_root, "shared.R"),           local = TRUE)
+source(file.path(shared_root, "lecture_layout.R"),   local = TRUE)
 source(file.path(project_root, "R", "ankieta.R"),          local = TRUE)
 
 # Globalne defaulty ggplot2 — motyw + kolory geom-ów (upwr_single = burgund)
@@ -67,7 +70,7 @@ lc_apply_ggplot_defaults()
 source(file.path(app_dir, "modules", "helpers.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "scene_helpers.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "survey_data.R"),    local = TRUE)
-source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_typy.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch2_jakosciowe.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch3_polozenie.R"),  local = TRUE)
@@ -110,7 +113,7 @@ app_extras <- tagList(
     .ch3-six-row.is-sorted + .lc-formula-box { overflow-x: auto; }
   ")),
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
-  includeScript(file.path(project_root, "R", "lc_charts.js")),
+  includeScript(file.path(shared_root, "lc_charts.js")),
   # Ryciny liczone w przeglądarce (ECharts): Ryc. 2.3, 3.4, 3.6, 3.9, 3.10, 5.5
   includeScript(file.path(app_dir, "modules", "chart_utils.js")),
   includeScript(file.path(app_dir, "modules", "salary_chart.js")),
@@ -119,7 +122,7 @@ app_extras <- tagList(
   includeScript(file.path(app_dir, "modules", "kurtosis_chart.js")),
   # Ryciny statystyk opisowych liczone w przeglądarce (stat_charts.js): rozdz. 1–5.
   lc01_survey_script(),
-  includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+  includeScript(file.path(shared_root, "lc_stat_figures.js")),
   includeScript(file.path(app_dir, "modules", "stat_charts.js")),
   lc_sf_styles(),
   tags$style(HTML("

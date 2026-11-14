@@ -1,8 +1,12 @@
 # Kontrakt Designu
 
 Ten dokument opisuje docelowy system dla interaktywnych wykładów z analizy
-ryzyka. Jest adaptacją kontraktu ze `statystyka/R/`; nowy kod ma trzymać się
-tych reguł bez warstw kompatybilności.
+ryzyka. Jest adaptacją wspólnego kontraktu `shared/DESIGN_CONTRACT.md` sprzed
+scalenia rdzenia (listopad 2026) i nie został jeszcze z nim uzgodniony punkt po
+punkcie: reguły wspólnych komponentów `lc_*` obowiązują w brzmieniu z
+`shared/DESIGN_CONTRACT.md`, a ten plik jest źródłem dla reguł własnych kursu
+(komponenty `risk_*`, nagłówki rozdziałów). Nowy kod ma trzymać się tych reguł
+bez warstw kompatybilności.
 
 ## Zakres
 
@@ -12,7 +16,7 @@ jako listę konfiguracyjną renderowaną przez `risk_block_chapters()` z `R/risk
 
 ## Shell Aplikacji
 
-Każdy wykład używa `lecture_page()` z `R/lecture_layout.R`. Rozdziały są listami tworzonymi przez `lecture_chapter()` albo jawne listy z polami `id`, `num`, `title`, `content`.
+Każdy wykład używa `lecture_page()` z `shared/lecture_layout.R`. Rozdziały są listami tworzonymi przez `lecture_chapter()` albo jawne listy z polami `id`, `num`, `title`, `content`.
 
 Kanoniczny `app.R`:
 
@@ -128,7 +132,7 @@ W nowym kodzie nie dodajemy:
 - `theme_educational()` i `theme_minimal()` jako lokalnego standardu wizualizacji
 - lokalnego `includeCSS()` dla wspólnego layoutu
 
-Jeżeli dynamiczny `renderUI()` potrzebuje komunikatu statusu, najpierw dodaj mały komponent w `R/lecture_layout.R`, zamiast przywracać klasę z poprzedniego systemu.
+Jeżeli dynamiczny `renderUI()` potrzebuje komunikatu statusu, najpierw dodaj mały komponent w `shared/lecture_layout.R`, zamiast przywracać klasę z poprzedniego systemu.
 
 Migracja dawnych fragmentów powinna iść wprost:
 
@@ -160,14 +164,14 @@ Dwa kroje z rodziny IBM Plex (licencja OFL), te same na stronie i na wykresach:
   zostają w Plex Sans.
 
 Strona ładuje kroje z Google Fonts (`lecture_page()` i `shared_styles.css`).
-Wykresy rysuje ragg z plików w `R/fonts/`, rejestrowanych w
+Wykresy rysuje ragg z plików w `shared/fonts/`, rejestrowanych w
 `lc_apply_ggplot_defaults()`; cyfry w etykietach wykresu:
 `geom_text(family = lc_mono_family)`. `--upwr-serif` to alias `--upwr-sans`;
 nie dodajemy innych krojów.
 
 ## Kolory i Wykresy
 
-Źródłem prawdy dla kolorów jest `R/palette.R`.
+Źródłem prawdy dla kolorów jest `shared/palette.R`.
 
 Stosuj:
 
@@ -182,7 +186,7 @@ Semantyczne kolory domenowe są dopuszczalne, jeśli realnie poprawiają czyteln
 
 ## CSS
 
-`R/shared_styles.css` jest CSS-em nowego systemu. Nie dodajemy do niego fallbacków dla starych klas.
+`shared/shared_styles.css` jest CSS-em nowego systemu. Nie dodajemy do niego fallbacków dla starych klas.
 
 Style specyficzne dla jednego wykładu mogą trafić do `header_extras`, ale powinny:
 
@@ -232,8 +236,8 @@ sterowania w kolumnach, które automatycznie przechodzą do jednego rzędu piono
 ## Widgety v2 i tabele v2
 
 Nowe i przebudowywane widgety oraz tabele korzystają z komponentów v2
-(sekcja „WIDGETY V2 I TABELE V2” w `R/lecture_layout.R`, style w
-`R/shared_styles.css`, logika klienta w `R/lc_widgets.js`). Sekcja jest
+(sekcja „WIDGETY V2 I TABELE V2” w `shared/lecture_layout.R`, style w
+`shared/shared_styles.css`, logika klienta w `shared/lc_widgets.js`). Sekcja jest
 identyczna we wszystkich kursach; zmiany wprowadzamy równolegle.
 
 Style v2 obejmują każdy `figure_panel()`; nie ma osobnej flagi. Elementy
@@ -435,7 +439,7 @@ Zasady wspólne: kroki od 1 (bez pustego kroku startowego, chyba że widget
 celowo zaczyna od pustego stanu), zmiana kontrolki nie zmienia kroku, reset
 wraca do kroku 1, bez osobnego licznika „Krok X z N” na szerokim ekranie.
 
-Gramatyka wykresu krokowego (`R/theme_upwr.R`): każdy element ma w danym
+Gramatyka wykresu krokowego (`shared/theme_upwr.R`): każdy element ma w danym
 kroku jedną rolę — `data` (niebo), `group` (bursztyn, druga kategoria),
 `new` (burgund, tylko w kroku wprowadzenia), `known` (grafit, z wcześniejszych
 kroków), `background` (niebo, mocno przezroczyste). Kontury słupków i pudełek

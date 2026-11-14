@@ -1,6 +1,8 @@
 # Layout wykładów (`lecture_page`)
 
-Pliki współdzielone: `R/lecture_layout.R`, `R/palette.R`, `R/theme_upwr.R`, `R/shared.R`, `R/shared_styles.css`, `R/shared_toc.js`.
+Pliki współdzielone: `shared/lecture_layout.R`, `shared/palette.R`, `shared/theme_upwr.R`, `shared/shared.R`, `shared/shared_styles.css`, `shared/shared_toc.js`.
+
+Konfiguracja kursu (nazwa, logo, moduły górnego paska, tryb rozdziałów): `<kurs>/R/course.R`.
 
 Wzorce do naśladowania: `typy-danych/`, `wnioskowanie-statystyczne/`, `rozklady-prawdopodobienstwa/`, `przedzialy-ufnosci/`, `zalozenia-testow/`, `regresja/`, `symulacje-statystyczne/`, `metody-bayesowskie/`, `dobre-dane/`, `case-studies/`.
 
@@ -12,15 +14,19 @@ To jest specyfikacja docelowego systemu. Aplikacje wykładowe używają `lecture
 
 ### a) Nie ładuj `bslib` i nie definiuj kolorów inline
 
-Kolory pochodzą z `R/palette.R`, a shell strony z `lecture_page()`. Nie definiuj lokalnych palet hex w `app.R`.
+Kolory pochodzą z `shared/palette.R`, a shell strony z `lecture_page()`. Nie definiuj lokalnych palet hex w `app.R`.
 
 ### b) Dodaj sourcing palety i layoutu (po `.find_app_dir()`)
 
 ```r
-source(file.path(project_root, "R", "palette.R"),        local = TRUE)
-source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
-source(file.path(project_root, "R", "shared.R"),         local = TRUE)
-source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+shared_root <- file.path(dirname(project_root), "shared")
+
+source(file.path(project_root, "R", "course.R"), local = TRUE)
+
+source(file.path(shared_root, "palette.R"),        local = TRUE)
+source(file.path(shared_root, "theme_upwr.R"),     local = TRUE)
+source(file.path(shared_root, "shared.R"),         local = TRUE)
+source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()   # motyw upwr + IBM Plex Sans dla wszystkich geom-ów
 ```
@@ -39,7 +45,7 @@ ui <- lecture_page(
 )
 ```
 
-Mapowanie `lecture_id → moduł` zdefiniowane w `.LC_LECTURE_MODULE` w `lecture_layout.R` — dopisz nową apkę jeśli potrzeba.
+Mapowanie `lecture_id → moduł` jest w polu `lecture_module` w `<kurs>/R/course.R` — dopisz nową apkę jeśli potrzeba.
 
 ### d) Server
 
@@ -137,7 +143,7 @@ col_binomial <- unname(upwr_cat["bursztyn"])
 col_poisson  <- unname(upwr_cat["szalwia"])
 ```
 
-Pełna paleta w `R/palette.R`: `upwr_cat` (8 kolorów: grafit, bursztyn, niebo, szalwia, kurkuma, indygo, terakota, wrzos), `upwr_accent` (burgund), `upwr_secondary` (grafit ciemny), `upwr_reference` (szarobeżowy).
+Pełna paleta w `shared/palette.R`: `upwr_cat` (8 kolorów: grafit, bursztyn, niebo, szalwia, kurkuma, indygo, terakota, wrzos), `upwr_accent` (burgund), `upwr_secondary` (grafit ciemny), `upwr_reference` (szarobeżowy).
 
 ---
 
@@ -254,11 +260,38 @@ Polskie cudzysłowy typograficzne `„..."` (U+201E/U+201D) mogą być **wewnąt
 | `margin_code_note(code, description, label)` | callout kodu (gold, `⌘`) |
 | `figure_panel(label, ..., title, full_width)` | ramka z plakietką; `full_width=TRUE` czyści floaty |
 | `lc_formula_box(...)` | blok wzoru lub krótkiego zapisu matematycznego |
-| `lc_formula_annotated(tex, notes, colors, side, above)` | wzór ze znacznikami: części `⟦k\|...⟧` w kolorach, krótkie opisy symboli („n: liczba obserwacji”) połączone strzałkami (`R/lc_formula.js`); `above` stawia wybrane opisy nad wzorem, `side = "right"` daje kolumnę opisów obok wzorów wielowierszowych |
+| `lc_formula_annotated(tex, notes, colors, side, above)` | wzór ze znacznikami: części `⟦k\|...⟧` w kolorach, krótkie opisy symboli („n: liczba obserwacji”) połączone strzałkami (`shared/lc_formula.js`); `above` stawia wybrane opisy nad wzorem, `side = "right"` daje kolumnę opisów obok wzorów wielowierszowych |
+| `lc_drop_match(input_id, items, zones, colors, item_colors, hint, reset_label)` | ćwiczenie „przypisz karty do pól" — przeciąganie myszą i obsługa klawiatury |
 | `lc_stat_grid(..., columns)` | siatka metryk/statystyk |
 | `lc_stat_box(label, value, ..., caption, color)` | pojedyncza metryka z lewym akcentem |
 | `lc_feedback(..., type)` | przestarzały; komunikat widgetu: `lc_status()` + `lc_verdict(type = "ok" / "warning" / "danger" / "info")` albo jedno zdanie `lc_caption()` |
 | `lc_chapter_next(num, title, lead, target_id)` | link „→ Dalej" na marginesie |
+
+---
+
+### `lc_drop_match()` — przypisywanie kart do pól
+
+Karty ze zdaniami leżą w puli i trafiają do pól kategorii przez przeciąganie
+albo z klawiatury (Enter podnosi, strzałki wybierają pole, Enter upuszcza,
+Escape anuluje, Delete odsyła kartę do puli). Do serwera trafia lista
+`kod_pola = id_karty` z wypełnionymi polami; nieprzypisane karty są pomijane.
+Logika klienta jest w `shared/lc_dragdrop.js` (ładowany przez `lecture_page()`),
+style w sekcji `.lc-dm*` w `shared/shared_styles.css`.
+
+```r
+lc_drop_match(
+  input_id = "ch1_assign",
+  items    = data.frame(id = c("peel", "slip"), text = c("Skórka…", "Upadek…")),
+  zones    = c(hazard = "Zagrożenie", event = "Zdarzenie"),
+  colors   = c(upwr_cat[["terakota"]], upwr_accent)
+)
+
+# server
+answers <- assignment_to_answers(input$ch1_assign)
+```
+
+Kolejność `items` jest kolejnością kart w puli — podawaj ją celowo pomieszaną,
+żeby pozycja nie podpowiadała odpowiedzi.
 
 ---
 

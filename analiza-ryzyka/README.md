@@ -63,7 +63,8 @@ Rscript analiza-ryzyka/tests/testthat.R
 
 ```text
 analiza-ryzyka/
-├── R/                    # własny snapshot layoutu i model Bananpolu
+├── R/                    # course.R, course_styles.css i model Bananpolu
+│                         # (layout i style wspólne: ../shared/)
 ├── docs/                 # plany źródłowe, ocena i plan kanoniczny
 ├── scripts/              # kontrole projektu
 ├── tests/                # testy funkcji oraz smoke test aplikacji
