@@ -192,3 +192,35 @@ testthat::test_that("wykład 01: decyzja i ćwiczenia mają dane dla przeglądar
   testthat::expect_match(res$vote$feedback$.other, "To zbyt szybki ranking.", fixed = TRUE)
   testthat::expect_equal(res$vote$feedback$.none, res$vote$feedback$.other)
 })
+
+# Wykłady gotowe do budowania statycznego (scripts/check_static_ready.R): wspólne warunki.
+static_ready_lectures <- c("01-jezyk-ryzyka", "02-warunki", "03-alarm-i-prawda", "04-wiele-prob",
+                           "05-do-zdarzenia", "06-zmiennosc-i-prog")
+
+for (lecture in static_ready_lectures) local({
+  lecture <- lecture
+  testthat::test_that(paste("tryb statyczny:", lecture, "ma komplet rozdziałów i nie czeka na serwer"), {
+    testthat::skip_if_not_installed("callr")
+    res <- callr::r(function(path) {
+      setwd(path)
+      options(lc.static = TRUE)
+      app <- new.env(parent = globalenv())
+      sys.source("app.R", envir = app)
+      t <- htmltools::renderTags(app$ui)
+      doc <- xml2::read_html(paste0("<div>", t$html, "</div>"))
+      ids <- xml2::xml_attr(xml2::xml_find_all(doc, "//*[@id]"), "id")
+      list(
+        sections = xml2::xml_attr(xml2::xml_find_all(doc, "//section[@data-lc-static-chapter]"), "id"),
+        chapters = vapply(app$.chapters, function(ch) ch$id, character(1)),
+        outputs = xml2::xml_attr(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-html-output') or contains(@class, 'shiny-plot-output') or contains(@class, 'shiny-text-output')]"), "id"),
+        selectize = length(xml2::xml_find_all(doc, "//script[@data-for]")),
+        duplicate_ids = unique(ids[duplicated(ids)])
+      )
+    }, args = list(path = file.path(risk_root, lecture)), timeout = 180)
+    testthat::expect_equal(res$sections, res$chapters)
+    # Klasę wyjścia Shiny mogą mieć tylko opisy kroków, które pisze przeglądarka: id kończy się na _text.
+    testthat::expect_true(all(grepl("_text$", res$outputs)), info = paste(res$outputs, collapse = ", "))
+    testthat::expect_equal(res$selectize, 0L)
+    testthat::expect_length(res$duplicate_ids, 0L)
+  })
+})

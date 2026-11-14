@@ -51,6 +51,7 @@ source(file.path(app_dir, "modules", "stop_proto_common.R"), local = TRUE)
 for (.f in c("ra", "rb", "rc", "rd", "re", "rf", "rg")) {
   source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
 }
+source(file.path(app_dir, "modules", "wykresy.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
@@ -72,6 +73,8 @@ ui <- lecture_page(
     includeScript(file.path(shared_root, "lc_charts.js")),
     includeScript(file.path(shared_root, "lc_dist.js")),
     includeScript(file.path(shared_root, "lc_stat_figures.js")),
+    includeScript(file.path(project_root, "R", "risk_figures.js")),
+    includeScript(file.path(app_dir, "modules", "wykresy.js")),
     lc_sf_styles(),
     lapply(c("ra", "rb", "rc", "rd", "re", "rf"), function(f)
       includeScript(file.path(app_dir, "modules", paste0("proto_", f, ".js"))))

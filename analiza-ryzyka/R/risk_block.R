@@ -47,6 +47,31 @@ risk_widget_panel <- function(label = "Eksperyment", title, controls,
   )
 }
 
+# Panel z ryciną liczoną w przeglądarce (silnik lcSF) — następca risk_widget_panel()
+# dla wykresów, które dawniej rysował serwer.
+#   fig       nazwa ryciny zarejestrowanej w JS (lcSF.register)
+#   controls  kontrolka albo lista kontrolek: lc_sf_slider(), lc_segmented(),
+#             selectInput(selectize = FALSE), checkboxInput()
+#   reads     odczyty wypełniane przez JS: lista risk_sf_read()
+#   config    dane dla ryciny (JSON w data-config)
+risk_sf_panel <- function(label = "Eksperyment", title, fig, controls = NULL, reads = NULL,
+                          note = NULL, width_mode = "wide", ratio = "2.2/1", max_height = "440px",
+                          config = NULL, legend = FALSE, full_width = NULL) {
+  content <- list(
+    lc_sf_figure(fig, control = controls, toolbar = if (!is.null(reads)) lc_readouts(reads),
+                 ratio = ratio, max_height = max_height, config = config, legend = legend),
+    if (!is.null(note)) lc_caption(note)
+  )
+  # figure_panel() przyjmuje width_mode albo full_width, nie oba naraz.
+  size <- if (is.null(full_width)) list(width_mode = width_mode) else list(full_width = full_width)
+  do.call(figure_panel, c(list(label = label, title = title), size, content))
+}
+
+# Odczyt wypełniany przez rycinę (lcSF.setValue(root, key, tekst)).
+risk_sf_read <- function(key, label, color = NULL) {
+  lc_readout(label, lc_sf_value(key), color = color)
+}
+
 # correct: wartość poprawnej odpowiedzi (karta zielenieje po „Sprawdź intuicję”);
 # NULL, gdy żadna odpowiedź nie jest jedyną poprawną.
 # feedback: komentarze do odpowiedzi jako nazwana lista tagów (nazwa = wartość

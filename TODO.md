@@ -46,11 +46,13 @@ przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. 
 R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
 
 Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
-2026: gotowe 10 z 21 wykładów (analiza ryzyka 01–05, statystyka 00–04, zbudowane i sprawdzone
+2026: gotowe 11 z 21 wykładów (analiza ryzyka 01–06, statystyka 00–04, zbudowane i sprawdzone
 przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
-z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 141 wykresów
-R, 241 wyjść tekstowych i 223 wejścia czytane przez serwer. Zostały tylko
-wykłady z wykresami R: analiza ryzyka 06–10 i statystyka 05–10. Quiz analizy ryzyka
+z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 135 wykresów
+R, 234 wyjścia tekstowe i 214 wejść czytanych przez serwer. Zostały tylko
+wykłady z wykresami R: analiza ryzyka 07–10 i statystyka 05–10. Wykresy analizy
+ryzyka rysuje silnik `lcSF` przez `risk_sf_panel()` (dane ze stałym ziarnem
+z R w `config`, funkcje kursu w `analiza-ryzyka/R/risk_figures.js`); wzorzec: 06. Quiz analizy ryzyka
 (wszystkie 10 wykładów) ocenia już przeglądarka; głosowanie „Najpierw zdecyduj”
 w 03–05 także (`risk_vote_panel(feedback = )`). Treść wybieraną kontrolką
 (dawniej `uiOutput()` + `renderUI()` po `input$…`) zastępuje `lc_variants()`,
@@ -85,7 +87,7 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   albo poszerzyć tolerancję.
 - [ ] Faza 3: `lc_stats.js` (regresja prosta, wielomianowa, wieloraka; testy t;
   QQ) z wynikami R jako wzorcem testów.
-- [ ] Faza 4: analiza ryzyka 06–10 (26 wykresów R).
+- [ ] Faza 4: analiza ryzyka 06–10 (26 wykresów R). Gotowe: 06 (6 wykresów).
 - [ ] Faza 5: statystyka 05–06 (29 wykresów R; Shapiro, Levene).
 - [ ] Faza 6: statystyka 07–08 (66 wykresów R).
 - [ ] Faza 7: statystyka 09–10 (20 wykresów R; modele na stałych zbiorach
