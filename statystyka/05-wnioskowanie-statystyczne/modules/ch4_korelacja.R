@@ -12,6 +12,156 @@ ch4_r_formula <- function() {
   )
 }
 
+.ch4_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
+
+# ============================================================================
+# SERVER
+# ============================================================================
+
+# Test korelacji Pearsona do rozwiązań ćwiczeń (dawniej pomocnik wewnątrz serwera).
+.cas_cor <- function(x, y) {
+  ok <- complete.cases(x, y); x <- x[ok]; y <- y[ok]
+  n <- length(x); r <- cor(x, y)
+  t_val <- r * sqrt((n - 2) / (1 - r^2)); df <- n - 2
+  p_val <- 2 * pt(-abs(t_val), df)
+  list(r = r, t = t_val, df = df, p = p_val, n = n, r2 = r^2)
+}
+
+# Treść stała (dawniej output$cas_ch4_sol3 na serwerze): składana przy budowaniu strony.
+cas_ch4_sol3_ui <- function() {
+  r <- .cas_cor(.ch4_cas$read, .ch4_cas$math)
+  tagList(
+    tags$ul(
+      tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
+        r$r, r$df, r$t,
+        if (r$p < 0.001) "<" else "=",
+        if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+      tags$li(sprintf("R² = %.3f → czytanie wyjaśnia %.1f%% wariancji wyników z matematyki",
+                      r$r2, 100 * r$r2))
+    ),
+    lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
+    p(tags$b("Interpretacja:"), " ",
+      sprintf("r = %.3f — korelacja silnie dodatnia.
+        Okręgi z lepszymi wynikami z czytania osiągają też wyższe wyniki z matematyki
+        (%.1f%% wspólnej wariancji). Obie zmienne mierzą ogólny poziom edukacji.",
+        r$r, 100 * r$r2))
+  )
+}
+
+# Treść stała (dawniej output$cas_ch4_sol4 na serwerze): składana przy budowaniu strony.
+cas_ch4_sol4_ui <- function() {
+  r <- .cas_cor(.ch4_cas$income, .ch4_cas$read)
+  tagList(
+    tags$ul(
+      tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
+        r$r, r$df, r$t,
+        if (r$p < 0.001) "<" else "=",
+        if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+      tags$li(sprintf("R² = %.3f — dochód wyjaśnia %.1f%% wariancji wyników",
+                      r$r2, 100 * r$r2))
+    ),
+    lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
+    p(tags$b("Korelacja ≠ przyczynowość:"),
+      " Korelacja jest istotna i dodatnia — bogatsze okręgi mają wyższe wyniki.
+      Jednak nie możemy stwierdzić, że dochód ", tags$em("powoduje"),
+      " lepsze wyniki. Trzecia zmienna (jakość nauczycieli, kapitał kulturowy rodziny)
+      może tłumaczyć obie. Potrzeba badania eksperymentalnego lub quasi-eksperymentalnego.")
+  )
+}
+
+# Treść stała (dawniej output$cas_ch4_sol5 na serwerze): składana przy budowaniu strony.
+cas_ch4_sol5_ui <- function() {
+  r <- .cas_cor(.ch4_cas$student_teacher_ratio, .ch4_cas$read)
+  tagList(
+    tags$ul(
+      tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
+        r$r, r$df, r$t,
+        if (r$p < 0.001) "<" else "=",
+        if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+      tags$li(sprintf("R² = %.3f — STR wyjaśnia %.1f%% wariancji wyników",
+                      r$r2, 100 * r$r2))
+    ),
+    lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
+    p(tags$b("Interpretacja:"), " ",
+      sprintf("r = %.3f — korelacja ujemna: wyższy STR (więcej uczniów na nauczyciela)
+        wiąże się z niższymi wynikami z czytania. STR wyjaśnia tylko %.1f%%
+        wariancji. STR często odzwierciedla zamożność okręgu, więc dochód może
+        być zmienną zakłócającą tej zależności.",
+        r$r, 100 * r$r2))
+  )
+}
+
+# Scenariusze testu korelacji (Ryc. 6.1 i 6.2): parametry losowania i teksty hipotez.
+ch4_scenario_params <- list(
+  sleep_grade = list(
+    r_true = 0.45, xlab = "Godziny snu", ylab = "Ocena z egzaminu",
+    x_mean = 7,   x_sd = 1.5,
+    y_mean = 70,  y_sd = 12,
+    title = "Sen a ocena",
+    question = "Czy istnieje związek między ilością snu a oceną z egzaminu?",
+    h0_text = "\\(H_0: \\rho = 0\\) (brak związku liniowego)",
+    h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
+    question_1s = "Czy więcej snu wiąże się z wyższą oceną?",
+    h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
+    h1_text_1s = "\\(H_a: \\rho > 0\\)",
+    alt_1s = "greater"),
+  nitrate_dist = list(
+    r_true = 0.55, xlab = "Odległość od źródła (km)", ylab = "Stężenie azotanów (mg/l)",
+    x_mean = 15,  x_sd = 8,
+    y_mean = 30,  y_sd = 12,
+    title = "Azotany wzdłuż rzeki",
+    question = "Czy stężenie azotanów jest powiązane z odległością od źródła?",
+    h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
+    h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
+    question_1s = "Czy stężenie azotanów rośnie z odległością od źródła?",
+    h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
+    h1_text_1s = "\\(H_a: \\rho > 0\\)",
+    alt_1s = "greater"),
+  irrigation_yield = list(
+    r_true = 0.60, xlab = "Nawadnianie (mm/tydzień)", ylab = "Plon (t/ha)",
+    x_mean = 25,  x_sd = 10,
+    y_mean = 6,   y_sd = 1.5,
+    title = "Nawadnianie a plon",
+    question = "Czy ilość nawadniania jest powiązana z plonem?",
+    h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
+    h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
+    question_1s = "Czy większe nawadnianie daje wyższe plony?",
+    h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
+    h1_text_1s = "\\(H_a: \\rho > 0\\)",
+    alt_1s = "greater"),
+  preserv_shelf = list(
+    r_true = 0.50, xlab = "Stężenie konserwantu (mg/kg)", ylab = "Trwałość (dni)",
+    x_mean = 200, x_sd = 60,
+    y_mean = 30,  y_sd = 8,
+    title = "Konserwant a trwałość",
+    question = "Czy stężenie konserwantu wpływa na trwałość produktu?",
+    h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
+    h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
+    question_1s = "Czy większe stężenie konserwantu wydłuża trwałość?",
+    h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
+    h1_text_1s = "\\(H_a: \\rho > 0\\)",
+    alt_1s = "greater"),
+  training_accidents = list(
+    r_true = -0.55,
+    xlab = "Godziny szkolenia BHP / rok",
+    ylab = "Liczba wypadków / 100 prac. / rok",
+    x_mean = 20,  x_sd = 7,
+    y_mean = 8,   y_sd = 3,
+    title = "Szkolenie BHP a wypadki",
+    question = "Czy liczba godzin szkolenia BHP wiąże się z liczbą wypadków?",
+    h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
+    h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
+    question_1s = "Czy więcej godzin szkolenia BHP wiąże się z mniejszą liczbą wypadków?",
+    h0_text_1s = "\\(H_0: \\rho \\geq 0\\)",
+    h1_text_1s = "\\(H_a: \\rho < 0\\)",
+    alt_1s = "less")
+)
+
+# Dane dla rycin s05_r1 i s05_r1b (modules/figures.js).
+ch4_r1_config <- list(scenarios = lapply(ch4_scenario_params, `[`,
+  c("r_true", "xlab", "ylab", "x_mean", "x_sd", "y_mean", "y_sd", "alt_1s")))
+
 ch4_ui <- list(
   id = "ch-korelacja", num = "06", title = "Korelacja",
   content = tagList(
@@ -176,26 +326,30 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 6.1",
       title = "Test korelacji — krok po kroku",
-      uiOutput("ch4_hypothesis_panel"),
-      lc_step_widget("ch4_test",
-        steps = c("Dane (wykres rozrzutu)", "Korelacja z próby",
-                  "Statystyka testowa", "p-wartość i decyzja"),
-        toolbar = lc_toolbar(
-          selectInput("ch4_scenario", "Scenariusz",
-            choices = c(
-              "Sen a ocena z egzaminu" = "sleep_grade",
-              "Azotany a odległość od źródła" = "nitrate_dist",
-              "Nawadnianie a plon" = "irrigation_yield",
-              "Stężenie konserwantu a trwałość" = "preserv_shelf",
-              "Szkolenie BHP a wypadki (IB)" = "training_accidents"
-            ),
-            selected = "sleep_grade"
+      # Losowanie, wykresy kroków i opisy liczy przeglądarka (modules/figures.js, rycina s05_r1).
+      lc_sf_figure("s05_r1", bare = TRUE, config = ch4_r1_config, body = tagList(
+        s05_hypothesis_panel(ch4_scenario_params, "ch4_scenario"),
+        lc_step_widget("ch4_test",
+          steps = c("Dane (wykres rozrzutu)", "Korelacja z próby",
+                    "Statystyka testowa", "p-wartość i decyzja"),
+          toolbar = lc_toolbar(
+            lc_sf_ctl(selectInput("ch4_scenario", "Scenariusz", selectize = FALSE,
+              choices = c(
+                "Sen a ocena z egzaminu" = "sleep_grade",
+                "Azotany a odległość od źródła" = "nitrate_dist",
+                "Nawadnianie a plon" = "irrigation_yield",
+                "Stężenie konserwantu a trwałość" = "preserv_shelf",
+                "Szkolenie BHP a wypadki (IB)" = "training_accidents"
+              ),
+              selected = "sleep_grade"
+            )),
+            lc_sf_slider("ch4_n", "Wielkość próby (n)", 15, 100, 40, 5),
+            lc_sf_action("new", "ch4_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
+            lc_chart_zoom_button()
           ),
-          lc_slider("ch4_n", "Wielkość próby (n)", 15, 100, 40, 5),
-          lc_action("ch4_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid")
-        ),
-        plot_id = "ch4_step_plot"
-      )
+          body = lc_sf_chart(0, "2.5/1", "380px")
+        )
+      ))
     ),
 
     lc_p("W scenariuszu domyślnym (\\(\\rho = 0.45\\), \\(n = 40\\)) wartość
@@ -230,15 +384,18 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 6.2",
       title = "Test korelacji jednostronny",
-      uiOutput("ch4b_hypothesis_panel"),
-      lc_step_widget("ch4b_test",
-        steps = c("Dane", "Korelacja z próby", "Statystyka testowa",
-                  "p-wartość i decyzja"),
-        toolbar = lc_toolbar(
-          lc_caption("Dane: te same co w teście dwustronnym powyżej.")
-        ),
-        plot_id = "ch4b_step_plot"
-      )
+      lc_sf_figure("s05_r1b", bare = TRUE, config = ch4_r1_config, body = tagList(
+        s05_hypothesis_panel(ch4_scenario_params, "ch4_scenario", one_sided = TRUE),
+        lc_step_widget("ch4b_test",
+          steps = c("Dane", "Korelacja z próby", "Statystyka testowa",
+                    "p-wartość i decyzja"),
+          toolbar = lc_toolbar(
+            lc_caption("Dane: te same co w teście dwustronnym powyżej."),
+            lc_chart_zoom_button()
+          ),
+          body = lc_sf_chart(0, "2.5/1", "380px")
+        )
+      ))
     ),
 
     lc_p("Wartości \\(r\\) i \\(t\\) są w obu panelach identyczne, bo zależą tylko
@@ -273,7 +430,7 @@ ch4_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("read"), " i ", tags$code("math"),
         ". Przed odsłonięciem rozwiązania: jakiej korelacji się spodziewać, dodatniej czy ujemnej?
         Silnej czy słabej? Zanotuj przewidywanie i sprawdź wynik."),
-      lc_more("Rozwiązanie", uiOutput("cas_ch4_sol3"))
+      lc_more("Rozwiązanie", cas_ch4_sol3_ui())
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -281,7 +438,7 @@ ch4_ui <- list(
       p("Oblicz korelację Pearsona między ", tags$code("income"), " a ", tags$code("read"),
         ". Jaki znak ma r? Czy korelacja jest istotna? Czy można wyciągnąć wniosek
         przyczynowy — że wyższy dochód ", tags$em("powoduje"), " lepsze wyniki?"),
-      lc_more("Rozwiązanie", uiOutput("cas_ch4_sol4"))
+      lc_more("Rozwiązanie", cas_ch4_sol4_ui())
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -290,7 +447,7 @@ ch4_ui <- list(
         " (STR) a ", tags$code("read"),
         ". Dlaczego korelacja jest ujemna? Czy jest istotna statystycznie?
         Czy silna praktycznie? Pomyśl, co może być zmienną zakłócającą."),
-      lc_more("Rozwiązanie", uiOutput("cas_ch4_sol5"))
+      lc_more("Rozwiązanie", cas_ch4_sol5_ui())
     ),
 
     lc_p("Trzy korelacje z tych samych danych pokazują trzy różne sytuacje. Przy
@@ -316,343 +473,6 @@ ch4_ui <- list(
 # DANE — CASchools (wczytane raz przy ładowaniu modułu)
 # ============================================================================
 
-.ch4_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
-                     stringsAsFactors = FALSE)
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch4_server <- function(input, output, session) {
-
-  # --- Parametry scenariuszy ---
-  scenario_params <- list(
-    sleep_grade = list(
-      r_true = 0.45, xlab = "Godziny snu", ylab = "Ocena z egzaminu",
-      x_mean = 7,   x_sd = 1.5,
-      y_mean = 70,  y_sd = 12,
-      title = "Sen a ocena",
-      question = "Czy istnieje związek między ilością snu a oceną z egzaminu?",
-      h0_text = "\\(H_0: \\rho = 0\\) (brak związku liniowego)",
-      h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
-      question_1s = "Czy więcej snu wiąże się z wyższą oceną?",
-      h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
-      h1_text_1s = "\\(H_a: \\rho > 0\\)",
-      alt_1s = "greater"),
-    nitrate_dist = list(
-      r_true = 0.55, xlab = "Odległość od źródła (km)", ylab = "Stężenie azotanów (mg/l)",
-      x_mean = 15,  x_sd = 8,
-      y_mean = 30,  y_sd = 12,
-      title = "Azotany wzdłuż rzeki",
-      question = "Czy stężenie azotanów jest powiązane z odległością od źródła?",
-      h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
-      h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
-      question_1s = "Czy stężenie azotanów rośnie z odległością od źródła?",
-      h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
-      h1_text_1s = "\\(H_a: \\rho > 0\\)",
-      alt_1s = "greater"),
-    irrigation_yield = list(
-      r_true = 0.60, xlab = "Nawadnianie (mm/tydzień)", ylab = "Plon (t/ha)",
-      x_mean = 25,  x_sd = 10,
-      y_mean = 6,   y_sd = 1.5,
-      title = "Nawadnianie a plon",
-      question = "Czy ilość nawadniania jest powiązana z plonem?",
-      h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
-      h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
-      question_1s = "Czy większe nawadnianie daje wyższe plony?",
-      h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
-      h1_text_1s = "\\(H_a: \\rho > 0\\)",
-      alt_1s = "greater"),
-    preserv_shelf = list(
-      r_true = 0.50, xlab = "Stężenie konserwantu (mg/kg)", ylab = "Trwałość (dni)",
-      x_mean = 200, x_sd = 60,
-      y_mean = 30,  y_sd = 8,
-      title = "Konserwant a trwałość",
-      question = "Czy stężenie konserwantu wpływa na trwałość produktu?",
-      h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
-      h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
-      question_1s = "Czy większe stężenie konserwantu wydłuża trwałość?",
-      h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
-      h1_text_1s = "\\(H_a: \\rho > 0\\)",
-      alt_1s = "greater"),
-    training_accidents = list(
-      r_true = -0.55,
-      xlab = "Godziny szkolenia BHP / rok",
-      ylab = "Liczba wypadków / 100 prac. / rok",
-      x_mean = 20,  x_sd = 7,
-      y_mean = 8,   y_sd = 3,
-      title = "Szkolenie BHP a wypadki",
-      question = "Czy liczba godzin szkolenia BHP wiąże się z liczbą wypadków?",
-      h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
-      h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
-      question_1s = "Czy więcej godzin szkolenia BHP wiąże się z mniejszą liczbą wypadków?",
-      h0_text_1s = "\\(H_0: \\rho \\geq 0\\)",
-      h1_text_1s = "\\(H_a: \\rho < 0\\)",
-      alt_1s = "less")
-  )
-
-  # --- Współdzielone dane ---
-  # Jedna próbka dla testu dwustronnego i jednostronnego; po zmianie
-  # scenariusza albo n stara próbka nie pasuje już do opisu pytania.
-  ch4_data_state <- reactiveVal(NULL)
-  ch4_data <- reactive({
-    state <- ch4_data_state()
-    if (is.null(state)) return(NULL)
-    req(input$ch4_scenario, input$ch4_n)
-
-    if (!identical(state$scenario, input$ch4_scenario) ||
-        !isTRUE(state$n == input$ch4_n)) {
-      return(NULL)
-    }
-
-    state$data
-  })
-
-  # Kroki widgetów (1..4) żyją w przeglądarce; nowa próba ani zmiana
-  # scenariusza nie cofa kroku.
-  ch4_step <- lc_step_server("ch4_test", input)$step
-  ch4b_step <- lc_step_server("ch4b_test", input)$step
-
-  observeEvent(input$ch4_new_sample, {
-    req(input$ch4_scenario, input$ch4_n)
-    par <- scenario_params[[input$ch4_scenario]]
-    req(!is.null(par))
-    n <- input$ch4_n
-    ch4_data_state(list(
-      scenario = input$ch4_scenario,
-      n = n,
-      data = generate_correlation_data(n, par$r_true, "linear",
-                                       x_mean = par$x_mean, x_sd = par$x_sd,
-                                       y_mean = par$y_mean, y_sd = par$y_sd)
-    ))
-  }, ignoreInit = TRUE)
-
-  # Kroki 1–2: wykres rozrzutu; prosta MNK nowa w kroku 2. Rama z danych.
-  ch4_scatter_plot <- function(d, par, step) {
-    pad <- function(v) range(v) + c(-1, 1) * diff(range(v)) * 0.06
-    ggplot(d, aes(x = x, y = y)) +
-      step_layer(geom_point, "data", size = 2.5) +
-      step_show(step, 2, step_layer(geom_smooth, step_role(step, 2), method = "lm",
-                                    formula = y ~ x, se = FALSE)) +
-      labs(x = par$xlab, y = par$ylab) +
-      step_frame(xlim = pad(d$x), ylim = pad(d$y))
-  }
-
-  # =============================================
-  # WIDGET 1: Test dwustronny
-  # =============================================
-
-  output$ch4_hypothesis_panel <- renderUI({
-    par <- scenario_params[[input$ch4_scenario]]
-    d <- ch4_data()
-    tagList(
-      lc_status(
-        p(tags$b("Pytanie potoczne:")),
-        p(tags$em(paste0("„", par$question, "”")))
-      ),
-      lc_formula_box(
-        p(tags$b("Hipoteza formalna (dwustronna):")),
-        p(withMathJax(par$h0_text)),
-        p(withMathJax(par$h1_text))
-      ),
-      if (is.null(d)) {
-        lc_empty("Kliknij „Losuj próbę”")
-      }
-    )
-  })
-
-  zoom_plot_server("ch4_step_plot", reactive({
-    d <- ch4_data()
-    step <- ch4_step()
-    par <- scenario_params[[input$ch4_scenario]]
-
-    if (is.null(d)) return(NULL)
-
-    if (step <= 2) {
-      ch4_scatter_plot(d, par, step)
-    } else {
-      n <- nrow(d)
-      r_val <- cor(d$x, d$y)
-      t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
-      step_null_plot(t_stat, df = n - 2, type = "t",
-                     phase = if (step == 3) "stat" else "decision")
-    }
-  }))
-
-  output$ch4_test_text <- renderUI({
-    d <- ch4_data()
-    step <- ch4_step()
-    par <- scenario_params[[input$ch4_scenario]]
-
-    if (is.null(d)) return(NULL)
-
-    n <- nrow(d)
-    r_val <- cor(d$x, d$y)
-    t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
-    p_val <- 2 * pt(-abs(t_stat), df = n - 2)
-
-    switch(as.character(step),
-      "1" = tagList(
-        "n = ", step_num(n), " par obserwacji. Każdy punkt to jedna obserwacja
-        z dwiema wartościami: ", paste0(par$xlab, " i ", par$ylab, ". Czy widać trend?")
-      ),
-      "2" = tagList(
-        "Korelacja z próby: r = ", step_num(lc_fmt(r_val, 3)),
-        ". Ale czy to wystarczająco daleko od zera, by odrzucić H₀?"
-      ),
-      "3" = tagList(
-        paste0("t = ", lc_fmt(r_val, 3), " · √", n - 2, " / √(1 − ",
-               lc_fmt(r_val^2, 3), ") = "),
-        step_num(lc_fmt(t_stat, 3)),
-        paste0(". Zamieniamy r na statystykę t, żeby móc porównać z rozkładem t(",
-               n - 2, ").")
-      ),
-      "4" = step_verdict(p_val)
-    )
-  })
-
-  # =============================================
-  # WIDGET 2: Jednostronny (te same dane)
-  # =============================================
-
-  output$ch4b_hypothesis_panel <- renderUI({
-    par <- scenario_params[[input$ch4_scenario]]
-    d <- ch4_data()
-    tagList(
-      lc_status(
-        p(tags$b("Pytanie potoczne (kierunkowe):")),
-        p(tags$em(paste0("„", par$question_1s, "”")))
-      ),
-      lc_formula_box(
-        p(tags$b("Hipoteza formalna (jednostronna):")),
-        p(withMathJax(par$h0_text_1s)),
-        p(withMathJax(par$h1_text_1s))
-      ),
-      if (is.null(d)) {
-        lc_empty("Najpierw wylosuj próbę w teście dwustronnym powyżej")
-      }
-    )
-  })
-
-  zoom_plot_server("ch4b_step_plot", reactive({
-    d <- ch4_data()
-    step <- ch4b_step()
-    par <- scenario_params[[input$ch4_scenario]]
-
-    if (is.null(d)) return(NULL)
-
-    n <- nrow(d)
-    r_val <- cor(d$x, d$y)
-    t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
-
-    if (step <= 2) {
-      ch4_scatter_plot(d, par, step)
-    } else {
-      step_null_plot(t_stat, df = n - 2, type = "t", alternative = par$alt_1s,
-                     phase = if (step == 3) "stat" else "decision")
-    }
-  }))
-
-  output$ch4b_test_text <- renderUI({
-    d <- ch4_data()
-    step <- ch4b_step()
-    par <- scenario_params[[input$ch4_scenario]]
-
-    if (is.null(d)) return(NULL)
-
-    n <- nrow(d)
-    r_val <- cor(d$x, d$y)
-    t_stat <- r_val * sqrt(n - 2) / sqrt(1 - r_val^2)
-    p_val <- pt(t_stat, df = n - 2, lower.tail = (par$alt_1s == "less"))
-
-    switch(as.character(step),
-      "1" = tagList(
-        "n = ", step_num(n), " (te same dane co wyżej). Te same obserwacje,
-        ale pytamy o kierunek związku."
-      ),
-      "2" = tagList(
-        "r = ", step_num(lc_fmt(r_val, 3)), ", tak samo jak w teście dwustronnym.
-        Zmieniło się tylko pytanie."
-      ),
-      "3" = tagList(
-        "t = ", step_num(lc_fmt(t_stat, 3)), ", bez zmian. Obszar odrzucenia
-        leży teraz tylko w ",
-        if (par$alt_1s == "greater") "prawym" else "lewym", " ogonie."
-      ),
-      "4" = tagList(
-        "Jednostronnie: ", step_verdict(p_val)
-      )
-    )
-  })
-
-  # --- Ćwiczenia CASchools ---
-
-  .cas_cor <- function(x, y) {
-    ok <- complete.cases(x, y); x <- x[ok]; y <- y[ok]
-    n <- length(x); r <- cor(x, y)
-    t_val <- r * sqrt((n - 2) / (1 - r^2)); df <- n - 2
-    p_val <- 2 * pt(-abs(t_val), df)
-    list(r = r, t = t_val, df = df, p = p_val, n = n, r2 = r^2)
-  }
-
-  output$cas_ch4_sol3 <- renderUI({
-    r <- .cas_cor(.ch4_cas$read, .ch4_cas$math)
-    tagList(
-      tags$ul(
-        tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
-          r$r, r$df, r$t,
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("R² = %.3f → czytanie wyjaśnia %.1f%% wariancji wyników z matematyki",
-                        r$r2, 100 * r$r2))
-      ),
-      lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
-      p(tags$b("Interpretacja:"), " ",
-        sprintf("r = %.3f — korelacja silnie dodatnia.
-          Okręgi z lepszymi wynikami z czytania osiągają też wyższe wyniki z matematyki
-          (%.1f%% wspólnej wariancji). Obie zmienne mierzą ogólny poziom edukacji.",
-          r$r, 100 * r$r2))
-    )
-  })
-
-  output$cas_ch4_sol4 <- renderUI({
-    r <- .cas_cor(.ch4_cas$income, .ch4_cas$read)
-    tagList(
-      tags$ul(
-        tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
-          r$r, r$df, r$t,
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("R² = %.3f — dochód wyjaśnia %.1f%% wariancji wyników",
-                        r$r2, 100 * r$r2))
-      ),
-      lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
-      p(tags$b("Korelacja ≠ przyczynowość:"),
-        " Korelacja jest istotna i dodatnia — bogatsze okręgi mają wyższe wyniki.
-        Jednak nie możemy stwierdzić, że dochód ", tags$em("powoduje"),
-        " lepsze wyniki. Trzecia zmienna (jakość nauczycieli, kapitał kulturowy rodziny)
-        może tłumaczyć obie. Potrzeba badania eksperymentalnego lub quasi-eksperymentalnego.")
-    )
-  })
-
-  output$cas_ch4_sol5 <- renderUI({
-    r <- .cas_cor(.ch4_cas$student_teacher_ratio, .ch4_cas$read)
-    tagList(
-      tags$ul(
-        tags$li(sprintf("r = %.3f, t(%d) = %.3f, p %s %s",
-          r$r, r$df, r$t,
-          if (r$p < 0.001) "<" else "=",
-          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        tags$li(sprintf("R² = %.3f — STR wyjaśnia %.1f%% wariancji wyników",
-                        r$r2, 100 * r$r2))
-      ),
-      lc_verdict(tags$strong("Odrzucamy H₀"), type = "danger"),
-      p(tags$b("Interpretacja:"), " ",
-        sprintf("r = %.3f — korelacja ujemna: wyższy STR (więcej uczniów na nauczyciela)
-          wiąże się z niższymi wynikami z czytania. STR wyjaśnia tylko %.1f%%
-          wariancji. STR często odzwierciedla zamożność okręgu, więc dochód może
-          być zmienną zakłócającą tej zależności.",
-          r$r, 100 * r$r2))
-    )
-  })
-}
+# Rozdział nie ma logiki serwera: próbę, wykresy kroków i opisy liczy przeglądarka
+# (modules/figures.js), rozwiązania ćwiczeń CASchools składa R przy budowaniu.
+ch4_server <- function(input, output, session) {}

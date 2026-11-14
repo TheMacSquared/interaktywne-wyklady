@@ -75,6 +75,21 @@
     var z = (diff > 0 ? 1 : diff < 0 ? -1 : 0) * adj / Math.sqrt(n * p0 * (1 - p0));
     return { z: z, p: 1 - D.pchisq(z * z, 1) };
   }
+  // generate_correlation_data(type = "linear"): x normalne, y = r · z(x) · sd_y + reszta; wartości do 0.1.
+  function corData(r, n, par) {
+    var round1 = function (v) { return Math.round(v * 10) / 10; };
+    var x = r.many(n, function () { return r.norm(par.x_mean, par.x_sd); }), mx = T.mean(x), sx = T.sd(x);
+    var y = x.map(function (v) { return par.r_true * (v - mx) / sx * par.y_sd + Math.sqrt(1 - par.r_true * par.r_true) * r.norm() * par.y_sd + par.y_mean; });
+    return { x: x.map(round1), y: y.map(round1) };
+  }
+  // Test korelacji Pearsona: r, statystyka t = r · √(n − 2) / √(1 − r²), p i prosta MNK.
+  function corTest(x, y, alternative) {
+    var n = x.length, mx = T.mean(x), my = T.mean(y), sxy = 0, sxx = 0, syy = 0, i;
+    for (i = 0; i < n; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) * (x[i] - mx); syy += (y[i] - my) * (y[i] - my); }
+    var r = sxy / Math.sqrt(sxx * syy), t = r * Math.sqrt(n - 2) / Math.sqrt(1 - r * r), df = n - 2;
+    var p = alternative === "less" ? D.pt(t, df) : alternative === "greater" ? 1 - D.pt(t, df) : 2 * D.pt(-Math.abs(t), df);
+    return { n: n, r: r, t: t, df: df, p: p, slope: sxy / sxx, intercept: my - sxy / sxx * mx };
+  }
   // Wartości krytyczne rozkładu statystyki testowej (α = 0.05) i funkcja „w obszarze odrzucenia”.
   function critical(type, df, alternative) {
     if (type === "chisq") { var c = D.qchisq(0.95, df); return { values: [c], reject: function (x) { return x >= c; } }; }
@@ -84,7 +99,8 @@
     return { values: [-t2, t2], reject: function (x) { return Math.abs(x) >= t2; } };
   }
   root.lcS05 = { phoneData: phoneData, nullDiffs: nullDiffs, simP: simP, power: power, quizAnswer: quizAnswer,
-                 tOne: tOne, hist15: hist15, critical: critical, binomTest: binomTest, propTest: propTest };
+                 tOne: tOne, hist15: hist15, critical: critical, binomTest: binomTest, propTest: propTest,
+                 corData: corData, corTest: corTest };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -446,6 +462,67 @@
       return d.n * p0 >= 10 && d.n * (1 - p0) >= 10 ? "ok" : "small";
     }
   };
+
+  // ---- Rozdział 6: dwie zmienne ilościowe (test korelacji) ----------------------
+  // Jedna wspólna próba par (x, y) dla testu dwustronnego (s05_r1) i jednostronnego (s05_r1b).
+  store.r1 = null;
+  function r1Controls() {
+    var sc = document.getElementById("ch4_scenario"), n = document.getElementById("ch4_n");
+    return { scenario: sc ? sc.value : "sleep_grade", n: n ? Number(n.value) : 40 };
+  }
+  function r1Data() {
+    var c = r1Controls(), s = store.r1;
+    return s && s.scenario === c.scenario && s.n === c.n ? s : null;
+  }
+  // Kroki 1–2: wykres rozrzutu; prosta MNK nowa w kroku 2. Rama z danych.
+  function r1Scatter(P, d, par, step) {
+    var pad = function (v) { var lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), e = (hi - lo) * 0.06; return [lo - e, hi + e]; };
+    var layers = [{ type: "points", data: d.x.map(function (x, i) { return [x, d.y[i]]; }), color: P.niebo, size: 8, alpha: 0.7 }];
+    if (step >= 2) {
+      var fit = corTest(d.x, d.y), lo = Math.min.apply(null, d.x), hi = Math.max.apply(null, d.x), role = stepRole(step, 2);
+      layers.push({ type: "line", data: [[lo, fit.intercept + fit.slope * lo], [hi, fit.intercept + fit.slope * hi]], color: roleColor(P, role), width: roleWidth(role) });
+    }
+    return { x: pad(d.x), y: pad(d.y), layers: layers, xName: par.xlab, yName: par.ylab, aria: "Wykres rozrzutu wylosowanych par obserwacji." };
+  }
+  function r1Fig(oneSided) {
+    return {
+      act: function (state) {
+        if (oneSided) return;
+        var c = r1Controls(), d = corData(rng, c.n, state.config.scenarios[c.scenario]);
+        store.r1 = { scenario: c.scenario, n: c.n, x: d.x, y: d.y };
+      },
+      draw: function (v, P, k, state, vals, step) {
+        var d = r1Data();
+        if (!d) return null;
+        var par = state.config.scenarios[d.scenario];
+        if (step <= 2) return r1Scatter(P, d, par, step);
+        var alt = oneSided ? par.alt_1s : "two.sided", r = corTest(d.x, d.y, alt);
+        return nullPlot(P, r.t, r.df, "t", alt, step === 3 ? "stat" : "decision");
+      },
+      text: function (state, v, vals, step) {
+        var d = r1Data();
+        if (!d) return "";
+        var par = state.config.scenarios[d.scenario], r = corTest(d.x, d.y, oneSided ? par.alt_1s : "two.sided");
+        if (!oneSided) {
+          if (step === 1) return "n = " + b(r.n) + " par obserwacji. Każdy punkt to jedna obserwacja z dwiema wartościami: " +
+            S.esc(par.xlab + " i " + par.ylab) + ". Czy widać trend?";
+          if (step === 2) return "Korelacja z próby: r = " + b(fmt(r.r, 3)) + ". Ale czy to wystarczająco daleko od zera, by odrzucić H₀?";
+          if (step === 3) return "t = " + fmt(r.r, 3) + " · √" + r.df + " / √(1 − " + fmt(r.r * r.r, 3) + ") = " + b(fmt(r.t, 3)) +
+            ". Zamieniamy r na statystykę t, żeby móc porównać z rozkładem t(" + r.df + ").";
+          return verdictHtml(r.p);
+        }
+        if (step === 1) return "n = " + b(r.n) + " (te same dane co wyżej). Te same obserwacje, ale pytamy o kierunek związku.";
+        if (step === 2) return "r = " + b(fmt(r.r, 3)) + ", tak samo jak w teście dwustronnym. Zmieniło się tylko pytanie.";
+        if (step === 3) return "t = " + b(fmt(r.t, 3)) + ", bez zmian. Obszar odrzucenia leży teraz tylko w " +
+          (par.alt_1s === "greater" ? "prawym" : "lewym") + " ogonie.";
+        return "Jednostronnie: " + verdictHtml(r.p);
+      },
+      update: function () { if (!oneSided) notify(["s05_r1b"]); },
+      noteKey: function () { return r1Data() ? "data" : "empty"; }
+    };
+  }
+  figures.s05_r1 = r1Fig(false);
+  figures.s05_r1b = r1Fig(true);
 
   S.register(figures);
 })();

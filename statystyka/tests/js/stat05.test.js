@@ -73,3 +73,18 @@ test("rozdział 5: test dwumianowy i test proporcji jak binom.test() i prop.test
   // Poprawka Yatesa nie przekracza samej różnicy: k = np₀ daje z = 0.
   assert.equal(Z.propTest(40, 50, 0.8).z, 0);
 });
+
+test("rozdział 6: test korelacji jak cor.test() i losowanie par o zadanej korelacji", () => {
+  // R: x <- c(6.1, 7.4, 5.2, 8.0, 6.8, 7.9, 5.5, 9.1, 6.3, 7.0); y <- c(62, 75, 58, 71, 66, 80, 61, 84, 70, 64)
+  //    cor.test(x, y): r = 0.9033888, t = 5.958572, df = 8, p = 0.00033871; "greater": 0.00016935; lm: 24.937771 + 6.372616 x
+  const x = [6.1, 7.4, 5.2, 8.0, 6.8, 7.9, 5.5, 9.1, 6.3, 7.0], y = [62, 75, 58, 71, 66, 80, 61, 84, 70, 64];
+  const r = Z.corTest(x, y, "two.sided");
+  close(r.r, 0.9033888, 1e-7, "r"); close(r.t, 5.958572, 1e-5, "t"); assert.equal(r.df, 8);
+  close(r.p, 0.00033871, 1e-7, "p"); close(Z.corTest(x, y, "greater").p, 0.00016935, 1e-7, "p prawostronne");
+  close(Z.corTest(x, y, "less").p, 1 - 0.00016935, 1e-7, "p lewostronne");
+  close(r.slope, 6.372616, 1e-5, "nachylenie"); close(r.intercept, 24.937771, 1e-4, "wyraz wolny");
+  // Duża próba: korelacja blisko zadanej, średnie i rozrzut jak w scenariuszu.
+  const d = Z.corData(D.rng(64), 5000, { r_true: -0.55, x_mean: 20, x_sd: 7, y_mean: 8, y_sd: 3 });
+  close(Z.corTest(d.x, d.y).r, -0.55, 0.03, "korelacja próby");
+  close(T.mean(d.y), 8, 0.15, "średnia y"); close(T.sd(d.x), 7, 0.25, "SD x");
+});
