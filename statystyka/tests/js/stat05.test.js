@@ -113,3 +113,20 @@ test("rozdział 7: test χ² i test Fishera dla tabel r × c jak chisq.test() i 
   assert.equal(tab.length, 3);
   assert.equal(tab.flat().reduce((s, v) => s + v, 0), 120);
 });
+
+test("rozdział 8: test t dla par jak t.test(paired = TRUE) i losowanie grup", () => {
+  // R: a <- c(48.2, 55.1, 39.7, 61.3, 52.8, 44.0, 58.6, 47.3); b <- c(55.0, 57.4, 46.2, 60.1, 61.9, 49.5, 66.3, 50.8)
+  //    t.test(b, a, paired = TRUE): średnia różnic 5.025, t = 4.262834, df = 7, p = 0.00373352
+  const PAIRED = [5.025, 4.262834, 7, 0.00373352];
+  const a = [48.2, 55.1, 39.7, 61.3, 52.8, 44.0, 58.6, 47.3], b = [55.0, 57.4, 46.2, 60.1, 61.9, 49.5, 66.3, 50.8];
+  const r = Z.pairedTest(a, b);
+  close(r.mean, PAIRED[0], 1e-6, "średnia różnica"); close(r.t, PAIRED[1], 1e-5, "t"); assert.equal(r.df, PAIRED[2]); close(r.p, PAIRED[3], 1e-7, "p");
+  const g = D.rng(8), s = Z.studentVar(g, 4000, "wzrost");
+  close(T.mean(s.K), 166, 0.4, "wzrost kobiet"); close(T.mean(s.M), 178, 0.4, "wzrost mężczyzn"); close(T.sd(s.M), 7, 0.3, "SD wzrostu mężczyzn");
+  const gpa = Z.studentVar(g, 4000, "srednia_ocen");
+  assert.ok(Math.min(...gpa.K, ...gpa.M) >= 2 && Math.max(...gpa.K, ...gpa.M) <= 5);
+  close(T.mean(gpa.K), 0.3 * 3.6 + 0.25 * 3.4 + 0.25 * 3.8 + 0.2 * 3.5, 0.05, "średnia ocen");
+  close(T.mean(Z.studentVar(g, 4000, "czas_dojazdu").M), 30, 1.2, "czas dojazdu: gamma(3, 10)");
+  const pd = Z.pairedData(g, 5000, 5);
+  close(Z.pairedTest(pd.przed, pd.po).mean, 5, 0.4, "średnia zmiana"); close(T.sd(pd.przed), 12, 0.4, "SD przed");
+});

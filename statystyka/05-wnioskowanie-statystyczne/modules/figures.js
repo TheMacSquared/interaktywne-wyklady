@@ -159,6 +159,30 @@
     }
     return { p: (1 + hits) / (B + 1), exact: false };
   }
+  // Wybrana zmienna z generate_student_data() dla n kobiet i n mężczyzn (equal_sex = TRUE).
+  function studentVar(r, n, name) {
+    var round = function (v, d) { var k = Math.pow(10, d); return Math.round(v * k) / k; };
+    var one = function (female) {
+      if (name === "wzrost") return round(female ? r.norm(166, 6) : r.norm(178, 7), 1);
+      if (name === "waga") return round(female ? r.norm(62, 8) : r.norm(78, 10), 1);
+      if (name === "czas_dojazdu") return round(r.gamma(3, 10), 1);
+      // Średnia ocen: poziom zależy od kierunku (losowanego z wagami), ograniczona do 2–5.
+      var base = [3.6, 3.4, 3.8, 3.5][r.choose([0.3, 0.25, 0.25, 0.2]) - 1];
+      return round(Math.min(5, Math.max(2, base + r.norm(0, 0.4))), 2);
+    };
+    return { K: r.many(n, function () { return one(true); }), M: r.many(n, function () { return one(false); }) };
+  }
+  // generate_paired_data(): wynik przed N(50, 12), po = przed + N(efekt, 8); do 0.1 pkt.
+  function pairedData(r, n, effect) {
+    var round1 = function (v) { return Math.round(v * 10) / 10; }, przed = [], po = [];
+    for (var i = 0; i < n; i++) { var a = r.norm(50, 12); przed.push(round1(a)); po.push(round1(a + r.norm(effect, 8))); }
+    return { przed: przed, po: po };
+  }
+  // Test t dla par: różnice po − przed.
+  function pairedTest(przed, po) {
+    var d = po.map(function (v, i) { return v - przed[i]; }), n = d.length, m = T.mean(d), s = T.sd(d), t = m / (s / Math.sqrt(n));
+    return { n: n, mean: m, sd: s, t: t, df: n - 1, p: 2 * D.pt(-Math.abs(t), n - 1) };
+  }
   // Wartości krytyczne rozkładu statystyki testowej (α = 0.05) i funkcja „w obszarze odrzucenia”.
   function critical(type, df, alternative) {
     if (type === "chisq") { var c = D.qchisq(0.95, df); return { values: [c], reject: function (x) { return x >= c; } }; }
@@ -169,7 +193,8 @@
   }
   root.lcS05 = { phoneData: phoneData, nullDiffs: nullDiffs, simP: simP, power: power, quizAnswer: quizAnswer,
                  tOne: tOne, hist15: hist15, critical: critical, binomTest: binomTest, propTest: propTest,
-                 corData: corData, corTest: corTest, tableSample: tableSample, chisqTest: chisqTest, fisherTest: fisherTest };
+                 corData: corData, corTest: corTest, tableSample: tableSample, chisqTest: chisqTest, fisherTest: fisherTest,
+                 studentVar: studentVar, pairedData: pairedData, pairedTest: pairedTest };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -697,6 +722,117 @@
       if (!d) return "nodata";
       return chisqTest(d.tab).expected.some(function (row) { return row.some(function (e) { return e < 5; }); }) ? "low" : "fine";
     }
+  };
+
+  // ---- Rozdział 8: dwie grupy (test t niezależny i dla par) ---------------------
+  var IND_LABEL = { wzrost: "Wzrost (cm)", waga: "Waga (kg)", srednia_ocen: "Średnia ocen", czas_dojazdu: "Czas dojazdu (min)" };
+  var IND_NAME = { wzrost: "wzrost", waga: "waga", srednia_ocen: "średnia ocen", czas_dojazdu: "czas dojazdu" };
+  // Zapis p jak ui_p_value() w shared.R: liczba wyróżniona, „p <” przy wartości granicznej.
+  function pValueHtml(p) {
+    var v = T.fmtPValue(p), bound = v.charAt(0) === "<" || v.charAt(0) === ">";
+    return "<p>" + (bound ? "p " + S.esc(v.charAt(0)) + " " : "p = ") + '<strong style="font-size: 1.25em;">' + S.esc(bound ? v.slice(1) : v) + "</strong></p>";
+  }
+  function decisionHtml(p) {
+    return '<p><span class="lc-status-' + (p < 0.05 ? "danger" : "ok") + '"><strong>' + (p < 0.05 ? "Odrzucamy H₀" : "Brak podstaw do odrzucenia H₀") + "</strong></span></p>";
+  }
+  function boxOf(x) {
+    var q1 = T.quantile(x, 0.25), q3 = T.quantile(x, 0.75), iqr = q3 - q1;
+    var inside = x.filter(function (v) { return v >= q1 - 1.5 * iqr && v <= q3 + 1.5 * iqr; });
+    return { q1: q1, med: T.median(x), q3: q3, lo: Math.min.apply(null, inside), hi: Math.max.apply(null, inside) };
+  }
+  function indData(el) {
+    var s = el._s05ind;
+    return s && s.name === el.querySelector("#ch6_ind_var").value && s.n === Number(el.querySelector("#ch6_ind_n").value) ? s : null;
+  }
+  figures.s05_ind = {
+    act: function (state, action, el) {
+      var name = el.querySelector("#ch6_ind_var").value, n = Number(el.querySelector("#ch6_ind_n").value), d = studentVar(rng, n, name);
+      // Rozsunięcie punktów w poziomie losowane raz dla próby.
+      el._s05ind = { name: name, n: n, K: d.K, M: d.M, jitter: rng.many(2 * n, function () { return rng.unif(-0.15, 0.15); }) };
+      state.root = el;
+    },
+    prepare: function (state, v, vals, el) { state.d = indData(el); state.test = state.d ? T.tTest(state.d.K, state.d.M, false) : null; },
+    draw: function (v, P, k, state, vals, step) {
+      var d = state.d;
+      if (!d) return null;
+      if (step >= 3) return nullPlot(P, state.test.t, state.test.df, "t", "two.sided", step === 3 ? "stat" : "decision");
+      // Pierwsza grupa w roli danych, druga w roli grupy; rama z danych.
+      var groups = [d.K, d.M], cols = [P.niebo, P.bursztyn], all = d.K.concat(d.M), layers = [];
+      var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all), span = hi - lo;
+      groups.forEach(function (gr, i) {
+        var bx = boxOf(gr);
+        layers.push({ type: "box", stroke: P.ink, boxes: [{ pos: i + 1, width: 0.5, q1: bx.q1, med: bx.med, q3: bx.q3, lo: bx.lo, hi: bx.hi, fill: C.alpha(cols[i], 0.35) }] });
+        layers.push({ type: "points", data: gr.map(function (y, j) { return [i + 1 + d.jitter[i * d.n + j], y]; }), color: cols[i], size: 5.5, alpha: 0.5 });
+      });
+      if (step >= 2) {
+        groups.forEach(function (gr, i) {
+          var m = T.mean(gr);
+          layers.push({ type: "point", x: i + 1, y: m, color: P.accent, symbol: "diamond", size: 17 });
+          layers.push({ type: "point", x: i + 1, y: m, color: P.surface, symbol: "diamond", size: 10 });
+          layers.push({ type: "text", x: i === 0 ? 0.9 : 2.1, y: m + span * 0.04, text: "x̄ = " + fmt(m, 1), color: P.accent, bold: true, align: i === 0 ? "right" : "left", valign: "middle" });
+        });
+      }
+      return { x: [0.4, 2.6], y: [lo - span * 0.08, hi + span * 0.08], layers: layers, xLabels: { 1: "Kobieta", 2: "Mężczyzna" },
+        xName: "Płeć", yName: IND_LABEL[d.name], aria: "Wykresy pudełkowe wybranej zmiennej u kobiet i mężczyzn." };
+    },
+    // Tabela średnich pod wykresem (krok 2).
+    table: function (state, v, vals, step) {
+      var d = state.d;
+      if (!d || step !== 2) return "";
+      return S.table([{ label: "Grupa", row: true }, { label: "n", digits: 0 }, { label: "x̄", digits: 2 }, { label: "s", digits: 2 }],
+        [["Kobieta", d.K.length, T.mean(d.K), T.sd(d.K)], ["Mężczyzna", d.M.length, T.mean(d.M), T.sd(d.M)]]);
+    },
+    text: function (state, v, vals, step) {
+      var d = state.d;
+      if (!d) return "";
+      var t = state.test, mk = T.mean(d.K), mm = T.mean(d.M), higher = mk >= mm ? "Kobieta" : "Mężczyzna", lower = mk >= mm ? "Mężczyzna" : "Kobieta";
+      var diff = fmt(Math.abs(mk - mm), 2), name = IND_NAME[d.name];
+      if (step === 1) return "n = " + b(2 * d.n) + " osób łącznie. Każdy punkt to jedna osoba. Najpierw patrzymy, czy grupy wizualnie wyglądają na przesunięte względem siebie.";
+      if (step === 2) return "Różnica średnich w próbie wynosi " + b(diff) + ". Test pyta, czy taka różnica jest duża względem zmienności w grupach.";
+      if (step === 3) return "t = " + b(fmt(t.t, 3)) + " (df Welcha = " + fmt(t.df, 1) + "). Tyle błędów standardowych dzieli średnie obu grup (kobiety − mężczyźni).";
+      return "Wynik testu t niezależnego: t(" + fmt(t.df, 1) + ") = " + b(fmt(t.t, 3)) + ". " + verdictHtml(t.p) + " <strong>Werdykt:</strong>" +
+        (t.p < 0.05
+          ? " średnia zmiennej „" + name + "” różni się istotnie między grupami — w próbie była wyższa w grupie " + higher + " niż " + lower + " o " + b(diff) + "."
+          : " nie ma podstaw, by twierdzić, że średnia zmiennej „" + name + "” różni się między grupami. Obserwowana w próbie różnica " + b(diff) +
+            " (na korzyść grupy " + higher + ") mieści się w zakresie wahań losowych.");
+    },
+    noteKey: function (vals, state) { return state.d ? "data" : "empty"; }
+  };
+
+  // Ryc. 8.2: dane sparowane „przed i po”; próba nieaktualna po zmianie suwaków.
+  figures.s05_paired = {
+    act: function (state, action, el) {
+      var n = Number(el.querySelector("#ch6_paired_n").value), effect = Number(el.querySelector("#ch6_paired_effect").value);
+      var d = pairedData(rng, n, effect);
+      state.sample = { n: n, effect: effect, przed: d.przed, po: d.po };
+    },
+    prepare: function (state, v, vals, el) {
+      var s = state.sample;
+      state.d = s && s.n === Number(el.querySelector("#ch6_paired_n").value) && s.effect === Number(el.querySelector("#ch6_paired_effect").value) ? s : null;
+    },
+    draw: function (v, P, k, state) {
+      var d = state.d;
+      if (!d) return null;
+      var all = d.przed.concat(d.po), lo = Math.min.apply(null, all), hi = Math.max.apply(null, all), pad = (hi - lo) * 0.05;
+      return { x: [0.4, 2.6], y: [lo - pad, hi + pad], xLabels: { 1: "Przed", 2: "Po" },
+        layers: [{ type: "segs", items: d.przed.map(function (a, i) { return { from: [1, a], to: [2, d.po[i]] }; }), color: C.token("--upwr-cat-kurkuma", "#cbb858"), width: 1.4, alpha: 0.3 },
+                 { type: "points", data: d.przed.map(function (a) { return [1, a]; }), color: P.niebo, size: 8, alpha: 0.7 },
+                 { type: "points", data: d.po.map(function (a) { return [2, a]; }), color: P.accent, size: 8, alpha: 0.7 }],
+        xName: "Moment", yName: "Wynik", aria: "Wyniki tych samych osób przed interwencją i po niej, połączone liniami." };
+    },
+    update: function (el, state) {
+      var box = el.querySelector('[data-role="result"]'), d = state.d;
+      if (!box) return;
+      if (!d) { box.innerHTML = ""; return; }
+      var r = pairedTest(d.przed, d.po), dir = r.mean > 0 ? "wzrosły" : r.mean < 0 ? "spadły" : "nie zmieniły się";
+      box.innerHTML = S.status("<p><strong>Wynik testu t dla danych sparowanych:</strong></p>" +
+        "<p>Średnia różnica (po − przed): " + T.round(r.mean, 2) + " pkt</p><p>t(" + r.df + ") = " + T.round(r.t, 3) + "</p>" + pValueHtml(r.p) + decisionHtml(r.p) +
+        (r.p < 0.05
+          ? "<p><strong>Werdykt:</strong> wyniki istotnie się zmieniły — średnio " + dir + " o " + T.round(Math.abs(r.mean), 2) + " pkt.</p>"
+          : "<p><strong>Werdykt:</strong> nie ma podstaw, by twierdzić, że wyniki się zmieniły. Obserwowana w próbie zmiana (" + T.round(r.mean, 2) +
+            " pkt) mieści się w zakresie wahań losowych.</p>"));
+    },
+    noteKey: function (vals, state) { return state.d ? "data" : "empty"; }
   };
 
   S.register(figures);

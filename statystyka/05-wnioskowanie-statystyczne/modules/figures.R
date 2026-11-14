@@ -113,3 +113,41 @@ s05_hypothesis_panel <- function(params, input_id, one_sided = FALSE, empty = NU
     }))
   )
 }
+
+# ---------------------------------------------------------------------------
+# Rozdział 8: dwie grupy
+# ---------------------------------------------------------------------------
+
+# Ryc. 8.3 (lewa): analiza niesparowana tych samych danych; pięć osób bez kontroli
+# zawyża średnią „przed”.
+ch6_compare_ind_fig <- function() {
+  d <- .ch6_compare$ind_data
+  set.seed(83)
+  d$x <- as.integer(d$grupa) + stats::runif(nrow(d), -0.12, 0.12)
+  groups <- split(d$wartosc, d$grupa)
+  m <- vapply(groups, mean, 0)
+  lc_sf_spec(sf_spec(c(0.4, 2.6), sf_range(d$wartosc, 0.06), c(list(
+      sf_boxes(groups[1], "@niebo/0.35", width = 0.45, stroke = "@subtle", at = 1),
+      sf_boxes(groups[2], "@accent/0.35", width = 0.45, stroke = "@subtle", at = 2),
+      sf_points(d$x[d$typ == "para" & d$grupa == "Przed"], d$wartosc[d$typ == "para" & d$grupa == "Przed"], color = "@niebo", size = 8, alpha = 0.8),
+      sf_points(d$x[d$grupa == "Po"], d$wartosc[d$grupa == "Po"], color = "@accent", size = 8, alpha = 0.8),
+      sf_points(d$x[d$typ == "dropout"], d$wartosc[d$typ == "dropout"], color = "#8B1A1A", size = 9, alpha = 0.8, symbol = "triangle")),
+      list(sf_text(0.9, m[[1]] + 2, paste0("x̄ = ", round(m[[1]], 1)), color = "@secondary", bold = TRUE, align = "right", valign = "middle"),
+           sf_text(2.1, m[[2]] + 2, paste0("x̄ = ", round(m[[2]], 1)), color = "@secondary", bold = TRUE, align = "left", valign = "middle"))),
+      "", "Ciśnienie skurczowe (mmHg)", aria = "Wykresy pudełkowe ciśnienia przed i po; pięć osób bez pomiaru kontrolnego zaznaczono trójkątami.",
+      xLabels = sf_labels(c("Przed", "Po")),
+      legend = sf_legend(c("Przed", "Po", "Brak kontroli (n = 5)"), c("@niebo", "@accent", "#8B1A1A"), box = TRUE)),
+    ratio = "1.5/1", max_height = "260px", legend = TRUE)
+}
+
+# Ryc. 8.3 (prawa): te same pary połączone liniami.
+ch6_compare_paired_fig <- function() {
+  pr <- .ch6_compare$pairs
+  lc_sf_spec(sf_spec(c(0.4, 2.6), sf_range(c(pr$przed, pr$po), 0.06), list(
+      sf_segs(rep(1, nrow(pr)), pr$przed, rep(2, nrow(pr)), pr$po, color = "@kurkuma", width = 1.4, alpha = 0.3),
+      sf_points(rep(1, nrow(pr)), pr$przed, color = "@niebo", size = 8, alpha = 0.8),
+      sf_points(rep(2, nrow(pr)), pr$po, color = "@accent", size = 8, alpha = 0.8)),
+      "", "Ciśnienie skurczowe (mmHg)", aria = "Ciśnienie tych samych piętnastu osób przed i po, połączone liniami.",
+      xLabels = sf_labels(c("Przed", "Po"))),
+    ratio = "1.5/1", max_height = "260px")
+}
