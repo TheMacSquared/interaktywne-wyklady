@@ -77,6 +77,9 @@ zycie_note <- function(label, text) {
   tagList(lc_h3(label), lc_p(text))
 }
 
+# Liczba z kropką dziesiętną, bez końcowych zer (odczyty widgetów).
+zycie_num <- function(x, digits = 1) format(round(x, digits), nsmall = 0, scientific = FALSE, trim = TRUE)
+
 zycie_functions_table <- lc_table(
   data.frame(
     fun = c("Gęstość f(t)", "Dystrybuanta F(t)", "Niezawodność R(t)", "Hazard h(t)"),
@@ -119,6 +122,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           "W dojrzewalni Bananpolu wentylator pracuje bez przerwy, a jego awaria przerywa kontrolę temperatury w komorze. Dział zakupów porównuje dwie oferty. Obie karty katalogowe podają ten sam MTTF, około 1500 godzin. Kierownik utrzymania ruchu pyta jednak o coś innego: jaka część wentylatorów dotrwa do planowego przeglądu po 1000 godzinach? Na to pytanie średnia nie odpowiada, bo nie mówi, jak awarie rozkładają się wokół niej.",
           "Żeby odpowiedzieć, musimy nazwać wielkość losową, o której mówimy. W wykładzie 05 liczyliśmy dyskretne próby do zdarzenia; tu zegar biegnie w sposób ciągły, a zdarzeniem jest awaria."
         ),
+        # PROTOTYP P1 (wariant B): scena na otwarcie rozdziału, przed definicjami i głosowaniem
+        c7p_variant("scena P1 na otwarcie rozdziału, przed głosowaniem (wariant B). Ta sama scena stoi też po głosowaniu (wariant A)."),
+        c7p_get("c7p_1_ui"),
         risk_definition("7.1", "Czas życia", c(
           "Czas życia T to nieujemna zmienna losowa mierząca czas od ustalonego początku (uruchomienia, montażu, ostatniej wymiany) do pierwszej awarii elementu. Definicja wymaga trzech ustaleń: co rozpoczyna zegar, w jakiej jednostce go mierzymy (godziny pracy, cykle, kilometry) i co uznajemy za awarię."
         )),
@@ -130,6 +136,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         "Gęstość f(t) i niezawodność R(t) pojawiają się tu przed formalną definicją; dokładnie zdefiniujemy je w definicji 7.4, a na razie wystarczy intuicja: f(t) opisuje, jak gęsto awarie skupiają się wokół chwili t.",
         "Wzór (7.1) jest ciągłą wersją średniej ważonej: każdy możliwy moment awarii t mnożymy przez jego „wagę” f(t) dt i sumujemy. Wynik jest jedną liczbą. Dwie gęstości o zupełnie różnych kształtach mogą dać tę samą całkę — tak jak dwie klasy o różnym rozkładzie ocen mogą mieć tę samą średnią. Zanim policzymy, dlaczego tak jest, zagłosuj.",
         risk_vote_panel("c7_vote", "c7_vote_feedback", "Czy ten sam MTTF oznacza takie samo R(1000 h)?", c("Tak" = "yes", "Nie — znaczenie ma cały rozkład" = "distribution", "Tylko dla Weibulla" = "weibull"), full_width = FALSE, correct = "distribution"),
+        # PROTOTYP P1 (wariant A): scena po głosowaniu, przed przykładem 7.1
+        c7p_variant("scena P1 po głosowaniu (wariant A)."),
+        c7p_get("c7p_1_ui"),
         risk_example("7.1", "Dwie oferty, jedna średnia",
           problem = list(
             tags$div(class = "life-offers",
@@ -153,6 +162,11 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           answer = "Przy niemal równym MTTF niezawodność w horyzoncie 1000 h różni się o 19 punktów procentowych, a w horyzoncie 3000 h przewaga przechodzi na drugą ofertę. O wyborze decyduje czas misji, nie średnia."
         ),
         "Skąd bierze się ta różnica? Oferta A psuje się „równomiernie w czasie”: część egzemplarzy zawodzi bardzo wcześnie, a część żyje kilka razy dłużej niż średnia. Oferta B się zużywa: wczesne awarie są rzadkie, ale awarie skupiają się wokół 1000–2500 godzin. Obie średnie wychodzą podobnie, bo w ofercie A krótkie życia równoważą się bardzo długimi.",
+        # PROTOTYPY P2A i P2B: dwie gęstości o tej samej średniej
+        c7p_variant("P2A — obie gęstości na jednej osi."),
+        c7p_get("c7p_2a_ui"),
+        c7p_variant("P2B — oferty jedna pod drugą."),
+        c7p_get("c7p_2b_ui"),
         risk_check("c7_chk_mttf",
           "Dwa typy wentylatorów mają MTTF = 1500 h. Które stwierdzenie jest uprawnione bez znajomości rozkładów?",
           c("Oba mają taką samą niezawodność po 1000 h" = "same_r", "W obu połowa egzemplarzy psuje się przed 1500 h" = "half", "Średnio żyją tyle samo, ale R(t) w konkretnym horyzoncie może się różnić" = "mean_only"),
@@ -175,6 +189,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         "Dane o czasie życia rzadko przychodzą kompletne. Badanie ma budżet i termin, egzemplarze montuje się w różnych tygodniach, część z nich zostaje zdemontowana z przyczyn niezwiązanych z awarią. W każdym z tych przypadków dla części elementów znamy nie czas życia, lecz tylko dolne ograniczenie: „działał co najmniej tyle”. Taką obserwację nazywamy cenzorowaną.",
         "W badaniu Bananpolu osiem wentylatorów ma rzeczywiste czasy życia 220, 480, 760, 990, 1350, 1750, 2300 i 3100 h. W prawdziwym badaniu tych liczb nie znamy — widzimy je tylko do końca obserwacji. Symulacja pozwala nam spojrzeć na nie z góry i porównać, co zobaczyłby analityk przy różnych terminach zakończenia badania."
       ),
+      # PROTOTYP P3: scena badania przerwanego po 1200 h, przed definicją
+      c7p_get("c7p_3_ui"),
       risk_definition("7.3", "Obserwacja cenzorowana prawostronnie", c(
         "Obserwacja czasu życia jest cenzorowana prawostronnie w chwili c, jeśli do chwili c element nie uległ awarii, a potem przestaliśmy go obserwować. Zapisujemy wtedy parę (c, cenzorowana) i wiemy tylko, że T > c. Obserwację zakończoną awarią zapisujemy jako (t, awaria)."
       ))
@@ -195,6 +211,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             lc_plot("c7_timeline", ratio = "1.8/1", max_height = "350px"),
             tags$p("Kropka oznacza awarię. Trójkąt oznacza koniec obserwacji działającego elementu. Przerywana linia wyznacza koniec badania; skala czasu pozostaje stała.")
           ),
+          # PROTOTYP P4: piaskownica końca badania w przeglądarce
+          c7p_get("c7p_4_ui"),
           zycie_reading(c(
             "Przy końcu obserwacji 1200 h widzimy cztery awarie (220, 480, 760, 990 h) i cztery obserwacje ucięte. Średnia z samych awarii wynosi 612.5 h. Przy 800 h awarie są trzy, a ich średnia spada do około 487 h; przy 2500 h awarii jest siedem, a średnia rośnie do około 1121 h. Tymczasem średnia wszystkich ośmiu rzeczywistych czasów to 1368.75 h.",
             "Naiwna średnia rośnie wraz z długością badania, choć wentylatory się nie zmieniają. Powód jest prosty: dłuższe badanie dopuszcza do zbioru awarii coraz dłuższe czasy życia. Średnia z zakończonych awarii jest w istocie średnią warunkową — liczoną tylko wśród egzemplarzy, które zdążyły się zepsuć — i zawsze leży poniżej prawdziwego MTTF."
@@ -220,6 +238,10 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             ),
             answer = "Szacunek z wykorzystaniem cenzorowania to około 1813 h, naiwna średnia — 612.5 h. Szacunek (7.2) nie trafia dokładnie w średnią ośmiu rzeczywistych czasów (1368.75 h): opiera się na czterech awariach i na założeniu stałego hazardu. W przeciwieństwie do naiwnej średniej nie jest jednak zaniżony z samej konstrukcji."
           ),
+          # PROTOTYP P5: łączny czas pracy jako jedna taśma
+          c7p_get("c7p_5_ui"),
+          # PROTOTYP P6: symulacja — błąd naiwnej średniej jest systematyczny
+          c7p_get("c7p_6_ui"),
           "Wzór (7.2) jest najprostszym przykładem ogólnej zasady: obserwacja cenzorowana wchodzi do analizy z informacją, którą rzeczywiście niesie. W modelach innych niż wykładniczy robi się to przez funkcję wiarygodności albo estymator Kaplana–Meiera; na tym kursie nie estymujemy parametrów, ale musimy umieć rozpoznać, kiedy ktoś zrobił to źle.",
           risk_check("c7_chk_cenzor",
             "Dlaczego średnia z samych zakończonych awarii rośnie, gdy przedłużamy badanie tych samych wentylatorów?",
@@ -260,6 +282,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
       list(
         id = "hazard", title = "Hazard: ryzyko najbliższej chwili",
         body = list(
+          # PROTOTYP P7: okno na parku — gęstość a hazard, przed definicją
+          c7p_get("c7p_7_ui"),
           risk_definition("7.5", "Hazard", c(
             "Hazard (funkcja intensywności awarii) h(t) to granica ilorazu warunkowego prawdopodobieństwa awarii w przedziale (t, t + Δt], pod warunkiem przetrwania do chwili t, przez długość przedziału Δt, gdy Δt dąży do zera. Hazard mierzy chwilowe tempo awarii wśród elementów, które wciąż działają; ma jednostkę 1/h."
           )),
@@ -292,6 +316,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           ),
           zycie_try("zostaw model wykładniczy i przesuwaj wspólną linię czasu od 0 do 4000 h. Porównaj, jak zmieniają się F(t) i R(t) w panelu oraz jak przebiegają przeskalowane krzywe f(t) i h(t)."),
           risk_widget_panel("Synchronizacja", "Wspólny suwak czasu", lc_slider("c7_time", "Czas t (h)", 0, 4000, 1000, 50), "c7_functions", "c7_functions_stats", note = "Dla rozkładu wykładniczego f(t) jest proporcjonalna do R(t), dlatego obie krzywe mają ten sam kształt, a przeskalowany hazard jest poziomą linią. To cecha tego modelu, nie ogólna reguła."),
+          # PROTOTYP P8: cztery funkcje bez przeskalowania
+          c7p_get("c7p_8_ui"),
           zycie_reading(c(
             "Dla t = 1000 h panel pokazuje F ≈ 0.487 i R ≈ 0.513, jak w przykładzie 7.3. Suma obu wartości zawsze wynosi 1. Na wykresie gęstość przemnożono przez 3000, a hazard przez 1500, żeby wszystkie cztery krzywe zmieściły się na jednej osi. Przy takim skalowaniu przeskalowana gęstość jest równa 2R(t), a przeskalowany hazard wynosi stale 1.",
             "Najważniejsza obserwacja: gęstość maleje, choć hazard stoi w miejscu. Mniej awarii w okolicy 3000 h nie oznacza, że stare wentylatory są bezpieczniejsze — po prostu mało który dożył tego wieku. O ryzyku dla działającego egzemplarza mówi hazard, nie gęstość."
@@ -328,6 +354,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             "Czas życia T można zapisać jako „sumę” jedynek: dla każdej chwili t < T element jeszcze działa. Formalnie T = ∫₀^∞ 1{T > t} dt, gdzie 1{T > t} równa się 1, gdy element działa w chwili t, i 0 w przeciwnym razie.",
             "Wartość oczekiwana wskaźnika to prawdopodobieństwo zdarzenia, więc E(1{T > t}) = R(t). Zamiana kolejności wartości oczekiwanej i całki daje wzór (7.7)."
           )),
+          # PROTOTYP P9: MTTF jako pole pod R(t) — kadry na parku
+          c7p_get("c7p_9_ui"),
           risk_example("7.4", "Hazard rośnie liniowo",
             problem = "Utrzymanie ruchu zakłada, że hazard wentylatora rośnie proporcjonalnie do wieku: h(t) = 2t/1700² na godzinę. Wyznacz R(t) i oblicz R(1000) oraz h(1000).",
             steps = c(
@@ -337,7 +365,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
               "h(1000) = 2 · 1000/1700² ≈ 0.000692 na godzinę — niemal tyle samo co stały hazard oferty A (0.000667)."
             ),
             answer = "R(1000) ≈ 0.707. W chwili 1000 h oba modele mają prawie równy hazard, ale oferta B dochodzi do niego od zera, więc do tego momentu zgromadziła mniejszy skumulowany hazard (0.346 wobec 0.667) i ma wyższą niezawodność."
-          )
+          ),
+          # PROTOTYP P10: pole pod hazardem decyduje o niezawodności
+          c7p_get("c7p_10_ui")
         )
       )
     )
@@ -375,6 +405,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           lc_h3("Brak pamięci: przyszłość działającego elementu"),
           risk_formula("P(T>s+t\\mid T>s)=P(T>t)=e^{-\\lambda t}", num = "7.9",
             legend = c("s" = "czas, który element już przepracował", "t" = "dodatkowy czas pracy")),
+          # PROTOTYP P11: ocalali wyglądają jak nowi
+          c7p_get("c7p_11_ui"),
           "Dowód jest przepisaniem dowodu wzoru (5.4): P(T > s + t | T > s) = R(s + t)/R(s) = e^(-λ(s+t)) / e^(-λs) = e^(-λt). W języku hazardu brak pamięci jest oczywisty — skoro ryzyko najbliższej chwili nie zależy od wieku, to dalsza przyszłość elementu też od niego nie zależy.",
           risk_example("7.5", "Wentylator po 1000 godzinach",
             problem = list(
@@ -395,6 +427,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           ),
           zycie_try("zmieniaj MTTF od 300 do 4000 h i obserwuj wartość R(1000 h) w panelu. Sprawdź, dla jakiego MTTF niezawodność w horyzoncie 1000 h przekracza 0.7."),
           risk_widget_panel("Model", "Stały hazard", lc_slider("c7_mttf", "MTTF (h)", 300, 4000, 1500, 50), "c7_exp", "c7_exp_stats", width_mode = "text"),
+          # PROTOTYP P12: piaskownica stałego hazardu w przeglądarce
+          c7p_get("c7p_12_ui"),
           zycie_reading(c(
             "Przy MTTF = 1500 h panel pokazuje R(1000 h) ≈ 0.513. Podwojenie MTTF do 3000 h podnosi tę wartość do około 0.717, a MTTF = 4000 h daje około 0.779. Przy MTTF = 500 h niezawodność w horyzoncie 1000 h spada do 0.135. Kształt krzywej zawsze jest ten sam — zmienia się tylko skala osi czasu, a w chwili t = MTTF krzywa przechodzi przez e⁻¹ ≈ 0.368.",
             "Ta sztywność jest zaletą i wadą zarazem. Zaletą, bo jeden parametr łatwo oszacować ze wzoru (7.2). Wadą, bo model nie ma czym opisać docierania ani zużycia. Jeśli dane pokazują starzenie, trzeba sięgnąć po rodzinę z dodatkowym parametrem kształtu."
@@ -416,6 +450,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           "Erlang jest rozkładem gamma o całkowitym parametrze kształtu k: sumą k niezależnych etapów o wykładniczych czasach — na przykład czasem do k-tej awarii w jednorodnym procesie Poissona. Ogólny rozkład gamma dopuszcza dowolne k>0. Kształt niecałkowity traci interpretację etapów, ale pozwala modelować hazard rosnący (k>1) albo malejący (k<1) i dopasowywać rozkład do danych bez sztucznego zaokrąglania."
         ),
         body = list(
+          # PROTOTYP P13: scena magazynu z trzema zapasowymi wentylatorami
+          c7p_get("c7p_13_ui"),
           risk_definition("7.7", "Rozkład gamma", c(
             "Czas T ma rozkład gamma z parametrem kształtu k > 0 i intensywnością λ > 0, jeśli jego gęstość dana jest wzorem (7.10). Dla całkowitego k rozkład nazywamy rozkładem Erlanga; opisuje on wtedy sumę k niezależnych czasów wykładniczych z parametrem λ. Dla k = 1 otrzymujemy rozkład wykładniczy."
           )),
@@ -439,6 +475,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           ),
           zycie_try("zacznij od k = 1 i porównaj kształt z krzywą wykładniczą. Potem ustaw k = 3 (przykład 7.6) i k = 8. Obserwuj, gdzie leży szczyt gęstości i jak zmienia się jej symetria."),
           risk_widget_panel("Model", "Czas oczekiwania o kształcie k", lc_slider("c7_k", "Parametr kształtu k", .5, 8, 3, .5), "c7_gamma", "c7_gamma_stats", note = "Dla całkowitego k suwak pokazuje rozkłady Erlanga; wartości pośrednie należą do ogólnej rodziny gamma."),
+          # PROTOTYP P14: piaskownica kształtu k w przeglądarce
+          c7p_get("c7p_14_ui"),
           zycie_reading(c(
             "Wykres używa skali 500 h, czyli λ = 1/500, jak w przykładzie 7.6. Dla k = 1 gęstość jest najwyższa w zerze i opada wykładniczo. Dla k = 3 szczyt przesuwa się do (k - 1) · 500 = 1000 h, a średnia wynosi 1500 h. Dla k = 8 średnia to 4000 h, szczyt leży przy 3500 h, a kształt jest wyraźnie bardziej symetryczny — ten sam efekt, który w wykładzie 05 widzieliśmy dla ujemnego dwumianowego przy rosnącym r.",
             "Dla k = 0.5 gęstość w pobliżu zera jest bardzo duża: ogólna gamma z k < 1 opisuje sytuację, w której wiele awarii zdarza się tuż po uruchomieniu, a hazard maleje. Takiej wartości nie da się czytać jako „pół etapu” — to już tylko parametr kształtu."
@@ -465,7 +503,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     body = list(
       lc_h2("zycie-czesc-b", "Część B · Od starzenia do planu przeglądów"),
       "Tu zaczyna się druga część wykładu. Z części pierwszej potrzebujemy trzech narzędzi: wzoru (7.4), który definiuje hazard jako ryzyko najbliższej chwili dla działającego elementu, wzoru (7.6), który z hipotezy o hazardzie odtwarza niezawodność, oraz wzoru (7.7), który z niezawodności daje MTTF. Rozkład wykładniczy okazał się modelem jednej hipotezy — hazardu stałego — i dlatego nie potrafi opisać ani docierania, ani zużycia.",
-      "Druga część odpowiada na pytanie, które w dojrzewalni jest najważniejsze: co zrobić, gdy hazard zmienia się z wiekiem? Zbudujemy model z parametrem kształtu, porównamy urządzenia o tym samym MTTF, rozłożymy krzywą wannową na mechanizmy i zamienimy wszystko w plan przeglądu."
+      "Druga część odpowiada na pytanie, które w dojrzewalni jest najważniejsze: co zrobić, gdy hazard zmienia się z wiekiem? Zbudujemy model z parametrem kształtu, porównamy urządzenia o tym samym MTTF, rozłożymy krzywą wannową na mechanizmy i zamienimy wszystko w plan przeglądu.",
+      # PROTOTYP P15: scena na otwarcie części B — trzy dzienniki awarii
+      c7p_get("c7p_15_ui")
     ),
     sections = list(
       list(
@@ -512,6 +552,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
               narrow = "stack-last"
             )
           ),
+          # PROTOTYP P16B: galeria rodziny Weibulla przy tabeli „Jak czytać β”
+          c7p_variant("P16B — galeria czterech kształtów przy tabeli. Wariant 16A (suwaki) stoi niżej, przy widgecie."),
+          c7p_get("c7p_16b_ui"),
           risk_example("7.7", "Wentylator zużywający się",
             problem = "Wentylator oferty B ma rozkład Weibulla z β = 2 i η = 1700 h. Oblicz R(1000), h(500), h(1000), h(2000), R(1700) oraz MTTF.",
             steps = c(
@@ -524,6 +567,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           ),
           zycie_try("zacznij od β = 2 i η = 1700 h. Następnie ustaw β = 1 i η = 1500 h, a potem β = 0.5 i η = 1700 h. Za każdym razem odczytaj kierunek hazardu i R(1000 h) w panelu; na dolnym wykresie zwróć uwagę na przebieg h(t) tuż po uruchomieniu."),
           risk_widget_panel("Model", "R(t) i h(t) reagują razem", tagList(lc_slider("c7_beta", "β", .4, 4, 2, .1), lc_slider("c7_eta", "η (h)", 300, 4000, 1700, 50)), "c7_weibull", "c7_weibull_stats"),
+          # PROTOTYP P16A: piaskownica β i η w przeglądarce
+          c7p_variant("P16A — suwaki β i η."),
+          c7p_get("c7p_16a_ui"),
           zycie_reading(c(
             "Dla β = 2 i η = 1700 h panel pokazuje hazard rosnący i R(1000 h) ≈ 0.707, jak w przykładzie 7.7; dolny wykres to prosta linia wychodząca z zera. Dla β = 1 i η = 1500 h hazard jest poziomy, a R(1000 h) ≈ 0.513 — odtworzyliśmy ofertę A. Dla β = 0.5 (przy η = 1700 h) hazard startuje bardzo wysoko i szybko opada: w chwili 100 h wynosi około 0.0012, a w chwili 1000 h około 0.0004 na godzinę.",
             "Zmiana η przy stałym β nie zmienia kształtu żadnej krzywej, tylko rozciąga lub ściska oś czasu. To dlatego η nazywa się parametrem skali: dwa parki maszyn o tym samym mechanizmie awarii, ale różnej jakości wykonania, różnią się η, a nie β."
@@ -556,6 +602,11 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           ),
           zycie_try("zacznij od misji 1000 h i odczytaj trzy wartości R(t) na pionowej linii. Potem przesuwaj czas misji w prawo i znajdź moment, w którym krzywa β = 2.5 spada poniżej pozostałych."),
           risk_widget_panel("Porównanie", "Modele skalibrowane do MTTF=1500 h", lc_slider("c7_mission", "Czas misji (h)", 100, 3000, 1000, 50), "c7_same_mean", "c7_same_mean_stats"),
+          # PROTOTYPY P17A i P17B: ten sam MTTF, inne R(t)
+          c7p_variant("P17A — trzy krzywe z suwakiem misji."),
+          c7p_get("c7p_17a_ui"),
+          c7p_variant("P17B — trzy parki wentylatorów."),
+          c7p_get("c7p_17b_ui"),
           zycie_reading(c(
             "Dla misji 1000 h pionowa linia przecina krzywe przy wartościach 0.41 (β = 0.7), 0.51 (β = 1) i 0.76 (β = 2.5), zgodnie z przykładem 7.8. Model zużyciowy przestaje być najlepszy około 1830 h, kiedy jego krzywa przecina krzywą wykładniczą, a około 1940 h spada także poniżej krzywej β = 0.7. Około 2600 h krzywa wykładnicza przecina krzywą β = 0.7 i od tej chwili model z malejącym hazardem jest najlepszy. Przy 3000 h wartości R wynoszą 0.147, 0.135 i zaledwie 0.015.",
             "Mechanizm jest ten sam co w przykładzie 7.1. Model β = 0.7 traci wiele egzemplarzy wcześnie, ale te, które przetrwały, żyją bardzo długo. Model β = 2.5 prawie nie traci egzemplarzy na początku, ale później zużycie dopada wszystkie niemal jednocześnie. Średnie się wyrównują, a niezawodności misji — nie."
@@ -589,6 +640,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             "Wentylator w dojrzewalni może zawieść z kilku niezależnych powodów. Wadliwy lut w sterowniku ujawni się zwykle w pierwszych setkach godzin. Przepięcie w sieci może przyjść w dowolnej chwili, niezależnie od wieku. Łożysko wyciera się powoli i jego ryzyko rośnie z każdą godziną. Wentylator działa, dopóki nie zadziała żaden z tych mechanizmów — jego czas życia to najkrótszy z trzech czasów.",
             "Jak z trzech hazardów zrobić jeden? Odpowiedź daje reguła mnożenia dla zdarzeń niezależnych z wykładu 02 i wzór (7.6)."
           ),
+          # PROTOTYP P18: scena trzech zegarów przed wzorem (7.15)
+          c7p_get("c7p_18_ui"),
           risk_formula("R(t)=R_1(t)\\,R_2(t)\\,R_3(t),\\qquad h(t)=h_1(t)+h_2(t)+h_3(t)", num = "7.15",
             legend = c("R_i(t)" = "niezawodność względem i-tego mechanizmu", "h_i(t)" = "hazard i-tego mechanizmu")),
           risk_derivation("sumowanie hazardów", c(
@@ -600,6 +653,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             "h(t) = H'(t) = h₁(t) + h₂(t) + h₃(t)"
           )),
           "Wzór (7.15) tłumaczy wannę bez żadnej dodatkowej teorii. Wczesne defekty dają składnik malejący, awarie losowe — stały, zużycie — rosnący. Suma najpierw maleje, bo dominuje pierwszy składnik, potem jest prawie płaska, a na końcu rośnie. Każdy składnik z osobna może być Weibullem; suma już nie.",
+          # PROTOTYP P20: jeden Weibull nie zrobi wanny
+          c7p_get("c7p_20_ui"),
           risk_example("7.9", "Który mechanizm dominuje?",
             problem = "W modelu z widgetu hazardy (w jednostkach względnych) wynoszą: wczesne defekty h₁(t) = 1.2 · e^(-t/350), awarie losowe h₂(t) = 0.12, zużycie h₃(t) = (t/4000)³ przy nasileniu zużycia równym 1. Oblicz trzy składowe i hazard całkowity dla t = 100, 1000 i 3000.",
             steps = c(
@@ -611,6 +666,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           ),
           zycie_try("zacznij od nasilenia zużycia 1 i znajdź na wykresie dno wanny. Następnie ustaw nasilenie 2 i 0.2. Obserwuj, jak zmienia się położenie dna i które ramię wanny reaguje na suwak."),
           risk_widget_panel("Mechanizmy", "Suma trzech składowych", lc_slider("c7_wear", "Nasilenie zużycia", .2, 2, 1, .1), "c7_bathtub", "c7_bathtub_stats"),
+          # PROTOTYP P19: piaskownica wanny w przeglądarce
+          c7p_get("c7p_19_ui"),
           zycie_reading(c(
             "Suwak zmienia wyłącznie składową zużycia, więc lewe ramię wanny się nie rusza. Przy nasileniu 1 dno leży około t ≈ 1310, przy nasileniu 2 przesuwa się wcześniej, do około 1160, a przy nasileniu 0.2 — później, do około 1700. Mocniejsze zużycie skraca okres stabilny z prawej strony i podnosi całą prawą część krzywej.",
             "To obraz, który warto przenieść na decyzje. Środkowy, płaski odcinek wanny jest okresem, w którym element zachowuje się prawie jak wykładniczy — wymiana profilaktyczna niewiele tu daje. Na lewym ramieniu pomaga kontrola odbiorcza i docieranie, na prawym — wymiana przed wejściem w strefę zużycia."
@@ -661,7 +718,12 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           figure_panel(label = "Decyzja", title = "Czy wentylator dotrwa do końca misji?", lc_toolbar(
               lc_slider("c7_plan_time", "Czas do przeglądu (h)", 100, 3000, 1000, 50),
               lc_readouts(uiOutput("c7_plan"))
-            ), full_width = TRUE),
+            ), lc_plot("c7_plan_plot", max_height = "300px"), full_width = TRUE),
+          # PROTOTYPY P21A i P21B: termin przeglądu
+          c7p_variant("P21A — termin na krzywej R(t)."),
+          c7p_get("c7p_21a_ui"),
+          c7p_variant("P21B — ryzyko jako pole pod gęstością przed kreską przeglądu."),
+          c7p_get("c7p_21b_ui"),
           zycie_reading(c(
             "Suwak ma krok 50 h, więc najbliższa wartość to 550 h: R ≈ 0.901, ryzyko awarii ≈ 0.099. Przy 600 h wymaganie jest już złamane. Przy domyślnych 1000 h ryzyko awarii przed przeglądem wynosi około 0.293 — prawie trzy razy więcej, niż dopuszcza kierownik. Przy 1500 h przekracza połowę (0.541).",
             "Zwróć uwagę, jak szybko rośnie ryzyko przy β = 2. Między 500 a 1000 h ryzyko wzrasta z około 0.083 do 0.293, czyli ponad trzykrotnie przy dwukrotnie dłuższym okresie. To bezpośrednia konsekwencja rosnącego hazardu: każda kolejna godzina jest groźniejsza od poprzedniej."
@@ -686,6 +748,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             ),
             answer = "Przy zużyciu wymiana podnosi szansę przetrwania kolejnych 500 h z 0.649 do 0.917. Przy stałym hazardzie wymiana nie zmienia niczego: 0.717 przed i po."
           ),
+          # PROTOTYP P22: używany a nowy na kolejne 500 h
+          c7p_get("c7p_22_ui"),
           risk_check("c7_chk_wymiana",
             "Element ma stały hazard. Co da wymiana sprawnego egzemplarza na nowy po 1000 h pracy?",
             c("Znacząco zmniejszy ryzyko awarii w kolejnym okresie" = "helps", "Nie zmieni ryzyka awarii w kolejnym okresie" = "nothing", "Zwiększy ryzyko, bo nowy egzemplarz ma wczesne defekty" = "worse"),
@@ -715,10 +779,18 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           lc_h3("Stały hazard i czas oczekiwania"),
           "Stały hazard wyznacza rozkład wykładniczy (7.8) — ciągłą wersję geometrycznego z wykładu 05 — i jego brak pamięci (7.9), odpowiednik wzoru (5.4). Suma k wykładniczych etapów daje rozkład gamma i Erlanga (7.10), a tożsamość (7.11) łączy czas do k-tego zdarzenia z liczbą zdarzeń Poissona, tak jak wzór (5.7) łączył ujemny dwumianowy z dwumianowym.",
           lc_h3("Starzenie i decyzja o wymianie"),
-          "Część B dodała parametr kształtu. W modelu Weibulla (7.12) kierunek zmiany hazardu (7.13) wyznacza β, a MTTF (7.14) zależy od obu parametrów — dlatego modele o tej samej średniej różnią się niezawodnością misji. Pełna krzywa wannowa wymaga sumy hazardów kilku mechanizmów (7.15). Plan przeglądu wynika z wymaganej niezawodności (7.16), a o sensie wymiany decyduje niezawodność warunkowa (7.17): przy zużyciu wymiana pomaga, przy stałym hazardzie nic nie zmienia."
+          "Część B dodała parametr kształtu. W modelu Weibulla (7.12) kierunek zmiany hazardu (7.13) wyznacza β, a MTTF (7.14) zależy od obu parametrów — dlatego modele o tej samej średniej różnią się niezawodnością misji. Pełna krzywa wannowa wymaga sumy hazardów kilku mechanizmów (7.15). Plan przeglądu wynika z wymaganej niezawodności (7.16), a o sensie wymiany decyduje niezawodność warunkowa (7.17): przy zużyciu wymiana pomaga, przy stałym hazardzie nic nie zmienia.",
+          # PROTOTYP P23A: domknięcie — karty katalogowe z rozdziału 1 poprawione
+          c7p_variant("P23A — karty katalogowe z rozdziału 1 wracają poprawione."),
+          c7p_get("c7p_23a_ui")
         )
       ),
-      list(id = "lista", title = "Pięć pytań", bullets = c("Co rozpoczyna i kończy czas życia?", "Jaki jest wspólny czas misji?", "Czy obserwacje działające są cenzorowane?", "Czy hazard jest stały, rośnie czy maleje?", "Jak wynik zmienia decyzję utrzymaniową?"), widget = risk_assessment_ui("c7", zycie_quiz, zycie_exercises)),
+      list(id = "lista", title = "Pięć pytań", bullets = c("Co rozpoczyna i kończy czas życia?", "Jaki jest wspólny czas misji?", "Czy obserwacje działające są cenzorowane?", "Czy hazard jest stały, rośnie czy maleje?", "Jak wynik zmienia decyzję utrzymaniową?"),
+        # PROTOTYP P23B: domknięcie — pięć pytań z odpowiedziami dla wentylatora
+        body = list(
+          c7p_variant("P23B — pięć pytań z odpowiedziami dla wentylatora Bananpolu."),
+          c7p_get("c7p_23b_ui")
+        ), widget = risk_assessment_ui("c7", zycie_quiz, zycie_exercises)),
       list(id = "most", title = "Co dalej", text = "Dotąd badaliśmy pojedynczy element. W następnym wykładzie połączymy funkcje niezawodności R_i(t) kilku elementów w niezawodność całego systemu — i okaże się, że wynik zależy nie tylko od elementów, ale i od architektury.")
     )
   )
@@ -768,7 +840,10 @@ zycie_server <- function(input, output, session) {
     tags$div(class = "life-observation-summary",
       tags$p(tags$strong("Awarie:"), paste(sum(dat$failed), "z 8")),
       tags$p(tags$strong("Cenzorowane:"), paste(sum(!dat$failed), "z 8")),
-      tags$p(tags$strong("Łączny czas obserwacji:"), paste(sum(dat$time), "h"))
+      tags$p(tags$strong("Łączny czas obserwacji:"), paste(sum(dat$time), "h")),
+      # Liczby, o które pyta tekst: średnia z samych awarii i szacunek (7.2).
+      tags$p(tags$strong("Średnia z samych awarii:"), paste(zycie_num(mean(dat$time[dat$failed])), "h")),
+      tags$p(tags$strong("Szacunek MTTF ze wzoru (7.2):"), paste(zycie_num(sum(dat$time) / sum(dat$failed)), "h"))
     )
   })
   functions_plot <- reactive({
@@ -778,7 +853,9 @@ zycie_server <- function(input, output, session) {
     ggplot(dat, aes(t, value, colour = fun)) +
       geom_line(linewidth = 1) +
       geom_vline(xintercept = input$c7_time, linetype = 2) +
+      geom_point(data = dat[rep(which.min(abs(t - input$c7_time)), 4) + (0:3) * length(t), ], size = 2.6) +
       scale_colour_manual(values = upwr_cat_n(4)) +
+      coord_cartesian(ylim = c(0, 2)) +
       labs(x = "Czas (h)", y = "Wartość przeskalowana", colour = NULL) +
       theme_upwr()
   })
@@ -787,40 +864,74 @@ zycie_server <- function(input, output, session) {
     e <- risk_exponential(input$c7_time, 1 / 1500)
     tagList(
       lc_readout("F(t)", risk_fmt_p(e$cdf)),
-      lc_readout("R(t)", risk_fmt_p(e$reliability), color = upwr_accent)
+      lc_readout("R(t)", risk_fmt_p(e$reliability), color = upwr_accent),
+      # Wartości bez przeskalowania, jak w przykładzie 7.3.
+      lc_readout("f(t) [1/h]", formatC(e$density, format = "f", digits = 6)),
+      lc_readout("h(t) [1/h]", formatC(e$hazard, format = "f", digits = 6))
     )
   })
   exp_plot <- reactive({
     t <- seq(0, 5000, length.out = 400)
     r <- risk_exponential(t, 1 / input$c7_mttf)$reliability
     ggplot(data.frame(t, r), aes(t, r)) +
+      # Kreska misji 1000 h (odczyt R(1000 h)) i punkt (MTTF, e⁻¹), o którym mówi tekst.
+      geom_vline(xintercept = 1000, linetype = 2) +
       geom_line(colour = upwr_accent, linewidth = 1.1) +
+      annotate("point", x = 1000, y = exp(-1000 / input$c7_mttf), colour = upwr_accent, size = 3) +
+      annotate("segment", x = 0, xend = input$c7_mttf, y = exp(-1), yend = exp(-1), colour = upwr_reference, linetype = 3) +
+      annotate("segment", x = input$c7_mttf, xend = input$c7_mttf, y = 0, yend = exp(-1), colour = upwr_reference, linetype = 3) +
+      annotate("point", x = input$c7_mttf, y = exp(-1), colour = upwr_secondary, size = 3) +
+      coord_cartesian(xlim = c(0, 5000), ylim = c(0, 1)) +
       labs(x = "Czas (h)", y = "R(t)") +
       theme_upwr()
   })
   zoom_plot_server("c7_exp", exp_plot, alt = "Malejąca wykładnicza krzywa niezawodności.")
   output$c7_exp_stats <- renderUI(tagList(
-    lc_readout("R(1000 h)", risk_fmt_p(exp(-1000 / input$c7_mttf)), color = upwr_accent)
+    lc_readout("R(1000 h)", risk_fmt_p(exp(-1000 / input$c7_mttf)), color = upwr_accent),
+    lc_readout("R(MTTF)", risk_fmt_p(exp(-1)), color = upwr_secondary)
   ))
   gamma_plot <- reactive({
-    t <- seq(0, 6000, length.out = 400)
-    ggplot(data.frame(t, p = dgamma(t, shape = input$c7_k, rate = 1 / 500)), aes(t, p)) +
+    # Stałe osie: suwak k zmienia kształt, nie skalę; etykiety osi Y bez notacji
+    # 4e-04. Dla k < 1 gęstość w zerze jest nieskończona, więc siatka zaczyna się
+    # tuż za zerem, a krzywa wychodzi ponad stałą oś.
+    t <- seq(5, 6000, length.out = 500)
+    d <- data.frame(t, p = dgamma(t, shape = input$c7_k, rate = 1 / 500))
+    ggplot(d, aes(t, p)) +
+      geom_area(data = d[d$t >= 1000, ], fill = upwr_secondary, alpha = .25) +
       geom_line(colour = upwr_secondary, linewidth = 1.1) +
-      labs(x = "Czas (h)", y = "Gęstość") +
+      geom_vline(xintercept = 1000, linetype = 2) +
+      geom_vline(xintercept = input$c7_k * 500, colour = upwr_reference, linetype = 3, linewidth = .8) +
+      scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
+      coord_cartesian(xlim = c(0, 6000), ylim = c(0, .0021)) +
+      labs(x = "Czas (h)", y = "Gęstość (1/h)") +
       theme_upwr()
   })
   zoom_plot_server("c7_gamma", gamma_plot, alt = "Gęstość rozkładu gamma dla wybranego parametru kształtu.")
   output$c7_gamma_stats <- renderUI(tagList(
     lc_readout("Średni czas E(T)", paste(input$c7_k * 500, "h")),
+    lc_readout("Szczyt gęstości", paste(max(0, (input$c7_k - 1) * 500), "h")),
+    lc_readout("P(T > 1000 h)", risk_fmt_p(pgamma(1000, shape = input$c7_k, rate = 1 / 500, lower.tail = FALSE)), color = upwr_secondary),
     lc_readout("Rodzina", if (input$c7_k %% 1 == 0) "Erlang" else "gamma")
   ))
   weib_plot <- reactive({
     t <- seq(1, 5000, length.out = 500)
     w <- risk_weibull(t, input$c7_beta, input$c7_eta)
-    dat <- rbind(data.frame(t, value = w$reliability, fun = "R(t)"), data.frame(t, value = w$hazard, fun = "Hazard h(t) [1/h]"))
+    # R(t) u góry, hazard na dole (tak opisuje je tekst). Oś hazardu jest stała
+    # (0–0.004 na godzinę): suwaki zmieniają krzywą, nie skalę; wartości ponad osią
+    # są ucięte (krzywa wychodzi poza panel).
+    funs <- c("R(t)", "Hazard h(t) [1/h]")
+    hazard <- w$hazard
+    hazard[hazard > .004] <- NA
+    dat <- rbind(data.frame(t, value = w$reliability, fun = funs[1]), data.frame(t, value = hazard, fun = funs[2]))
+    dat$fun <- factor(dat$fun, levels = funs)
+    frame <- data.frame(t = 0, value = c(0, 1, 0, .004), fun = factor(rep(funs, each = 2), levels = funs))
+    mark <- data.frame(t = 1000, value = risk_weibull(1000, input$c7_beta, input$c7_eta)$reliability, fun = factor(funs[1], levels = funs))
     ggplot(dat, aes(t, value, colour = fun)) +
-      geom_line(linewidth = 1.05) +
-      scale_colour_manual(values = upwr_cat_n(2)) +
+      geom_blank(data = frame) +
+      geom_vline(xintercept = 1000, linetype = 2) +
+      geom_line(linewidth = 1.05, na.rm = TRUE) +
+      geom_point(data = mark, size = 3) +
+      scale_colour_manual(values = upwr_cat_n(2), guide = "none") +
       facet_wrap(~fun, ncol = 1, scales = "free_y") +
       labs(x = "Czas (h)", y = NULL, colour = NULL) +
       theme_upwr()
@@ -835,36 +946,77 @@ zycie_server <- function(input, output, session) {
     shapes <- c(.7, 1, 2.5)
     scales <- 1500 / gamma(1 + 1 / shapes)
     dat <- do.call(rbind, lapply(seq_along(shapes), function(i) data.frame(t, r = exp(-(t / scales[i])^shapes[i]), model = paste0("β=", shapes[i]))))
+    mark <- data.frame(t = input$c7_mission, r = exp(-(input$c7_mission / scales)^shapes), model = paste0("β=", shapes))
     ggplot(dat, aes(t, r, colour = model)) +
       geom_line(linewidth = 1) +
       geom_vline(xintercept = input$c7_mission, linetype = 2) +
+      geom_point(data = mark, size = 3) +
       scale_colour_manual(values = upwr_cat_n(3)) +
+      coord_cartesian(ylim = c(0, 1)) +
       labs(x = "Czas (h)", y = "R(t)", colour = NULL) +
       theme_upwr()
   })
   zoom_plot_server("c7_same_mean", same_plot, alt = "Trzy krzywe Weibulla o tym samym średnim czasie życia i różnych kształtach.")
-  output$c7_same_mean_stats <- renderUI(lc_caption(
-                                          "Odczytaj trzy różne wartości na pionowej linii czasu misji.",
-                                          tone = "info"
-                                        ))
+  # Trzy wartości R(t) na linii misji, w kolorach krzywych (przykład 7.8).
+  output$c7_same_mean_stats <- renderUI({
+    shapes <- c(.7, 1, 2.5)
+    scales <- 1500 / gamma(1 + 1 / shapes)
+    cols <- upwr_cat_n(3)
+    tagList(lapply(seq_along(shapes), function(i) {
+      lc_readout(paste0("R(t), β = ", shapes[i]), risk_fmt_p(exp(-(input$c7_mission / scales[i])^shapes[i])),
+        color = cols[i], swatch = TRUE)
+    }))
+  })
+  # Dno wanny: minimum sumy trzech składowych (położenie, wartość).
+  bathtub_bottom <- reactive({
+    total <- function(t) 1.2 * exp(-t / 350) + .12 + input$c7_wear * (t / 4000)^3
+    opt <- optimize(total, c(1, 4000))
+    c(opt$minimum, opt$objective)
+  })
   bathtub_plot <- reactive({
     t <- seq(1, 4000, length.out = 500)
     early <- 1.2 * exp(-t / 350)
     stable <- rep(.12, length(t))
     wear <- input$c7_wear * (t / 4000)^3
     dat <- data.frame(t, early, stable, wear, total = early + stable + wear)
-    long <- reshape(dat, varying = c("early", "stable", "wear", "total"), v.names = "hazard", timevar = "mechanizm", times = c("Wczesne defekty", "Losowe awarie", "Zużycie", "Suma"), direction = "long")
+    mech <- c("Wczesne defekty", "Losowe awarie", "Zużycie", "Suma")
+    long <- reshape(dat, varying = c("early", "stable", "wear", "total"), v.names = "hazard", timevar = "mechanizm", times = mech, direction = "long")
+    long$mechanizm <- factor(long$mechanizm, levels = mech)
+    bottom <- bathtub_bottom()
+    # Stała oś Y: suwak podnosi prawe ramię (przy dużym nasileniu wychodzi ponad
+    # oś), lewe stoi w miejscu. Punkt i przerywana kreska: dno wanny.
     ggplot(long, aes(t, hazard, colour = mechanizm)) +
       geom_line(aes(linewidth = mechanizm == "Suma")) +
+      annotate("segment", x = bottom[1], xend = bottom[1], y = 0, yend = bottom[2], linetype = 2) +
+      annotate("point", x = bottom[1], y = bottom[2], size = 3) +
       scale_linewidth_manual(values = c(`TRUE` = 1.3, `FALSE` = .7), guide = "none") +
       scale_colour_manual(values = upwr_cat_n(4)) +
+      coord_cartesian(ylim = c(0, 1.4)) +
       labs(x = "Czas", y = "Względny hazard", colour = NULL) +
       theme_upwr()
   })
   zoom_plot_server("c7_bathtub", bathtub_plot, alt = "Krzywa hazardu w kształcie wanny i jej trzy składowe.")
-  output$c7_bathtub_stats <- renderUI(lc_caption(
-                                        "Zmiana mechanizmu wymaga innej interwencji utrzymaniowej."
-                                      ))
+  output$c7_bathtub_stats <- renderUI(tagList(
+    lc_readout("Dno wanny", paste0("t ≈ ", round(bathtub_bottom()[1] / 10) * 10)),
+    lc_readout("Hazard w dnie", formatC(bathtub_bottom()[2], format = "f", digits = 3))
+  ))
+  # Obraz do panelu decyzji: R(t) modelu Weibulla (β = 2, η = 1700 h), wymaganie
+  # R = 0.90 i wybrany termin; odcinek w kolorze akcentu to ryzyko awarii 1 - R(t).
+  plan_plot <- reactive({
+    t <- seq(0, 3000, length.out = 400)
+    d <- data.frame(t, r = risk_weibull(t, 2, 1700)$reliability)
+    r_now <- risk_weibull(input$c7_plan_time, 2, 1700)$reliability
+    ggplot(d, aes(t, r)) +
+      annotate("segment", x = input$c7_plan_time, xend = input$c7_plan_time, y = r_now, yend = 1, colour = upwr_accent, linewidth = 2.2) +
+      geom_hline(yintercept = .9, colour = upwr_reference, linetype = 3, linewidth = .8) +
+      geom_line(colour = upwr_secondary, linewidth = 1.1) +
+      annotate("segment", x = input$c7_plan_time, xend = input$c7_plan_time, y = 0, yend = r_now, linetype = 2) +
+      annotate("point", x = input$c7_plan_time, y = r_now, colour = upwr_accent, size = 3) +
+      coord_cartesian(xlim = c(0, 3000), ylim = c(0, 1)) +
+      labs(x = "Czas do przeglądu (h)", y = "R(t)") +
+      theme_upwr()
+  })
+  zoom_plot_server("c7_plan_plot", plan_plot, alt = "Krzywa niezawodności Weibulla z wybranym terminem przeglądu, wymaganiem 0.90 i odcinkiem ryzyka awarii przed przeglądem.")
   output$c7_plan <- renderUI({
     r <- risk_weibull(input$c7_plan_time, 2, 1700)$reliability
     tagList(

@@ -41,6 +41,14 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "bananpol.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_math.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_block.R"), local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
+# Prototypy punktów stop (PUNKTY-STOP-PROPOZYCJA.md): wspólne narzędzia, potem
+# pliki grup; block.R wpina obiekty przez c7p_get().
+source(file.path(app_dir, "modules", "stop_proto_common.R"), local = TRUE)
+.proto_groups <- c("ra", "rb", "rc", "rd", "re", "rf", "rg", "rh", "ri")
+for (.f in .proto_groups) {
+  source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
+}
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
@@ -53,7 +61,20 @@ ui <- lecture_page(
   lecture_title = "Czas życia elementu",
   module_label = "Analiza ryzyka · Bananpol",
   chapters = .chapters,
-  header_extras = includeCSS(file.path(app_dir, "assets", "pilot.css"))
+  # Prototypy punktów stop działają w przeglądarce, bez serwera R: sceny
+  # (modules/sceny.js, window.lcC7) i ryciny lcSF na ECharts; pliki
+  # modules/proto_*.js rejestrują sceny i ryciny poszczególnych grup.
+  header_extras = tagList(
+    includeCSS(file.path(app_dir, "assets", "pilot.css")),
+    includeScript(file.path(app_dir, "modules", "sceny.js")),
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
+    includeScript(file.path(project_root, "R", "lc_dist.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    lc_sf_styles(),
+    # Grupy rc i ri mają tylko kadry policzone w R (bez pliku JS).
+    lapply(c("ra", "rb", "rd", "re", "rf", "rg", "rh"), function(f) includeScript(file.path(app_dir, "modules", paste0("proto_", f, ".js"))))
+  )
 )
 
 server <- function(input, output, session) {
