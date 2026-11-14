@@ -142,7 +142,9 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     03 bez obliczeń w R poza głosowaniem i quizem: `detektor.js` liczy tablicę 2×2,
     drzewo Bayesa (kroki nadal w `drzewo.js`) i ryciny lcSF (dwa alarmy, próg
     reakcji, Serpuchów); suwaki tablicy są wspólne dla kilku rozdziałów.
-    Dalej 02 → 01. Wspólna obsługa
+    02 bez obliczeń w R poza quizem: Monty Hall w `monty.js` (rycina lcSF),
+    „Trzy widoki” to stały SVG i tabela z R (`monty_server.R` usunięty).
+    Dalej 01. Wspólna obsługa
     w `lc_charts.js` gotowa. Wykłady 01, 02, 03 i 05 w całości na ECharts
     (2026-11-05; mostek offline `widgets/01-ch2-jakosciowe.js` też), 04 od
     2026-11-09. Wykłady statystyki nie ładują już Chart.js (poza

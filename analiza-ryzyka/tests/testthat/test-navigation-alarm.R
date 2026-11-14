@@ -37,25 +37,33 @@ testthat::test_that("zmiana rozdziału nie odtwarza suwaków detektora z wartoś
   testthat::expect_true(result)
 })
 
-testthat::test_that("wydzielony Monty Hall sumuje gry i resetuje eksperyment", {
-  result <- callr::r(function(path) {
+# Grę Monty Halla prowadzi od 2026-11-14 modules/monty.js (logika: tests/js/w2_monty.test.js).
+testthat::test_that("wykład 02: Monty Hall, drzewo i tablica działają bez serwera", {
+  testthat::skip_if_not_installed("xml2")
+  res <- callr::r(function(path) {
     setwd(path)
     app <- new.env()
     sys.source("app.R", app)
-    shiny::testServer(app$warunki_monty_server, {
-      session$setInputs(w2_monty_door_1 = 0, w2_monty_switch = 0,
-        w2_monty_sim_10 = 0, w2_monty_new = 0)
-      session$setInputs(w2_monty_door_1 = 1)
-      stopifnot(monty$opened != monty$prize, monty$opened != monty$chosen)
-      session$setInputs(w2_monty_switch = 1)
-      stopifnot(monty$final != monty$chosen, monty$final != monty$opened)
-      session$setInputs(w2_monty_sim_10 = 1)
-      session$setInputs(w2_monty_sim_10 = 2)
-      stopifnot(monty_sim$n == 20, monty_sim$wins_stay + monty_sim$wins_switch == 20)
-      session$setInputs(w2_monty_new = 1)
-      stopifnot(is.null(monty$final), monty_sim$n == 0)
-    })
-    TRUE
+    html <- paste(vapply(app$.chapters, function(ch) htmltools::renderTags(ch$content)$html, ""), collapse = "\n")
+    doc <- xml2::read_html(html)
+    t <- htmltools::renderTags(app$ui)
+    list(
+      monty = length(xml2::xml_find_all(doc, "//div[@class='w2-monty']")),
+      slots = xml2::xml_attr(xml2::xml_find_all(doc, "//div[@class='w2-monty']//*[@data-mt]"), "data-mt"),
+      figs = xml2::xml_attr(xml2::xml_find_all(doc, "//div[contains(@class, 'lc-sf') and @data-fig]"), "data-fig"),
+      tree = length(xml2::xml_find_all(doc, "//svg[starts-with(@aria-label, 'Drzewo dróg: 1000')]")),
+      plot_outputs = length(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-plot-output')]")),
+      html_outputs = xml2::xml_attr(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-html-output')]"), "id"),
+      head = paste(t$head, t$html),
+      has_server = exists("warunki_monty_server", envir = app)
+    )
   }, args = list(path = file.path(risk_root, "02-warunki")), timeout = 60)
-  testthat::expect_true(result)
+  testthat::expect_equal(res$monty, 1L)
+  testthat::expect_true(all(c("controls", "doors", "feedback", "sim", "tick") %in% res$slots))
+  testthat::expect_equal(res$figs, "w2_monty")
+  testthat::expect_equal(res$tree, 1L)
+  testthat::expect_equal(res$plot_outputs, 0L)
+  testthat::expect_equal(res$html_outputs, "w2_quiz_feedback")
+  testthat::expect_true(grepl("lcW2Monty", res$head, fixed = TRUE))
+  testthat::expect_false(res$has_server)
 })

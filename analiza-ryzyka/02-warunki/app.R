@@ -41,7 +41,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "bananpol.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_math.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_block.R"), local = TRUE)
-source(file.path(app_dir, "modules", "monty_server.R"), local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
@@ -55,6 +55,12 @@ ui <- lecture_page(
   module_label = "Analiza ryzyka · Bananpol",
   chapters = .chapters,
   header_extras = tagList(
+    # Monty Hall (monty.js) z ryciną lcSF na ECharts: działa bez serwera, także offline.
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "monty.js")),
+    lc_sf_styles(),
     includeScript(file.path(app_dir, "modules", "filtr.js")),
     includeScript(file.path(app_dir, "modules", "iloczyn.js")),
     includeScript(file.path(app_dir, "modules", "raport.js")),

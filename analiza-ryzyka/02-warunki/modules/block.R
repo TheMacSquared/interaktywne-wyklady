@@ -273,115 +273,37 @@ warunki_raport_widget <- figure_panel(
   )
 )
 
+# Gra Monty Halla: logikę, bramki i symulację prowadzi modules/monty.js (bez
+# serwera, także offline); odsetek wygranych rysuje rycina lcSF „w2_monty”.
 warunki_monty_widget <- figure_panel(
   label = "Idź na całość",
   title = "Zostać przy bramce czy zmienić wybór?",
   full_width = TRUE,
-  uiOutput("w2_monty_controls"),
-  uiOutput("w2_monty_doors"),
-  uiOutput("w2_monty_feedback"),
-  uiOutput("w2_monty_simulation_panel")
+  tags$div(class = "w2-monty",
+    tags$div(`data-mt` = "controls"),
+    tags$div(`data-mt` = "doors"),
+    tags$div(`data-mt` = "feedback"),
+    tags$div(`data-mt` = "sim", hidden = NA, style = "margin-top:1.4em;",
+      tags$div(class = "lc-eyebrow", "Eksperyment wielokrotny"),
+      tags$h4("Czy wynik jednej gry był przypadkiem?"),
+      tags$p("Dograj kolejne partie obiema strategiami naraz. Wyniki się sumują, więc zobacz, jak odsetek wygranych stabilizuje się wraz z liczbą gier."),
+      lc_sf_figure("w2_monty",
+        # Ukryta kontrolka: monty.js wywołuje na niej zdarzenie, żeby przerysować rycinę.
+        control = tags$input(type = "hidden", `data-mt` = "tick"),
+        toolbar = tagList(
+          lc_sf_action_group("Dograj gry", g1 = "+1", g10 = "+10", g100 = "+100", g1000 = "+1000"),
+          lc_readouts(
+            lc_readout("Gier", lc_sf_value("games")),
+            lc_readout("Zostaję", lc_sf_value("stay"), color = upwr_reference),
+            lc_readout("Zmieniam", lc_sf_value("switch"), color = upwr_accent))),
+        ratio = "1.6/1", max_height = "390px",
+        notes = list(none = NULL,
+          few = lc_caption("Przy kilku grach przypadek jeszcze rządzi — dograj więcej."),
+          many = lc_caption("Linie kropkowane: teoretyczne 1/3 i 2/3.")),
+        selected = "none")
+    )
+  )
 )
-
-# --- Rysunki SVG bramek Monty'ego Halla (paleta UPWr, bez plików binarnych) ---
-
-.monty_svg_door_closed <- function(door, highlight = FALSE) {
-  frame <- if (highlight) upwr_accent else upwr_secondary
-  sprintf(
-    '<svg viewBox="0 0 120 150" width="100%%" height="140" role="img" aria-label="Bramka %d: zamknięta">
-       <rect x="8" y="6" width="104" height="138" rx="10" fill="%s"/>
-       <rect x="18" y="16" width="84" height="118" rx="6" fill="none"
-             stroke="#ffffff" stroke-opacity="0.35" stroke-width="3"/>
-       <circle cx="96" cy="78" r="5" fill="%s"/>
-       <text x="58" y="90" text-anchor="middle" font-size="46" font-weight="bold"
-             fill="#ffffff">%d</text>
-     </svg>',
-    door, frame, unname(upwr_cat[["bursztyn"]]), door
-  )
-}
-
-.monty_svg_doorway <- function(content, label) {
-  sprintf(
-    '<svg viewBox="0 0 120 150" width="100%%" height="140" role="img" aria-label="%s">
-       <rect x="8" y="6" width="104" height="138" rx="10" fill="%s"/>
-       <rect x="16" y="14" width="88" height="122" rx="6" fill="%s"/>
-       %s
-     </svg>',
-    label, upwr_secondary, upwr_panel, content
-  )
-}
-
-.monty_svg_car <- function() {
-  body_col <- unname(upwr_cat[["bursztyn"]])
-  wheel_col <- upwr_secondary
-  paste0(
-    '<path d="M36 86 Q41 64 58 64 L72 64 Q86 64 91 86 Z" fill="', body_col, '"/>',
-    '<rect x="24" y="84" width="72" height="24" rx="9" fill="', body_col, '"/>',
-    '<rect x="47" y="70" width="21" height="13" rx="3" fill="#ffffff" fill-opacity="0.85"/>',
-    '<circle cx="41" cy="110" r="9" fill="', wheel_col, '"/>',
-    '<circle cx="41" cy="110" r="3.5" fill="#ffffff"/>',
-    '<circle cx="79" cy="110" r="9" fill="', wheel_col, '"/>',
-    '<circle cx="79" cy="110" r="3.5" fill="#ffffff"/>',
-    '<circle cx="93" cy="92" r="2.5" fill="#ffffff"/>'
-  )
-}
-
-.monty_svg_cat <- function() {
-  cat_col <- upwr_reference
-  line_col <- upwr_secondary
-  paste0(
-    # ogon
-    '<path d="M78 112 Q98 110 96 90 Q95 80 88 84" stroke="', cat_col, '" stroke-width="6" fill="none" stroke-linecap="round"/>',
-    # siedzący tułów
-    '<ellipse cx="60" cy="104" rx="22" ry="20" fill="', cat_col, '"/>',
-    # przednie łapy
-    '<rect x="46" y="110" width="9" height="16" rx="4" fill="', cat_col, '"/>',
-    '<rect x="63" y="110" width="9" height="16" rx="4" fill="', cat_col, '"/>',
-    # uszy
-    '<path d="M42 66 L46 46 L58 60 Z" fill="', cat_col, '"/>',
-    '<path d="M78 66 L74 46 L62 60 Z" fill="', cat_col, '"/>',
-    # głowa
-    '<circle cx="60" cy="72" r="18" fill="', cat_col, '"/>',
-    # oczy
-    '<ellipse cx="53" cy="69" rx="2.4" ry="3.4" fill="', line_col, '"/>',
-    '<ellipse cx="67" cy="69" rx="2.4" ry="3.4" fill="', line_col, '"/>',
-    # nos
-    '<path d="M57.5 76 L62.5 76 L60 79 Z" fill="', line_col, '"/>',
-    # wąsy
-    '<path d="M50 77 L34 74" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
-    '<path d="M50 80 L35 83" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
-    '<path d="M70 77 L86 74" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>',
-    '<path d="M70 80 L85 83" stroke="', line_col, '" stroke-width="1.6" stroke-linecap="round"/>'
-  )
-}
-
-.monty_door_card <- function(door, state, title_text, caption, border) {
-  svg <- switch(state,
-    closed = .monty_svg_door_closed(door, highlight = FALSE),
-    chosen = .monty_svg_door_closed(door, highlight = TRUE),
-    zonk = .monty_svg_doorway(
-      .monty_svg_cat(), sprintf("Bramka %d: Zonk", door)
-    ),
-    car = .monty_svg_doorway(
-      .monty_svg_car(), sprintf("Bramka %d: nagroda", door)
-    )
-  )
-  tags$div(
-    style = paste0(
-      "text-align:center; padding:0.6rem 0.5rem; border:2px solid ", border,
-      "; border-radius:12px; background:#ffffff; height:100%;"
-    ),
-    HTML(svg),
-    tags$div(
-      style = "font-weight:700; margin-top:0.35rem;",
-      paste0("Bramka ", door, " · ", title_text)
-    ),
-    tags$div(
-      style = paste0("font-size:0.85rem; color:", upwr_ink_soft, ";"),
-      caption
-    )
-  )
-}
 
 # Widget używa stałych liczb Bananpolu z narracji (1000 zmian, 100 z przegrzaniem,
 # 12 i 5 incydentów), więc działa niezależnie od suwaka mozaiki.
@@ -394,11 +316,53 @@ warunki_views_counts <- data.frame(
 )
 warunki_views_params <- c(share = 0.10, hot = 0.12, normal = 5 / 900)
 
+# Drzewo dróg z góry na dół, same liczebności (bez podświetleń i prawdopodobieństw):
+# statyczny SVG z tokenami motywu, skaluje się z szerokością (dawniej ggplot na serwerze).
+warunki_views_tree_svg <- function(d = warunki_views_counts) {
+  px <- function(x) 380 + x * 62
+  py <- function(y) 34 + (4.45 - y) * 62
+  nodes <- data.frame(
+    x = c(0, -3, 3, -4.5, -1.5, 1.5, 4.5), y = c(4, 2, 2, 0, 0, 0, 0),
+    a = c("1000 zmian", "Przegrzanie", "Brak przegrzania", "Incydent", "Brak", "Incydent", "Brak"),
+    b = c("", d$total[1], d$total[2], d$event[1], d$no_event[1], d$event[2], d$no_event[2]),
+    w = c(160, 178, 214, 136, 136, 136, 136), stringsAsFactors = FALSE)
+  edges <- list(c(1, 2), c(1, 3), c(2, 4), c(2, 5), c(3, 6), c(3, 7))
+  lines <- vapply(edges, function(e) sprintf(
+    '<line x1="%g" y1="%g" x2="%g" y2="%g" style="stroke:var(--upwr-reference)" stroke-width="1.6"/>',
+    px(nodes$x[e[1]]), py(nodes$y[e[1]]), px(nodes$x[e[2]]), py(nodes$y[e[2]])), "")
+  boxes <- vapply(seq_len(nrow(nodes)), function(i) {
+    x <- px(nodes$x[i]); y <- py(nodes$y[i]); two <- nzchar(nodes$b[i]); h <- if (two) 62 else 40
+    paste0(sprintf('<rect x="%g" y="%g" width="%g" height="%g" rx="7" style="fill:var(--upwr-secondary)"/>',
+        x - nodes$w[i] / 2, y - h / 2, nodes$w[i], h),
+      if (two) sprintf('<text x="%g" y="%g" text-anchor="middle" font-size="20" font-weight="700" style="fill:var(--upwr-surface)"><tspan x="%g" dy="0">%s</tspan><tspan x="%g" dy="23">%s</tspan></text>',
+        x, y - 5, x, nodes$a[i], x, nodes$b[i])
+      else sprintf('<text x="%g" y="%g" text-anchor="middle" font-size="20" font-weight="700" style="fill:var(--upwr-surface)">%s</text>',
+        x, y + 7, nodes$a[i]))
+  }, "")
+  HTML(paste0('<svg viewBox="0 0 760 340" style="display:block;width:100%;max-width:760px;height:auto;margin:0 auto 1.2em" role="img" ',
+    'aria-label="Drzewo dróg: 1000 zmian dzieli się na 100 z przegrzaniem i 900 bez; w każdej grupie zmiany z incydentem i bez.">',
+    paste(lines, collapse = ""), paste(boxes, collapse = ""), "</svg>"))
+}
+
+# Tablica 2×2 tych samych liczb (stała, więc liczona raz przy starcie).
+warunki_views_table <- function(d = warunki_views_counts) {
+  lc_table(
+    data.frame(group = d$condition, event = d$event, no_event = d$no_event, total = d$total),
+    cols = list(
+      lc_col("group", "Grupa", "row"),
+      lc_col("event", "Incydent", "num"),
+      lc_col("no_event", "Brak incydentu", "num"),
+      lc_col("total", "Razem", "num")
+    ),
+    foot = list(group = "Razem", event = sum(d$event), no_event = sum(d$no_event), total = sum(d$total))
+  )
+}
+
 warunki_views_widget <- figure_panel(
   label = "Trzy widoki", title = "Te same liczby: drzewo, tabela i dane do jUPWR",
-  lc_plot("w2_views_tree", ratio = "1.5/1", ratio_narrow = "1.1/1", max_height = "420px"),
+  warunki_views_tree_svg(),
   lc_plots(
-    uiOutput("w2_table"),
+    warunki_views_table(),
     # Układ „długi”, jak przy wpisywaniu danych do jUPWR: wiersz = kombinacja
     # zdarzeń, liczność = liczba zmian z tą kombinacją.
     lc_table(
@@ -961,93 +925,7 @@ warunki_block <- list(
 warunki_chapters <- risk_block_chapters(warunki_block)
 
 warunki_server <- function(input, output, session) {
-  warunki_monty_server(input, output, session)
-
-  output$w2_table <- renderUI({
-    d <- warunki_views_counts
-    lc_table(
-      data.frame(group = d$condition, event = d$event, no_event = d$no_event, total = d$total),
-      cols = list(
-        lc_col("group", "Grupa", "row"),
-        lc_col("event", "Incydent", "num"),
-        lc_col("no_event", "Brak incydentu", "num"),
-        lc_col("total", "Razem", "num")
-      ),
-      foot = list(group = "Razem", event = sum(d$event), no_event = sum(d$no_event),
-                  total = sum(d$total))
-    )
-  })
-  # Drzewo dróg rysowane z góry na dół: na wąskim ekranie liście stoją obok siebie
-  # zamiast nachodzić na siebie. target = NULL rysuje drzewo bez podświetleń.
-  # Etykiety ggplot mają stały rozmiar w mm, więc poniżej 520 px szerokości wykresu
-  # zmniejszamy je proporcjonalnie (width = szerokość wyjścia z clientData).
-  # show_p = FALSE rysuje same liczebności, bez prawdopodobieństw na gałęziach.
-  tree_plot <- function(target = NULL, width = NULL, show_p = TRUE) {
-    k <- if (is.null(width) || width <= 0) 1 else min(1, width / 520)
-    d <- warunki_views_counts
-    prm <- warunki_views_params
-    fmt <- function(p) sprintf("%.3f", p)
-    amber <- unname(upwr_cat[["bursztyn"]])
-    num_nodes <- target$num_nodes %||% integer(0)
-    den_nodes <- target$den_nodes %||% integer(0)
-    num_edges <- target$num_edges %||% integer(0)
-    den_edges <- target$den_edges %||% integer(0)
-    nodes <- data.frame(
-      x = c(0, -3, 3, -4.5, -1.5, 1.5, 4.5),
-      y = c(4, 2, 2, 0, 0, 0, 0),
-      label = c(
-        "1000 zmian", paste0("Przegrzanie\n", d$total[1]), paste0("Brak przegrzania\n", d$total[2]),
-        paste0("Incydent\n", d$event[1]), paste0("Brak\n", d$no_event[1]),
-        paste0("Incydent\n", d$event[2]), paste0("Brak\n", d$no_event[2])
-      )
-    )
-    node_idx <- seq_len(nrow(nodes))
-    nodes$fill <- ifelse(node_idx %in% num_nodes, upwr_accent,
-      ifelse(node_idx %in% den_nodes, amber, upwr_secondary))
-    edges <- data.frame(
-      xs = c(0, 0, -3, -3, 3, 3),
-      ys = c(4, 4, 2, 2, 2, 2),
-      xe = c(-3, 3, -4.5, -1.5, 1.5, 4.5),
-      ye = c(2, 2, 0, 0, 0, 0),
-      p = c(
-        fmt(prm[["share"]]), fmt(1 - prm[["share"]]),
-        fmt(prm[["hot"]]), fmt(1 - prm[["hot"]]),
-        fmt(prm[["normal"]]), fmt(1 - prm[["normal"]])
-      )
-    )
-    edge_idx <- seq_len(nrow(edges))
-    edges$colour <- ifelse(edge_idx %in% num_edges, upwr_accent,
-      ifelse(edge_idx %in% den_edges, amber, upwr_reference))
-    edges$width <- ifelse(edge_idx %in% c(num_edges, den_edges), 1.8, .8)
-    p <- ggplot() +
-      geom_segment(data = edges, aes(x = xs, y = ys, xend = xe, yend = ye, colour = colour, linewidth = width)) +
-      scale_colour_identity() +
-      scale_linewidth_identity() +
-      if (show_p) geom_label(
-        data = edges, aes((xs + xe) / 2, (ys + ye) / 2, label = p),
-        size = 4.6 * k, colour = upwr_secondary, fontface = "bold", linewidth = 0,
-        label.padding = unit(0.25, "lines")
-      )
-    p <- p +
-      geom_label(
-        data = nodes, aes(x, y, label = label, fill = fill),
-        size = 5 * k, colour = "white", fontface = "bold", linewidth = 0, lineheight = 0.95,
-        label.padding = unit(0.45, "lines"), label.r = unit(0.25, "lines")
-      ) +
-      scale_fill_identity() +
-      coord_cartesian(xlim = c(-5.6, 5.6), ylim = c(-0.55, 4.45)) +
-      labs(x = NULL, y = NULL) +
-      theme_upwr() +
-      theme(
-        axis.text = element_blank(), axis.ticks = element_blank(),
-        axis.line = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()
-      )
-    p
-  }
-  zoom_plot_server("w2_views_tree",
-    reactive(tree_plot(width = session$clientData[["output_w2_views_tree-plot_width"]], show_p = FALSE)),
-    alt = "Drzewo dróg z prawdopodobieństwami na gałęziach i liczebnościami w węzłach."
-  )
+  # Monty Hall (modules/monty.js), trzy widoki (stałe liczby) i pozostałe widgety
+  # działają bez serwera; tu zostaje tylko quiz.
   risk_assessment_server("w2", warunki_quiz, input, output)
 }
