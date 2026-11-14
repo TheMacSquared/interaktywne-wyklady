@@ -53,3 +53,14 @@ test("krzywa normalna i pole ogona zaczynające się w progu", () => {
   assert.equal(tail[0][0], 85.5);
   assert.ok(tail.slice(1).every((p) => p[0] > 85.5));
 });
+
+test("weibull jak risk_weibull() w R, siatka jak seq() i barwy palety", () => {
+  // R: risk_weibull(1000, 2, 1700); risk_weibull(1000, 0.7, 1500 / gamma(1 + 1 / 0.7))
+  close(R.weibull(1000, 2, 1700).reliability, 0.7074977984184172, 1e-12, "R(1000), beta 2");
+  close(R.weibull(1000, 2, 1700).hazard, 0.0006920415224913495, 1e-15, "h(1000), beta 2");
+  close(R.weibull(1000, 0.7, 1500 / 1.265823506057284).reliability, 0.411491042909168, 1e-9, "R(1000), beta 0.7");
+  const c = R.curve((x) => 2 * x, 0, 4000, 400);
+  assert.equal(c.length, 400);
+  assert.deepEqual([c[0], c[399]], [[0, 0], [4000, 8000]]);
+  assert.deepEqual(R.cat(3), ["#2d3b3d", "#c08540", "#6a9dc4"]);   // upwr_cat_n(3)
+});

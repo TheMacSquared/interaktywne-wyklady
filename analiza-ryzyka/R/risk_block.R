@@ -56,10 +56,11 @@ risk_widget_panel <- function(label = "Eksperyment", title, controls,
 #   config    dane dla ryciny (JSON w data-config)
 risk_sf_panel <- function(label = "Eksperyment", title, fig, controls = NULL, reads = NULL,
                           note = NULL, width_mode = "wide", ratio = "2.2/1", max_height = "440px",
-                          config = NULL, legend = FALSE, full_width = NULL) {
+                          config = NULL, legend = FALSE, full_width = NULL, ...) {
+  # ...: pozostałe argumenty lc_sf_figure() (np. body dla kilku wykresów w jednej rycinie).
   content <- list(
     lc_sf_figure(fig, control = controls, toolbar = if (!is.null(reads)) lc_readouts(reads),
-                 ratio = ratio, max_height = max_height, config = config, legend = legend),
+                 ratio = ratio, max_height = max_height, config = config, legend = legend, ...),
     if (!is.null(note)) lc_caption(note)
   )
   # figure_panel() przyjmuje width_mode albo full_width, nie oba naraz.

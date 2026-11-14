@@ -195,7 +195,7 @@ testthat::test_that("wykład 01: decyzja i ćwiczenia mają dane dla przeglądar
 
 # Wykłady gotowe do budowania statycznego (scripts/check_static_ready.R): wspólne warunki.
 static_ready_lectures <- c("01-jezyk-ryzyka", "02-warunki", "03-alarm-i-prawda", "04-wiele-prob",
-                           "05-do-zdarzenia", "06-zmiennosc-i-prog")
+                           "05-do-zdarzenia", "06-zmiennosc-i-prog", "07-czas-zycia")
 
 for (lecture in static_ready_lectures) local({
   lecture <- lecture

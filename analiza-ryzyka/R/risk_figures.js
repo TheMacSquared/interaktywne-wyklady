@@ -55,6 +55,26 @@
     return Math.sqrt(v / (x.length - 1));
   }
 
-  root.lcRisk = { fmtP: fmtP, big: big, naturalFrequency: naturalFrequency, normalExceedance: normalExceedance,
+  // risk_weibull(): niezawodność i hazard Weibulla (kształt, skala) w chwili t.
+  function weibull(t, shape, scale) {
+    return { reliability: Math.exp(-Math.pow(t / scale, shape)),
+             hazard: (shape / scale) * Math.pow(t / scale, shape - 1) };
+  }
+  // Krzywa [[x, f(x)]] w k punktach od a do b: jak seq(a, b, length.out = k) w R.
+  function curve(f, a, b, k) {
+    var out = [], n = k || 400;
+    for (var i = 0; i < n; i++) { var x = a + (b - a) * i / (n - 1); out.push([x, f(x)]); }
+    return out;
+  }
+  // upwr_cat_n(n): pierwsze n barw palety kategorycznej z tokenów motywu
+  // (rezerwowe wartości jak w shared/palette.R).
+  var CAT = [["grafit", "#2d3b3d"], ["bursztyn", "#c08540"], ["niebo", "#6a9dc4"], ["szalwia", "#4a8a6a"],
+             ["kurkuma", "#cbb858"], ["indygo", "#3a5a8a"], ["terakota", "#b25838"], ["wrzos", "#a07894"]];
+  function cat(n) {
+    var C = root.lcCharts;
+    return CAT.slice(0, n).map(function (c) { return C && C.token ? C.token("--upwr-cat-" + c[0], c[1]) : c[1]; });
+  }
+
+  root.lcRisk = { weibull: weibull, curve: curve, cat: cat, fmtP: fmtP, big: big, naturalFrequency: naturalFrequency, normalExceedance: normalExceedance,
     stressStrength: stressStrength, normalCurve: normalCurve, tailCurve: tailCurve, rnd: rnd, mean: mean, sd: sd };
 })();

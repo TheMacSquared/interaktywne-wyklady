@@ -46,7 +46,7 @@ przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. 
 R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
 
 Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
-2026: gotowe 11 z 21 wykładów (analiza ryzyka 01–06, statystyka 00–04, zbudowane i sprawdzone
+2026: gotowe 12 z 21 wykładów (analiza ryzyka 01–07, statystyka 00–04, zbudowane i sprawdzone
 przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
 z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 135 wykresów
 R, 234 wyjścia tekstowe i 214 wejść czytanych przez serwer. Zostały tylko
@@ -87,7 +87,7 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   albo poszerzyć tolerancję.
 - [ ] Faza 3: `lc_stats.js` (regresja prosta, wielomianowa, wieloraka; testy t;
   QQ) z wynikami R jako wzorcem testów.
-- [ ] Faza 4: analiza ryzyka 06–10 (26 wykresów R). Gotowe: 06 (6 wykresów).
+- [ ] Faza 4: analiza ryzyka 06–10 (26 wykresów R). Gotowe: 06 (6 wykresów), 07 (8 wykresów; ryciny główne mają przedrostek `c7m_`, bo prototypy zajęły nazwy `c7_gamma` i `c7_weibull` — `lcSF.register` zgłasza teraz powtórzoną nazwę w konsoli).
 - [ ] Faza 5: statystyka 05–06 (29 wykresów R; Shapiro, Levene).
 - [ ] Faza 6: statystyka 07–08 (66 wykresów R).
 - [ ] Faza 7: statystyka 09–10 (20 wykresów R; modele na stałych zbiorach

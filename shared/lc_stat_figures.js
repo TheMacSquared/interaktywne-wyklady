@@ -461,7 +461,11 @@
   // Wykład dopisuje ryciny do rejestru; kontenery, które czekały na swoją
   // rycinę, inicjują się przy kolejnym przeglądzie onReady.
   function register(figs) {
-    Object.keys(figs).forEach(function (k) { FIGURES[k] = figs[k]; });
+    Object.keys(figs).forEach(function (k) {
+      // Dwie ryciny o tej samej nazwie: druga po cichu zastąpiłaby pierwszą na stronie.
+      if (FIGURES[k] && FIGURES[k] !== figs[k] && window.console) console.error("lcSF: rycina „" + k + "” zarejestrowana dwa razy");
+      FIGURES[k] = figs[k];
+    });
     C.onReady(".lc-sf", mount);
   }
 
