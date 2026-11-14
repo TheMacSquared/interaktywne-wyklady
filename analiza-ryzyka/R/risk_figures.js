@@ -6,12 +6,23 @@
   var root = typeof window !== "undefined" ? window : globalThis;
   var D = root.lcDist;
 
+  // sprintf("%.df", x) z R dla x ≥ 0. toFixed() liczy na dokładnej wartości liczby tak jak C,
+  // ale dokładną połówkę (np. 0.0625 przy trzech miejscach) zaokrągla w górę, a C do parzystej
+  // cyfry — wtedy bierzemy wynik z parzystą ostatnią cyfrą.
+  function fixed(x, d) {
+    var up = x.toFixed(d);
+    if (!(x >= 0)) return up;
+    var full = x.toFixed(Math.min(100, d + 60)), cut = full.indexOf(".") + 1 + d;
+    if (!/^50*$/.test(full.slice(cut))) return up;
+    var down = d === 0 ? full.slice(0, cut - 1) : full.slice(0, cut);
+    return Number(up.charAt(up.length - 1)) % 2 === 0 ? up : down;
+  }
   // risk_fmt_p(): trzy miejsca po kropce, a dla p < 0.01 tyle, żeby były dwie cyfry znaczące.
   function fmtP(x) {
     if (typeof x !== "number" || !isFinite(x)) return "—";
     var d = 3;
     if (x > 0 && x < 0.01) d = Math.max(3, Math.min(12, Math.ceil(-Math.log10(x)) + 2));
-    return x.toFixed(d);
+    return fixed(x, d);
   }
   // Liczba całkowita ze spacją tysięcy: format(x, big.mark = " ").
   function big(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
@@ -75,6 +86,6 @@
     return CAT.slice(0, n).map(function (c) { return C && C.token ? C.token("--upwr-cat-" + c[0], c[1]) : c[1]; });
   }
 
-  root.lcRisk = { weibull: weibull, curve: curve, cat: cat, fmtP: fmtP, big: big, naturalFrequency: naturalFrequency, normalExceedance: normalExceedance,
+  root.lcRisk = { weibull: weibull, curve: curve, cat: cat, fixed: fixed, fmtP: fmtP, big: big, naturalFrequency: naturalFrequency, normalExceedance: normalExceedance,
     stressStrength: stressStrength, normalCurve: normalCurve, tailCurve: tailCurve, rnd: rnd, mean: mean, sd: sd };
 })();

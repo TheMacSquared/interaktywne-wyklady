@@ -51,7 +51,9 @@ testthat::test_that("wykład 08: prototypy punktów stop są wpięte i działaj�
     }
   }
   testthat::expect_setequal(res$figs, c("s8_lancuch", "s8_horyzont", "s8_kwadrat", "s8_architektury", "s8_czas",
-    "s8_przewaga", "s8_wspolna", "s8_sklad", "s8_beta", "s8_galezie", "s8_galezie_log", "s8_poprawa"))
+    "s8_przewaga", "s8_wspolna", "s8_sklad", "s8_beta", "s8_galezie", "s8_galezie_log", "s8_poprawa",
+    # Pięć głównych wykresów wykładu (dawniej ggplot na serwerze): modules/wykresy.js.
+    "s8m_arch", "s8m_time", "s8m_common", "s8m_redundancy", "s8m_improvement"))
   testthat::expect_equal(anyDuplicated(res$ids), 0L)
 
   # Liczby na obrazach zgadzają się z tekstem wykładu.

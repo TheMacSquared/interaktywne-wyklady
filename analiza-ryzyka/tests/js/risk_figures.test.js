@@ -64,3 +64,14 @@ test("weibull jak risk_weibull() w R, siatka jak seq() i barwy palety", () => {
   assert.deepEqual([c[0], c[399]], [[0, 0], [4000, 8000]]);
   assert.deepEqual(R.cat(3), ["#2d3b3d", "#c08540", "#6a9dc4"]);   // upwr_cat_n(3)
 });
+
+test("dokładne połówki zaokrąglane do parzystej, jak sprintf() w R", () => {
+  // R: sprintf("%.3f", c(0.0625, 0.1875, 0.3125, 0.4375, 0.5625, 0.9375))
+  assert.deepEqual([0.0625, 0.1875, 0.3125, 0.4375, 0.5625, 0.9375].map(R.fmtP),
+                   ["0.062", "0.188", "0.312", "0.438", "0.562", "0.938"]);
+  // R: sprintf("%.0f", c(0.5, 1.5, 2.5)); sprintf("%.1f", c(0.25, 0.75)); sprintf("%.4f", 0.01865)
+  assert.deepEqual([0.5, 1.5, 2.5].map((x) => R.fixed(x, 0)), ["0", "2", "2"]);
+  assert.deepEqual([0.25, 0.75].map((x) => R.fixed(x, 1)), ["0.2", "0.8"]);
+  assert.equal(R.fixed(0.01865, 4), (0.01865).toFixed(4));       // nie połówka: jak toFixed
+  assert.equal(R.fixed(0.5525, 3), (0.5525).toFixed(3));
+});

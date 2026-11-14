@@ -91,7 +91,7 @@
       var e = exponential(Number(v), 1500);
       S.setValue(el, "fun_cdf", R.fmtP(e.cdf)); S.setValue(el, "fun_rel", R.fmtP(e.reliability));
       // Wartości bez przeskalowania, jak w przykładzie 7.3.
-      S.setValue(el, "fun_dens", e.density.toFixed(6)); S.setValue(el, "fun_haz", e.hazard.toFixed(6));
+      S.setValue(el, "fun_dens", R.fixed(e.density, 6)); S.setValue(el, "fun_haz", R.fixed(e.hazard, 6));
     }
   };
 
