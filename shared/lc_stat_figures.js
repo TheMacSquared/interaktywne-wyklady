@@ -440,6 +440,9 @@
       charts.push(C.chart(els[k], { animation: false }, { onResize: draw }));
     }
     ctls.forEach(function (c) { C.listen(c, "change", draw); C.listen(c, "input", draw); });
+    // Rycina zależna od kontrolek spoza własnego kontenera (np. ustawień z innego rozdziału):
+    // skrypt wykładu prosi o przerysowanie zdarzeniem lc:sf-redraw na kontenerze.
+    C.listen(root, "lc:sf-redraw", draw);
     if (stepper) {
       var watch = new MutationObserver(draw);
       watch.observe(stepper, { attributes: true, attributeFilter: ["data-lc-step"] });

@@ -52,6 +52,7 @@ source(file.path(app_dir, "modules", "stop_proto_common.R"), local = TRUE)
 for (.f in .proto_groups) {
   source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
 }
+source(file.path(app_dir, "modules", "wykresy.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
@@ -74,6 +75,8 @@ ui <- lecture_page(
     includeScript(file.path(shared_root, "lc_dist.js")),
     includeScript(file.path(shared_root, "lc_stat_figures.js")),
     lc_sf_styles(),
+    includeScript(file.path(project_root, "R", "risk_figures.js")),
+    includeScript(file.path(app_dir, "modules", "wykresy.js")),
     # Grupa rf to same karty i kadry z R, bez własnego pliku JS.
     lapply(c("ra", "rb", "rc", "rd", "re", "rg"), function(f)
       includeScript(file.path(app_dir, "modules", paste0("proto_", f, ".js"))))

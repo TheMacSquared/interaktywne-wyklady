@@ -44,7 +44,10 @@ testthat::test_that("wykład 10: prototypy punktów stop są wpięte i działaj�
     }
   }
   testthat::expect_setequal(res$figs, c("i10_modele", "i10_zero", "i10_zero_n", "i10_odnowa",
-    "i10_opcje", "i10_scen", "i10_odwrocenie", "i10_kryterium"))
+    "i10_opcje", "i10_scen", "i10_odwrocenie", "i10_kryterium",
+    # Osiem głównych rycin wykładu (dawniej wykresy i odczyty z serwera): modules/wykresy.js.
+    "i10m_alarm", "i10m_inspection", "i10m_life", "i10m_system", "i10m_fta", "i10m_interventions",
+    "i10m_scenarios", "i10m_memo"))
   testthat::expect_equal(anyDuplicated(res$ids), 0L)
 
   # Liczby sceny P1 i stan bazowy zgadzają się z tekstem wykładu.

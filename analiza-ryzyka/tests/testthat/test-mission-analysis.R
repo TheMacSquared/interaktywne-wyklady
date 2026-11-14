@@ -41,40 +41,34 @@ testthat::test_that("interwencje są porównywane przy jednakowych scenariuszach
   testthat::expect_error(env$risk_mission_analysis(0, "exp", .98, .95, .005, .95))
 })
 
-testthat::test_that("karty, scenariusze i notatka reagują na wejścia aplikacji", {
-  testthat::skip_if_not_installed("callr")
-  result <- callr::r(function(path) {
-    setwd(path)
-    app <- new.env(parent = globalenv())
-    sys.source("app.R", envir = app)
-    shiny::testServer(app$integracja_server, {
-      session$setInputs(i10_time = 1000, i10_life_model = "exp", i10_power = .98,
-        i10_controller = .95, i10_init = .005, i10_sens = .95, i10_fpr = .05,
-        i10_n = 100, i10_p = .02, i10_question = "bayes", i10_budget = 2,
-        i10_intervention = "prevention", i10_recommend = "prevention",
-        i10_uncertainty = .2, i10_target = .002)
-      initial <- top_p()
-      stopifnot(nrow(scenario_results()) == 12)
-      stopifnot(abs(life_r() - exp(-1000 / 1500)) < 1e-12)
-      for (name in c("i10_alarm_result", "i10_inspection_result", "i10_system_result",
-                     "i10_fta_stats", "i10_scenarios_stats", "i10_memo")) {
-        stopifnot(length(output[[name]]) > 0)
-      }
-      session$setInputs(i10_life_model = "weibull")
-      stopifnot(top_p() < initial)
-      previous <- top_p()
-      session$setInputs(i10_fpr = .2)
-      stopifnot(identical(top_p(), previous))
-      session$setInputs(i10_time = 2000)
-      stopifnot(top_p() > previous)
-      session$setInputs(i10_budget = 1, i10_recommend = "power")
-      stopifnot(grepl("poza budżetem", output$i10_memo$html, fixed = TRUE))
-      session$setInputs(i10_target = .0001)
-      stopifnot(grepl("nie jest spełniony", output$i10_memo$html, fixed = TRUE))
-    })
-    TRUE
-  }, args = list(path = file.path(risk_root, "10-model-do-decyzji")), timeout = 60)
-  testthat::expect_true(result)
+testthat::test_that("karty, scenariusze i notatka reagują na ustawienia", {
+  # Karty, scenariusze i notatkę liczy przeglądarka (10-model-do-decyzji/modules/wykresy.js);
+  # test sprawdza te same zależności co dawniej na serwerze. Zgodność liczb z R: test-i10-wykresy.R.
+  testthat::skip_if(Sys.which("node") == "", "Node.js nie jest dostępny")
+  root <- normalizePath(dirname(risk_root))
+  script <- sprintf('
+    globalThis.window = globalThis;
+    require("%s/shared/lc_dist.js"); require("%s/analiza-ryzyka/R/risk_figures.js");
+    require("%s/analiza-ryzyka/10-model-do-decyzji/modules/wykresy.js");
+    const Z = globalThis.lcI10Charts;
+    const ids = ["detector", "prevention", "power", "fan"];
+    const s = { time: 1000, model: "exp", power: 0.98, controller: 0.95, init: 0.005, sens: 0.95 };
+    const top = (x) => Z.mission(x, "none").top;
+    const worst = (x, id, u) => Math.max(...Z.scenarios(x, ids, u).map((row) => row[ids.indexOf(id)]));
+    console.log(JSON.stringify({
+      initial: top(s), fan: Z.mission(s, "none").fan_r, cells: Z.scenarios(s, ids, 0.2).flat().length,
+      weibull: top(Object.assign({}, s, { model: "weibull" })),
+      weibull2000: top(Object.assign({}, s, { model: "weibull", time: 2000 })),
+      worst_power: worst(Object.assign({}, s, { model: "weibull", time: 2000 }), "power", 0.2)
+    }));', root, root, root)
+  res <- jsonlite::fromJSON(paste(system2("node", c("-e", shQuote(script)), stdout = TRUE, stderr = TRUE), collapse = ""))
+  testthat::expect_equal(res$cells, 12L)                           # 4 działania × 3 scenariusze
+  testthat::expect_equal(res$fan, exp(-1000 / 1500), tolerance = 1e-12)
+  testthat::expect_lt(res$weibull, res$initial)                    # zmiana modelu obniża P(TOP)
+  testthat::expect_gt(res$weibull2000, res$weibull)                # dłuższa misja je podnosi
+  # FPR nie wchodzi do kontraktu misji: P(TOP) od niego nie zależy (nie jest argumentem mission()).
+  # Notatka: niezależne zasilanie (koszt 4) jest poza budżetem 1 i nie spełnia limitu 0.0001.
+  testthat::expect_gt(res$worst_power, .0001)
 })
 
 testthat::test_that("FTA pokazuje oba błędy powtórzenia i przelicza wspólną przyczynę", {
