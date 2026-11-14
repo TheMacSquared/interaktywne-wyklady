@@ -22,30 +22,25 @@ format_decision <- function(p_value, alpha = 0.05) {
 
 
 # Pytanie z kartami odpowiedzi (lc-choices): poprawna karta zielenieje po
-# wyborze, pod kartami pojawia się wyjaśnienie z case_quiz_server().
-case_quiz_ui <- function(id, title, question, choices, correct) {
+# wyborze, pod kartami pojawia się wyjaśnienie wybranej odpowiedzi.
+# feedback: lista nazwana wartościami odpowiedzi; tekst po werdykcie. Wszystkie
+# wyjaśnienia są w dokumencie, widoczne wybiera przeglądarka (lc_variants).
+case_quiz_ui <- function(id, title, question, choices, correct, feedback) {
+  stopifnot(setequal(names(feedback), unname(choices)))
   figure_panel(
     label = "Pytanie", title = title,
     p(question),
     tags$div(class = "lc-choices", `data-correct` = correct,
       radioButtons(id, NULL, choices = choices, selected = character(0))
     ),
-    uiOutput(paste0(id, "_fb"))
+    lc_variants(id, lapply(stats::setNames(names(feedback), names(feedback)), function(choice) {
+      ok <- identical(choice, correct)
+      lc_status(
+        lc_verdict(tags$strong(if (ok) "Tak." else "Nie."), type = if (ok) "ok" else "danger"),
+        " ", feedback[[choice]]
+      )
+    }), selected = ".none")
   )
-}
-
-# feedback: lista nazwana wartościami odpowiedzi; tekst po werdykcie.
-case_quiz_server <- function(input, output, id, correct, feedback) {
-  output[[paste0(id, "_fb")]] <- renderUI({
-    choice <- input[[id]]
-    if (is.null(choice) || identical(choice, character(0))) return(NULL)
-    ok <- identical(choice, correct)
-    lc_status(
-      lc_verdict(tags$strong(if (ok) "Tak." else "Nie."),
-                 type = if (ok) "ok" else "danger"),
-      " ", feedback[[choice]]
-    )
-  })
 }
 
 
@@ -108,6 +103,9 @@ case_steps_ch3 <- list(
 case_confounder <- function(nodes, edges, strength,
                             colors = c("bursztyn", "niebo", "grafit")) {
   W <- 600; H <- 250
+  # Każdy schemat ma własny znacznik grotu: na stronie statycznej wszystkie rozdziały
+  # są w jednym dokumencie, więc identyfikator nie może się powtarzać.
+  arrow_id <- paste0("cf-arrow-", sum(utf8ToInt(paste(c(nodes, edges), collapse = ""))))
   pos <- list(z = c(300, 42), x = c(110, 205), y = c(490, 205))
   bw <- 176; bh <- 46
   node <- function(p, label, col) {
@@ -124,7 +122,7 @@ case_confounder <- function(nodes, edges, strength,
     tagList(
       tags$line(class = paste("cf-edge", if (dashed) "is-open"),
         x1 = p0[1], y1 = p0[2], x2 = p1[1], y2 = p1[2],
-        `stroke-width` = round(1.5 + 7 * s, 1), `marker-end` = "url(#cf-arrow)"),
+        `stroke-width` = round(1.5 + 7 * s, 1), `marker-end` = paste0("url(#", arrow_id, ")")),
       tags$text(class = "cf-val", x = mid[1] + lab_dx, y = mid[2] + lab_dy,
                 `text-anchor` = "middle", label)
     )
@@ -133,7 +131,7 @@ case_confounder <- function(nodes, edges, strength,
     role = "img",
     `aria-label` = sprintf("%s wiąże się z %s (%s) i z %s (%s); związek %s z %s: %s.",
       nodes[1], nodes[2], edges[1], nodes[3], edges[2], nodes[2], nodes[3], edges[3]),
-    tags$defs(tags$marker(id = "cf-arrow", viewBox = "0 0 10 10", refX = 0, refY = 5,
+    tags$defs(tags$marker(id = arrow_id, viewBox = "0 0 10 10", refX = 0, refY = 5,
       markerWidth = 16, markerHeight = 16, markerUnits = "userSpaceOnUse",
       orient = "auto-start-reverse", tags$path(d = "M0,0 L10,5 L0,10 z", class = "cf-head"))),
     edge(pos$z, pos$x, edges[1], strength[1], lab_dx = -58, lab_dy = 0),

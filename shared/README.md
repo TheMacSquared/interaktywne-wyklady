@@ -144,3 +144,30 @@ kontener z atrybutem `data-lc-nochart` i figura z samym `update()`. Rycinę
 zależną od kontrolek spoza własnego kontenera skrypt wykładu odświeża
 zdarzeniem `lc:sf-redraw`. `lcSF.register()` zgłasza w konsoli nazwę ryciny
 zarejestrowaną dwa razy.
+
+## Rycina „opis z R”
+
+Wykres na stałych danych nie potrzebuje własnego kodu JS. R składa przy
+budowaniu opis rysunku (zakresy osi, warstwy, podpisy), a rysuje go wbudowana
+rycina `lc_spec`:
+
+```r
+lc_sf_spec(sf_spec(sf_range(d$x), sf_range(d$y),
+  c(list(sf_points(d$x, d$y, color = "@secondary", alpha = 0.4)),
+    sf_smooth_lm(d$x, d$y, color = "@szalwia")),
+  x_name = "Oś X", y_name = "Oś Y", aria = "Opis wykresu"))
+```
+
+Warstwy: `sf_points()`, `sf_line()`, `sf_vline()`, `sf_hline()`, `sf_bars()`,
+`sf_cols()`, `sf_hist()`, `sf_boxes()` (statystyki: `sf_box_stats()`),
+`sf_segs()`, `sf_errorbars_h()`, `sf_errorbars_v()`, `sf_text()`, `sf_texts()`,
+`sf_polygon()`, `sf_ribbon()`, `sf_smooth_lm()`, `sf_qq()`; legenda:
+`sf_legend()`. Barwy to nazwy z palety z „@” (`"@niebo"`, `"@accent"`,
+`"@ref"`, `"@wrzos/0.6"` z przezroczystością).
+
+Gdy wykres zależy od kontrolki o skończonej liczbie ustawień (lista, segment,
+pole wyboru, grupa pól), R liczy każdy wariant: `lc_sf_spec(variants = list(wartość = opis, …),
+reads = …, html = …, control = …)`. `reads` wypełnia odczyty `lc_sf_value()`,
+`html` wstawia gotowe fragmenty (np. tabelę) do elementów `[data-role]`.
+Klucz grupy pól wyboru to zaznaczone wartości złączone „+”, a pustej — `none`.
+Wzorzec: `statystyka/09-case-studies/modules/figures.R`.

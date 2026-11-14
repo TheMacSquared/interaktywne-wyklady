@@ -53,7 +53,7 @@
       if (cfg.kind === "scatter") {
         var rx = range(cfg.points.map(function (p) { return p[0]; }));
         var band = cfg.upr.concat(cfg.lwr.slice().reverse());
-        return { x: pad(rx[0], rx[1]), y: pad(ry[0], ry[1]),
+        return { x: pad(rx[0], rx[1]), y: pad(ry[0], ry[1]), yNegative: true,
           layers: [{ type: "points", data: cfg.points, color: P.ref, size: 7, alpha: 0.45 },
                    { type: "polygon", points: band, fill: C.alpha(P.szalwia, 0.12) },
                    { type: "line", data: cfg.fit, color: P.szalwia, width: 2.4 }],
@@ -65,7 +65,7 @@
         b.out.forEach(function (y) { out.push([i + 1, y]); });
         return { pos: i + 1, width: 0.75, q1: b.q1, med: b.med, q3: b.q3, lo: b.lo, hi: b.hi, fill: C.alpha(colour(P, cfg.fills[i]), 0.65) };
       });
-      return { x: [0.4, cfg.levels.length + 0.6], y: pad(ry[0], ry[1]), xLabels: labels,
+      return { x: [0.4, cfg.levels.length + 0.6], y: pad(ry[0], ry[1]), xLabels: labels, yNegative: true,
         layers: [{ type: "box", boxes: boxes, stroke: P.accent },
                  { type: "points", data: out, color: P.accent, size: 6, alpha: 0.25 },
                  { type: "points", data: cfg.points, color: P.accent, size: 4, alpha: 0.16 }],
@@ -81,7 +81,7 @@
         layers.push({ type: "bins", data: [[i + 0.7, i + 1.3, b]], color: cfg.significant[i] ? P.szalwia : P.ref, stroke: P.surface });
       });
       layers.push({ type: "line", data: [[0.4, 0], [cfg.beta.length + 0.6, 0]], color: P.ref, width: 1.4 });
-      return { x: [0.4, cfg.beta.length + 0.6], y: [low * 1.08, top * 1.08], layers: layers, xLabels: labels, xRotate: 20,
+      return { x: [0.4, cfg.beta.length + 0.6], y: [low * 1.08, top * 1.08], layers: layers, xLabels: labels, xRotate: 20, yNegative: true,
         xName: "", yName: "Współczynnik przy beauty", aria: "Współczynnik przy atrakcyjności w czterech kolejnych modelach kontrolnych." };
     }
   };

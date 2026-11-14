@@ -46,11 +46,11 @@ przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. 
 R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
 
 Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
-2026: gotowe 17 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–04, 06 i 10, zbudowane i sprawdzone
+2026: gotowe 18 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–04, 06, 09 i 10, zbudowane i sprawdzone
 przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
 z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 115 wykresów
 R, 197 wyjść tekstowych i 168 wejść czytanych przez serwer. Zostały tylko
-wykłady statystyki 05 i 07–09; cała analiza ryzyka działa bez serwera. Wykresy analizy
+wykłady statystyki 05, 07 i 08; cała analiza ryzyka działa bez serwera. Wykresy analizy
 ryzyka rysuje silnik `lcSF` przez `risk_sf_panel()` (dane ze stałym ziarnem
 z R w `config`, funkcje kursu w `analiza-ryzyka/R/risk_figures.js`); wzorzec: 06. Quiz analizy ryzyka
 (wszystkie 10 wykładów) ocenia już przeglądarka; głosowanie „Najpierw zdecyduj”
@@ -113,11 +113,20 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   magazyn w `modules/figures.js` i zdarzenie `lc:sf-redraw`; stan przed
   losowaniem i warianty wyniku w elementach `[data-when]`).
 - [ ] Faza 6: statystyka 07–08 (66 wykresów R).
-- [ ] Faza 7: statystyka 09–10 (20 wykresów R; modele na stałych zbiorach
+- [x] Faza 7 (15 listopada 2026): statystyka 09–10 (20 wykresów R; modele na stałych zbiorach
   liczone przy budowaniu). Gotowe: 10 (5 wykresów; treści stałe przeniesione
   z serwera do dokumentu narzędziem `scripts/migracja/inline_static_outputs.py`,
   model własny liczy `lcStats.lm()` z kolumn danych w `config`, podgląd danych
-  to cała tabela w dokumencie sortowana i okienkowana w przeglądarce).
+  to cała tabela w dokumencie sortowana i okienkowana w przeglądarce);
+  09 (15 wykresów; bez własnego JS — każdy wariant kontrolki liczy R, a rysuje
+  ogólna rycina „opis z R”: `lc_sf_spec()` i funkcje `sf_*()` w
+  `shared/lc_stat_figures.R`; model wieloraki to 32 warianty, po jednym na
+  podzbiór predyktorów; przycisk „Dopasuj” zniknął, bo model zmienia się od razu).
+- [ ] Drugi test losowy bez ziarna: `statystyka/tests/js/stops34.test.js` zawiódł raz
+  na pięć uruchomień (15 listopada 2026), bez związku ze zmienianym kodem.
+- [ ] `scripts/check_static_page.R` nie zauważa ryciny, która przy każdym
+  rysowaniu rzuca wyjątek (silnik łapie go i ponawia, strona się zawiesza):
+  wykrywa to `scripts/migracja/gdzie_wisi.R`. Dodać taki test do kontroli strony.
 - [ ] Faza 8: usunąć `app.R` i kod serwera, statyczny spis wykładów zamiast
   huba, wycofać `przedmioty/*/skrypt/build`, zaktualizować `AGENTS.md`,
   kontrakt i testy.

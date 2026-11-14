@@ -12,6 +12,64 @@ pg_sex$plec <- factor(pg_sex$sex, levels = c("female", "male"),
 
 pg_cols <- c(Adelie = case_explore, Chinstrap = case_conclude, Gentoo = case_model)
 
+# Treść stała (dawniej output$ch2_desc_reads na serwerze): składana przy budowaniu strony.
+ch2_desc_reads_ui <- function() {
+  m <- tapply(pg$body_mass_g, pg$species, mean)
+  tagList(lapply(names(m), function(s)
+    lc_readout(s, paste0(fmt0(m[[s]]), " g"), color = pg_cols[[s]], swatch = TRUE)))
+}
+
+# Treść stała (dawniej output$ch2_assump_table na serwerze): składana przy budowaniu strony.
+ch2_assump_table_ui <- function() {
+  sw <- as.data.frame(rstatix::shapiro_test(dplyr::group_by(pg, species), body_mass_g))
+  sds <- tapply(pg$body_mass_g, pg$species, sd)
+  ns <- table(pg$species)
+  lev <- as.data.frame(rstatix::levene_test(pg, body_mass_g ~ species))
+  tagList(
+    lc_table(
+      data.frame(gat = levels(pg$species), n = as.integer(ns),
+                 sd = as.numeric(sds), p = lc_pval(sw$p)),
+      cols = list(
+        lc_col("gat", "Gatunek", "row"),
+        lc_col("n", "n"),
+        lc_col("sd", "SD", digits = 0, suffix = " g"),
+        lc_col("p", "p (Shapiro-Wilk)")
+      )
+    ),
+    lc_caption(HTML(paste0("Test Levene'a: F(", lev$df1, ", ", lev$df2, ") = ",
+                           formatC(lev$statistic, format = "f", digits = 2),
+                           ", p = ", lc_pval(lev$p), ".")))
+  )
+}
+
+# Treść stała (dawniej output$ch2_welch_reads na serwerze): składana przy budowaniu strony.
+ch2_welch_reads_ui <- function() {
+  w <- as.data.frame(rstatix::welch_anova_test(pg, body_mass_g ~ species))
+  a <- aov(body_mass_g ~ species, pg)
+  ss <- summary(a)[[1]][["Sum Sq"]]
+  tagList(
+    lc_readout("F Welcha", formatC(w$statistic, format = "f", digits = 0)),
+    lc_readout("p", HTML(lc_pval(w$p))),
+    lc_readout("η²", formatC(ss[1] / sum(ss), format = "f", digits = 2))
+  )
+}
+
+# Treść stała (dawniej output$ch2_gh_table na serwerze): składana przy budowaniu strony.
+ch2_gh_table_ui <- function() {
+  d <- ch2_gh_data()
+  lc_table(
+    data.frame(para = d$para, est = d$estimate,
+               ci = paste0(fmt0(d$conf.low), " do ", fmt0(d$conf.high)),
+               p = lc_pval(d$p.adj)),
+    cols = list(
+      lc_col("para", "Para", "row"),
+      lc_col("est", "Różnica", digits = 0, suffix = " g"),
+      lc_col("ci", "95% przedział (g)", "text"),
+      lc_col("p", "p (Games-Howell)")
+    )
+  )
+}
+
 ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = tagList(
 
   lc_chapter_hero(
@@ -64,8 +122,8 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
   figure_panel(
     label = "Ryc. 2.2",
     title = "Masa ciała w trzech gatunkach",
-    lc_toolbar(lc_readouts(uiOutput("ch2_desc_reads"))),
-    lc_plot("ch2_desc_plot", ratio = "1.6/1", max_height = "340px")
+    lc_toolbar(lc_readouts(ch2_desc_reads_ui())),
+    ch2_desc_fig()
   ),
 
   lc_p("Gentoo są wyraźnie cięższe: średnio 5076 g (",
@@ -92,8 +150,8 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
   figure_panel(
     label = "Ryc. 2.3",
     title = "Wykresy Q-Q masy ciała w gatunkach",
-    lc_plot("ch2_qq_plot", ratio = "2.4/1", max_height = "300px"),
-    uiOutput("ch2_assump_table")
+    ch2_qq_fig(),
+    ch2_assump_table_ui()
   ),
 
   lc_p("Punkty na wykresach Q-Q leżą blisko prostej we wszystkich gatunkach.
@@ -117,7 +175,19 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
       "Test Kruskala-Wallisa, bo jedno z założeń nie jest spełnione." = "kw",
       "Trzy testy t dla par, bez żadnej poprawki." = "ttests"
     ),
-    correct = "welch"
+    correct = "welch",
+    feedback = list(
+    classic = "Normalność wystarcza tylko połowicznie: klasyczna ANOVA zakłada
+    też równe wariancje, a test Levene'a je odrzuca, i to przy grupach
+    o różnej liczebności.",
+    welch = "ANOVA Welcha nie zakłada równych wariancji, a Games-Howell to
+    dopasowane do niej porównania par.",
+    kw = "Test Kruskala-Wallisa porównuje całe rozkłady, nie średnie. Przy
+    rozkładach bliskich normalnym wystarczy poprawić założenie
+    o wariancjach, nie trzeba porzucać średnich.",
+    ttests = "Trzy osobne testy t bez poprawki zawyżają ryzyko fałszywego
+    alarmu. Do tego służą porównania post hoc."
+    )
   ),
 
   lc_p("Rozdział 02 wykładu 06 zalecał w takiej sytuacji parę ANOVA Welcha
@@ -149,9 +219,9 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
   figure_panel(
     label = "Ryc. 2.4",
     title = "Różnice średnich masy między parami gatunków",
-    lc_toolbar(lc_readouts(uiOutput("ch2_welch_reads"))),
-    lc_plot("ch2_gh_plot", ratio = "2.2/1", max_height = "260px"),
-    uiOutput("ch2_gh_table")
+    lc_toolbar(lc_readouts(ch2_welch_reads_ui())),
+    ch2_gh_fig(),
+    ch2_gh_table_ui()
   ),
 
   lc_p("ANOVA Welcha odrzuca hipotezę o równych średnich (F(2, 189) = 318,
@@ -172,7 +242,17 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
       "Dane nie pozwalają stwierdzić różnicy; mieści się w nich zarówno brak różnicy, jak i różnica rzędu 150 g w każdą stronę." = "ci",
       "Test był źle dobrany, bo nie wykrył różnicy." = "wrong_test"
     ),
-    correct = "ci"
+    correct = "ci",
+    feedback = list(
+    equal = "Brak istotnej różnicy nie dowodzi równości. Przedział ufności
+    obejmuje różnice rzędu 100–170 g w obie strony.",
+    heavier = "32 g to różnica w tej próbie. Przedział ufności obejmuje zero
+    i wartości ujemne, więc kierunek różnicy w populacji jest nieznany.",
+    ci = "Przedział od -109 do 174 g obejmuje zero, ale też różnice, które
+    biolog mógłby uznać za istotne praktycznie.",
+    wrong_test = "Test był dobrany do danych. To, że nie wykrył różnicy,
+    wynika z danych, a nie z wyboru testu."
+    )
   ),
 
   lc_p("Brak podstaw do odrzucenia hipotezy zerowej nie dowodzi, że średnie
@@ -196,12 +276,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
   figure_panel(
     label = "Ryc. 2.5",
     title = "Masa ciała gatunków osobno dla samic i samców",
-    lc_toolbar(
-      lc_segmented("ch2_sex_group", "Grupa",
-        choices = c("Samice" = "Samice", "Samce" = "Samce")),
-      lc_readouts(uiOutput("ch2_sex_reads"))
-    ),
-    lc_plot("ch2_sex_plot", ratio = "1.6/1", max_height = "340px")
+    ch2_sex_fig()
   ),
 
   lc_p("W każdym gatunku jest prawie tyle samo samców co samic (73 i 73
@@ -250,152 +325,6 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
 # SERVER
 # ============================================================================
 
-ch2_server <- function(input, output, session) {
-
-  fmt0 <- function(v) formatC(v, format = "f", digits = 0)
-
-  # --- Krok 1 ---
-  output$ch2_desc_reads <- renderUI({
-    m <- tapply(pg$body_mass_g, pg$species, mean)
-    tagList(lapply(names(m), function(s)
-      lc_readout(s, paste0(fmt0(m[[s]]), " g"), color = pg_cols[[s]], swatch = TRUE)))
-  })
-
-  zoom_plot_server("ch2_desc_plot", reactive({
-    ggplot(pg, aes(species, body_mass_g, fill = species, colour = species)) +
-      geom_boxplot(alpha = 0.25, outlier.shape = NA, width = 0.55) +
-      geom_jitter(width = 0.15, height = 0, alpha = 0.45, size = 1.6) +
-      scale_fill_manual(values = pg_cols, guide = "none") +
-      scale_colour_manual(values = pg_cols, guide = "none") +
-      labs(x = NULL, y = "Masa ciała (g)")
-  }), alt = "Wykres pudełkowy masy ciała trzech gatunków pingwinów.")
-
-  # --- Krok 2 ---
-  zoom_plot_server("ch2_qq_plot", reactive({
-    ggplot(pg, aes(sample = body_mass_g, colour = species)) +
-      stat_qq_line(colour = case_reference, linetype = "dashed") +
-      stat_qq(alpha = 0.6, size = 1.4) +
-      facet_wrap(~species, nrow = 1, scales = "free_y") +
-      scale_colour_manual(values = pg_cols, guide = "none") +
-      labs(x = "Kwantyle teoretyczne", y = "Masa ciała (g)")
-  }), alt = "Wykresy kwantyl-kwantyl masy ciała w trzech gatunkach.")
-
-  output$ch2_assump_table <- renderUI({
-    sw <- as.data.frame(rstatix::shapiro_test(dplyr::group_by(pg, species), body_mass_g))
-    sds <- tapply(pg$body_mass_g, pg$species, sd)
-    ns <- table(pg$species)
-    lev <- as.data.frame(rstatix::levene_test(pg, body_mass_g ~ species))
-    tagList(
-      lc_table(
-        data.frame(gat = levels(pg$species), n = as.integer(ns),
-                   sd = as.numeric(sds), p = lc_pval(sw$p)),
-        cols = list(
-          lc_col("gat", "Gatunek", "row"),
-          lc_col("n", "n"),
-          lc_col("sd", "SD", digits = 0, suffix = " g"),
-          lc_col("p", "p (Shapiro-Wilk)")
-        )
-      ),
-      lc_caption(HTML(paste0("Test Levene'a: F(", lev$df1, ", ", lev$df2, ") = ",
-                             formatC(lev$statistic, format = "f", digits = 2),
-                             ", p = ", lc_pval(lev$p), ".")))
-    )
-  })
-
-  case_quiz_server(input, output, "ch2_quiz_test", "welch", list(
-    classic = "Normalność wystarcza tylko połowicznie: klasyczna ANOVA zakłada
-      też równe wariancje, a test Levene'a je odrzuca, i to przy grupach
-      o różnej liczebności.",
-    welch = "ANOVA Welcha nie zakłada równych wariancji, a Games-Howell to
-      dopasowane do niej porównania par.",
-    kw = "Test Kruskala-Wallisa porównuje całe rozkłady, nie średnie. Przy
-      rozkładach bliskich normalnym wystarczy poprawić założenie
-      o wariancjach, nie trzeba porzucać średnich.",
-    ttests = "Trzy osobne testy t bez poprawki zawyżają ryzyko fałszywego
-      alarmu. Do tego służą porównania post hoc."
-  ))
-
-  # --- Krok 3 ---
-  ch2_gh <- as.data.frame(rstatix::games_howell_test(pg, body_mass_g ~ species))
-  ch2_gh$para <- paste(ch2_gh$group2, "−", ch2_gh$group1)
-
-  output$ch2_welch_reads <- renderUI({
-    w <- as.data.frame(rstatix::welch_anova_test(pg, body_mass_g ~ species))
-    a <- aov(body_mass_g ~ species, pg)
-    ss <- summary(a)[[1]][["Sum Sq"]]
-    tagList(
-      lc_readout("F Welcha", formatC(w$statistic, format = "f", digits = 0)),
-      lc_readout("p", HTML(lc_pval(w$p))),
-      lc_readout("η²", formatC(ss[1] / sum(ss), format = "f", digits = 2))
-    )
-  })
-
-  zoom_plot_server("ch2_gh_plot", reactive({
-    d <- ch2_gh
-    d$para <- factor(d$para, levels = rev(d$para))
-    d$sig <- d$p.adj < 0.05
-    ggplot(d, aes(estimate, para, colour = sig)) +
-      geom_vline(xintercept = 0, linetype = "dashed", colour = case_reference) +
-      geom_errorbar(aes(xmin = conf.low, xmax = conf.high), width = 0.2,
-                    orientation = "y", linewidth = 0.9) +
-      geom_point(size = 3) +
-      scale_colour_manual(values = c(`TRUE` = case_model, `FALSE` = case_highlight),
-                          guide = "none") +
-      labs(x = "Różnica średnich masy (g) z 95% przedziałem ufności", y = NULL)
-  }), alt = "Różnice średnich masy między parami gatunków z przedziałami ufności.")
-
-  output$ch2_gh_table <- renderUI({
-    d <- ch2_gh
-    lc_table(
-      data.frame(para = d$para, est = d$estimate,
-                 ci = paste0(fmt0(d$conf.low), " do ", fmt0(d$conf.high)),
-                 p = lc_pval(d$p.adj)),
-      cols = list(
-        lc_col("para", "Para", "row"),
-        lc_col("est", "Różnica", digits = 0, suffix = " g"),
-        lc_col("ci", "95% przedział (g)", "text"),
-        lc_col("p", "p (Games-Howell)")
-      )
-    )
-  })
-
-  case_quiz_server(input, output, "ch2_quiz_ns", "ci", list(
-    equal = "Brak istotnej różnicy nie dowodzi równości. Przedział ufności
-      obejmuje różnice rzędu 100–170 g w obie strony.",
-    heavier = "32 g to różnica w tej próbie. Przedział ufności obejmuje zero
-      i wartości ujemne, więc kierunek różnicy w populacji jest nieznany.",
-    ci = "Przedział od -109 do 174 g obejmuje zero, ale też różnice, które
-      biolog mógłby uznać za istotne praktycznie.",
-    wrong_test = "Test był dobrany do danych. To, że nie wykrył różnicy,
-      wynika z danych, a nie z wyboru testu."
-  ))
-
-  # --- Krok 4 ---
-  ch2_sex_gh <- reactive({
-    d <- pg_sex[pg_sex$plec == (input$ch2_sex_group %||% "Samice"), ]
-    list(d = d, gh = as.data.frame(rstatix::games_howell_test(d, body_mass_g ~ species)))
-  })
-
-  output$ch2_sex_reads <- renderUI({
-    x <- ch2_sex_gh()
-    m <- tapply(x$d$body_mass_g, x$d$species, mean)
-    ac <- x$gh[x$gh$group1 == "Adelie" & x$gh$group2 == "Chinstrap", ]
-    tagList(
-      lapply(names(m), function(s)
-        lc_readout(s, paste0(fmt0(m[[s]]), " g"), color = pg_cols[[s]], swatch = TRUE)),
-      lc_readout("Chinstrap − Adelie",
-                 HTML(paste0(fmt0(ac$estimate), " g, p = ", lc_pval(ac$p.adj))))
-    )
-  })
-
-  zoom_plot_server("ch2_sex_plot", reactive({
-    d <- ch2_sex_gh()$d
-    ggplot(d, aes(species, body_mass_g, fill = species, colour = species)) +
-      geom_boxplot(alpha = 0.25, outlier.shape = NA, width = 0.55) +
-      geom_jitter(width = 0.15, height = 0, alpha = 0.45, size = 1.6) +
-      scale_fill_manual(values = pg_cols, guide = "none") +
-      scale_colour_manual(values = pg_cols, guide = "none") +
-      coord_cartesian(ylim = c(2600, 6400)) +
-      labs(x = NULL, y = "Masa ciała (g)")
-  }), alt = "Masa ciała trzech gatunków osobno dla samic albo samców.")
-}
+# Rozdział nie ma logiki serwera: dane są stałe, więc tabele, odczyty i opisy rycin liczy R
+# przy budowaniu strony (modules/figures.R), a przeglądarka rysuje wybrany wariant.
+ch2_server <- function(input, output, session) {}

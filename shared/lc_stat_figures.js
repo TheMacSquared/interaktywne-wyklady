@@ -22,7 +22,8 @@
 //   line {data:[[x,y]], color, width, dash, fill, fillAlpha}  — krzywa (z polem)
 //   segment, arrow(s), point(s), rect(s), segs, polygon, box, rug, cells
 //   text {x, y, text, color, align, valign, bold, mono, size, halo}  (y = "top": przy górnej krawędzi)
-// Inne klucze opisu: xBig, xTicks, xLabels, yLabels, xLabelEvery, xInt, noXGrid, noYGrid, hideY, alignLeft.
+// Inne klucze opisu: xBig, xTicks, xLabels, yLabels, xLabelEvery, xInt, noXGrid, noYGrid, hideY, alignLeft,
+// yNegative (podpisy ujemnych wartości osi Y), xRotate.
 (function () {
   "use strict";
   var C = window.lcCharts;
@@ -307,7 +308,8 @@
     var ya = C.ecAxis(P, fs, { type: "value", min: ymin, max: ymax, name: spec.yName || "",
       nameGap: Math.round(fs * (spec.alignLeft ? 3.8 : 2.8)) });
     if (spec.alignLeft) ya.nameMoveOverlap = false;
-    ya.axisLabel.formatter = function (v) { return v < 0 ? "" : lcFmt(v, 6); };
+    // Podpisy ujemne tylko na życzenie (yNegative): większość rycin ma oś od zera z marginesem w dół.
+    ya.axisLabel.formatter = function (v) { return v < 0 && !spec.yNegative ? "" : lcFmt(v, 6); };
     ya.axisLabel.showMaxLabel = false;
     ya.axisLabel.showMinLabel = ymin === 0;  // dół osi bez nieokrągłej wartości (np. 147.94)
     ya.axisLine.onZero = false;
@@ -332,6 +334,7 @@
 
   function legendItems(legend, items) {
     legend.textContent = "";
+    if (items && !Array.isArray(items) && !items.stops) items = null;   // pusty obiekt z JSON: brak legendy
     if (items && !Array.isArray(items)) {
       // Skala barw: tytuł, „mało” — gradient — „dużo”.
       var at = items.at || items.stops.map(function (c, i) { return i / (items.stops.length - 1); });
@@ -474,6 +477,55 @@
     });
     C.onReady(".lc-sf", mount);
   }
+
+  // ---- Rycina „opis z R” (lc_spec) ----------------------------------------------
+  // Dla wykresów na stałych danych: R składa przy budowaniu gotowy opis rysunku
+  // (zakresy, warstwy, osie — jak zwraca draw) i podaje go w data-config; przeglądarka
+  // tylko rysuje. Barwy w opisie to nazwy z palety poprzedzone „@” (np. "@niebo",
+  // "@accent", "@ref", "@wrzos"), z przezroczystością po ukośniku ("@niebo/0.6").
+  // config: opis albo
+  //   {charts: [opis, …]}                    — kilka wykresów w jednej rycinie,
+  //   {variants: {wartość: opis lub {charts}, …}, reads: {wartość: {klucz: tekst}},
+  //    html: {wartość: {rola: "<…>"}}}        — opis wybierany pierwszą kontrolką (lista, segment,
+  //                                            pole wyboru: "on"/"off", grupa pól: "a+b", pusta: "none").
+  // R: lc_sf_spec() i funkcje sf_*() w lc_stat_figures.R.
+  function specColor(s, P) {
+    if (typeof s !== "string" || s.charAt(0) !== "@") return s;
+    var parts = s.slice(1).split("/"), base = P[parts[0]] || C.token("--upwr-cat-" + parts[0], parts[0]);
+    return parts.length > 1 ? C.alpha(base, Number(parts[1])) : base;
+  }
+  function specResolve(node, P) {
+    if (Array.isArray(node)) return node.map(function (n) { return specResolve(n, P); });
+    if (node && typeof node === "object") {
+      var out = {};
+      Object.keys(node).forEach(function (k) { out[k] = specResolve(node[k], P); });
+      return out;
+    }
+    return specColor(node, P);
+  }
+  // Klucz wariantu: wartość kontrolki; dla grupy pól wyboru zaznaczone wartości złączone „+”.
+  // Nic nie zaznaczono: klucz "none".
+  function specKey(v) { return Array.isArray(v) ? (v.length ? v.join("+") : "none") : v; }
+  function specPick(cfg, v) { return cfg.variants ? cfg.variants[specKey(v)] || cfg.variants[Object.keys(cfg.variants)[0]] : cfg; }
+  FIGURES.lc_spec = {
+    draw: function (v, P, k, state) {
+      var spec = specPick(state.config, v);
+      if (spec.charts) spec = spec.charts[k];
+      return spec ? specResolve(spec, P) : null;
+    },
+    // reads: teksty do lc_sf_value(); html: gotowe fragmenty (np. tabela) do elementów [data-role].
+    update: function (root, state, v) {
+      var cfg = state.config, key = specKey(v);
+      var reads = cfg.reads && (cfg.variants ? cfg.reads[key] : cfg.reads);
+      if (reads) Object.keys(reads).forEach(function (name) { setValue(root, name, reads[name]); });
+      var html = cfg.html && (cfg.variants ? cfg.html[key] : cfg.html);
+      if (html) Object.keys(html).forEach(function (role) {
+        var box = root.querySelector('[data-role="' + role + '"]');
+        if (box) box.innerHTML = html[role];
+      });
+    }
+  };
+  C.onReady(".lc-sf", mount);
 
   window.lcSF = { register: register, figures: FIGURES, option: option, fmt: lcFmt, status: status,
                   setValue: setValue, esc: esc, table: lcTable, legendItems: legendItems,

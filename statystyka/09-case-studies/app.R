@@ -50,10 +50,12 @@ source(file.path(shared_root, "palette.R"),        local = TRUE)
 source(file.path(shared_root, "theme_upwr.R"),     local = TRUE)
 source(file.path(shared_root, "shared.R"),         local = TRUE)
 source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
+source(file.path(app_dir, "modules", "figures.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch1_caschools.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_pingwiny.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch3_titanic.R"),   local = TRUE)
@@ -115,7 +117,15 @@ ui <- lecture_page(
   lecture_title = "Case studies",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  header_extras = case_extras
+  # Ryciny rysuje przeglądarka z opisów policzonych w R (rycina lc_spec silnika lcSF).
+  header_extras = tagList(
+    case_extras,
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(shared_root, "lc_charts.js")),
+    includeScript(file.path(shared_root, "lc_dist.js")),
+    includeScript(file.path(shared_root, "lc_stat_figures.js")),
+    lc_sf_styles()
+  )
 )
 
 # ============================================================================
