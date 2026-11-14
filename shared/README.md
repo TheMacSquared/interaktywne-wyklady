@@ -130,8 +130,9 @@ Testy rdzenia są na razie w obu kursach (`<kurs>/tests/`, m.in.
 liczył serwer R: statystyki opisowe, kwantyle (typ 7), punkty i prostą wykresu
 Q-Q, test Shapiro–Wilka (algorytm AS R94, jak `shapiro.test()`), test Levene'a
 (środek: mediana, jak `rstatix::levene_test()`), test Bartletta, test t Studenta
-i Welcha, χ² bez poprawki i test dokładny Fishera dla tabeli 2×2 oraz
-dystrybuantę rozkładu F. `fmtPValue()` odpowiada `format_p_value()`.
+i Welcha, χ² bez poprawki i test dokładny Fishera dla tabeli 2×2, dystrybuantę
+rozkładu F oraz regresję liniową `lm(columns, y)` (rozkład QR; współczynniki,
+błędy standardowe, p, 95% CI, R², skorygowany R², AIC). `fmtPValue()` odpowiada `format_p_value()`.
 
 Wzorcem są wyniki R: `statystyka/tests/js/lc_stats.test.js` porównuje funkcje
 z plikiem `statystyka/tests/js/fixtures/lc_stats.json`, który generuje

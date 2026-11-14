@@ -46,11 +46,11 @@ przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. 
 R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
 
 Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
-2026: gotowe 16 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–04 i 06, zbudowane i sprawdzone
+2026: gotowe 17 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–04, 06 i 10, zbudowane i sprawdzone
 przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
 z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 115 wykresów
 R, 197 wyjść tekstowych i 168 wejść czytanych przez serwer. Zostały tylko
-wykłady statystyki 05 i 07–10; cała analiza ryzyka działa bez serwera. Wykresy analizy
+wykłady statystyki 05 i 07–09; cała analiza ryzyka działa bez serwera. Wykresy analizy
 ryzyka rysuje silnik `lcSF` przez `risk_sf_panel()` (dane ze stałym ziarnem
 z R w `config`, funkcje kursu w `analiza-ryzyka/R/risk_figures.js`); wzorzec: 06. Quiz analizy ryzyka
 (wszystkie 10 wykładów) ocenia już przeglądarka; głosowanie „Najpierw zdecyduj”
@@ -89,8 +89,9 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   wyniki R (`statystyka/tests/js/lc_stats.test.js`, wzorce generuje
   `statystyka/tests/js/fixtures/make_lc_stats.R`). Jest: Shapiro–Wilk, Levene,
   Bartlett, test t Studenta i Welcha, χ² i Fisher dla tabeli 2×2, rozkład F,
-  kwantyle, wykres Q-Q. Brakuje (dla 05 i 07–10): regresja prosta,
-  wielomianowa i wieloraka, ANOVA z post hoc, korelacje, testy rangowe.
+  kwantyle, wykres Q-Q, regresja liniowa (`lm()`: współczynniki, błędy, p,
+  95% CI, R², AIC). Brakuje (dla 05 i 07–09): ANOVA z post hoc, korelacje,
+  testy rangowe, diagnostyka regresji.
 - [x] Faza 4 (15 listopada 2026): analiza ryzyka 06–10 (26 wykresów R). Gotowe: 06 (6 wykresów), 07 (8 wykresów; ryciny główne mają przedrostek `c7m_`, bo prototypy zajęły nazwy `c7_gamma` i `c7_weibull` — `lcSF.register` zgłasza teraz powtórzoną nazwę w konsoli), 08 (5 wykresów; schemat
   blokowy to trzy rysunki SVG z R przełączane listą — bez lupy, którą miał wykres),
   09 (2 wykresy; drzewo to rysunek SVG z R z liczbami wpisywanymi przez JS, panele
@@ -113,7 +114,10 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   losowaniem i warianty wyniku w elementach `[data-when]`).
 - [ ] Faza 6: statystyka 07–08 (66 wykresów R).
 - [ ] Faza 7: statystyka 09–10 (20 wykresów R; modele na stałych zbiorach
-  liczone przy budowaniu).
+  liczone przy budowaniu). Gotowe: 10 (5 wykresów; treści stałe przeniesione
+  z serwera do dokumentu narzędziem `scripts/migracja/inline_static_outputs.py`,
+  model własny liczy `lcStats.lm()` z kolumn danych w `config`, podgląd danych
+  to cała tabela w dokumencie sortowana i okienkowana w przeglądarce).
 - [ ] Faza 8: usunąć `app.R` i kod serwera, statyczny spis wykładów zamiast
   huba, wycofać `przedmioty/*/skrypt/build`, zaktualizować `AGENTS.md`,
   kontrakt i testy.

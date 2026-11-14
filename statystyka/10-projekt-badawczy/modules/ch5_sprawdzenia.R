@@ -1,3 +1,45 @@
+# Treść stała (dawniej output$ch5_bundle_results na serwerze): składana przy budowaniu strony.
+ch5_bundle_results_ui <- function() {
+  blocks <- lapply(tr_trop_order, function(id) {
+    tr  <- tr_tropy[[id]]
+    row <- tr_board_row(id)
+    fb_type <- if (row$supported) "warning" else "ok"
+
+    desc <- tr_desc_table(id)
+    first_col <- if (tr$method == "cor") "Zmienna" else "Grupa"
+    desc$iqr <- paste0(lc_num(desc$q1, 2), "–", lc_num(desc$q3, 2))
+    desc_tbl <- lc_table_split(desc,
+      cols = list(
+        lc_col("label", first_col, "row"),
+        lc_col("mean", "Średnia", digits = 2),
+        lc_col("sd", "SD", digits = 2),
+        lc_col("median", "Mediana", digits = 2),
+        lc_col("iqr", "Q1–Q3")
+      ),
+      groups = list(c("mean", "sd"), c("median", "iqr")),
+      label = "Statystyki opisowe (eval)"
+    )
+
+    p_disp <- if (grepl("<", row$p_label)) paste0("p ", row$p_label)
+              else paste0("p = ", row$p_label)
+    effect_kind <- if (tr$method == "cor") "korelacja" else "różnica średnich"
+
+    figure_panel(label = "Trop", title = tr$short,
+      p(tags$strong("Pytanie:"), " ", tr$question),
+      s10_plot(s10_trop_config(id)),
+      tags$p(tags$strong("Statystyki opisowe (eval):")),
+      desc_tbl,
+      tags$p(tags$strong(paste0("Miara efektu (", effect_kind, "):")), " ",
+             row$effect),
+             tags$p(tags$strong("Test:"), paste0(" ", tr$test_name, "; ", p_disp)),
+      lc_status(
+        tags$p(lc_verdict(tags$strong("Werdykt:"), type = fb_type), " ", row$verdict)
+      )
+    )
+  })
+  div(blocks)
+}
+
 ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia", content = tagList(
   lc_chapter_hero(
     kicker = "Rozdział 05 · Proste testy",
@@ -15,7 +57,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
     statystyczne, bo dopiero teraz wiadomo, czego mają szukać. Cel badania
     pozostaje ten sam: ", tags$em(tr_goal)),
 
-  lc_h2("sec-01", "Wiązka spotyka dane — trop po tropie"),
+  lc_h2("ch5-sec-01", "Wiązka spotyka dane — trop po tropie"),
 
   lc_p("Narzędzie wynika z typu zmiennych, tak jak w drzewie decyzyjnym
     z rozdziału 11 wykładu 05. Atrakcyjność i odsetek odpowiedzi są ",
@@ -35,7 +77,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
     0.05, a „osłabiony”, że nie jest. To umowny podział na potrzeby
     tablicy, a nie ocena tropu."),
 
-  uiOutput("ch5_bundle_results"),
+  ch5_bundle_results_ui(),
 
   lc_p("Atrakcyjność wiąże się z oceną kursu dodatnio: r = 0.19, z 95% ",
     gloss("przedział ufności", "przedziałem ufności"), " od 0.10 do 0.28
@@ -75,7 +117,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
     że grupa jest za mała albo że prosty test pomija coś, co różnicuje
     porównywane kursy."),
 
-  lc_h2("sec-02", "Tablica tropów po pierwszych testach"),
+  lc_h2("ch5-sec-02", "Tablica tropów po pierwszych testach"),
 
   lc_p("Wyniki pięciu testów trafiają do tablicy, którą w rozdziale 1
     zostawiliśmy pustą. Każdy wiersz to jeden trop: pytanie, narzędzie,
@@ -99,72 +141,6 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
   )
 )
 
-ch5_server <- function(input, output, session) {
-  # Wykres jednego tropu — korelacja (ilościowe) albo boxplot (grupy).
-  .trop_plot <- function(id) {
-    tr <- tr_tropy[[id]]
-    if (tr$method == "cor") {
-      ggplot(tr_data, aes(x = .data[[tr$var]], y = eval)) +
-        geom_point(color = proj_col_ref, alpha = 0.45, size = 2) +
-        geom_smooth(method = "lm", se = TRUE, color = proj_col_ctrl,
-                    fill = proj_col_ctrl, alpha = 0.12) +
-        labs(x = unname(tr_labels[tr$var]), y = "Ocena kursu (eval)") +
-        theme_upwr()
-    } else {
-      ggplot(tr_data, aes(x = .data[[tr$var]], y = eval, fill = .data[[tr$var]])) +
-        geom_boxplot(alpha = 0.65, outlier.alpha = 0.25) +
-        geom_jitter(width = 0.12, alpha = 0.16, size = 1) +
-        scale_fill_manual(values = rep(c(proj_col_data, proj_col_hyp, proj_col_ctrl),
-                                       length.out = length(unique(tr_data[[tr$var]])))) +
-        labs(x = unname(tr_labels[tr$var]), y = "Ocena kursu (eval)") +
-        theme_upwr() +
-        theme(legend.position = "none")
-    }
-  }
-
-  # Zarejestruj wykres + render karty wyniku dla każdego tropu.
-  lapply(tr_trop_order, function(id) {
-    zoom_plot_server(paste0("ch5_plot_", id), reactive(.trop_plot(id)))
-  })
-
-  output$ch5_bundle_results <- renderUI({
-    blocks <- lapply(tr_trop_order, function(id) {
-      tr  <- tr_tropy[[id]]
-      row <- tr_board_row(id)
-      fb_type <- if (row$supported) "warning" else "ok"
-
-      desc <- tr_desc_table(id)
-      first_col <- if (tr$method == "cor") "Zmienna" else "Grupa"
-      desc$iqr <- paste0(lc_num(desc$q1, 2), "–", lc_num(desc$q3, 2))
-      desc_tbl <- lc_table_split(desc,
-        cols = list(
-          lc_col("label", first_col, "row"),
-          lc_col("mean", "Średnia", digits = 2),
-          lc_col("sd", "SD", digits = 2),
-          lc_col("median", "Mediana", digits = 2),
-          lc_col("iqr", "Q1–Q3")
-        ),
-        groups = list(c("mean", "sd"), c("median", "iqr")),
-        label = "Statystyki opisowe (eval)"
-      )
-
-      p_disp <- if (grepl("<", row$p_label)) paste0("p ", row$p_label)
-                else paste0("p = ", row$p_label)
-      effect_kind <- if (tr$method == "cor") "korelacja" else "różnica średnich"
-
-      figure_panel(label = "Trop", title = tr$short,
-        p(tags$strong("Pytanie:"), " ", tr$question),
-        lc_plot(paste0("ch5_plot_", id), ratio = "1.9/1", max_height = "320px"),
-        tags$p(tags$strong("Statystyki opisowe (eval):")),
-        desc_tbl,
-        tags$p(tags$strong(paste0("Miara efektu (", effect_kind, "):")), " ",
-               row$effect),
-               tags$p(tags$strong("Test:"), paste0(" ", tr$test_name, "; ", p_disp)),
-        lc_status(
-          tags$p(lc_verdict(tags$strong("Werdykt:"), type = fb_type), " ", row$verdict)
-        )
-      )
-    })
-    div(blocks)
-  })
-}
+# Rozdział nie ma logiki serwera: karty tropów składa R przy budowaniu, wykresy rysuje
+# przeglądarka z danych policzonych w R (modules/figures.R, rycina s10_plot).
+ch5_server <- function(input, output, session) {}

@@ -45,7 +45,15 @@ tables <- lapply(tabs, function(v) {
        chi_p = if (is.null(chi)) NA else chi$p.value, fisher_p = fisher.test(m)$p.value)
 })
 pvals <- c(0.5, 0.05, 0.0499, 0.123456, 0.00012, 0.00009999, 0.999, 0.9951, 0.3, 0.0456, 0.00105, 1)
-out <- list(shapiro = shapiro, two = two, tables = tables,
+# Regresja: mtcars, predyktory ilościowe i zmienna jakościowa jako kolumny 0/1.
+lm_fixture <- lapply(list(mpg ~ wt, mpg ~ wt + hp + factor(cyl), mpg ~ wt + hp + qsec + drat + factor(am) + disp), function(f) {
+  m <- lm(f, data = mtcars); s <- summary(m); ci <- confint(m); x <- model.matrix(m)
+  list(columns = lapply(seq_len(ncol(x))[-1], function(j) unname(x[, j])), y = mtcars$mpg,
+       estimate = unname(coef(m)), se = unname(s$coefficients[, 2]), t = unname(s$coefficients[, 3]),
+       p = unname(s$coefficients[, 4]), lo = unname(ci[, 1]), hi = unname(ci[, 2]),
+       r2 = s$r.squared, adj = s$adj.r.squared, aic = AIC(m), sigma = s$sigma)
+})
+out <- list(shapiro = shapiro, two = two, tables = tables, lm = lm_fixture,
   pf = list(args = list(c(2.5, 1, 58), c(0.3, 3, 20), c(11, 2, 7), c(1, 1, 1), c(45, 4, 100)),
             upper = c(pf(2.5, 1, 58, lower.tail = FALSE), pf(.3, 3, 20, lower.tail = FALSE), pf(11, 2, 7, lower.tail = FALSE),
                       pf(1, 1, 1, lower.tail = FALSE), pf(45, 4, 100, lower.tail = FALSE))),

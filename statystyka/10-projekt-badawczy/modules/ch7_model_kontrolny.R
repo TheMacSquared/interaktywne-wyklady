@@ -18,7 +18,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     uwzględnimy naraz, bo każdy z nich patrzył na jedną zmienną. Cel
     badania pozostaje ten sam: ", tags$em(tr_goal)),
 
-  lc_h2("sec-01", "Model kontrolny"),
+  lc_h2("ch7-sec-01", "Model kontrolny"),
 
   lc_p(gloss("regresja wieloraka", "Regresja wieloraka"), " z rozdziału 03
     wykładu 07 pozwala zadać to pytanie wprost. ",
@@ -48,8 +48,8 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     pokazuje współczynnik w kolejnych modelach."),
 
   figure_panel(label = "Ryc. 7.1", title = "Seria modeli kontrolnych",
-    uiOutput("ch7_models_table"),
-    lc_plot("ch7_beta_plot", max_height = "280px")
+    ch7_models_table_ui(),
+    lc_sf_figure("s10_beta", ratio = "2.4/1", max_height = "280px", config = s10_beta_config)
   ),
 
   lc_p("Współczynnik przy atrakcyjności prawie się nie zmienia: 0.133 w modelu
@@ -80,25 +80,31 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     gloss("przedział ufności", "przedziałami ufności"), "."),
 
   figure_panel(label = "Ryc. 7.2", title = "Własny model kontrolny",
-    lc_toolbar(
-      checkboxGroupInput("ch7_vars", "Dodaj kontrole", inline = TRUE,
-          choices = c(
-            "Płeć" = "gender",
-            "Wiek" = "age",
-            "Mniejszość" = "minority",
-            "Native speaker" = "native",
-            "Tenure track" = "tenure",
-            "Poziom kursu" = "division",
-            "Credits" = "credits",
-            "Liczba odpowiedzi" = "students",
-            "Response rate" = "response.rate"
-          ),
-          selected = c("gender", "age", "native", "division", "credits", "response.rate")
-            ),
-            lc_readouts(uiOutput("ch7_custom_metrics"))
-          ),
-          uiOutput("ch7_custom_coefs"),
-          lc_plot("ch7_custom_coef_plot", max_height = "260px")
+    # Model liczy przeglądarka (shared/lc_stats.js) z kolumn danych podanych w config
+    # (modules/figures.R, rycina s10_custom).
+    lc_sf_figure("s10_custom",
+      control = checkboxGroupInput("ch7_vars", "Dodaj kontrole", inline = TRUE,
+        choices = c(
+          "Płeć" = "gender",
+          "Wiek" = "age",
+          "Mniejszość" = "minority",
+          "Native speaker" = "native",
+          "Tenure track" = "tenure",
+          "Poziom kursu" = "division",
+          "Credits" = "credits",
+          "Liczba odpowiedzi" = "students",
+          "Response rate" = "response.rate"
+        ),
+        selected = c("gender", "age", "native", "division", "credits", "response.rate")
+      ),
+      toolbar = lc_readouts(
+        lc_readout("R² skor.", lc_sf_value("custom_adj"), color = proj_col_ctrl),
+        lc_readout("AIC", lc_sf_value("custom_aic"), color = proj_col_warn),
+        lc_readout("β beauty", lc_sf_value("custom_beta"), color = proj_col_hyp),
+        lc_readout("p beauty", lc_sf_value("custom_p"), color = proj_col_data)
+      ),
+      body = tagList(tags$div(`data-role` = "coefs"), lc_sf_chart(0, "2.6/1", "260px")),
+      config = s10_custom_config)
   ),
 
   lc_p("W modelu startowym współczynnik przy atrakcyjności wynosi 0.140
@@ -144,7 +150,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     niż sugeruje liczba wierszy. Prawdziwa niepewność jest większa niż
     w tabeli, choć przy p < 0.001 trudno oczekiwać, że związek zniknie."),
 
-  lc_h2("sec-02", "Czego model nie rozstrzygnie"),
+  lc_h2("ch7-sec-02", "Czego model nie rozstrzygnie"),
 
   lc_p("Model nie zastępuje sformułowania pytania. Jego wynik da się
     zinterpretować dzięki temu, co powstało wcześniej: celowi, wiązce ",
@@ -171,104 +177,6 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
   )
 )
 
-ch7_server <- function(input, output, session) {
-  # Seria modeli liczona od razu — to materiał do omówienia z projekcji,
-  # nie nagroda za kliknięcie.
-  model_series <- reactive({
-    models <- list(
-      list(label = "1: beauty", model = lm(eval ~ beauty, data = tr_data)),
-      list(label = "2: + cechy osoby", model = lm(eval ~ beauty + gender + age + minority + native + tenure, data = tr_data)),
-      list(label = "3: + kontekst kursu", model = lm(eval ~ beauty + gender + age + minority + native + tenure + division + credits + students, data = tr_data)),
-      list(label = "4: + response rate", model = lm(eval ~ beauty + gender + age + minority + native + tenure + division + credits + students + response.rate, data = tr_data))
-    )
-    tr_model_table(models)
-  })
-
-  output$ch7_models_table <- renderUI({
-    df <- model_series()
-    df$p_label <- lc_pval(df$p_beauty)
-    lc_table_split(df,
-      cols = list(
-        lc_col("model", "Model", "row"),
-        lc_col("beta_beauty", "β beauty", digits = 3),
-        lc_col("p_label", "p"),
-        lc_col("adj_r2", "adj.R²", digits = 3),
-        lc_col("aic", "AIC")
-      ),
-      groups = list(c("beta_beauty", "p_label"), c("adj_r2", "aic")),
-      label = "Seria modeli kontrolnych"
-    )
-  })
-
-  zoom_plot_server("ch7_beta_plot", reactive({
-    df <- model_series()
-    df$model <- factor(df$model, levels = df$model)
-    ggplot(df, aes(x = model, y = beta_beauty, fill = p_beauty < 0.05)) +
-      geom_col(width = 0.6) +
-      geom_hline(yintercept = 0, color = proj_col_ref) +
-      scale_fill_manual(values = c("TRUE" = proj_col_ctrl, "FALSE" = proj_col_ref),
-                        guide = "none") +
-      labs(x = NULL, y = "Współczynnik przy beauty") +
-      theme_upwr() +
-      theme(axis.text.x = element_text(angle = 20, hjust = 1))
-  }))
-
-  custom_model <- reactive({
-    vars <- input$ch7_vars
-    rhs <- paste(c("beauty", vars), collapse = " + ")
-    lm(as.formula(paste("eval ~", rhs)), data = tr_data)
-  })
-
-  output$ch7_custom_metrics <- renderUI({
-    m <- custom_model()
-    g <- broom::glance(m)
-    coefs <- broom::tidy(m)
-    p_beauty <- coefs$p.value[coefs$term == "beauty"]
-    p_beauty_label <- if (is.na(p_beauty)) "—"
-                      else if (p_beauty < 0.001) "< 0.001"
-                      else sprintf("%.3f", p_beauty)
-    tagList(
-      lc_readout("R² skor.", lc_fmt(g$adj.r.squared, 3), color = proj_col_ctrl),
-      lc_readout("AIC", lc_fmt(AIC(m), 0), color = proj_col_warn),
-      lc_readout("β beauty", lc_fmt(coefs$estimate[coefs$term == "beauty"], 3), color = proj_col_hyp),
-      lc_readout("p beauty", p_beauty_label, color = proj_col_data)
-    )
-  })
-
-  output$ch7_custom_coefs <- renderUI({
-    coefs <- broom::tidy(custom_model())
-    coefs <- coefs[coefs$term != "(Intercept)", ]
-    significant <- !is.na(coefs$p.value) & coefs$p.value < 0.05
-    lc_table(
-      data.frame(
-        term = tr_label_term(coefs$term),
-        estimate = coefs$estimate,
-        se = coefs$std.error,
-        p = lc_pval(coefs$p.value),
-        stringsAsFactors = FALSE
-      ),
-      cols = list(
-        lc_col("term", "Predyktor", "row"),
-        lc_col("estimate", "β", digits = 3),
-        lc_col("se", "SE", digits = 3),
-        lc_col("p", "p")
-      ),
-      # Istotne predyktory (p < 0.05) wyróżnione jak dotąd całym wierszem.
-      row_class = lapply(significant, function(s) if (s) "is-best")
-    )
-  })
-
-  zoom_plot_server("ch7_custom_coef_plot", reactive({
-    coefs <- broom::tidy(custom_model(), conf.int = TRUE)
-    coefs <- coefs[coefs$term != "(Intercept)", ]
-    coefs$label <- tr_label_term(coefs$term)
-    coefs$label <- factor(coefs$label, levels = rev(coefs$label))
-    ggplot(coefs, aes(x = estimate, y = label)) +
-      geom_vline(xintercept = 0, color = proj_col_ref, linetype = "dashed") +
-      geom_errorbar(aes(xmin = conf.low, xmax = conf.high), width = 0.2,
-                     color = proj_col_ref, orientation = "y") +
-      geom_point(color = proj_col_hyp, size = 2.5) +
-      labs(x = "Współczynnik z 95% CI", y = NULL) +
-      theme_upwr()
-  }))
-}
+# Rozdział nie ma logiki serwera: serię modeli liczy R przy budowaniu (modules/figures.R),
+# model własny przeglądarka (shared/lc_stats.js).
+ch7_server <- function(input, output, session) {}

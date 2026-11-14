@@ -10,6 +10,7 @@
 //   tTest(a, b, varEqual)  — t.test() dwóch prób: {t, df, p}
 //   chisq2x2(tab)          — chisq.test(correct = FALSE) dla tabeli 2×2: {X2, p}
 //   fisher2x2(tab)         — fisher.test() dwustronny: p
+//   lm(columns, y)         — lm(): współczynniki, błędy, t, p, 95% CI, R², skor. R², AIC
 //   pf(x, d1, d2)          — dystrybuanta rozkładu F
 //   fmtPValue(p), round(x, d) — format_p_value() i as.character(round(x, d))
 (function () {
@@ -212,6 +213,57 @@
     return Math.min(1, p);
   }
 
+  // Regresja liniowa MNK jak lm(): kolumny predyktorów (bez wyrazu wolnego, zmienne
+  // jakościowe już jako kolumny 0/1) i wektor y. Rozkład QR Householdera, jak w R.
+  // Zwraca współczynniki z błędami, t, p i 95% CI (pierwszy to wyraz wolny), R², skor. R², AIC;
+  // null, gdy kolumny są liniowo zależne.
+  function lm(columns, y) {
+    var n = y.length, p = columns.length + 1, A = [new Float64Array(n).fill(1)], q = Float64Array.from(y), i, j, k;
+    columns.forEach(function (c) { A.push(Float64Array.from(c)); });
+    var scale = A.map(function (c) { var s = 0; for (var r = 0; r < n; r++) s += c[r] * c[r]; return Math.sqrt(s); });
+    for (k = 0; k < p; k++) {
+      var norm = 0;
+      for (i = k; i < n; i++) norm += A[k][i] * A[k][i];
+      norm = Math.sqrt(norm);
+      if (!(norm > 1e-10 * scale[k])) return null;
+      var alpha = A[k][k] > 0 ? -norm : norm, v = A[k].slice(k), v2 = 0;
+      v[0] -= alpha;
+      for (i = 0; i < v.length; i++) v2 += v[i] * v[i];
+      var reflect = function (col) {
+        var dot = 0, r;
+        for (r = 0; r < v.length; r++) dot += v[r] * col[k + r];
+        var f = 2 * dot / v2;
+        for (r = 0; r < v.length; r++) col[k + r] -= f * v[r];
+      };
+      for (j = k; j < p; j++) reflect(A[j]);
+      reflect(q);
+    }
+    // R górnotrójkątna: R[i][j] = A[j][i]; odwrotność przez podstawianie wstecz.
+    var inv = [];
+    for (i = 0; i < p; i++) inv.push(new Float64Array(p));
+    for (j = p - 1; j >= 0; j--) {
+      inv[j][j] = 1 / A[j][j];
+      for (i = j - 1; i >= 0; i--) {
+        var s = 0;
+        for (k = i + 1; k <= j; k++) s += A[k][i] * inv[k][j];
+        inv[i][j] = -s / A[i][i];
+      }
+    }
+    var sse = 0, my = mean(y), sst = 0, df = n - p;
+    for (i = p; i < n; i++) sse += q[i] * q[i];
+    for (i = 0; i < n; i++) sst += (y[i] - my) * (y[i] - my);
+    var sigma2 = sse / df, tq = D.qt(0.975, df), coef = [];
+    for (i = 0; i < p; i++) {
+      var est = 0, var_i = 0;
+      for (k = i; k < p; k++) { est += inv[i][k] * q[k]; var_i += inv[i][k] * inv[i][k]; }
+      var se = Math.sqrt(var_i * sigma2), tval = est / se;
+      coef.push({ estimate: est, se: se, t: tval, p: pt2(tval, df), lo: est - tq * se, hi: est + tq * se });
+    }
+    var r2 = 1 - sse / sst;
+    return { coef: coef, n: n, df: df, sigma: Math.sqrt(sigma2), r2: r2, adjR2: 1 - (1 - r2) * (n - 1) / df,
+             aic: n * (Math.log(2 * Math.PI) + Math.log(sse / n) + 1) + 2 * (p + 1) };
+  }
+
   // format_p_value() z shared/shared.R.
   function fmtPValue(p) {
     if (typeof p !== "number" || isNaN(p)) return "NA";
@@ -226,5 +278,5 @@
 
   root.lcStats = { mean: mean, variance: variance, sd: sd, median: median, quantile: quantile, ppoints: ppoints,
     qqNormal: qqNormal, betaReg: betaReg, pf: pf, shapiroWilk: shapiroWilk, anovaF: anovaF, levene: levene,
-    bartlett: bartlett, tTest: tTest, chisq2x2: chisq2x2, fisher2x2: fisher2x2, fmtPValue: fmtPValue, round: round };
+    bartlett: bartlett, tTest: tTest, lm: lm, chisq2x2: chisq2x2, fisher2x2: fisher2x2, fmtPValue: fmtPValue, round: round };
 })();

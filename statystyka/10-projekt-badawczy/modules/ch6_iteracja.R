@@ -1,3 +1,92 @@
+# Treść stała (dawniej output$ch6_next_steps na serwerze): składana przy budowaniu strony.
+ch6_next_steps_ui <- function() {
+  cases <- list(
+    beauty = list(
+      narrative = "Atrakcyjność wiąże się z oceną kursu (r = 0.19). Teraz pytamy, czy ten związek nie wynika z innych cech prowadzącego albo kursu.",
+      checks = c(
+        "Sprawdzić alternatywy z konspektu: wiek, płeć i typ kursu.",
+        "Zobaczyć, czy `beauty` współwystępuje z tymi zmiennymi.",
+        "Zobaczyć, czy związek `beauty` z `eval` pozostaje widoczny, gdy te zmienne analizujemy razem."
+      )
+    ),
+    gender = list(
+      narrative = "Kursy prowadzone przez kobiety mają średnio o 0.17 punktu niższe oceny. Trzeba ustalić, czy płeć jest samodzielnym tropem, czy miesza się z innymi cechami kursu i prowadzącego.",
+      checks = c(
+        "Sprawdzić, z czym współwystępuje `gender`: typ kursu, response rate, wiek, atrakcyjność.",
+        "Ocenić, czy wynik dla płci może być alternatywnym wyjaśnieniem dla innych tropów.",
+        "Zobaczyć, czy efekt płci pozostaje widoczny, gdy inne zmienne analizujemy razem."
+      )
+    ),
+    native = list(
+      narrative = "Kursy prowadzone przez osoby, dla których angielski nie jest językiem ojczystym, mają średnio o 0.33 punktu niższe oceny, ale jest ich tylko 28. Trzeba ustalić, czy chodzi o odbiór prowadzącego, czy o kontekst kursów, które prowadzi ta grupa.",
+      checks = c(
+        "Sprawdzić, czy `native` współwystępuje z poziomem kursu, credits albo liczebnością grup.",
+        "Ocenić, czy różnice między grupami mogą wynikać z nierównych liczebności albo rodzaju prowadzonych zajęć.",
+        "Zobaczyć, czy `native` wnosi informację, gdy uwzględniamy inne cechy kursu i prowadzącego."
+      )
+    ),
+    minority = list(
+      narrative = "Różnica 0.12 punktu na niekorzyść prowadzących z grup mniejszościowych nie jest istotna, ale grupa liczy 64 kursy. Brak istotności przy takiej liczebności nie wyklucza różnicy, więc trop zostaje jako ostrożny sygnał.",
+      checks = c(
+        "Opisać liczebności grup, zanim interpretujemy różnice.",
+        "Sprawdzić, czy `minority` współwystępuje z płcią, statusem `native`, typem kursu lub innymi cechami.",
+        "Sprawdzić, czy różnica nie zmienia się po uwzględnieniu innych cech. Nową hipotezę formułować ostrożnie: wynik może wskazywać problem, ale nie dowodzi mechanizmu."
+      )
+    ),
+    response = list(
+      narrative = "Kursy z wyższym odsetkiem odpowiedzi mają wyższe oceny (r = 0.22). Trzeba sprawdzić, czy ankieta opisuje doświadczenie całej grupy, czy raczej głos wybranej części studentów.",
+      checks = c(
+        "Sprawdzić, czy `response.rate` wiąże się z wielkością kursu (`students`, `allstudents`) albo typem kursu.",
+        "Zobaczyć, czy niska odpowiedź osłabia zaufanie do pozostałych wyników.",
+        "Dopisać hipotezę o selekcji odpowiedzi, jeśli response rate zmienia interpretację innych tropów."
+      )
+    )
+  )
+  cards <- lapply(tr_trop_order, function(id) {
+    tr  <- tr_tropy[[id]]
+    row <- tr_board_row(id)
+    tagList(
+      lc_h3(tagList(tr$short, " · ", lc_verdict(row$verdict, type = if (row$supported) "ok" else "danger"))),
+      p(tags$strong("Po wstępnym wyniku:"), " ", cases[[id]]$narrative),
+      p(tags$strong("Co sprawdzamy dalej:")),
+      tags$ul(
+        lapply(cases[[id]]$checks, function(x) {
+          tags$li(HTML(gsub("`([^`]+)`", "<code>\\1</code>", x)))
+        })
+      )
+    )
+  })
+  tagList(cards)
+}
+
+# Treść stała (dawniej output$ch6_conf_example_verdict na serwerze): składana przy budowaniu strony.
+ch6_conf_example_verdict_ui <- function() {
+  r <- tr_confounder_row("gender")
+  lc_status(
+    tags$p(tags$strong("Płeć a atrakcyjność:"), paste0(" ", r$beauty_label, ". "),
+      tags$strong("Płeć a ocena kursu:"), paste0(" ", r$eval_label, "."))
+  )
+}
+
+# Treść stała (dawniej output$ch6_confounder_table na serwerze): składana przy budowaniu strony.
+ch6_confounder_table_ui <- function() {
+  rows <- lapply(tr_confounder_vars, tr_confounder_row)
+  df <- data.frame(
+    label = vapply(rows, function(r) r$label, character(1)),
+    beauty = vapply(rows, function(r) r$beauty_label, character(1)),
+    eval = vapply(rows, function(r) r$eval_label, character(1)),
+    stringsAsFactors = FALSE
+  )
+  lc_table(df,
+    cols = list(
+      lc_col("label", "Zmienna", "row"),
+      lc_col("beauty", "Związek z beauty", "text"),
+      lc_col("eval", "Związek z eval", "text")
+    ),
+    narrow = "cards"
+  )
+}
+
 ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy badania", content = tagList(
   lc_chapter_hero(
     kicker = "Rozdział 06 · Iteracja",
@@ -16,7 +105,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     które z nich mogą się nawzajem tłumaczyć, i zapisuje, czego dane nie
     pozwolą rozstrzygnąć."),
 
-  lc_h2("sec-01", "Cała wiązka naraz"),
+  lc_h2("ch6-sec-01", "Cała wiązka naraz"),
 
   lc_p("Pojedynczy test odpowiada na pytanie o jeden trop. Na cel odpowiada
     dopiero zestawienie: które tropy dane wzmocniły, które osłabiły i co
@@ -33,7 +122,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     niż samą jakość nauczania. Ile więcej i czego dokładnie, tego tablica
     nie mówi, bo każdy jej wiersz powstał bez oglądania się na pozostałe."),
 
-  lc_h2("sec-02", "Po wstępnych wynikach: alternatywne wyjaśnienia"),
+  lc_h2("ch6-sec-02", "Po wstępnych wynikach: alternatywne wyjaśnienia"),
 
   lc_p("Werdykt „wzmocniony” nie znaczy „udowodniony”, a „osłabiony” nie
     znaczy „temat zamknięty”. Na tym etapie nie układamy planu od nowa.
@@ -43,7 +132,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     Karty poniżej zestawiają dla każdego tropu wstępny wynik i plan
     dalszych sprawdzeń."),
 
-  uiOutput("ch6_next_steps"),
+  ch6_next_steps_ui(),
 
   lc_p("Listy sprawdzeń przy różnych tropach powtarzają te same zmienne.
     Płeć jest osobnym tropem, ale pojawia się też jako alternatywne
@@ -53,7 +142,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     te same zmienne się spotykają, a to oznacza, że trzeba je sprawdzić
     razem, a nie po kolei."),
 
-  lc_h2("sec-03", "Zanim zaufamy wynikowi: zmienne zakłócające"),
+  lc_h2("ch6-sec-03", "Zanim zaufamy wynikowi: zmienne zakłócające"),
 
   lc_p("Pierwsze pytanie po każdym wyniku brzmi: czy to nie zasługa czegoś
     innego? Z rozdziału 06 wykładu 05 i rozdziału 03 wykładu 07 znamy ",
@@ -76,10 +165,12 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
 
   figure_panel(label = "Ryc. 6.1", title = "Płeć a obie zmienne relacji",
     lc_plots(
-      lc_plot("ch6_conf_beauty", max_height = "300px"),
-      lc_plot("ch6_conf_eval", max_height = "300px")
+      s10_plot(s10_box_config("gender", "beauty", "Płeć prowadzącego", "Ocena atrakcyjności (beauty)", c("niebo", "wrzos")),
+               ratio = "1.5/1", max_height = "300px"),
+      s10_plot(s10_box_config("gender", "eval", "Płeć prowadzącego", "Ocena kursu (eval)", c("niebo", "wrzos")),
+               ratio = "1.5/1", max_height = "300px")
     ),
-    uiOutput("ch6_conf_example_verdict")
+    ch6_conf_example_verdict_ui()
   ),
 
   lc_p("Oba związki istnieją, ale idą w przeciwne strony. Kobiety dostają
@@ -113,7 +204,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     i to zarówno z beauty, jak i z oceną kursu."),
 
   figure_panel(label = "Ryc. 6.3", title = "Związki cech prowadzącego i kursu z beauty i z oceną kursu",
-    uiOutput("ch6_confounder_table")
+    ch6_confounder_table_ui()
   ),
 
   lc_p("Oprócz płci kandydatami są status native speaker i liczba punktów
@@ -142,7 +233,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     bo każda para pomija pozostałe zmienne. To zadanie dla modelu
     kontrolnego z rozdziału 7."),
 
-  lc_h2("sec-04", "Czego brakuje w danych"),
+  lc_h2("ch6-sec-04", "Czego brakuje w danych"),
 
   lc_p("Wiązka tropów pokazała też, czego w danych nie ma. Przy każdym
     tropie konspekt z rozdziału 4 zapisał w polu „Dostępne dane i braki”
@@ -177,105 +268,6 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
   )
 )
 
-ch6_server <- function(input, output, session) {
-  output$ch6_next_steps <- renderUI({
-    cases <- list(
-      beauty = list(
-        narrative = "Atrakcyjność wiąże się z oceną kursu (r = 0.19). Teraz pytamy, czy ten związek nie wynika z innych cech prowadzącego albo kursu.",
-        checks = c(
-          "Sprawdzić alternatywy z konspektu: wiek, płeć i typ kursu.",
-          "Zobaczyć, czy `beauty` współwystępuje z tymi zmiennymi.",
-          "Zobaczyć, czy związek `beauty` z `eval` pozostaje widoczny, gdy te zmienne analizujemy razem."
-        )
-      ),
-      gender = list(
-        narrative = "Kursy prowadzone przez kobiety mają średnio o 0.17 punktu niższe oceny. Trzeba ustalić, czy płeć jest samodzielnym tropem, czy miesza się z innymi cechami kursu i prowadzącego.",
-        checks = c(
-          "Sprawdzić, z czym współwystępuje `gender`: typ kursu, response rate, wiek, atrakcyjność.",
-          "Ocenić, czy wynik dla płci może być alternatywnym wyjaśnieniem dla innych tropów.",
-          "Zobaczyć, czy efekt płci pozostaje widoczny, gdy inne zmienne analizujemy razem."
-        )
-      ),
-      native = list(
-        narrative = "Kursy prowadzone przez osoby, dla których angielski nie jest językiem ojczystym, mają średnio o 0.33 punktu niższe oceny, ale jest ich tylko 28. Trzeba ustalić, czy chodzi o odbiór prowadzącego, czy o kontekst kursów, które prowadzi ta grupa.",
-        checks = c(
-          "Sprawdzić, czy `native` współwystępuje z poziomem kursu, credits albo liczebnością grup.",
-          "Ocenić, czy różnice między grupami mogą wynikać z nierównych liczebności albo rodzaju prowadzonych zajęć.",
-          "Zobaczyć, czy `native` wnosi informację, gdy uwzględniamy inne cechy kursu i prowadzącego."
-        )
-      ),
-      minority = list(
-        narrative = "Różnica 0.12 punktu na niekorzyść prowadzących z grup mniejszościowych nie jest istotna, ale grupa liczy 64 kursy. Brak istotności przy takiej liczebności nie wyklucza różnicy, więc trop zostaje jako ostrożny sygnał.",
-        checks = c(
-          "Opisać liczebności grup, zanim interpretujemy różnice.",
-          "Sprawdzić, czy `minority` współwystępuje z płcią, statusem `native`, typem kursu lub innymi cechami.",
-          "Sprawdzić, czy różnica nie zmienia się po uwzględnieniu innych cech. Nową hipotezę formułować ostrożnie: wynik może wskazywać problem, ale nie dowodzi mechanizmu."
-        )
-      ),
-      response = list(
-        narrative = "Kursy z wyższym odsetkiem odpowiedzi mają wyższe oceny (r = 0.22). Trzeba sprawdzić, czy ankieta opisuje doświadczenie całej grupy, czy raczej głos wybranej części studentów.",
-        checks = c(
-          "Sprawdzić, czy `response.rate` wiąże się z wielkością kursu (`students`, `allstudents`) albo typem kursu.",
-          "Zobaczyć, czy niska odpowiedź osłabia zaufanie do pozostałych wyników.",
-          "Dopisać hipotezę o selekcji odpowiedzi, jeśli response rate zmienia interpretację innych tropów."
-        )
-      )
-    )
-    cards <- lapply(tr_trop_order, function(id) {
-      tr  <- tr_tropy[[id]]
-      row <- tr_board_row(id)
-      tagList(
-        lc_h3(tagList(tr$short, " · ", lc_verdict(row$verdict, type = if (row$supported) "ok" else "danger"))),
-        p(tags$strong("Po wstępnym wyniku:"), " ", cases[[id]]$narrative),
-        p(tags$strong("Co sprawdzamy dalej:")),
-        tags$ul(
-          lapply(cases[[id]]$checks, function(x) {
-            tags$li(HTML(gsub("`([^`]+)`", "<code>\\1</code>", x)))
-          })
-        )
-      )
-    })
-    tagList(cards)
-  })
-
-  # Zmienne zakłócające — przykład rozpisany (płeć) + tabela zbiorcza.
-  .conf_box <- function(y_var, y_label) {
-    ggplot(tr_data, aes(x = gender, y = .data[[y_var]], fill = gender)) +
-      geom_boxplot(alpha = 0.65, outlier.alpha = 0.25) +
-      geom_jitter(width = 0.12, alpha = 0.16, size = 1) +
-      scale_fill_manual(values = c(proj_col_data, proj_col_hyp)) +
-      labs(x = "Płeć prowadzącego", y = y_label) +
-      theme_upwr() +
-      theme(legend.position = "none")
-  }
-  zoom_plot_server("ch6_conf_beauty",
-                   reactive(.conf_box("beauty", "Ocena atrakcyjności (beauty)")))
-  zoom_plot_server("ch6_conf_eval",
-                   reactive(.conf_box("eval", "Ocena kursu (eval)")))
-
-  output$ch6_conf_example_verdict <- renderUI({
-    r <- tr_confounder_row("gender")
-    lc_status(
-      tags$p(tags$strong("Płeć a atrakcyjność:"), paste0(" ", r$beauty_label, ". "),
-        tags$strong("Płeć a ocena kursu:"), paste0(" ", r$eval_label, "."))
-    )
-  })
-
-  output$ch6_confounder_table <- renderUI({
-    rows <- lapply(tr_confounder_vars, tr_confounder_row)
-    df <- data.frame(
-      label = vapply(rows, function(r) r$label, character(1)),
-      beauty = vapply(rows, function(r) r$beauty_label, character(1)),
-      eval = vapply(rows, function(r) r$eval_label, character(1)),
-      stringsAsFactors = FALSE
-    )
-    lc_table(df,
-      cols = list(
-        lc_col("label", "Zmienna", "row"),
-        lc_col("beauty", "Związek z beauty", "text"),
-        lc_col("eval", "Związek z eval", "text")
-      ),
-      narrow = "cards"
-    )
-  })
-}
+# Rozdział nie ma logiki serwera: treści stałe składa R przy budowaniu, wykresy rysuje
+# przeglądarka z danych policzonych w R (modules/figures.R).
+ch6_server <- function(input, output, session) {}

@@ -43,9 +43,11 @@ source(file.path(shared_root, "palette.R"),        local = TRUE)
 source(file.path(shared_root, "theme_upwr.R"),     local = TRUE)
 source(file.path(shared_root, "shared.R"),         local = TRUE)
 source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"), local = TRUE)
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"), local = TRUE)
+source(file.path(app_dir, "modules", "figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch0_dzien_dobroci.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch1_ciekawosc.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_hipotezy.R"), local = TRUE)
@@ -57,6 +59,14 @@ source(file.path(app_dir, "modules", "ch7_model_kontrolny.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch8_konspekt.R"), local = TRUE)
 
 header_extras <- tagList(
+  # Ryciny liczone w przeglądarce: silnik lcSF na ECharts, rozkłady, testy i ryciny wykładu.
+  tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+  includeScript(file.path(shared_root, "lc_charts.js")),
+  includeScript(file.path(shared_root, "lc_dist.js")),
+  includeScript(file.path(shared_root, "lc_stats.js")),
+  includeScript(file.path(shared_root, "lc_stat_figures.js")),
+  includeScript(file.path(app_dir, "modules", "figures.js")),
+  lc_sf_styles(),
   tags$style(HTML("
 
     .construct-map {

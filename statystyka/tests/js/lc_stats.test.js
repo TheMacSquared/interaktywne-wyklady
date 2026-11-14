@@ -71,3 +71,18 @@ test("rozkład F, zapis p-wartości i zaokrąglenia", () => {
   // 2.5 → R zaokrągla do parzystej ("2"), toFixed w górę: ten przypadek pomijamy.
   F.round.x.forEach((x, i) => { if (x !== 2.5 && x !== 0.125) assert.equal(S.round(x, F.round.d[i]), F.round.text[i]); });
 });
+
+test("regresja liniowa jak lm()", () => {
+  F.lm.forEach((m, i) => {
+    const fit = S.lm(m.columns, m.y);
+    fit.coef.forEach((c, j) => {
+      close(c.estimate, m.estimate[j], 1e-9, `lm ${i} b${j}`); close(c.se, m.se[j], 1e-9, `lm ${i} se${j}`);
+      close(c.t, m.t[j], 1e-8, `lm ${i} t${j}`); close(c.p, m.p[j], 1e-7, `lm ${i} p${j}`);
+      close(c.lo, m.lo[j], 1e-6, `lm ${i} lo${j}`); close(c.hi, m.hi[j], 1e-6, `lm ${i} hi${j}`);
+    });
+    close(fit.r2, m.r2, 1e-10, `lm ${i} R2`); close(fit.adjR2, m.adj, 1e-10, `lm ${i} adj`);
+    close(fit.aic, m.aic, 1e-9, `lm ${i} AIC`); close(fit.sigma, m.sigma, 1e-10, `lm ${i} sigma`);
+  });
+  // Kolumny liniowo zależne: brak rozwiązania.
+  assert.equal(S.lm([[1, 2, 3, 4], [2, 4, 6, 8]], [1, 3, 2, 5]), null);
+});
