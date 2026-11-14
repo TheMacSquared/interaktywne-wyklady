@@ -138,7 +138,8 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     05 bez obliczeń w R poza głosowaniem i quizem (sceny z kadrami liczone
     w R z góry, sceny losowe i rozkład geometryczny w JS; wzory w odczytach
     scen jako HTML, bo offline nie ma MathJax; offline 3.3 → 2.9 MB, zero PNG).
-    Zostały trzy wykresy Chart.js w 05 (nb, plan, mix — działają offline).
+    Od 2026-11-14 także trzy piaskownice z uchwytem w 05 (nb, plan, mix) na ECharts;
+    wykład nie ładuje już Chart.js (offline 2.7 MB).
     03 bez obliczeń w R poza głosowaniem i quizem: `detektor.js` liczy tablicę 2×2,
     drzewo Bayesa (kroki nadal w `drzewo.js`) i ryciny lcSF (dwa alarmy, próg
     reakcji, Serpuchów); suwaki tablicy są wspólne dla kilku rozdziałów.

@@ -65,8 +65,9 @@ ui <- lecture_page(
   module_label = "Analiza ryzyka · Bananpol",
   chapters = .chapters,
   # Punkty stop (modules/sceny.js) i rozkład geometryczny (modules/wykresy.js, ECharts
-  # przez lcSF) działają w przeglądarce, bez serwera R. Chart.js dla punktów stop P7
-  # (nb_chart.js), „Limit, średnia i rezerwa” (plan_chart.js) i P11 (mix_chart.js).
+  # przez lcSF) działają w przeglądarce, bez serwera R. Punkty stop P7 (nb_chart.js),
+  # „Limit, średnia i rezerwa” (plan_chart.js) i P11 (mix_chart.js) też na ECharts;
+  # plan_chart.js korzysta z rachunku w nb_chart.js, więc kolejność skryptów ma znaczenie.
   header_extras = tagList(
     # Zapisy matematyczne w zwykłym tekście (\\( … \\) w akapicie albo punkcie listy)
     # dostają jasne tło z ramką, jak w wykładzie 04. Wzory numerowane stoją w <div>.
@@ -82,7 +83,6 @@ ui <- lecture_page(
       :is(p, li):has(> .MathJax) { text-align: left; }
     ")),
     includeScript(file.path(app_dir, "modules", "sceny.js")),
-    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
     includeScript(file.path(project_root, "R", "lc_dist.js")),

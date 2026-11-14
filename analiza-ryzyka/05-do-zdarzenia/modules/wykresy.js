@@ -4,8 +4,8 @@
 //   d5_geom — Rozkład geometryczny dla trzech wartości p (pola wyboru), oś do
 //             kwantyla 0.999 najdłuższego z wybranych, najwyżej 80 kontroli.
 //
-// Wykresy Chart.js tego wykładu (nb_chart.js, plan_chart.js, mix_chart.js) działają
-// offline same; ich przeniesienie na ECharts to osobny krok.
+// Piaskownice z uchwytem (nb_chart.js, plan_chart.js, mix_chart.js) używają ECharts
+// bezpośrednio, bez lcSF: przeciąganie kreski i klawisze obsługuje lcCharts.handleLayer.
 (function () {
   "use strict";
   var C = window.lcCharts, S = window.lcSF, D = window.lcDist;

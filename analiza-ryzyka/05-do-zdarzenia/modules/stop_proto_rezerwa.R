@@ -1,25 +1,25 @@
 # PUNKTY STOP (2026-11-04) — limit planistyczny, średnia i rezerwa na jednym widoku --
 #
-# Chart.js (modules/plan_chart.js): rozkład łącznej liczby kontroli do trzeciej
+# ECharts (modules/plan_chart.js): rozkład łącznej liczby kontroli do trzeciej
 # wady (r = 3, p = 0.10), pole do limitu n to P(X ≤ n), kreski średniej i limitu,
 # klamra rezerwy (n − średnia). Limit przeciąga się po wykresie albo wybiera
 # poziomem pewności α; „wszystkie” pokazuje 90/95/99% naraz (scalony P10
 # „Koszt pewności”). Stoi za definicją 5.4.
 #   d5p_plan_ui — kontener .lc-plan[data-r][data-p][data-n]
-# Wymaga: stop_proto_common.R (d5p_panel, d5p_css), w nagłówku Chart.js,
+# Wymaga: stop_proto_common.R (d5p_panel, d5p_css), w nagłówku ECharts,
 # R/lc_charts.js i modules/plan_chart.js (app.R).
 
 d5p_plan_alphas <- c("50%" = "0.5", "90%" = "0.9", "95%" = "0.95", "99%" = "0.99")
 
 d5p_plan_css <- tags$style(HTML("
   .lc-plan .lc-area-canvas { position: relative; aspect-ratio: 2.2 / 1; touch-action: none; }
-  .lc-plan .lc-area-canvas > canvas { position: absolute; inset: 0; }
+  .lc-plan .lc-area-canvas > .lc-ec { position: absolute; inset: 0; }
   .lc-plan .lc-area-canvas > .lc-chart-zoom { position: absolute; top: 0; left: 0; z-index: 1; }
   .lc-plan[data-lc-chart-large='true'] .lc-area-canvas { aspect-ratio: 1.65 / 1; }
   .lc-plan .lc-chart-handle { cursor: ew-resize; }
   .lc-plan.is-all .lc-read-value { font-size: .72em; }
   @media (max-width: 640px) {
-    .lc-plan .lc-area-canvas { aspect-ratio: 1.4 / 1; }
+    .lc-plan .lc-area-canvas { aspect-ratio: 1.05 / 1; }
     .lc-plan[data-lc-chart-large='true'] .lc-area-canvas { aspect-ratio: 1 / 1; }
   }
 "))
@@ -42,7 +42,7 @@ d5p_plan_ui <- d5p_panel("Pojęcie", "Limit, średnia i rezerwa",
     ),
     tags$div(class = "lc-area-canvas",
       lc_chart_zoom_button(),
-      tags$canvas(role = "img", `data-role` = "pmf",
+      tags$div(class = "lc-ec", role = "img", `data-role` = "pmf",
         `aria-label` = "Rozkład liczby kontroli do trzeciej wady z kreską średniej, kreską limitu i klamrą rezerwy; wartości w odczytach nad wykresem"))
   ),
   tags$p(class = "d5p-caption",

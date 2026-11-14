@@ -1,24 +1,24 @@
 # PUNKTY STOP (2026-11-04) — rozkład ujemny dwumianowy na tle geometrycznego (P7) ---
 #
-# Zastępuje dawny widget ggplot „Łączna liczba kontroli”. Chart.js
+# Zastępuje dawny widget ggplot „Łączna liczba kontroli”. ECharts
 # (modules/nb_chart.js, wzorzec jak „Dwie krzywe normalne” w statystyce):
 # jedno pole pod krzywą, stała oś Y (szczyt r = 1), blady kontur rozkładu
 # geometrycznego. r zmienia się, przeciągając kropkę na średniej (albo
 # strzałkami), p z przycisków nad wykresem. Wszystko liczy przeglądarka.
 #   d5p7d_ui — kontener .lc-nb[data-r][data-p]
-# Wymaga: stop_proto_common.R (d5p_panel, d5p_css), w nagłówku Chart.js,
+# Wymaga: stop_proto_common.R (d5p_panel, d5p_css), w nagłówku ECharts,
 # R/lc_charts.js i modules/nb_chart.js (app.R).
 
 d5p7_p_values <- c("0.33", "0.10", "0.03")
 
 d5p7_css <- tags$style(HTML("
   .lc-nb .lc-area-canvas { position: relative; aspect-ratio: 2.2 / 1; touch-action: none; }
-  .lc-nb .lc-area-canvas > canvas { position: absolute; inset: 0; }
+  .lc-nb .lc-area-canvas > .lc-ec { position: absolute; inset: 0; }
   .lc-nb[data-lc-chart-large='true'] .lc-area-canvas { aspect-ratio: 1.65 / 1; }
   .lc-nb .lc-chart-handle { cursor: ew-resize; }
   .lc-nb .lc-area-canvas > .lc-chart-zoom { position: absolute; top: 0; left: 0; z-index: 1; }
   @media (max-width: 640px) {
-    .lc-nb .lc-area-canvas { aspect-ratio: 1.4 / 1; }
+    .lc-nb .lc-area-canvas { aspect-ratio: 1.05 / 1; }
     .lc-nb[data-lc-chart-large='true'] .lc-area-canvas { aspect-ratio: 1 / 1; }
   }
 "))
@@ -42,7 +42,7 @@ d5p7d_ui <- d5p_panel("Piaskownica", "Rozkład i jego geometryczny cień",
     ),
     tags$div(class = "lc-area-canvas",
       lc_chart_zoom_button(),
-      tags$canvas(role = "img", `data-role` = "pmf",
+      tags$div(class = "lc-ec", role = "img", `data-role` = "pmf",
         `aria-label` = "Rozkład łącznej liczby kontroli do r-tej wady na tle rozkładu geometrycznego; parametry w odczytach nad wykresem"))
   ),
   tags$p(class = "d5p-caption",

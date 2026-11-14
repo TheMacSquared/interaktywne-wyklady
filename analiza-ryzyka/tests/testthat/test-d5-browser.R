@@ -18,6 +18,9 @@ testthat::test_that("wykład 05: punkty stop i rozkład geometryczny działają 
       html_outputs = xml2::xml_attr(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-html-output')]"), "id"),
       shiny_scene_ids = grepl('id="d5p_(rule|geo_one|mem|one|sum|br|cut_new|dost)', html),
       head = paste(t$head, t$html),
+      ec = vapply(c("lc-nb", "lc-plan", "lc-mix"), function(k) length(xml2::xml_find_all(doc,
+        sprintf("//div[@class='%s']//div[@class='lc-ec' and @data-role='pmf']", k))), integer(1)),
+      canvases = length(xml2::xml_find_all(doc, "//canvas")),
       seed_x = vapply(env$d5p_br_seed_tapes, length, integer(1))
     )
   }, args = list(path = file.path(risk_root, "05-do-zdarzenia")), show = FALSE)
@@ -27,9 +30,13 @@ testthat::test_that("wykład 05: punkty stop i rozkład geometryczny działają 
   testthat::expect_equal(res$plot_outputs, 0L)
   testthat::expect_setequal(res$html_outputs, c("d5_vote_feedback", "d5_quiz_feedback"))
   testthat::expect_false(res$shiny_scene_ids)
-  for (s in c("lcD5Scenes", "window.lcSF", "echarts/6.1.0/echarts.min.js", "chart.umd.js")) {
+  for (s in c("lcD5Scenes", "window.lcSF", "echarts/6.1.0/echarts.min.js", "lcD5Nb", "lcD5Mix")) {
     testthat::expect_true(grepl(s, res$head, fixed = TRUE), info = s)
   }
+  # Piaskownice P7, „Limit, średnia i rezerwa” i P11 na ECharts (od 2026-11-14), bez Chart.js.
+  testthat::expect_equal(unname(res$ec), c(1L, 1L, 1L))
+  testthat::expect_equal(res$canvases, 0L)
+  testthat::expect_false(grepl("chart.umd.js", res$head, fixed = TRUE))
 
   frames <- Filter(function(cfg) !is.null(cfg$frames), res$configs)
   testthat::expect_equal(sort(vapply(frames, function(cfg) length(cfg$frames), integer(1))), c(2L, 3L, 3L, 3L, 5L))
