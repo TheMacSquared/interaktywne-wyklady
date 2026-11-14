@@ -94,3 +94,21 @@ test("kolor wyniku w trakcie gry: stały albo z progów", () => {
   assert.equal(Q.scoreColor({ correct: 5, wrong: 5 }, { score_levels: levels }), "m");
   assert.equal(Q.scoreColor({ correct: 4, wrong: 6 }, { score_levels: levels }), "l");
 });
+
+test("część odpowiedzi w pytaniu: poprawna i losowe błędne", () => {
+  const six = { n: 5, option_count: 3, questions: Array.from({ length: 8 }, (_, i) => ({
+    question: "P" + i, options: ["a", "b", "c", "d", "e", "f"], correct: 1 + (i % 6), explanation: "" })) };
+  const rnd = mulberry32(21);
+  const s = Q.start(six, rnd);
+  const seen = new Set();
+  for (let i = 0; i < 5; i++) {
+    assert.equal(s.order.length, 3);
+    assert.equal(new Set(s.order).size, 3, "odpowiedzi się nie powtarzają");
+    assert.ok(s.order.includes(s.questions[s.index].correct - 1), "poprawna jest wśród kafelków");
+    s.order.forEach((k) => seen.add(k));
+    Q.answer(s, rightTile(s));
+    assert.equal(s.last.ok, true);
+    if (i < 4) Q.next(s, rnd);
+  }
+  assert.ok(seen.size > 3, "błędne odpowiedzi są losowane z całej puli");
+});

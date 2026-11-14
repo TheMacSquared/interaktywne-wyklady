@@ -1,7 +1,9 @@
 // Quiz kafelkowy (lc_tile_quiz() w lecture_layout.R): losuje n pytań z puli,
 // pokazuje je po jednym, po odpowiedzi daje omówienie, na końcu wynik.
 // Działa w przeglądarce, bez serwera. Dane w script[data-lc-tile-quiz="<id>"]:
-//   { n, questions: [{ scenario, question, options[], correct (od 1), explanation }],
+//   { n, questions: [{ scenario, question, options[], correct (od 1), explanation,
+//       extra (HTML pokazywany po odpowiedzi, np. wykres) }],
+//     option_count: ile odpowiedzi pokazać (poprawna + losowe błędne); brak = wszystkie,
 //     colors: { letter, score, question, correct, score_levels: { start, ok, mid, low } },
 //     option_colors: [kolor litery dla każdej odpowiedzi] albo null,
 //     labels: { question, score, result, correct, next, finish, again }, tiles_class,
@@ -22,15 +24,21 @@
     }
     return a;
   }
-  function optionOrder(question, random) {
-    return shuffle(question.options.map(function (_, i) { return i; }), random);
+  // Kolejność kafelków. count < liczby odpowiedzi: poprawna i count − 1 losowych błędnych.
+  function optionOrder(question, random, count) {
+    var all = question.options.map(function (_, i) { return i; });
+    if (!count || count >= all.length) return shuffle(all, random);
+    var right = question.correct - 1;
+    var wrong = shuffle(all.filter(function (i) { return i !== right; }), random).slice(0, count - 1);
+    return shuffle([right].concat(wrong), random);
   }
   // Nowa gra: n losowych pytań, pierwsze z wylosowaną kolejnością odpowiedzi.
   function start(cfg, random) {
     var n = Math.min(cfg.n || cfg.questions.length, cfg.questions.length);
     var questions = shuffle(cfg.questions, random).slice(0, n);
     return { questions: questions, total: n, index: 0, correct: 0, wrong: 0,
-      answered: false, finished: false, last: null, order: optionOrder(questions[0], random) };
+      answered: false, finished: false, last: null, optionCount: cfg.option_count || 0,
+      order: optionOrder(questions[0], random, cfg.option_count) };
   }
   // Odpowiedź: i to pozycja kafelka (od 0) w bieżącej kolejności.
   function answer(state, i) {
@@ -46,7 +54,7 @@
     if (state.index >= state.total - 1) return finish(state);
     state.index += 1;
     state.answered = false;
-    state.order = optionOrder(state.questions[state.index], random);
+    state.order = optionOrder(state.questions[state.index], random, state.optionCount);
     return state;
   }
   function finish(state) {
@@ -118,7 +126,7 @@
       '<div class="lc-status" role="status" aria-live="polite"><span class="lc-status-' +
       (s.last.ok ? "ok" : "danger") + '"><strong>' + (s.last.ok ? "Dobrze!" : "Nie tym razem.") + "</strong></span>" +
       (s.last.ok ? "" : " Poprawna odpowiedź: <strong>" + esc(s.last.label) + "</strong>.") +
-      "<p>" + esc(s.last.explanation) + "</p></div>" +
+      "<p>" + esc(s.last.explanation) + "</p></div>" + (q.extra || "") +
       (s.index < s.total - 1 ? action("data-lc-quiz-next", id, labels.next || "Następne pytanie")
                              : action("data-lc-quiz-finish", id, labels.finish || "Zobacz wynik")));
     var sum = s.finished ? summary(s, cfg) : null;

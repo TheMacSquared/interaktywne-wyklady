@@ -354,7 +354,20 @@ ch4_ui <- list(
         list(kind = "expo", lambda = 4, window = 60, width = 5, unit = "deszcz",
              sub = "czas do końca deszczu",
              xTitle = "X, czyli czas do końca deszczu (min)",
-             aria = "Czas do końca deszczu i histogram powtórzeń"))
+             aria = "Czas do końca deszczu i histogram powtórzeń"),
+        texts = list(
+        tagList("Zaczyna padać. Zegar rusza od zera i czekamy, aż deszcz się skończy: chmurka zamieni się
+        w słoneczko. Czas jest za każdym razem inny, a przed deszczem go nie znamy."),
+        tagList("Z każdego deszczu robimy jedną liczbę: ", exp_X(), " to czas do jego końca w minutach.
+        Może wynieść dowolną wartość dodatnią, nie tylko całkowitą, więc to zmienna losowa ciągła."),
+        tagList("Powtarzamy deszcze i zliczamy, ile czasów trafia do przedziałów po 5 minut.
+        Dla zmiennej ciągłej liczy się przedział, a nie pojedyncza wartość. Wykres urywa się na
+        60 minutach: dłuższe deszcze są rzadkie."),
+        tagList("Częstości w przedziałach układają się wzdłuż krzywej: najwięcej krótkich deszczów, potem
+        wykładniczy spadek. To gęstość rozkładu wykładniczego ze średnim czasem 15 minut, czyli
+        λ = 4 na godzinę.")
+        )
+      )
     ),
 
     lc_p("Gęstość ma największą wartość w zerze i maleje wykładniczo. Rozkład
@@ -449,19 +462,6 @@ ch4_ui <- list(
 ch4_server <- function(input, output, session) {
 
   # --- Ryc. 4.7: czas oczekiwania → rozkład wykładniczy (experiment.js) ---
-  X <- exp_X
-  exp_texts(input, output, "ch4_expo", list(
-    tagList("Zaczyna padać. Zegar rusza od zera i czekamy, aż deszcz się skończy: chmurka zamieni się
-      w słoneczko. Czas jest za każdym razem inny, a przed deszczem go nie znamy."),
-    tagList("Z każdego deszczu robimy jedną liczbę: ", X(), " to czas do jego końca w minutach.
-      Może wynieść dowolną wartość dodatnią, nie tylko całkowitą, więc to zmienna losowa ciągła."),
-    tagList("Powtarzamy deszcze i zliczamy, ile czasów trafia do przedziałów po 5 minut.
-      Dla zmiennej ciągłej liczy się przedział, a nie pojedyncza wartość. Wykres urywa się na
-      60 minutach: dłuższe deszcze są rzadkie."),
-    tagList("Częstości w przedziałach układają się wzdłuż krzywej: najwięcej krótkich deszczów, potem
-      wykładniczy spadek. To gęstość rozkładu wykładniczego ze średnim czasem 15 minut, czyli
-      λ = 4 na godzinę.")
-  ))
 
   # Ryc. 4.1 losuje i rysuje sim_charts.js, Ryc. 4.6 i 4.8 — dist_charts.js.
 

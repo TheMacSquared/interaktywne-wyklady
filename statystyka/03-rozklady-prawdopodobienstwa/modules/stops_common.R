@@ -9,14 +9,6 @@ s3p_panel <- function(kind, title, ..., width_mode = "wide") {
   figure_panel(label = kind, title = title, width_mode = width_mode, ...)
 }
 
-# Tekst kroku widgetu krokowego: lista napisów (albo funkcji bez argumentów).
-s3p_step_text <- function(output, id, step, texts) {
-  output[[paste0(id, "_text")]] <- renderUI({
-    t <- texts[[step()]]
-    if (is.function(t)) t() else t
-  })
-}
-
 # Karta przykładu: sytuacja, liczby, wynik, decyzja (rodzaj „Przykłady”).
 s3p_card <- function(title, situation, numbers, result, decision) {
   tags$div(class = "s3p-card",

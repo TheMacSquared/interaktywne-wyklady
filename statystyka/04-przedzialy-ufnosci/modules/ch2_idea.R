@@ -183,7 +183,16 @@ ch2_ui <- list(
         config = list(kind = "net", mode = "net", style = "editorial", mu = net_world$mu, sigma = net_world$sigma,
                       n = 25L, mult = "t", tq = net_tq, z = 1.96,
                       xmin = 140, xmax = 200, height = 600,
-                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali, zarzuca przedział x̄ ± margines na oś wzrostu; kolejne przedziały układają się pod osią, a w ostatnim kroku widać μ i odsetek trafień"))
+                      aria = "Student z miarką mierzy grupkę osób wychodzących z sali, zarzuca przedział x̄ ± margines na oś wzrostu; kolejne przedziały układają się pod osią, a w ostatnim kroku widać μ i odsetek trafień"),
+        texts = list(
+        tagList("Zmierz grupkę. Siatka to ", tags$code("x̄", .noWS = "outside"),
+        " ± margines, czyli 95% przedział ufności dla ", tags$code("μ", .noWS = "outside"), "."),
+        tagList("Siatki spadają na stos, najnowsza na górze. ", tags$code("μ", .noWS = "outside"),
+        " jest niewidoczne, jak w prawdziwym badaniu. Dorzuć +100 i +1000 siatek."),
+        tagList("Przerywana linia to ", tags$code("μ", .noWS = "outside"), ". W długiej serii łapie je około 95% siatek,
+        a pojedyncza siatka albo złapała, albo nie.")
+        )
+      )
     ),
 
     lc_p("Przy n = 25 i poziomie 95% każda siatka sięga około 4.1 cm w każdą
@@ -279,14 +288,6 @@ ch2_ui <- list(
 ch2_server <- function(input, output, session) {
 
   # --- Scena: Zarzuć siatkę ---
-  scene_texts(input, output, "ch2_siatka", list(
-    tagList("Zmierz grupkę. Siatka to ", tags$code("x̄", .noWS = "outside"),
-      " ± margines, czyli 95% przedział ufności dla ", tags$code("μ", .noWS = "outside"), "."),
-    tagList("Siatki spadają na stos, najnowsza na górze. ", tags$code("μ", .noWS = "outside"),
-      " jest niewidoczne, jak w prawdziwym badaniu. Dorzuć +100 i +1000 siatek."),
-    tagList("Przerywana linia to ", tags$code("μ", .noWS = "outside"), ". W długiej serii łapie je około 95% siatek,
-      a pojedyncza siatka albo złapała, albo nie.")
-  ))
 
   # Ryc. 2.3 (quiz) obsługuje przeglądarka: ch2_quiz_ui() i sf_ch12.js.
 }

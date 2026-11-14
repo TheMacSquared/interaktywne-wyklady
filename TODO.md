@@ -46,10 +46,11 @@ przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. 
 R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
 
 Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
-2026: gotowe 8 z 21 wykładów (analiza ryzyka 01–05, statystyka 00–02, zbudowane i sprawdzone
+2026: gotowe 10 z 21 wykładów (analiza ryzyka 01–05, statystyka 00–04, zbudowane i sprawdzone
 przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
 z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 141 wykresów
-R, 258 wyjść tekstowych i 233 wejścia czytane przez serwer. Quiz analizy ryzyka
+R, 241 wyjść tekstowych i 223 wejścia czytane przez serwer. Zostały tylko
+wykłady z wykresami R: analiza ryzyka 06–10 i statystyka 05–10. Quiz analizy ryzyka
 (wszystkie 10 wykładów) ocenia już przeglądarka; głosowanie „Najpierw zdecyduj”
 w 03–05 także (`risk_vote_panel(feedback = )`). Treść wybieraną kontrolką
 (dawniej `uiOutput()` + `renderUI()` po `input$…`) zastępuje `lc_variants()`,
@@ -63,17 +64,18 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
 - [x] Faza 0: licznik zależności od serwera (`scripts/check_static_ready.R`).
 - [x] Faza 1: tryb statyczny `lecture_page()`, `scripts/build_static.R`,
   `scripts/check_static_page.R`; pilot: analiza ryzyka 02.
-- [ ] Faza 2: kontrolki bez Shiny (segment, lista, kroki `lc_step_nav`,
+- [x] Faza 2 (15 listopada 2026): wykłady bez wykresów R — analiza ryzyka 01–05
+  i statystyka 00–04 — nie mają logiki serwera. Strona statyczna wstawia treść
+  rozdziałów po wczytaniu skryptów (jak renderUI w Shiny).
+- [ ] Faza 2, reszta: kontrolki bez Shiny (segment, lista, kroki `lc_step_nav`,
   `lc_chips`, `lc_drop_match`, `conditionalPanel`), głosowanie w pozostałych
   wykładach (06–10: dopisać `feedback` do `risk_vote_panel()`) i ćwiczenia
-  w przeglądarce; statystyka 03 i 04 (bez wykresów R).
-  Zrobione: analiza ryzyka 01, 03, 04 i 05; statystyka 00, 01 i 02.
+  w przeglądarce — przy wykładach z wykresami R (fazy 4–7).
 - [ ] Opisy kroków scen w pozostałych wykładach statystyki: `scene_texts()`
-  (serwer) → `lc_step_widget(texts = )`, tak jak w 00–02. Zostało 16 wywołań:
-  03 (4), 04 (1), 05 (4), 06 (4), 07 (2), 08 (1). Każdy wykład ma własną kopię
-  `scene_texts()` w `modules/`.
-- [ ] Quiz statystyki 03 przenieść na `lc_tile_quiz()` (ma wykres do pytania:
-  komponent trzeba o to rozszerzyć; 00 i 01 są przeniesione).
+  (serwer) → `lc_step_widget(texts = )`, tak jak w 00–04
+  (`scripts/migracja/move_scene_texts.py`). Zostało 11 wywołań: 05 (4), 06 (4),
+  07 (2), 08 (1). Ćwiczenia w wariantach kierunków przenosi
+  `scripts/migracja/port_exercises.py` (`lc_static_fill()`).
 - [ ] Wzory liczone w przeglądarce są składane w HTML (`.lc-hmath`, `.lc-hfrac`),
   bo strona statyczna nie ładuje MathJax; dziś tylko statystyka 01, Ryc. 3.5.
   Krój i wielkość różnią się od wzorów składanych przy budowaniu: do oceny na ekranie.

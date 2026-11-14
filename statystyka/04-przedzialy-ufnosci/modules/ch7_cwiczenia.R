@@ -7,49 +7,6 @@
 # UI
 # ============================================================================
 
-ch7_ui <- list(
-  id    = "ch-cwiczenia",
-  num   = "06",
-  title = "Ćwiczenia",
-  content = tagList(
-
-    lc_chapter_hero(
-      kicker = "Rozdział 06 · Przedziały ufności",
-      num    = "06",
-      title  = "Ćwiczenia praktyczne.",
-      lead   = "Czas zastosować wszystko, co poznaliśmy o przedziałach
-                ufności na rzeczywistych danych."
-    ),
-
-    lc_h2("ch7-cwiczenia", "Ćwiczenia praktyczne — przedziały ufności"),
-
-    tagList(
-      p(tags$b("Czas trwania:"), " ~ 90 minut · ",
-        tags$b("Narzędzie:"), " Jamovi"),
-      p("Trzy bloki zadań — CI dla średniej, CI dla proporcji,
-        interpretacja i myślenie krytyczne. Każde zadanie ma ",
-        tags$b("ukryte rozwiązanie"),
-        " — kliknij przycisk, aby je zobaczyć."),
-
-      tagList(
-        selectInput("ch7_kierunek", tags$b("Wybierz wariant dla kierunku:"),
-          choices = list(
-            "Edukacja (CASchools)" = "edu",
-            "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
-            "Rolnictwo" = "rol",
-            "Technologia żywności" = "zyw",
-            "Inżynieria danych satelitarnych i kosmicznych" = "sat"
-          ),
-          selected = "edu",
-          width = "100%"
-        )
-      )
-    ),
-
-    uiOutput("ch7_content")
-  )
-)
-
 # ============================================================================
 # TRESC ZADAN — funkcje zwracajace tagList per kierunek
 # ============================================================================
@@ -1066,32 +1023,82 @@ source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
 .ch7_solutions$sat <- .ch7_sat_solutions
 
 # ============================================================================
-# SERVER
+# WARIANTY W DOKUMENCIE (bez serwera)
 # ============================================================================
 
-ch7_server <- function(input, output, session) {
+.ch7_directions <- c("edu", "bhp", "rol", "zyw", "sat")
 
-  sol_ids <- c("sol1", "sol2", "sol3", "sol4", "sol5", "sol6", "sol7", "sol8")
-
-  # Treść wariantu po zmianie kierunku.
-  observeEvent(input$ch7_kierunek, {
-    k <- input$ch7_kierunek
-    output$ch7_content <- renderUI({
-      switch(k,
+# Treść wariantu z rozwiązaniami wstawionymi w zwijane bloki (dawniej renderował
+# je serwer). Nagłówki sekcji dostają przyrostek kierunku, bo w dokumencie są
+# wszystkie warianty naraz.
+.ch7_static_content <- function(k) {
+  content <- switch(k,
         edu = .ch7_content_edu(),
         bhp = .ch7_content_bhp(),
         rol = .ch7_content_rol(),
         zyw = .ch7_content_zyw(),
         sat = .ch7_content_sat()
-      )
-    })
-  }, ignoreNULL = FALSE)
+  )
+  solutions <- .ch7_solutions[[k]]
+  lc_static_fill(content, heading_suffix = k,
+    fills = stats::setNames(solutions, paste0("ch7_", names(solutions))))
+}
 
-  # Rozwiązania siedzą w lc_more(): Shiny renderuje je dopiero po rozwinięciu.
-  lapply(sol_ids, function(sid) {
-    output[[paste0("ch7_", sid)]] <- renderUI({
-      req(input$ch7_kierunek)
-      .ch7_solutions[[input$ch7_kierunek]][[sid]]
-    })
-  })
+# ============================================================================
+# UI
+# ============================================================================
+
+ch7_ui <- list(
+  id    = "ch-cwiczenia",
+  num   = "06",
+  title = "Ćwiczenia",
+  content = tagList(
+
+    lc_chapter_hero(
+      kicker = "Rozdział 06 · Przedziały ufności",
+      num    = "06",
+      title  = "Ćwiczenia praktyczne.",
+      lead   = "Czas zastosować wszystko, co poznaliśmy o przedziałach
+                ufności na rzeczywistych danych."
+    ),
+
+    lc_h2("ch7-cwiczenia", "Ćwiczenia praktyczne — przedziały ufności"),
+
+    tagList(
+      p(tags$b("Czas trwania:"), " ~ 90 minut · ",
+        tags$b("Narzędzie:"), " Jamovi"),
+      p("Trzy bloki zadań — CI dla średniej, CI dla proporcji,
+        interpretacja i myślenie krytyczne. Każde zadanie ma ",
+        tags$b("ukryte rozwiązanie"),
+        " — kliknij przycisk, aby je zobaczyć."),
+
+      tagList(
+        selectInput("ch7_kierunek", tags$b("Wybierz wariant dla kierunku:"),
+          choices = list(
+            "Edukacja (CASchools)" = "edu",
+            "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
+            "Rolnictwo" = "rol",
+            "Technologia żywności" = "zyw",
+            "Inżynieria danych satelitarnych i kosmicznych" = "sat"
+          ),
+          selected = "edu",
+          width = "100%",
+          selectize = FALSE   # zwykła lista: działa bez skryptów Shiny
+        )
+      )
+    ),
+
+    # Wszystkie warianty są w dokumencie; widoczny jest wariant wybranego kierunku.
+    lc_variants("ch7_kierunek", selected = "edu",
+      stats::setNames(lapply(.ch7_directions, .ch7_static_content), .ch7_directions))
+  )
+)
+
+# ============================================================================
+# SERVER
+# ============================================================================
+
+ch7_server <- function(input, output, session) {
+  # Rozdział nie ma logiki serwera: warianty i rozwiązania są w dokumencie
+  # (lc_variants(), lc_static_fill()).
 }

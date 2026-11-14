@@ -138,7 +138,10 @@ check_page <- function(file) {
   note(!isTRUE(ev("document.documentElement.scrollWidth > window.innerWidth + 1")),
        "brak poziomego przewijania przy 390 px")
 
-  requests <- unique(requests); errors <- unique(errors)
+  # Osadzone filmy (iframe YouTube) są treścią wykładu i wymagają sieci z założenia.
+  embeds <- grepl("^https://www\\.youtube(-nocookie)?\\.com/embed/", requests)
+  if (any(embeds)) cat(sprintf("  [ok] osadzone filmy z sieci: %d\n", length(unique(requests[embeds]))))
+  requests <- unique(requests[!embeds]); errors <- unique(errors)
   note(!length(requests), if (length(requests)) paste("żądania sieciowe:", paste(requests, collapse = ", ")) else "brak żądań sieciowych")
   note(!length(errors), if (length(errors)) paste("błędy konsoli:", paste(errors, collapse = " | ")) else "brak błędów konsoli")
   problems

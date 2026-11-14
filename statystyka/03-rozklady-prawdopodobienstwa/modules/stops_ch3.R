@@ -93,7 +93,15 @@ s3p_3g_ui <- s3p_panel("Ryc. 3.5", "Spotkanie na szlaku", width_mode = "text",
     labels = c("Ruszają", "Rozegraj zawody", "Rozegraj zawody", "Rozegraj zawody"),
     options = list(list(name = "p", label = "Szansa spotkania", values = c("Ukryj" = "off", "Pokaż" = "on"),
                         selected = "off")),
-    more_from = 3, config = s3p_3g_cfg)
+    more_from = 3, config = s3p_3g_cfg,
+    texts = list(
+    "Na Ślężę prowadzi pięć równie długich i równie ładnych szlaków. Jeden kolega stoi na szczycie, drugi na dole. Każdy wybiera szlak na chybił trafił i ruszają jednocześnie. Jaka jest szansa, że spotkają się na szlaku?",
+    "Teraz zawody: sześć par w różnych koszulkach, w każdej jeden zawodnik na szczycie i jeden na dole. Punkt zdobywa para, która spotka się na szlaku. X to liczba par, które się spotkały.",
+    "Medale rozdamy tylko wtedy, gdy spotkają się co najmniej trzy pary. Jak często tak się zdarza? Rozegraj wiele zawodów.",
+    tagList("Kółka pokazują model: sześć niezależnych par, każda spotyka się z szansą 1/5. To rozkład dwumianowy B(6, 0.2).",
+    tags$br(), tags$em(class = "s3p-dedic", "Dedykacja: śp. dr hab. Andrzej Michalski"))
+    )
+  )
 )
 
 # ============================================================================
@@ -105,11 +113,4 @@ s3p_ch3_server <- function(input, output, session) {
   # Ryc. 3.6 i 3.9 liczy przeglądarka (stops34_charts.js).
 
   # --- 3g -------------------------------------------------------------------
-  scene_texts(input, output, "s3p_3g", list(
-    "Na Ślężę prowadzi pięć równie długich i równie ładnych szlaków. Jeden kolega stoi na szczycie, drugi na dole. Każdy wybiera szlak na chybił trafił i ruszają jednocześnie. Jaka jest szansa, że spotkają się na szlaku?",
-    "Teraz zawody: sześć par w różnych koszulkach, w każdej jeden zawodnik na szczycie i jeden na dole. Punkt zdobywa para, która spotka się na szlaku. X to liczba par, które się spotkały.",
-    "Medale rozdamy tylko wtedy, gdy spotkają się co najmniej trzy pary. Jak często tak się zdarza? Rozegraj wiele zawodów.",
-    tagList("Kółka pokazują model: sześć niezależnych par, każda spotyka się z szansą 1/5. To rozkład dwumianowy B(6, 0.2).",
-      tags$br(), tags$em(class = "s3p-dedic", "Dedykacja: śp. dr hab. Andrzej Michalski"))
-  ))
 }

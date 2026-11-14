@@ -269,3 +269,34 @@ testthat::test_that("lc_tile_quiz ze stałymi odpowiedziami: klucz jako wartoś�
   bad <- questions; bad[[1]]$correct <- "z"
   testthat::expect_error(env$lc_tile_quiz("qo", bad, summary = c("0" = "ok"), options = options))
 })
+
+testthat::test_that("lc_static_fill wstawia treść w miejsca wyjść i nadaje przyrostek nagłówkom", {
+  env <- load_v2_env()
+  content <- shiny::tagList(env$lc_h2("blok1", "Blok 1"),
+                            shiny::tags$details(shiny::uiOutput("x_sol1")), shiny::uiOutput("x_sol2"))
+  out <- html(env$lc_static_fill(content, heading_suffix = "rol",
+    fills = list(x_sol1 = shiny::tags$p("Rozwiązanie 1"), x_sol3 = "nie ma takiego miejsca")))
+  testthat::expect_match(out, 'id="blok1-rol"', fixed = TRUE)
+  testthat::expect_match(out, 'data-lc-section="blok1-rol"', fixed = TRUE)
+  testthat::expect_match(out, "<p>Rozwiązanie 1</p>", fixed = TRUE)
+  testthat::expect_false(grepl('id="x_sol1"', out, fixed = TRUE))
+  testthat::expect_match(out, 'id="x_sol2"', fixed = TRUE)          # niewypełnione zostaje
+  testthat::expect_false(grepl("nie ma takiego miejsca", out, fixed = TRUE))
+})
+
+testthat::test_that("lc_tile_quiz: część odpowiedzi w pytaniu i treść po odpowiedzi", {
+  env <- load_v2_env()
+  options <- lapply(c("a", "b", "c", "d"), function(v) list(value = v, label = toupper(v)))
+  questions <- list(list(id = 1, question = "Q1", correct = "c", explanation = "E1", example = TRUE),
+                    list(id = 2, question = "Q2", correct = "a", explanation = "E2"))
+  out <- html(env$lc_tile_quiz("qx", questions, summary = c("0" = "ok"), options = options,
+    option_count = 3, colors = list(letter = NULL),
+    extra = function(q) if (isTRUE(q$example)) shiny::tags$div(class = "ex", paste("przykład", q$id))))
+  json <- sub('(?s).*<script type="application/json" data-lc-tile-quiz="qx">(.*?)</script>.*', "\\1", out, perl = TRUE)
+  cfg <- jsonlite::fromJSON(gsub("<\\/", "</", json, fixed = TRUE), simplifyVector = FALSE)
+  testthat::expect_equal(cfg$option_count, 3L)
+  testthat::expect_match(cfg$questions[[1]]$extra, '<div class="ex">przykład 1</div>', fixed = TRUE)
+  testthat::expect_null(cfg$questions[[2]]$extra)
+  testthat::expect_null(cfg$colors$letter)
+  testthat::expect_null(cfg$option_colors)
+})

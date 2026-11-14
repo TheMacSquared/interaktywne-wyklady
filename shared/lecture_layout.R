@@ -1918,7 +1918,15 @@ lc_check_button <- function(button_id, label, input_id, variant = "solid") {
 #              c("90" = "Świetnie.", "70" = "Dobry wynik.", "0" = "Spróbuj ponownie.")
 lc_tile_quiz <- function(id, questions, n = length(questions), summary,
                          start_label = "Rozpocznij quiz", options = NULL,
-                         labels = list(), colors = list(), tiles_class = "quiz-cols-2") {
+                         labels = list(), colors = list(), tiles_class = "quiz-cols-2",
+                         option_count = NULL, extra = NULL) {
+  # option_count: ile odpowiedzi pokazać w pytaniu (poprawna + losowe błędne).
+  # extra: funkcja(pytanie) zwracająca treść pokazywaną po odpowiedzi (np. wykres)
+  #        albo NULL; liczona raz, przy budowaniu strony.
+  extras <- if (is.function(extra)) lapply(questions, function(q) {
+    x <- extra(q)
+    if (is.null(x)) NULL else as.character(htmltools::tagList(x))
+  })
   stopifnot(length(questions) > 0, !is.null(names(summary)))
   # options: te same odpowiedzi w każdym pytaniu, jako lista list(value, label, color);
   # wtedy `correct` pytania jest wartością (value), a kafelek ma kolor odpowiedzi.
@@ -1937,16 +1945,19 @@ lc_tile_quiz <- function(id, questions, n = length(questions), summary,
   }
   config <- list(
     n = min(n, length(questions)),
-    questions = lapply(questions, function(q) {
-      list(scenario = q$scenario %||% "", question = q$question,
-           options = as.list(unlist(q$options)), correct = as.integer(q$correct),
-           explanation = q$explanation)
+    questions = lapply(seq_along(questions), function(i) {
+      q <- questions[[i]]
+      c(list(scenario = q$scenario %||% "", question = q$question,
+             options = as.list(unlist(q$options)), correct = as.integer(q$correct),
+             explanation = q$explanation),
+        if (!is.null(extras[[i]])) list(extra = extras[[i]]))
     }),
+    option_count = option_count,
     # colors: letter (tło litery kafelka), score (odczyt wyniku), question i correct
     # (pozostałe odczyty), score_levels = list(start, ok, mid, low): kolor wyniku
     # w trakcie gry (≥ 70%, ≥ 50%, mniej).
     colors = utils::modifyList(list(letter = upwr_secondary, score = upwr_accent), colors),
-    option_colors = if (!is.null(options)) {
+    option_colors = if (!is.null(options) && !is.null(options[[1]]$color)) {
       as.list(unname(vapply(options, function(o) as.character(o$color), character(1))))
     },
     # labels: question, score (odczyty w trakcie), result, correct (podsumowanie),
@@ -1975,6 +1986,32 @@ lc_tile_quiz <- function(id, questions, n = length(questions), summary,
 # Zastępuje uiOutput() + renderUI() z req() po kliknięciu. Logika: shared/lc_widgets.js.
 lc_reveal <- function(button_id, ..., id = NULL) {
   tags$div(id = id, class = "lc-reveal", `data-lc-reveal` = button_id, hidden = NA, ...)
+}
+
+# Wypełnia w gotowej treści miejsca, które dawniej renderował serwer: element
+# o identyfikatorze `<nazwa>` (np. uiOutput("ch7_sol1")) zostaje zastąpiony
+# treścią fills[[<nazwa>]]. Identyfikatory, których nie ma w treści, są pomijane.
+#   heading_suffix  przyrostek identyfikatorów nagłówków lc_h2() — potrzebny, gdy
+#                   w dokumencie jest kilka wariantów tej samej treści naraz
+lc_static_fill <- function(content, fills = list(), heading_suffix = NULL) {
+  q <- htmltools::tagQuery(tags$div(content))
+  if (!is.null(heading_suffix)) {
+    q <- q$find("h2.lc-h2")$each(function(h, i) {
+      id <- paste0(htmltools::tagGetAttribute(h, "id"), "-", heading_suffix)
+      h$attribs$id <- id
+      h$attribs[["data-lc-section"]] <- id
+      h
+    })$resetSelected()
+  }
+  for (id in names(fills)) {
+    hit <- q$find(paste0("#", id))
+    q <- if (length(hit$selectedTags()) > 0) {
+      hit$replaceWith(tags$div(fills[[id]]))$resetSelected()
+    } else {
+      hit$resetSelected()
+    }
+  }
+  q$allTags()
 }
 
 # Warianty treści przełączane kontrolką, bez serwera: wszystkie warianty są

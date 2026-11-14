@@ -76,7 +76,8 @@ test("kanały wiadomości czekają na Shiny i rejestrują się tylko raz", () =>
 test("lejek odtwarza serie po powrocie, także po wiadomości bez obecnego DOM", () => {
   const env = environment();
   env.load("03-rozklady-prawdopodobienstwa/modules/lejek_chart.js");
-  const message = env.handlers.get("lejek_series");
+  // Serie ustawia sam skrypt (window.lcS03Lejek.set); serwer ich nie przysyła.
+  const message = (m) => env.window.lcS03Lejek.set(m.series);
   message({ series: [[0, 0.5, 0.33]] });
   for (let i = 0; i < 10; i++) {
     const el = root("lc-lejek", [ecbox("lejek")]);
@@ -514,16 +515,56 @@ test("Simpson: lupa zachowuje widok osobnych branż", () => {
   assert.ok(ch.series.get("g0").data.length);assert.equal(ch.series.get("all").lineStyle.type.join(),"6,4");
 });
 
+test("lejek: losowanie serii, rozrzut między seriami i odczyty", () => {
+  const env = environment();
+  env.load("03-rozklady-prawdopodobienstwa/modules/lejek_chart.js");
+  const L = env.window.lcS03Lejek;
+  let seed = 11;                                   // mulberry32
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let x = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; };
+  const s = L.drawSeries(rnd);
+  assert.equal(s.length, L.NS.length, "jedna częstość na punkt siatki");
+  assert.equal(L.NS[0], 1); assert.equal(L.NS[L.NS.length - 1], 1000);
+  assert.ok(s[0] === 0 || s[0] === 1, "po jednym rzucie częstość to 0 albo 1");
+  assert.ok(s.every(f => f >= 0 && f <= 1));
+  assert.ok(Math.abs(s[s.length - 1] - 1 / 6) < 0.05, "po 1000 rzutach blisko 1/6: " + s[s.length - 1]);
+  // stała funkcja losowa: zawsze szóstka albo nigdy
+  assert.ok(L.drawSeries(() => 0.99).every(f => f === 1));
+  assert.ok(L.drawSeries(() => 0).every(f => f === 0));
+  // rozrzut dopiero od pięciu serii; wzór z próby (n - 1)
+  const flat = (v) => L.NS.map(() => v);
+  assert.equal(L.sdAt([flat(0.1), flat(0.2), flat(0.3), flat(0.4)], 10), null);
+  const sd = L.sdAt([flat(0.1), flat(0.2), flat(0.3), flat(0.4), flat(0.5)], 10);
+  assert.ok(Math.abs(sd - 0.158113883) < 1e-9, String(sd));     // R: sd(c(.1, .2, .3, .4, .5))
+  assert.equal(L.fmt3(sd), "0.158"); assert.equal(L.fmt3(null), "–"); assert.equal(L.fmt3(0.1), "0.1");
+  // rozrzut maleje z n (lejek): 40 serii
+  const many = Array.from({ length: 40 }, () => L.drawSeries(rnd));
+  assert.ok(L.sdAt(many, 10) > L.sdAt(many, 100) && L.sdAt(many, 100) > L.sdAt(many, 1000));
+  // odczyty i podpis w panelu
+  const read = (name) => new Element("span", { "data-lejek": name });
+  const few = new Element("div", { "data-lejek-caption": "few" }), lots = new Element("div", { "data-lejek-caption": "many" });
+  const reads = ["count", "sd10", "sd100", "sd1000"].map(read);
+  const el = root("lc-lejek", [...reads, few, lots, ecbox("lejek")]);
+  env.mount(el);
+  assert.equal(reads[0].textContent, "0"); assert.equal(reads[1].textContent, "–");
+  assert.equal([few.hidden, lots.hidden].join(), "false,true");
+  L.set(many);
+  assert.equal(reads[0].textContent, "40");
+  assert.match(reads[3].textContent, /^0\.0\d+$/);
+  assert.equal([few.hidden, lots.hidden].join(), "true,false");
+  assert.equal(env.errors.length, 0);
+});
+
 test("lejek: lupa nie kończy animacji, nie zmienia serii i zachowuje skalę log", () => {
   const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/lejek_chart.js");
   const el=root("lc-lejek",[zoomButton(),ecbox("lejek")]);env.mount(el);
-  env.handlers.get("lejek_series")({series:[[.1,.2,.15]]});
+  env.window.lcS03Lejek.set([[.1,.2,.15]]);
   assert.equal(env.timers.size,1);
   zoomWithoutChangingData(env,el);
   assert.equal(env.timers.size,1);
   const ch=[...env.live][0];assert.equal(ch.xAxis.type,"log");
   assert.equal(ch.series.get("last").data.length,1);
-  env.handlers.get("lejek_series")({series:[]});assert.equal(env.timers.size,0);
+  env.window.lcS03Lejek.set([]);assert.equal(env.timers.size,0);
   assert.equal(ch.series.get("last").data.length,0);assert.equal(ch.series.get("old").data.length,0);
 });
 

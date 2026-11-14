@@ -234,11 +234,9 @@ build_one <- function(app_dir) {
   title <- app_field(file.path(app_dir, "app.R"), "lecture_title")
   page_title <- paste(stats::na.omit(c(num, title)), collapse = " · ")
 
-  # Skrypty przenosimy z nagłówka na koniec dokumentu, w tej samej kolejności.
-  # W wersji Shiny treść rozdziału pojawia się naraz (renderUI); tutaj jest
-  # w pliku, więc skrypt z nagłówka, który obserwuje zmiany DOM, trafiałby na
-  # widgety wczytane do połowy. W nagłówku zostają skrypty oznaczone
-  # data-lc-early (tryb i rozmiar tekstu przed pierwszym rysowaniem) oraz dane.
+  # Skrypty przenosimy z nagłówka na koniec dokumentu, w tej samej kolejności;
+  # w nagłówku zostają skrypty oznaczone data-lc-early (tryb i rozmiar tekstu
+  # przed pierwszym rysowaniem) oraz dane.
   head_all <- paste(c(dep_html, head), collapse = "\n")
   late <- character()
   kept <- character()
@@ -258,6 +256,23 @@ build_one <- function(app_dir) {
   for (i in seq_along(kept)) {
     head_all <- sub(sprintf("<!--LC-KEPT-%d-->", i), kept[[i]], head_all, fixed = TRUE)
   }
+
+  # Treść rozdziałów czeka w <template> i trafia do dokumentu jednym ruchem, gdy
+  # wszystkie skrypty są już wczytane — tak jak w wersji Shiny, gdzie rozdział
+  # wstawia renderUI. Dzięki temu widgety nie zależą od kolejności skryptów
+  # (skrypt uruchomiony od razu nie widzi treści, zanim wczyta się skrypt, którego używa).
+  main_open <- regexpr("<main id=\"lc-main\"[^>]*>", body, perl = TRUE)
+  main_close <- max(gregexpr("</main>", body, fixed = TRUE)[[1]])
+  if (main_open < 0 || main_close < 0) stop("Nie znaleziono <main id=\"lc-main\">.", call. = FALSE)
+  inner_start <- main_open + attr(main_open, "match.length")
+  body <- paste0(
+    substr(body, 1, inner_start - 1),
+    "<template id=\"lc-static-content\">", substr(body, inner_start, main_close - 1), "</template>",
+    substr(body, main_close, nchar(body))
+  )
+  late <- c(late, paste0(
+    "<script>(function(){var t=document.getElementById('lc-static-content');",
+    "if(t)t.parentNode.replaceChild(t.content,t);})();</script>"))
 
   html <- paste(c(
     "<!DOCTYPE html>",

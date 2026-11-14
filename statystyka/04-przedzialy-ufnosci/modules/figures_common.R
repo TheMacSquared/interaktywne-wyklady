@@ -10,10 +10,3 @@ fig_panel <- function(num, label, title, ..., width_mode = "wide") {
 # Wstawka w tekście rozdziału, np. fig("1a") → fig_1a_ui.
 fig <- function(num) get(paste0("fig_", num, "_ui"), inherits = TRUE)
 
-# Tekst kroku widgetu krokowego: lista napisów (albo funkcji bez argumentów).
-fig_step_text <- function(output, id, step, texts) {
-  output[[paste0(id, "_text")]] <- renderUI({
-    t <- texts[[step()]]
-    if (is.function(t)) t() else t
-  })
-}

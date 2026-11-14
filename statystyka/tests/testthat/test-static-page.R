@@ -184,3 +184,36 @@ testthat::test_that("wykład 01 nie ma logiki serwera poza powłoką", {
   text <- paste(unlist(lapply(files, readLines, warn = FALSE)), collapse = "\n")
   testthat::expect_false(grepl("renderUI|renderText|renderPlot|observeEvent|reactiveVal|lc_step_server|sendCustomMessage|sendInputMessage|updateActionButton", text))
 })
+
+# Wykłady gotowe do budowania statycznego (scripts/check_static_ready.R): wspólne warunki.
+static_ready_lectures <- c("00-dane-i-populacja", "01-typy-danych", "02-zwiazki-zmiennych",
+                           "03-rozklady-prawdopodobienstwa", "04-przedzialy-ufnosci")
+
+for (lecture in static_ready_lectures) local({
+  lecture <- lecture
+  testthat::test_that(paste("tryb statyczny:", lecture, "ma komplet rozdziałów i nie czeka na serwer"), {
+    testthat::skip_if_not_installed("callr")
+    res <- callr::r(function(path) {
+      setwd(path)
+      options(lc.static = TRUE)
+      app <- new.env(parent = globalenv())
+      sys.source("app.R", envir = app)
+      t <- htmltools::renderTags(app$ui)
+      doc <- xml2::read_html(paste0("<div>", t$html, "</div>"))
+      ids <- xml2::xml_attr(xml2::xml_find_all(doc, "//*[@id]"), "id")
+      list(
+        sections = xml2::xml_attr(xml2::xml_find_all(doc, "//section[@data-lc-static-chapter]"), "id"),
+        chapters = vapply(app$.chapters, function(ch) ch$id, character(1)),
+        outputs = xml2::xml_attr(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-html-output') or contains(@class, 'shiny-plot-output') or contains(@class, 'shiny-text-output')]"), "id"),
+        selectize = length(xml2::xml_find_all(doc, "//script[@data-for]")),
+        duplicate_ids = unique(ids[duplicated(ids)])
+      )
+    }, args = list(path = file.path(stat_root, lecture)), timeout = 180)
+    testthat::expect_equal(res$sections, res$chapters)
+    # Klasę wyjścia Shiny mogą mieć tylko opisy kroków, które pisze przeglądarka
+    # (ryciny lcSF i skrypty wykładu): identyfikator kończy się na _text.
+    testthat::expect_true(all(grepl("_text$", res$outputs)), info = paste(res$outputs, collapse = ", "))
+    testthat::expect_equal(res$selectize, 0L)
+    testthat::expect_length(res$duplicate_ids, 0L)
+  })
+})

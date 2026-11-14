@@ -61,7 +61,17 @@ ch6_ui <- list(
         more_from = 2,
         config = c(list(kind = "lift", height = 428,
                         aria = "Trzynaście osób o losowej wadze wsiada do windy o udźwigu 1000 kg; histogram łącznej wagi z kolejnych kursów"),
-                   scene_lift[c("n", "mu", "sigma", "limit", "lo", "hi", "bin", "tick")]))
+                   scene_lift[c("n", "mu", "sigma", "limit", "lo", "hi", "bin", "tick")]),
+        texts = list(
+        tagList("Do windy wsiada 13 losowych osób. Waga każdej ma rozkład N(80, 12), a ",
+        tags$code("S", .noWS = "outside"), " to łączna waga w kabinie. Wpuść kilka kompletów."),
+        tagList("Każdy kurs spada żetonem nad swoją sumą. Pionowa linia to limit 1000 kg,
+        a słupki za nią to kursy z przeciążeniem. Dołóż 100 i 1000."),
+        tagList("Krzywa to rozkład normalny sumy wokół E(", tags$code("S", .noWS = "outside"),
+        ") = 1040 kg. Pole pod krzywą na prawo od limitu to prawdopodobieństwo
+        przeciążenia; porównaj je z odsetkiem z symulacji.")
+        )
+      )
     ),
 
     lc_p("Przeciążenie nie jest rzadkim pechem. Zdarza się w ponad czterech kursach
@@ -143,7 +153,16 @@ ch6_ui <- list(
         more_from = 2,
         config = list(kind = "group", n = 5, vals = I(scene_rating$vals), probs = I(scene_rating$probs),
                       mu = scene_rating$mu, sigma = scene_rating$sigma, height = 428,
-                      aria = "Pięć losowych osób ocenia prowadzącego w skali 1–10; histogram średnich ocen z kolejnych grupek"))
+                      aria = "Pięć losowych osób ocenia prowadzącego w skali 1–10; histogram średnich ocen z kolejnych grupek"),
+        texts = list(
+        tagList("Pytasz 5 losowych osób z roku: jak oceniasz prowadzącego w skali od 1 do 10? ",
+        tags$code("X̄", .noWS = "outside"), " to średnia ocena grupki. Zapytaj kilka grupek."),
+        tagList("Każda grupka spada żetonem nad swoją średnią. Dołóż 100 i 1000."),
+        tagList("Tło to rozkład pojedynczych ocen: skośny, większość wysokich. Krzywa to rozkład normalny dla ",
+        tags$code("X̄", .noWS = "outside"), ". Średnie z pięciu ocen układają się już prawie jak dzwon wokół μ = ",
+        lc_fmt(scene_rating$mu, 1), ".")
+        )
+      )
     ),
 
     lc_p("Dwie własności tego rozkładu wynikają wprost z rachunku wartości oczekiwanej
@@ -203,7 +222,19 @@ ch6_ui <- list(
       exp_widget("ch6_sumdice", "Suma oczek z n kostek", "Rzuć kostkami",
         list(kind = "sumdice", n = 1, xTitle = "X, czyli suma oczek",
              aria = "Suma oczek z n kostek i histogram powtórzeń"),
-        options = list(label = "Liczba kostek", values = c(1, 2, 5, 10), selected = 1))
+        options = list(label = "Liczba kostek", values = c(1, 2, 5, 10), selected = 1),
+        texts = list(
+        tagList("Rzucamy n kostkami naraz i dodajemy oczka. Liczbę kostek można zmienić w każdej chwili
+        (zmiana czyści zebrane rzuty). Zacznij od jednej."),
+        tagList(exp_X(), " to suma oczek ze wszystkich kostek. Przed rzutem jej nie znamy, więc to zmienna
+        losowa. Dla jednej kostki zakres to 1–6, dla dziesięciu 10–60."),
+        tagList("Powtarzamy rzuty i zliczamy sumy. Zmieniaj liczbę kostek i obserwuj kształt histogramu:
+        jedna kostka daje płaski rozkład, kilka kostek coraz wyraźniejszy dzwon."),
+        tagList("Częstości zbliżają się do rozkładu sumy, a przy większej liczbie kostek ten rozkład
+        pokrywa się z krzywą normalną. Dla jednej kostki krzywa wyraźnie nie pasuje, a o tym mówi CTG:
+        przybliżenie poprawia się wraz ze wzrostem n.")
+        )
+      )
     ),
 
     lc_h2("ch6-eksperyment", "Eksperyment: średnie z dowolnego rozkładu"),
@@ -348,39 +379,10 @@ ch6_ui <- list(
 ch6_server <- function(input, output, session) {
 
   # --- Ryc. 6.3: suma n kostek → rozkład normalny (experiment.js) ---
-  X <- exp_X
-  exp_texts(input, output, "ch6_sumdice", list(
-    tagList("Rzucamy n kostkami naraz i dodajemy oczka. Liczbę kostek można zmienić w każdej chwili
-      (zmiana czyści zebrane rzuty). Zacznij od jednej."),
-    tagList(X(), " to suma oczek ze wszystkich kostek. Przed rzutem jej nie znamy, więc to zmienna
-      losowa. Dla jednej kostki zakres to 1–6, dla dziesięciu 10–60."),
-    tagList("Powtarzamy rzuty i zliczamy sumy. Zmieniaj liczbę kostek i obserwuj kształt histogramu:
-      jedna kostka daje płaski rozkład, kilka kostek coraz wyraźniejszy dzwon."),
-    tagList("Częstości zbliżają się do rozkładu sumy, a przy większej liczbie kostek ten rozkład
-      pokrywa się z krzywą normalną. Dla jednej kostki krzywa wyraźnie nie pasuje, a o tym mówi CTG:
-      przybliżenie poprawia się wraz ze wzrostem n.")
-  ))
 
   # --- Ryc. 6.1: scena „Winda” (suma rozkładów normalnych) ---
-  scene_texts(input, output, "ch6_winda", list(
-    tagList("Do windy wsiada 13 losowych osób. Waga każdej ma rozkład N(80, 12), a ",
-      tags$code("S", .noWS = "outside"), " to łączna waga w kabinie. Wpuść kilka kompletów."),
-    tagList("Każdy kurs spada żetonem nad swoją sumą. Pionowa linia to limit 1000 kg,
-      a słupki za nią to kursy z przeciążeniem. Dołóż 100 i 1000."),
-    tagList("Krzywa to rozkład normalny sumy wokół E(", tags$code("S", .noWS = "outside"),
-      ") = 1040 kg. Pole pod krzywą na prawo od limitu to prawdopodobieństwo
-      przeciążenia; porównaj je z odsetkiem z symulacji.")
-  ))
 
   # --- Scena: Zapytaj grupkę ---
-  scene_texts(input, output, "ch6_grupka", list(
-    tagList("Pytasz 5 losowych osób z roku: jak oceniasz prowadzącego w skali od 1 do 10? ",
-      tags$code("X̄", .noWS = "outside"), " to średnia ocena grupki. Zapytaj kilka grupek."),
-    tagList("Każda grupka spada żetonem nad swoją średnią. Dołóż 100 i 1000."),
-    tagList("Tło to rozkład pojedynczych ocen: skośny, większość wysokich. Krzywa to rozkład normalny dla ",
-      tags$code("X̄", .noWS = "outside"), ". Średnie z pięciu ocen układają się już prawie jak dzwon wokół μ = ",
-      lc_fmt(scene_rating$mu, 1), ".")
-  ))
 
   # Ryc. 6.4 (symulacja CTG) losuje i rysuje sim_charts.js w przeglądarce.
   # Ryc. 6.5 (mapa zbieżności) rysuje ec_charts.js z danych w data-config.

@@ -94,7 +94,10 @@ Co działa bez serwera we wspólnych komponentach:
 - treść odsłaniana przyciskiem, np. tok rozwiązania: `lc_reveal()`;
 - opisy kroków widgetu krokowego: `lc_step_widget(texts = )`;
 - quiz losujący pytania z puli: `lc_tile_quiz()` (także ze stałymi odpowiedziami
-  w kolorach, argument `options`);
+  w kolorach — `options`, z częścią odpowiedzi w pytaniu — `option_count`,
+  i z treścią po odpowiedzi, np. wykresem — `extra`);
+- gotowa treść z miejscami po dawnych wyjściach serwera: `lc_static_fill()`
+  (np. rozwiązania ćwiczeń w wariantach kierunków);
 - treść wybierana kliknięciem (`lc_variants(pick = TRUE)` + atrybuty `lc_pick()`),
   przełączana przyciskiem (`lc_toggle_button()` + `lc_toggle_content()`) albo
   krokiem widgetu (`lc_step_views()`);
@@ -103,7 +106,14 @@ Co działa bez serwera we wspólnych komponentach:
 - ryciny `lcSF`, wykresy `lcCharts`, wzór ze znacznikami.
 
 Skrypty strony statycznej są na końcu dokumentu (w nagłówku zostają tylko
-oznaczone `data-lc-early`), więc widgety inicjują się na kompletnej treści.
+oznaczone `data-lc-early`), a treść rozdziałów czeka w `<template>` i trafia
+do dokumentu jednym ruchem po ich wczytaniu — tak jak w Shiny, gdzie rozdział
+wstawia `renderUI`. Widgety nie zależą więc od kolejności skryptów.
+
+Narzędzia pomocnicze migracji są w `scripts/migracja/`: porównanie paneli
+strony statycznej z wersją Shiny (`porownaj_panele.R`), uruchomienie skryptu
+sprawdzającego na działającej aplikacji (`z_shiny.R`), zrzuty i JS na stronie
+(`zrzut.R`, `js_na_stronie.R`), wszystkie kontrole naraz (`wszystkie_kontrole.sh`).
 
 Wzory wpisane w treść składa MathJax przy budowaniu. Tekst, który skrypt
 wykładu tworzy w przeglądarce, nie może zawierać TeX-a: na stronie statycznej

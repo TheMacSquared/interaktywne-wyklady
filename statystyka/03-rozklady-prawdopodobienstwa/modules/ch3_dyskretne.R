@@ -3,11 +3,13 @@
 # ============================================================================
 
 # Widget „eksperyment → zmienna losowa → rozkład” (animacja w experiment.js).
-# Konfiguracja trafia do JS jako JSON; teksty kroków renderuje serwer.
+# Konfiguracja trafia do JS jako JSON; opisy kroków są w dokumencie.
 # options: list(label, values, selected), gdy widget ma przełącznik liczby n.
-exp_widget <- function(id, title, roll_label, config, options = NULL) {
+# texts: opisy czterech kroków (bez serwera).
+exp_widget <- function(id, title, roll_label, config, options = NULL, texts = NULL) {
   lc_step_widget(id,
     title = title,
+    texts = texts,
     steps = c("Eksperyment", "Zmienna losowa", "Powtarzamy", "Rozkład"),
     toolbar = lc_toolbar(
       if (!is.null(options)) lc_group(options$label,
@@ -36,11 +38,6 @@ exp_widget <- function(id, title, roll_label, config, options = NULL) {
   )
 }
 
-# Teksty kroków widgetu eksperymentu: lista czterech fragmentów HTML.
-exp_texts <- function(input, output, id, texts) {
-  step <- lc_step_server(id, input)$step
-  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
-}
 exp_X <- function() tags$code("X", .noWS = "outside")
 
 # Wszystkie ciągi n prób (Ryc. 3.3). Kolumna = liczba
@@ -247,7 +244,20 @@ ch3_ui <- list(
       width_mode = "text",
       exp_widget("ch3_exp", "Od rzutu kostkami do rozkładu", "Rzuć kostkami",
         list(kind = "dice", n = 6, faces = 6, hit = 6, xTitle = "X, czyli liczba szóstek",
-             aria = "Rzut sześcioma kostkami, liczba szóstek i histogram powtórzeń"))
+             aria = "Rzut sześcioma kostkami, liczba szóstek i histogram powtórzeń"),
+        texts = list(
+        tagList("Rzucamy sześcioma kostkami naraz. Wynikiem doświadczenia jest sześć liczb
+        oczek, ale przed rzutem nie wiemy, jakie to będą liczby. Rzuć kostkami kilka razy."),
+        tagList("Interesuje nas jedna liczba z każdego rzutu: ", exp_X(), " to liczba szóstek.
+        Każdy rzut daje wartość ze zbioru 0, 1, …, 6, a przed rzutem nie wiemy której.
+        Liczba zależna od przypadku to zmienna losowa."),
+        tagList("Powtarzamy doświadczenie i zliczamy, ile razy wypadła każda wartość ", exp_X(),
+        ". Najpierw rzuć kilka razy, potem dokładaj po 10, 100 i 1000 rzutów."),
+        tagList("Liczebności dzielimy przez liczbę rzutów i dostajemy częstości względne. Zbliżają się
+        do prawdopodobieństw P(X = k) (kółka). Lista wartości X z ich prawdopodobieństwami to
+        rozkład prawdopodobieństwa zmiennej X.")
+        )
+      )
     ),
 
     lc_formula_annotated(
@@ -344,7 +354,19 @@ ch3_ui <- list(
       exp_widget("ch3_exp_pois", "Od godziny w sklepie do rozkładu Poissona", "Obserwuj godzinę",
         list(kind = "poisson", lambda = 4, window = 60, kmax = 11, unit = "godzina",
              sub = "liczba klientów w tej godzinie", xTitle = "X, czyli liczba klientów w godzinie",
-             aria = "Klienci wchodzący do sklepu w ciągu godziny, liczba klientów i histogram powtórzeń"))
+             aria = "Klienci wchodzący do sklepu w ciągu godziny, liczba klientów i histogram powtórzeń"),
+        texts = list(
+        tagList("Obserwujemy sklep przez godzinę. Klienci wchodzą w losowych momentach, średnio
+        czterech na godzinę, ale w żadnej godzinie nie wiemy, kiedy i ilu ich będzie."),
+        tagList("Z każdej godziny robimy jedną liczbę: ", exp_X(), " to liczba klientów, którzy weszli
+        w jej trakcie. Zależy od przypadku, więc jest zmienną losową."),
+        tagList("Obserwujemy kolejne godziny i zliczamy, ile razy wystąpiła każda wartość ", exp_X(),
+        ". Najpierw kilka godzin, potem dokładaj po 10, 100 i 1000. Wykres urywa się na
+        10 klientach: większe liczby są tak rzadkie, że nie mieszczą się na osi."),
+        tagList("Częstości względne zbliżają się do rozkładu Poissona z λ = 4 (kółka). Do jego zapisu
+        wystarczy jedna liczba, średnia liczba zdarzeń λ: P(X = k) = λᵏ e⁻λ / k!.")
+        )
+      )
     ),
 
     lc_formula_annotated(
@@ -418,7 +440,19 @@ ch3_ui <- list(
       exp_widget("ch3_exp_geom", "Od rzutów do pierwszej szóstki do rozkładu geometrycznego", "Rzucaj do szóstki",
         list(kind = "geometric", faces = 6, hit = 6, kmax = 12, unit = "seria",
              sub = "liczba rzutów do pierwszej szóstki", xTitle = "X, czyli numer rzutu z pierwszą szóstką",
-             aria = "Rzuty kostką do pierwszej szóstki, liczba rzutów i histogram powtórzeń"))
+             aria = "Rzuty kostką do pierwszej szóstki, liczba rzutów i histogram powtórzeń"),
+        texts = list(
+        tagList("Rzucamy jedną kostką tak długo, aż wypadnie szóstka. Kostki pojawiają się jedna
+        po drugiej, a długość serii jest za każdym razem inna."),
+        tagList("Z każdej serii robimy jedną liczbę: ", exp_X(), " to numer rzutu, w którym padła pierwsza
+        szóstka. Przed serią nie wiemy, ile rzutów to zajmie, więc X jest zmienną losową."),
+        tagList("Powtarzamy serie i zliczamy, ile razy wypadła każda wartość ", exp_X(),
+        ". Wykres urywa się na 12 rzutach: dłuższe serie zdarzają się rzadziej i nie
+        mieszczą się na osi."),
+        tagList("Częstości względne zbliżają się do rozkładu geometrycznego Geom(1/6) (kółka). Najczęściej
+        pierwsza szóstka pada już w pierwszym rzucie, a średnio czekamy na nią 6 rzutów.")
+        )
+      )
     ),
 
     lc_formula_annotated(
@@ -525,44 +559,9 @@ ch3_ui <- list(
 ch3_server <- function(input, output, session) {
 
   # --- Ryc. 3.2, 3.7, 3.10: eksperyment → zmienna losowa → rozkład (experiment.js) ---
-  X <- exp_X
 
-  exp_texts(input, output, "ch3_exp", list(
-    tagList("Rzucamy sześcioma kostkami naraz. Wynikiem doświadczenia jest sześć liczb
-      oczek, ale przed rzutem nie wiemy, jakie to będą liczby. Rzuć kostkami kilka razy."),
-    tagList("Interesuje nas jedna liczba z każdego rzutu: ", X(), " to liczba szóstek.
-      Każdy rzut daje wartość ze zbioru 0, 1, …, 6, a przed rzutem nie wiemy której.
-      Liczba zależna od przypadku to zmienna losowa."),
-    tagList("Powtarzamy doświadczenie i zliczamy, ile razy wypadła każda wartość ", X(),
-      ". Najpierw rzuć kilka razy, potem dokładaj po 10, 100 i 1000 rzutów."),
-    tagList("Liczebności dzielimy przez liczbę rzutów i dostajemy częstości względne. Zbliżają się
-      do prawdopodobieństw P(X = k) (kółka). Lista wartości X z ich prawdopodobieństwami to
-      rozkład prawdopodobieństwa zmiennej X.")
-  ))
 
-  exp_texts(input, output, "ch3_exp_pois", list(
-    tagList("Obserwujemy sklep przez godzinę. Klienci wchodzą w losowych momentach, średnio
-      czterech na godzinę, ale w żadnej godzinie nie wiemy, kiedy i ilu ich będzie."),
-    tagList("Z każdej godziny robimy jedną liczbę: ", X(), " to liczba klientów, którzy weszli
-      w jej trakcie. Zależy od przypadku, więc jest zmienną losową."),
-    tagList("Obserwujemy kolejne godziny i zliczamy, ile razy wystąpiła każda wartość ", X(),
-      ". Najpierw kilka godzin, potem dokładaj po 10, 100 i 1000. Wykres urywa się na
-      10 klientach: większe liczby są tak rzadkie, że nie mieszczą się na osi."),
-    tagList("Częstości względne zbliżają się do rozkładu Poissona z λ = 4 (kółka). Do jego zapisu
-      wystarczy jedna liczba, średnia liczba zdarzeń λ: P(X = k) = λᵏ e⁻λ / k!.")
-  ))
 
-  exp_texts(input, output, "ch3_exp_geom", list(
-    tagList("Rzucamy jedną kostką tak długo, aż wypadnie szóstka. Kostki pojawiają się jedna
-      po drugiej, a długość serii jest za każdym razem inna."),
-    tagList("Z każdej serii robimy jedną liczbę: ", X(), " to numer rzutu, w którym padła pierwsza
-      szóstka. Przed serią nie wiemy, ile rzutów to zajmie, więc X jest zmienną losową."),
-    tagList("Powtarzamy serie i zliczamy, ile razy wypadła każda wartość ", X(),
-      ". Wykres urywa się na 12 rzutach: dłuższe serie zdarzają się rzadziej i nie
-      mieszczą się na osi."),
-    tagList("Częstości względne zbliżają się do rozkładu geometrycznego Geom(1/6) (kółka). Najczęściej
-      pierwsza szóstka pada już w pierwszym rzucie, a średnio czekamy na nią 6 rzutów.")
-  ))
 
   # Ryc. 3.1 losuje i rysuje sim_charts.js, Ryc. 3.4, 3.8, 3.11, 3.12 — dist_charts.js.
 
