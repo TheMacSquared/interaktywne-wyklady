@@ -56,3 +56,20 @@ test("rozdział 4: test t jednej próby, histogram kroków i wartości krytyczne
   close(Z.critical("chisq", 3).values[0], 7.814728, 1e-5, "qchisq");
   assert.ok(Z.critical("t", 39, "less").reject(-2) && !Z.critical("t", 39, "less").reject(2));
 });
+
+test("rozdział 5: test dwumianowy i test proporcji jak binom.test() i prop.test()", () => {
+  // R: binom.test(k, n, p)$p.value i prop.test(k, n, p = p, correct = TRUE)$p.value
+  const cases = [[45, 50, 0.8, 0.0788306, 0.0480272, 0.1116118], [34, 50, 0.6, 0.3122589, 0.1560906, 0.3123214],
+                 [3, 50, 0.03, 0.1892019, 0.1892019, 0.4070893], [70, 80, 0.95, 0.0065343, 0.9979009, 0.0047809],
+                 [2, 20, 0.5, 0.0004025, 0.9999800, 0.0007962]];
+  for (const [k, n, p0, two, greater, prop] of cases) {
+    close(Z.binomTest(k, n, p0, "two.sided").p, two, 2e-7, `binom dwustronny ${k}/${n}`);
+    close(Z.binomTest(k, n, p0, "greater").p, greater, 2e-7, `binom prawostronny ${k}/${n}`);
+    close(Z.propTest(k, n, p0).p, prop, 2e-7, `prop.test ${k}/${n}`);
+  }
+  const t = Z.binomTest(45, 50, 0.8, "two.sided");
+  assert.equal(t.probs.length, 51);
+  assert.ok(t.extreme[45] && t.extreme[50] && !t.extreme[40]);
+  // Poprawka Yatesa nie przekracza samej różnicy: k = np₀ daje z = 0.
+  assert.equal(Z.propTest(40, 50, 0.8).z, 0);
+});

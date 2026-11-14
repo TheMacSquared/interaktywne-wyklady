@@ -58,6 +58,23 @@
     x.forEach(function (v) { counts[Math.max(0, Math.min(14, Math.ceil((v - lo) / w - 1e-9) - 1))] += 1; });
     return counts.map(function (c, j) { return [lo + j * w, lo + (j + 1) * w, c]; });
   }
+  // binom.test(k, n, p0): p dokładne. Dwustronnie: suma prawdopodobieństw wyników nie bardziej
+  // prawdopodobnych niż k (z tolerancją 1e-7, jak w R); extreme to te wyniki (słupki p-wartości).
+  function binomTest(k, n, p0, alternative) {
+    var probs = [], extreme = [], p = 0, i, dk = D.dbinom(k, n, p0);
+    for (i = 0; i <= n; i++) probs.push(D.dbinom(i, n, p0));
+    for (i = 0; i <= n; i++) {
+      var ex = alternative === "greater" ? i >= k : alternative === "less" ? i <= k : probs[i] <= dk * (1 + 1e-7);
+      extreme.push(ex); if (ex) p += probs[i];
+    }
+    return { p: Math.min(1, p), probs: probs, extreme: extreme };
+  }
+  // prop.test(k, n, p0, correct = TRUE): z z poprawką Yatesa i p z rozkładu χ²(1).
+  function propTest(k, n, p0) {
+    var diff = k - n * p0, adj = Math.abs(diff) - Math.min(0.5, Math.abs(diff));
+    var z = (diff > 0 ? 1 : diff < 0 ? -1 : 0) * adj / Math.sqrt(n * p0 * (1 - p0));
+    return { z: z, p: 1 - D.pchisq(z * z, 1) };
+  }
   // Wartości krytyczne rozkładu statystyki testowej (α = 0.05) i funkcja „w obszarze odrzucenia”.
   function critical(type, df, alternative) {
     if (type === "chisq") { var c = D.qchisq(0.95, df); return { values: [c], reject: function (x) { return x >= c; } }; }
@@ -67,7 +84,7 @@
     return { values: [-t2, t2], reject: function (x) { return Math.abs(x) >= t2; } };
   }
   root.lcS05 = { phoneData: phoneData, nullDiffs: nullDiffs, simP: simP, power: power, quizAnswer: quizAnswer,
-                 tOne: tOne, hist15: hist15, critical: critical };
+                 tOne: tOne, hist15: hist15, critical: critical, binomTest: binomTest, propTest: propTest };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -322,6 +339,113 @@
   }
   figures.s05_t1 = t1Fig(false);
   figures.s05_t1b = t1Fig(true);
+
+  // ---- Rozdział 5: jedna zmienna jakościowa (test dwumianowy) -------------------
+  // Jedna wspólna próba (liczba sukcesów k w n próbach) dla Ryc. 5.1–5.3.
+  store.b1 = null;
+  function b1Controls() {
+    var sc = document.getElementById("ch3_scenario"), n = document.getElementById("ch3_n");
+    return { scenario: sc ? sc.value : "water_quality", n: n ? Number(n.value) : 50 };
+  }
+  function b1Data() {
+    var c = b1Controls(), s = store.b1;
+    return s && s.scenario === c.scenario && s.n === c.n ? s : null;
+  }
+  // Krok 1: słupki sukces / porażka z proporcją z próby.
+  function b1Counts(P, d, par, label) {
+    var top = Math.max(d.k, d.n - d.k), labels = {};
+    labels[1] = par.success_label; labels[2] = par.failure_label;
+    return { x: [0.4, 2.6], y: [0, top * 1.2], xLabels: labels,
+      layers: [{ type: "bins", data: [[0.7, 1.3, d.k]], color: P.niebo, alpha: 0.7, stroke: P.ink },
+               { type: "bins", data: [[1.7, 2.3, d.n - d.k]], color: P.bursztyn, alpha: 0.7, stroke: P.ink },
+               { type: "text", x: 1, y: d.k, text: String(d.k), color: P.secondary, bold: true, mono: true, size: 1.3 },
+               { type: "text", x: 2, y: d.n - d.k, text: String(d.n - d.k), color: P.secondary, bold: true, mono: true, size: 1.3 },
+               { type: "text", x: 1.5, y: top * 0.7, text: label, color: P.accent, bold: true, valign: "middle", size: 1.35 }],
+      xName: "", yName: "Liczba", aria: "Liczba sukcesów i porażek w wylosowanej próbie." };
+  }
+  // Kroki 2–3: rozkład dwumianowy pod H₀; w kroku 3 słupki p-wartości w akcencie.
+  function b1Binom(P, d, p0, test, step) {
+    var max = Math.max.apply(null, test.probs), lo = d.k, hi = d.k, plain = [], hot = [];
+    test.probs.forEach(function (pr, i) { if (pr >= max * 1e-3) { lo = Math.min(lo, i); hi = Math.max(hi, i); } });
+    test.probs.forEach(function (pr, i) {
+      if (i < lo - 1 || i > hi + 1) return;
+      (test.extreme[i] && step >= 3 ? hot : plain).push([i - 0.4, i + 0.4, pr]);
+    });
+    var role = stepRole(step, 2), top = max * 1.15;
+    return { x: [lo - 1.5, hi + 1.5], y: [0, top], xInt: true,
+      layers: [{ type: "bins", data: plain, color: P.niebo, alpha: 0.7, stroke: P.ink },
+               { type: "bins", data: hot, color: P.accent, alpha: 0.7, stroke: P.ink },
+               { type: "vline", x: d.k, color: roleColor(P, role), width: roleWidth(role) },
+               lineLabel(d.k, top * 0.9, "k = " + d.k, roleColor(P, role), d.k > d.n * p0)],
+      xName: "Liczba sukcesów", yName: "Prawdopodobieństwo", aria: "Rozkład dwumianowy liczby sukcesów pod hipotezą zerową z zaznaczonym wynikiem próby." };
+  }
+  function b1Fig(oneSided) {
+    return {
+      act: function (state) {
+        if (oneSided) return;
+        var c = b1Controls(), par = state.config.scenarios[c.scenario];
+        store.b1 = { scenario: c.scenario, n: c.n, k: rng.binom(c.n, par.p_true) };
+      },
+      draw: function (v, P, k, state, vals, step) {
+        var d = b1Data();
+        if (!d) return null;
+        var par = state.config.scenarios[d.scenario];
+        if (step === 1) {
+          return b1Counts(P, d, par, oneSided ? "p̂ = " + fmt(d.k / d.n, 3) + " (te same dane)"
+                                               : "p̂ = " + d.k + "/" + d.n + " = " + fmt(d.k / d.n, 3));
+        }
+        return b1Binom(P, d, par.p0, binomTest(d.k, d.n, par.p0, oneSided ? par.alt_1s : "two.sided"), step);
+      },
+      text: function (state, v, vals, step) {
+        var d = b1Data();
+        if (!d) return "";
+        var par = state.config.scenarios[d.scenario], p0 = par.p0, phat = d.k / d.n;
+        if (!oneSided) {
+          if (step === 1) return "n = " + b(d.n) + ", " + S.esc(par.success_label) + ": " + b(d.k) + ". Proporcja z próby: p̂ = " + d.k + "/" + d.n + " = " +
+            b(fmt(phat, 3)) + ". Wartość referencyjna: p₀ = " + b(p0) + ". Różnica: " + b(fmt(phat - p0, 3)) + ". Ale czy to dużo?";
+          if (step === 2) return "Rozkład B(" + d.n + "; " + fmt(p0, 2) + ") — liczba sukcesów, jakiej należałoby się spodziewać przy prawdziwej H₀. " +
+            "Pionowa linia: nasz wynik k = " + b(d.k) + ".";
+          return verdictHtml(binomTest(d.k, d.n, p0, "two.sided").p);
+        }
+        if (step === 1) return "n = " + b(d.n) + ", p̂ = " + b(fmt(phat, 3)) + " — te same dane co w teście dwustronnym.";
+        if (step === 2) return "Ten sam rozkład B(" + d.n + "; " + fmt(p0, 2) + "), ale teraz liczy się tylko " +
+          (par.alt_1s === "greater" ? "prawy" : "lewy") + " ogon.";
+        return "Jednostronnie: " + verdictHtml(binomTest(d.k, d.n, p0, par.alt_1s).p) + " <em>Porównaj z p-wartością testu dwustronnego wyżej.</em>";
+      },
+      update: function () { if (!oneSided) notify(["s05_b1b", "s05_bcmp"]); },
+      noteKey: function () { return b1Data() ? "data" : "empty"; }
+    };
+  }
+  figures.s05_b1 = b1Fig(false);
+  figures.s05_b1b = b1Fig(true);
+
+  // Ryc. 5.3: test dwumianowy a test proporcji (z) na tej samej próbie; bez wykresu.
+  figures.s05_bcmp = {
+    act: function (state) { state.asked = true; },
+    update: function (el, state) {
+      var d = b1Data();
+      if (!state.asked || !d) return;
+      var p0 = state.config.scenarios[d.scenario].p0, bt = binomTest(d.k, d.n, p0, "two.sided"), pt = propTest(d.k, d.n, p0);
+      var data = "k = " + d.k + ", n = " + d.n, decision = function (p) { return p < 0.05 ? "Odrzucamy H₀" : "Brak podstaw do odrzucenia H₀"; };
+      S.setValue(el, "cmp_b_data", data); S.setValue(el, "cmp_p_data", data);
+      S.setValue(el, "cmp_b_stat", "k = " + d.k + " (dokładna)"); S.setValue(el, "cmp_p_stat", "z = " + T.round(pt.z, 3) + " (z poprawką na ciągłość)");
+      S.setValue(el, "cmp_b_p", T.fmtPValue(bt.p)); S.setValue(el, "cmp_p_p", T.fmtPValue(pt.p));
+      S.setValue(el, "cmp_b_dec", decision(bt.p)); S.setValue(el, "cmp_p_dec", decision(pt.p));
+      [["cmp_b_dec", bt.p], ["cmp_p_dec", pt.p]].forEach(function (c) {
+        var cell = el.querySelector('[data-v="' + c[0] + '"]');
+        if (cell && cell.closest("td")) cell.closest("td").classList.toggle("is-base", c[1] < 0.05);
+      });
+      S.setValue(el, "cmp_np", T.round(d.n * p0, 1)); S.setValue(el, "cmp_nq", T.round(d.n * (1 - p0), 1));
+    },
+    // Przybliżenie normalne jest dobre, gdy oczekujemy co najmniej 10 sukcesów i 10 porażek.
+    noteKey: function (vals, state) {
+      var d = b1Data();
+      if (!state.asked) return "none";
+      if (!d) return "nodata";
+      var p0 = state.config.scenarios[d.scenario].p0;
+      return d.n * p0 >= 10 && d.n * (1 - p0) >= 10 ? "ok" : "small";
+    }
+  };
 
   S.register(figures);
 })();

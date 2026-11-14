@@ -35,6 +35,12 @@ lc_sf_action_group <- function(label, ...) {
 # Stan pusty ryciny (przed pierwszym losowaniem): widoczny, gdy noteKey ryciny zwraca "empty".
 lc_sf_empty <- function(text) tags$div(`data-when` = "empty", class = "lc-sf-empty", tags$p(text))
 
+# Tabela lc_table() z komórkami wypełnianymi przez przeglądarkę: napis „@@klucz@@”
+# w danych staje się elementem lc_sf_value(klucz).
+lc_sf_fill_table <- function(table) {
+  HTML(gsub("@@([a-z_0-9]+)@@", '<span data-v="\\1">–</span>', as.character(table)))
+}
+
 # Wartość wypełniana przez JS (odczyt, komórka tabeli).
 lc_sf_value <- function(key, text = "–") tags$span(`data-v` = key, text)
 

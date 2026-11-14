@@ -2,6 +2,177 @@
 # CHAPTER 5: Jedna zmienna jakościowa — test dwumianowy
 # ============================================================================
 
+.ch3_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
+
+# Liczba z przecinkiem dziesiętnym do tekstów rozwiązań.
+.ch3_dec <- function(x, digits) {
+  formatC(x, format = "f", digits = digits)
+}
+
+# ============================================================================
+# SERVER
+# ============================================================================
+
+# Treść stała (dawniej output$cas_ch3_sol_a na serwerze): składana przy budowaniu strony.
+cas_ch3_sol_a_ui <- function() {
+  r <- local({
+    k <- sum(.ch3_cas$grades == "KK-06")
+    n <- nrow(.ch3_cas)
+    p_obs <- k / n
+    bt <- binom.test(k, n, p = 0.5, alternative = "two.sided")
+    list(k = k, n = n, p_obs = p_obs, p_val = bt$p.value,
+         ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
+  })
+  tagList(
+    p(tags$b("H₀:"), " p_KK06 = 0.5 · ", tags$b("Hₐ:"), " p_KK06 ≠ 0.5"),
+    tags$ul(
+      tags$li(sprintf("k = %d, n = %d, p̂ = %s (%s%%)",
+                      r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
+      tags$li(sprintf("p %s %s (test dwumianowy, dwustronny)",
+        if (r$p_val < 0.001) "<" else "=",
+        if (r$p_val < 0.001) "0.001" else .ch3_dec(r$p_val, 4))),
+      tags$li(sprintf("95%% przedział ufności: [%s; %s]",
+                      .ch3_dec(r$ci_lo, 3), .ch3_dec(r$ci_hi, 3)))
+    ),
+    lc_verdict(tags$strong(if (r$p_val < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+               type = if (r$p_val < 0.05) "danger" else "ok"),
+    p(tags$b("Interpretacja:"), " ",
+      sprintf("%s%% okręgów to szkoły KK-06. %s",
+        .ch3_dec(100 * r$p_obs, 1),
+        if (r$p_val >= 0.05) {
+          "Dane nie dają podstaw, by twierdzić, że odsetek różni się od 50% (p ≥ 0.05)."
+        } else if (r$p_obs > 0.5) {
+          "Odsetek istotnie różni się od 50% (p < 0.05): okręgi KK-06 stanowią większość."
+        } else {
+          "Odsetek istotnie różni się od 50% (p < 0.05), ale w przeciwną stronę, niż sugeruje pytanie: okręgów KK-06 jest wyraźnie mniej niż połowa."
+        }))
+  )
+}
+
+# Treść stała (dawniej output$cas_ch3_sol_b na serwerze): składana przy budowaniu strony.
+cas_ch3_sol_b_ui <- function() {
+  r <- local({
+    high_lunch <- .ch3_cas$lunch > 50
+    k <- sum(high_lunch)
+    n <- length(high_lunch)
+    p_obs <- k / n
+    bt <- binom.test(k, n, p = 0.30, alternative = "greater")
+    list(k = k, n = n, p_obs = p_obs, p_val = bt$p.value,
+         ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
+  })
+  tagList(
+    p(tags$b("H₀:"), " p_ubóstwo ≤ 0.30 · ",
+      tags$b("Hₐ:"), " p_ubóstwo > 0.30"),
+    tags$ul(
+      tags$li(sprintf("k = %d okręgów z lunch > 50, n = %d, p̂ = %s (%s%%)",
+                      r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
+      tags$li(sprintf("p %s %s (test dwumianowy, prawostronny)",
+        if (r$p_val < 0.001) "<" else "=",
+        if (r$p_val < 0.001) "0.001" else .ch3_dec(r$p_val, 4))),
+      tags$li(sprintf("Dolna granica jednostronnego 95%% przedziału ufności: %s",
+                      .ch3_dec(r$ci_lo, 3)))
+    ),
+    lc_verdict(tags$strong(if (r$p_val < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+               type = if (r$p_val < 0.05) "danger" else "ok"),
+    p(tags$b("Interpretacja:"), " ",
+      sprintf("%s%% okręgów ma wysoki poziom ubóstwa (lunch > 50). %s",
+        .ch3_dec(100 * r$p_obs, 1),
+        if (r$p_val < 0.05) {
+          "Odsetek ten istotnie przekracza normę 30% (p < 0.05)."
+        } else {
+          "Dane nie dają podstaw, by twierdzić, że odsetek przekracza normę 30% (p ≥ 0.05)."
+        }))
+  )
+}
+
+# Scenariusze testu dwumianowego (Ryc. 5.1–5.3): parametry losowania i teksty hipotez.
+ch3_scenario_params <- list(
+  water_quality = list(
+    p0 = 0.80, p_true = 0.85, n_default = 50,
+    success_label = "spełnia normę", failure_label = "nie spełnia",
+    title = "Jakość próbek wody",
+    question = "Czy odsetek próbek spełniających normy różni się od deklarowanych 80%?",
+    h0_text = "\\(H_0: p = 0.80\\) (odsetek zgodny z deklaracją)",
+    h1_text = "\\(H_a: p \\neq 0.80\\) (odsetek odbiega od deklaracji)",
+    question_1s = "Czy odsetek próbek spełniających normy jest wyższy niż 80%?",
+    h0_text_1s = "\\(H_0: p \\leq 0.80\\)",
+    h1_text_1s = "\\(H_a: p > 0.80\\)",
+    alt_1s = "greater"),
+  exam_pass = list(
+    p0 = 0.60, p_true = 0.68, n_default = 50,
+    success_label = "zdał", failure_label = "nie zdał",
+    title = "Zdawalność egzaminu",
+    question = "Czy zdawalność różni się od 60% (wartość historyczna)?",
+    h0_text = "\\(H_0: p = 0.60\\) (zdawalność typowa)",
+    h1_text = "\\(H_a: p \\neq 0.60\\) (zdawalność odbiega od normy)",
+    question_1s = "Czy zdawalność jest wyższa niż historyczne 60%?",
+    h0_text_1s = "\\(H_0: p \\leq 0.60\\)",
+    h1_text_1s = "\\(H_a: p > 0.60\\)",
+    alt_1s = "greater"),
+  germination = list(
+    p0 = 0.90, p_true = 0.86, n_default = 50,
+    success_label = "wykiełkowało", failure_label = "nie wykiełkowało",
+    title = "Kiełkowalność nasion",
+    question = "Czy kiełkowalność partii nasion różni się od deklarowanych 90%?",
+    h0_text = "\\(H_0: p = 0.90\\) (kiełkowalność zgodna z deklaracją)",
+    h1_text = "\\(H_a: p \\neq 0.90\\) (kiełkowalność odbiega)",
+    question_1s = "Czy kiełkowalność jest niższa niż deklarowane 90%?",
+    h0_text_1s = "\\(H_0: p \\geq 0.90\\)",
+    h1_text_1s = "\\(H_a: p < 0.90\\)",
+    alt_1s = "less"),
+  defects = list(
+    p0 = 0.03, p_true = 0.06, n_default = 50,
+    success_label = "poza normą", failure_label = "w normie",
+    title = "Kontrola jakości produktów",
+    question = "Czy odsetek produktów niespełniających normy różni się od dopuszczalnych 3%?",
+    h0_text = "\\(H_0: p = 0.03\\) (odsetek wadliwych zgodny z normą)",
+    h1_text = "\\(H_a: p \\neq 0.03\\) (odsetek odbiega od normy)",
+    question_1s = "Czy odsetek produktów poza normą przekracza dopuszczalne 3%?",
+    h0_text_1s = "\\(H_0: p \\leq 0.03\\)",
+    h1_text_1s = "\\(H_a: p > 0.03\\)",
+    alt_1s = "greater"),
+  helmets = list(
+    p0 = 0.95, p_true = 0.88, n_default = 80,
+    success_label = "nosi kask", failure_label = "bez kasku",
+    title = "Używanie kasków na budowie",
+    question = "Czy odsetek pracowników używających kasków odbiega od zakładanych 95%?",
+    h0_text = "\\(H_0: p = 0.95\\) (odsetek zgodny z wymaganiem)",
+    h1_text = "\\(H_a: p \\neq 0.95\\) (odsetek odbiega od wymagania)",
+    question_1s = "Czy odsetek pracowników używających kasków jest niższy niż wymagane 95%?",
+    h0_text_1s = "\\(H_0: p \\geq 0.95\\)",
+    h1_text_1s = "\\(H_a: p < 0.95\\)",
+    alt_1s = "less")
+)
+
+# Panel hipotezy nad krokami: wariant wybiera lista „Scenariusz”; podpowiedź widać,
+# dopóki nie ma próby (element [data-when = "empty"], przełącza rycina).
+ch3_hypothesis_panel <- function(one_sided = FALSE) {
+  tagList(
+    lc_variants("ch3_scenario", lapply(ch3_scenario_params, function(par) {
+      tagList(
+        lc_status(
+          p(tags$b(if (one_sided) "Pytanie potoczne (kierunkowe):" else "Pytanie potoczne:")),
+          p(tags$em(paste0("„", if (one_sided) par$question_1s else par$question, "”")))
+        ),
+        lc_formula_box(
+          p(tags$b(if (one_sided) "Hipoteza formalna (jednostronna):" else "Hipoteza formalna (dwustronna):")),
+          p(withMathJax(if (one_sided) par$h0_text_1s else par$h0_text)),
+          p(withMathJax(if (one_sided) par$h1_text_1s else par$h1_text))
+        )
+      )
+    })),
+    tags$div(`data-when` = "empty", lc_empty(if (one_sided) {
+      "Najpierw wylosuj próbę w teście dwustronnym powyżej"
+    } else {
+      "Kliknij „Losuj próbę”"
+    }))
+  )
+}
+# Dane dla rycin s05_b1, s05_b1b i s05_bcmp (modules/figures.js).
+ch3_b1_config <- list(scenarios = lapply(ch3_scenario_params, `[`,
+  c("p0", "p_true", "success_label", "failure_label", "alt_1s")))
+
 ch3_ui <- list(
   id = "ch-jedna-jakosciowa", num = "05", title = "Test proporcji",
   content = tagList(
@@ -156,25 +327,29 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 5.1",
       title = "Test dwumianowy — krok po kroku",
-      uiOutput("ch3_hypothesis_panel"),
-      lc_step_widget("ch3_test",
-        steps = c("Dane", "Rozkład pod H₀", "p-wartość i decyzja"),
-        toolbar = lc_toolbar(
-          selectInput("ch3_scenario", "Scenariusz",
-            choices = c(
-              "Jakość wody (p₀ = 80%)" = "water_quality",
-              "Zdawalność egzaminu (p₀ = 60%)" = "exam_pass",
-              "Kiełkowalność nasion (p₀ = 90%)" = "germination",
-              "Produkty poza normą (p₀ = 3%)" = "defects",
-              "Używanie kasków na budowie (p₀ = 95%, IB)" = "helmets"
-            ),
-            selected = "water_quality"
+      # Losowanie, wykresy kroków i opisy liczy przeglądarka (modules/figures.js, rycina s05_b1).
+      lc_sf_figure("s05_b1", bare = TRUE, config = ch3_b1_config, body = tagList(
+        ch3_hypothesis_panel(),
+        lc_step_widget("ch3_test",
+          steps = c("Dane", "Rozkład pod H₀", "p-wartość i decyzja"),
+          toolbar = lc_toolbar(
+            lc_sf_ctl(selectInput("ch3_scenario", "Scenariusz", selectize = FALSE,
+              choices = c(
+                "Jakość wody (p₀ = 80%)" = "water_quality",
+                "Zdawalność egzaminu (p₀ = 60%)" = "exam_pass",
+                "Kiełkowalność nasion (p₀ = 90%)" = "germination",
+                "Produkty poza normą (p₀ = 3%)" = "defects",
+                "Używanie kasków na budowie (p₀ = 95%, IB)" = "helmets"
+              ),
+              selected = "water_quality"
+            )),
+            lc_sf_slider("ch3_n", "Wielkość próby (n)", 20, 200, 50, 10),
+            lc_sf_action("new", "ch3_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
+            lc_chart_zoom_button()
           ),
-          lc_slider("ch3_n", "Wielkość próby (n)", 20, 200, 50, 10),
-          lc_action("ch3_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid")
-        ),
-        plot_id = "ch3_step_plot"
-      )
+          body = lc_sf_chart(0, "2.5/1", "380px")
+        )
+      ))
     ),
 
     lc_p("Przy \\(n = 50\\) i \\(p_0 = 0.8\\) rozkład z kroku 2 ma środek
@@ -224,14 +399,17 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 5.2",
       title = "Test dwumianowy jednostronny",
-      uiOutput("ch3b_hypothesis_panel"),
-      lc_step_widget("ch3b_test",
-        steps = c("Dane", "Rozkład pod H₀", "p-wartość i decyzja"),
-        toolbar = lc_toolbar(
-          lc_caption("Dane: te same co w teście dwustronnym powyżej.")
-        ),
-        plot_id = "ch3b_step_plot"
-      )
+      lc_sf_figure("s05_b1b", bare = TRUE, config = ch3_b1_config, body = tagList(
+        ch3_hypothesis_panel(one_sided = TRUE),
+        lc_step_widget("ch3b_test",
+          steps = c("Dane", "Rozkład pod H₀", "p-wartość i decyzja"),
+          toolbar = lc_toolbar(
+            lc_caption("Dane: te same co w teście dwustronnym powyżej."),
+            lc_chart_zoom_button()
+          ),
+          body = lc_sf_chart(0, "2.5/1", "380px")
+        )
+      ))
     ),
 
     lc_p("Weźmy próbę, w której normę spełnia 45 z 50 próbek wody. Test
@@ -281,8 +459,33 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 5.3",
       title = "Porównanie wyników: dwumianowy vs z-test",
-      lc_toolbar(lc_action("ch3_compare", "Porównaj testy", variant = "solid")),
-      uiOutput("ch3_compare_result")
+      # Oba testy liczy przeglądarka na próbie z Ryc. 5.1 (rycina s05_bcmp, bez wykresu).
+      tags$div(class = "lc-sf", `data-fig` = "s05_bcmp", `data-lc-nochart` = NA,
+        `data-config` = as.character(jsonlite::toJSON(ch3_b1_config, auto_unbox = TRUE)),
+        lc_toolbar(lc_sf_action("cmp", "ch3_compare", "Porównaj testy", variant = "solid")),
+        tags$div(`data-when` = "nodata", hidden = NA, lc_caption("Najpierw wylosuj próbę w widgecie powyżej.")),
+        lapply(c("ok", "small"), function(key) tags$div(`data-when` = key, hidden = NA,
+          lc_sf_fill_table(lc_table(
+            data.frame(
+              row = c("Dane", "Statystyka", "p-wartość", "Decyzja"),
+              binom = c("@@cmp_b_data@@", "@@cmp_b_stat@@", "@@cmp_b_p@@", "@@cmp_b_dec@@"),
+              prop = c("@@cmp_p_data@@", "@@cmp_p_stat@@", "@@cmp_p_p@@", "@@cmp_p_dec@@")
+            ),
+            cols = list(
+              lc_col("row", "", "row"),
+              lc_col("binom", "Test dwumianowy", "text"),
+              lc_col("prop", "Test proporcji (z)", "text")
+            )
+          )),
+          lc_status(
+            p(lc_verdict(tags$b("Oczekiwane przy H₀:"), type = if (key == "ok") "ok" else "danger"), " ",
+              tags$i("np"), tags$sub("0"), " = ", lc_sf_value("cmp_np"), " sukcesów i ",
+              tags$i("n"), "(1 − ", tags$i("p"), tags$sub("0"), ") = ", lc_sf_value("cmp_nq"), " porażek",
+              if (key == "ok") " — obie liczby są duże, przybliżenie normalne działa dobrze."
+              else " — jedna z liczb jest mała, więc test proporcji może być niedokładny.")
+          )
+        ))
+      )
     ),
 
     lc_p("Wynik porównania zależy od scenariusza. Przy jakości wody
@@ -357,7 +560,7 @@ ch3_ui <- list(
         dwustronnie, czy odsetek okręgów KK-06 różni się od 50%.
         Sformułuj H₀ i Hₐ, oblicz p-wartość testem dwumianowym (α = 0.05).
         Jak zinterpretować wynik?"),
-      lc_more("Rozwiązanie", uiOutput("cas_ch3_sol_a"))
+      lc_more("Rozwiązanie", cas_ch3_sol_a_ui())
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -366,7 +569,7 @@ ch3_ui <- list(
         ". Przetestuj jednostronnie (prawostronnie),
         czy odsetek takich okręgów przekracza normę 30%.
         Sformułuj H₀ i Hₐ, wykonaj test dwumianowy. Jaki wniosek?"),
-      lc_more("Rozwiązanie", uiOutput("cas_ch3_sol_b"))
+      lc_more("Rozwiązanie", cas_ch3_sol_b_ui())
     ),
 
     lc_p("W obu zadaniach pełna odpowiedź ma trzy części: hipotezy ustalone
@@ -388,427 +591,6 @@ ch3_ui <- list(
 # DANE — CASchools (wczytane raz przy ładowaniu modułu)
 # ============================================================================
 
-.ch3_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
-                     stringsAsFactors = FALSE)
-
-# Liczba z przecinkiem dziesiętnym do tekstów rozwiązań.
-.ch3_dec <- function(x, digits) {
-  formatC(x, format = "f", digits = digits)
-}
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch3_server <- function(input, output, session) {
-
-  # --- Parametry scenariuszy ---
-  scenario_params <- list(
-    water_quality = list(
-      p0 = 0.80, p_true = 0.85, n_default = 50,
-      success_label = "spełnia normę", failure_label = "nie spełnia",
-      title = "Jakość próbek wody",
-      question = "Czy odsetek próbek spełniających normy różni się od deklarowanych 80%?",
-      h0_text = "\\(H_0: p = 0.80\\) (odsetek zgodny z deklaracją)",
-      h1_text = "\\(H_a: p \\neq 0.80\\) (odsetek odbiega od deklaracji)",
-      question_1s = "Czy odsetek próbek spełniających normy jest wyższy niż 80%?",
-      h0_text_1s = "\\(H_0: p \\leq 0.80\\)",
-      h1_text_1s = "\\(H_a: p > 0.80\\)",
-      alt_1s = "greater"),
-    exam_pass = list(
-      p0 = 0.60, p_true = 0.68, n_default = 50,
-      success_label = "zdał", failure_label = "nie zdał",
-      title = "Zdawalność egzaminu",
-      question = "Czy zdawalność różni się od 60% (wartość historyczna)?",
-      h0_text = "\\(H_0: p = 0.60\\) (zdawalność typowa)",
-      h1_text = "\\(H_a: p \\neq 0.60\\) (zdawalność odbiega od normy)",
-      question_1s = "Czy zdawalność jest wyższa niż historyczne 60%?",
-      h0_text_1s = "\\(H_0: p \\leq 0.60\\)",
-      h1_text_1s = "\\(H_a: p > 0.60\\)",
-      alt_1s = "greater"),
-    germination = list(
-      p0 = 0.90, p_true = 0.86, n_default = 50,
-      success_label = "wykiełkowało", failure_label = "nie wykiełkowało",
-      title = "Kiełkowalność nasion",
-      question = "Czy kiełkowalność partii nasion różni się od deklarowanych 90%?",
-      h0_text = "\\(H_0: p = 0.90\\) (kiełkowalność zgodna z deklaracją)",
-      h1_text = "\\(H_a: p \\neq 0.90\\) (kiełkowalność odbiega)",
-      question_1s = "Czy kiełkowalność jest niższa niż deklarowane 90%?",
-      h0_text_1s = "\\(H_0: p \\geq 0.90\\)",
-      h1_text_1s = "\\(H_a: p < 0.90\\)",
-      alt_1s = "less"),
-    defects = list(
-      p0 = 0.03, p_true = 0.06, n_default = 50,
-      success_label = "poza normą", failure_label = "w normie",
-      title = "Kontrola jakości produktów",
-      question = "Czy odsetek produktów niespełniających normy różni się od dopuszczalnych 3%?",
-      h0_text = "\\(H_0: p = 0.03\\) (odsetek wadliwych zgodny z normą)",
-      h1_text = "\\(H_a: p \\neq 0.03\\) (odsetek odbiega od normy)",
-      question_1s = "Czy odsetek produktów poza normą przekracza dopuszczalne 3%?",
-      h0_text_1s = "\\(H_0: p \\leq 0.03\\)",
-      h1_text_1s = "\\(H_a: p > 0.03\\)",
-      alt_1s = "greater"),
-    helmets = list(
-      p0 = 0.95, p_true = 0.88, n_default = 80,
-      success_label = "nosi kask", failure_label = "bez kasku",
-      title = "Używanie kasków na budowie",
-      question = "Czy odsetek pracowników używających kasków odbiega od zakładanych 95%?",
-      h0_text = "\\(H_0: p = 0.95\\) (odsetek zgodny z wymaganiem)",
-      h1_text = "\\(H_a: p \\neq 0.95\\) (odsetek odbiega od wymagania)",
-      question_1s = "Czy odsetek pracowników używających kasków jest niższy niż wymagane 95%?",
-      h0_text_1s = "\\(H_0: p \\geq 0.95\\)",
-      h1_text_1s = "\\(H_a: p < 0.95\\)",
-      alt_1s = "less")
-  )
-
-  # --- Współdzielone dane ---
-  # Jedna próbka dla testu dwustronnego i jednostronnego; po zmianie
-  # scenariusza albo n stara próbka nie jest już zgodna z pytaniem.
-  ch3_data_state <- reactiveVal(NULL)
-  ch3_data <- reactive({
-    state <- ch3_data_state()
-    if (is.null(state)) return(NULL)
-    req(input$ch3_scenario, input$ch3_n)
-
-    if (!identical(state$scenario, input$ch3_scenario) ||
-        !isTRUE(state$n == input$ch3_n)) {
-      return(NULL)
-    }
-
-    list(k = state$k, n = state$n)
-  })
-
-  # Kroki widgetów (1..3) żyją w przeglądarce; nowa próba ani zmiana
-  # scenariusza nie cofa kroku.
-  ch3_step <- lc_step_server("ch3_test", input)$step
-  ch3b_step <- lc_step_server("ch3b_test", input)$step
-
-  observeEvent(input$ch3_new_sample, {
-    req(input$ch3_scenario, input$ch3_n)
-    par <- scenario_params[[input$ch3_scenario]]
-    req(!is.null(par))
-    n <- input$ch3_n
-    k <- rbinom(1, n, par$p_true)
-    ch3_data_state(list(
-      scenario = input$ch3_scenario,
-      n = n,
-      k = k
-    ))
-  }, ignoreInit = TRUE)
-
-  # Krok 1: słupki sukces / porażka (dane i druga kategoria) z proporcją.
-  ch3_counts_plot <- function(k, n, par, phat_label) {
-    df <- data.frame(
-      kat = factor(c(par$success_label, par$failure_label),
-                   levels = c(par$success_label, par$failure_label)),
-      count = c(k, n - k)
-    )
-    y_top <- max(k, n - k) * 1.2
-
-    ggplot(df, aes(x = kat, y = count)) +
-      step_result(geom_col, data = df[1, ], width = 0.6) +
-      step_result(geom_col, data = df[2, ], width = 0.6,
-                  fill = STEP_ROLES$group$colour) +
-      geom_text(aes(label = count), vjust = -0.5, size = 5, fontface = "bold",
-                family = lc_mono_family, colour = STEP_ROLES$known$colour) +
-      step_symbol_label(1.5, max(k, n - k) * 0.7, phat_label, role = "new",
-                        hjust = 0.5, size = 5) +
-      labs(x = NULL, y = "Liczba") +
-      step_frame(xlim = c(0.4, 2.6), ylim = c(0, y_top))
-  }
-
-  # Kroki 2–3: rozkład dwumianowy pod H₀; extreme = słupki p-wartości.
-  # Rama: zakres z niepomijalnym prawdopodobieństwem plus wynik k.
-  ch3_binom_plot <- function(k, n, p0, extreme, step) {
-    df <- data.frame(x = 0:n, prob = dbinom(0:n, n, p0), extreme = extreme)
-    shown <- df$x[df$prob >= max(df$prob) * 1e-3]
-    xlim <- range(c(shown, k)) + c(-1.5, 1.5)
-    y_top <- max(df$prob) * 1.15
-    k_role <- step_role(step, 2)
-
-    ggplot(df, aes(x = x, y = prob)) +
-      step_result(geom_col, data = df[!(df$extreme & step >= 3), ], width = 0.8) +
-      step_show(step, 3, step_result(geom_col, data = df[df$extreme, ], width = 0.8,
-                                     fill = STEP_ROLES$new$colour)) +
-      step_line(k_role, xintercept = k, helper = FALSE) +
-      step_label(k, y_top * 0.9, paste0("k = ", k), role = k_role,
-                 hjust = if (k > n * p0) -0.2 else 1.2) +
-      labs(x = "Liczba sukcesów", y = "Prawdopodobieństwo") +
-      step_frame(xlim = xlim, ylim = c(0, y_top))
-  }
-
-  # =============================================
-  # WIDGET 1: Dwustronny
-  # =============================================
-
-  output$ch3_hypothesis_panel <- renderUI({
-    par <- scenario_params[[input$ch3_scenario]]
-    d <- ch3_data()
-
-    tagList(
-      lc_status(
-        p(tags$b("Pytanie potoczne:")),
-        p(tags$em(paste0("„", par$question, "”")))
-      ),
-      lc_formula_box(
-        p(tags$b("Hipoteza formalna (dwustronna):")),
-        p(withMathJax(par$h0_text)),
-        p(withMathJax(par$h1_text))
-      ),
-      if (is.null(d)) {
-        lc_empty("Kliknij „Losuj próbę”")
-      }
-    )
-  })
-
-  zoom_plot_server("ch3_step_plot", reactive({
-    d <- ch3_data()
-    step <- ch3_step()
-    par <- scenario_params[[input$ch3_scenario]]
-
-    if (is.null(d)) return(NULL)
-
-    k <- d$k; n <- d$n; p0 <- par$p0
-
-    if (step == 1) {
-      ch3_counts_plot(k, n, par,
-                      paste0("hat(p) == '", k, "/", n, " = ", lc_fmt(k / n, 3), "'"))
-    } else {
-      # Wartości co najmniej tak mało prawdopodobne jak k (dwustronnie)
-      extreme <- dbinom(0:n, n, p0) <= dbinom(k, n, p0)
-      ch3_binom_plot(k, n, p0, extreme, step)
-    }
-  }))
-
-  output$ch3_test_text <- renderUI({
-    d <- ch3_data()
-    step <- ch3_step()
-    par <- scenario_params[[input$ch3_scenario]]
-
-    if (is.null(d)) return(NULL)
-
-    k <- d$k; n <- d$n; p0 <- par$p0; phat <- k / n
-
-    switch(as.character(step),
-      "1" = tagList(
-        "n = ", step_num(n), paste0(", ", par$success_label, ": "), step_num(k),
-        paste0(". Proporcja z próby: p̂ = ", k, "/", n, " = "), step_num(lc_fmt(phat, 3)),
-        ". Wartość referencyjna: p₀ = ", step_num(p0),
-        ". Różnica: ", step_num(lc_fmt(phat - p0, 3)), ". Ale czy to dużo?"
-      ),
-      "2" = tagList(
-        paste0("Rozkład B(", n, "; ", lc_fmt(p0, 2), ") — liczba sukcesów, "),
-        "jakiej należałoby się spodziewać przy prawdziwej H₀. Pionowa linia: nasz wynik k = ",
-        step_num(k), "."
-      ),
-      "3" = step_verdict(binom.test(k, n, p0, alternative = "two.sided")$p.value)
-    )
-  })
-
-  # =============================================
-  # WIDGET 2: Jednostronny (te same dane)
-  # =============================================
-
-  output$ch3b_hypothesis_panel <- renderUI({
-    par <- scenario_params[[input$ch3_scenario]]
-    d <- ch3_data()
-
-    tagList(
-      lc_status(
-        p(tags$b("Pytanie potoczne (kierunkowe):")),
-        p(tags$em(paste0("„", par$question_1s, "”")))
-      ),
-      lc_formula_box(
-        p(tags$b("Hipoteza formalna (jednostronna):")),
-        p(withMathJax(par$h0_text_1s)),
-        p(withMathJax(par$h1_text_1s))
-      ),
-      if (is.null(d)) {
-        lc_empty("Najpierw wylosuj próbę w teście dwustronnym powyżej")
-      }
-    )
-  })
-
-  zoom_plot_server("ch3b_step_plot", reactive({
-    d <- ch3_data()
-    step <- ch3b_step()
-    par <- scenario_params[[input$ch3_scenario]]
-
-    if (is.null(d)) return(NULL)
-
-    k <- d$k; n <- d$n; p0 <- par$p0
-
-    if (step == 1) {
-      ch3_counts_plot(k, n, par,
-                      paste0("hat(p) == ", lc_fmt(k / n, 3), " ~ '(te same dane)'"))
-    } else {
-      # Jeden ogon: wartości co najmniej tak skrajne jak k w kierunku Hₐ
-      extreme <- if (par$alt_1s == "greater") 0:n >= k else 0:n <= k
-      ch3_binom_plot(k, n, p0, extreme, step)
-    }
-  }))
-
-  output$ch3b_test_text <- renderUI({
-    d <- ch3_data()
-    step <- ch3b_step()
-    par <- scenario_params[[input$ch3_scenario]]
-
-    if (is.null(d)) return(NULL)
-
-    k <- d$k; n <- d$n; p0 <- par$p0; phat <- k / n
-
-    switch(as.character(step),
-      "1" = tagList(
-        "n = ", step_num(n), ", p̂ = ", step_num(lc_fmt(phat, 3)),
-        " — te same dane co w teście dwustronnym."
-      ),
-      "2" = tagList(
-        paste0("Ten sam rozkład B(", n, "; ", lc_fmt(p0, 2), "), ale teraz liczy się tylko ",
-               if (par$alt_1s == "greater") "prawy" else "lewy", " ogon.")
-      ),
-      "3" = tagList(
-        "Jednostronnie: ",
-        step_verdict(binom.test(k, n, p0, alternative = par$alt_1s)$p.value), " ",
-        tags$em("Porównaj z p-wartością testu dwustronnego wyżej.")
-      )
-    )
-  })
-
-  # =============================================
-  # WIDGET 3: Porównanie dwumianowy vs proporcji
-  # =============================================
-
-  output$ch3_compare_result <- renderUI({
-    req(input$ch3_compare)
-    d <- ch3_data()
-    par <- scenario_params[[input$ch3_scenario]]
-
-    if (is.null(d)) {
-      return(lc_caption(
-               "Najpierw wylosuj próbę w widgecie powyżej."
-             ))
-    }
-
-    k <- d$k; n <- d$n; p0 <- par$p0; phat <- k / n
-
-    # Test dwumianowy
-    binom_res <- binom.test(k, n, p0, alternative = "two.sided")
-
-    # Test proporcji (z-test z poprawką ciągłości)
-    prop_res <- suppressWarnings(prop.test(k, n, p = p0, alternative = "two.sided", correct = TRUE))
-
-    # Statystyka z z tą samą poprawką na ciągłość co prop.test (Yates):
-    # |k - np₀| pomniejszone o 0.5 (nie więcej niż sama różnica).
-    diff_k <- k - n * p0
-    z_stat <- sign(diff_k) * (abs(diff_k) - min(0.5, abs(diff_k))) / sqrt(n * p0 * (1 - p0))
-
-    # Warunki przybliżenia normalnego
-    np0 <- n * p0
-    nq0 <- n * (1 - p0)
-    ok <- np0 >= 10 && nq0 >= 10
-
-    div(
-      lc_table(
-        data.frame(
-          row = c("Dane", "Statystyka", "p-wartość", "Decyzja"),
-          binom = c(paste0("k = ", k, ", n = ", n), paste0("k = ", k, " (dokładna)"),
-                    format_p_value(binom_res$p.value),
-                    format_test_result(binom_res$p.value)$decision),
-          prop = c(paste0("k = ", k, ", n = ", n), paste0("z = ", round(z_stat, 3), " (z poprawką na ciągłość)"),
-                   format_p_value(prop_res$p.value),
-                   format_test_result(prop_res$p.value)$decision)
-        ),
-        cols = list(
-          lc_col("row", "", "row"),
-          lc_col("binom", "Test dwumianowy", "text"),
-          lc_col("prop", "Test proporcji (z)", "text")
-        ),
-        cell_class = list(
-          binom = c(NA, NA, NA, if (binom_res$p.value < 0.05) "is-base" else NA),
-          prop = c(NA, NA, NA, if (prop_res$p.value < 0.05) "is-base" else NA)
-        )
-      ),
-      lc_status(
-        p(lc_verdict(tags$b("Oczekiwane przy H₀:"), type = if (ok) "ok" else "danger"), " ",
-          withMathJax(paste0("\\(np_0 = ", round(np0, 1), "\\)")),
-          " sukcesów i ",
-          withMathJax(paste0("\\(n(1-p_0) = ", round(nq0, 1), "\\)")),
-          " porażek",
-          if (ok) " — obie liczby są duże, przybliżenie normalne działa dobrze."
-          else " — jedna z liczb jest mała, więc test proporcji może być niedokładny.")
-      )
-    )
-  })
-
-  # --- Ćwiczenia CASchools ---
-
-  output$cas_ch3_sol_a <- renderUI({
-    r <- local({
-      k <- sum(.ch3_cas$grades == "KK-06")
-      n <- nrow(.ch3_cas)
-      p_obs <- k / n
-      bt <- binom.test(k, n, p = 0.5, alternative = "two.sided")
-      list(k = k, n = n, p_obs = p_obs, p_val = bt$p.value,
-           ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
-    })
-    tagList(
-      p(tags$b("H₀:"), " p_KK06 = 0.5 · ", tags$b("Hₐ:"), " p_KK06 ≠ 0.5"),
-      tags$ul(
-        tags$li(sprintf("k = %d, n = %d, p̂ = %s (%s%%)",
-                        r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
-        tags$li(sprintf("p %s %s (test dwumianowy, dwustronny)",
-          if (r$p_val < 0.001) "<" else "=",
-          if (r$p_val < 0.001) "0.001" else .ch3_dec(r$p_val, 4))),
-        tags$li(sprintf("95%% przedział ufności: [%s; %s]",
-                        .ch3_dec(r$ci_lo, 3), .ch3_dec(r$ci_hi, 3)))
-      ),
-      lc_verdict(tags$strong(if (r$p_val < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
-                 type = if (r$p_val < 0.05) "danger" else "ok"),
-      p(tags$b("Interpretacja:"), " ",
-        sprintf("%s%% okręgów to szkoły KK-06. %s",
-          .ch3_dec(100 * r$p_obs, 1),
-          if (r$p_val >= 0.05) {
-            "Dane nie dają podstaw, by twierdzić, że odsetek różni się od 50% (p ≥ 0.05)."
-          } else if (r$p_obs > 0.5) {
-            "Odsetek istotnie różni się od 50% (p < 0.05): okręgi KK-06 stanowią większość."
-          } else {
-            "Odsetek istotnie różni się od 50% (p < 0.05), ale w przeciwną stronę, niż sugeruje pytanie: okręgów KK-06 jest wyraźnie mniej niż połowa."
-          }))
-    )
-  })
-
-  output$cas_ch3_sol_b <- renderUI({
-    r <- local({
-      high_lunch <- .ch3_cas$lunch > 50
-      k <- sum(high_lunch)
-      n <- length(high_lunch)
-      p_obs <- k / n
-      bt <- binom.test(k, n, p = 0.30, alternative = "greater")
-      list(k = k, n = n, p_obs = p_obs, p_val = bt$p.value,
-           ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
-    })
-    tagList(
-      p(tags$b("H₀:"), " p_ubóstwo ≤ 0.30 · ",
-        tags$b("Hₐ:"), " p_ubóstwo > 0.30"),
-      tags$ul(
-        tags$li(sprintf("k = %d okręgów z lunch > 50, n = %d, p̂ = %s (%s%%)",
-                        r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
-        tags$li(sprintf("p %s %s (test dwumianowy, prawostronny)",
-          if (r$p_val < 0.001) "<" else "=",
-          if (r$p_val < 0.001) "0.001" else .ch3_dec(r$p_val, 4))),
-        tags$li(sprintf("Dolna granica jednostronnego 95%% przedziału ufności: %s",
-                        .ch3_dec(r$ci_lo, 3)))
-      ),
-      lc_verdict(tags$strong(if (r$p_val < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
-                 type = if (r$p_val < 0.05) "danger" else "ok"),
-      p(tags$b("Interpretacja:"), " ",
-        sprintf("%s%% okręgów ma wysoki poziom ubóstwa (lunch > 50). %s",
-          .ch3_dec(100 * r$p_obs, 1),
-          if (r$p_val < 0.05) {
-            "Odsetek ten istotnie przekracza normę 30% (p < 0.05)."
-          } else {
-            "Dane nie dają podstaw, by twierdzić, że odsetek przekracza normę 30% (p ≥ 0.05)."
-          }))
-    )
-  })
-}
+# Rozdział nie ma logiki serwera: próbę, wykresy kroków, opisy i porównanie testów liczy
+# przeglądarka (modules/figures.js), rozwiązania ćwiczeń CASchools składa R przy budowaniu.
+ch3_server <- function(input, output, session) {}
