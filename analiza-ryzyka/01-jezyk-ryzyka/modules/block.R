@@ -319,6 +319,20 @@ jezyk_chain_terms <- list(
   )
 )
 
+# Ćwiczenia 1.1 i 1.2: przycisk i pole wyniku oceniane w przeglądarce (modules/jezyk.js).
+jezyk_check_button <- function(dm_id) {
+  b <- lc_action(paste0(dm_id, "_check"), "Sprawdź klasyfikację", variant = "solid")
+  b$attribs$id <- NULL
+  b$attribs$class <- sub("action-button ", "", b$attribs$class, fixed = TRUE)
+  b$attribs[["data-ch1-check"]] <- dm_id
+  b
+}
+jezyk_classification_feedback <- function(dm_id, items, ok_text, rows = FALSE) {
+  tags$div(`data-ch1-feedback` = dm_id, `data-config` = jsonlite::toJSON(list(
+    items = items[, c("id", "text", "correct", "explanation")], labels = as.list(risk_term_labels),
+    ok = ok_text, rows = rows), auto_unbox = TRUE, dataframe = "rows"))
+}
+
 jezyk_chain_svg <- function() {
   node <- function(key, x, y, w, h) {
     term <- jezyk_chain_terms[[key]]
@@ -369,15 +383,15 @@ jezyk_chain_widget <- figure_panel(
   full_width = TRUE,
   jezyk_chain_svg(),
   tags$p(class = "lc-chain-hint", "Kliknij pojęcie, aby zobaczyć jego definicję i pytanie kontrolne."),
-  uiOutput("ch1_chain_detail"),
-  tags$script(HTML(
-    "function lcChainSelect(el) {
-       el.closest('svg').querySelectorAll('.lc-chain-node').forEach(function(n) {
-         n.classList.toggle('is-active', n === el);
-       });
-       Shiny.setInputValue('ch1_chain_click', el.dataset.key, {priority: 'event'});
-     }"
-  ))
+  # Opisy węzłów policzone z góry; klik obsługuje lcChainSelect() w modules/jezyk.js.
+  tags$div(`data-ch1` = "chain-detail", `data-config` = jsonlite::toJSON(lapply(
+    stats::setNames(names(jezyk_chain_terms), names(jezyk_chain_terms)), function(key) {
+      term <- jezyk_chain_terms[[key]]
+      as.character(tags$div(class = "lc-chain-detail", style = paste0("--node-color:", term$color),
+        tags$div(class = "lc-chain-detail-name", risk_term_labels[[key]]),
+        tags$p(term$definition),
+        tags$p(tags$strong("Pytanie kontrolne:"), paste0(" ", term$question))))
+    }), auto_unbox = TRUE))
 )
 
 # Ćwiczenie 3: plac z 24 paletami jako Ω, palety z uszkodzonym zabezpieczeniem
@@ -543,9 +557,10 @@ jezyk_block <- list(
                   upwr_cat[["wrzos"]],
                   upwr_cat[["szalwia"]]
                 ),
-                actions = lc_action("ch1_check", "Sprawdź klasyfikację", variant = "solid")
+                actions = jezyk_check_button("ch1_assign")
               ),
-              uiOutput("ch1_feedback")
+              jezyk_classification_feedback("ch1_assign", risk_scenario_items,
+                " Historia jest uporządkowana — można teraz zdefiniować zdarzenie do obliczeń.")
             ),
             "Najczęstsze pomyłki dotyczą dwóch par. Skórka bywa brana za zdarzenie,
                bo „coś się stało” — ktoś ją upuścił. Ale z perspektywy bezpieczeństwa
@@ -576,9 +591,10 @@ jezyk_block <- list(
                   "Enter upuszcza, Escape anuluje, Delete odsyła kartę do puli."
                 ),
                 class = "is-rows",
-                actions = lc_action("ch1_check_rampa", "Sprawdź klasyfikację", variant = "solid")
+                actions = jezyk_check_button("ch1_assign_rampa")
               ),
-              uiOutput("ch1_feedback_rampa")
+              jezyk_classification_feedback("ch1_assign_rampa", risk_rampa_items,
+                " Ten sam łańcuch opisuje zupełnie inną historię.", rows = TRUE)
             ),
             risk_check("j1_chk_role",
               "Posadzka przy myjni skrzynek jest mokra przez całą zmianę. Jaką rolę pełni ten fakt w łańcuchu z definicji 1.1?",
@@ -695,27 +711,28 @@ jezyk_block <- list(
               label = "Ćwiczenie 2",
               title = "Teoria kontra kolejne zmiany w Bananpolu",
               full_width = TRUE,
-              lc_toolbar(
-                lc_action_group(ch2_add_1 = "+1", ch2_add_10 = "+10",
-                                ch2_add_100 = "+100", ch2_add_1000 = "+1 000",
-                                label = "Dodaj zmiany"),
-                lc_slider("ch2_guess", "Twoje oszacowanie P", 0, 0.30, 0.15, 0.01),
-                lc_action("ch2_reveal", "Odsłoń i porównaj", variant = "outline"),
-                lc_action("ch2_reset", icon = "shuffle", variant = "ghost", aria_label = "Nowa seria"),
-                lc_readouts(uiOutput("ch2_stats"))
-              ),
-              lc_plots(
-                tags$div(
-                  tags$h4("Ostatnie 100 zmian"),
-                  lc_plot("ch2_grid", ratio = "1/1", max_height = "280px")
-                ),
-                tags$div(
-                  tags$h4("Skumulowana częstość"),
-                  lc_plot("ch2_line", ratio = "1.3/1", max_height = "340px")
-                )
-              ),
-              uiOutput("ch2_note"),
-              uiOutput("ch2_feedback")
+              # Rycina lcSF „j1_freq” (modules/jezyk.js): ukryte P, losowanie i wykresy w przeglądarce.
+              lc_sf_figure("j1_freq",
+                control = lc_sf_slider("ch2_guess", "Twoje oszacowanie P", 0, 0.30, 0.15, 0.01),
+                toolbar = tagList(
+                  lc_sf_action_group("Dodaj zmiany", add1 = "+1", add10 = "+10", add100 = "+100", add1000 = "+1 000"),
+                  lc_sf_action("reveal", "ch2_reveal", "Odsłoń i porównaj", variant = "outline"),
+                  lc_sf_action("reset", "ch2_reset", icon = "shuffle", variant = "ghost", aria_label = "Nowa seria"),
+                  lc_readouts(
+                    lc_readout("Zmiany", lc_sf_value("n", "0")),
+                    lc_readout("Ze zdarzeniem", lc_sf_value("k", "0"), color = upwr_accent),
+                    lc_readout("Częstość", lc_sf_value("f", "—"), color = upwr_cat[["niebo"]]),
+                    lc_readout("Modelowe P", lc_sf_value("p", "ukryte")))),
+                body = lc_plots(
+                  # Siatka 10 × 10 o kwadratowych polach: kwadratowy, zawężony wykres.
+                  tags$div(tags$h4("Ostatnie 100 zmian"),
+                    tags$div(style = "max-width:300px;margin:0 auto;", lc_sf_chart(0, "1/1", "300px"))),
+                  tags$div(tags$h4("Skumulowana częstość"), lc_sf_chart(1, "1.3/1", "340px"))),
+                notes = list(
+                  hidden = lc_caption("Siatka: burgundowe pola to zmiany z poślizgnięciem, niebieskie bez zdarzenia, szare jeszcze nieobserwowane. Wykres: kropkowana linia to Twoje oszacowanie."),
+                  shown = lc_caption("Siatka: burgundowe pola to zmiany z poślizgnięciem, niebieskie bez zdarzenia, szare jeszcze nieobserwowane. Wykres: kropkowana linia to Twoje oszacowanie, przerywana modelowe P.")),
+                selected = "hidden",
+                after = tags$div(`data-role` = "fb"))
             ),
             "Na początku serii linia skacze gwałtownie: po jednej zmianie częstość
                wynosi 0 albo 1, a po kilku zmianach jedno zdarzenie przesuwa ją o
@@ -1041,7 +1058,7 @@ jezyk_block <- list(
               label = "Rycina 1.1",
               title = "Cztery działania na zdarzeniach",
               full_width = TRUE,
-              lc_plot("ch4_ops_plot", ratio = "1.7/1", max_height = "480px")
+              jezyk_ops_svg()
             ),
             lc_caption("Zaznaczony obszar to zdarzenie otrzymane w wyniku działania; prostokąt oznacza całą przestrzeń Ω."),
             risk_definition("1.7", "Zdarzenia rozłączne", c(
@@ -1070,12 +1087,7 @@ jezyk_block <- list(
             figure_panel(
               label = "Demonstracja 1.1",
               full_width = TRUE,
-              lc_step_widget("ch4_venn",
-                title = "Dlaczego nie wystarczy dodać P(A) i P(B)?",
-                steps = c("Dane", "Naiwna suma", "Korekta", "Zdarzenia rozłączne"),
-                plot_id = "ch4_venn_plot",
-                ratio = "1.8/1"
-              )
+              jezyk_venn_widget()
             ),
             "Naiwna suma 0.70 + 0.60 = 1.30 łamie własność 0 ≤ P ≤ 1 ze wzoru (1.3) —
                to sygnał, że coś policzono podwójnie. Wystarczy odjąć część wspólną
@@ -1132,13 +1144,21 @@ jezyk_block <- list(
               label = "Ćwiczenie 4",
               title = "Suma, iloczyn i dopełnienie zdarzeń",
               full_width = TRUE,
-              lc_toolbar(
-                lc_slider("ch4_n_a", "Liczba kontroli ze zdarzeniem Me", 0, 80, 30, 1),
-                lc_slider("ch4_n_b", "Liczba kontroli ze zdarzeniem Be", 0, 80, 20, 1),
-                lc_slider("ch4_overlap", "Liczba kontroli z Me i Be", 0, 20, 8, 1),
-                lc_readouts(uiOutput("ch4_stats"))
-              ),
-              lc_plot("ch4_event_grid", ratio = "1.3/1", max_height = "480px")
+              # Rycina lcSF „j1_events” (modules/jezyk.js); suwak części wspólnej
+              # pilnuje zakresu [max(0, Me + Be − 100), min(Me, Be)].
+              lc_sf_figure("j1_events",
+                control = list(
+                  lc_sf_slider("ch4_n_a", "Liczba kontroli ze zdarzeniem Me", 0, 80, 30, 1),
+                  lc_sf_slider("ch4_n_b", "Liczba kontroli ze zdarzeniem Be", 0, 80, 20, 1),
+                  lc_sf_slider("ch4_overlap", "Liczba kontroli z Me i Be", 0, 20, 8, 1)),
+                toolbar = lc_readouts(
+                  lc_readout("P(Me ∩ Be)", lc_sf_value("and"), color = upwr_cat[["wrzos"]]),
+                  lc_readout("P(Me ∪ Be)", lc_sf_value("or"), color = upwr_accent),
+                  lc_readout("P(Meᶜ)", lc_sf_value("notA"), color = upwr_cat[["szalwia"]]),
+                  lc_readout("Ani Me, ani Be", lc_sf_value("none"), color = upwr_reference)),
+                # Kwadratowe pola siatki: kwadratowy, zawężony wykres (legenda nad nim).
+                body = tags$div(style = "max-width:440px;margin:0 auto;", lc_sf_chart(0, "1/1", "440px")),
+                legend = TRUE)
             ),
             "Przy ustawieniach startowych panel pokazuje P(Me ∩ Be) = 0.08, P(Me ∪ Be) =
                0.42, P(Meᶜ) = 0.70 i „ani Me, ani Be” = 0.58. Sprawdzenie wzorem (1.5):
@@ -1596,449 +1616,9 @@ jezyk_block <- list(
 
 jezyk_chapters <- risk_block_chapters(jezyk_block)
 
-jezyk_sytuacja_server <- function(input, output, session) {
-  output$ch1_chain_detail <- renderUI({
-    key <- input$ch1_chain_click
-    req(key %in% names(jezyk_chain_terms))
-    term <- jezyk_chain_terms[[key]]
-    tags$div(
-      class = "lc-chain-detail", style = paste0("--node-color:", term$color),
-      tags$div(class = "lc-chain-detail-name", risk_term_labels[[key]]),
-      tags$p(term$definition),
-      tags$p(tags$strong("Pytanie kontrolne:"), paste0(" ", term$question))
-    )
-  })
-
-  # Klasyfikacja do ról z definicji 1.1. Ćwiczenie 1.1: karty-zdania do pól ról;
-  # ćwiczenie 1.2 (rows = TRUE): karty-role do pól zdań.
-  classification_feedback <- function(assign_id, check_id, items, ok_text, rows = FALSE) {
-    checked <- reactiveVal(FALSE)
-    observeEvent(input[[check_id]], checked(TRUE))
-
-    renderUI({
-      req(checked())
-
-      answers <- if (rows) {
-        rows_assignment_to_answers(input[[assign_id]], items)
-      } else {
-        assignment_to_answers(input[[assign_id]], items)
-      }
-      result <- score_risk_classification(answers, items)
-
-      details <- lapply(seq_len(nrow(items)), function(i) {
-        selected <- answers[[items$id[[i]]]]
-        correct_code <- items$correct[[i]]
-        is_correct <- result$correct[[i]]
-        verdict <- if (is_correct) {
-          "Dobrze rozpoznane. "
-        } else if (nzchar(selected)) {
-          paste0(if (rows) "Przypisana rola: " else "Trafiło do pola ",
-                 risk_term_labels[[selected]], ". ")
-        } else {
-          if (rows) "Bez przypisanej roli. " else "Nie trafiło do żadnego pola. "
-        }
-
-        tags$li(
-          tags$strong(paste0(risk_term_labels[[correct_code]], ": ")),
-          items$text[[i]], " ", verdict,
-          items$explanation[[i]]
-        )
-      })
-
-      lc_status(
-        lc_verdict(tags$strong(sprintf("Wynik: %d/%d.", result$score, result$total)), type = if (result$score == result$total) "ok" else "warning"),
-        if (result$score == result$total) {
-          ok_text
-        } else {
-          " Sprawdź różnicę między źródłem szkody, kontaktem, zdarzeniem i następstwem."
-        },
-        tags$ul(details)
-      )
-    })
-  }
-
-  output$ch1_feedback <- classification_feedback("ch1_assign", "ch1_check", risk_scenario_items,
-    " Historia jest uporządkowana — można teraz zdefiniować zdarzenie do obliczeń.")
-  output$ch1_feedback_rampa <- classification_feedback("ch1_assign_rampa", "ch1_check_rampa",
-    risk_rampa_items, " Ten sam łańcuch opisuje zupełnie inną historię.", rows = TRUE)
-}
-
-jezyk_czestosc_server <- function(input, output, session) {
-  probability_candidates <- seq(0.01, 0.30, by = 0.01)
-  history <- reactiveVal(integer())
-  model_probability <- reactiveVal(sample(probability_candidates, 1L))
-  probability_revealed <- reactiveVal(FALSE)
-
-  add_days <- function(n) {
-    history(append_bernoulli_history(history(), n, model_probability()))
-  }
-
-  observeEvent(input$ch2_add_1, add_days(1L))
-  observeEvent(input$ch2_add_10, add_days(10L))
-  observeEvent(input$ch2_add_100, add_days(100L))
-  observeEvent(input$ch2_add_1000, add_days(1000L))
-  observeEvent(input$ch2_reveal, probability_revealed(TRUE))
-  observeEvent(input$ch2_reset, {
-    history(integer())
-    model_probability(sample(setdiff(probability_candidates, model_probability()), 1L))
-    probability_revealed(FALSE)
-  })
-
-  output$ch2_stats <- renderUI({
-    observed <- history()
-    n <- length(observed)
-    tagList(
-      lc_readout("Zmiany", format(n, big.mark = " ")),
-      lc_readout("Ze zdarzeniem", format(sum(observed), big.mark = " "), color = upwr_accent),
-      lc_readout("Częstość", if (n) risk_fmt_p(mean(observed)) else "—",
-                 color = upwr_cat[["niebo"]]),
-      lc_readout("Modelowe P",
-                 if (probability_revealed()) risk_fmt_p(model_probability()) else "ukryte")
-    )
-  })
-
-  # Siatka ostatnich 100 zmian: burgund = poślizgnięcie, niebieski = bez zdarzenia.
-  zoom_plot_server("ch2_grid", reactive({
-    last <- utils::tail(history(), 100L)
-    cells <- data.frame(id = seq_len(100L))
-    cells$column <- (cells$id - 1L) %% 10L + 1L
-    cells$row <- (cells$id - 1L) %/% 10L + 1L
-    cells$state <- factor(
-      c(ifelse(last == 1L, "event", "none"), rep("empty", 100L - length(last))),
-      levels = c("event", "none", "empty")
-    )
-    ggplot(cells, aes(column, -row, fill = state)) +
-      geom_tile(colour = upwr_panel, linewidth = 1.2) +
-      scale_fill_manual(values = c(event = upwr_accent, none = upwr_cat[["niebo"]],
-                                   empty = upwr_rule), drop = FALSE, guide = "none") +
-      coord_equal(expand = FALSE) +
-      labs(x = NULL, y = NULL) +
-      theme_void()
-  }), alt = "Siatka ostatnich stu zmian; burgundowe pola to zmiany z poślizgnięciem.")
-
-  zoom_plot_server("ch2_line", reactive({
-    data <- cumulative_frequency(history())
-    plot <- ggplot(data, aes(trial, frequency)) +
-      geom_hline(yintercept = input$ch2_guess, colour = upwr_cat[["bursztyn"]],
-                 linewidth = 0.9, linetype = "dotted") +
-      coord_cartesian(ylim = c(0, 1)) +
-      labs(x = "Liczba obserwowanych zmian", y = "Skumulowana częstość")
-    if (probability_revealed()) {
-      plot <- plot + geom_hline(yintercept = model_probability(), colour = upwr_accent,
-                                linewidth = 0.9, linetype = "dashed")
-    }
-    if (nrow(data) == 0) {
-      plot + scale_x_continuous(limits = c(0, 2))
-    } else {
-      plot + geom_line(linewidth = 0.8, colour = upwr_cat[["niebo"]])
-    }
-  }), alt = "Skumulowana częstość poślizgnięć z linią oszacowania; po odsłonięciu także linia modelowego P.")
-
-  output$ch2_note <- renderUI({
-    lc_caption(paste0(
-      "Siatka: burgundowe pola to zmiany z poślizgnięciem, niebieskie bez zdarzenia, ",
-      "szare jeszcze nieobserwowane. Wykres: kropkowana linia to Twoje oszacowanie",
-      if (probability_revealed()) ", przerywana modelowe P." else "."
-    ))
-  })
-
-  output$ch2_feedback <- renderUI({
-    req(probability_revealed())
-    observed <- history()
-    n <- length(observed)
-    p <- model_probability()
-    lc_status(
-      tags$strong("Porównanie:"),
-      paste0(
-        sprintf(" Twoje oszacowanie %s, modelowe P %s", risk_fmt_p(input$ch2_guess), risk_fmt_p(p)),
-        if (n) sprintf(paste0(", częstość po %s zmianach %s. Przy tej liczbie zmian ",
-                              "częstość waha się wokół P typowo o √(p(1 - p)/n) ≈ %s."),
-                       format(n, big.mark = " "), risk_fmt_p(mean(observed)),
-                       risk_fmt_p(sqrt(p * (1 - p) / n))) else
-          ". Dodaj zmiany, żeby porównać z częstością."
-      )
-    )
-  })
-}
-
-jezyk_zbiory_server <- function(input, output, session) {
-  # Krok widgetu (1..4) żyje w przeglądarce; opis kroku jako tekst inline.
-  venn_step <- lc_step_server("ch4_venn", input)$step
-
-  output$ch4_venn_text <- renderUI({
-    txt <- switch(
-      as.character(venn_step()),
-      "1" = paste(
-        "Dwa zachodzące na siebie zdarzenia. P(A) = 0.70, P(B) = 0.60, a P(A ∩ B) = 0.40.",
-        "Najpierw zaznaczamy oba zbiory bez wykonywania działania."
-      ),
-      "2" = paste(
-        "Dodajemy całe A i całe B: \\(0.70+0.60=1.30\\).",
-        "Wynik 1.30 nie może być prawdopodobieństwem. Ciemna część wspólna dostała dwa kolory — została policzona dwa razy."
-      ),
-      "3" = paste(
-        "Usuwamy jedną kopię części wspólnej: \\(0.70+0.60-0.40=0.90\\).",
-        "Obszar A ∩ B nadal należy do sumy, ale jest w niej liczony tylko raz."
-      ),
-      "4" = paste(
-        "Kiedy samo dodawanie działa? \\(0.40+0.35=0.75\\).",
-        "Koła nie zachodzą na siebie, więc P(A ∩ B) = 0. Niczego nie policzyliśmy dwa razy."
-      )
-    )
-    withMathJax(txt)
-  })
-
-  venn_plot <- reactive({
-    circle_points <- function(center_x, center_y, radius, n = 240L) {
-      angle <- seq(0, 2 * pi, length.out = n)
-      data.frame(
-        x = center_x + radius * cos(angle),
-        y = center_y + radius * sin(angle)
-      )
-    }
-
-    step <- venn_step()
-    if (step == 4L) {
-      circle_a <- circle_points(3.15, 3.25, 1.55)
-      circle_b <- circle_points(6.85, 3.25, 1.55)
-    } else {
-      center_a <- 4.05
-      center_b <- 5.95
-      radius <- 2.15
-      circle_a <- circle_points(center_a, 3.25, radius)
-      circle_b <- circle_points(center_b, 3.25, radius)
-      half_angle <- acos((center_b - center_a) / (2 * radius))
-      overlap <- rbind(
-        data.frame(
-          x = center_a + radius * cos(seq(-half_angle, half_angle, length.out = 120L)),
-          y = 3.25 + radius * sin(seq(-half_angle, half_angle, length.out = 120L))
-        ),
-        data.frame(
-          x = center_b + radius * cos(seq(pi - half_angle, pi + half_angle, length.out = 120L)),
-          y = 3.25 + radius * sin(seq(pi - half_angle, pi + half_angle, length.out = 120L))
-        )
-      )
-    }
-
-    plot <- ggplot() +
-      annotate(
-        "rect",
-        xmin = 0.8, xmax = 9.2, ymin = 0.45, ymax = 6.05,
-        fill = upwr_panel, colour = upwr_rule, linewidth = 0.7
-      )
-
-    blend_with_panel <- function(colour, fraction = STEP_ROLES$data$alpha) {
-      grDevices::colorRampPalette(c(upwr_panel, colour))(101L)[round(fraction * 100) + 1L]
-    }
-    # Role: A = dane (niebo), B = druga grupa (bursztyn); kontury wypełnionych kół czarne.
-    a_colour <- STEP_ROLES$data$colour
-    b_colour <- STEP_ROLES$group$colour
-
-    if (step == 1L) {
-      plot <- plot +
-        step_layer(geom_polygon, "data", data = circle_a, mapping = aes(x = x, y = y),
-                   fill = NA, linewidth = 1.3) +
-        step_layer(geom_polygon, "group", data = circle_b, mapping = aes(x = x, y = y),
-                   fill = NA, linewidth = 1.3)
-    } else if (step == 3L) {
-      a_fill <- blend_with_panel(a_colour)
-      b_fill <- blend_with_panel(b_colour)
-      plot <- plot +
-        step_result(geom_polygon, data = circle_a, mapping = aes(x = x, y = y),
-                    fill = a_fill, alpha = 1) +
-        step_result(geom_polygon, data = circle_b, mapping = aes(x = x, y = y),
-                    fill = b_fill, alpha = 1) +
-        step_layer(geom_polygon, "new", data = overlap, mapping = aes(x = x, y = y),
-                   fill = a_fill)
-    } else {
-      plot <- plot +
-        step_result(geom_polygon, data = circle_a, mapping = aes(x = x, y = y),
-                    fill = a_colour) +
-        step_result(geom_polygon, data = circle_b, mapping = aes(x = x, y = y),
-                    fill = b_colour)
-    }
-
-    label_x <- if (step == 4L) c(3.15, 6.85) else c(2.7, 7.3)
-    label_text <- if (step == 4L) c("A\nP(A) = 0.40", "B\nP(B) = 0.35") else
-      c("A\nP(A) = 0.70", "B\nP(B) = 0.60")
-
-    plot <- plot +
-      annotate("text", x = label_x, y = 3.35, label = label_text,
-               fontface = "bold", size = 5, lineheight = 1.15)
-
-    if (step == 2L) {
-      plot <- plot + annotate(
-        "label", x = 5, y = 3.25,
-        label = "A ∩ B = 0.40\nPOLICZONE 2 RAZY",
-        fill = "#ffffff", colour = STEP_ROLES$new$colour,
-        linewidth = 0.4, fontface = "bold", size = 4.3
-      )
-    } else if (step == 3L) {
-      plot <- plot + annotate(
-        "label", x = 5, y = 3.25,
-        label = "A ∩ B = 0.40\nJEDNO NALICZENIE",
-        fill = "#ffffff", colour = STEP_ROLES$new$colour,
-        linewidth = 0.4, fontface = "bold", size = 4,
-        lineheight = 0.9
-      )
-    }
-
-    plot +
-      # Stała rama we wszystkich krokach.
-      coord_equal(xlim = c(0.5, 9.5), ylim = c(0.6, 6.25), expand = FALSE) +
-      labs(x = NULL, y = NULL) +
-      theme_void() +
-      theme(legend.position = "none")
-  })
-
-  zoom_plot_server(
-    "ch4_venn_plot",
-    venn_plot,
-    alt = paste(
-      "Czterostopniowy diagram Venna pokazujący podwójne policzenie części",
-      "wspólnej oraz szczególny przypadek zdarzeń rozłącznych."
-    )
-  )
-
-  ops_plot <- reactive({
-    # Siatka punktów w prostokącie Ω; zdarzenie to zaznaczony podzbiór punktów.
-    grid <- expand.grid(x = seq(0.05, 9.95, length.out = 300L), y = seq(0.05, 5.95, length.out = 180L))
-    in_a <- (grid$x - 3.9)^2 + (grid$y - 3)^2 <= 2^2
-    in_b <- (grid$x - 6.1)^2 + (grid$y - 3)^2 <= 2^2
-    ops <- list(
-      "A ~ '∪' ~ B" = in_a | in_b,
-      "A ~ '∩' ~ B" = in_a & in_b,
-      "A^c" = !in_a,
-      "A ~ '\\\\' ~ B" = in_a & !in_b
-    )
-    data <- do.call(rbind, lapply(names(ops), function(op) {
-      cbind(grid, op = factor(op, levels = names(ops)), selected = ops[[op]])
-    }))
-
-    circles <- do.call(rbind, lapply(names(ops), function(op) {
-      angle <- seq(0, 2 * pi, length.out = 200L)
-      rbind(
-        data.frame(op = op, set = "A", x = 3.9 + 2 * cos(angle), y = 3 + 2 * sin(angle)),
-        data.frame(op = op, set = "B", x = 6.1 + 2 * cos(angle), y = 3 + 2 * sin(angle))
-      )
-    }))
-    circles$op <- factor(circles$op, levels = names(ops))
-    labels <- data.frame(
-      op = factor(rep(names(ops), each = 2L), levels = names(ops)),
-      set = c("A", "B"), x = c(3.2, 6.8), y = 3
-    )
-
-    ggplot() +
-      geom_raster(data = data, aes(x = x, y = y, fill = selected)) +
-      geom_path(data = circles, aes(x = x, y = y, group = interaction(op, set)),
-                colour = upwr_ink, linewidth = 0.6) +
-      geom_text(data = labels, aes(x = x, y = y, label = set), fontface = "bold", size = 5) +
-      annotate("rect", xmin = 0, xmax = 10, ymin = 0, ymax = 6,
-               fill = NA, colour = upwr_ink, linewidth = 0.5) +
-      facet_wrap(~op, nrow = 2L, labeller = label_parsed) +
-      scale_fill_manual(values = c(
-        "TRUE" = grDevices::colorRampPalette(c(upwr_panel, STEP_ROLES$new$colour))(101L)[46L],
-        "FALSE" = upwr_panel
-      )) +
-      coord_equal(xlim = c(-0.1, 10.1), ylim = c(-0.1, 6.1), expand = FALSE) +
-      labs(x = NULL, y = NULL) +
-      theme_void() +
-      theme(legend.position = "none",
-            strip.text = element_text(face = "bold", size = rel(1.3), margin = margin(b = 4)),
-            panel.spacing = grid::unit(1, "lines"))
-  })
-
-  zoom_plot_server(
-    "ch4_ops_plot",
-    ops_plot,
-    alt = paste(
-      "Cztery diagramy Venna: suma, iloczyn, dopełnienie A oraz różnica A bez B,",
-      "z zaznaczonym obszarem odpowiadającym każdemu działaniu."
-    )
-  )
-
-  observeEvent(list(input$ch4_n_a, input$ch4_n_b), {
-    req(input$ch4_n_a, input$ch4_n_b)
-    lower <- max(0L, input$ch4_n_a + input$ch4_n_b - 100L)
-    upper <- min(input$ch4_n_a, input$ch4_n_b)
-    current <- input$ch4_overlap
-    if (is.null(current)) current <- lower
-    value <- min(max(current, lower), upper)
-
-    updateSliderInput(
-      session,
-      "ch4_overlap",
-      min = lower,
-      max = upper,
-      value = value
-    )
-  })
-
-  event_values <- reactive({
-    req(input$ch4_n_a, input$ch4_n_b, input$ch4_overlap)
-    lower <- max(0L, input$ch4_n_a + input$ch4_n_b - 100L)
-    upper <- min(input$ch4_n_a, input$ch4_n_b)
-    overlap <- min(max(input$ch4_overlap, lower), upper)
-    list(
-      n_a = as.integer(input$ch4_n_a),
-      n_b = as.integer(input$ch4_n_b),
-      overlap = as.integer(overlap)
-    )
-  })
-
-  output$ch4_stats <- renderUI({
-    values <- event_values()
-    union <- values$n_a + values$n_b - values$overlap
-
-    tagList(
-      lc_readout("P(Me ∩ Be)", risk_fmt_p(values$overlap / 100), color = upwr_cat[["wrzos"]]),
-      lc_readout("P(Me ∪ Be)", risk_fmt_p(union / 100), color = upwr_accent),
-      lc_readout("P(Meᶜ)", risk_fmt_p(1 - values$n_a / 100), color = upwr_cat[["szalwia"]]),
-      lc_readout("Ani Me, ani Be", risk_fmt_p((100 - union) / 100), color = upwr_reference)
-    )
-  })
-
-  event_grid_plot <- reactive({
-    values <- event_values()
-    data <- build_event_grid(
-      total = 100L,
-      n_a = values$n_a,
-      n_b = values$n_b,
-      overlap = values$overlap,
-      columns = 10L
-    )
-
-    ggplot(data, aes(x = column, y = -row, fill = status)) +
-      geom_tile(colour = "white", linewidth = 0.7, width = 0.95, height = 0.95) +
-      scale_fill_manual(values = c(
-        "A i B" = upwr_cat[["wrzos"]],
-        "Tylko A" = upwr_cat[["terakota"]],
-        "Tylko B" = upwr_cat[["niebo"]],
-        "Ani A, ani B" = upwr_reference
-      ), labels = c(
-        "A i B" = "Me i Be", "Tylko A" = "Tylko Me",
-        "Tylko B" = "Tylko Be", "Ani A, ani B" = "Ani Me, ani Be"
-      )) +
-      coord_equal() +
-      scale_x_continuous(breaks = NULL) +
-      scale_y_continuous(breaks = NULL) +
-      labs(x = NULL, y = NULL, fill = NULL) +
-      theme(
-        panel.grid = element_blank(),
-        axis.text = element_blank(),
-        legend.position = "bottom"
-      )
-  })
-
-  zoom_plot_server(
-    "ch4_event_grid",
-    event_grid_plot,
-    alt = paste(
-      "Siatka stu kontroli podzielonych na zdarzenie A, zdarzenie B,",
-      "ich część wspólną oraz wyniki nienależące do żadnego zdarzenia."
-    )
-  )
-}
+# Łańcuch, ćwiczenia 1.1 i 1.2, częstość, działania na zdarzeniach i siatka zdarzeń
+# działają w przeglądarce (modules/jezyk.js, modules/rysunki.R); serwer obsługuje
+# tylko sprawdzenie decyzji, ćwiczenia z rozdziału „Ćwiczenia” i quiz.
 
 jezyk_decyzja_server <- function(input, output, session) {
   check_count <- reactiveVal(0L)
@@ -2170,9 +1750,6 @@ jezyk_cwiczenia_server <- function(input, output, session) {
 }
 
 jezyk_server <- function(input, output, session) {
-  jezyk_sytuacja_server(input, output, session)
-  jezyk_czestosc_server(input, output, session)
-  jezyk_zbiory_server(input, output, session)
   jezyk_decyzja_server(input, output, session)
   jezyk_cwiczenia_server(input, output, session)
   risk_assessment_server("j1", jezyk_quiz, input, output)

@@ -144,7 +144,10 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     reakcji, Serpuchów); suwaki tablicy są wspólne dla kilku rozdziałów.
     02 bez obliczeń w R poza quizem: Monty Hall w `monty.js` (rycina lcSF),
     „Trzy widoki” to stały SVG i tabela z R (`monty_server.R` usunięty).
-    Dalej 01. Wspólna obsługa
+    01 bez obliczeń w R poza decyzją, ćwiczeniami i quizem: `jezyk.js` (łańcuch
+    pojęć, ocena klasyfikacji Ćw. 1.1/1.2, ryciny lcSF częstości i siatki zdarzeń,
+    kadry Demonstracji 1.1), Rycina 1.1 i Venn jako SVG z `rysunki.R`;
+    offline 1.9 MB, zero PNG. Wspólna obsługa
     w `lc_charts.js` gotowa. Wykłady 01, 02, 03 i 05 w całości na ECharts
     (2026-11-05; mostek offline `widgets/01-ch2-jakosciowe.js` też), 04 od
     2026-11-09. Wykłady statystyki nie ładują już Chart.js (poza

@@ -53,6 +53,8 @@ lc_apply_ggplot_defaults()
 # ==========================================================================
 
 source(file.path(app_dir, "modules", "helpers.R"), local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
+source(file.path(app_dir, "modules", "rysunki.R"), local = TRUE)
 source(file.path(app_dir, "modules", "block.R"),   local = TRUE)
 
 .chapters <- jezyk_chapters
@@ -64,6 +66,14 @@ ui <- lecture_page(
   module_label  = "Analiza ryzyka · Bananpol",
   chapters      = .chapters,
   header_extras = tagList(
+    # Łańcuch, ćwiczenia 1.1–1.2, częstość, Venn i siatka zdarzeń działają w przeglądarce
+    # (modules/jezyk.js; ryciny lcSF na ECharts), więc także offline.
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "jezyk.js")),
+    lc_sf_styles(),
+    tags$style(HTML(".j1-math { font-family: var(--upwr-mono); white-space: nowrap; }")),
     includeScript(file.path(app_dir, "modules", "omega.js")),
     includeScript(file.path(app_dir, "modules", "riskmatrix.js")),
     tags$style(HTML("
