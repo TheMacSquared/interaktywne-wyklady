@@ -88,3 +88,28 @@ test("rozdział 6: test korelacji jak cor.test() i losowanie par o zadanej korel
   close(Z.corTest(d.x, d.y).r, -0.55, 0.03, "korelacja próby");
   close(T.mean(d.y), 8, 0.15, "średnia y"); close(T.sd(d.x), 7, 0.25, "SD x");
 });
+
+test("rozdział 7: test χ² i test Fishera dla tabel r × c jak chisq.test() i fisher.test()", () => {
+  // R: chisq.test(m) i fisher.test(m) dla macierzy wierszami.
+  const cases = [
+    { tab: [[3, 37], [6, 34], [9, 31]], stat: 3.529412, df: 2, p: 0.17123714, fisher: 0.19043885, e11: 6 },
+    { tab: [[6, 16, 18], [22, 14, 4], [28, 10, 2]], stat: 34.257143, df: 4, p: 0.00000066, fisher: 0.00000042, e11: 18.66667 },
+    { tab: [[18, 14, 8], [48, 10, 2]], stat: 14.482323, df: 2, p: 0.00071648, fisher: 0.00063524, e11: 26.4 },
+    { tab: [[1, 9], [0, 12], [5, 3]], stat: 12.65625, df: 2, p: 0.00178538, fisher: 0.00134394, e11: 2 }];
+  const r = D.rng(7);
+  for (const c of cases) {
+    const chi = Z.chisqTest(c.tab);
+    close(chi.stat, c.stat, 1e-5, "χ²"); assert.equal(chi.df, c.df); close(chi.p, c.p, 2e-8, "p χ²"); close(chi.expected[0][0], c.e11, 1e-4, "oczekiwana");
+    const f = Z.fisherTest(c.tab, r);
+    assert.ok(f.exact);
+    close(f.p, c.fisher, 2e-8, "p Fishera");
+  }
+  // Powyżej limitu wyliczenia: symulacja (B = 2000), wynik blisko dokładnego.
+  const sim = Z.fisherTest(cases[0].tab, r, 10);
+  assert.ok(!sim.exact);
+  close(sim.p, 0.19043885, 0.04, "p Fishera z symulacji");
+  // Losowanie tabeli: suma n, kształt jak macierz prawdopodobieństw.
+  const tab = Z.tableSample(r, 120, [[0.05, 0.95], [0.12, 0.88], [0.2, 0.8]]);
+  assert.equal(tab.length, 3);
+  assert.equal(tab.flat().reduce((s, v) => s + v, 0), 120);
+});

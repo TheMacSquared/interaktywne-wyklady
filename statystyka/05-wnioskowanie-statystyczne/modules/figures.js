@@ -90,6 +90,75 @@
     var p = alternative === "less" ? D.pt(t, df) : alternative === "greater" ? 1 - D.pt(t, df) : 2 * D.pt(-Math.abs(t), df);
     return { n: n, r: r, t: t, df: df, p: p, slope: sxy / sxx, intercept: my - sxy / sxx * mx };
   }
+  // Tabela r × c z losowania: liczebności wierszy z rozkładu wielomianowego o równych szansach,
+  // w każdym wierszu kategorie kolumn z prawdopodobieństwami probs[i].
+  function tableSample(r, n, probs) {
+    var tab = probs.map(function (row) { return row.map(function () { return 0; }); });
+    for (var i = 0; i < n; i++) {
+      var a = r.int(probs.length) - 1;
+      tab[a][r.choose(probs[a]) - 1] += 1;
+    }
+    return tab;
+  }
+  function margins(tab) {
+    var rows = tab.map(function (r) { return r.reduce(function (s, v) { return s + v; }, 0); });
+    var cols = tab[0].map(function (v, j) { return tab.reduce(function (s, r) { return s + r[j]; }, 0); });
+    return { rows: rows, cols: cols, n: rows.reduce(function (s, v) { return s + v; }, 0) };
+  }
+  // chisq.test() dla tabeli większej niż 2 × 2 (bez poprawki): statystyka, df, p i liczebności oczekiwane.
+  function chisqTest(tab) {
+    var m = margins(tab), stat = 0;
+    var expected = tab.map(function (r, i) { return r.map(function (v, j) { return m.rows[i] * m.cols[j] / m.n; }); });
+    tab.forEach(function (r, i) { r.forEach(function (v, j) { stat += (v - expected[i][j]) * (v - expected[i][j]) / expected[i][j]; }); });
+    var df = (tab.length - 1) * (tab[0].length - 1);
+    return { stat: stat, df: df, p: 1 - D.pchisq(stat, df), expected: expected };
+  }
+  // fisher.test() dla tabeli r × c: suma prawdopodobieństw tabel o tych samych sumach brzegowych
+  // nie bardziej prawdopodobnych od obserwowanej. Wyliczenie dokładne, dopóki tabel jest niewiele
+  // (limit `cap`); powyżej — losowanie tabel jak fisher.test(simulate.p.value = TRUE, B = 2000).
+  function fisherTest(tab, r, cap) {
+    var m = margins(tab), R = tab.length, Cn = tab[0].length, lf = D.lgamma;
+    var lfact = function (k) { return lf(k + 1); };
+    var constant = m.rows.reduce(function (s, v) { return s + lfact(v); }, 0) + m.cols.reduce(function (s, v) { return s + lfact(v); }, 0) - lfact(m.n);
+    var logp = function (t) { var s = constant; t.forEach(function (row) { row.forEach(function (v) { s -= lfact(v); }); }); return s; };
+    var obs = logp(tab), limit = obs + 1e-7, count = 0, total = 0, aborted = false, max = cap || 4e6;
+    // Wyliczenie: komórki wiersz po wierszu; ostatni wiersz i ostatnia kolumna wynikają z sum.
+    var cur = tab.map(function (row) { return row.map(function () { return 0; }); }), colLeft = m.cols.slice();
+    function fill(i, j, rowLeft, acc) {
+      if (aborted) return;
+      if (i === R - 1) {                       // ostatni wiersz: reszta kolumn
+        var s = acc;
+        for (var c = 0; c < Cn; c++) s -= lfact(colLeft[c]);
+        if (++count > max) { aborted = true; return; }
+        if (s <= limit) total += Math.exp(s);
+        return;
+      }
+      if (j === Cn - 1) {                      // ostatnia komórka wiersza: reszta wiersza
+        if (rowLeft > colLeft[j]) return;
+        colLeft[j] -= rowLeft;
+        fill(i + 1, 0, m.rows[i + 1], acc - lfact(rowLeft));
+        colLeft[j] += rowLeft;
+        return;
+      }
+      for (var v = Math.min(rowLeft, colLeft[j]); v >= 0; v--) {
+        colLeft[j] -= v;
+        fill(i, j + 1, rowLeft - v, acc - lfact(v));
+        colLeft[j] += v;
+      }
+    }
+    fill(0, 0, m.rows[0], constant);
+    if (!aborted) return { p: Math.min(1, total), exact: true };
+    // Symulacja: losowe przyporządkowanie etykiet kolumn (te same sumy brzegowe), B = 2000.
+    var labels = [], B = 2000, hits = 0, i, b;
+    m.cols.forEach(function (k, c) { for (var q = 0; q < k; q++) labels.push(c); });
+    for (b = 0; b < B; b++) {
+      for (i = labels.length - 1; i > 0; i--) { var w = r.int(i + 1) - 1, tmp = labels[i]; labels[i] = labels[w]; labels[w] = tmp; }
+      var t = tab.map(function (row) { return row.map(function () { return 0; }); }), pos = 0;
+      m.rows.forEach(function (k, a) { for (var q = 0; q < k; q++) t[a][labels[pos++]] += 1; });
+      if (logp(t) <= limit) hits++;
+    }
+    return { p: (1 + hits) / (B + 1), exact: false };
+  }
   // Wartości krytyczne rozkładu statystyki testowej (α = 0.05) i funkcja „w obszarze odrzucenia”.
   function critical(type, df, alternative) {
     if (type === "chisq") { var c = D.qchisq(0.95, df); return { values: [c], reject: function (x) { return x >= c; } }; }
@@ -100,7 +169,7 @@
   }
   root.lcS05 = { phoneData: phoneData, nullDiffs: nullDiffs, simP: simP, power: power, quizAnswer: quizAnswer,
                  tOne: tOne, hist15: hist15, critical: critical, binomTest: binomTest, propTest: propTest,
-                 corData: corData, corTest: corTest };
+                 corData: corData, corTest: corTest, tableSample: tableSample, chisqTest: chisqTest, fisherTest: fisherTest };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -523,6 +592,112 @@
   }
   figures.s05_r1 = r1Fig(false);
   figures.s05_r1b = r1Fig(true);
+
+  // ---- Rozdział 7: dwie zmienne jakościowe (test χ² niezależności) ----------------
+  // Tabela krzyżowa jak lc_crosstab() w R: liczebności albo procenty wierszowe, z sumami.
+  function crosstabHtml(o) {
+    var m = margins(o.tab), pct = o.measure === "row", e = S.esc;
+    var cell = function (v, total) { return pct ? fmt(100 * v / total, 1) : String(v); };
+    var head = '<thead><tr><th scope="col" rowspan="2" class="lc-tbl-corner">' + e(o.rowName) + '</th><th scope="colgroup" colspan="' + o.cols.length +
+      '" class="lc-tbl-span">' + e(o.colName) + '</th><th scope="col" rowspan="2" class="n is-total">Razem</th></tr><tr>' +
+      o.cols.map(function (c, j) { return '<th scope="col" class="n"><i class="lc-th-swatch" aria-hidden="true" style="--lc-sw:' + o.colours[j] + ';"></i>' + e(c) + "</th>"; }).join("") + "</tr></thead>";
+    var body = "<tbody>" + o.tab.map(function (row, i) {
+      return '<tr><th scope="row">' + e(o.rows[i]) + "</th>" + row.map(function (v, j) { return '<td class="n" data-label="' + e(o.cols[j]) + '">' + cell(v, m.rows[i]) + "</td>"; }).join("") +
+        '<td class="n is-total' + (pct ? " is-base-val" : "") + '">' + (pct ? "100" : m.rows[i]) + "</td></tr>";
+    }).join("") + "</tbody>";
+    var foot = '<tfoot><tr><th scope="row">Razem</th>' + m.cols.map(function (v) { return '<td class="n">' + cell(v, m.n) + "</td>"; }).join("") +
+      '<td class="n is-total">' + (pct ? "100" : m.n) + "</td></tr></tfoot>";
+    return '<div class="lc-tbl-block">' + (pct ? '<p class="lc-tbl-lead"><b>% wierszowe:</b> każdy wiersz sumuje się do 100.</p>' : "") +
+      '<div class="lc-tbl-scroll" tabindex="0" role="region" aria-label="' + e(o.label) + '"><table class="lc-tbl is-fit">' + head + body + foot + "</table></div></div>";
+  }
+  // Jedna wspólna tabela dla Ryc. 7.2 (kroki) i 7.3 (χ² a Fisher); po zmianie scenariusza albo n jest nieaktualna.
+  store.x2 = null;
+  function x2Controls() {
+    var sc = document.getElementById("ch5_scenario"), n = document.getElementById("ch5_n");
+    return { scenario: sc ? sc.value : "packaging", n: n ? Number(n.value) : 120 };
+  }
+  function x2Data() {
+    var c = x2Controls(), s = store.x2;
+    return s && s.scenario === c.scenario && s.n === c.n ? s : null;
+  }
+  // Kolory kategorii zmiennej w kolumnach (kroki 1–2): dane, grupa, trzecia.
+  function catColours(P) { return [P.niebo, P.bursztyn, P.szalwia]; }
+  figures.s05_x2 = {
+    act: function (state) {
+      var c = x2Controls();
+      store.x2 = { scenario: c.scenario, n: c.n, tab: tableSample(rng, c.n, state.config.scenarios[c.scenario].probs) };
+    },
+    draw: function (v, P, k, state, vals, step) {
+      var d = x2Data();
+      if (!d) return null;
+      var par = state.config.scenarios[d.scenario];
+      if (step >= 3) { var test = chisqTest(d.tab); return nullPlot(P, test.stat, test.df, "chisq", null, step === 3 ? "stat" : "decision"); }
+      // Krok 1: liczności; krok 2: procenty w obrębie wiersza. Słupki kategorii obok siebie.
+      var m = margins(d.tab), cols = catColours(P), nc = par.cats2.length, w = 0.9 / nc, layers = [], labels = {}, top = 0;
+      d.tab.forEach(function (row, i) {
+        labels[i + 1] = par.cats1[i];
+        row.forEach(function (count, j) {
+          var pct = Math.round(count / m.rows[i] * 1000) / 10, value = step === 1 ? count : pct, x = i + 1 - 0.45 + w * (j + 0.5);
+          top = Math.max(top, value);
+          layers.push({ type: "bins", data: [[x - w * 0.47, x + w * 0.47, value]], color: cols[j], alpha: 0.7, stroke: P.ink });
+          layers.push({ type: "text", x: x, y: value, text: step === 1 ? String(count) : pct + "%", color: P.secondary, mono: true });
+        });
+      });
+      return { x: [0.4, d.tab.length + 0.6], y: [0, step === 1 ? top * 1.15 : 110], layers: layers, xLabels: labels,
+        xName: par.lab1, yName: step === 1 ? "Liczebność" : "Procent", aria: "Słupki kategorii drugiej zmiennej w grupach pierwszej zmiennej." };
+    },
+    // Tabele kroków nad wykresem: 1 liczebności, 2 procenty wierszowe, 3 liczebności oczekiwane.
+    table: function (state, v, vals, step) {
+      var d = x2Data();
+      if (!d || step === 4) return "";
+      var par = state.config.scenarios[d.scenario], base = { tab: d.tab, rows: par.cats1, cols: par.cats2, rowName: par.lab1, colName: par.lab2, colours: catColours(C.palette()) };
+      if (step === 1) return crosstabHtml(Object.assign({ measure: "n", label: "Tabela krzyżowa: " + par.lab1 + " × " + par.lab2 }, base));
+      if (step === 2) return crosstabHtml(Object.assign({ measure: "row", label: "Procenty w każdej grupie (wierszu)" }, base));
+      var expected = chisqTest(d.tab).expected;
+      return '<p class="lc-tbl-lead">Liczebności oczekiwane (gdyby H₀ była prawdziwa):</p>' +
+        S.table([{ label: par.lab1, row: true }].concat(par.cats2.map(function (c) { return { label: c, digits: 1 }; })),
+                expected.map(function (row, i) { return [par.cats1[i]].concat(row); }));
+    },
+    text: function (state, v, vals, step) {
+      var d = x2Data();
+      if (!d) return "";
+      var test = chisqTest(d.tab), low = test.expected.some(function (row) { return row.some(function (e) { return e < 5; }); });
+      if (step === 1) return "To liczebności obserwowane. Grupy mogą mieć różne rozmiary, więc same liczby trudno porównać.";
+      if (step === 2) return "Przy niezależności procenty w populacji byłyby takie same w każdym wierszu; w próbie różnią się także przez przypadek.";
+      if (step === 3) return "χ² = " + b(fmt(test.stat, 3)) + " (df = " + test.df + ") — łączna rozbieżność między tabelą obserwowaną a oczekiwaną." +
+        (low ? ' <span class="lc-status-danger">Uwaga: niektóre liczebności oczekiwane są mniejsze od 5</span>' : "");
+      return "Wynik testu χ² niezależności: χ²(" + test.df + ") = " + b(fmt(test.stat, 3)) + ". " + verdictHtml(test.p);
+    },
+    update: function () { notify(["s05_x2cmp"]); },
+    noteKey: function () { return x2Data() ? "data" : "empty"; }
+  };
+
+  // Ryc. 7.3: test χ² a test dokładny Fishera na tej samej tabeli; bez wykresu.
+  figures.s05_x2cmp = {
+    act: function (state) { state.asked = true; },
+    update: function (el, state) {
+      var d = x2Data();
+      if (!state.asked || !d) return;
+      // Wynik liczony raz na tabelę: przy dużych tabelach test Fishera jest symulowany.
+      if (state.tab !== d.tab) { state.tab = d.tab; state.chi = chisqTest(d.tab); state.fisher = fisherTest(d.tab, rng); }
+      var decision = function (p) { return p < 0.05 ? "Odrzucamy H₀" : "Brak podstaw do odrzucenia H₀"; };
+      S.setValue(el, "x2_chi_p", T.fmtPValue(state.chi.p)); S.setValue(el, "x2_fisher_p", T.fmtPValue(state.fisher.p));
+      S.setValue(el, "x2_chi_dec", decision(state.chi.p)); S.setValue(el, "x2_fisher_dec", decision(state.fisher.p));
+      [["x2_chi_dec", state.chi.p], ["x2_fisher_dec", state.fisher.p]].forEach(function (c) {
+        var cell = el.querySelector('[data-v="' + c[0] + '"]');
+        if (cell && cell.closest("td")) cell.closest("td").classList.toggle("is-base", c[1] < 0.05);
+      });
+      var low = 0;
+      state.chi.expected.forEach(function (row) { row.forEach(function (e) { if (e < 5) low++; }); });
+      S.setValue(el, "x2_low", String(low));
+    },
+    noteKey: function (vals, state) {
+      var d = x2Data();
+      if (!state.asked) return "none";
+      if (!d) return "nodata";
+      return chisqTest(d.tab).expected.some(function (row) { return row.some(function (e) { return e < 5; }); }) ? "low" : "fine";
+    }
+  };
 
   S.register(figures);
 })();

@@ -89,7 +89,8 @@ ch1_quiz_fig <- function() {
 # `empty` widać, dopóki nie ma próby (element [data-when = "empty"], przełącza rycina).
 # params: nazwana lista scenariuszy z polami question, h0_text, h1_text (i *_1s dla
 # testu jednostronnego).
-s05_hypothesis_panel <- function(params, input_id, one_sided = FALSE, empty = NULL) {
+# heading: nagłówek ramki hipotezy, gdy inny niż „… (dwustronna/jednostronna):”.
+s05_hypothesis_panel <- function(params, input_id, one_sided = FALSE, empty = NULL, heading = NULL) {
   field <- function(par, name) par[[if (one_sided) paste0(name, "_1s") else name]]
   tagList(
     lc_variants(input_id, lapply(params, function(par) {
@@ -99,7 +100,7 @@ s05_hypothesis_panel <- function(params, input_id, one_sided = FALSE, empty = NU
           p(tags$em(paste0("„", field(par, "question"), "”")))
         ),
         lc_formula_box(
-          p(tags$b(if (one_sided) "Hipoteza formalna (jednostronna):" else "Hipoteza formalna (dwustronna):")),
+          p(tags$b(if (!is.null(heading)) heading else if (one_sided) "Hipoteza formalna (jednostronna):" else "Hipoteza formalna (dwustronna):")),
           p(withMathJax(field(par, "h0_text"))),
           p(withMathJax(field(par, "h1_text")))
         )
