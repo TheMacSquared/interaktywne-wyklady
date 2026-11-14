@@ -48,6 +48,7 @@ source(file.path(shared_root, "palette.R"),          local = TRUE)
 source(file.path(shared_root, "theme_upwr.R"),       local = TRUE)
 source(file.path(shared_root, "shared.R"),           local = TRUE)
 source(file.path(shared_root, "lecture_layout.R"),   local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"),  local = TRUE)
 
 lc_apply_ggplot_defaults()
 
@@ -73,10 +74,19 @@ ui <- lecture_page(
   header_extras = tagList(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
+    # Ryciny liczone w przeglądarce: silnik lcSF na ECharts, rozkłady, testy i ryciny wykładu.
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(shared_root, "lc_charts.js")),
+    includeScript(file.path(shared_root, "lc_dist.js")),
+    includeScript(file.path(shared_root, "lc_stats.js")),
+    includeScript(file.path(shared_root, "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "figures.js")),
+    lc_sf_styles(),
     tags$style(HTML("
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
       .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
       .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+      .lc-sf-empty { text-align: center; color: var(--upwr-reference); font-size: 1.2em; padding: 3em 0; }
     "))
   )
 )

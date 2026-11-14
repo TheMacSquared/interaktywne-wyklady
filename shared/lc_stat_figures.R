@@ -38,13 +38,14 @@ lc_sf_value <- function(key, text = "–") tags$span(`data-v` = key, text)
 lc_sf_figure <- function(fig, control = NULL, ratio = "2/1", max_height = "340px",
                          charts = 1, headings = NULL, notes = NULL, legend = FALSE,
                          selected = NULL, toolbar = NULL, body = NULL, after = NULL,
-                         bare = FALSE, config = NULL, chartless = FALSE) {
+                         bare = FALSE, config = NULL, chartless = FALSE, pair = FALSE) {
   if (is.null(body)) {
     boxes <- lapply(seq_len(charts), function(k) {
       box <- lc_sf_chart(k - 1, ratio, max_height)
       if (is.null(headings)) box else tags$div(tags$h4(headings[[k]]), box)
     })
-    body <- if (charts > 1) lc_plots(boxes) else boxes[[1]]
+    # pair: dwa wykresy obok siebie już w kolumnie tekstu (lc_plots(pair = TRUE)).
+    body <- if (charts > 1) lc_plots(boxes, pair = pair) else boxes[[1]]
   }
   # Kilka kontrolek: zwykła lista tagów; każda dostaje klasę lc-sf-ctl.
   if (is.list(control) && !inherits(control, c("shiny.tag", "shiny.tag.list"))) {

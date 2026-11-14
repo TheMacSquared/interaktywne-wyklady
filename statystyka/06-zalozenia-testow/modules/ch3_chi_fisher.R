@@ -91,14 +91,23 @@ ch3_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 3.1",
       title = "Symulacja: χ² a Fisher przy małych n",
-      lc_toolbar(
-        lc_slider("ch3_n", "Wielkość próby", 10, 200, 20, 5),
-        lc_segmented("ch3_cat", "Kategorie", c("Równe (50/50)" = "equal",
-                                               "Rzadkie (10/90)" = "rare")),
-        lc_action("ch3_sim", "Symuluj", variant = "solid"),
-        lc_readouts(uiOutput("ch3_sim_results"))
-      ),
-      lc_plot("ch3_sim_plot", max_height = "250px"),
+      # Symulację, wykres i odczyty liczy przeglądarka (modules/figures.js, rycina s06_sim).
+      lc_sf_figure("s06_sim",
+        control = list(
+          lc_sf_slider("ch3_n", "Wielkość próby", 10, 200, 20, 5),
+          lc_segmented("ch3_cat", "Kategorie", c("Równe (50/50)" = "equal",
+                                                 "Rzadkie (10/90)" = "rare"))
+        ),
+        toolbar = tagList(
+          lc_sf_action("sim", "ch3_sim", "Symuluj", variant = "solid"),
+          lc_readouts(
+            lc_readout("Fałszywe alarmy χ²", lc_sf_value("sim_chi"), color = col_ok),
+            lc_readout("Fałszywe alarmy Fisher", lc_sf_value("sim_fisher"), color = col_ok),
+            lc_readout("Poziom α", "5%", color = upwr_secondary)
+          )
+        ),
+        ratio = "2.8/1", max_height = "250px", legend = TRUE,
+        after = s06_empty("Kliknij „Symuluj”")),
       lc_caption("500 prób z prawdziwą H₀ (brak związku), α = 0.05. Tabele, w których
         χ² nie da się policzyć (pusty wiersz lub kolumna), są pomijane.")
     ),
@@ -259,80 +268,5 @@ ch3_ui <- lecture_chapter(
 # SERVER
 # ============================================================================
 
-ch3_server <- function(input, output, session) {
-
-  ch3_sim_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch3_sim, {
-    n <- input$ch3_n
-    n_sims <- 500
-    # „Rzadkie”: w obu zmiennych jedna kategoria ma 10% częstości.
-    p_cat <- if (identical(input$ch3_cat, "rare")) c(0.1, 0.9) else c(0.5, 0.5)
-
-    results <- sapply(1:n_sims, function(i) {
-      # H0 prawdziwa: brak związku
-      x <- factor(sample(c("A", "B"), n, replace = TRUE, prob = p_cat), levels = c("A", "B"))
-      y <- factor(sample(c("Tak", "Nie"), n, replace = TRUE, prob = p_cat), levels = c("Tak", "Nie"))
-      tab <- table(x, y)
-
-      p_chi <- tryCatch(suppressWarnings(chisq.test(tab, correct = FALSE)$p.value),
-                        error = function(e) NA)
-      p_fisher <- fisher.test(tab)$p.value
-
-      c(p_chi = p_chi, p_fisher = p_fisher)
-    })
-
-    results_df <- data.frame(t(results))
-    ch3_sim_data(results_df)
-  })
-
-  output$ch3_sim_results <- renderUI({
-    df <- ch3_sim_data()
-    if (is.null(df)) return(NULL)
-
-    fpr_chi <- mean(df$p_chi < 0.05, na.rm = TRUE) * 100
-    fpr_fisher <- mean(df$p_fisher < 0.05, na.rm = TRUE) * 100
-
-    # Blisko α: zielony; za dużo fałszywych alarmów: czerwony; za mało
-    # (test konserwatywny): bursztynowy.
-    fpr_color <- function(fpr) {
-      if (abs(fpr - 5) <= 2) col_ok
-      else if (fpr > 5) col_fail
-      else unname(upwr_cat["bursztyn"])
-    }
-    chi_color <- fpr_color(fpr_chi)
-    fisher_color <- fpr_color(fpr_fisher)
-
-    tagList(
-      lc_readout("Fałszywe alarmy χ²", paste0(round(fpr_chi, 1), "%"), color = chi_color),
-      lc_readout("Fałszywe alarmy Fisher", paste0(round(fpr_fisher, 1), "%"), color = fisher_color),
-      lc_readout("Poziom α", "5%", color = upwr_secondary)
-    )
-  })
-
-  zoom_plot_server("ch3_sim_plot", reactive({
-    df <- ch3_sim_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Symuluj”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      long <- data.frame(
-        test = rep(c("χ²", "Fisher"), each = nrow(df)),
-        p = c(df$p_chi, df$p_fisher)
-      )
-      long <- long[!is.na(long$p), ]
-
-      ggplot(long, aes(x = p, fill = test)) +
-        geom_histogram(breaks = seq(0, 1, by = 0.05), alpha = 0.6,
-                       color = "white", position = "identity") +
-        geom_vline(xintercept = 0.05, color = col_fail, linetype = "dashed") +
-        scale_fill_manual(values = c(col_test, col_alt), name = NULL) +
-        labs(
-             x = "p-wartość", y = "Liczba") +
-        theme_upwr() +
-        theme(legend.position = "top")
-    }
-  }))
-}
+# Rozdział nie ma logiki serwera: symulację liczy przeglądarka (modules/figures.js).
+ch3_server <- function(input, output, session) {}

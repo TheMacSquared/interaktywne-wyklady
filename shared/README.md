@@ -123,3 +123,23 @@ MathJax nie jest ładowany (`check_static_page.R` wykrywa niezłożony zapis).
 
 Testy rdzenia są na razie w obu kursach (`<kurs>/tests/`, m.in.
 `test-widgets-v2.R` i `test-panel-layout.R` w dwóch niemal identycznych kopiach).
+
+## Testy statystyczne w przeglądarce
+
+`lc_stats.js` (`window.lcStats`, ładować po `lc_dist.js`) liczy to, co dawniej
+liczył serwer R: statystyki opisowe, kwantyle (typ 7), punkty i prostą wykresu
+Q-Q, test Shapiro–Wilka (algorytm AS R94, jak `shapiro.test()`), test Levene'a
+(środek: mediana, jak `rstatix::levene_test()`), test Bartletta, test t Studenta
+i Welcha, χ² bez poprawki i test dokładny Fishera dla tabeli 2×2 oraz
+dystrybuantę rozkładu F. `fmtPValue()` odpowiada `format_p_value()`.
+
+Wzorcem są wyniki R: `statystyka/tests/js/lc_stats.test.js` porównuje funkcje
+z plikiem `statystyka/tests/js/fixtures/lc_stats.json`, który generuje
+`Rscript statystyka/tests/js/fixtures/make_lc_stats.R`.
+
+Rycina `lcSF` może nie mieć wykresu (same odczyty, wynik testu albo rysunek
+z R z liczbami w `lc_sf_value()`): `lc_sf_figure(chartless = TRUE)` albo
+kontener z atrybutem `data-lc-nochart` i figura z samym `update()`. Rycinę
+zależną od kontrolek spoza własnego kontenera skrypt wykładu odświeża
+zdarzeniem `lc:sf-redraw`. `lcSF.register()` zgłasza w konsoli nazwę ryciny
+zarejestrowaną dwa razy.

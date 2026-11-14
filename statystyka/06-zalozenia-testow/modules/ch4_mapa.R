@@ -2,6 +2,126 @@
 # CHAPTER 4: Mapa metod - kompletna tablica założenia -> alternatywa
 # ============================================================================
 
+# Sprawdzarka założeń (Ryc. 4.1): opis każdej metody; widoczny wybiera lista „Metoda”.
+ch4_method_info <- list(
+  t_one = list(
+    name = "Test t jednej próby",
+    assumptions = c("Niezależne obserwacje",
+                    "Średnia z próby w przybliżeniu normalna: dane bez silnej skośności i wartości odstających albo odpowiednio duża próba"),
+    checks = c("Wykres Q-Q (najpierw)", "Pomocniczo: test Shapiro-Wilka"),
+    alternatives = c("Przy symetrii: test Wilcoxona dla jednej próby",
+                     "Przy silnej skośności Wilcoxon nie jest automatycznym zamiennikiem; najpierw ustal, czy pytanie dotyczy średniej")
+  ),
+  t_ind = list(
+    name = "Test t dla prób niezależnych",
+    assumptions = c("Niezależne obserwacje i grupy",
+                    "Średnie w obu grupach w przybliżeniu normalne (brak silnej skośności lub odpowiednio duże grupy)",
+                    "Równe wariancje — tylko w wersji Studenta"),
+    checks = c("Wykresy Q-Q w grupach (najpierw)", "Pomocniczo: test Shapiro-Wilka",
+               "Odchylenia standardowe w grupach (opisowo); wyboru między Welchem a Studentem nie uzależniaj od testu Levene'a"),
+    alternatives = c("Test t Welcha jako wybór domyślny",
+                     "Test Manna–Whitneya: porównuje rangi, nie średnie, i nie rozwiązuje problemu nierównych wariancji")
+  ),
+  t_paired = list(
+    name = "Test t dla par",
+    assumptions = c("Niezależne pary",
+                    "Średnia różnic w przybliżeniu normalna (rozkład różnic, nie obu pomiarów osobno)"),
+    checks = c("Wykres Q-Q różnic (najpierw)", "Pomocniczo: test Shapiro-Wilka na różnicach"),
+    alternatives = c("Przy symetrii różnic: test Wilcoxona dla par")
+  ),
+  anova = list(
+    name = "ANOVA jednoczynnikowa",
+    assumptions = c("Niezależne obserwacje",
+                    "Reszty (odchylenia od średniej grupy) w przybliżeniu normalne",
+                    "Równe wariancje — tylko w wersji klasycznej"),
+    checks = c("Wykres Q-Q reszt (najpierw)", "Odchylenia standardowe w grupach (opisowo); wyboru wersji ANOVA nie uzależniaj od testu Levene'a"),
+    alternatives = c("ANOVA Welcha + post hoc Games-Howella",
+                     "Test Kruskala-Wallisa + post hoc Dunna; nie porównuje średnich")
+  ),
+  pearson = list(
+    name = "Korelacja Pearsona",
+    assumptions = c("Niezależne pary", "Związek liniowy", "Brak silnych wartości odstających",
+                    "Dla testu: rozkład obu zmiennych łącznie zbliżony do normalnego"),
+    checks = c("Wykres rozrzutu (najpierw)", "Pomocniczo: wykresy Q-Q obu zmiennych"),
+    alternatives = c("Korelacja Spearmana",
+                     "Tau Kendalla")
+  ),
+  spearman = list(
+    name = "Korelacja Spearmana",
+    assumptions = c("Niezależne pary", "Związek monotoniczny"),
+    checks = c("Wykres rozrzutu"),
+    alternatives = c("Tau Kendalla przy małych próbach i wielu remisach")
+  ),
+  mann_whitney = list(
+    name = "Test Manna–Whitneya",
+    assumptions = c("Niezależne grupy i obserwacje", "Dane co najmniej porządkowe",
+                    "H₀: oba rozkłady identyczne; to nie jest test średnich, a porównanie median wymaga tego samego kształtu rozkładów"),
+    checks = c("Projekt badania (niezależność)", "Histogramy lub wykresy pudełkowe w grupach (kształt)"),
+    alternatives = c("Test t Welcha, gdy pytanie dotyczy średnich", "Test permutacyjny")
+  ),
+  kruskal = list(
+    name = "Test Kruskala-Wallisa",
+    assumptions = c("Niezależne grupy i obserwacje", "Dane co najmniej porządkowe",
+                    "H₀: wszystkie rozkłady identyczne; porównanie median tylko przy podobnych kształtach"),
+    checks = c("Projekt badania (niezależność)", "Wykresy pudełkowe, histogramy w grupach (kształt)"),
+    alternatives = c("Post hoc: test Dunna z korektą", "ANOVA Welcha, gdy pytanie dotyczy średnich",
+                     "Test permutacyjny")
+  ),
+  chi_sq = list(
+    name = "Test χ² niezależności",
+    assumptions = c("Niezależne obserwacje", "W komórkach liczebności, nie procenty",
+                    "Liczebności oczekiwane niezbyt małe (orientacyjnie co najmniej 5)"),
+    checks = c("Tabela liczebności oczekiwanych"),
+    alternatives = c("Test dokładny Fishera",
+                     "P-wartość z symulacji Monte Carlo")
+  ),
+  fisher = list(
+    name = "Test dokładny Fishera",
+    assumptions = c("Niezależne obserwacje"),
+    checks = c("Projekt badania (niezależność)"),
+    alternatives = c("Metoda dokładna, nie wymaga dużej próby",
+                     "Dane sparowane (te same osoby dwa razy) wymagają innego testu")
+  ),
+  lm = list(
+    name = "Regresja liniowa",
+    assumptions = c("Liniowość związku", "Niezależność reszt", "Homoskedastyczność reszt",
+                    "Reszty w przybliżeniu normalne", "Brak silnej współliniowości (w regresji wielorakiej)"),
+    checks = c("Reszty względem wartości przewidywanych", "Wykres Q-Q reszt", "Scale-Location",
+               "Test Breuscha-Pagana",
+               "Test Durbina-Watsona (dane w czasie)", "VIF"),
+    alternatives = c("Transformacja Y lub X", "Odporne błędy standardowe (HC)",
+                     "Ważona MNK (WLS)", "GLM, GAM, bootstrap")
+  ),
+  glm = list(
+    name = "Regresja logistyczna",
+    assumptions = c("Liniowa zależność logitu od predyktorów", "Niezależne obserwacje",
+                    "Brak silnej współliniowości",
+                    "Wystarczająco dużo zdarzeń rzadszej kategorii na predyktor (orientacyjnie około 10)"),
+    checks = c("Test Hosmera-Lemeshowa", "VIF",
+               "Liczba zdarzeń na predyktor"),
+    alternatives = c("Regresja Firtha", "Regularyzacja",
+                     "Drzewa decyzyjne")
+  )
+)
+
+ch4_method_card <- function(info) {
+  tagList(
+    h4(info$name),
+    lc_status(
+      lc_verdict(tags$strong("Założenia:"), type = "warning"),
+      tags$ul(lapply(info$assumptions, tags$li))
+    ),
+    lc_status(
+      tags$strong("Jak sprawdzić:"),
+      tags$ul(lapply(info$checks, tags$li))
+    ),
+    lc_status(
+      lc_verdict(tags$strong("Alternatywy:"), type = "ok"),
+      tags$ul(lapply(info$alternatives, tags$li))
+    )
+  )
+}
+
 ch4_ui <- lecture_chapter(
   id = "ch-mapa",
   num = "04",
@@ -43,7 +163,17 @@ ch4_ui <- lecture_chapter(
         labels = rep("Załóż doświadczenie", 4),
         config = list(kind = "plots", mu = 50, tau = 3, sigma = 5, k = 4, m = 25,
                       alpha = 0.05, height = 470,
-                      aria = "Dwa nawozy, po cztery poletka, na każdym 25 roślin; te same dane analizowane jako 100 roślin na nawóz albo 4 średnie poletek, z licznikami fałszywych alarmów"))
+                      aria = "Dwa nawozy, po cztery poletka, na każdym 25 roślin; te same dane analizowane jako 100 roślin na nawóz albo 4 średnie poletek, z licznikami fałszywych alarmów"),
+        texts = list(
+        tagList("Nawóz A trafił na cztery poletka, nawóz B na cztery inne. Na każdym
+        mierzymy 25 roślin. Kolor to poletko, romb to średnia poletka."),
+        tagList("Te same dane oceniają dwie analizy: test t na 100 roślinach na nawóz
+        i test t na 4 średnich poletek na nawóz."),
+        tagList("Zakładaj wiele doświadczeń. Każda analiza ma swój licznik alarmów."),
+        tagList("Oba nawozy dają tę samą średnią wysokość, więc każdy alarm jest
+        fałszywy. Porównaj liczniki z α = 5%.")
+        )
+      )
     ),
 
     lc_p("Oba nawozy działają tak samo. Analiza, która liczy każdą roślinę jako
@@ -355,7 +485,7 @@ ch4_ui <- lecture_chapter(
       label = "Ryc. 4.1",
       title = "Sprawdzarka założeń",
       lc_toolbar(
-        selectInput("ch4_method", "Metoda",
+        selectInput("ch4_method", "Metoda", selectize = FALSE,
             choices = c(
               "Test t jednej próby" = "t_one",
               "Test t dla prób niezależnych" = "t_ind",
@@ -373,7 +503,7 @@ ch4_ui <- lecture_chapter(
             selected = "t_ind"
           )
       ),
-      uiOutput("ch4_method_info")
+      lc_variants("ch4_method", lapply(ch4_method_info, ch4_method_card), selected = "t_ind")
     ),
 
     lc_p("Domyślnie wybrany test t dla prób niezależnych dobrze pokazuje, jak
@@ -415,138 +545,5 @@ ch4_ui <- lecture_chapter(
 # SERVER
 # ============================================================================
 
-ch4_server <- function(input, output, session) {
-
-  # PROTOTYP 6E: teksty kroków
-  scene_texts(input, output, "ch4_p6e", list(
-    tagList("Nawóz A trafił na cztery poletka, nawóz B na cztery inne. Na każdym
-      mierzymy 25 roślin. Kolor to poletko, romb to średnia poletka."),
-    tagList("Te same dane oceniają dwie analizy: test t na 100 roślinach na nawóz
-      i test t na 4 średnich poletek na nawóz."),
-    tagList("Zakładaj wiele doświadczeń. Każda analiza ma swój licznik alarmów."),
-    tagList("Oba nawozy dają tę samą średnią wysokość, więc każdy alarm jest
-      fałszywy. Porównaj liczniki z α = 5%.")
-  ))
-
-  method_info <- list(
-    t_one = list(
-      name = "Test t jednej próby",
-      assumptions = c("Niezależne obserwacje",
-                      "Średnia z próby w przybliżeniu normalna: dane bez silnej skośności i wartości odstających albo odpowiednio duża próba"),
-      checks = c("Wykres Q-Q (najpierw)", "Pomocniczo: test Shapiro-Wilka"),
-      alternatives = c("Przy symetrii: test Wilcoxona dla jednej próby",
-                       "Przy silnej skośności Wilcoxon nie jest automatycznym zamiennikiem; najpierw ustal, czy pytanie dotyczy średniej")
-    ),
-    t_ind = list(
-      name = "Test t dla prób niezależnych",
-      assumptions = c("Niezależne obserwacje i grupy",
-                      "Średnie w obu grupach w przybliżeniu normalne (brak silnej skośności lub odpowiednio duże grupy)",
-                      "Równe wariancje — tylko w wersji Studenta"),
-      checks = c("Wykresy Q-Q w grupach (najpierw)", "Pomocniczo: test Shapiro-Wilka",
-                 "Odchylenia standardowe w grupach (opisowo); wyboru między Welchem a Studentem nie uzależniaj od testu Levene'a"),
-      alternatives = c("Test t Welcha jako wybór domyślny",
-                       "Test Manna–Whitneya: porównuje rangi, nie średnie, i nie rozwiązuje problemu nierównych wariancji")
-    ),
-    t_paired = list(
-      name = "Test t dla par",
-      assumptions = c("Niezależne pary",
-                      "Średnia różnic w przybliżeniu normalna (rozkład różnic, nie obu pomiarów osobno)"),
-      checks = c("Wykres Q-Q różnic (najpierw)", "Pomocniczo: test Shapiro-Wilka na różnicach"),
-      alternatives = c("Przy symetrii różnic: test Wilcoxona dla par")
-    ),
-    anova = list(
-      name = "ANOVA jednoczynnikowa",
-      assumptions = c("Niezależne obserwacje",
-                      "Reszty (odchylenia od średniej grupy) w przybliżeniu normalne",
-                      "Równe wariancje — tylko w wersji klasycznej"),
-      checks = c("Wykres Q-Q reszt (najpierw)", "Odchylenia standardowe w grupach (opisowo); wyboru wersji ANOVA nie uzależniaj od testu Levene'a"),
-      alternatives = c("ANOVA Welcha + post hoc Games-Howella",
-                       "Test Kruskala-Wallisa + post hoc Dunna; nie porównuje średnich")
-    ),
-    pearson = list(
-      name = "Korelacja Pearsona",
-      assumptions = c("Niezależne pary", "Związek liniowy", "Brak silnych wartości odstających",
-                      "Dla testu: rozkład obu zmiennych łącznie zbliżony do normalnego"),
-      checks = c("Wykres rozrzutu (najpierw)", "Pomocniczo: wykresy Q-Q obu zmiennych"),
-      alternatives = c("Korelacja Spearmana",
-                       "Tau Kendalla")
-    ),
-    spearman = list(
-      name = "Korelacja Spearmana",
-      assumptions = c("Niezależne pary", "Związek monotoniczny"),
-      checks = c("Wykres rozrzutu"),
-      alternatives = c("Tau Kendalla przy małych próbach i wielu remisach")
-    ),
-    mann_whitney = list(
-      name = "Test Manna–Whitneya",
-      assumptions = c("Niezależne grupy i obserwacje", "Dane co najmniej porządkowe",
-                      "H₀: oba rozkłady identyczne; to nie jest test średnich, a porównanie median wymaga tego samego kształtu rozkładów"),
-      checks = c("Projekt badania (niezależność)", "Histogramy lub wykresy pudełkowe w grupach (kształt)"),
-      alternatives = c("Test t Welcha, gdy pytanie dotyczy średnich", "Test permutacyjny")
-    ),
-    kruskal = list(
-      name = "Test Kruskala-Wallisa",
-      assumptions = c("Niezależne grupy i obserwacje", "Dane co najmniej porządkowe",
-                      "H₀: wszystkie rozkłady identyczne; porównanie median tylko przy podobnych kształtach"),
-      checks = c("Projekt badania (niezależność)", "Wykresy pudełkowe, histogramy w grupach (kształt)"),
-      alternatives = c("Post hoc: test Dunna z korektą", "ANOVA Welcha, gdy pytanie dotyczy średnich",
-                       "Test permutacyjny")
-    ),
-    chi_sq = list(
-      name = "Test χ² niezależności",
-      assumptions = c("Niezależne obserwacje", "W komórkach liczebności, nie procenty",
-                      "Liczebności oczekiwane niezbyt małe (orientacyjnie co najmniej 5)"),
-      checks = c("Tabela liczebności oczekiwanych"),
-      alternatives = c("Test dokładny Fishera",
-                       "P-wartość z symulacji Monte Carlo")
-    ),
-    fisher = list(
-      name = "Test dokładny Fishera",
-      assumptions = c("Niezależne obserwacje"),
-      checks = c("Projekt badania (niezależność)"),
-      alternatives = c("Metoda dokładna, nie wymaga dużej próby",
-                       "Dane sparowane (te same osoby dwa razy) wymagają innego testu")
-    ),
-    lm = list(
-      name = "Regresja liniowa",
-      assumptions = c("Liniowość związku", "Niezależność reszt", "Homoskedastyczność reszt",
-                      "Reszty w przybliżeniu normalne", "Brak silnej współliniowości (w regresji wielorakiej)"),
-      checks = c("Reszty względem wartości przewidywanych", "Wykres Q-Q reszt", "Scale-Location",
-                 "Test Breuscha-Pagana",
-                 "Test Durbina-Watsona (dane w czasie)", "VIF"),
-      alternatives = c("Transformacja Y lub X", "Odporne błędy standardowe (HC)",
-                       "Ważona MNK (WLS)", "GLM, GAM, bootstrap")
-    ),
-    glm = list(
-      name = "Regresja logistyczna",
-      assumptions = c("Liniowa zależność logitu od predyktorów", "Niezależne obserwacje",
-                      "Brak silnej współliniowości",
-                      "Wystarczająco dużo zdarzeń rzadszej kategorii na predyktor (orientacyjnie około 10)"),
-      checks = c("Test Hosmera-Lemeshowa", "VIF",
-                 "Liczba zdarzeń na predyktor"),
-      alternatives = c("Regresja Firtha", "Regularyzacja",
-                       "Drzewa decyzyjne")
-    )
-  )
-
-  output$ch4_method_info <- renderUI({
-    info <- method_info[[input$ch4_method]]
-    if (is.null(info)) return(NULL)
-
-    tagList(
-      h4(info$name),
-      lc_status(
-        lc_verdict(tags$strong("Założenia:"), type = "warning"),
-        tags$ul(lapply(info$assumptions, tags$li))
-      ),
-      lc_status(
-        tags$strong("Jak sprawdzić:"),
-        tags$ul(lapply(info$checks, tags$li))
-      ),
-      lc_status(
-        lc_verdict(tags$strong("Alternatywy:"), type = "ok"),
-        tags$ul(lapply(info$alternatives, tags$li))
-      )
-    )
-  })
-}
+# Rozdział nie ma logiki serwera: opisy metod i kroków sceny są w dokumencie.
+ch4_server <- function(input, output, session) {}
