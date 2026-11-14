@@ -74,11 +74,17 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Pytanie z raportu brzmi: jak często łożysko pracuje w temperaturze wyższej niż 85°C? Średnia mówi tylko, gdzie leży środek zbioru pomiarów. Nie mówi, jak daleko od tego środka odchodzą pojedyncze wyniki — a przekroczenie progu to właśnie sprawa pojedynczych wyników, nie średniej. Łożysko, którego temperatura trzyma się w przedziale 81–83°C, i łożysko, które skacze między 75 a 90°C, mogą mieć identyczną średnią.",
             "Zanim zaczniemy liczyć, zdecyduj, co można powiedzieć o ryzyku, znając tylko średnią i próg."
           ),
+          # PROTOTYP P1 (wariant B): scena przed głosowaniem
+          z6p_variant("scena P1 przed głosowaniem (wariant B). Ta sama scena stoi też po głosowaniu (wariant A)."),
+          z6p_get("z6p_1_ui"),
           risk_vote_panel("z6_vote", "z6_vote_feedback", "Średnia temperatura wynosi 82°C, próg 85°C. Czy ryzyko jest pomijalne?", c("Tak" = "yes", "Nie — potrzebujemy rozrzutu" = "sd", "Zawsze wynosi 50%" = "half"), correct = "sd"),
           c(
             "Odpowiedź „tak” zakłada, że wszystkie pomiary leżą blisko średniej. Odpowiedź „50%” myli średnią z progiem: połowa wyników leży powyżej średniej, a nie powyżej dowolnego progu. Poprawna odpowiedź jest mniej efektowna, ale uczciwa: z samych dwóch liczb, 82 i 85, nie da się wyznaczyć ryzyka. Brakuje trzeciej — miary rozrzutu, czyli odchylenia standardowego σ.",
             "Ile zmienia ta trzecia liczba? Poniższy przykład wyprzedza rachunek, który wyprowadzimy w rozdziale 3; na razie wystarczy zauważyć skalę różnic."
           ),
+          # PROTOTYP P1 (wariant A): scena po głosowaniu, przed przykładem 6.1
+          z6p_variant("scena P1 po głosowaniu (wariant A)."),
+          z6p_get("z6p_1_ui"),
           risk_example("6.1", "Trzy łożyska o tej samej średniej",
             problem = "Trzy łożyska mają średnią temperaturę 82°C i pracują pod tym samym progiem 85°C. Różnią się odchyleniem standardowym: σ = 1°C, 3°C i 5°C. Przyjmując model normalny, porównaj odsetek pomiarów ponad progiem.",
             steps = c(
@@ -106,6 +112,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           ),
           risk_try("zacznij od 30 obserwacji i porównaj histogram z nałożoną krzywą. Potem zwiększ liczebność do 200 i do 5000. Obserwuj, jak zachowują się słupki po prawej stronie 85°C oraz średnia i SD próby w panelu."),
           risk_widget_panel("Symulacja", "Histogram stabilizuje się wraz z liczebnością", lc_slider("z6_sample", "Liczba obserwacji", 30, 5000, 200, 10), "z6_hist", "z6_hist_stats"),
+          # PROTOTYPY P2A i P2B: symulacja z narastaniem, dwie puenty do wyboru
+          z6p_variant("P2A — puenta „kształt się stabilizuje”."),
+          z6p_get("z6p_2a_ui"),
+          z6p_variant("P2B — puenta „ogon jest najsłabiej obsadzony”."),
+          z6p_get("z6p_2b_ui"),
           c(
             "Przy 30 obserwacjach histogram jest poszarpany, a średnia i SD próby wynoszą 82.31 i 3.20 — blisko, ale nie dokładnie 82 i 3. Ponad progiem leży 7 z 30 wyników, czyli 23%. Przy 200 obserwacjach jest ich 40, czyli 20%, a przy 5000 — 813, czyli 16.3%. Dopiero duża próba zbliża się do wartości 15.9%, którą daje model.",
             "Wniosek jest podwójny. Po pierwsze, model gęstości jest idealizacją histogramu z nieskończenie wielu pomiarów — dlatego prawdopodobieństwa w modelu to pola. Po drugie, ogon jest najsłabiej obsadzoną częścią danych: przy kilkudziesięciu pomiarach odsetek przekroczeń może się mylić o kilka punktów procentowych, a o przekroczeniach dalekich progów mała próba nie mówi prawie nic."
@@ -136,6 +147,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         body = list(
           risk_formula("P(a<X\\le b)=\\int_a^b f(x)\\,dx,\\qquad P(X=x)=0", num = "6.1",
             legend = c("f(x)" = "gęstość zmiennej X", "a, b" = "granice przedziału", "\\int_a^b" = "pole pod gęstością między a i b")),
+          # PROTOTYP P3: pole między dwiema kreskami
+          z6p_get("z6p_3_ui"),
           c(
             "Z P(X = x) = 0 wynika praktyczna wygoda: dla zmiennej ciągłej nie ma znaczenia, czy piszemy X > 85, czy X ≥ 85, ani czy przedział jest domknięty, czy otwarty. W rozkładach dyskretnych z poprzednich wykładów ta różnica była istotna — P(X ≤ 3) i P(X < 3) różniły się o słupek P(X = 3).",
             "Pola pod gęstością rzadko liczymy przez całkowanie. Wygodniej jest raz stablicować pole od lewego końca do każdego punktu — to dystrybuanta, znana z wykładu 04, tym razem dla zmiennej ciągłej. Każde pole przedziału to wtedy różnica dwóch jej wartości."
@@ -187,10 +200,14 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             ),
             answer = "68% pomiarów w 79–85°C, 95% w 76–88°C; powyżej 85°C około 0.159 — ta sama liczba, którą dał przykład 6.1 dla σ = 3°C."
           ),
+          # PROTOTYP P5: linijka σ
+          z6p_get("z6p_5_ui"),
           "Pobaw się suwakami i obserwuj wskaźnik z dla progu 85°C. Zauważ, że tę samą odległość od progu można osiągnąć chłodzeniem (mniejsze μ) albo stabilizacją pracy (mniejsze σ) — rozróżnienie, które wróci przy decyzjach.",
           risk_formula("T\\sim N(\\mu,\\sigma),\\qquad z=\\frac{t-\\mu}{\\sigma}"),
           risk_try("zacznij od μ = 82°C i σ = 3°C (z = 1). Najpierw obniż μ do 80°C, potem wróć do 82°C i zmniejsz σ do 2°C. Zapisz z w obu przypadkach i zwróć uwagę, jak zmienia się wysokość krzywej przy zmianie σ."),
-          risk_widget_panel("Model", "Przesuń i rozszerz krzywą", tagList(lc_slider("z6_mean", "μ (°C)", 75, 90, 82, .5), lc_slider("z6_sd", "σ (°C)", .5, 8, 3, .25)), "z6_normal", "z6_normal_stats"),
+          risk_widget_panel("Model", "Przesuń i rozszerz krzywą", tagList(lc_slider("z6_mean", "μ (°C)", 75, 90, 82, .5), lc_slider("z6_sd", "σ (°C)", 1.5, 6, 3, .25)), "z6_normal", "z6_normal_stats"),
+          # PROTOTYP P4: piaskownica μ i σ w przeglądarce
+          z6p_get("z6p_4_ui"),
           c(
             "Obniżenie średniej do 80°C przesuwa całą krzywą w lewo bez zmiany kształtu i daje z = 5/3 ≈ 1.67. Zmniejszenie σ do 2°C zostawia środek w miejscu, ale krzywa staje się węższa i wyższa, a z rośnie do 1.5. W obu przypadkach próg „odsuwa się” od środka rozkładu, choć tylko w pierwszym zmieniła się temperatura, w której łożysko pracuje przeciętnie.",
             "Przy μ = 85°C wskaźnik z spada do zera: próg leży dokładnie w środku rozkładu i przekracza go połowa pomiarów, niezależnie od σ. Przy μ > 85°C wskaźnik staje się ujemny — przekroczenia są wtedy normą, a nie wyjątkiem."
@@ -243,6 +260,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             ),
             answer = "Przekroczenie progu temperatury jest około 118 razy częstsze, choć w surowych liczbach zapas ciśnienia (6 bar) i temperatury (3°C) są nieporównywalne. O priorytecie decyduje z, nie surowa różnica."
           ),
+          # PROTOTYP P6: temperatura i ciśnienie na jednej linijce
+          z6p_get("z6p_6_ui"),
           risk_check("z6_chk_z",
             "Czujnik drgań ma średnią 4.0 mm/s, σ = 0.5 mm/s i próg 5.0 mm/s. Gdzie leży ten próg w porównaniu z progiem temperatury łożyska (z = 1)?",
             c("Dalej od średniej: z = 2" = "further", "Bliżej średniej: z = 0.5" = "closer", "Nie da się porównać różnych jednostek" = "none"),
@@ -261,6 +280,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         body = list(
           risk_try("zacznij od progu 82°C (równego średniej) i przesuń go na 82.5°C. Zanotuj zmianę P(przekroczenia). Potem zrób ten sam krok z 91°C na 91.5°C i porównaj obie zmiany."),
           risk_widget_panel("Ogon", "Próg temperatury łożyska", lc_slider("z6_threshold", "Próg (°C)", 78, 95, 85, .5), "z6_tail", "z6_tail_stats"),
+          # PROTOTYP P7: piaskownica progu w przeglądarce
+          z6p_get("z6p_7_ui"),
           c(
             "Przy progu 82°C panel pokazuje 0.500, a przy 82.5°C — 0.434: pół stopnia zabrało 6.6 punktu procentowego. Między 91 a 91.5°C prawdopodobieństwo spada z 0.00135 do 0.00077, czyli o niecałe 0.06 punktu procentowego. W liczbach bezwzględnych daleki ogon jest mało wrażliwy na próg. W liczbach względnych jest odwrotnie: te same pół stopnia zmniejsza ryzyko o ponad 40%. Która skala jest ważniejsza, zależy od tego, czy pytamy o liczbę przekroczeń, czy o rząd wielkości rzadkiego zdarzenia."
           ),
@@ -293,6 +314,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Liczba 0.159 dotyczy jednego losowego pomiaru. Kierownik zmiany pyta jednak o co innego: jak często w ciągu zmiany zobaczy przynajmniej jeden alarm? To pytanie o maksimum wielu pomiarów, a nie o pojedynczy pomiar — ostrzega o tym karta danych Bananpolu.",
             "Najprostszy model łączy ten wykład z wykładem 04. Jeśli w zmianie wykonuje się n pomiarów, każdy przekracza próg z prawdopodobieństwem p, a pomiary są niezależne, to liczba przekroczeń ma rozkład dwumianowy, a zmiana bez alarmu wymaga n „porażek” z rzędu."
           ),
+          # PROTOTYP P8: dzienniki zmian (8b jako przełącznik w scenie)
+          z6p_get("z6p_8_ui"),
           risk_formula("P(\\text{co najmniej jedno przekroczenie w zmianie})=1-(1-p)^{n}", num = "6.7",
             legend = c("p" = "prawdopodobieństwo przekroczenia w pojedynczym pomiarze, np. z (6.5)", "n" = "liczba pomiarów w zmianie")),
           risk_example("6.6", "Osiem pomiarów na zmianę",
@@ -304,6 +327,9 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             answer = "Przy niezależnych pomiarach około trzech zmian na cztery ma alarm, choć pojedynczy pomiar przekracza próg tylko w 16% przypadków. Częstsze pomiary „podnoszą” ryzyko w zmianie, bo pytanie dotyczy innej zmiennej."
           ),
           "Założenie niezależności jest tu najsłabszym ogniwem. Temperatura łożyska zmienia się powoli: jeśli o 10:00 było gorąco, o 11:00 zapewne też będzie. Pomiary dodatnio skorelowane dają mniej zmian z alarmem, niż mówi (6.7), bo przekroczenia skupiają się w tych samych zmianach. Wzór (6.7) jest więc górnym oszacowaniem dla pomiarów dodatnio skorelowanych — prawdziwa wartość leży między p a 1 - (1 - p)ⁿ.",
+          # PROTOTYP P8b: przypadek brzegowy jako osobny obraz (dwa światy)
+          z6p_variant("P8b jako osobny obraz. W scenie P8 ten sam przypadek jest przełącznikiem."),
+          z6p_get("z6p_8b_ui"),
           risk_check("z6_chk_horyzont",
             "Pojedynczy pomiar przekracza próg z prawdopodobieństwem 0.159. W zmianie jest 8 niezależnych pomiarów. Jaki odsetek zmian ma co najmniej jedno przekroczenie?",
             c("0.159" = "single", "około 0.75" = "shift", "8 · 0.159 ≈ 1.27" = "sum"),
@@ -353,7 +379,12 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           figure_panel(label = "Porównanie", title = "Która interwencja najbardziej zmienia ogon?", lc_toolbar(
               selectInput("z6_action", "Działanie", c("Stan bazowy" = "base", "Chłodzenie: μ-2°C" = "mean", "Stabilizacja: σ-1°C" = "sd", "Wyższy próg: +2°C" = "threshold")),
               lc_readouts(uiOutput("z6_action_result"))
-            ), full_width = TRUE),
+            ), lc_plot("z6_action_plot", max_height = "300px"), full_width = TRUE),
+          # PROTOTYPY P9A i P9B: galeria interwencji
+          z6p_variant("P9A — warianty po kolei w przełączniku."),
+          z6p_get("z6p_9a_ui"),
+          z6p_variant("P9B — warianty obok siebie."),
+          z6p_get("z6p_9b_ui"),
           c(
             "Panel pokazuje 0.159 dla stanu bazowego, 0.048 dla chłodzenia, 0.067 dla stabilizacji i znowu 0.048 dla wyższego progu. W tym punkcie wyjścia chłodzenie o 2°C wygrywa ze stabilizacją o 1°C — ale to wynik tej konkretnej pary liczb. Stabilizacja o 1.5°C (σ = 1.5) dałaby z = 2 i P ≈ 0.023, czyli lepiej niż chłodzenie.",
             "Najbardziej pouczająca jest zbieżność chłodzenia i podniesienia progu. Statystycznie są nieodróżnialne: obie zwiększają z do 5/3. Fizycznie są zupełnie różne — po chłodzeniu łożysko naprawdę pracuje w niższej temperaturze, a po zmianie progu pracuje dokładnie tak samo jak przedtem."
@@ -362,6 +393,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Φ jest funkcją rosnącą, więc P(T > c) = 1 - Φ(z) maleje, gdy z rośnie. Zmniejszenie σ mnoży z przez liczbę większą od 1 — ale z może być dodatnie, ujemne albo zerowe, zależnie od znaku c - μ.",
             "Dla progu 80°C poniżej średniej 82°C zmniejszenie σ z 3 do 2°C podnosi P(T > 80) z 0.748 do 0.841. Zwężenie rozkładu zbliża wszystkie wyniki do średniej, a średnia leży po „złej” stronie progu."
           ), lines = c("c > μ: z > 0, mniejsze σ ⇒ większe z ⇒ mniejsze P(T > c)", "c = μ: z = 0 dla każdego σ ⇒ P(T > c) = 0.5", "c < μ: z < 0, mniejsze σ ⇒ bardziej ujemne z ⇒ większe P(T > c)")),
+          # PROTOTYPY P10A i P10B: próg poniżej średniej
+          z6p_variant("P10A — osobny obraz z suwakiem σ."),
+          z6p_get("z6p_10a_ui"),
+          z6p_variant("P10B — galeria jak P9A, tylko dla progu 80°C."),
+          z6p_get("z6p_10b_ui"),
           risk_check("z6_chk_prog",
             "Chłodzenie o 2°C i podniesienie progu o 2°C dają to samo P(T > c) ≈ 0.048. Czy te działania są równoważne z punktu widzenia bezpieczeństwa łożyska?",
             c("Tak, bo mają to samo z" = "same", "Nie — tylko chłodzenie zmienia temperaturę pracy łożyska" = "mechanism", "Tak, jeśli raport podaje naturalną częstość" = "report"),
@@ -387,7 +423,9 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
       "Najpierw obejrzyj ten wyścig w symulacji: każdy punkt to jedna para obciążenie–wytrzymałość, a przekątna dzieli świat na pary bezpieczne i awarie. Przesuwaj obie średnie i obserwuj, jak chmura punktów przelewa się przez linię L = S."
     ),
     sections = list(
-      list(id = "most", title = "Próg też bywa zmienny", text = "Dotąd próg był stałą konstrukcyjną, a zmienna była tylko temperatura. Teraz sam próg — wytrzymałość S — również jest zmienną losową, więc porównujemy dwie zmienne naraz i pytamy o prawdopodobieństwo, że jedna przewyższy drugą."),
+      list(id = "most", title = "Próg też bywa zmienny", text = "Dotąd próg był stałą konstrukcyjną, a zmienna była tylko temperatura. Teraz sam próg — wytrzymałość S — również jest zmienną losową, więc porównujemy dwie zmienne naraz i pytamy o prawdopodobieństwo, że jedna przewyższy drugą.",
+        # PROTOTYP P11: scena zawiesia na otwarcie rozdziału
+        body = list(z6p_get("z6p_11_ui"))),
       list(
         id = "symulacja", title = "Chmura par L i S",
         body = list(
@@ -402,6 +440,9 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           risk_formula("P(\\text{awarii})=P(L>S)=P(D<0),\\qquad D=S-L", num = "6.8",
             legend = c("L" = "obciążenie", "S" = "wytrzymałość", "D" = "zapas bezpieczeństwa w danej parze (margines)")),
           "Dla niezależnych rozkładów normalnych różnica D też jest normalna: o średniej μ_S - μ_L i wariancji σ_S² + σ_L². Rachunek progowy z poprzednich rozdziałów stosuje się wtedy do D i progu zero."
+          ,
+          # PROTOTYP P12: od chmury par do marginesu D
+          z6p_get("z6p_12_ui")
         )
       ),
       list(
@@ -424,6 +465,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Wzór (6.10) tłumaczy, dlaczego normy mówią o rozrzutach, a nie tylko o średnich. Tradycyjny współczynnik bezpieczeństwa μ_S/μ_L nie zawiera σ, więc dwie konstrukcje o tym samym współczynniku mogą mieć zupełnie różne ryzyko awarii.",
             "Tu też wraca pułapka z nakładaniem krzywych. Kusi, by za ryzyko uznać pole wspólne dwóch gęstości narysowanych na jednym wykresie. Dla L ~ N(85, 8) i S ~ N(95, 7) to pole wynosi około 0.50, podczas gdy P(L > S) ≈ 0.173. Pole nakładania mierzy podobieństwo kształtów, a nie częstość par, w których obciążenie wygrywa."
           ),
+          # PROTOTYP P13: pole nakładania to nie ryzyko
+          z6p_get("z6p_13_ui"),
           risk_check("z6_chk_wariancja",
             "L ~ N(85, 8) i S ~ N(95, 7) są niezależne. Jakie jest odchylenie standardowe marginesu D = S - L?",
             c("√(8² - 7²) ≈ 3.9" = "minus", "√(8² + 7²) ≈ 10.6" = "plus", "8 - 7 = 1" = "diff"),
@@ -487,6 +530,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             answer = "Przy progu 1σ nad średnią modele różnią się umiarkowanie, a model z ciężkim ogonem daje nawet mniej przekroczeń niż normalny. Przy progu 3σ oba modele nienormalne dają od 5 do 9 razy więcej przekroczeń. Założenie normalności najbardziej szkodzi tam, gdzie progi są najważniejsze — daleko w ogonie."
           ),
           risk_try("porównaj histogramy trzech kształtów przy widoku „Histogram” i sprawdź, ile słupków leży na prawo od pionowej linii 85°C. Potem przełącz na „Wykres kwantylowy (Q–Q)” i przejrzyj te same trzy kształty, patrząc przede wszystkim na oba końce wykresu."),
+          # PROTOTYPY P14A i P14B: galeria trzech modeli
+          z6p_variant("P14A — trzy modele na jednej osi, z powiększeniem ogona."),
+          z6p_get("z6p_14a_ui"),
+          z6p_variant("P14B — trzy modele obok siebie."),
+          z6p_get("z6p_14b_ui"),
           risk_widget_panel("Rozszerzenie", "Trzy rozkłady o podobnym centrum", tagList(selectInput("z6_shape", "Kształt", c("Symetryczny" = "normal", "Skośny" = "skew", "Ciężki ogon" = "heavy")), lc_segmented("z6_view", "Widok", choices = c("Histogram" = "hist", "Wykres kwantylowy (Q–Q)" = "qq"))), "z6_shapes", "z6_shapes_stats"),
           c(
             "Na histogramach różnice łatwo przeoczyć: wszystkie trzy mają garb w okolicy 82°C, a ogony to kilka niskich słupków. Rozkład skośny ma wyraźnie ucięty lewy bok i nieco dłuższy prawy; rozkład z ciężkim ogonem ma wyższy i węższy garb, a pojedyncze obserwacje sięgają daleko poza 95°C i poniżej 70°C. Na wykresie kwantylowym te same różnice są oczywiste — i to jest główny powód, dla którego używa się go do diagnozy."
@@ -514,6 +562,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             ),
             answer = "Największy pomiar jest o 2.8°C wyższy, niż przewiduje model normalny — sygnał możliwego ciężkiego prawego ogona. Przy pięciu pomiarach to jednak tylko sygnał; do oceny ogona potrzeba znacznie więcej danych."
           ),
+          # PROTOTYPY P15A i P15B: jak powstaje punkt wykresu Q–Q
+          z6p_variant("P15A — kadry: pomiary obok kwantyli modelu."),
+          z6p_get("z6p_15a_ui"),
+          z6p_variant("P15B — jeden prosty rysunek."),
+          z6p_get("z6p_15b_ui"),
           risk_check("z6_chk_qq", extension = TRUE,
             "Na wykresie Q–Q punkty w środku leżą na prostej, a na prawym końcu wyraźnie zaginają się w górę. Co to oznacza dla oceny P(T > c) przy wysokim progu c?",
             c("Model normalny zaniża ryzyko" = "under", "Model normalny zawyża ryzyko" = "over", "Nic, bo środek jest zgodny" = "nothing"),
@@ -547,6 +600,10 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             ),
             answer = "„Około 16% pomiarów, a w praktyce większość zmian, przekracza próg 85°C. Przyczyną jest średnia zbyt blisko progu przy rozrzucie 3°C. Rekomendujemy poprawę chłodzenia i wyrównanie obciążenia, co może obniżyć częstość przekroczeń do kilku na tysiąc; progu nie podnosimy bez badania materiałowego.”"
           )
+          ,
+          # PROTOTYP P16A: domknięcie — raport z rozdziału 1 poprawiony
+          z6p_variant("P16A — raport z rozdziału 1 wraca poprawiony."),
+          z6p_get("z6p_16a_ui")
         )
       )
     )
@@ -564,6 +621,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           "Wykład zaczął się od raportu, w którym średnia 82°C leżała poniżej progu 85°C, i od obserwacji, że bez miary rozrzutu nie da się ocenić ryzyka. Temperatura jest zmienną ciągłą, więc prawdopodobieństwa są polami pod gęstością (6.1), a pojedyncza wartość ma prawdopodobieństwo zero. Pola odczytujemy z dystrybuanty (6.2). Rozkład normalny N(μ, σ) o gęstości (6.3) opisują dwa parametry: położenie μ i szerokość σ — w tym kursie zawsze z odchyleniem standardowym na drugim miejscu.",
           "Standaryzacja (6.4) przekłada każdy próg na wspólną linijkę z, a wzór (6.5) zamienia z na prawdopodobieństwo przekroczenia; kwantyl (6.6) odpowiada na pytanie odwrotne. Dla łożyska z = 1 i P(T > 85) ≈ 0.159, czyli około 159 pomiarów na tysiąc. Ryzyko w zmianie z wieloma pomiarami to inna zmienna — wzór (6.7). Chłodzenie, stabilizacja i zmiana progu działają przez to samo z, ale tylko dwa pierwsze zmieniają fizykę. Gdy próg sam jest losowy, jak wytrzymałość zawiesia, ryzyko to P(D < 0) dla marginesu D = S - L (6.8), którego wariancja jest sumą wariancji (6.9), a prawdopodobieństwo awarii to Φ(-β) (6.10).",
           "Wszystkie te rachunki zależą od kształtu ogona. Wykres kwantylowy (6.11) pokazuje, czy model normalny opisuje ekstremalne pomiary; skośność i ciężkie ogony potrafią zwiększyć częstość przekroczeń odległych progów kilkakrotnie, przy tej samej średniej i tym samym σ."
+        ),
+        # PROTOTYP P16B: domknięcie — mapa wykładu z wynikami dla łożyska
+        body = list(
+          z6p_variant("P16B — mapa wykładu z wynikiem każdego kroku."),
+          z6p_get("z6p_16b_ui")
         )
       ),
       list(
@@ -598,31 +660,46 @@ prog_server <- function(input, output, session) {
     set.seed(606)
     rnorm(input$z6_sample, 82, 3)
   })
+  # Stałe osie i stałe granice słupków (co 1°C): przy zmianie liczebności zmienia
+  # się tylko kształt histogramu, a nie skala.
   hist_plot <- reactive(ggplot(data.frame(t = sample_values()), aes(t)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 30, fill = upwr_secondary, colour = "white") +
+    geom_histogram(aes(y = after_stat(density)), breaks = seq(68, 96, 1), fill = upwr_secondary, colour = "white") +
     stat_function(fun = dnorm, args = list(mean = 82, sd = 3), colour = upwr_accent, linewidth = 1) +
+    geom_vline(xintercept = 85, linetype = 2) +
+    coord_cartesian(xlim = c(70, 94), ylim = c(0, .22)) +
     labs(x = "Temperatura (°C)", y = "Gęstość") +
     theme_upwr())
   zoom_plot_server("z6_hist", hist_plot, alt = "Histogram temperatur z nałożoną krzywą normalną.")
   output$z6_hist_stats <- renderUI(tagList(
     lc_readout("Średnia próby", round(mean(sample_values()), 2)),
-    lc_readout("SD próby", round(sd(sample_values()), 2))
+    lc_readout("SD próby", round(sd(sample_values()), 2)),
+    lc_readout("Ponad 85°C", sprintf("%d z %d (%s%%)", sum(sample_values() > 85), length(sample_values()),
+      format(round(100 * mean(sample_values() > 85), 1), nsmall = 1)), color = upwr_accent)
   ))
   normal_plot <- reactive({
     x <- seq(65, 105, length.out = 400)
-    ggplot(data.frame(x, p = dnorm(x, input$z6_mean, input$z6_sd)), aes(x, p)) +
+    d <- data.frame(x, p = dnorm(x, input$z6_mean, input$z6_sd))
+    # Stała oś Y (szczyt przy σ = 1.5): zwężenie rozkładu widać jako wyższą krzywą.
+    ggplot(d, aes(x, p)) +
+      geom_area(data = d[d$x >= 85, ], fill = upwr_accent, alpha = .35) +
+      stat_function(fun = dnorm, args = list(mean = 82, sd = 3), colour = upwr_reference, linetype = 3, linewidth = .8) +
       geom_line(colour = upwr_accent, linewidth = 1.1) +
       geom_vline(xintercept = input$z6_mean, linetype = 2) +
+      geom_vline(xintercept = 85, colour = upwr_secondary, linewidth = 1) +
+      coord_cartesian(ylim = c(0, .28)) +
       labs(x = "Temperatura (°C)", y = "Gęstość") +
       theme_upwr()
   })
   zoom_plot_server("z6_normal", normal_plot, alt = "Krzywa normalna sterowana średnią i odchyleniem standardowym.")
   output$z6_normal_stats <- renderUI(tagList(
-    lc_readout("z dla 85°C", round((85 - input$z6_mean) / input$z6_sd, 2))
+    lc_readout("z dla 85°C", round((85 - input$z6_mean) / input$z6_sd, 2)),
+    lc_readout("P(T > 85°C)", risk_fmt_p(risk_normal_exceedance(85, input$z6_mean, input$z6_sd)), color = upwr_accent)
   ))
+  # Panel progu ma własny, stały model N(82, 3): liczby w tekście nie zależą od
+  # suwaków μ i σ z rozdziału 2.
   tail_plot <- reactive({
-    x <- seq(input$z6_mean - 4 * input$z6_sd, input$z6_mean + 5 * input$z6_sd, length.out = 500)
-    d <- data.frame(x, p = dnorm(x, input$z6_mean, input$z6_sd))
+    x <- seq(70, 97, length.out = 500)
+    d <- data.frame(x, p = dnorm(x, 82, 3))
     ggplot(d, aes(x, p)) +
       geom_area(data = d[d$x >= input$z6_threshold, ], fill = upwr_accent, alpha = .55) +
       geom_line(colour = upwr_secondary, linewidth = 1) +
@@ -632,7 +709,7 @@ prog_server <- function(input, output, session) {
   })
   zoom_plot_server("z6_tail", tail_plot, alt = "Krzywa normalna z zacieniowanym obszarem temperatur powyżej progu.")
   output$z6_tail_stats <- renderUI({
-    p <- risk_normal_exceedance(input$z6_threshold, input$z6_mean, input$z6_sd)
+    p <- risk_normal_exceedance(input$z6_threshold, 82, 3)
     tagList(
       lc_readout("P(przekroczenia)", risk_fmt_p(p), color = upwr_accent),
       lc_readout("Częstość", risk_natural_frequency(p))
@@ -651,6 +728,27 @@ prog_server <- function(input, output, session) {
       lc_readout("P(przekroczenia)", risk_fmt_p(p), color = upwr_accent)
     )
   })
+  action_pars <- reactive(switch(input$z6_action,
+    base = c(82, 3, 85),
+    mean = c(80, 3, 85),
+    sd = c(82, 2, 85),
+    threshold = c(82, 3, 87)
+  ))
+  action_plot <- reactive({
+    pars <- action_pars()
+    x <- seq(70, 96, length.out = 500)
+    d <- data.frame(x, p = dnorm(x, pars[1], pars[2]))
+    ggplot(d, aes(x, p)) +
+      geom_area(data = d[d$x >= pars[3], ], fill = upwr_accent, alpha = .45) +
+      stat_function(fun = dnorm, args = list(mean = 82, sd = 3), colour = upwr_reference, linetype = 3, linewidth = .8) +
+      geom_vline(xintercept = 85, colour = upwr_reference, linetype = 3, linewidth = .8) +
+      geom_line(colour = upwr_secondary, linewidth = 1.1) +
+      geom_vline(xintercept = pars[3], linetype = 2) +
+      coord_cartesian(ylim = c(0, .21)) +
+      labs(x = "Temperatura (°C)", y = "Gęstość") +
+      theme_upwr()
+  })
+  zoom_plot_server("z6_action_plot", action_plot, alt = "Krzywa normalna po wybranej interwencji na tle stanu bazowego, z zacieniowanym polem ponad progiem.")
   ls_plot <- reactive({
     set.seed(607)
     n <- 700
@@ -661,6 +759,7 @@ prog_server <- function(input, output, session) {
       geom_point(alpha = .55) +
       geom_abline(slope = 1, intercept = 0, linetype = 2) +
       scale_colour_manual(values = c("Awaria: L>S" = upwr_accent, "Rezerwa: S≥L" = upwr_secondary)) +
+      coord_cartesian(xlim = c(35, 135), ylim = c(45, 145)) +
       labs(x = "Obciążenie L", y = "Wytrzymałość S", colour = NULL, shape = NULL) +
       theme_upwr()
   })
@@ -692,9 +791,18 @@ prog_server <- function(input, output, session) {
     }
   })
   zoom_plot_server("z6_shapes", shapes_plot, alt = "Histogram albo wykres kwantylowy wybranego rozkładu względem modelu normalnego.")
-  output$z6_shapes_stats <- renderUI(lc_caption(
-                                       "Punkty układające się wzdłuż prostej na wykresie kwantylowym oznaczają zgodność z modelem normalnym; zagięcia w ogonach ostrzegają, że ocena przekroczeń może być błędna. Porównuj prawdopodobieństwo przekroczenia, nie tylko średnią i odchylenie.",
-                                       tone = "info"
-                                     ))
+  # Odczyty z modelu (nie z próby): te same liczby co w przykładzie 6.10.
+  output$z6_shapes_stats <- renderUI({
+    gamma_scale <- 3 / sqrt(3)
+    tail_p <- function(c) switch(input$z6_shape,
+      normal = pnorm(c, 82, 3, lower.tail = FALSE),
+      skew = pgamma(c - (82 - 3 * gamma_scale), shape = 3, scale = gamma_scale, lower.tail = FALSE),
+      heavy = pt((c - 82) * sqrt(3) / 3, df = 3, lower.tail = FALSE)
+    )
+    tagList(
+      lc_readout("P(T > 85°C)", risk_fmt_p(tail_p(85)), color = upwr_accent),
+      lc_readout("P(T > 91°C)", formatC(tail_p(91), format = "f", digits = 4), color = upwr_accent)
+    )
+  })
   risk_assessment_server("z6", prog_quiz, input, output)
 }
