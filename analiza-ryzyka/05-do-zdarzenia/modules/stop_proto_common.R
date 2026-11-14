@@ -1,8 +1,12 @@
 # PUNKTY STOP (2026-11-03) — wspólne narzędzia punktów stop wykładu 05 ----------
 #
-# Punkty stop rysowane po stronie serwera (SVG z R + renderUI), jak w wykładzie 04.
+# Punkty stop działają w przeglądarce, bez serwera R (także offline):
+#   - sceny z kadrami: R rysuje SVG każdego kadru z góry (d5p_frames_ui),
+#     modules/sceny.js tylko przełącza kadry;
+#   - sceny losowe (seria za serią, oddziały, taśma przecięta): rysunek i stan
+#     w modules/sceny.js, R podaje dane i teksty w data-config (d5p_scene_ui).
 # Numery jak w PUNKTY-STOP-PROPOZYCJA.md. Każdy plik stop_proto_*.R definiuje
-# obiekty UI d5p_*_ui i funkcję serwera; wpięcie w block.R i app.R.
+# obiekty UI d5p_*_ui; wpięcie w block.R i app.R.
 #
 # Wspólny język wizualny: TAŚMA KONTROLI. Jedna kratka = kontrola jednej palety;
 # kratka z wadą w kolorze akcentu, bez wady kurkumowa (jasna, „bananowa”), niewykonana pusta.
@@ -38,6 +42,12 @@ d5p_css <- tags$style(HTML("
   .d5p-caption { min-height: 3em; margin: .4em 0; }
   .d5p-read { font-family: var(--upwr-mono); font-weight: 600; margin: .2em 0 .6em; }
   .d5p-nav { display: flex; gap: .6em; flex-wrap: wrap; }
+  /* Wzory w odczytach scen jako HTML (offline nie ma MathJax). */
+  .d5p-math { font-family: var(--upwr-sans); font-weight: 400; font-size: 1.1em; white-space: nowrap; }
+  .d5p-math i { font-family: Georgia, 'Times New Roman', serif; }
+  .d5p-math sub, .d5p-math sup { font-size: .7em; }
+  .d5p-binom { display: inline-flex; align-items: center; vertical-align: middle; }
+  .d5p-binom-in { display: inline-flex; flex-direction: column; line-height: 1.05; font-size: .8em; text-align: center; padding: 0 .1em; }
 "))
 
 # Owija fragmenty SVG w <svg> o szerokości w (viewBox w × h).
@@ -46,10 +56,6 @@ d5p_svg <- function(w, h, aria, ...) {
     paste(unlist(list(...)), collapse = ""), "</svg>"))
 }
 
-# Nagłówek sceny: nazwa kadru po lewej, licznik/stan po prawej.
-d5p_head <- function(name, step) {
-  tags$div(class = "d5p-head", tags$span(class = "d5p-name", name), tags$span(class = "d5p-step", step))
-}
 
 # Jeden wiersz taśmy kontroli.
 #   outcomes — wektor logiczny: TRUE = wada w tej kontroli, FALSE = brak wady
@@ -87,4 +93,48 @@ d5p_axis <- function(x_of, y, ticks, label = NULL, x_label = NULL) {
     if (!is.null(label)) sprintf('<text class="d5p-subtle" x="%g" y="%g" font-size="12" text-anchor="end">%s</text>',
       if (is.null(x_label)) x_of(max(ticks)) else x_label, y + 34, label) else ""
   )
+}
+
+# ============================================================================
+# SCENY W PRZEGLĄDARCE (modules/sceny.js)
+# ============================================================================
+
+# Przycisk sceny: wygląd lc_action(), bez wejścia Shiny — klik obsługuje sceny.js
+# po atrybucie data-d5p.
+d5p_button <- function(act, label = NULL, icon = NULL, variant = "outline", aria_label = NULL) {
+  b <- lc_action(paste0("d5p-", act), label, icon = icon, variant = variant, aria_label = aria_label)
+  b$attribs$id <- NULL
+  b$attribs$class <- sub("action-button ", "", b$attribs$class, fixed = TRUE)
+  b$attribs[["data-d5p"]] <- act
+  b
+}
+
+d5p_prev_next <- function() tagList(d5p_button("prev", "Wstecz", icon = "prev"),
+  d5p_button("next", "Dalej", icon = "next", variant = "solid"))
+
+# Kontener sceny: slots to treść w kolejności (sloty d5p_out() i zwykłe tagi).
+d5p_scene_ui <- function(kind, title, scene, config, ..., width_mode = "wide") {
+  d5p_panel(kind, title, width_mode = width_mode, d5p_css,
+    tags$div(class = "d5p-scene", `data-scene` = scene,
+      `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA), ...))
+}
+d5p_out <- function(name, ...) tags$div(`data-d5p-out` = name, ...)
+
+# Scena z kadrami policzonymi w R. frames: lista z polem name; svg(i) zwraca
+# rysunek kadru i, body(frame) treść pod rysunkiem (opis i odczyt).
+d5p_frames_ui <- function(kind, title, frames, svg, body, width_mode = "wide") {
+  cfg <- list(frames = lapply(seq_along(frames), function(i) list(
+    name = frames[[i]]$name,
+    svg = as.character(svg(i)),
+    body = as.character(body(frames[[i]]))
+  )))
+  d5p_scene_ui(kind, title, "kadry", cfg,
+    d5p_out("head"), d5p_out("stage"), d5p_out("body"),
+    tags$div(class = "d5p-nav", d5p_prev_next()), width_mode = width_mode)
+}
+
+# Treść kadru: opis i (gdy jest) odczyt; odczyt może być wzorem w HTML (d5p-math).
+d5p_frame_body <- function(f) {
+  tagList(tags$p(class = "d5p-caption", f$text),
+    if (!is.null(f$read) && !(is.character(f$read) && !nzchar(f$read))) tags$p(class = "d5p-read", f$read))
 }

@@ -199,14 +199,15 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
             label = "Rozkład",
             title = "Rozkład geometryczny dla trzech wartości p",
             full_width = TRUE,
-            lc_toolbar(
-              checkboxGroupInput("d5_geom_scenarios", "Scenariusze",
+            # Rycina lcSF (modules/wykresy.js): liczy i rysuje przeglądarka.
+            lc_sf_figure("d5_geom",
+              control = checkboxGroupInput("d5_geom_scenarios", "Scenariusze",
                 choices = setNames(names(d5_geom_defs), vapply(d5_geom_defs, `[[`, character(1), "label")),
-                selected = "geom_33"
-              )
-            ),
-            lc_plot("d5_geom_plot", max_height = "400px"),
-            uiOutput("d5_geom_stats")
+                selected = "geom_33"),
+              ratio = "2/1", max_height = "400px", legend = TRUE,
+              config = list(defs = lapply(d5_geom_defs, function(s) c(s, list(
+                mean = lc_fmt(1 / s$p, 1), sd = lc_fmt(sqrt(1 - s$p) / s$p, 1))))),
+              after = tags$div(`data-role` = "stats"))
           ),
           c(
             "Do planowania częściej niż pojedyncze słupki potrzebne jest prawdopodobieństwo, że czekamy dłużej niż \\(x\\) kontroli. Tu przydaje się trik z dopełnieniem: \\(X > x\\) oznacza dokładnie tyle, że pierwsze x kontroli nie wykryło niczego."
@@ -538,49 +539,7 @@ dozd_server <- function(input, output, session) {
       " r=3; liczba kontroli pozostaje losowa."
     )
   })
-  # Rycina porównawcza: rozkłady geometryczne nałożone na jednej osi
-  zoom_plot_server("d5_geom_plot", reactive({
-    selected <- input$d5_geom_scenarios
-    req(length(selected) > 0)
-
-    # Wspólny zakres x, ograniczony do 80 jak w symulacji
-    x_max <- min(80, max(sapply(selected, function(id) qgeom(0.999, d5_geom_defs[[id]]$p) + 1)))
-
-    df <- do.call(rbind, lapply(selected, function(id) {
-      s <- d5_geom_defs[[id]]
-      x_vals <- 1:x_max
-      data.frame(x = x_vals, prob = dgeom(x_vals - 1, s$p), scenario = s$label)
-    }))
-    labels <- vapply(d5_geom_defs[selected], `[[`, character(1), "label")
-    df$scenario <- factor(df$scenario, levels = labels)
-
-    n_sel <- length(selected)
-    dodge <- if (n_sel > 1) position_dodge(width = 0.5) else "identity"
-
-    ggplot(df, aes(x = x, y = prob, color = scenario)) +
-      geom_point(size = 3, alpha = 0.85, position = dodge) +
-      geom_segment(aes(xend = x, yend = 0), linewidth = 0.8, alpha = 0.6, position = dodge) +
-      scale_color_manual(values = setNames(upwr_cat_n(n_sel), labels), name = NULL) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
-      labs(x = "Numer kontroli z pierwszą wadą (x)", y = "P(X = x)") +
-      theme_upwr() +
-      theme(legend.position = "top", legend.text = element_text(size = 11))
-  }), alt = "Rozkłady geometryczne dla wybranych wartości p nałożone na jednej osi.")
-
-  output$d5_geom_stats <- renderUI({
-    selected <- input$d5_geom_scenarios
-    req(length(selected) > 0)
-    tags$ul(lapply(selected, function(id) {
-      s <- d5_geom_defs[[id]]
-      tags$li(sprintf("%s: E(X) = %s, SD = %s", s$label, lc_fmt(1 / s$p, 1), lc_fmt(sqrt(1 - s$p) / s$p, 1)))
-    }))
-  })
-
+  # Rozkład geometryczny rysuje przeglądarka (modules/wykresy.js).
   risk_assessment_server("d5", dozd_quiz, input, output)
-  # Punkty stop (PUNKTY-STOP-PROPOZYCJA.md)
-  d5p_tasma_server(input, output, session)
-  d5p_geo_server(input, output, session)
-  d5p_suma_server(input, output, session)
-  d5p_oddzialy_server(input, output, session)
-  d5p_dost_server(input, output, session)
+  # Punkty stop (PUNKTY-STOP-PROPOZYCJA.md) działają w przeglądarce: modules/sceny.js.
 }

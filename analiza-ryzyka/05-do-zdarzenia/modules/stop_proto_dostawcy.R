@@ -3,8 +3,8 @@
 #   d5p_dost_scene_ui — Scena „Dziesięć audytów u każdego dostawcy”, 3 kadry:
 #     B (p = 0.15) → A (p = 0.05) → razem; każdy audyt to pasek długości X
 #     z kreskami w miejscach trzech wad. Ziarno 4398: średnie 20.1 i 60.0.
-# Serwer: d5p_dost_server(input, output, session). Wejścia: d5p_dost_prev, d5p_dost_next.
-# Wymaga: stop_proto_common.R (d5p_panel, d5p_css, d5p_svg, d5p_head, d5p_axis).
+# Kadry rysuje R z góry (d5p_frames_ui), przełącza je modules/sceny.js.
+# Wymaga: stop_proto_common.R (d5p_panel, d5p_css, d5p_svg, d5p_axis).
 
 d5p_dost_audits <- local({
   set.seed(4398)
@@ -62,24 +62,5 @@ d5p_dost_svg <- function(step) {
     d5p_axis(x_of, base + 6, c(0, 20, 40, 60, 80, 100, 120), label = "liczba kontroli do trzeciej wady"))
 }
 
-d5p_dost_scene_ui <- d5p_panel("Scena", "Dziesięć audytów u każdego dostawcy",
-  d5p_css,
-  uiOutput("d5p_dost_head"),
-  uiOutput("d5p_dost_stage"),
-  uiOutput("d5p_dost_caption"),
-  tags$div(class = "d5p-nav",
-    lc_action("d5p_dost_prev", "Wstecz", icon = "prev"),
-    lc_action("d5p_dost_next", "Dalej", icon = "next", variant = "solid")))
-
-d5p_dost_server <- function(input, output, session) {
-  st <- reactiveVal(1L)
-  n <- length(d5p_dost_frames)
-  observeEvent(input$d5p_dost_next, st(min(n, st() + 1L)))
-  observeEvent(input$d5p_dost_prev, st(max(1L, st() - 1L)))
-  output$d5p_dost_head <- renderUI(d5p_head(d5p_dost_frames[[st()]]$name, sprintf("Kadr %d z %d", st(), n)))
-  output$d5p_dost_stage <- renderUI(d5p_dost_svg(st()))
-  output$d5p_dost_caption <- renderUI({
-    f <- d5p_dost_frames[[st()]]
-    tagList(tags$p(class = "d5p-caption", f$text), tags$p(class = "d5p-read", f$read))
-  })
-}
+d5p_dost_scene_ui <- d5p_frames_ui("Scena", "Dziesięć audytów u każdego dostawcy",
+  d5p_dost_frames, d5p_dost_svg, d5p_frame_body)

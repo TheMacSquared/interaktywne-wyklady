@@ -1,22 +1,18 @@
 # PUNKTY STOP (2026-11-03) — pojęcia: suma czasów oczekiwania i układy wad ------
 #
-# Punkty stop rysowane po stronie serwera (SVG z R + renderUI), jak w wykładzie 04.
+# Kadry rysuje R z góry (d5p_frames_ui), przełącza je modules/sceny.js.
 #   d5p_one_ui — Pojęcie „Jeden audyt” (P5a): skąd wzór (5.5), 2 kadry krokowe
 #   d5p_sum_ui — Pojęcie „Trzy kolejki czekania” (P5), 3 kadry krokowe
 # Rysunki: d5p_sum_svg(step) i d5p_one_svg(step) zwracają HTML (SVG), bez serwera.
-# Serwer: d5p_suma_server(input, output, session).
-# Wymaga: stop_proto_common.R (d5p_panel, d5p_css, d5p_svg, d5p_head, d5p_tape, d5p_axis).
-# Wejścia: d5p_sum_prev, d5p_sum_next, d5p_one_prev, d5p_one_next.
-
-# Odczyt kadru: zwykły tekst albo wzór MathJax (d5p_math) — wtedy składany po wstawieniu.
-d5p_read_ui <- function(txt) {
-  if (is.character(txt) && !nzchar(txt)) return(NULL)
-  withMathJax(tags$p(class = "d5p-read", txt))
-}
+# Wymaga: stop_proto_common.R (d5p_panel, d5p_css, d5p_svg, d5p_tape, d5p_frames_ui, d5p_axis).
 
 # Wzór w odczycie; kolory części jak we wzorze (5.5): ułożenia, wady, kontrole bez wady.
-d5p_tex_col <- function(tex, col) sprintf("\\style{color:var(--upwr-cat-%s)}{%s}", col, tex)
-d5p_math <- function(tex) HTML(paste0("\\(\\displaystyle ", tex, "\\)"))
+# Wzór w zwykłym HTML (bez MathJax): sceny wstawiają go w przeglądarce, a wersja
+# offline nie ma MathJax, więc TeX zostałby surowym tekstem. Styl: d5p-math w d5p_css.
+# Składany jako jeden ciąg bez białych znaków (htmltools wcięłoby tagi, a w tekście
+# wcięcia stają się spacjami, np. „0.1 ³”).
+d5p_col <- function(col, html) sprintf('<span style="color:var(--upwr-cat-%s)">%s</span>', col, html)
+d5p_binom <- function(n, k) sprintf('<span class="d5p-binom">(<span class="d5p-binom-in"><span>%s</span><span>%s</span></span>)</span>', n, k)
 
 # ============================================================================
 # P5 — TRZY KOLEJKI CZEKANIA
@@ -87,17 +83,9 @@ d5p_sum_svg <- function(step) {
   d5p_svg(W, 170, "Trzy kolejki w trzech wierszach; każdy kończy się wadą.", rows)
 }
 
-d5p_sum_ui <- d5p_panel("Pojęcie", "Trzy kolejki czekania",
-  d5p_css,
-  uiOutput("d5p_sum_head"),
-  uiOutput("d5p_sum_stage"),
-  uiOutput("d5p_sum_caption"),
-  uiOutput("d5p_sum_read"),
-  tags$div(class = "d5p-nav",
-    lc_action("d5p_sum_prev", "Wstecz", icon = "prev"),
-    lc_action("d5p_sum_next", "Dalej", icon = "next", variant = "solid")
-  )
-)
+# Kadry P5 zaczynają się od rysunku nr 2 (d5p_sum_svg(step + 1)).
+d5p_sum_ui <- d5p_frames_ui("Pojęcie", "Trzy kolejki czekania", d5p_sum_frames,
+  function(i) d5p_sum_svg(i + 1L), d5p_frame_body)
 
 # ============================================================================
 # P5a — JEDEN AUDYT: SKĄD WZÓR (5.5)
@@ -117,9 +105,9 @@ d5p_one_frames <- list(
     read = "X = 27 kontroli do trzeciej wady"),
   list(name = "Inne układy, ten sam wynik",
     text = "Trzecia wada stoi w 27. kontroli, a dwie pierwsze mogą stać w dowolnych miejscach wśród 26 wcześniejszych. Takich układów jest tyle, na ile sposobów można wybrać 2 miejsca z 26 — to symbol Newtona z wykładu 04. Każdy taki układ kończy audyt na 27. kontroli i ma to samo prawdopodobieństwo: trzy wady i 24 kontrole bez wady.",
-    read = d5p_math(paste0("P(X=27)=", d5p_tex_col("\\binom{26}{2}", "szalwia"), "\\,",
-      d5p_tex_col("p^{3}", "terakota"), "\\,", d5p_tex_col("(1-p)^{24}", "indygo"),
-      sprintf("=325\\cdot 0.1^{3}\\cdot 0.9^{24}\\approx %.3f", dnbinom(24, 3, 0.10)))))
+    read = HTML(paste0('<span class="d5p-math"><i>P</i>(<i>X</i> = 27) = ', d5p_col("szalwia", d5p_binom(26, 2)), " ",
+      d5p_col("terakota", "<i>p</i><sup>3</sup>"), " ", d5p_col("indygo", "(1 − <i>p</i>)<sup>24</sup>"),
+      " = 325 · 0.1<sup>3</sup> · 0.9<sup>24</sup>", sprintf(" ≈ %.3f", dnbinom(24, 3, 0.10)), "</span>")))
 )
 
 d5p_one_row <- function(defects, y) {
@@ -141,38 +129,5 @@ d5p_one_svg <- function(step) {
     rows, more)
 }
 
-d5p_one_ui <- d5p_panel("Pojęcie", "Jeden audyt, trzecia wada w 27. kontroli",
-  d5p_css,
-  uiOutput("d5p_one_head"),
-  uiOutput("d5p_one_stage"),
-  uiOutput("d5p_one_caption"),
-  uiOutput("d5p_one_read"),
-  tags$div(class = "d5p-nav",
-    lc_action("d5p_one_prev", "Wstecz", icon = "prev"),
-    lc_action("d5p_one_next", "Dalej", icon = "next", variant = "solid")
-  )
-)
-
-d5p_suma_server <- function(input, output, session) {
-  # P5a
-  one_step <- reactiveVal(1L)
-  n_one <- length(d5p_one_frames)
-  observeEvent(input$d5p_one_next, one_step(min(n_one, one_step() + 1L)))
-  observeEvent(input$d5p_one_prev, one_step(max(1L, one_step() - 1L)))
-  output$d5p_one_head <- renderUI(d5p_head(d5p_one_frames[[one_step()]]$name,
-    sprintf("Kadr %d z %d", one_step(), n_one)))
-  output$d5p_one_stage <- renderUI(d5p_one_svg(one_step()))
-  output$d5p_one_caption <- renderUI(tags$p(class = "d5p-caption", d5p_one_frames[[one_step()]]$text))
-  output$d5p_one_read <- renderUI(d5p_read_ui(d5p_one_frames[[one_step()]]$read))
-
-  # P5
-  sum_step <- reactiveVal(1L)
-  n_sum <- length(d5p_sum_frames)
-  observeEvent(input$d5p_sum_next, sum_step(min(n_sum, sum_step() + 1L)))
-  observeEvent(input$d5p_sum_prev, sum_step(max(1L, sum_step() - 1L)))
-  output$d5p_sum_head <- renderUI(d5p_head(d5p_sum_frames[[sum_step()]]$name,
-    sprintf("Kadr %d z %d", sum_step(), n_sum)))
-  output$d5p_sum_stage <- renderUI(d5p_sum_svg(sum_step() + 1L))
-  output$d5p_sum_caption <- renderUI(tags$p(class = "d5p-caption", d5p_sum_frames[[sum_step()]]$text))
-  output$d5p_sum_read <- renderUI(d5p_read_ui(d5p_sum_frames[[sum_step()]]$read))
-}
+d5p_one_ui <- d5p_frames_ui("Pojęcie", "Jeden audyt, trzecia wada w 27. kontroli",
+  d5p_one_frames, d5p_one_svg, d5p_frame_body)

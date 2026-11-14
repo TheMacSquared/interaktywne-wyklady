@@ -41,6 +41,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "bananpol.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_math.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_block.R"), local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_common.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_tasma.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_proto_geo.R"), local = TRUE)
@@ -63,7 +64,9 @@ ui <- lecture_page(
   lecture_title = "Ile prób do zdarzenia",
   module_label = "Analiza ryzyka · Bananpol",
   chapters = .chapters,
-  # Chart.js dla punktów stop P7 (nb_chart.js) i „Limit, średnia i rezerwa” (plan_chart.js)
+  # Punkty stop (modules/sceny.js) i rozkład geometryczny (modules/wykresy.js, ECharts
+  # przez lcSF) działają w przeglądarce, bez serwera R. Chart.js dla punktów stop P7
+  # (nb_chart.js), „Limit, średnia i rezerwa” (plan_chart.js) i P11 (mix_chart.js).
   header_extras = tagList(
     # Zapisy matematyczne w zwykłym tekście (\\( … \\) w akapicie albo punkcie listy)
     # dostają jasne tło z ramką, jak w wykładzie 04. Wzory numerowane stoją w <div>.
@@ -78,8 +81,14 @@ ui <- lecture_page(
       /* Ramki rozpychają wyjustowany tekst, więc akapity z matematyką wyrównujemy do lewej. */
       :is(p, li):has(> .MathJax) { text-align: left; }
     ")),
+    includeScript(file.path(app_dir, "modules", "sceny.js")),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"),
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     includeScript(file.path(project_root, "R", "lc_charts.js")),
+    includeScript(file.path(project_root, "R", "lc_dist.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "wykresy.js")),
+    lc_sf_styles(),
     includeScript(file.path(app_dir, "modules", "nb_chart.js")),
     includeScript(file.path(app_dir, "modules", "plan_chart.js")),
     includeScript(file.path(app_dir, "modules", "mix_chart.js"))

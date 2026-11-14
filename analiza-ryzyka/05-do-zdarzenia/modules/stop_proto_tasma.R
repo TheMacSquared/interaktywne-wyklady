@@ -1,12 +1,11 @@
 # PUNKTY STOP (2026-11-03) — taśma kontroli: dwaj audytorzy i trzy reguły ----------
 #
-# Punkty stop rysowane po stronie serwera (SVG z R + renderUI), bez animacji.
+# Kadry sceny P1 rysuje R z góry (d5p_frames_ui), przełącza je modules/sceny.js.
 # Wspólna taśma d5p_shared_tape: 50 kontroli palet, wady w kontrolach 7, 15, 24, 38, 44.
 #   d5p_rule_ui   — Scena „Dwóch audytorów” (kadry historii) (P1): Wstecz / Dalej
 #   d5p_close_ui  — Domknięcie „Trzy reguły, jedna taśma” (P12): statyczne, bez przycisków
-# Serwer: d5p_tasma_server(input, output, session). Obsługuje tylko P1
-# (input d5p_rule_prev, d5p_rule_next); P12 nie ma wejść.
-# Wymaga: stop_proto_common.R (d5p_panel, d5p_css, d5p_svg, d5p_head, d5p_tape, d5p_axis).
+# Bez serwera: P1 przełącza kadry w przeglądarce, P12 jest statyczne.
+# Wymaga: stop_proto_common.R (d5p_panel, d5p_css, d5p_svg, d5p_tape, d5p_axis).
 
 # Stała taśma: TRUE = wada w tej kontroli (wpisana w kod, żeby narracja zgadzała się z obrazem).
 d5p_shared_tape <- seq_len(50) %in% c(7L, 15L, 24L, 38L, 44L)
@@ -127,15 +126,7 @@ d5p_close_svg <- function() {
     rows, plan_mark)
 }
 
-d5p_rule_ui <- d5p_panel("Scena", "Dwóch audytorów",
-  d5p_css,
-  uiOutput("d5p_rule_head"),
-  uiOutput("d5p_rule_stage"),
-  uiOutput("d5p_rule_caption"),
-  tags$div(class = "d5p-nav",
-    lc_action("d5p_rule_prev", "Wstecz", icon = "prev"),
-    lc_action("d5p_rule_next", "Dalej", icon = "next", variant = "solid"))
-)
+d5p_rule_ui <- d5p_frames_ui("Scena", "Dwóch audytorów", d5p_rule_frames, d5p_rule_svg, d5p_frame_body)
 
 d5p_close_ui <- d5p_panel("Domknięcie", "Trzy reguły, jedna taśma",
   d5p_css,
@@ -144,19 +135,3 @@ d5p_close_ui <- d5p_panel("Domknięcie", "Trzy reguły, jedna taśma",
   d5p_close_svg()
 )
 
-d5p_tasma_server <- function(input, output, session) {
-  rule <- reactiveVal(1L)
-  n_rule <- length(d5p_rule_frames)
-  observeEvent(input$d5p_rule_next, rule(min(n_rule, rule() + 1L)))
-  observeEvent(input$d5p_rule_prev, rule(max(1L, rule() - 1L)))
-  output$d5p_rule_head <- renderUI(d5p_head(d5p_rule_frames[[rule()]]$name,
-    sprintf("Kadr %d z %d", rule(), n_rule)))
-  output$d5p_rule_stage <- renderUI(d5p_rule_svg(rule()))
-  output$d5p_rule_caption <- renderUI({
-    f <- d5p_rule_frames[[rule()]]
-    tagList(
-      tags$p(class = "d5p-caption", f$text),
-      if (!is.null(f$read)) tags$p(class = "d5p-read", f$read)
-    )
-  })
-}
