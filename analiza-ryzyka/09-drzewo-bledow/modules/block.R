@@ -60,6 +60,10 @@ fta_exercises <- list(
   )
 )
 
+# Warunek aktywnego zdarzenia szczytowego: inicjacja AND (brak detekcji OR brak tłumienia).
+f9_top_active <- paste0("input.f9_states.indexOf('init') >= 0 && ",
+                        "(input.f9_states.indexOf('detect') >= 0 || input.f9_states.indexOf('suppress') >= 0)")
+
 fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = list(
   list(
     id = "top", title = "Zdarzenie szczytowe", hook = "Najpierw nazwij awarię, której się boisz",
@@ -84,7 +88,13 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           ),
           # PROTOTYP P1: scena „protokół po pożarze” — od skutku do przyczyn, przed głosowaniem
           f9p_get("f9p_1_ui"),
-          risk_vote_panel("f9_vote", "f9_vote_feedback", "Która definicja jest audytowalna?", c("Nieopanowany pożar magazynu w ciągu roku" = "good", "Problem z bezpieczeństwem" = "vague", "Awaria" = "failure"), correct = "good"),
+          risk_vote_panel("f9_vote", "f9_vote_feedback", "Która definicja jest audytowalna?", c("Nieopanowany pożar magazynu w ciągu roku" = "good", "Problem z bezpieczeństwem" = "vague", "Awaria" = "failure"), correct = "good",
+            feedback = list(
+              "good" = lc_status(lc_verdict(tags$strong("Dobra definicja:"), type = "ok"),
+                                 " nieopanowany pożar magazynu w ciągu jednego roku."),
+              ".other" = lc_status(lc_verdict(tags$strong("Dobra definicja:"), type = "warning"),
+                                   " nieopanowany pożar magazynu w ciągu jednego roku.")
+            )),
           "„Problem z bezpieczeństwem” i „awaria” nie mówią, o jaki stan chodzi, w jakim obiekcie ani w jakim czasie. Każdy uczestnik analizy dopisze do nich inne scenariusze, więc drzewo rozrośnie się bez końca, a wynik liczbowy nie będzie miał jednostki. Pierwsza definicja nazywa stan (pożar nieopanowany, czyli taki, którego nie ugasiła instalacja ani obsługa), obiekt (magazyn Bananpolu) i horyzont (jeden rok). Dopiero taka definicja pozwala zapytać o prawdopodobieństwo."
         )
       ),
@@ -165,7 +175,17 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Najczęstszy błąd początkujących polega na przenoszeniu intuicji z języka potocznego: „mamy detekcję i tłumienie, więc AND”. Spójnik „i” opisuje tu listę wymaganych funkcji, a nie warunek awarii. Awaria łańcucha wymaganych funkcji to OR ich niepowodzeń."
           ),
           risk_try("wybierz bramkę OR z przyczynami „brak detekcji” i „brak tłumienia”, a potem przełącz na AND. Dodaj „utratę zasilania” i zastanów się, która bramka opisuje każdą wersję instalacji."),
-          figure_panel(label = "Budowa", title = "Utrata kontroli nad zapłonem", selectInput("f9_gate", "Logika", c("Wystarczy jedna przyczyna — OR" = "or", "Potrzebna kombinacja — AND" = "and")), checkboxGroupInput("f9_causes", "Przyczyny", c("Brak detekcji" = "detect", "Brak tłumienia" = "suppress", "Utrata zasilania" = "power"), selected = c("detect", "suppress")), uiOutput("f9_structure"), full_width = TRUE),
+          figure_panel(label = "Budowa", title = "Utrata kontroli nad zapłonem", selectInput("f9_gate", "Logika", selectize = FALSE, c("Wystarczy jedna przyczyna — OR" = "or", "Potrzebna kombinacja — AND" = "and")), checkboxGroupInput("f9_causes", "Przyczyny", c("Brak detekcji" = "detect", "Brak tłumienia" = "suppress", "Utrata zasilania" = "power"), selected = c("detect", "suppress")),
+            # Opis wybranej struktury: po jednym wariancie na bramkę i liczbę wejść,
+            # widoczny wybiera przeglądarka (conditionalPanel bez serwera).
+            lapply(c("or", "and"), function(gate) lapply(0:3, function(n) conditionalPanel(
+              sprintf("input.f9_gate == '%s' && input.f9_causes.length == %d", gate, n),
+              lc_status(
+                paste0("Wybrano bramkę ", toupper(gate), " i ", n, " ",
+                       if (n %% 10 %in% 2:4 && !(n %% 100 %in% 12:14)) "wejścia" else "wejść", ". "),
+                if (gate == "or") "Każde wejście może wystarczyć." else "Wszystkie wybrane wejścia są potrzebne."
+              )))),
+            full_width = TRUE),
           # PROTOTYP P5: konstruktor bramki z rysunkiem
           f9p_get("f9p_5_ui"),
           "Konstruktor nie ocenia, która bramka jest właściwa — odpowiada tylko, co wybrana bramka znaczy. Dla bramki OR każde wybrane wejście samo wystarcza; dla AND wszystkie są potrzebne. Utrata zasilania, która wyłącza jednocześnie detekcję i tłumienie, nie pasuje dobrze do żadnej z prostych wersji: jest wspólną przyczyną i w rozdziale o przekrojach dostanie własną gałąź."
@@ -184,7 +204,15 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         body = list(
           "W zapisie zbiorowym: TOP = I ∩ (D ∪ S). Z trzema liśćmi, z których każdy zachodzi albo nie, istnieje 2³ = 8 kombinacji stanów. Pełna tabela jest mała i warto ją przejść w całości — to najtańszy audyt logiki drzewa.",
           risk_try("zacznij od pustego zaznaczenia i włączaj liście pojedynczo, potem parami. Zapisz, które z ośmiu kombinacji aktywują zdarzenie szczytowe."),
-          figure_panel(label = "Logika", title = "Aktywuj zdarzenia bazowe", checkboxGroupInput("f9_states", "Aktywne liście", c("Inicjacja" = "init", "Brak detekcji" = "detect", "Brak tłumienia" = "suppress"), selected = character(0)), uiOutput("f9_state_result"), full_width = TRUE),
+          figure_panel(label = "Logika", title = "Aktywuj zdarzenia bazowe", checkboxGroupInput("f9_states", "Aktywne liście", c("Inicjacja" = "init", "Brak detekcji" = "detect", "Brak tłumienia" = "suppress"), selected = character(0)),
+            # Stan zdarzenia szczytowego z zaznaczonych liści (conditionalPanel bez serwera).
+            conditionalPanel(f9_top_active,
+              lc_status(lc_verdict(tags$strong("Zdarzenie szczytowe aktywne."), type = "warning"),
+                        " Logika: inicjacja AND (brak detekcji OR brak tłumienia).")),
+            conditionalPanel(paste0("!(", f9_top_active, ")"),
+              lc_status(lc_verdict(tags$strong("Zdarzenie szczytowe nieaktywne."), type = "ok"),
+                        " Logika: inicjacja AND (brak detekcji OR brak tłumienia).")),
+            full_width = TRUE),
           # PROTOTYPY P6A i P6B: drzewo Bananpolu i osiem kombinacji liści
           f9p_variant("P6A — klikane drzewo z tabelą stanów, która wypełnia się po kolei."),
           f9p_get("f9p_6a_ui"),
@@ -274,7 +302,12 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           # PROTOTYP P8: rachunek od liści do korzenia w kadrach
           f9p_get("f9p_8_ui"),
           risk_try("zacznij od wartości domyślnych i sprawdź wynik przykładu 9.3. Potem podwój P(inicjacji), a osobno podwój P(braku detekcji) — porównaj, jak zmienia się P(TOP) w obu przypadkach."),
-          risk_widget_panel("Obliczenia", "Parametry małego drzewa", tagList(lc_slider("f9_init", "P(inicjacji)", 0, .03, .005, .001), lc_slider("f9_detect", "P(braku detekcji | I)", 0, .3, .05, .01), lc_slider("f9_suppress", "P(niepowodzenia modułu tłumienia | I)", 0, .3, .08, .01)), "f9_tree_plot", "f9_tree_stats"),
+          risk_sf_panel("Obliczenia", "Parametry małego drzewa", "f9m_tree",
+            controls = list(lc_sf_slider("f9_init", "P(inicjacji)", 0, .03, .005, .001), lc_sf_slider("f9_detect", "P(braku detekcji | I)", 0, .3, .05, .01),
+                            lc_sf_slider("f9_suppress", "P(niepowodzenia modułu tłumienia | I)", 0, .3, .08, .01)),
+            reads = list(risk_sf_read("tree_or_read", "P(D ∪ S | I)"), risk_sf_read("tree_top_read", "P(TOP)", color = upwr_accent)),
+            # Rysunek drzewa z R (modules/wykresy.R); liczby przy węzłach wpisuje przeglądarka.
+            body = f9_tree_svg(), chartless = TRUE),
           # PROTOTYP P9: piaskownica parametrów drzewa w przeglądarce
           f9p_get("f9p_9_ui"),
           c(
@@ -352,7 +385,11 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         bullets = c("{inicjacja, brak detekcji}", "{inicjacja, brak tłumienia}"),
         body = list(
           risk_try("przełączaj między przekrojami i dla każdego zadaj pytanie: którego liścia usunięcie wyłącza ten scenariusz?"),
-          figure_panel(label = "Podświetlenie", title = "Wybierz przekrój", lc_segmented("f9_cut", NULL, choices = c("I + D" = "id", "I + S" = "is"), selected = "id"), uiOutput("f9_cut_text"), full_width = TRUE),
+          figure_panel(label = "Podświetlenie", title = "Wybierz przekrój", lc_segmented("f9_cut", NULL, choices = c("I + D" = "id", "I + S" = "is"), selected = "id"),
+            lc_variants("f9_cut", list(
+              id = lc_caption("Inicjacja + brak detekcji wystarczają do TOP.", tone = "info"),
+              is = lc_caption("Inicjacja + brak tłumienia wystarczają do TOP.", tone = "info"))),
+            full_width = TRUE),
           # PROTOTYPY P11A i P11B: przekrój jako zapalona ścieżka
           f9p_variant("P11A — przekroje po kolei w przełączniku, z przekrojem niebędącym minimalnym."),
           f9p_get("f9p_11a_ui"),
@@ -396,10 +433,13 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         ),
         body = list(
           risk_try("ustaw P(utraty wspólnego zasilania) na 0.05, a potem przesuń suwak do 0.01 i do 0.20. Porównaj, jak zmienia się rozjazd każdego błędnego wyniku z poprawnym."),
-          figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", lc_toolbar(
-              lc_slider("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01),
-              lc_readouts(uiOutput("f9_repeat_result"))
-            ), full_width = TRUE),
+          figure_panel(label = "Pułapka", title = "Dwa wystąpienia, jedno źródło", 
+            # Same odczyty, bez wykresu: liczy je rycina f9m_repeat (modules/wykresy.js).
+            tags$div(class = "lc-sf", `data-fig` = "f9m_repeat", `data-lc-nochart` = NA, lc_toolbar(
+              lc_sf_slider("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01),
+              lc_readouts(risk_sf_read("repeat_one", "Jedno wspólne zdarzenie", color = upwr_accent),
+                          risk_sf_read("repeat_or", "Błędne OR kopii"), risk_sf_read("repeat_and", "Błędne AND kopii"))
+            )), full_width = TRUE),
           # PROTOTYP P12: powtórzony liść pod OR i pod AND na jednej osi
           f9p_get("f9p_12_ui"),
           c(
@@ -461,10 +501,12 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             answer = "(a) ≈ 0.000674, (b) ≈ 0.0000698. Wspólna przyczyna najmocniej uderza w redundancję: w łańcuchu dodaje kilka procent, w układzie z dwiema barierami zjada większość zysku z redundancji."
           ),
           risk_try("ustaw P(C | I) na 0 i sprawdź, że oba wyniki się pokrywają. Potem zwiększaj q i obserwuj różnicę; na koniec wróć do rozdziału o rachunku i zmniejsz tam P(braku detekcji) do zera."),
-          figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", lc_toolbar(
-              lc_slider("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005),
-              lc_readouts(uiOutput("f9_common_result"))
-            ),
+          figure_panel(label = "Rachunek", title = "Trzy minimalne przekroje", 
+            # Same odczyty: rycina f9m_common czyta także suwaki drzewa z rozdziału o rachunku.
+            tags$div(class = "lc-sf", `data-fig` = "f9m_common", `data-lc-nochart` = NA, lc_toolbar(
+              lc_sf_slider("f9_common", "P(C | I): wspólne niepowodzenie funkcji", 0, .2, .01, .005),
+              lc_readouts(risk_sf_read("common_without", "Bez wspólnej przyczyny"), risk_sf_read("common_with", "Ze wspólną przyczyną"))
+            )),
             lc_caption("Przekroje: {I,C}, {I,D₀}, {I,S₀}. Suwaki detekcji i tłumienia interpretujemy tu jako lokalne niepowodzenia bez C."),
             full_width = TRUE),
           # PROTOTYP P14: wspólna przyczyna z własnymi, stałymi parametrami
@@ -535,7 +577,10 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Istotność krytyczna zdarzenia bazowego i to względny spadek P(TOP) przypadający na względny spadek p_i. Równoważnie: prawdopodobieństwo, że zdarzenie i zaszło i było krytyczne, pod warunkiem że zaszło zdarzenie szczytowe."
           )),
           risk_try("zostaw redukcję 0.5 i odczytaj kolejność słupków. Potem zmień redukcję na 0.2 i 0.9 — sprawdź, czy kolejność się zmienia."),
-          risk_widget_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", lc_slider("f9_reduction", "Redukcja parametru", 0, .9, .5, .05), "f9_rank_plot", "f9_rank_stats",
+          risk_sf_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", "f9m_rank",
+            controls = lc_sf_slider("f9_reduction", "Redukcja parametru", 0, .9, .5, .05),
+            reads = list(lc_caption("Porównanie dotyczy modelu bazowego i jednakowej redukcji względnej.", tone = "info")),
+            config = f9_rank_config,
             note = "Parametry bazowe drzewa jak w przykładzie 9.3: P(I) = 0.005, P(D | I) = 0.05, P(S | I) = 0.08."),
           # PROTOTYPY P16A i P16B: ta sama względna redukcja każdego liścia
           f9p_variant("P16A — słupki spadku P(TOP) na stałej osi."),
@@ -637,115 +682,6 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
 ))
 fta_chapters <- risk_block_chapters(fta_block)
 
-fta_server <- function(input, output, session) {
-  v <- reactiveVal(FALSE)
-  observeEvent(input$f9_vote_check, v(TRUE))
-  output$f9_vote_feedback <- renderUI({
-    req(v())
-    if (is.null(input$f9_vote)) {
-      return(lc_caption(
-               "Najpierw zaznacz jedną z odpowiedzi.",
-               tone = "info"
-             ))
-    }
-    lc_status(
-      lc_verdict(tags$strong("Dobra definicja:"), type = if (identical(input$f9_vote, "good")) "ok" else "warning"),
-      " nieopanowany pożar magazynu w ciągu jednego roku."
-    )
-  })
-  output$f9_structure <- renderUI({
-    n <- length(input$f9_causes)
-    lc_status(
-      paste0("Wybrano bramkę ", toupper(input$f9_gate), " i ", n, " ",
-             if (n %% 10 %in% 2:4 && !(n %% 100 %in% 12:14)) "wejścia" else "wejść", ". "),
-      if (input$f9_gate == "or") "Każde wejście może wystarczyć." else "Wszystkie wybrane wejścia są potrzebne."
-    )
-  })
-  output$f9_state_result <- renderUI({
-    s <- input$f9_states
-    active <- "init" %in% s && ("detect" %in% s || "suppress" %in% s)
-    lc_status(
-      lc_verdict(tags$strong(if (active) "Zdarzenie szczytowe aktywne." else "Zdarzenie szczytowe nieaktywne."), type = if (active) "warning" else "ok"),
-      " Logika: inicjacja AND (brak detekcji OR brak tłumienia)."
-    )
-  })
-  tree_value <- reactive(risk_fta_top(input$f9_init, input$f9_detect, input$f9_suppress))
-  tree_plot <- reactive({
-    # Liczby z suwaków stoją przy węzłach: rysunek reaguje na parametry, a nie tylko odczyty.
-    or_value <- risk_gate_or(c(input$f9_detect, input$f9_suppress))
-    nodes <- data.frame(x = c(2, 1, 3, 2.5, 3.5), y = c(3, 2, 2, 1, 1),
-      label = c(paste0("TOP (AND)\n", risk_fmt_p(tree_value(), 6)), paste0("Inicjacja\n", input$f9_init),
-        paste0("OR\n", risk_fmt_p(or_value)), paste0("Brak\ndetekcji\n", input$f9_detect), paste0("Brak\ntłumienia\n", input$f9_suppress)),
-      type = c("Szczytowe", "Bazowe", "Bramka", "Bazowe", "Bazowe"))
-    edges <- data.frame(x = c(2, 2, 3, 3), y = c(3, 3, 2, 2), xend = c(1, 3, 2.5, 3.5), yend = c(2, 2, 1, 1))
-    ggplot() +
-      geom_segment(data = edges, aes(x, y, xend = xend, yend = yend), colour = upwr_reference) +
-      geom_point(data = nodes, aes(x, y, shape = type, colour = type), size = 7) +
-      geom_text(data = nodes[nodes$type == "Bazowe", ], aes(x, y - .25, label = label), size = 4, lineheight = 0.9, vjust = 1) +
-      # Napisy bramek z boku, żeby nie nachodziły na gałęzie.
-      geom_text(data = nodes[nodes$type != "Bazowe", ], aes(x + .25, y, label = label), size = 4, lineheight = 0.9, hjust = 0) +
-      scale_colour_manual(values = upwr_cat_n(3)) +
-      coord_equal(xlim = c(.2, 4.6), ylim = c(-.1, 3.3)) +
-      labs(x = NULL, y = NULL, shape = NULL, colour = NULL) +
-      theme_upwr() +
-      # Schemat, nie wykres: bez siatki i osi.
-      theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.line = element_blank(),
-        panel.grid = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.grid.major.x = element_blank(), panel.grid.major.y = element_blank(),
-        axis.line.x = element_blank(), axis.line.y = element_blank(), panel.border = element_blank())
-  })
-  zoom_plot_server("f9_tree_plot", tree_plot, alt = "Drzewo błędów z inicjacją połączoną przez AND z bramką OR dwóch niesprawności zabezpieczeń.")
-  output$f9_tree_stats <- renderUI(tagList(
-    lc_readout("P(D ∪ S | I)", risk_fmt_p(risk_gate_or(c(input$f9_detect, input$f9_suppress)))),
-    lc_readout("P(TOP)", risk_fmt_p(tree_value()), color = upwr_accent)
-  ))
-  output$f9_cut_text <- renderUI(lc_caption(
-                                   if (input$f9_cut == "id") "Inicjacja + brak detekcji wystarczają do TOP." else "Inicjacja + brak tłumienia wystarczają do TOP.",
-                                   tone = "info"
-                                 ))
-  output$f9_repeat_result <- renderUI({
-    q <- input$f9_repeat
-    wrong <- risk_gate_or(c(q, q))
-    tagList(
-      lc_readout("Jedno wspólne zdarzenie", risk_fmt_p(q), color = upwr_accent),
-      lc_readout("Błędne OR kopii", risk_fmt_p(wrong)),
-      lc_readout("Błędne AND kopii", risk_fmt_p(q^2))
-    )
-  })
-  output$f9_common_result <- renderUI({
-    q <- input$f9_common
-    local_failure <- risk_gate_or(c(input$f9_detect, input$f9_suppress))
-    result <- input$f9_init * (q + (1 - q) * local_failure)
-    tagList(
-      lc_readout("Bez wspólnej przyczyny", risk_fmt_p(tree_value(), 6)),
-      lc_readout("Ze wspólną przyczyną", risk_fmt_p(result, 6))
-    )
-  })
-  rank_plot <- reactive({
-    base <- c(init = .005, detect = .05, suppress = .08)
-    top0 <- do.call(risk_fta_top, unname(as.list(base)))
-    gains <- vapply(names(base), function(n) {
-      x <- base
-      x[n] <- x[n] * (1 - input$f9_reduction)
-      top0 - do.call(risk_fta_top, unname(as.list(x)))
-    }, numeric(1))
-    dat <- data.frame(element = factor(c("Inicjacja", "Detekcja", "Tłumienie"), levels = c("Inicjacja", "Detekcja", "Tłumienie")), gain = gains)
-    # Stała oś Y do wyjściowego P(TOP) = 0.00063: suwak r zmienia wysokość słupków,
-    # a nie skalę. Wartości z tekstu stoją nad słupkami.
-    ggplot(dat, aes(element, gain, fill = element)) +
-      geom_col() +
-      geom_hline(yintercept = top0, linetype = 2, colour = upwr_reference) +
-      geom_text(aes(label = sprintf("%.6f", gain)), vjust = -.5, size = 4.5) +
-      annotate("text", x = 3.45, y = top0, label = "P(TOP) = 0.00063", hjust = 1, vjust = -.5, size = 4, colour = upwr_reference) +
-      scale_fill_manual(values = upwr_cat_n(3), guide = "none") +
-      scale_y_continuous(labels = function(x) format(x, scientific = FALSE), breaks = seq(0, .0006, .0001)) +
-      coord_cartesian(ylim = c(0, .00068)) +
-      labs(x = NULL, y = "Redukcja P(TOP)") +
-      theme_upwr()
-  })
-  zoom_plot_server("f9_rank_plot", rank_plot, alt = "Słupki redukcji prawdopodobieństwa zdarzenia szczytowego po poprawie każdego liścia.")
-  output$f9_rank_stats <- renderUI(lc_caption(
-                                     "Porównanie dotyczy modelu bazowego i jednakowej redukcji względnej.",
-                                     tone = "info"
-                                   ))
-}
+# Wykład nie ma logiki serwera: głosowanie, opisy struktury, stan drzewa i przekroje wybiera
+# przeglądarka, rysunek drzewa składa R przy budowaniu, a odczyty i ranking liczy modules/wykresy.js.
+fta_server <- function(input, output, session) {}

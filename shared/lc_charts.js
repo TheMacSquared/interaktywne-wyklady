@@ -62,7 +62,8 @@
       document.querySelectorAll(registration.selector).forEach(function (root) {
         if (widgets.has(root)) return;
         // Nie inicjujemy niekompletnego kontenera podczas wstawiania HTML.
-        if (!root.querySelector("canvas") && !root.querySelector(".lc-ec")) return;
+        // data-lc-nochart: widget bez wykresu (same odczyty albo rysunek z R) jest kompletny od razu.
+        if (!root.querySelector("canvas") && !root.querySelector(".lc-ec") && !root.hasAttribute("data-lc-nochart")) return;
         var widget = { charts: new Set(), cleanups: [], themes: new Set(), frame: null };
         widgets.set(root, widget);
         try {

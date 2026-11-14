@@ -43,7 +43,9 @@ testthat::test_that("wykład 09: prototypy punktów stop są wpięte i działaj�
       for (p in fr$panels) testthat::expect_true(!is.null(p$svg) || p$tree %in% names(cfg$trees))
     }
   }
-  testthat::expect_setequal(res$figs, c("f9_suma", "f9_powtorzenie", "f9_wspolna", "f9_ranking", "f9_pole", "f9_przedzial"))
+  testthat::expect_setequal(res$figs, c("f9_suma", "f9_powtorzenie", "f9_wspolna", "f9_ranking", "f9_pole", "f9_przedzial",
+    # Cztery główne ryciny wykładu (dawniej wykresy i odczyty z serwera): modules/wykresy.js.
+    "f9m_tree", "f9m_repeat", "f9m_common", "f9m_rank"))
   testthat::expect_equal(anyDuplicated(res$ids), 0L)
 
   # Liczby na obrazach zgadzają się z przykładami 9.3, 9.6, 9.7 i 9.9.

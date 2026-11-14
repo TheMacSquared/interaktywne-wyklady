@@ -78,32 +78,35 @@ testthat::test_that("karty, scenariusze i notatka reagują na wejścia aplikacji
 })
 
 testthat::test_that("FTA pokazuje oba błędy powtórzenia i przelicza wspólną przyczynę", {
-  testthat::skip_if_not_installed("callr")
-  result <- callr::r(function(path) {
-    setwd(path)
-    app <- new.env(parent = globalenv())
-    sys.source("app.R", envir = app)
-    shiny::testServer(app$fta_server, {
-      session$setInputs(f9_init = .005, f9_detect = .05, f9_suppress = .08,
-        f9_common = .01, f9_repeat = .05, f9_states = character(),
-        f9_gate = "or", f9_causes = c("detect", "suppress"), f9_cut = "id",
-        f9_reduction = .5)
-      stopifnot(abs(tree_value() - .00063) < 1e-12)
-      stopifnot(grepl("0.000674", output$f9_common_result$html, fixed = TRUE))
-      stopifnot(grepl("AND", output$f9_repeat_result$html, fixed = TRUE))
-      stopifnot(grepl("OR", output$f9_repeat_result$html, fixed = TRUE))
-      # Enumeracja zdarzeń bazowych niezależnie od wzoru aplikacji.
-      states <- expand.grid(i = 0:1, c = 0:1, d = 0:1, s = 0:1)
-      weights <- apply(states, 1, function(x) prod(ifelse(x == 1,
-        c(.005, .01, .05, .08), 1 - c(.005, .01, .05, .08))))
-      active <- with(states, i == 1 & (c == 1 | d == 1 | s == 1))
-      stopifnot(abs(sum(weights[active]) - .0006737) < 1e-12)
-      session$setInputs(f9_common = 1)
-      stopifnot(grepl("0.005000", output$f9_common_result$html, fixed = TRUE))
-    })
-    TRUE
-  }, args = list(path = file.path(risk_root, "09-drzewo-bledow")), timeout = 60)
-  testthat::expect_true(result)
+  # Rachunek drzewa liczy przeglądarka (09-drzewo-bledow/modules/wykresy.js); test
+  # sprawdza te same liczby co dawniej na serwerze.
+  testthat::skip_if(Sys.which("node") == "", "Node.js nie jest dostępny")
+  root <- normalizePath(dirname(risk_root))
+  script <- sprintf('
+    globalThis.window = globalThis;
+    require("%s/shared/lc_dist.js"); require("%s/analiza-ryzyka/R/risk_figures.js");
+    require("%s/analiza-ryzyka/09-drzewo-bledow/modules/wykresy.js");
+    const Z = globalThis.lcF9Charts, R = globalThis.lcRisk;
+    console.log(JSON.stringify({
+      top: Z.ftaTop(0.005, 0.05, 0.08),
+      common: Z.commonTop(0.005, 0.05, 0.08, 0.01), common_text: R.fmtPd(Z.commonTop(0.005, 0.05, 0.08, 0.01), 6),
+      common_sure: R.fmtPd(Z.commonTop(0.005, 0.05, 0.08, 1), 6),
+      repeat_or: Z.gateOr([0.05, 0.05]), repeat_and: 0.05 * 0.05
+    }));', root, root, root)
+  res <- jsonlite::fromJSON(paste(system2("node", c("-e", shQuote(script)), stdout = TRUE, stderr = TRUE), collapse = ""))
+  testthat::expect_equal(res$top, .00063, tolerance = 1e-12)
+  testthat::expect_equal(res$common_text, "0.000674")
+  # Oba błędne rachunki powtórzonego liścia różnią się od jednego zdarzenia (0.05).
+  testthat::expect_equal(res$repeat_or, 1 - .95^2, tolerance = 1e-12)
+  testthat::expect_equal(res$repeat_and, .0025, tolerance = 1e-12)
+  # Enumeracja zdarzeń bazowych niezależnie od wzoru ryciny.
+  states <- expand.grid(i = 0:1, c = 0:1, d = 0:1, s = 0:1)
+  weights <- apply(states, 1, function(x) prod(ifelse(x == 1,
+    c(.005, .01, .05, .08), 1 - c(.005, .01, .05, .08))))
+  active <- with(states, i == 1 & (c == 1 | d == 1 | s == 1))
+  testthat::expect_equal(sum(weights[active]), .0006737, tolerance = 1e-12)
+  testthat::expect_equal(res$common, sum(weights[active]), tolerance = 1e-12)
+  testthat::expect_equal(res$common_sure, "0.005000")
 })
 
 testthat::test_that("porównanie zmiennego p używa tych samych danych na wykresie i w średnich", {

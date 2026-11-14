@@ -46,7 +46,7 @@ przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. 
 R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
 
 Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
-2026: gotowe 13 z 21 wykładów (analiza ryzyka 01–08, statystyka 00–04, zbudowane i sprawdzone
+2026: gotowe 14 z 21 wykładów (analiza ryzyka 01–09, statystyka 00–04, zbudowane i sprawdzone
 przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
 z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 135 wykresów
 R, 234 wyjścia tekstowe i 214 wejść czytanych przez serwer. Zostały tylko
@@ -88,7 +88,10 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
 - [ ] Faza 3: `lc_stats.js` (regresja prosta, wielomianowa, wieloraka; testy t;
   QQ) z wynikami R jako wzorcem testów.
 - [ ] Faza 4: analiza ryzyka 06–10 (26 wykresów R). Gotowe: 06 (6 wykresów), 07 (8 wykresów; ryciny główne mają przedrostek `c7m_`, bo prototypy zajęły nazwy `c7_gamma` i `c7_weibull` — `lcSF.register` zgłasza teraz powtórzoną nazwę w konsoli), 08 (5 wykresów; schemat
-  blokowy to trzy rysunki SVG z R przełączane listą — bez lupy, którą miał wykres).
+  blokowy to trzy rysunki SVG z R przełączane listą — bez lupy, którą miał wykres),
+  09 (2 wykresy; drzewo to rysunek SVG z R z liczbami wpisywanymi przez JS, panele
+  z samymi odczytami to ryciny bez wykresu: `lc_sf_figure(chartless = TRUE)` /
+  atrybut `data-lc-nochart`).
 - [ ] Zaokrąglanie dokładnych połówek: `sprintf()` w R zaokrągla do parzystej,
   `toFixed()` w JS w górę (0.0625 → „0.062” w R, „0.063” w JS). `lcRisk.fixed()`
   i `lcRisk.fmtP()` (analiza ryzyka 06–10) robią to jak R; własne formatowanie

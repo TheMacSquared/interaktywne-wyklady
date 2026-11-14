@@ -38,7 +38,7 @@ lc_sf_value <- function(key, text = "–") tags$span(`data-v` = key, text)
 lc_sf_figure <- function(fig, control = NULL, ratio = "2/1", max_height = "340px",
                          charts = 1, headings = NULL, notes = NULL, legend = FALSE,
                          selected = NULL, toolbar = NULL, body = NULL, after = NULL,
-                         bare = FALSE, config = NULL) {
+                         bare = FALSE, config = NULL, chartless = FALSE) {
   if (is.null(body)) {
     boxes <- lapply(seq_len(charts), function(k) {
       box <- lc_sf_chart(k - 1, ratio, max_height)
@@ -59,7 +59,8 @@ lc_sf_figure <- function(fig, control = NULL, ratio = "2/1", max_height = "340px
   } else {
     lc_toolbar(control, toolbar, lc_chart_zoom_button())
   }
-  tags$div(class = "lc-sf", `data-fig` = fig,
+  # chartless: rycina bez wykresu (same odczyty albo rysunek z R w body, liczby w lc_sf_value()).
+  tags$div(class = "lc-sf", `data-fig` = fig, `data-lc-nochart` = if (isTRUE(chartless)) NA,
     `data-config` = if (!is.null(config)) as.character(jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA)),
     bar,
     if (legend) tags$div(class = "lc-sf-legend", hidden = NA),

@@ -75,3 +75,9 @@ test("dokładne połówki zaokrąglane do parzystej, jak sprintf() w R", () => {
   assert.equal(R.fixed(0.01865, 4), (0.01865).toFixed(4));       // nie połówka: jak toFixed
   assert.equal(R.fixed(0.5525, 3), (0.5525).toFixed(3));
 });
+
+test("fmtPd jak risk_fmt_p(x, 6) w R", () => {
+  // R: vapply(c(0.00063, 0.000674, 0.0000698, 0.126, 0), risk_fmt_p, "", digits = 6)
+  assert.deepEqual([0.00063, 0.000674, 0.0000698, 0.126, 0].map((x) => R.fmtPd(x, 6)),
+                   ["0.000630", "0.000674", "0.0000698", "0.126000", "0.000000"]);
+});

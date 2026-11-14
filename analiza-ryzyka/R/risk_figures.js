@@ -18,12 +18,15 @@
     return Number(up.charAt(up.length - 1)) % 2 === 0 ? up : down;
   }
   // risk_fmt_p(): trzy miejsca po kropce, a dla p < 0.01 tyle, żeby były dwie cyfry znaczące.
-  function fmtP(x) {
+  // fmtPd(x, digits): to samo z inną najmniejszą liczbą miejsc (risk_fmt_p(x, 6)).
+  // fmtP ma jeden argument, żeby działało w [..].map(fmtP) (map podaje też indeks).
+  function fmtPd(x, digits) {
     if (typeof x !== "number" || !isFinite(x)) return "—";
-    var d = 3;
-    if (x > 0 && x < 0.01) d = Math.max(3, Math.min(12, Math.ceil(-Math.log10(x)) + 2));
+    var d = digits;
+    if (x > 0 && x < 0.01) d = Math.max(digits, Math.min(12, Math.ceil(-Math.log10(x)) + 2));
     return fixed(x, d);
   }
+  function fmtP(x) { return fmtPd(x, 3); }
   // Liczba całkowita ze spacją tysięcy: format(x, big.mark = " ").
   function big(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
   // round() z R dla dokładnych połówek zaokrągla do parzystej; tu wystarcza zwykłe zaokrąglenie
@@ -86,6 +89,6 @@
     return CAT.slice(0, n).map(function (c) { return C && C.token ? C.token("--upwr-cat-" + c[0], c[1]) : c[1]; });
   }
 
-  root.lcRisk = { weibull: weibull, curve: curve, cat: cat, fixed: fixed, fmtP: fmtP, big: big, naturalFrequency: naturalFrequency, normalExceedance: normalExceedance,
+  root.lcRisk = { weibull: weibull, curve: curve, cat: cat, fixed: fixed, fmtP: fmtP, fmtPd: fmtPd, big: big, naturalFrequency: naturalFrequency, normalExceedance: normalExceedance,
     stressStrength: stressStrength, normalCurve: normalCurve, tailCurve: tailCurve, rnd: rnd, mean: mean, sd: sd };
 })();

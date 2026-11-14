@@ -6,7 +6,8 @@
 //   .lc-sf[data-fig][data-config]
 //     .lc-sf-ctl            — kontrolka (natywny <select>, radia lc_segmented, pole
 //                             wyboru, grupa pól wyboru → lista, suwak lc_sf_slider)
-//     .lc-ec[data-chart=k]  — jeden lub więcej wykresów
+//     .lc-ec[data-chart=k]  — jeden lub więcej wykresów (bez wykresu: atrybut
+//                             data-lc-nochart i figura z samym update())
 //     .lc-sf-legend         — legenda (opcjonalnie)
 //     [data-when="wartość"] — opisy policzone w R dla każdej opcji; JS pokazuje właściwy
 //     [data-stat-act]       — przyciski obsługiwane przez figure.act
@@ -357,7 +358,9 @@
   // Figura: funkcja draw(v, P, k) albo obiekt {init, prepare, act, draw, update}.
   function mount(root) {
     var def = FIGURES[root.dataset.fig], els = root.querySelectorAll(".lc-ec");
-    if (!def || !els.length) return false;
+    // Bez wykresów montuje się tylko rycina z update(): same odczyty albo rysunek z R
+    // z liczbami w elementach [data-v].
+    if (!def || (!els.length && !def.update)) return false;
     var fig = typeof def === "function" ? { draw: def } : def, state = {};
     var ctls = root.querySelectorAll(".lc-sf-ctl"), ctl = ctls[0] || null;
     var legend = root.querySelector(".lc-sf-legend"), charts = [];
