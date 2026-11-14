@@ -82,6 +82,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "Ta zmiana kierunku ma praktyczny powód. Schemat blokowy z wykładu 08 wymaga, żeby najpierw dało się wyliczyć wszystkie elementy, bez których system nie działa. Przy pożarze magazynu nie ma takiej listy: przyczyną może być zwarcie, niedopałek, przegrzany wózek, a opanowanie zależy od ludzi, czujników i instalacji. Łatwiej zacząć od jednego jasno opisanego skutku i schodzić w dół, pytając za każdym razem: co musiało się stać, żeby to nastąpiło?",
             "Zanim jednak zejdziemy w dół, trzeba ustalić, co dokładnie stoi na szczycie. Spróbuj ocenić trzy kandydatury."
           ),
+          # PROTOTYP P1: scena „protokół po pożarze” — od skutku do przyczyn, przed głosowaniem
+          f9p_get("f9p_1_ui"),
           risk_vote_panel("f9_vote", "f9_vote_feedback", "Która definicja jest audytowalna?", c("Nieopanowany pożar magazynu w ciągu roku" = "good", "Problem z bezpieczeństwem" = "vague", "Awaria" = "failure"), correct = "good"),
           "„Problem z bezpieczeństwem” i „awaria” nie mówią, o jaki stan chodzi, w jakim obiekcie ani w jakim czasie. Każdy uczestnik analizy dopisze do nich inne scenariusze, więc drzewo rozrośnie się bez końca, a wynik liczbowy nie będzie miał jednostki. Pierwsza definicja nazywa stan (pożar nieopanowany, czyli taki, którego nie ugasiła instalacja ani obsługa), obiekt (magazyn Bananpolu) i horyzont (jeden rok). Dopiero taka definicja pozwala zapytać o prawdopodobieństwo."
         )
@@ -105,7 +107,9 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
               "Horyzont: jeden rok eksploatacji w trybie normalnej pracy."
             ),
             answer = "„Temperatura w komorze dojrzewalni nr 2 przekracza 18 °C przez ponad 2 godziny, co najmniej raz w roku eksploatacji.” Każdy składnik to decyzja analityka; wszystkie muszą być zapisane w nagłówku drzewa."
-          )
+          ),
+          # PROTOTYP P2: cztery składniki definicji zdarzenia szczytowego
+          f9p_get("f9p_2_ui")
         )
       ),
       list(
@@ -123,6 +127,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             "W drzewie Bananpolu mamy trzy zdarzenia bazowe: inicjację I (zapłon w magazynie), brak detekcji D i niepowodzenie modułu tłumienia S. Zdarzeniem pośrednim jest „zabezpieczenia zawiodły”, czyli D lub S. Parametry D i S są warunkowe: d = P(D | I) i s = P(S | I) opisują zachowanie barier w chwili, gdy pożar już się zaczął. To ważne, bo czujnik, który jest sprawny w codziennych testach, może zawieść w dymie i temperaturze prawdziwego pożaru.",
             "Z drzewa wynika też, czego nie modelujemy. Nie ma w nim zachowania ludzi, dostępu straży ani rozmieszczenia towaru. Nie znaczy to, że te czynniki są nieistotne — tylko że w tej wersji analizy zostały poza granicą systemu z definicji 9.1. Do konsekwencji takich decyzji wrócimy w rozdziale „Granice drzewa błędów”."
           ),
+          # PROTOTYP P3: trzy piętra drzewa
+          f9p_get("f9p_3_ui"),
           risk_check("f9_chk_poziom",
             "Zespół rozwija „brak detekcji” na „uszkodzenie czujki” oraz „odcięcie zasilania centrali”. Jaką rolę pełni teraz „brak detekcji”?",
             c("Zdarzenie bazowe" = "base", "Zdarzenie pośrednie" = "inter", "Zdarzenie szczytowe" = "top"),
@@ -145,6 +151,11 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
       list(
         id = "budowa", title = "Kierowany konstruktor",
         body = list(
+          # PROTOTYPY P4A i P4B: scena „łańcuch a zapas” przed definicją bramek
+          f9p_variant("P4A — budzik przed egzaminem (sytuacja spoza Bananpolu)."),
+          f9p_get("f9p_4a_ui"),
+          f9p_variant("P4B — ta sama scena na instalacji gaśniczej Bananpolu."),
+          f9p_get("f9p_4b_ui"),
           risk_definition("9.3", "Bramki AND i OR", c(
             "Bramka AND (koniunkcja) oznacza, że zdarzenie wyjściowe zachodzi wtedy i tylko wtedy, gdy zachodzą wszystkie zdarzenia wejściowe: wyjście = A₁ ∩ A₂ ∩ … ∩ Aₙ.",
             "Bramka OR (alternatywa) oznacza, że zdarzenie wyjściowe zachodzi wtedy i tylko wtedy, gdy zachodzi co najmniej jedno zdarzenie wejściowe: wyjście = A₁ ∪ A₂ ∪ … ∪ Aₙ."
@@ -155,6 +166,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           ),
           risk_try("wybierz bramkę OR z przyczynami „brak detekcji” i „brak tłumienia”, a potem przełącz na AND. Dodaj „utratę zasilania” i zastanów się, która bramka opisuje każdą wersję instalacji."),
           figure_panel(label = "Budowa", title = "Utrata kontroli nad zapłonem", selectInput("f9_gate", "Logika", c("Wystarczy jedna przyczyna — OR" = "or", "Potrzebna kombinacja — AND" = "and")), checkboxGroupInput("f9_causes", "Przyczyny", c("Brak detekcji" = "detect", "Brak tłumienia" = "suppress", "Utrata zasilania" = "power"), selected = c("detect", "suppress")), uiOutput("f9_structure"), full_width = TRUE),
+          # PROTOTYP P5: konstruktor bramki z rysunkiem
+          f9p_get("f9p_5_ui"),
           "Konstruktor nie ocenia, która bramka jest właściwa — odpowiada tylko, co wybrana bramka znaczy. Dla bramki OR każde wybrane wejście samo wystarcza; dla AND wszystkie są potrzebne. Utrata zasilania, która wyłącza jednocześnie detekcję i tłumienie, nie pasuje dobrze do żadnej z prostych wersji: jest wspólną przyczyną i w rozdziale o przekrojach dostanie własną gałąź."
         )
       ),
@@ -172,6 +185,11 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           "W zapisie zbiorowym: TOP = I ∩ (D ∪ S). Z trzema liśćmi, z których każdy zachodzi albo nie, istnieje 2³ = 8 kombinacji stanów. Pełna tabela jest mała i warto ją przejść w całości — to najtańszy audyt logiki drzewa.",
           risk_try("zacznij od pustego zaznaczenia i włączaj liście pojedynczo, potem parami. Zapisz, które z ośmiu kombinacji aktywują zdarzenie szczytowe."),
           figure_panel(label = "Logika", title = "Aktywuj zdarzenia bazowe", checkboxGroupInput("f9_states", "Aktywne liście", c("Inicjacja" = "init", "Brak detekcji" = "detect", "Brak tłumienia" = "suppress"), selected = character(0)), uiOutput("f9_state_result"), full_width = TRUE),
+          # PROTOTYPY P6A i P6B: drzewo Bananpolu i osiem kombinacji liści
+          f9p_variant("P6A — klikane drzewo z tabelą stanów, która wypełnia się po kolei."),
+          f9p_get("f9p_6a_ui"),
+          f9p_variant("P6B — wszystkie osiem kombinacji obok siebie."),
+          f9p_get("f9p_6b_ui"),
           "Zdarzenie szczytowe aktywują dokładnie trzy kombinacje: {I, D}, {I, S} oraz {I, D, S}. Wszystkie zawierają inicjację, więc żadna kombinacja samych awarii barier nie wywołuje pożaru. Dwie pierwsze są najmniejsze — usunięcie z nich czegokolwiek wyłącza TOP. To pierwsze spotkanie z minimalnymi przekrojami, które w rozdziale czwartym posłużą do liczenia dużych drzew."
         )
       ),
@@ -204,6 +222,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             steps_type = "a",
             answer = "(a) 0.126; (b) 0.004. Różnica między architekturami to czynnik 31.5 — przy tych samych urządzeniach."
           ),
+          # PROTOTYP P7: schemat blokowy i drzewo błędów tego samego systemu
+          f9p_get("f9p_7_ui"),
           risk_check("f9_chk_brama",
             "Układ szeregowy trzech czujników zawodzi, gdy zawiedzie którykolwiek z nich. Jaką bramką zapiszesz jego awarię w drzewie błędów?",
             c("AND trzech awarii" = "and", "OR trzech awarii" = "or", "AND trzech sukcesów" = "and_ok"),
@@ -251,8 +271,12 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             ),
             answer = "P(TOP) = 0.00063, czyli około 6.3 nieopanowanego pożaru na 10 000 magazyno-lat."
           ),
+          # PROTOTYP P8: rachunek od liści do korzenia w kadrach
+          f9p_get("f9p_8_ui"),
           risk_try("zacznij od wartości domyślnych i sprawdź wynik przykładu 9.3. Potem podwój P(inicjacji), a osobno podwój P(braku detekcji) — porównaj, jak zmienia się P(TOP) w obu przypadkach."),
           risk_widget_panel("Obliczenia", "Parametry małego drzewa", tagList(lc_slider("f9_init", "P(inicjacji)", 0, .03, .005, .001), lc_slider("f9_detect", "P(braku detekcji | I)", 0, .3, .05, .01), lc_slider("f9_suppress", "P(niepowodzenia modułu tłumienia | I)", 0, .3, .08, .01)), "f9_tree_plot", "f9_tree_stats"),
+          # PROTOTYP P9: piaskownica parametrów drzewa w przeglądarce
+          f9p_get("f9p_9_ui"),
           c(
             "Przy wartościach domyślnych panel pokazuje P(D ∪ S | I) = 0.126 i P(TOP) = 0.000630. Podwojenie inicjacji do 0.010 podwaja wynik do 0.00126 — inicjacja wchodzi przez AND, więc działa proporcjonalnie. Podwojenie braku detekcji do 0.10 zmienia wynik słabiej: P(D ∪ S | I) = 1 - 0.90 · 0.92 = 0.172, a P(TOP) = 0.00086, czyli wzrost o około 37%.",
             "Ta asymetria jest pierwszym sygnałem, że miejsce liścia w drzewie decyduje o jego wadze. Wrócimy do niej w rozdziale o rankingu."
@@ -283,6 +307,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             steps_type = "a",
             answer = "Przy wejściach rzędu kilku procent suma myli się o kilka procent; przy wejściach rzędu 0.3 błąd sięga kilkunastu procent. O jakości przybliżenia decydują prawdopodobieństwa wejść bramki, a nie wynik końcowy."
           ),
+          # PROTOTYP P10: suma liczy część wspólną dwa razy
+          f9p_get("f9p_10_ui"),
           risk_check("f9_chk_przybl",
             "Zdarzenie szczytowe ma prawdopodobieństwo 0.0003, ale jest wynikiem bramki OR dwóch wejść po 0.4 pomnożonej przez małe P(I). Czy przybliżenie rzadkich zdarzeń w tej bramce jest bezpieczne?",
             c("Tak, bo wynik jest bardzo mały" = "yes", "Nie, bo wejścia bramki nie są rzadkie" = "no", "Tak, bo przybliżenie zawsze zaniża wynik" = "under"),
@@ -327,6 +353,11 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
         body = list(
           risk_try("przełączaj między przekrojami i dla każdego zadaj pytanie: którego liścia usunięcie wyłącza ten scenariusz?"),
           figure_panel(label = "Podświetlenie", title = "Wybierz przekrój", lc_segmented("f9_cut", NULL, choices = c("I + D" = "id", "I + S" = "is"), selected = "id"), uiOutput("f9_cut_text"), full_width = TRUE),
+          # PROTOTYPY P11A i P11B: przekrój jako zapalona ścieżka
+          f9p_variant("P11A — przekroje po kolei w przełączniku, z przekrojem niebędącym minimalnym."),
+          f9p_get("f9p_11a_ui"),
+          f9p_variant("P11B — dwa minimalne przekroje obok siebie."),
+          f9p_get("f9p_11b_ui"),
           c(
             "Oba scenariusze dzielą inicjację: jej wyeliminowanie wyłącza oba naraz, a wyeliminowanie D albo S tylko jeden. To jakościowa zapowiedź rankingu z następnego rozdziału. Lista przekrojów pozwala też policzyć P(TOP) bez rysowania drzewa. Ze wzoru (9.6): P(K₁) = P(I) · d = 0.005 · 0.05 = 0.00025 oraz P(K₂) = P(I) · s = 0.005 · 0.08 = 0.0004.",
             "Przekroje nie są rozłączne — oba zachodzą, gdy zajdą I, D i S naraz — więc dokładna wartość wymaga odjęcia części wspólnej. Dla przekrojów obowiązuje ta sama zasada włączeń i wyłączeń, co dla bramki OR, a jej pierwszy wyraz daje przybliżenie rzadkich zdarzeń, powszechnie stosowane w dużych drzewach."
@@ -369,6 +400,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
               lc_slider("f9_repeat", "P(utraty wspólnego zasilania)", 0, .2, .05, .01),
               lc_readouts(uiOutput("f9_repeat_result"))
             ), full_width = TRUE),
+          # PROTOTYP P12: powtórzony liść pod OR i pod AND na jednej osi
+          f9p_get("f9p_12_ui"),
           c(
             "Przy q = 0.05 poprawna wartość to 0.050. Błędne OR daje 1 - 0.95² = 0.0975 (panel zaokrągla do 0.098) — prawie dwa razy za dużo. Błędne AND daje 0.05² = 0.0025, dwadzieścia razy za mało. Im mniejsze q, tym gorzej wypada AND: przy q = 0.01 kwadrat zaniża wynik stukrotnie. To dlatego pomyłka pod bramką AND jest groźniejsza: daje wrażenie redundancji tam, gdzie jej nie ma.",
             "W prawdziwych drzewach powtórzenie rzadko jest tak jawne jak C ∩ C. Zwykle ten sam liść wchodzi do dwóch różnych gałęzi, a jego wpływ ukrywa się w mieszance innych zdarzeń. Poniższy przykład pokazuje, jak redukcja do minimalnych przekrojów usuwa ten problem."
@@ -389,6 +422,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             steps_type = "a",
             answer = "Poprawnie 0.0298; rachunek naiwny zaniża wynik ponad dwukrotnie. Redukcja ujawnia też pojedynczy punkt awarii {Z}, którego rysunek z dwoma kanałami nie pokazywał wprost."
           ),
+          # PROTOTYP P13: dwa kanały detekcji, jedno zasilanie
+          f9p_get("f9p_13_ui"),
           "Ten sam mechanizm działa w drzewie Bananpolu w drugą stronę. Inicjacja I występuje w obu przekrojach. Gdyby potraktować przekroje jak niezależne zdarzenia i połączyć je wzorem (9.2), wyszłoby 1 - (1 - 0.00025)(1 - 0.0004) ≈ 0.00064990 zamiast 0.00063 — około 3% za dużo. Pod OR błąd jest łagodny i idzie w bezpieczną stronę; pod AND bywa wielokrotny i idzie w stronę fałszywego spokoju.",
           risk_check("f9_chk_powt",
             "W drzewie liść Z występuje w dwóch gałęziach połączonych bramką AND. Analityk policzył je jak niezależne kopie. Jaki jest najbardziej prawdopodobny skutek?",
@@ -432,6 +467,8 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             ),
             lc_caption("Przekroje: {I,C}, {I,D₀}, {I,S₀}. Suwaki detekcji i tłumienia interpretujemy tu jako lokalne niepowodzenia bez C."),
             full_width = TRUE),
+          # PROTOTYP P14: wspólna przyczyna z własnymi, stałymi parametrami
+          f9p_get("f9p_14_ui"),
           c(
             "Panel korzysta z suwaków detekcji i tłumienia z rozdziału o rachunku, interpretując je jako d₀ i s₀. Przy wartościach domyślnych i q = 0.01 pokazuje 0.000630 bez wspólnej przyczyny i 0.000674 z nią — zgodnie z przykładem 9.7(a). Nawet gdy lokalne niepowodzenia sprowadzimy do zera, wynik nie spadnie poniżej P(I) · q: przekroju {I, C} nie da się usunąć poprawianiem pojedynczych urządzeń.",
             "Dla q = 1 wynik osiąga P(I) = 0.005: każda inicjacja kończy się nieopanowanym pożarem, bo wspólna przyczyna wyłącza obie funkcje zawsze. To skrajny, ale pouczający przypadek — pokazuje, że wspólna przyczyna działa jak most łączący inicjację bezpośrednio ze zdarzeniem szczytowym."
@@ -480,7 +517,9 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
               "S: analogicznie 0.005 - 0.005 · 0.05 = 0.00475 = 0.005 · (1 - 0.05)."
             ),
             answer = "I_B(I) = 0.126, I_B(D) = 0.0046, I_B(S) = 0.00475. Istotność Birnbauma mierzy wrażliwość na bezwzględną zmianę p_i — ale zmiana inicjacji o 0.01 i zmiana braku detekcji o 0.01 to w praktyce zupełnie różne przedsięwzięcia."
-          )
+          ),
+          # PROTOTYP P15: dwa światy jednego liścia
+          f9p_get("f9p_15_ui")
         )
       ),
       list(
@@ -498,6 +537,11 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           risk_try("zostaw redukcję 0.5 i odczytaj kolejność słupków. Potem zmień redukcję na 0.2 i 0.9 — sprawdź, czy kolejność się zmienia."),
           risk_widget_panel("Wrażliwość", "Ta sama redukcja względna każdego liścia", lc_slider("f9_reduction", "Redukcja parametru", 0, .9, .5, .05), "f9_rank_plot", "f9_rank_stats",
             note = "Parametry bazowe drzewa jak w przykładzie 9.3: P(I) = 0.005, P(D | I) = 0.05, P(S | I) = 0.08."),
+          # PROTOTYPY P16A i P16B: ta sama względna redukcja każdego liścia
+          f9p_variant("P16A — słupki spadku P(TOP) na stałej osi."),
+          f9p_get("f9p_16a_ui"),
+          f9p_variant("P16B — P(TOP) jako pole prostokąta: wysokość P(I), szerokość P(D ∪ S | I)."),
+          f9p_get("f9p_16b_ui"),
           c(
             "Widget liczy ranking dla wartości bazowych 0.005; 0.05; 0.08, niezależnie od suwaków z rozdziału o rachunku. Przy r = 0.5 słupki mają wysokości 0.000315 dla inicjacji, 0.000190 dla tłumienia i 0.000115 dla detekcji — to 50%, 30% i 18% wyjściowego P(TOP). Istotności krytyczne wynoszą więc 1, około 0.60 dla tłumienia i około 0.37 dla detekcji.",
             "Zmiana r skaluje wszystkie słupki w tej samej proporcji i nie zmienia kolejności — tak mówi wzór (9.10). Inicjacja wygrywa, bo każdy scenariusz przez nią przechodzi: należy do obu minimalnych przekrojów. Tłumienie wyprzedza detekcję, bo zawodzi częściej (0.08 wobec 0.05), więc jego przekrój {I, S} odpowiada za większą część ryzyka."
@@ -540,9 +584,13 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
             ),
             answer = "P(TOP) rośnie do około 0.000717 (+14%), a lista przekrojów zyskuje {I, V}. Przed przeglądem ten scenariusz miał w rachunku prawdopodobieństwo zero."
           ),
+          # PROTOTYP P17: zapomniany zawór dopisany do drzewa
+          f9p_get("f9p_17_ui"),
           c(
             "Niepewność danych można przynajmniej pokazać. Jeśli o d wiemy tylko tyle, że leży między 0.02 a 0.10, wzór (9.4) daje P(TOP) od 0.005 · (1 - 0.98 · 0.92) = 0.000492 do 0.005 · (1 - 0.90 · 0.92) = 0.00086. Uczciwy raport podaje taki przedział obok wartości punktowej — i wskazuje, który parametr go najbardziej rozszerza."
           ),
+          # PROTOTYP P18: przedział P(TOP) z niepewnego d
+          f9p_get("f9p_18_ui"),
           risk_check("f9_chk_granice",
             "Zespół uzupełnia drzewo o przeoczoną przyczynę, dołączając ją do istniejącej bramki OR. Co może się stać z P(TOP)?",
             c("Może tylko wzrosnąć albo pozostać bez zmian" = "up", "Może tylko zmaleć" = "down", "Może zmienić się w dowolną stronę" = "any"),
@@ -565,6 +613,13 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           "Analiza drzewa błędów zaczyna się od zdania, nie od liczby: audytowalnej definicji zdarzenia szczytowego (definicja 9.1). Drzewo rozkłada ten stan na zdarzenia pośrednie i bazowe, łącząc je bramkami AND i OR. Dla niezależnych wejść bramka AND daje iloczyn (9.1), a bramka OR — dopełnienie iloczynu dopełnień (9.2). Dzięki dualności (9.3) te same wzory znamy z układów szeregowych i równoległych: drzewo błędów jest schematem blokowym zapisanym w języku awarii.",
           "Rachunek od liści do korzenia (9.4) jest poprawny, gdy każdy liść występuje w drzewie raz. Ogólniejszą drogą są minimalne przekroje (9.6): zdarzenie szczytowe jest ich sumą, a P(TOP) liczymy z zasady włączeń i wyłączeń albo przybliżeniem rzadkich zdarzeń (9.5, 9.7), które zawyża wynik i wymaga małych wejść bramek OR. Powtórzone zdarzenia i wspólne przyczyny (9.8) trzeba zredukować algebraicznie, zanim cokolwiek pomnożymy — naiwne liczenie zawyża wynik pod OR i zaniża go pod AND.",
           "Miary istotności (9.9, 9.10) zamieniają drzewo w ranking: w drzewie Bananpolu najważniejsza jest inicjacja, bo należy do każdego przekroju. Ranking otwiera jednak dopiero rozmowę o kosztach, a wynik całej analizy jest tak dobry, jak kompletność drzewa i jakość danych w liściach."
+        ),
+        # PROTOTYPY P19A i P19B: domknięcie — jedno drzewo, pięć pytań
+        body = list(
+          f9p_variant("P19A — jedno drzewo, pięć warstw w przełączniku."),
+          f9p_get("f9p_19a_ui"),
+          f9p_variant("P19B — karta z pięcioma wierszami."),
+          f9p_get("f9p_19b_ui")
         )
       ),
       list(
@@ -616,17 +671,28 @@ fta_server <- function(input, output, session) {
   })
   tree_value <- reactive(risk_fta_top(input$f9_init, input$f9_detect, input$f9_suppress))
   tree_plot <- reactive({
-    nodes <- data.frame(x = c(2, 1, 3, .5, 1.5), y = c(3, 2, 2, 1, 1), label = c("TOP (AND)", "Inicjacja", "OR", "Brak\ndetekcji", "Brak\ntłumienia"), type = c("Szczytowe", "Bazowe", "Bramka", "Bazowe", "Bazowe"))
-    edges <- data.frame(x = c(2, 2, 3, 3), y = c(3, 3, 2, 2), xend = c(1, 3, .5, 1.5), yend = c(2, 2, 1, 1))
+    # Liczby z suwaków stoją przy węzłach: rysunek reaguje na parametry, a nie tylko odczyty.
+    or_value <- risk_gate_or(c(input$f9_detect, input$f9_suppress))
+    nodes <- data.frame(x = c(2, 1, 3, 2.5, 3.5), y = c(3, 2, 2, 1, 1),
+      label = c(paste0("TOP (AND)\n", risk_fmt_p(tree_value(), 6)), paste0("Inicjacja\n", input$f9_init),
+        paste0("OR\n", risk_fmt_p(or_value)), paste0("Brak\ndetekcji\n", input$f9_detect), paste0("Brak\ntłumienia\n", input$f9_suppress)),
+      type = c("Szczytowe", "Bazowe", "Bramka", "Bazowe", "Bazowe"))
+    edges <- data.frame(x = c(2, 2, 3, 3), y = c(3, 3, 2, 2), xend = c(1, 3, 2.5, 3.5), yend = c(2, 2, 1, 1))
     ggplot() +
       geom_segment(data = edges, aes(x, y, xend = xend, yend = yend), colour = upwr_reference) +
       geom_point(data = nodes, aes(x, y, shape = type, colour = type), size = 7) +
-      geom_text(data = nodes, aes(x, y - .3, label = label), size = 4, lineheight = 0.9, vjust = 1) +
+      geom_text(data = nodes[nodes$type == "Bazowe", ], aes(x, y - .25, label = label), size = 4, lineheight = 0.9, vjust = 1) +
+      # Napisy bramek z boku, żeby nie nachodziły na gałęzie.
+      geom_text(data = nodes[nodes$type != "Bazowe", ], aes(x + .25, y, label = label), size = 4, lineheight = 0.9, hjust = 0) +
       scale_colour_manual(values = upwr_cat_n(3)) +
-      coord_equal(xlim = c(-.3, 3.8), ylim = c(-.1, 3.4)) +
+      coord_equal(xlim = c(.2, 4.6), ylim = c(-.1, 3.3)) +
       labs(x = NULL, y = NULL, shape = NULL, colour = NULL) +
       theme_upwr() +
-      theme(axis.text = element_blank(), axis.ticks = element_blank())
+      # Schemat, nie wykres: bez siatki i osi.
+      theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.line = element_blank(),
+        panel.grid = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank(), panel.grid.major.y = element_blank(),
+        axis.line.x = element_blank(), axis.line.y = element_blank(), panel.border = element_blank())
   })
   zoom_plot_server("f9_tree_plot", tree_plot, alt = "Drzewo błędów z inicjacją połączoną przez AND z bramką OR dwóch niesprawności zabezpieczeń.")
   output$f9_tree_stats <- renderUI(tagList(
@@ -664,9 +730,16 @@ fta_server <- function(input, output, session) {
       top0 - do.call(risk_fta_top, unname(as.list(x)))
     }, numeric(1))
     dat <- data.frame(element = factor(c("Inicjacja", "Detekcja", "Tłumienie"), levels = c("Inicjacja", "Detekcja", "Tłumienie")), gain = gains)
+    # Stała oś Y do wyjściowego P(TOP) = 0.00063: suwak r zmienia wysokość słupków,
+    # a nie skalę. Wartości z tekstu stoją nad słupkami.
     ggplot(dat, aes(element, gain, fill = element)) +
       geom_col() +
+      geom_hline(yintercept = top0, linetype = 2, colour = upwr_reference) +
+      geom_text(aes(label = sprintf("%.6f", gain)), vjust = -.5, size = 4.5) +
+      annotate("text", x = 3.45, y = top0, label = "P(TOP) = 0.00063", hjust = 1, vjust = -.5, size = 4, colour = upwr_reference) +
       scale_fill_manual(values = upwr_cat_n(3), guide = "none") +
+      scale_y_continuous(labels = function(x) format(x, scientific = FALSE), breaks = seq(0, .0006, .0001)) +
+      coord_cartesian(ylim = c(0, .00068)) +
       labs(x = NULL, y = "Redukcja P(TOP)") +
       theme_upwr()
   })
