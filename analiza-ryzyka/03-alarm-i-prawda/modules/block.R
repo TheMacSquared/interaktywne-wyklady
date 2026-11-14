@@ -339,8 +339,8 @@ a3_stop_npv_ui <- a3_stop_bayes_panel("npv", lapply(a3_total_raw, function(s)
   alarm_tree_lit(s$prevalence, s$sensitivity, s$fpr, quiet = TRUE)))
 
 # Krokowe drzewo: wzór Bayesa składany z trzech narzędzi wykładu 02, a na koniec
-# ta sama konstrukcja dla ciszy (NPV). Drzewo rysuje serwer (reaguje na suwaki
-# tablicy 2×2), kroki i linijki wzoru dokłada modules/drzewo.js.
+# ta sama konstrukcja dla ciszy (NPV). Drzewo rysuje modules/detektor.js (reaguje
+# na suwaki tablicy 2×2), kroki i linijki wzoru dokłada modules/drzewo.js.
 alarm_paths_widget <- figure_panel(
   label = "Pojęcie",
   title = "Wzór Bayesa na drzewie: dwie drogi do alarmu",
@@ -350,8 +350,13 @@ alarm_paths_widget <- figure_panel(
       tags$span(class = "lc-sp-name", `data-tr-out` = "name", "Drzewo"),
       tags$span(class = "lc-sp-step", `data-tr-out` = "step", "Krok 1 z 6")
     ),
-    lc_toolbar(lc_readouts(uiOutput("a3_counts"))),
-    uiOutput("a3_tree"),
+    # Kolory jak gałęzie drzewa: odczyty pełnią rolę legendy (wartości: detektor.js).
+    lc_toolbar(lc_readouts(
+      lc_readout("Prawdziwe alarmy", tags$span(`data-a3v` = "tp", "–"), color = upwr_accent, swatch = TRUE),
+      lc_readout("Fałszywe alarmy", tags$span(`data-a3v` = "fp", "–"), color = upwr_single_alt, swatch = TRUE),
+      lc_readout("P(awaria | alarm)", tags$span(`data-a3v` = "post", "–"), color = upwr_secondary)
+    )),
+    tags$div(`data-a3` = "tree"),
     tags$div(class = "lc-tr-lines", `aria-live` = "polite"),
     tags$div(class = "lc-sp-nav",
       tags$button(type = "button", class = "lc-action is-outline", `data-tr` = "prev", lc_icon("prev"), tags$span("Wstecz")),
@@ -554,11 +559,12 @@ alarm_block <- list(
               label = "Tablica 2×2", title = "Zmień parametry detektora",
               lc_p("Liczebności są zaokrągloną ilustracją dla 10 000 zmian. Prawdopodobieństwa obliczamy bezpośrednio z parametrów modelu."),
               lc_toolbar(
-                lc_slider("a3_prev", "Częstość awarii", 0.001, 0.10, 0.01, 0.001),
-                lc_slider("a3_sens", "Czułość", 0.50, 1, 0.95, 0.01),
-                lc_slider("a3_fpr", "FPR (fałszywe alarmy)", 0, 0.30, 0.05, 0.01)
+                # Natywne suwaki: tablicę, drzewo i „Dwa alarmy” liczy modules/detektor.js.
+                lc_sf_slider("a3_prev", "Częstość awarii", 0.001, 0.10, 0.01, 0.001),
+                lc_sf_slider("a3_sens", "Czułość", 0.50, 1, 0.95, 0.01),
+                lc_sf_slider("a3_fpr", "FPR (fałszywe alarmy)", 0, 0.30, 0.05, 0.01)
               ),
-              uiOutput("a3_table"),
+              tags$div(`data-a3` = "table"),
               full_width = TRUE
             ),
             c(
@@ -831,12 +837,7 @@ alarm_block <- list(
             risk_try("zacznij od prawdopodobieństwa skopiowania 0 i porównaj wynik z przykładem 3.7. Następnie ustaw 0.25, 0.5 i 1. Czujniki mają parametry ustawione w tablicy 2×2 w rozdziale „Czułość i swoistość”. Obserwuj, który pełny słupek rośnie."),
             figure_panel(
               label = "Porównanie", title = "Dwa alarmy",
-              lc_toolbar(
-                lc_slider("a3_dependence", "Prawdopodobieństwo skopiowania pierwszego alarmu", 0, 1, 0, 0.05),
-                lc_readouts(uiOutput("a3_second"))
-              ),
               a3_stop_double_plot_ui,
-              lc_caption("Przerywany kontur: czujniki niezależne. Pełny słupek: bieżące kopiowanie."),
               full_width = TRUE
             ),
             c(
@@ -950,12 +951,6 @@ alarm_block <- list(
 alarm_chapters <- risk_block_chapters(alarm_block)
 
 alarm_server <- function(input, output, session) {
-  detector_parameters <- reactive(list(
-    prevalence = input$a3_prev %||% .01,
-    sensitivity = input$a3_sens %||% .95,
-    false_positive_rate = input$a3_fpr %||% .05
-  ))
-  posterior <- reactive(do.call(risk_bayes, detector_parameters()))
   checked <- reactiveVal(FALSE)
   observeEvent(input$a3_vote_check, checked(TRUE))
   output$a3_vote_feedback <- renderUI({
@@ -983,39 +978,6 @@ alarm_server <- function(input, output, session) {
       )
     }
   })
-  detector <- reactive(do.call(risk_detector_counts, c(list(population = 10000L), detector_parameters())))
-  output$a3_table <- renderUI({
-    d <- detector()
-    counts <- matrix(c(d$alarm, d$no_alarm), nrow = 2,
-                     dimnames = list(d$state, c("Alarm", "Brak alarmu")))
-    lc_crosstab(counts, measure = "n", row_name = "Stan", col_name = "Odczyt detektora", big_mark = " ",
-                lead = FALSE, label = "Tablica 2×2 dla 10 000 zmian")
-  })
-  output$a3_counts <- renderUI({
-    d <- detector()
-    # Kolory jak gałęzie drzewa: odczyty pełnią rolę legendy.
-    tagList(
-      lc_readout("Prawdziwe alarmy", d$alarm[1], color = upwr_accent, swatch = TRUE),
-      lc_readout("Fałszywe alarmy", d$alarm[2], color = upwr_single_alt, swatch = TRUE),
-      lc_readout("P(awaria | alarm)", risk_fmt_p(posterior()), color = upwr_secondary)
-    )
-  })
-  output$a3_second <- renderUI({
-    p1 <- posterior()
-    adjusted <- do.call(risk_two_alarm_posterior, c(detector_parameters(),
-      list(dependence = input$a3_dependence %||% 0)))
-    tagList(
-      lc_readout("Po jednym alarmie", risk_fmt_p(p1), color = upwr_secondary),
-      lc_readout("Po dwóch alarmach", risk_fmt_p(adjusted), color = upwr_accent)
-    )
-  })
-  output$a3_tree <- renderUI({
-    p <- detector_parameters()
-    d <- detector()
-    alarm_tree_svg(d, p$prevalence, p$sensitivity, p$false_positive_rate)
-  })
-  a3_stop_szanse_server(input, output, session, detector_parameters)
-  a3_stop_prog_server(input, output, session)
-  a3_stop_serpuchow_case_server(input, output, session)
+  # Tablica 2×2, drzewo, dwa alarmy, próg reakcji i Serpuchów: modules/detektor.js.
   risk_assessment_server("a3", alarm_quiz, input, output)
 }

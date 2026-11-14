@@ -135,7 +135,14 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     renderer SVG, canvas dla tysięcy punktów; pełny `echarts.min.js`
     z cdnjs). Analiza ryzyka od 2026-11-13 też na ECharts: 04 w całości
     (sceny `sceny.js`, wykresy `wykresy.js` na `lcSF`, offline 7.5 → 3.1 MB);
-    dalej 05 → 03 → 02 → 01. Wspólna obsługa
+    05 bez obliczeń w R poza głosowaniem i quizem (sceny z kadrami liczone
+    w R z góry, sceny losowe i rozkład geometryczny w JS; wzory w odczytach
+    scen jako HTML, bo offline nie ma MathJax; offline 3.3 → 2.9 MB, zero PNG).
+    Zostały trzy wykresy Chart.js w 05 (nb, plan, mix — działają offline).
+    03 bez obliczeń w R poza głosowaniem i quizem: `detektor.js` liczy tablicę 2×2,
+    drzewo Bayesa (kroki nadal w `drzewo.js`) i ryciny lcSF (dwa alarmy, próg
+    reakcji, Serpuchów); suwaki tablicy są wspólne dla kilku rozdziałów.
+    Dalej 02 → 01. Wspólna obsługa
     w `lc_charts.js` gotowa. Wykłady 01, 02, 03 i 05 w całości na ECharts
     (2026-11-05; mostek offline `widgets/01-ch2-jakosciowe.js` też), 04 od
     2026-11-09. Wykłady statystyki nie ładują już Chart.js (poza

@@ -1,7 +1,7 @@
 # Punkty stop rozdziału „Próg reakcji”:
 #   a3_stop_matrix_ui — pojęcie „Macierz konsekwencji” (statyczna tablica 2×2),
 #   a3_stop_cost_ui   — piaskownica „Koszt reakcji a koszt zaniechania”.
-# Serwer: a3_stop_prog_server(input, output, session).
+# Oba działają bez serwera (wykres kosztów: modules/detektor.js).
 
 # ============================================================================
 # MACIERZ KONSEKWENCJI (pojęcie)
@@ -71,72 +71,18 @@ a3_cost_cases <- data.frame(
   )
 )
 
-a3_cost_q_max <- 0.5
-
-# Wykres bez sesji Shiny: oczekiwany koszt reakcji (c) i braku reakcji (L · q).
-a3_cost_plot <- function(cost_c = 100, loss_L = 2000, cases = a3_cost_cases) {
-  q_star <- cost_c / loss_L
-  y_top <- loss_L * a3_cost_q_max
-  pts <- cases
-  pts$act <- pts$q > q_star
-  lines <- data.frame(
-    q = c(0, a3_cost_q_max, 0, a3_cost_q_max),
-    cost = c(cost_c, cost_c, 0, y_top),
-    option = rep(c("reakcja", "brak"), each = 2)
-  )
-  y_band <- -0.13 * y_top  # pas pod osią na podpisy punktów (linie go nie przecinają)
-  ggplot() +
-    annotate("rect", xmin = q_star, xmax = a3_cost_q_max, ymin = 0, ymax = y_top,
-             fill = upwr_accent, alpha = 0.06) +
-    annotate("segment", x = q_star, xend = q_star, y = 0, yend = y_top,
-             linetype = "dashed", colour = upwr_reference, linewidth = 0.8) +
-    geom_line(data = lines, aes(q, cost, linetype = option), colour = upwr_secondary,
-              linewidth = 1.4) +
-    scale_linetype_manual(values = c(reakcja = "solid", brak = "22"), guide = "none") +
-    geom_point(data = pts[pts$act, ], aes(q, 0), shape = 21, size = 5.5, stroke = 1.4,
-               colour = upwr_accent, fill = upwr_accent) +
-    geom_point(data = pts[!pts$act, ], aes(q, 0), shape = 21, size = 5.5, stroke = 1.4,
-               colour = upwr_reference, fill = "white") +
-    geom_text(data = pts, aes(q, y_band, label = label,
-                              colour = ifelse(act, upwr_accent, upwr_reference)),
-              size = 5.2, fontface = "bold") +
-    scale_colour_identity() +
-    scale_x_continuous(limits = c(0, a3_cost_q_max), breaks = seq(0, 0.5, 0.1),
-                       expand = expansion(mult = c(0.03, 0.02))) +
-    scale_y_continuous(limits = c(1.25 * y_band, y_top), breaks = function(l) {
-                         b <- scales::extended_breaks()(c(0, y_top)); b[b >= 0]
-                       }, expand = expansion(mult = c(0, 0.04)),
-                       labels = function(x) format(x, big.mark = " ", scientific = FALSE,
-                                                   trim = TRUE)) +
-    coord_cartesian(clip = "off") +
-    labs(x = "Posterior q = P(awaria | alarm)", y = "Oczekiwany koszt (zł)") +
-    theme_upwr()
-}
-
-a3_stop_cost_ui <- risk_widget_panel("Decyzja", "Koszt reakcji a koszt zaniechania",
-  tagList(
-    lc_slider("a3_cost_c", "Koszt reakcji c (zł)", 20, 500, 100, 10),
-    lc_slider("a3_cost_L", "Strata przy zignorowanej awarii L (zł)", 1000, 10000, 2000, 100)
-  ),
-  plot_id = "a3_cost", stats_id = "a3_cost_read", ratio = "1.9/1",
-  note = "Linia ciągła: koszt reakcji c. Linia przerywana: oczekiwany koszt braku reakcji L · q. Punkty: sytuacje z przykładu 3.8."
+# Wykres: modules/detektor.js (rycina lcSF „a3_cost”): koszt reakcji c (linia
+# ciągła), oczekiwany koszt braku reakcji L · q (przerywana), próg q* = c/L.
+a3_stop_cost_ui <- figure_panel(label = "Decyzja", title = "Koszt reakcji a koszt zaniechania", width_mode = "wide",
+  lc_sf_figure("a3_cost",
+    control = list(
+      lc_sf_slider("a3_cost_c", "Koszt reakcji c (zł)", 20, 500, 100, 10),
+      lc_sf_slider("a3_cost_L", "Strata przy zignorowanej awarii L (zł)", 1000, 10000, 2000, 100)),
+    toolbar = lc_readouts(
+      lc_readout("Próg q* = c/L", lc_sf_value("qs"), color = upwr_reference),
+      lc_readout(sprintf("Hala 0.01 (q = %.3f)", a3_cost_cases$q[a3_cost_cases$label == "hala 0.01"]),
+        lc_sf_value("hall"), color = upwr_accent)),
+    ratio = "1.9/1", max_height = "400px",
+    config = list(cases = a3_cost_cases),
+    after = lc_caption("Linia ciągła: koszt reakcji c. Linia przerywana: oczekiwany koszt braku reakcji L · q. Punkty: sytuacje z przykładu 3.8."))
 )
-
-a3_stop_prog_server <- function(input, output, session) {
-  cost_c <- reactive(input$a3_cost_c %||% 100)
-  loss_L <- reactive(input$a3_cost_L %||% 2000)
-
-  zoom_plot_server("a3_cost", reactive(a3_cost_plot(cost_c(), loss_L())),
-    alt = "Oczekiwany koszt reakcji (pozioma linia) i braku reakcji (rosnąca linia) względem posterioru; pionowa linia w progu q* = c/L, punkty trzech sytuacji z przykładu 3.8.")
-
-  output$a3_cost_read <- renderUI({
-    q_star <- cost_c() / loss_L()
-    q_hall <- a3_cost_cases$q[a3_cost_cases$label == "hala 0.01"]
-    tagList(
-      lc_readout("Próg q* = c/L", risk_fmt_p(q_star), color = upwr_reference),
-      lc_readout(sprintf("Hala 0.01 (q = %.3f)", q_hall),
-        if (q_hall > q_star) "reagować" else "nie reagować",
-        color = if (q_hall > q_star) upwr_accent else upwr_reference)
-    )
-  })
-}

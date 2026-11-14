@@ -15,18 +15,14 @@ testthat::test_that("dwa alarmy wynikają z jawnego rozkładu wspólnego", {
   testthat::expect_true(is.na(env$risk_two_alarm_posterior(0, 1, 0)))
 })
 
-testthat::test_that("alarm działa przed odwiedzeniem kontrolek i używa dokładnego posterioru", {
+# Odczyty detektora (posterior, dwa alarmy, tablica, drzewo) liczy od 2026-11-13
+# modules/detektor.js: rachunek sprawdza tests/js/a3_detektor.test.js, a wpięcie
+# test-a3-browser.R. Tu zostaje nawigacja: suwaki żyją dłużej niż rozdział.
+testthat::test_that("zmiana rozdziału nie odtwarza suwaków detektora z wartościami początkowymi", {
   result <- callr::r(function(path) {
     setwd(path)
     app <- new.env()
     sys.source("app.R", app)
-    shiny::testServer(app$alarm_server, {
-      session$setInputs(a3_dependence = .5)
-      stopifnot(grepl("Po dwóch alarmach", output$a3_second$html))
-      session$setInputs(a3_prev = .001, a3_sens = .95, a3_fpr = .05)
-      stopifnot(abs(posterior() - .00095 / (.00095 + .04995)) < 1e-12)
-      stopifnot(grepl(app$risk_fmt_p(posterior()), output$a3_counts$html, fixed = TRUE))
-    })
     # Zmiana rozdziału nie odtwarza kontrolek z wartościami początkowymi.
     shiny::testServer(app$server, {
       first <- output$lc__chapter_content$html

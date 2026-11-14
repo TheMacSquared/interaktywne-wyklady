@@ -41,6 +41,7 @@ source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
 source(file.path(project_root, "R", "bananpol.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_math.R"), local = TRUE)
 source(file.path(project_root, "R", "risk_block.R"), local = TRUE)
+source(file.path(project_root, "R", "lc_stat_figures.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_mianowniki.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_szanse.R"), local = TRUE)
 source(file.path(app_dir, "modules", "stop_detektory.R"), local = TRUE)
@@ -68,6 +69,13 @@ ui <- lecture_page(
   module_label = "Analiza ryzyka · Bananpol",
   chapters = .chapters,
   header_extras = tagList(
+    # Detektor (tablica 2×2, drzewo, dwa alarmy, próg, Serpuchów) liczy przeglądarka;
+    # ryciny lcSF rysuje ECharts. Działa też offline.
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(project_root, "R", "lc_charts.js")),
+    includeScript(file.path(project_root, "R", "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "detektor.js")),
+    lc_sf_styles(),
     includeScript(file.path(app_dir, "modules", "serpuchow.js")),
     includeScript(file.path(app_dir, "modules", "notacja.js")),
     includeScript(file.path(app_dir, "modules", "dziennik.js")),
