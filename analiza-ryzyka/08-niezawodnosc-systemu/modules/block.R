@@ -106,8 +106,14 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         "W wykładzie o czasie życia niezawodność R(t) była własnością jednego urządzenia: prawdopodobieństwem, że przetrwa do chwili t. Dojrzewalnia bananów nie jest jednak jednym urządzeniem. Chłodzenie to czujnik temperatury, sterownik, wentylatory i zasilanie, a kierownika zmiany interesuje tylko jedno pytanie: czy przez najbliższe tysiąc godzin w komorze utrzyma się właściwa temperatura.",
         "Zanim przejdziemy do wzorów, zatrzymaj się przy najprostszej sytuacji: dwa elementy, każdy o niezawodności 0.9. Ile wynosi niezawodność systemu? Zaznacz odpowiedź, zanim zaczniesz liczyć."
       ),
+      # PROTOTYP P1 (wariant B): scena przed głosowaniem
+      s8p_variant("scena P1 przed głosowaniem (wariant B). Ta sama scena stoi też po głosowaniu (wariant A)."),
+      s8p_get("s8p_1_ui"),
       risk_vote_panel("s8_vote", "s8_vote_feedback", "Dwa elementy mają R=0.9. Czy R systemu wynosi 0.81, 0.9 czy 0.99?", c("0.81" = "series", "0.90" = "single", "0.99" = "parallel")),
       "Pytanie było celowo niedookreślone. Nie powiedzieliśmy, czy system potrzebuje obu elementów, jednego konkretnego, czy któregokolwiek z nich. Każda z trzech liczb jest poprawną odpowiedzią na inne pytanie — i właśnie dlatego lista części wraz z ich niezawodnościami nie wystarcza do obliczenia niezawodności systemu.",
+      # PROTOTYP P1 (wariant A): scena po głosowaniu, przed przykładem 8.1
+      s8p_variant("scena P1 po głosowaniu (wariant A)."),
+      s8p_get("s8p_1_ui"),
       risk_example("8.1", "Trzy logiki sukcesu",
         problem = list(
           "Dwa niezależne elementy E₁ i E₂ mają niezawodność 0.9 w tym samym czasie misji. Oblicz R systemu, gdy:",
@@ -125,6 +131,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         steps_type = "a",
         answer = "0.81, 0.90 i 0.99. Te same części dają trzy różne systemy; o wyniku rozstrzyga definicja sukcesu, a nie katalog elementów."
       ),
+      # PROTOTYPY P2A i P2B: sto misji w trzech logikach
+      s8p_variant("P2A — kratki z przełącznikiem logiki (dokładne liczby z przykładu 8.1)."),
+      s8p_get("s8p_2a_ui"),
+      s8p_variant("P2B — symulacja: misje dochodzą po kolei."),
+      s8p_get("s8p_2b_ui"),
       c(
         "Różnica między skrajnymi odpowiedziami jest ogromna, jeśli spojrzeć na ryzyko zamiast na niezawodność: w wariancie (a) system zawodzi w 19 misjach na 100, w wariancie (c) w jednej. Dziewiętnastokrotna różnica ryzyka przy identycznych częściach to najlepszy argument, że architektura jest pełnoprawną zmienną decyzyjną.",
         "Wykład prowadzi przez kolejne kroki tego rachunku: definicję sukcesu i czasu misji, układy szeregowe i równoległe, układy mieszane i ich zapis funkcją struktury, niezawodność w czasie, wspólne przyczyny awarii oraz wybór redundancji i elementu do poprawy."
@@ -149,6 +160,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       list(
         id = "sukces", title = "Niezawodność systemu na czas misji",
         body = list(
+          # PROTOTYP P3: scena na otwarcie sekcji, przed definicją 8.1
+          s8p_get("s8p_3_ui"),
           c(
             "Definicja sukcesu jest decyzją, a nie faktem technicznym. W dojrzewalni można przyjąć, że chłodzenie działa, gdy temperatura w komorze nie przekracza 14.5 °C (próg przyjęty w przykładzie); ale można też wymagać, żeby dodatkowo działał alarm przekroczenia, bo bez niego awaria wyjdzie na jaw dopiero rano. Druga definicja dołącza do systemu czujnik i kanał alarmowy — i obniża niezawodność, bo wymaga więcej.",
             "Drugą decyzją jest horyzont. Z wykładu o czasie życia wiemy, że R(t) maleje z czasem, więc bez t liczba nie ma sensu. Dla systemu obowiązuje ta sama zasada: niezawodność systemu to funkcja czasu, a do jednego rachunku wchodzą tylko niezawodności elementów liczone dla tego samego t."
@@ -170,6 +183,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             ),
             answer = "Około 0.915, a nie 0.874. Pomieszanie horyzontów zawyżyło ryzyko prawie półtora raza (0.126 zamiast 0.085); przy odwrotnym pomieszaniu równie łatwo je zaniżyć. Przeliczenie wymaga założenia o kształcie R(t) — tu wykładniczego."
           ),
+          # PROTOTYPY P4A i P4B: dwa horyzonty z przykładu 8.2
+          s8p_variant("P4A — kadry na osi czasu."),
+          s8p_get("s8p_4a_ui"),
+          s8p_variant("P4B — piaskownica: wspólny czas misji na suwaku."),
+          s8p_get("s8p_4b_ui"),
           risk_check("s8_chk_misja",
             "Element A ma R = 0.90 na 500 h, element B ma R = 0.90 na 2000 h. Który jest bardziej niezawodny na misję 1000 h?",
             c("B, bo na dłuższym horyzoncie ma tę samą niezawodność" = "b", "A i B są jednakowe, bo oba mają 0.90" = "same", "A, bo jego liczba dotyczy krótszego czasu" = "a"),
@@ -199,6 +217,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           )),
           risk_try("przełącz kolejno „Szeregowy”, „Równoległy” i „Mieszany”. Dla każdego schematu wskaż, ile bloków musi zawieść, żeby zniknęła ostatnia droga od lewej do prawej."),
           risk_widget_panel("Schemat", "Trzy architektury tych samych elementów", selectInput("s8_diagram", "Układ", c("Szeregowy" = "series", "Równoległy" = "parallel", "Mieszany" = "mixed")), plot_id = "s8_diagram_plot", note = "Blok to element, linia to wymaganie drogi sukcesu; schemat opisuje logikę niezawodności, nie fizyczne połączenia."),
+          # PROTOTYPY P5A i P5B: klikalny schemat
+          s8p_variant("P5A — jeden schemat z przełącznikiem architektury."),
+          s8p_get("s8p_5a_ui"),
+          s8p_variant("P5B — trzy schematy obok siebie."),
+          s8p_get("s8p_5b_ui"),
           c(
             "W układzie szeregowym jest jedna droga i przechodzi przez wszystkie bloki, więc wystarczy awaria dowolnego z nich. W układzie równoległym każda gałąź jest osobną drogą; system traci ostatnią drogę dopiero przy awarii obu wentylatorów. W układzie mieszanym sterownik C leży na każdej drodze — jego awaria wystarczy — natomiast wentylatory trzeba „wyłączyć” oba.",
             "Ta liczba — najmniejszy zbiór elementów, których awaria przerywa wszystkie drogi — wróci w wykładzie o drzewie błędów pod nazwą minimalnego zbioru przekrojów. Już teraz widać, że element leżący samotnie na wszystkich drogach jest kandydatem na wąskie gardło systemu."
@@ -221,6 +244,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           )),
           risk_try("odznaczaj po jednym elemencie, potem po dwa. Policz, ile z ośmiu możliwych kombinacji stanów daje „System działa”."),
           figure_panel(label = "Stany", title = "Wszystkie muszą działać", checkboxGroupInput("s8_series_states", "Działające elementy", choices = c("Czujnik" = "sensor", "Sterownik" = "controller", "Wentylator" = "fan"), selected = c("sensor", "controller", "fan")), uiOutput("s8_series_state"), full_width = TRUE),
+          # PROTOTYP P6: osiem stanów szeregu
+          s8p_get("s8p_6_ui"),
           "Kombinacja wygrywająca jest dokładnie jedna: wszyscy działają. Skoro system wymaga wszystkich elementów naraz, a awarie są niezależne, prawdopodobieństwa działania mnożą się wzdłuż łańcucha:",
           risk_formula("R_s=\\prod_{i=1}^{n} R_i", num = "8.2",
             legend = c("R_i" = "niezawodność i-tego elementu na wspólny czas misji", "n" = "liczba elementów w szeregu", "R_s" = "niezawodność układu szeregowego")),
@@ -228,6 +253,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Sukces systemu to zdarzenie „działa E₁ i działa E₂ i … i działa Eₙ”, czyli przecięcie n zdarzeń. Z wykładu 02 wiemy, że dla zdarzeń niezależnych prawdopodobieństwo przecięcia jest iloczynem prawdopodobieństw. Bez niezależności trzeba by mnożyć prawdopodobieństwa warunkowe: P(E₁) · P(E₂ | E₁) · …, i to one niosą informację o wspólnych zasobach."
           ), lines = c("R_s = P(E₁ ∩ E₂ ∩ … ∩ Eₙ)", "    = P(E₁) · P(E₂) · … · P(Eₙ)     (niezależność)", "    = R₁ · R₂ · … · Rₙ")),
           "Iloczyn liczb mniejszych od jedności maleje z każdym czynnikiem, więc długie szeregi są bezlitosne: dziesięć elementów po R = 0.95 daje systemowe R ≈ 0.60. W układzie szeregowym system jest co najwyżej tak niezawodny jak najsłabszy element — a dotkliwość tej straty rośnie z długością łańcucha.",
+          # PROTOTYP P7: długi łańcuch
+          s8p_get("s8p_7_ui"),
           risk_example("8.3", "Ile ogniw zmieści się w łańcuchu?",
             problem = "Linia sterowania chłodzeniem składa się z jednakowych, niezależnych modułów, każdy o R = 0.99 na misję 1000 h. System wymaga wszystkich modułów. Ilu modułów można użyć, żeby R systemu nie spadło poniżej 0.90? Porównaj wynik dokładny z przybliżeniem R_s ≈ 1 - Σ(1 - R_i).",
             steps = c(
@@ -255,6 +282,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Układ n elementów jest równoległy, jeśli działa wtedy i tylko wtedy, gdy działa co najmniej jeden element. Wszystkie gałęzie pracują od początku misji (redundancja czynna, gorąca), a czas życia systemu to T_s = max(T₁, …, Tₙ)."
           )),
           figure_panel(label = "Stany", title = "Co najmniej jedna gałąź musi działać", checkboxGroupInput("s8_parallel_states", "Działające wentylatory", choices = c("A" = "a", "B" = "b"), selected = c("a", "b")), uiOutput("s8_parallel_state"), full_width = TRUE),
+          # PROTOTYP P8: cztery stany układu równoległego
+          s8p_get("s8p_8_ui"),
           "Tym razem przegrywająca kombinacja jest jedna — i to jest zaproszenie do triku z dopełnieniem, znanego z wykładu o wielu próbach: zamiast wielu scenariuszy sukcesu liczymy jeden scenariusz porażki.",
           risk_formula("R_p=1-\\prod_{i=1}^{n}(1-R_i)", num = "8.3",
             legend = c("1-R_i" = "prawdopodobieństwo awarii i-tej gałęzi w czasie misji", "\\prod_{i}(1-R_i)" = "prawdopodobieństwo, że zawiodą wszystkie gałęzie", "R_p" = "niezawodność układu równoległego")),
@@ -284,6 +313,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         body = list(
           risk_try("przy domyślnych suwakach przełącz układ z szeregowego na równoległy. Potem obniż R₂ do 0.60 i znów porównaj oba układy."),
           risk_widget_panel("Architektura", "Te same R, inny system", tagList(selectInput("s8_arch", "Układ", c("Szeregowy" = "series", "Równoległy" = "parallel")), lc_slider("s8_r1", "R₁", .5, 1, .92, .01), lc_slider("s8_r2", "R₂", .5, 1, .95, .01)), "s8_arch_plot", "s8_arch_stats"),
+          # PROTOTYPY P9A i P9B: te same R, dwie architektury naraz
+          s8p_variant("P9A — kwadrat czterech pól."),
+          s8p_get("s8p_9a_ui"),
+          s8p_variant("P9B — słupki obu architektur naraz."),
+          s8p_get("s8p_9b_ui"),
           c(
             "Przy domyślnych wartościach układ szeregowy daje 0.874 — mniej niż którykolwiek element — a równoległy 0.996 — więcej niż którykolwiek element. Słupek systemu zawsze leży poniżej najniższego słupka elementu w szeregu i powyżej najwyższego w układzie równoległym.",
             "Po obniżeniu R₂ do 0.60 szereg spada do 0.92 · 0.60 = 0.552, a układ równoległy tylko do 1 - 0.08 · 0.40 = 0.968. Szereg jest wrażliwy na każdy słaby element, redundancja maskuje słabą gałąź, dopóki druga jest dobra. Ta asymetria zadecyduje w ostatnim rozdziale o tym, który element opłaca się poprawiać."
@@ -309,6 +343,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           ),
           risk_try("klikaj „Dalej” i przy każdym kroku zapisz, który fragment schematu z poprzedniego rozdziału został właśnie zastąpiony jednym blokiem."),
           figure_panel(label = "Krok po kroku", title = "Sterownik C oraz wentylatory A/B", lc_toolbar(lc_step_nav("s8_step", s8_reduction_steps, start = 1L)), uiOutput("s8_reduction"), full_width = TRUE),
+          # PROTOTYP P10: schemat zwija się krok po kroku
+          s8p_get("s8p_10_ui"),
           "Trzy kroki redukcji, które właśnie przeszliśmy, składają się w gotowy wzór całego układu:",
           risk_formula("R_{sys}=R_C\\,[1-(1-R_A)(1-R_B)]", num = "8.4",
             legend = c("R_C" = "niezawodność sterownika (blok szeregowy)", "R_A, R_B" = "niezawodności wentylatorów", "[1-(1-R_A)(1-R_B)]" = "zastępczy blok równoległy wentylatorów")),
@@ -352,6 +388,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           ),
           risk_try("ustaw czas misji na 1000 h i odczytaj R systemu. Potem przesuń suwak na 100 h i na 3000 h; za każdym razem porównaj krzywą systemu z krzywą sterownika i wentylatora A."),
           risk_widget_panel("Czas", "Elementy i system mieszany", lc_slider("s8_mission", "Czas misji (h)", 100, 3000, 1000, 50), "s8_time_plot", "s8_time_stats"),
+          # PROTOTYPY P11A i P11B: systemowa R(t), dwie puenty
+          s8p_variant("P11A — puenta „system leży pod najsłabszym szeregiem”."),
+          s8p_get("s8p_11a_ui"),
+          s8p_variant("P11B — puenta „przewaga redundancji topnieje z czasem misji”."),
+          s8p_get("s8p_11b_ui"),
           c(
             "Ta sama redukcja działa w czasie: krzywe elementów i całego systemu muszą używać wspólnego czasu misji, a krzywa systemu zawsze leży poniżej najsłabszego wymaganego szeregu — tutaj poniżej krzywej sterownika. Przy 1000 h panel pokazuje R systemu 0.558.",
             "Warto porównać, ile redundancja wentylatorów zmniejsza ryzyko w zależności od t. Prawdopodobieństwo awarii bloku A/B to prawdopodobieństwo awarii A pomnożone przez 1 - R_B(t). Przy 100 h ten mnożnik wynosi około 0.05 — redundancja zmniejsza ryzyko dwudziestokrotnie. Przy 1000 h mnożnik to około 0.39, a przy 3000 h już około 0.78. W długiej misji druga gałąź sama jest prawdopodobnie zepsuta, zanim będzie potrzebna."
@@ -394,7 +435,9 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
               "Suma: 0.85652 + 0.04508 + 0.07448 = 0.97608."
             ),
             answer = "0.97608 — dokładnie tyle co z redukcji w przykładzie 8.5. Tabela stanów jest wolniejsza, ale działa dla każdej struktury, także takiej, której nie da się zredukować do szeregów i równoległości."
-          )
+          ),
+          # PROTOTYP P12: tabela stanów jako osiem schematów
+          s8p_get("s8p_12_ui")
         )
       ),
       list(
@@ -408,10 +451,14 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           )),
           "Z definicji wynika użyteczne oszacowanie. W systemie koherentnym awaria wszystkich elementów oznacza awarię systemu, a działanie wszystkich — działanie systemu. Stąd każdy system koherentny leży między szeregiem a układem równoległym tych samych elementów:",
           risk_formula("\\prod_{i=1}^{n}R_i\\;\\le\\;R_s\\;\\le\\;1-\\prod_{i=1}^{n}(1-R_i)", num = "8.9"),
+          # PROTOTYP P13: te same kafle dla szeregu, układu mieszanego i równoległego
+          s8p_get("s8p_13_ui"),
           risk_derivation("oszacowanie (8.9)", c(
             "Ponieważ każdy element jest istotny, istnieje stan, w którym φ = 1; z monotoniczności φ(1, …, 1) = 1. Analogicznie istnieje stan z φ = 0, więc φ(0, …, 0) = 0. Jeśli wszystkie xᵢ = 1, to φ(x) = 1 = min xᵢ; w pozostałych przypadkach min xᵢ = 0 ≤ φ(x). Jeśli wszystkie xᵢ = 0, to φ(x) = 0 = max xᵢ; w pozostałych przypadkach max xᵢ = 1 ≥ φ(x).",
             "Mamy więc min xᵢ ≤ φ(x) ≤ max xᵢ dla każdego x. Biorąc wartości oczekiwane i korzystając z (8.7)–(8.8), otrzymujemy (8.9). Dla układu z przykładu 8.7: 0.85652 ≤ 0.97608 ≤ 1 - 0.08 · 0.05 · 0.02 = 0.99992."
           )),
+          # PROTOTYP P14: układ niekoherentny
+          s8p_get("s8p_14_ui"),
           risk_check("s8_chk_koh",
             "System dwóch elementów ma funkcję struktury φ(x_A, x_B) = x_A · (1 - x_B). Czy jest koherentny?",
             c("Nie — naprawa B wyłącza system, więc φ nie jest monotoniczna" = "nonmono", "Tak — oba elementy są istotne" = "yes", "Nie — element A jest nieistotny" = "irrel"),
@@ -435,6 +482,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       list(
         id = "zdarzenie", title = "Wspólna przyczyna jako zdarzenie",
         body = list(
+          # PROTOTYP P15: scena na otwarcie rozdziału, przed definicją 8.7
+          s8p_get("s8p_15_ui"),
           c(
             "Wzór (8.3) mnoży prawdopodobieństwa awarii gałęzi, a to wolno zrobić tylko wtedy, gdy awarie są niezależne. W dojrzewalni istnieje co najmniej jeden mechanizm, który tę niezależność łamie: obie gałęzie czerpią prąd z jednej rozdzielnicy. Gdy rozdzielnica pada, oba wentylatory stają w tej samej sekundzie — nie jest to zbieg dwóch awarii, lecz jedna awaria o dwóch skutkach.",
             "Najczystszym sposobem ujęcia takiej zależności jest wydzielenie jej przyczyny jako osobnego zdarzenia. Zamiast mówić „awarie wentylatorów są skorelowane”, mówimy: istnieje zdarzenie Z (utrata zasilania), które wyłącza obie gałęzie; poza nim gałęzie zawodzą niezależnie."
@@ -458,6 +507,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           ),
           risk_try("zacznij od q = 0 i odczytaj R. Następnie ustaw q = 0.01 (dane Bananpolu) i q = 0.05; porównaj spadek R z ryzykiem 0.004, które obiecywał sam układ równoległy."),
           risk_widget_panel("Zależność", "Wspólne zasilanie", lc_slider("s8_common", "P(utraty wspólnego zasilania)", 0, .15, .01, .005), "s8_common_plot", "s8_common_stats"),
+          # PROTOTYPY P16A i P16B: ile zostaje z obietnicy redundancji
+          s8p_variant("P16A — linia R(q) z obiecanym 0.996."),
+          s8p_get("s8p_16a_ui"),
+          s8p_variant("P16B — ryzyko w podziale na przyczyny."),
+          s8p_get("s8p_16b_ui"),
           c(
             "Linia jest prosta, bo R zależy od q liniowo: każdy punkt procentowy q odbiera prawie cały punkt procentowy niezawodności. Przy q = 0.01 panel pokazuje 0.986, przy q = 0.05 R spada do 0.95 · 0.996 ≈ 0.946 — ryzyko 0.054, trzynaście i pół raza większe niż obiecane 0.004. Przy q = 0.15 zostaje około 0.847.",
             "Porównaj to z wkładem wentylatorów: poprawa jednego z nich o kilka punktów procentowych zmienia ryzyko bloku równoległego o tysięczne części. Gdy q jest rzędu ryzyka pojedynczej gałęzi, wspólna przyczyna dominuje całą analizę."
@@ -492,6 +546,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             ),
             answer = "Ryzyko rośnie z 0.0064 do 0.0135 — ponad dwukrotnie — choć każdy wentylator z osobna ma nadal R = 0.92. Dziesięcioprocentowy udział awarii wspólnych wystarcza, by to one stały się głównym składnikiem ryzyka układu."
           ),
+          # PROTOTYP P17: beta-factor
+          s8p_get("s8p_17_ui"),
           "Model beta-factor jest przybliżeniem: zakłada, że zdarzenie wspólne wyłącza zawsze wszystkie gałęzie i że β nie zależy od liczby gałęzi. Jego wartość dydaktyczna jest jednak duża — pokazuje, że niezawodności elementów nie wystarczą do policzenia redundancji; potrzebny jest jeszcze jeden parametr opisujący zależność."
         )
       )
@@ -509,6 +565,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       list(
         id = "nasycenie", title = "Malejąca korzyść redundancji",
         body = list(
+          # PROTOTYP P18: scena na otwarcie rozdziału
+          s8p_get("s8p_18_ui"),
           "Dla n jednakowych, niezależnych gałęzi o niezawodności r wzór (8.3) przyjmuje prostą postać, a odwracając go, dostajemy liczbę gałęzi potrzebną do osiągnięcia celu R*:",
           risk_formula("R_n=1-(1-r)^{n}", num = "8.13",
             legend = c("r" = "niezawodność jednej gałęzi", "n" = "liczba gałęzi równoległych")),
@@ -526,6 +584,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           ),
           risk_try("przy R jednej gałęzi 0.9 przesuwaj liczbę gałęzi od 1 do 6 i zapisuj przyrost R po każdym kroku. Potem zmień R gałęzi na 0.6 i powtórz."),
           risk_widget_panel("Trade-off", "Liczba gałęzi i koszt", tagList(lc_slider("s8_branches", "Liczba gałęzi", 1, 6, 2, 1), lc_slider("s8_branch_r", "R jednej gałęzi", .5, .99, .9, .01)), "s8_redundancy", "s8_redundancy_stats"),
+          # PROTOTYPY P19A i P19B: krzywa nasycenia i sufit wspólnej przyczyny
+          s8p_variant("P19A — R na osi liniowej."),
+          s8p_get("s8p_19a_ui"),
+          s8p_variant("P19B — ryzyko na osi logarytmicznej, z celem 0.9999."),
+          s8p_get("s8p_19b_ui"),
           c(
             "Przy r = 0.9 krzywa po drugiej gałęzi jest praktycznie pozioma: panel pokazuje R = 0.990 dla dwóch gałęzi i koszt 200 jednostek, a każda następna gałąź dokłada 100 jednostek kosztu za coraz mniej. Przy słabej gałęzi (r = 0.6) krzywa rośnie dłużej, bo pojedyncza gałąź zostawia dużo ryzyka do usunięcia — redundancja najwięcej daje tam, gdzie elementy są słabe.",
             "Widget zakłada pełną niezależność gałęzi. Po lekturze poprzedniego rozdziału wiemy, że realna krzywa ma sufit na poziomie 1 - q: od chwili, gdy ryzyko bloku równoległego spadnie poniżej ryzyka wspólnej przyczyny, dokładanie gałęzi przestaje mieć sens."
@@ -547,12 +610,16 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           "Dla n jednakowych, niezależnych elementów o niezawodności r liczba działających elementów ma rozkład dwumianowy z wykładu 04, więc niezawodność układu to suma prawdopodobieństw, że działa k, k + 1, …, n elementów:",
           risk_formula("R_{k\\,z\\,n}=\\sum_{j=k}^{n}\\binom{n}{j}\\,r^{j}(1-r)^{n-j},\\qquad R_{2\\,z\\,3}=3r^{2}-2r^{3}",
             legend = c("k" = "najmniejsza liczba działających elementów", "n" = "liczba elementów", "r" = "niezawodność jednego elementu")),
-          "Dla r = 0.9 układ 2 z 3 ma niezawodność 3 · 0.81 - 2 · 0.729 = 0.972: mniej niż dwa elementy równolegle (0.99), ale więcej niż jeden element. W zamian pojedynczy fałszywy odczyt nie wywołuje alarmu — dlatego głosowanie stosuje się tam, gdzie liczą się oba rodzaje błędów."
+          "Dla r = 0.9 układ 2 z 3 ma niezawodność 3 · 0.81 - 2 · 0.729 = 0.972: mniej niż dwa elementy równolegle (0.99), ale więcej niż jeden element. W zamian pojedynczy fałszywy odczyt nie wywołuje alarmu — dlatego głosowanie stosuje się tam, gdzie liczą się oba rodzaje błędów.",
+          # PROTOTYP P20: k z n na kaflach stanów
+          s8p_get("s8p_20_ui")
         )
       ),
       list(
         id = "transfer", title = "Przykład transferowy: kopie zapasowe",
-        text = "Ta sama krzywa opisuje kopie zapasowe danych. Druga kopia radykalnie zmniejsza ryzyko utraty, trzecia już umiarkowanie — a wszystkie trzy trzymane w tej samej serwerowni dzielą wspólną przyczynę: pożar, zalanie, ransomware. Reguła 3-2-1 (trzy kopie, dwa nośniki, jedna poza lokalizacją) to inżynieria wspólnych przyczyn, nie mnożenie gałęzi."
+        text = "Ta sama krzywa opisuje kopie zapasowe danych. Druga kopia radykalnie zmniejsza ryzyko utraty, trzecia już umiarkowanie — a wszystkie trzy trzymane w tej samej serwerowni dzielą wspólną przyczynę: pożar, zalanie, ransomware. Reguła 3-2-1 (trzy kopie, dwa nośniki, jedna poza lokalizacją) to inżynieria wspólnych przyczyn, nie mnożenie gałęzi.",
+        # PROTOTYP P21: scena z kopiami zapasowymi
+        body = list(s8p_get("s8p_21_ui"))
       ),
       list(
         id = "poprawa", title = "Który element poprawić?",
@@ -570,6 +637,8 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           risk_formula("I_B(i)=\\frac{\\partial R_s}{\\partial R_i}=R_s(1_i)-R_s(0_i),\\qquad \\Delta R_s=I_B(i)\\,\\Delta R_i", num = "8.15",
             legend = c("R_s(1_i)" = "niezawodność systemu, gdy element i na pewno działa", "R_s(0_i)" = "niezawodność systemu, gdy element i na pewno nie działa", "\\Delta R_i" = "poprawa niezawodności elementu i")),
           "Dla szeregu istotność elementu to iloczyn niezawodności pozostałych elementów, więc największa jest dla elementu najsłabszego — stąd reguła z początku sekcji. Dla gałęzi równoległej istotność zawiera czynnik 1 - R innej gałęzi, bo element jest krytyczny tylko wtedy, gdy jego zastępca już zawiódł.",
+          # PROTOTYP P22: kiedy element rozstrzyga
+          s8p_get("s8p_22_ui"),
           risk_example("8.11", "Wąskie gardło czy gałąź redundantna?",
             problem = list(
               risk_parts(
@@ -585,7 +654,9 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             answer = "W szeregu najwięcej daje poprawa najsłabszego wentylatora, choć przewaga jest mała. W układzie mieszanym poprawa sterownika daje około dwudziestokrotnie więcej niż poprawa wentylatora A — tej samej wielkości poprawa ma zupełnie inną wartość w zależności od miejsca w architekturze."
           ),
           risk_try("odczytaj trzy zyski w panelu i porównaj je z krokiem (a) przykładu 8.11. Zastanów się, jak zmieniłaby się kolejność, gdyby zasilanie miało R = 0.90."),
-          figure_panel(label = "Porównanie", title = "Spadek ryzyka po poprawie R o 0.02", lc_readouts(uiOutput("s8_improvement")), full_width = TRUE),
+          figure_panel(label = "Porównanie", title = "Spadek ryzyka po poprawie R o 0.02", lc_readouts(uiOutput("s8_improvement")), lc_plot("s8_improvement_plot", ratio = "3/1", max_height = "260px"), full_width = TRUE),
+          # PROTOTYP P23: ta sama poprawa w trzech miejscach
+          s8p_get("s8p_23_ui"),
           c(
             "Panel pokazuje zyski 0.019, 0.018 i 0.017 — kolejność zgodna z istotnością Birnbauma, bo każdy zysk to 0.02 · I_B. Gdyby zasilanie spadło do 0.90, jego istotność wynosiłaby wciąż 0.874, ale wentylatora i czujnika spadłyby do 0.95 · 0.90 = 0.855 i 0.92 · 0.90 = 0.828 — najcenniejsza stałaby się poprawa zasilania, czyli nowego najsłabszego ogniwa.",
             "Istotność mówi, ile daje poprawa, ale nie ile kosztuje. Poprawa sterownika z 0.98 do 0.99 może wymagać wymiany na model przemysłowy, a poprawa wentylatora — tylko częstszego serwisu. Dlatego ranking istotności jest punktem wyjścia do decyzji, a nie decyzją."
@@ -616,10 +687,21 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           "Wykład zaczął się od obserwacji, że te same części mogą tworzyć systemy o bardzo różnej niezawodności. Dlatego rachunek zaczyna się od definicji: funkcji systemu i wspólnego czasu misji (8.1). Logikę sukcesu zapisujemy schematem blokowym, a dwa podstawowe układy mają lustrzane wzory — iloczyn niezawodności dla szeregu (8.2) i iloczyn zawodności dla układu równoległego (8.3). Układy mieszane redukujemy etapami (8.4), a w czasie podstawiamy R_i(t): szereg elementów wykładniczych jest wykładniczy (8.5), układ równoległy już nie (8.6).",
           "Funkcja struktury oddziela logikę od liczb (8.7), a niezawodność systemu jest jej wartością oczekiwaną (8.8). Systemy koherentne — monotoniczne i bez zbędnych elementów — leżą zawsze między szeregiem a układem równoległym (8.9). Wszystkie te wzory zakładają niezależność; wspólną przyczynę dopisujemy do architektury jako jawne zdarzenie (8.10) albo przez model beta-factor (8.11)–(8.12). Nawet małe q lub β potrafi zdominować ryzyko układu redundantnego.",
           "Decyzje projektowe wynikają z dwóch ostatnich narzędzi. Liczba gałęzi (8.13)–(8.14) daje malejącą bezwzględną korzyść i ma sufit wyznaczony przez wspólne przyczyny. Istotność Birnbauma (8.15) mówi, ile daje poprawa elementu w konkretnym miejscu architektury — wąskie gardło szeregowe jest zwykle warte więcej niż gałąź redundantna. Ostateczny wybór łączy ten zysk z kosztem i wykonalnością."
+        ),
+        # PROTOTYP P24A: domknięcie w kadrach
+        body = list(
+          s8p_variant("P24A — schemat rośnie krok po kroku."),
+          s8p_get("s8p_24a_ui")
         )
       ),
       list(id = "tabela", title = "Ściąga wzorów", widget = system_sciaga_widget),
-      list(id = "lista", title = "Pięć kroków", bullets = c("Zdefiniuj sukces systemu", "Ustal wspólny czas misji", "Zredukuj logikę etapami", "Dodaj jawne wspólne przyczyny", "Sprawdź wrażliwość na interwencje"), widget = risk_assessment_ui("s8", system_quiz, system_exercises)),
+      list(id = "lista", title = "Pięć kroków", bullets = c("Zdefiniuj sukces systemu", "Ustal wspólny czas misji", "Zredukuj logikę etapami", "Dodaj jawne wspólne przyczyny", "Sprawdź wrażliwość na interwencje"),
+        # PROTOTYP P24B: mapa pięciu kroków z wynikami
+        body = list(
+          s8p_variant("P24B — mapa pięciu kroków z wynikiem każdego kroku."),
+          s8p_get("s8p_24b_ui")
+        ),
+        widget = risk_assessment_ui("s8", system_quiz, system_exercises)),
       list(id = "most", title = "Co dalej", text = "Opisaliśmy logikę sukcesu: kiedy system działa. Następny wykład odwróci perspektywę i zapyta, jakie kombinacje przyczyn prowadzą do awarii — to ta sama algebra, ale czytana od strony zdarzenia szczytowego.")
     )
   )
@@ -690,6 +772,10 @@ system_server <- function(input, output, session) {
       geom_segment(data = lines, aes(x = xs, xend = xe, y = ys, yend = ye), colour = upwr_reference, linewidth = 1) +
       geom_rect(data = boxes, aes(xmin = x - w, xmax = x + w, ymin = y - .45, ymax = y + .45), fill = upwr_secondary, colour = "white") +
       geom_text(data = boxes, aes(x = x, y = y, label = label), colour = "white", fontface = "bold", size = 4.2) +
+      # Wejście i wyjście schematu: droga sukcesu biegnie od lewej kropki do prawej.
+      annotate("point", x = c(min(lines$xs), max(lines$xe)), y = 0, colour = upwr_accent, size = 3.2) +
+      annotate("text", x = c(min(lines$xs), max(lines$xe)), y = -.42, label = c("wejście", "wyjście"),
+        colour = upwr_reference, size = 3.6, hjust = c(0, 1)) +
       coord_equal(xlim = limits$x, ylim = limits$y) +
       labs(x = NULL, y = NULL) +
       theme_upwr() +
@@ -705,14 +791,18 @@ system_server <- function(input, output, session) {
     dat <- data.frame(element = c("Element 1", "Element 2", "System"), r = c(input$s8_r1, input$s8_r2, arch_value()))
     ggplot(dat, aes(element, r, fill = element)) +
       geom_col(width = .65) +
-      coord_cartesian(ylim = c(0, 1)) +
-      scale_fill_manual(values = upwr_cat_n(3), guide = "none") +
+      geom_text(aes(label = sprintf("%.3f", r)), vjust = -.5, size = 4.6, family = "mono") +
+      coord_cartesian(ylim = c(0, 1.08)) +
+      scale_y_continuous(breaks = seq(0, 1, .25)) +
+      # Elementy w kolorze kontekstu, system w akcencie.
+      scale_fill_manual(values = c("Element 1" = upwr_secondary, "Element 2" = upwr_secondary, "System" = upwr_accent), guide = "none") +
       labs(x = NULL, y = "Niezawodność") +
       theme_upwr()
   })
   zoom_plot_server("s8_arch_plot", arch_plot, alt = "Słupki niezawodności dwóch elementów i systemu dla wybranej architektury.")
   output$s8_arch_stats <- renderUI(tagList(
-    lc_readout("R systemu", risk_fmt_p(arch_value()), color = upwr_accent)
+    lc_readout("R systemu", risk_fmt_p(arch_value()), color = upwr_accent),
+    lc_readout("Ryzyko systemu", risk_fmt_p(1 - arch_value()))
   ))
   output$s8_reduction <- renderUI({
     # Kroki od 1; cofnięcie przed krok 1 pokazuje nadal krok 1.
@@ -720,6 +810,11 @@ system_server <- function(input, output, session) {
     texts <- c("Zdefiniuj sukces: C działa oraz A lub B działa.", "Zredukuj A/B: R_AB=1-(1-R_A)(1-R_B).", "Połącz szeregowo: R_sys=R_C·R_AB.")
     lc_step_text(paste0("Krok ", k, " z 3 · ", s8_reduction_steps[[k]]), texts[[k]])
   })
+  # R elementów i systemu mieszanego w chwili t (MTTF 1800, 2000 i 2500 h, przykład 8.6).
+  time_values <- function(t) {
+    ra <- exp(-t / 1800); rb <- exp(-t / 2000); rc <- exp(-t / 2500)
+    c("Wentylator A" = ra, "Wentylator B" = rb, "Sterownik" = rc, "System" = rc * (1 - (1 - ra) * (1 - rb)))
+  }
   time_plot <- reactive({
     t <- seq(0, 3000, length.out = 400)
     ra <- exp(-t / 1800)
@@ -727,19 +822,28 @@ system_server <- function(input, output, session) {
     rc <- exp(-t / 2500)
     rs <- rc * (1 - (1 - ra) * (1 - rb))
     dat <- rbind(data.frame(t, r = ra, name = "Wentylator A"), data.frame(t, r = rb, name = "Wentylator B"), data.frame(t, r = rc, name = "Sterownik"), data.frame(t, r = rs, name = "System"))
+    now <- time_values(input$s8_mission)
+    pts <- data.frame(t = input$s8_mission, r = unname(now), name = names(now))
     ggplot(dat, aes(t, r, colour = name)) +
-      geom_line(linewidth = 1) +
+      geom_line(aes(linewidth = name)) +
       geom_vline(xintercept = input$s8_mission, linetype = 2) +
-      scale_colour_manual(values = upwr_cat_n(4)) +
+      geom_point(data = pts, size = 3) +
+      # System w akcencie i grubszą linią; oś pionowa od zera.
+      scale_colour_manual(values = c("Wentylator A" = upwr_cat_n(4)[[3]], "Wentylator B" = upwr_cat_n(4)[[4]],
+        "Sterownik" = upwr_secondary, "System" = upwr_accent)) +
+      scale_linewidth_manual(values = c("Wentylator A" = .9, "Wentylator B" = .9, "Sterownik" = .9, "System" = 1.7), guide = "none") +
+      coord_cartesian(ylim = c(0, 1)) +
       labs(x = "Czas (h)", y = "R(t)", colour = NULL) +
       theme_upwr()
   })
   zoom_plot_server("s8_time_plot", time_plot, alt = "Krzywe niezawodności trzech elementów i systemu mieszanego.")
   output$s8_time_stats <- renderUI({
-    t <- input$s8_mission
-    rs <- exp(-t / 2500) * (1 - (1 - exp(-t / 1800)) * (1 - exp(-t / 2000)))
+    now <- time_values(input$s8_mission)
     tagList(
-      lc_readout("R systemu", risk_fmt_p(rs), color = upwr_accent)
+      lc_readout("R wentylatora A", risk_fmt_p(now[["Wentylator A"]])),
+      lc_readout("R wentylatora B", risk_fmt_p(now[["Wentylator B"]])),
+      lc_readout("R sterownika", risk_fmt_p(now[["Sterownik"]])),
+      lc_readout("R systemu", risk_fmt_p(now[["System"]]), color = upwr_accent)
     )
   })
   common_plot <- reactive({
@@ -747,14 +851,25 @@ system_server <- function(input, output, session) {
     base <- risk_parallel_reliability(c(.92, .95))
     ggplot(data.frame(q, r = (1 - q) * base), aes(q, r)) +
       geom_line(colour = upwr_accent, linewidth = 1.1) +
+      # Obietnica samego układu równoległego (przykład 8.4) jako linia odniesienia.
+      geom_hline(yintercept = base, colour = upwr_reference, linetype = 2) +
+      annotate("text", x = .15, y = base, label = "bez wspólnej przyczyny: 0.996", hjust = 1, vjust = -.6,
+        colour = upwr_reference, size = 3.8) +
       geom_point(data = data.frame(q = input$s8_common, r = (1 - input$s8_common) * base), colour = upwr_secondary, size = 3) +
+      coord_cartesian(ylim = c(.84, 1)) +
       labs(x = "P(wspólnej awarii)", y = "R systemu") +
       theme_upwr()
   })
   zoom_plot_server("s8_common_plot", common_plot, alt = "Malejąca niezawodność układu redundantnego wraz ze wzrostem wspólnej przyczyny.")
-  output$s8_common_stats <- renderUI(tagList(
-    lc_readout("R z przyczyną wspólną", risk_fmt_p(risk_common_cause_reliability(risk_parallel_reliability(c(.92, .95)), input$s8_common)), color = upwr_accent)
-  ))
+  output$s8_common_stats <- renderUI({
+    r <- risk_common_cause_reliability(risk_parallel_reliability(c(.92, .95)), input$s8_common)
+    tagList(
+      lc_readout("R z przyczyną wspólną", risk_fmt_p(r), color = upwr_accent),
+      lc_readout("Ryzyko", risk_fmt_p(1 - r)),
+      # Część ryzyka, która pochodzi ze zdarzenia wspólnego (przykład 8.8: 0.72).
+      lc_readout("Udział wspólnej przyczyny", sprintf("%.0f%%", 100 * input$s8_common / (1 - r)))
+    )
+  })
   redundancy_plot <- reactive({
     n <- 1:6
     r <- 1 - (1 - input$s8_branch_r)^n
@@ -763,6 +878,9 @@ system_server <- function(input, output, session) {
       geom_line(colour = upwr_accent, linewidth = 1.1) +
       geom_point() +
       geom_point(data = dat[dat$n == input$s8_branches, ], colour = upwr_secondary, size = 4) +
+      # Stała oś: suwak R gałęzi zmienia krzywą, nie skalę.
+      scale_x_continuous(breaks = 1:6) +
+      coord_cartesian(ylim = c(.5, 1)) +
       labs(x = "Liczba gałęzi", y = "R systemu") +
       theme_upwr()
   })
@@ -771,17 +889,34 @@ system_server <- function(input, output, session) {
     r <- 1 - (1 - input$s8_branch_r)^input$s8_branches
     tagList(
       lc_readout("R", risk_fmt_p(r), color = upwr_accent),
+      lc_readout("Przyrost od poprzedniej gałęzi", if (input$s8_branches > 1) {
+        risk_fmt_p(r - (1 - (1 - input$s8_branch_r)^(input$s8_branches - 1)))
+      } else "—"),
       lc_readout("Koszt demonstracyjny", paste(input$s8_branches * 100, "jedn."))
     )
   })
-  output$s8_improvement <- renderUI({
+  improvement_gains <- function() {
     base <- c(.92, .95, .98)
     sys0 <- risk_series_reliability(base)
-    gains <- vapply(seq_along(base), function(i) {
+    vapply(seq_along(base), function(i) {
       x <- base
       x[i] <- min(1, x[i] + .02)
       risk_series_reliability(x) - sys0
     }, numeric(1))
+  }
+  improvement_plot <- reactive({
+    dat <- data.frame(element = factor(c("Wentylator (0.92)", "Czujnik (0.95)", "Zasilanie (0.98)"),
+      levels = c("Wentylator (0.92)", "Czujnik (0.95)", "Zasilanie (0.98)")), gain = improvement_gains())
+    ggplot(dat, aes(element, gain)) +
+      geom_col(width = .55, fill = upwr_secondary) +
+      geom_text(aes(label = sprintf("%.4f", gain)), vjust = -.5, size = 4.4, family = "mono") +
+      coord_cartesian(ylim = c(0, .022)) +
+      labs(x = NULL, y = "Wzrost R systemu") +
+      theme_upwr()
+  })
+  zoom_plot_server("s8_improvement_plot", improvement_plot, alt = "Słupki wzrostu niezawodności szeregu po poprawie każdego z trzech elementów o 0.02.")
+  output$s8_improvement <- renderUI({
+    gains <- improvement_gains()
     tagList(
       lc_readout("Wentylator", risk_fmt_p(gains[1])),
       lc_readout("Czujnik", risk_fmt_p(gains[2])),
