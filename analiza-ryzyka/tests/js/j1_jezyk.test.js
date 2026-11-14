@@ -46,3 +46,39 @@ test("skumulowana częstość i formatowanie", () => {
   assert.equal(J.big(1100), "1 100");
   assert.equal(J.fmtP(0.0042), "0.00420");  // jak risk_fmt_p() w R
 });
+
+// Ćwiczenie 1: notatka dla dyrektora (dawniej output$ch8_feedback w jezyk_cwiczenia_server).
+const reportCfg = {
+  required: ["definition", "exposure", "period", "consequence"], correct: "insufficient",
+  labels: { definition: "definicja zdarzenia", exposure: "mianownik ekspozycji",
+            period: "wspólny okres i warunki", consequence: "rodzaj skutków" }
+};
+
+test("notatka dla dyrektora: braki, wniosek i komplet", () => {
+  const none = J.reportFeedback([], "", reportCfg);
+  assert.equal(none.ok, false);
+  assert.equal(none.verdict, "Wstrzymaj decyzję.");
+  assert.equal(none.text, " Brakuje: definicja zdarzenia, mianownik ekspozycji, wspólny okres i warunki, rodzaj skutków." +
+    " Same liczniki 3 i 5 nie pozwalają jeszcze ustalić, który magazyn jest bezpieczniejszy.");
+  // wszystkie pola, zły wniosek: zostaje tylko uwaga o licznikach
+  const wrong = J.reportFeedback(reportCfg.required, "safer", reportCfg);
+  assert.equal(wrong.ok, false);
+  assert.equal(wrong.text, " Same liczniki 3 i 5 nie pozwalają jeszcze ustalić, który magazyn jest bezpieczniejszy.");
+  // dobry wniosek, brak dwóch pól: lista braków w kolejności pól
+  const partial = J.reportFeedback(["consequence", "definition"], "insufficient", reportCfg);
+  assert.equal(partial.ok, false);
+  assert.equal(partial.text, " Brakuje: mianownik ekspozycji, wspólny okres i warunki.");
+  const full = J.reportFeedback(["period", "definition", "consequence", "exposure"], "insufficient", reportCfg);
+  assert.equal(full.ok, true);
+  assert.equal(full.verdict, "Rekomendacja jest kompletna.");
+  assert.equal(full.text, " Najpierw ujednolicamy definicje i ekspozycję, potem porównujemy częstości i skutki.");
+  assert.match(J.reportHtml(full), /^<div class="lc-status" role="status" aria-live="polite"><span class="lc-status-ok"><strong>Rekomendacja jest kompletna\.<\/strong><\/span> Najpierw/);
+  assert.match(J.reportHtml(none), /lc-status-warning/);
+});
+
+test("punkt startu: wynik liczy trafienia na swoich pozycjach", () => {
+  const correct = ["classical", "empirical", "model"];
+  assert.deepEqual(J.modelsScore(["", "", ""], correct), { score: 0, total: 3, ok: false, verdict: "Wynik: 0/3." });
+  assert.equal(J.modelsScore(["classical", "model", "empirical"], correct).score, 1);
+  assert.deepEqual(J.modelsScore(correct, correct), { score: 3, total: 3, ok: true, verdict: "Wynik: 3/3." });
+});

@@ -1654,6 +1654,25 @@ mjx-container mjx-text {
   }
 }
 
+/* lc_variants(): w dokumencie są wszystkie warianty, widoczny jest jeden. */
+.lc-variants > [hidden] { display: none !important; }
+/* Wzór złożony w HTML przez skrypt wykładu (strona statyczna nie ładuje MathJax):
+   .lc-hmath to wiersz wzoru, .lc-hfrac ułamek z licznikiem i mianownikiem. */
+.lc-formula-box:has(.lc-hmath) { text-align: center; font-size: 1.12em; }
+.lc-hmath { display: inline-block; white-space: nowrap; font-family: "Latin Modern Roman", "STIX Two Text", "Times New Roman", serif; font-size: 1.12em; line-height: 1.3; }
+.lc-hmath i { font-style: italic; }
+.lc-hmath sub { font-size: .7em; }
+.lc-hfrac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 .15em; }
+.lc-hfrac-n { padding: 0 .3em .1em; }
+.lc-hfrac-d { padding: .1em .3em 0; border-top: 1px solid currentColor; align-self: stretch; text-align: center; }
+/* lc_step_widget(texts = ): opisy kroków poza bieżącym. */
+.lc-step-texts > [hidden] { display: none !important; }
+/* lc_reveal(): treść czeka na kliknięcie przycisku. */
+.lc-reveal[hidden] { display: none !important; }
+
+/* Strona statyczna: rozdziały poza bieżącym są w dokumencie, ale ukryte. */
+section[data-lc-static-chapter][hidden] { display: none !important; }
+
 /* ============================================================================
    Glossary terms — klikalne hasła słownikowe
    Funkcja R: gloss("termin") w R/glossary.R
@@ -2016,7 +2035,7 @@ mjx-container mjx-text {
 
 /* Odczyty: zastępują lc_stat_box w widgetach */
 .lc-reads{display:flex;flex-wrap:wrap;gap:.6em 1.6em}
-.lc-reads>.shiny-html-output{display:contents}
+.lc-reads>.shiny-html-output,.lc-reads>.lc-variants,.lc-reads>.lc-variants>[data-lc-variant]:not([hidden]),.lc-reads>[data-lc-quiz-slot]{display:contents}
 .lc-read{display:flex;flex-direction:column;gap:.15em;padding-left:.7em;border-left:2px solid var(--lc-read-color,var(--upwr-accent))}
 .lc-read-label{font:500 .72em var(--upwr-mono);letter-spacing:.02em;color:var(--upwr-ink-subtle);display:flex;align-items:center;gap:.5em}
 .lc-read-value{font:700 1.35em/1.1 var(--upwr-mono);color:var(--upwr-ink);font-variant-numeric:tabular-nums}

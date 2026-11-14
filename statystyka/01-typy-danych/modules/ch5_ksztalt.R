@@ -36,6 +36,113 @@ ch5_skew_notes <- function() {
   })
 }
 
+# Tabela statystyk (Ryc. 5.4) dla zmiennej i zestawu: "min" albo "full".
+# Wszystkie warianty są w dokumencie (lc_variants()), liczy je R przy budowaniu strony.
+.ch5_full_table <- function(var_name, set) {
+  vals <- student_data[[var_name]]
+  vals <- vals[!is.na(vals)]
+
+  n <- length(vals)
+  m <- mean(vals)
+  med <- median(vals)
+  s <- sd(vals)
+  v <- var(vals)
+  rng <- diff(range(vals))
+  q1 <- quantile(vals, 0.25, names = FALSE)
+  q3 <- quantile(vals, 0.75, names = FALSE)
+  iqr_val <- IQR(vals)
+  cv <- (s / m) * 100
+  sk <- e1071::skewness(vals)
+  ku <- e1071::kurtosis(vals)
+  trimmed <- mean(vals, trim = 0.1)
+
+  # Mode: bin with highest frequency
+  h <- hist(vals, breaks = 20, plot = FALSE)
+  mode_bin_idx <- which.max(h$counts)
+  mode_val <- (h$breaks[mode_bin_idx] + h$breaks[mode_bin_idx + 1]) / 2
+
+  # Minimum (n, średnia, SD, mediana, kwartyle) albo
+  # pełny zestaw w dwóch tabelach obok siebie.
+  f2 <- function(x) formatC(x, format = "f", digits = 2)
+  stat_table <- function(names, values, label) {
+    lc_table(data.frame(Statystyka = names, Wartość = values, stringsAsFactors = FALSE),
+      cols = list(lc_col("Statystyka", "Statystyka", "row"), lc_col("Wartość", "Wartość")),
+      label = label)
+  }
+
+  if (!identical(set, "full")) {
+    return(stat_table(
+      c("n", "Średnia", "Odch. std.", "Mediana", "Q1", "Q3"),
+      c(as.character(n), f2(m), f2(s), f2(med), f2(q1), f2(q3)),
+      "Charakterystyka rozkładu — zestaw minimum"))
+  }
+
+  tags$div(class = "ch5-full-pair",
+    tags$div(
+      tags$h4("Położenie"),
+      stat_table(
+        c("n", "Średnia", "Mediana", "Dominanta", "Śr. ucięta 10%",
+          "Minimum", "Q1", "Q3", "Maksimum"),
+        c(as.character(n), f2(m), f2(med), f2(mode_val), f2(trimmed),
+          f2(min(vals)), f2(q1), f2(q3), f2(max(vals))),
+        "Statystyki położenia")
+    ),
+    tags$div(
+      tags$h4("Rozrzut i kształt"),
+      stat_table(
+        c("Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
+          "Skośność", "Kurtoza"),
+        c(f2(s), f2(v), f2(rng), f2(iqr_val), formatC(cv, format = "f", digits = 1),
+          formatC(sk, format = "f", digits = 3), formatC(ku, format = "f", digits = 3)),
+        "Statystyki rozrzutu i kształtu")
+    )
+  )
+}
+
+# Podsumowanie słowne dla zmiennej.
+.ch5_full_interpretation <- function(var_name) {
+  vals <- student_data[[var_name]]
+  vals <- vals[!is.na(vals)]
+
+  m <- mean(vals)
+  med <- median(vals)
+  s <- sd(vals)
+  q1 <- quantile(vals, 0.25, names = FALSE)
+  q3 <- quantile(vals, 0.75, names = FALSE)
+  iqr_val <- IQR(vals)
+  sk <- e1071::skewness(vals)
+
+  # Outliers
+  lower_fence <- q1 - 1.5 * iqr_val
+  upper_fence <- q3 + 1.5 * iqr_val
+  outliers_low <- vals[vals < lower_fence]
+  outliers_high <- vals[vals > upper_fence]
+  n_outliers <- length(outliers_low) + length(outliers_high)
+
+  if (n_outliers > 0) {
+    outlier_text <- paste0(
+      "Wykryto ", n_outliers, " wartości odstających ",
+      "(poza przedziałem [", round(lower_fence, 2), ", ",
+      round(upper_fence, 2), "])."
+    )
+  } else {
+    outlier_text <- "Brak wartości odstających (wg kryterium 1.5 · IQR)."
+  }
+
+  lc_status(
+    p(tags$strong("Podsumowanie:")),
+    tags$ul(
+      tags$li(paste0("Średnia = ", round(m, 2), ", Mediana = ", round(med, 2))),
+      tags$li(paste0("Środkowe 50% obserwacji leży między ",
+        round(q1, 2), " a ", round(q3, 2), " (Q1–Q3).")),
+      tags$li(paste0("Skośność = ", round(sk, 3), ", Kurtoza = ", round(e1071::kurtosis(vals), 3))),
+      tags$li(outlier_text)
+    )
+  )
+}
+
+.ch5_full_vars <- c("wzrost", "srednia_ocen", "czas_dojazdu", "waga")
+
 ch5_ui <- list(
   id = "ch-ksztalt", num = "05", title = "Kształt rozkładu",
   content = tagList(
@@ -51,7 +158,7 @@ ch5_ui <- list(
                 i jak często trafiają się w nim wartości skrajne."
     ),
 
-    uiOutput("tracker_ch5"),
+    tracker_variants(5),
 
     lc_p("W rozdziale 3 opisywaliśmy, gdzie leży środek danych, a w rozdziale 4,
       jak bardzo dane są wokół niego rozproszone. Te dwie informacje nie mówią
@@ -273,8 +380,11 @@ ch5_ui <- list(
           choices = c("Minimum" = "min", "Pełny" = "full"), selected = "min"),
         body = tagList(lc_sf_chart(0, ratio = "1.8/1", max_height = "350px"),
                        lc_sf_chart(1, ratio = "5.2/1", max_height = "130px"))),
-      uiOutput("ch5_full_table"),
-      uiOutput("ch5_full_interpretation")
+      lc_variants("ch5_full_var", stats::setNames(lapply(.ch5_full_vars, function(v) {
+        lc_variants("ch5_full_set", list(min = .ch5_full_table(v, "min"), full = .ch5_full_table(v, "full")))
+      }), .ch5_full_vars)),
+      lc_variants("ch5_full_var", stats::setNames(lapply(.ch5_full_vars, .ch5_full_interpretation),
+                                                  .ch5_full_vars))
     ),
 
     lc_p("Różne miary opowiadają o tej samej zmiennej spójną historię
@@ -309,129 +419,6 @@ ch5_ui <- list(
 # --------------------------------------------------------------------------
 
 ch5_server <- function(input, output, session) {
-
-  # --------------------------------------------------------------------------
-  # Widget 1: Skewness
-  # --------------------------------------------------------------------------
-
-  # Ryc. 5.2 i 5.3 rysuje stat_charts.js; opisy w UI (ch5_skew_notes).
-
-  # Ryc. 5.1 (skośność krok po kroku) rysuje stat_charts.js.
-
-  # --------------------------------------------------------------------------
-  # Widget 3: Full picture (Capstone)
-  # --------------------------------------------------------------------------
-
-  ch5_full_data <- reactive({
-    req(input$ch5_full_var)
-    vals <- student_data[[input$ch5_full_var]]
-    vals <- vals[!is.na(vals)]
-    list(
-      values = vals,
-      label = variable_meta[[input$ch5_full_var]]$label,
-      var_name = input$ch5_full_var
-    )
-  })
-
-  output$ch5_full_table <- renderUI({
-    d <- ch5_full_data()
-    vals <- d$values
-
-    n <- length(vals)
-    m <- mean(vals)
-    med <- median(vals)
-    s <- sd(vals)
-    v <- var(vals)
-    rng <- diff(range(vals))
-    q1 <- quantile(vals, 0.25, names = FALSE)
-    q3 <- quantile(vals, 0.75, names = FALSE)
-    iqr_val <- IQR(vals)
-    cv <- (s / m) * 100
-    sk <- e1071::skewness(vals)
-    ku <- e1071::kurtosis(vals)
-    trimmed <- mean(vals, trim = 0.1)
-
-    # Mode: bin with highest frequency
-    h <- hist(vals, breaks = 20, plot = FALSE)
-    mode_bin_idx <- which.max(h$counts)
-    mode_val <- (h$breaks[mode_bin_idx] + h$breaks[mode_bin_idx + 1]) / 2
-
-    # Minimum (n, średnia, SD, mediana, kwartyle) albo
-    # pełny zestaw w dwóch tabelach obok siebie.
-    f2 <- function(x) formatC(x, format = "f", digits = 2)
-    stat_table <- function(names, values, label) {
-      lc_table(data.frame(Statystyka = names, Wartość = values, stringsAsFactors = FALSE),
-        cols = list(lc_col("Statystyka", "Statystyka", "row"), lc_col("Wartość", "Wartość")),
-        label = label)
-    }
-
-    if (!identical(input$ch5_full_set, "full")) {
-      return(stat_table(
-        c("n", "Średnia", "Odch. std.", "Mediana", "Q1", "Q3"),
-        c(as.character(n), f2(m), f2(s), f2(med), f2(q1), f2(q3)),
-        "Charakterystyka rozkładu — zestaw minimum"))
-    }
-
-    tags$div(class = "ch5-full-pair",
-      tags$div(
-        tags$h4("Położenie"),
-        stat_table(
-          c("n", "Średnia", "Mediana", "Dominanta", "Śr. ucięta 10%",
-            "Minimum", "Q1", "Q3", "Maksimum"),
-          c(as.character(n), f2(m), f2(med), f2(mode_val), f2(trimmed),
-            f2(min(vals)), f2(q1), f2(q3), f2(max(vals))),
-          "Statystyki położenia")
-      ),
-      tags$div(
-        tags$h4("Rozrzut i kształt"),
-        stat_table(
-          c("Odch. std.", "Wariancja", "Rozstęp", "IQR", "CV (%)",
-            "Skośność", "Kurtoza"),
-          c(f2(s), f2(v), f2(rng), f2(iqr_val), formatC(cv, format = "f", digits = 1),
-            formatC(sk, format = "f", digits = 3), formatC(ku, format = "f", digits = 3)),
-          "Statystyki rozrzutu i kształtu")
-      )
-    )
-  })
-
-  output$ch5_full_interpretation <- renderUI({
-    d <- ch5_full_data()
-    vals <- d$values
-
-    m <- mean(vals)
-    med <- median(vals)
-    s <- sd(vals)
-    q1 <- quantile(vals, 0.25, names = FALSE)
-    q3 <- quantile(vals, 0.75, names = FALSE)
-    iqr_val <- IQR(vals)
-    sk <- e1071::skewness(vals)
-
-    # Outliers
-    lower_fence <- q1 - 1.5 * iqr_val
-    upper_fence <- q3 + 1.5 * iqr_val
-    outliers_low <- vals[vals < lower_fence]
-    outliers_high <- vals[vals > upper_fence]
-    n_outliers <- length(outliers_low) + length(outliers_high)
-
-    if (n_outliers > 0) {
-      outlier_text <- paste0(
-        "Wykryto ", n_outliers, " wartości odstających ",
-        "(poza przedziałem [", round(lower_fence, 2), ", ",
-        round(upper_fence, 2), "])."
-      )
-    } else {
-      outlier_text <- "Brak wartości odstających (wg kryterium 1.5 · IQR)."
-    }
-
-    lc_status(
-      p(tags$strong("Podsumowanie:")),
-      tags$ul(
-        tags$li(paste0("Średnia = ", round(m, 2), ", Mediana = ", round(med, 2))),
-        tags$li(paste0("Środkowe 50% obserwacji leży między ",
-          round(q1, 2), " a ", round(q3, 2), " (Q1–Q3).")),
-        tags$li(paste0("Skośność = ", round(sk, 3), ", Kurtoza = ", round(e1071::kurtosis(vals), 3))),
-        tags$li(outlier_text)
-      )
-    )
-  })
+  # Rozdział nie ma logiki serwera: Ryc. 5.1–5.3 rysuje stat_charts.js, a tabele
+  # i podsumowanie pełnego obrazu (Ryc. 5.4) są w dokumencie dla każdej zmiennej.
 }

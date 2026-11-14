@@ -88,3 +88,28 @@ pie_vs_bar_scenarios <- list(
     pie_ok = FALSE
   )
 )
+
+# ============================================================================
+# Śledzona zmienna: odczyty dla każdej zmiennej z listy tracked_var (rozdz. 1)
+# są w dokumencie; widoczny jest wariant wybranej zmiennej (lc_variants()).
+# ============================================================================
+
+tracked_vars <- c("Wzrost (cm)" = "wzrost", "Waga (kg)" = "waga",
+                  "Czas dojazdu (min)" = "czas_dojazdu", "Średnia ocen" = "srednia_ocen")
+
+# chapter: 3 (położenie), 4 (rozrzut) albo 5 (kształt)
+tracker_variants <- function(chapter) {
+  lc_variants("tracked_var", selected = "wzrost", stats::setNames(lapply(tracked_vars, function(var_name) {
+    vals <- student_data[[var_name]]
+    label <- variable_meta[[var_name]]$label
+    stats <- switch(as.character(chapter),
+      "3" = c("Średnia" = lc_fmt(mean(vals), 2), "Mediana" = lc_fmt(median(vals), 2)),
+      "4" = c("x̄" = lc_fmt(mean(vals), 2), "Me" = lc_fmt(median(vals), 2),
+              "SD" = lc_fmt(sd(vals), 2), "IQR" = lc_fmt(IQR(vals), 2)),
+      "5" = c("x̄" = lc_fmt(mean(vals), 2), "SD" = lc_fmt(sd(vals), 2),
+              "Skośność" = lc_fmt(round(e1071::skewness(vals), 2), 2),
+              "Kurtoza" = lc_fmt(round(e1071::kurtosis(vals), 2), 2))
+    )
+    lc_tracker(label, stats)
+  }), unname(tracked_vars)))
+}

@@ -48,6 +48,18 @@
     });
   }
 
+  // Strona statyczna (bez Shiny): suwaki uruchamiamy sami. ionRangeSlider czyta
+  // konfigurację z atrybutów data-* i sam zgłasza zdarzenia input i change.
+  function initStaticSliders() {
+    var $ = window.jQuery;
+    if (window.Shiny || !$ || !$.fn || !$.fn.ionRangeSlider) return;
+    $('.js-range-slider').each(function() {
+      if (!$(this).data('ionRangeSlider')) $(this).ionRangeSlider();
+      updateSliderOutput(this);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', initStaticSliders);
+
   // --- Segment: wyłączenie wartości wybranej w segmencie powiązanym ---
   function syncExclusive(group) {
     var otherId = group.getAttribute('data-lc-exclusive');
@@ -91,6 +103,186 @@
     if (!btn) return;
     document.querySelectorAll('.lc-choices[data-correct][data-reveal]').forEach(function(box) {
       if (box.getAttribute('data-reveal') === btn.id) markChoices(box);
+    });
+  });
+
+  // --- Quiz z kluczem: ocena i omówienie po kliknięciu przycisku ---
+  // Przycisk [data-lc-quiz-check="<id>"], dane pytań w script[data-lc-quiz-data="<id>"]
+  // (name, question, correct, correct_label, explanation), wynik w #<id>_quiz_feedback.
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function quizStatus(type, label, text) {
+    return '<div class="lc-status" role="status" aria-live="polite">' +
+      '<span class="lc-status-' + type + '"><strong>' + escapeHtml(label) + '</strong></span>' +
+      escapeHtml(text) + '</div>';
+  }
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest && e.target.closest('[data-lc-quiz-check]');
+    if (!btn) return;
+    var id = btn.getAttribute('data-lc-quiz-check');
+    var data = document.querySelector('script[data-lc-quiz-data="' + id + '"]');
+    var out = document.getElementById(id + '_quiz_feedback');
+    if (!data || !out) return;
+    var questions = JSON.parse(data.textContent);
+    var score = 0, missing = 0;
+    var items = questions.map(function(q) {
+      var checked = document.querySelector('input[type="radio"][name="' + q.name + '"]:checked');
+      var answer = checked ? checked.value : '';
+      var ok = answer === q.correct;
+      if (ok) score += 1;
+      if (!answer) missing += 1;
+      return '<li>' + quizStatus(ok ? 'ok' : 'warning',
+        ok ? 'Poprawnie:' : !answer ? 'Brak odpowiedzi:' : 'Do poprawy:',
+        ' ' + q.question + ' Poprawna odpowiedź: ' + q.correct_label + '. ' + q.explanation) + '</li>';
+    });
+    out.innerHTML = quizStatus(score === questions.length ? 'ok' : 'warning',
+      'Wynik: ' + score + '/' + questions.length + '.',
+      missing ? ' Bez odpowiedzi: ' + missing + '.' : ' Poniżej omówienie każdej odpowiedzi.') +
+      '<ol>' + items.join('') + '</ol>';
+  });
+
+  // --- Głosowanie („Najpierw zdecyduj”): komentarz do wybranej odpowiedzi ---
+  // Przycisk [data-lc-vote-check="<id>"], dane w script[data-lc-vote-data="<id>"]:
+  // { output: id miejsca na komentarz, feedback: { <wartość>: html, ".other": html,
+  // ".none": html } }. Po pierwszym sprawdzeniu komentarz podąża za wyborem.
+  function voteRender(id) {
+    var data = document.querySelector('script[data-lc-vote-data="' + id + '"]');
+    if (!data) return;
+    var cfg = JSON.parse(data.textContent);
+    var out = document.getElementById(cfg.output);
+    if (!out) return;
+    var checked = document.querySelector('input[type="radio"][name="' + id + '"]:checked');
+    var fb = cfg.feedback;
+    out.innerHTML = !checked ? fb['.none'] :
+      fb[checked.value] !== undefined ? fb[checked.value] : (fb['.other'] || '');
+    out.setAttribute('data-lc-vote-open', 'true');
+  }
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest && e.target.closest('[data-lc-vote-check]');
+    if (btn) voteRender(btn.getAttribute('data-lc-vote-check'));
+  });
+  document.addEventListener('change', function(e) {
+    if (e.target.type !== 'radio' || !e.target.name) return;
+    var data = document.querySelector('script[data-lc-vote-data="' + e.target.name + '"]');
+    if (!data) return;
+    var out = document.getElementById(JSON.parse(data.textContent).output);
+    if (out && out.hasAttribute('data-lc-vote-open')) voteRender(e.target.name);
+  });
+
+  // --- Warianty treści (lc_variants): widoczny wariant = wartość kontrolki ---
+  // div[data-lc-variants="<id kontrolki>"] > div[data-lc-variant="<wartość>"].
+  // Z data-lc-variants-reveal="<id przycisku>" treść pojawia się po kliknięciu
+  // przycisku, a zmiana wyboru ją chowa.
+  // Ostatnia wartość kontrolki: w wersji Shiny rozdziały są wstawiane pojedynczo,
+  // więc kontrolka z innego rozdziału (np. śledzona zmienna) bywa poza dokumentem.
+  var rememberedValues = {};
+  function controlValue(id) {
+    var el = document.getElementById(id);
+    if (el && el.tagName === 'SELECT') return el.value;
+    var checked = document.querySelector('input[type="radio"][name="' + id + '"]:checked');
+    if (checked) return checked.value;
+    if (el && typeof el.value === 'string') return el.value;
+    return Object.prototype.hasOwnProperty.call(rememberedValues, id) ? rememberedValues[id] : null;
+  }
+  function variantsSync(box, show) {
+    var value = controlValue(box.getAttribute('data-lc-variants'));
+    var changed = false;
+    Array.prototype.forEach.call(box.children, function(child) {
+      if (!child.hasAttribute('data-lc-variant')) return;
+      var hide = !(show && child.getAttribute('data-lc-variant') === value);
+      if (child.hidden !== hide) changed = true;
+      child.hidden = hide;
+    });
+    // Spis sekcji i wykresy w odsłoniętym wariancie reagują na zmianę.
+    if (changed) {
+      document.dispatchEvent(new CustomEvent('lc:variants', { detail: { id: box.getAttribute('data-lc-variants') } }));
+      setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 0);
+    }
+  }
+  document.addEventListener('change', function(e) {
+    var id = e.target.name || e.target.id;
+    if (!id) return;
+    if (e.target.tagName === 'SELECT' || (e.target.type === 'radio' && e.target.checked)) rememberedValues[id] = e.target.value;
+    document.querySelectorAll('[data-lc-variants]').forEach(function(box) {
+      if (box.getAttribute('data-lc-variants') !== id || box.hasAttribute('data-lc-variants-pick')) return;
+      variantsSync(box, !box.hasAttribute('data-lc-variants-reveal'));
+    });
+  });
+  // Treść wstawiona później (rozdział z renderUI): warianty kontrolki, której nie ma
+  // już w dokumencie, ustawiamy według zapamiętanej wartości.
+  var variantsQueued = false;
+  new MutationObserver(function() {
+    if (variantsQueued || !Object.keys(rememberedValues).length) return;
+    variantsQueued = true;
+    setTimeout(function() {
+      variantsQueued = false;
+      document.querySelectorAll('[data-lc-variants]').forEach(function(box) {
+        if (box.hasAttribute('data-lc-variants-pick') || box.hasAttribute('data-lc-variants-reveal')) return;
+        var id = box.getAttribute('data-lc-variants');
+        if (document.getElementById(id) || document.querySelector('input[name="' + id + '"]')) return;
+        if (Object.prototype.hasOwnProperty.call(rememberedValues, id)) variantsSync(box, true);
+      });
+    }, 0);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
+  // Wybór kliknięciem: [data-lc-pick="<grupa>"][data-value]; ponowne kliknięcie chowa treść.
+  function pickVariant(el) {
+    var group = el.getAttribute('data-lc-pick'), value = el.getAttribute('data-value');
+    var on = el.getAttribute('aria-pressed') !== 'true';
+    document.querySelectorAll('[data-lc-pick]').forEach(function(p) {
+      if (p.getAttribute('data-lc-pick') === group) p.setAttribute('aria-pressed', on && p === el ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-lc-variants-pick]').forEach(function(box) {
+      if (box.getAttribute('data-lc-variants') !== group) return;
+      Array.prototype.forEach.call(box.children, function(child) {
+        if (child.hasAttribute('data-lc-variant')) child.hidden = !(on && child.getAttribute('data-lc-variant') === value);
+      });
+    });
+  }
+  document.addEventListener('click', function(e) {
+    var el = e.target.closest && e.target.closest('[data-lc-pick]');
+    if (el) pickVariant(el);
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var el = e.target.closest && e.target.closest('[data-lc-pick]');
+    if (el && el === e.target) { e.preventDefault(); pickVariant(el); }
+  });
+
+  // Przełącznik treści (lc_toggle_button + lc_toggle_content).
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest && e.target.closest('[data-lc-toggle-button]');
+    if (!btn) return;
+    var on = btn.getAttribute('aria-pressed') !== 'true';
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    var label = btn.querySelector('span');
+    if (label) label.textContent = btn.getAttribute(on ? 'data-label-on' : 'data-label-off');
+    document.querySelectorAll('[data-lc-toggle]').forEach(function(box) {
+      if (box.getAttribute('data-lc-toggle') !== btn.id) return;
+      Array.prototype.forEach.call(box.children, function(child) {
+        if (child.hasAttribute('data-lc-toggle-state')) {
+          child.hidden = (child.getAttribute('data-lc-toggle-state') === 'on') !== on;
+        }
+      });
+    });
+  });
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest && e.target.closest('button[id]');
+    if (!btn) return;
+    document.querySelectorAll('[data-lc-variants-reveal]').forEach(function(box) {
+      if (box.getAttribute('data-lc-variants-reveal') === btn.id) variantsSync(box, true);
+    });
+  });
+
+  // --- Treść odsłaniana przyciskiem (lc_reveal): div[data-lc-reveal="<id przycisku>"] ---
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest && e.target.closest('button[id]');
+    if (!btn) return;
+    document.querySelectorAll('[data-lc-reveal]').forEach(function(box) {
+      if (box.getAttribute('data-lc-reveal') === btn.id) box.hidden = false;
     });
   });
 
@@ -161,6 +353,10 @@
     var nav = function(a) { return root.querySelector('[data-lc-nav="' + a + '"]'); };
     if (nav('prev')) nav('prev').disabled = k === 1;
     if (nav('next')) nav('next').disabled = k === n;
+    // Opisy kroków z lc_step_widget(texts = ): widoczny opis bieżącego kroku.
+    root.querySelectorAll('[data-lc-step-text]').forEach(function(t) {
+      if (t.closest('.lc-stepper') === root) t.hidden = Number(t.getAttribute('data-lc-step-text')) !== k;
+    });
     root.querySelectorAll('[data-lc-from]').forEach(function(c) {
       var off = k < Number(c.getAttribute('data-lc-from'));
       c.classList.toggle('lc-is-off', off);
@@ -265,6 +461,62 @@
   }
   registerBindings();
   document.addEventListener('DOMContentLoaded', registerBindings);
+
+  // --- conditionalPanel() na stronie statycznej ---
+  // Shiny ocenia warunki data-display-if w przeglądarce; bez Shiny robimy to sami.
+  // W warunku dostępne jest `input` z wartościami kontrolek czytanymi z dokumentu:
+  // kroki lc_step_nav, widget krokowy (<id>_step), pola wyboru, radio, listy, pola liczbowe.
+  function staticInputValue(id) {
+    if (/_step$/.test(id)) {
+      var stepper = document.getElementById(id.replace(/_step$/, ''));
+      if (stepper && stepper.classList.contains('lc-stepper')) return Number(stepper.getAttribute('data-lc-step')) || 1;
+    }
+    var el = document.getElementById(id);
+    if (el && el.classList.contains('lc-step-nav')) return Number(el.getAttribute('data-step')) || 0;
+    if (el && el.tagName === 'INPUT' && el.type === 'checkbox') return el.checked;
+    if (el && el.tagName === 'INPUT' && (el.type === 'number' || el.classList.contains('js-range-slider'))) {
+      var raw = el.value !== '' ? el.value : el.getAttribute('data-from');
+      return raw === null || raw === '' ? null : Number(raw);
+    }
+    if (el && (el.tagName === 'SELECT' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return el.value;
+    var boxes = document.querySelectorAll('input[type="checkbox"][name="' + id + '"]');
+    if (boxes.length) {
+      return Array.prototype.filter.call(boxes, function(b) { return b.checked; }).map(function(b) { return b.value; });
+    }
+    var radio = document.querySelector('input[type="radio"][name="' + id + '"]:checked');
+    return radio ? radio.value : null;
+  }
+  var staticInput = typeof Proxy === 'undefined' ? null : new Proxy({}, {
+    has: function() { return true; },
+    get: function(_, name) { return typeof name === 'string' ? staticInputValue(name) : undefined; }
+  });
+  function syncConditionalPanels() {
+    if (window.Shiny || !staticInput) return;
+    var shown = false;
+    document.querySelectorAll('[data-display-if]').forEach(function(panel) {
+      var visible;
+      try {
+        visible = !!(new Function('input', 'output', 'return (' + panel.getAttribute('data-display-if') + ');'))(staticInput, {});
+      } catch (err) { visible = false; }
+      var was = panel.classList.contains('shiny-conditional--shown');
+      // Arkusz Shiny chowa panele bez tej klasy; display ustawiamy jak Shiny.
+      panel.classList.toggle('shiny-conditional--shown', visible);
+      panel.style.display = visible ? '' : 'none';
+      if (visible && !was) shown = true;
+    });
+    // Wykresy w panelu ukrytym do tej pory mierzą się dopiero teraz.
+    if (shown) setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 0);
+  }
+  var conditionalQueued = false;
+  function queueConditionalPanels() {
+    if (conditionalQueued) return;
+    conditionalQueued = true;
+    setTimeout(function() { conditionalQueued = false; syncConditionalPanels(); }, 0);
+  }
+  ['click', 'change', 'input', 'keyup'].forEach(function(type) {
+    document.addEventListener(type, queueConditionalPanels);
+  });
+  document.addEventListener('DOMContentLoaded', syncConditionalPanels);
 
   // lc_more(): wyjście Shiny w zwiniętym <details> jest ukryte i nie renderuje
   // się; po rozwinięciu trzeba powiedzieć Shiny, że stało się widoczne.

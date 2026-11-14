@@ -856,5 +856,4 @@ integracja_server <- function(input, output, session) {
     ) |> tagList(lc_caption(paste0("Ustawienia z poprzednich rozdziałów: ", settings_label(),
       " · budżet ", input$i10_budget, " · zakres u ", input$i10_uncertainty, "."), tone = "info"))
   })
-  risk_assessment_server("i10", integracja_quiz, input, output)
 }

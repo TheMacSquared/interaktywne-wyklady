@@ -106,7 +106,7 @@ ch4_ui <- list(
                 statystyki rozrzutu."
     ),
 
-    uiOutput("tracker_ch4"),
+    tracker_variants(4),
 
     lc_p("W poprzednim rozdziale streszczaliśmy dane jedną liczbą opisującą
       położenie: ", gloss("średnia", "średnią"), ", ", gloss("mediana", "medianą"), " albo ", gloss("percentyl", "percentylem"), ". Taka liczba nie mówi
@@ -149,6 +149,16 @@ ch4_ui <- list(
           dep = 7 * 60 + 45, limit = ch4_bus_limit, limit_input = "ch4_bus_buffer",
           mean = round(mean(ch4_bus$a), 1), xmax = 25,
           aria = "Student czeka na przystanku na autobus linii A albo K; każde spóźnienie trafia do histogramu swojej linii."
+        ),
+        texts = list(
+        tagList("Odjazd wg rozkładu 7:45, jazda 10 minut, zajęcia o 8:00. Poczekaj kilka
+        razy na linii A, potem na K. Spóźnienie x liczymy od godziny z rozkładu."),
+        tagList("Każde czekanie trafia do histogramu swojej linii (każdy ma własną skalę
+        wysokości). Zbierz po kilkaset kursów na obu liniach i porównaj kształty."),
+        tagList("Przerywana linia to średnia, wspólna dla obu linii. Na prawo od
+        granicy zapasu nie zdążysz na zajęcia. Suwak zmienia zapas: większy zapas
+        to wcześniejszy kurs. Porównaj odsetek spóźnień pod wykresem: średnia
+        nie mówi, czy zdążysz.")
         )
       )
     ),
@@ -496,19 +506,7 @@ ch4_server <- function(input, output, session) {
 
   # --- Widget 1: Bus scene ---
 
-  # Scena: teksty kroków liczone z tego samego świata autobusów.
-  local({
-    scene_texts(input, output, "ch4_bus_scene", list(
-      tagList("Odjazd wg rozkładu 7:45, jazda 10 minut, zajęcia o 8:00. Poczekaj kilka
-        razy na linii A, potem na K. Spóźnienie x liczymy od godziny z rozkładu."),
-      tagList("Każde czekanie trafia do histogramu swojej linii (każdy ma własną skalę
-        wysokości). Zbierz po kilkaset kursów na obu liniach i porównaj kształty."),
-      tagList("Przerywana linia to średnia, wspólna dla obu linii. Na prawo od
-        granicy zapasu nie zdążysz na zajęcia. Suwak zmienia zapas: większy zapas
-        to wcześniejszy kurs. Porównaj odsetek spóźnień pod wykresem: średnia
-        nie mówi, czy zdążysz.")
-    ))
-  })
+  # Scena: opisy kroków są w dokumencie (scene_widget(texts = )).
 
   # Ryc. 4.2 (SD krok po kroku) i 4.3 (reguła 68–95–99.7) rysuje stat_charts.js.
 

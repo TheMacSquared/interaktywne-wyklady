@@ -139,7 +139,13 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
           ),
             practice = c(term = "plan badań: do ustalonej liczby prób albo do ustalonej liczby zdarzeń", question = "Ustalam z góry koszt czy materiał do analizy?")),
           "Te same próby, z tym samym \\(p\\), mogą więc prowadzić do dwóch różnych zmiennych losowych. Rozkład dwumianowy z poprzedniego wykładu opisuje pierwszą regułę. Ten wykład dotyczy drugiej. Zanim przejdziemy do wzorów, sprawdź, czy potrafisz wskazać regułę w konkretnym planie audytu.",
-          risk_vote_panel("d5_vote", "d5_vote_feedback", "Chcemy znaleźć trzy wadliwe zabezpieczenia. Który element eksperymentu jest stały?", c("r=3 znalezione wady" = "r", "n — liczba kontroli" = "n", "odsetek wad w zebranej próbie" = "share"), correct = "r"),
+          risk_vote_panel("d5_vote", "d5_vote_feedback", "Chcemy znaleźć trzy wadliwe zabezpieczenia. Który element eksperymentu jest stały?", c("r=3 znalezione wady" = "r", "n — liczba kontroli" = "n", "odsetek wad w zebranej próbie" = "share"), correct = "r",
+            feedback = list(
+              "r" = lc_status(lc_verdict(tags$strong("Stały jest cel:"), type = "ok"),
+                              " r=3; liczba kontroli pozostaje losowa."),
+              ".other" = lc_status(lc_verdict(tags$strong("Stały jest cel:"), type = "warning"),
+                                   " r=3; liczba kontroli pozostaje losowa.")
+            )),
           "Kuszącą odpowiedzią jest odsetek wad: przecież \\(p = 0.10\\) jest stałe. Ale \\(p\\) to parametr modelu, a nie element planu eksperymentu. Odsetek wad w zebranej próbie jest wynikiem i zmienia się od serii do serii. Plan audytu ustala tylko jedno: kończymy po trzeciej wykrytej wadzie."
         )
       ),
@@ -524,22 +530,7 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
 dozd_chapters <- risk_block_chapters(dozd_block)
 
 dozd_server <- function(input, output, session) {
-  vote <- reactiveVal(FALSE)
-  observeEvent(input$d5_vote_check, vote(TRUE))
-  output$d5_vote_feedback <- renderUI({
-    req(vote())
-    if (is.null(input$d5_vote)) {
-      return(lc_caption(
-               "Najpierw zaznacz jedną z odpowiedzi.",
-               tone = "info"
-             ))
-    }
-    lc_status(
-      lc_verdict(tags$strong("Stały jest cel:"), type = if (identical(input$d5_vote, "r")) "ok" else "warning"),
-      " r=3; liczba kontroli pozostaje losowa."
-    )
-  })
+  # Wykład nie ma logiki serwera: głosowanie i quiz ocenia przeglądarka.
   # Rozkład geometryczny rysuje przeglądarka (modules/wykresy.js).
-  risk_assessment_server("d5", dozd_quiz, input, output)
   # Punkty stop (PUNKTY-STOP-PROPOZYCJA.md) działają w przeglądarce: modules/sceny.js.
 }

@@ -2,6 +2,123 @@
 # CHAPTER 2: Zmienne jakościowe
 # ============================================================================
 
+# Ryc. 2.1: opis kroku i tabela dla kroku (1–4) i zmiennej ("kierunek" albo
+# "zadowolenie"). Wszystkie osiem widoków jest w dokumencie; liczy je R przy
+# budowaniu strony, a przełączają krok widgetu i segment „Zmienna”.
+.ch2_freq_text <- function(step, var_name) {
+  is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
+  var_label <- if (is_ord) "zadowolenie" else "kierunek"
+
+  if (step == 1) {
+    tagList(
+        "Pierwsze obserwacje zmiennej ",
+        tags$code(var_label, .noWS = "outside"), ". Każdy wiersz to odpowiedź jednego studenta.",
+        if (is_ord) " Kategorie mają naturalną kolejność: od „Bardzo niezadowolony” do „Bardzo zadowolony”."
+    )
+  } else if (step == 2) {
+    tagList(
+        "Liczymy, ile razy występuje każda kategoria. To są liczebności (częstości bezwzględne).",
+        if (is_ord) " Kolejność wierszy wynika z porządku kategorii."
+    )
+  } else if (step == 3) {
+    tagList(
+        paste0("Dzielimy każdą liczebność przez liczbę obserwacji (n = ",
+               nrow(student_data), ") i wynik podajemy jako ułamek lub procent."))
+  } else if (step == 4) {
+    if (is_ord) {
+      cum_pct <- cumsum(prop.table(table(student_data$zadowolenie))) * 100
+      low_pct <- cum_pct[["Niezadowolony"]]
+      tagList(
+        "Sumujemy częstości narastająco. Dla zmiennej porządkowej wynik da się
+         odczytać: ", lc_fmt(low_pct, 1), "% studentów jest niezadowolonych
+         lub bardzo niezadowolonych, a ", lc_fmt(100 - low_pct, 1),
+        "% neutralnych lub bardziej zadowolonych.")
+    } else {
+      cum_pct <- cumsum(prop.table(table(student_data$kierunek))) * 100
+      tagList(
+        "Sumujemy częstości narastająco. Dla zmiennej nominalnej kolejność
+         kategorii jest umowna, więc wynik nic nie znaczy: „",
+        lc_fmt(cum_pct[["Informatyka"]], 1), "% studentów studiuje kierunki
+         do Informatyki włącznie” to tylko skutek porządku alfabetycznego.")
+    }
+  }
+}
+
+.ch2_freq_table <- function(step, var_name) {
+  is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
+  x <- if (is_ord) student_data$zadowolenie else student_data$kierunek
+  col_label <- if (is_ord) "Zadowolenie" else "Kierunek"
+
+  if (step == 1) {
+    raw <- data.frame(V = as.character(head(x, 20)))
+    return(lc_table_preview(raw, n = 20, total = length(x),
+                            cols = list(lc_col("V", col_label, "text"))))
+  }
+
+  counts <- table(x)
+  df <- data.frame(
+    kat = names(counts),
+    n = as.integer(counts)
+  )
+  df$f <- round(df$n / sum(df$n), 3)
+  df$p <- round(df$f * 100, 1)
+  df$cn <- cumsum(df$n)
+  df$cp <- round(cumsum(df$f) * 100, 1)
+  foot <- list(kat = "Razem", n = sum(df$n), f = 1, p = 100, cn = "", cp = "")
+
+  with_class <- function(col, class) { col$class <- class; col }
+  cols <- list(
+    kat = lc_col("kat", col_label, "row"),
+    n   = lc_col("n", "Liczebność", short = "n", desc = "liczebność"),
+    f   = lc_col("f", "Częstość względna", digits = 3, short = "f",
+                 desc = "częstość względna (n / N)"),
+    p   = lc_col("p", "Procent", digits = 1, short = "%",
+                 desc = "procent (f · 100)"),
+    cn  = lc_col("cn", "Liczebność skumulowana", short = "N skum.",
+                 desc = "liczebność skumulowana"),
+    cp  = lc_col("cp", "Procent skumulowany", digits = 1, short = "% skum.",
+                 desc = "procent skumulowany")
+  )
+
+  if (step == 2) {
+    return(lc_table(df, list(cols$kat, with_class(cols$n, "is-new")), foot = foot))
+  }
+  if (step == 3) {
+    return(lc_table(df, list(cols$kat, cols$n, with_class(cols$f, "is-new"),
+                             with_class(cols$p, "is-new")),
+                    foot = foot, scroll = TRUE, label = "Tabela częstości"))
+  }
+  # Krok 4: dla zmiennej nominalnej skumulowane wartości są wyszarzone.
+  cum_class <- if (is_ord) "is-new" else "is-new is-dim"
+  lc_table_split(df,
+    list(cols$kat, cols$n, cols$f, cols$p,
+         with_class(cols$cn, cum_class), with_class(cols$cp, cum_class)),
+    groups = list(c("n", "f", "p"), c("cn", "cp")),
+    foot = foot, label = "Tabela częstości")
+}
+
+.ch2_freq_vars <- c("kierunek", "zadowolenie")
+.ch2_freq_views <- function(fun, inline = FALSE) {
+  lapply(1:4, function(step) {
+    lc_variants("ch2_freq_var", inline = inline, selected = "kierunek",
+      stats::setNames(lapply(.ch2_freq_vars, function(v) fun(step, v)), .ch2_freq_vars))
+  })
+}
+
+# Ryc. 2.3: treść zależna od scenariusza (1–3) jako warianty segmentu ch2_scenario.
+.ch2_scenario_variants <- function(fun) {
+  lc_variants("ch2_scenario", selected = "1", stats::setNames(
+    lapply(seq_along(pie_vs_bar_scenarios), function(i) fun(pie_vs_bar_scenarios[[i]], i)),
+    as.character(seq_along(pie_vs_bar_scenarios))))
+}
+
+# Karty w puli nie są posortowane (kolejność stała dla każdego scenariusza).
+.ch2_pool_order <- c(4, 1, 5, 2, 3)
+.ch2_position_zones <- c(
+  pos1 = "1. najmniejszy", pos2 = "2.", pos3 = "3.",
+  pos4 = "4.", pos5 = "5. największy"
+)
+
 ch2_ui <- list(
   id = "ch-jakosciowe", num = "02", title = "Zmienne jakościowe",
   content = tagList(
@@ -67,7 +184,8 @@ ch2_ui <- list(
             selected = "kierunek"
           )
         ),
-        body = uiOutput("ch2_freq_table")
+        body = lc_step_views(.ch2_freq_views(.ch2_freq_table)),
+        texts = .ch2_freq_views(.ch2_freq_text, inline = TRUE)
       )
     ),
 
@@ -144,7 +262,19 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.3",
       title = "Wykres kołowy a słupkowy — trzy scenariusze",
+      # Scenariusz, odsłonięcie odpowiedzi i ocenę ułożenia prowadzi przeglądarka
+      # (modules/scenario_chart.js). Treści wszystkich scenariuszy są w dokumencie:
+      # przełącza je lc_variants(), a [data-scn-reveal] / [data-scn-hide] pokazują
+      # się po odsłonięciu odpowiedzi albo przed nim.
       tags$div(class = "lc-scenario",
+        `data-config` = jsonlite::toJSON(auto_unbox = TRUE, list(
+          input = "ch2_scenario",
+          scenarios = lapply(pie_vs_bar_scenarios, function(s) {
+            list(labels = s$labels, data = s$data, colors = unname(s$colors),
+                 # identyfikatory kart od najmniejszego udziału do największego
+                 order = LETTERS[seq_along(s$labels)][order(s$data)])
+          })
+        )),
         lc_toolbar(
           lc_segmented("ch2_scenario", "Scenariusz",
             choices = c("Duże różnice" = "1", "Podobne" = "2", "Złe kolory" = "3")),
@@ -156,22 +286,71 @@ ch2_ui <- list(
             div(class = "lc-scenario-canvas",
               tags$div(class = "lc-ec", id = "ch2_pie_canvas", role = "img", `aria-label` = "Udziały produktów na wykresie kołowym")
             ),
-            uiOutput("ch2_scenario_pie_verdict")
+            .ch2_scenario_variants(function(s, i) {
+              tags$div(`data-scn-reveal` = "true", hidden = NA,
+                lc_caption(lc_verdict(b_(if (s$pie_ok) "OK." else "Problem."),
+                                      type = if (s$pie_ok) "ok" else "danger"),
+                           " ", s$pie_verdict))
+            })
           ),
           tags$div(
             tags$h4("Wykres słupkowy, te same dane"),
             div(class = "lc-scenario-canvas",
               tags$div(class = "lc-ec", id = "ch2_bar_canvas", role = "img", `aria-label` = "Udziały tych samych produktów na wykresie słupkowym po odsłonięciu"),
-              uiOutput("ch2_bar_cover")
+              tags$div(`data-scn-hide` = "true",
+                style = "position: absolute; inset: 0; display: flex; align-items: center;
+                  justify-content: center; padding: 1em; text-align: center;
+                  background: var(--upwr-surface); color: var(--upwr-ink-soft);",
+                "Słupki i wartości odsłonimy po ułożeniu produktów"
+              )
             ),
-            uiOutput("ch2_scenario_bar_verdict")
+            .ch2_scenario_variants(function(s, i) {
+              tags$div(`data-scn-reveal` = "true", hidden = NA,
+                lc_caption(lc_verdict(b_("OK."), type = "ok"), " ", s$bar_verdict))
+            })
           )
         ),
         tags$div(style = "margin-top: 1.6em; font-size: 1.15em;",
-          lc_readouts(uiOutput("ch2_scenario_legend"))
+          # Odczyty w kolorach wycinków pełnią rolę legendy obu wykresów.
+          # Przed odsłonięciem zamiast wartości pokazują kreskę.
+          lc_readouts(.ch2_scenario_variants(function(s, i) {
+            tagList(mapply(function(label, color, value) {
+              lc_readout(label, tagList(
+                tags$span(`data-scn-hide` = "true", "—"),
+                tags$span(`data-scn-reveal` = "true", hidden = NA, paste0(value, "%"))
+              ), color = color, swatch = TRUE)
+            }, s$labels, s$colors, s$data, SIMPLIFY = FALSE))
+          }))
         ),
-        uiOutput("ch2_order_widget"),
-        uiOutput("ch2_order_result")
+        .ch2_scenario_variants(function(s, i) {
+          ids <- LETTERS[seq_along(s$labels)]
+          correct_idx <- order(s$data)
+          tagList(
+            lc_drop_match(
+              input_id = paste0("ch2_order_", i),
+              items = data.frame(
+                id   = ids[.ch2_pool_order],
+                text = s$labels[.ch2_pool_order],
+                stringsAsFactors = FALSE
+              ),
+              zones = .ch2_position_zones,
+              colors = rep(upwr_reference, length(.ch2_position_zones)),
+              # Karty w kolorach wycinków — łatwiej powiązać produkt z kołem.
+              item_colors = s$colors[.ch2_pool_order],
+              hint = "Przeciągnijcie produkty na pozycje od najmniejszego udziału do największego.",
+              actions = htmltools::tagAppendAttributes(
+                lc_action(paste0("ch2_reveal_", i), "Odsłoń odpowiedź", variant = "solid"),
+                `data-scn-reveal-button` = "true")
+            ),
+            # Porównanie ułożenia z prawidłową kolejnością; liczbę trafień wpisuje
+            # skrypt w chwili odsłonięcia (późniejsze przeciągnięcia jej nie zmieniają).
+            tags$div(`data-scn-reveal` = "true", hidden = NA, lc_caption(
+              "Trafionych pozycji: ", tags$span(`data-scn-hits` = "true", "0"),
+              paste0(" z 5. Od najmniejszego udziału: ",
+                     paste0(s$labels[correct_idx], " (", s$data[correct_idx], "%)", collapse = ", "), ".")
+            ))
+          )
+        })
       )
     ),
 
@@ -320,242 +499,8 @@ ch2_ui <- list(
 # --------------------------------------------------------------------------
 
 ch2_server <- function(input, output, session) {
-
-  ch2_freq_step <- lc_step_server("ch2_freq", input)$step
-  ch2_scenario_idx <- reactiveVal(1)
-
-  # ========================================================================
-  # Widget 1: Frequency table step-by-step
-  # ========================================================================
-
-  output$ch2_freq_text <- renderUI({
-    step <- ch2_freq_step()
-    var_name <- input$ch2_freq_var
-    is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
-    var_label <- if (is_ord) "zadowolenie" else "kierunek"
-
-    if (step == 1) {
-      tagList(
-          "Pierwsze obserwacje zmiennej ",
-          tags$code(var_label, .noWS = "outside"), ". Każdy wiersz to odpowiedź jednego studenta.",
-          if (is_ord) " Kategorie mają naturalną kolejność: od „Bardzo niezadowolony” do „Bardzo zadowolony”."
-      )
-    } else if (step == 2) {
-      tagList(
-          "Liczymy, ile razy występuje każda kategoria. To są liczebności (częstości bezwzględne).",
-          if (is_ord) " Kolejność wierszy wynika z porządku kategorii."
-      )
-    } else if (step == 3) {
-      tagList(
-          paste0("Dzielimy każdą liczebność przez liczbę obserwacji (n = ",
-                 nrow(student_data), ") i wynik podajemy jako ułamek lub procent."))
-    } else if (step == 4) {
-      if (is_ord) {
-        cum_pct <- cumsum(prop.table(table(student_data$zadowolenie))) * 100
-        low_pct <- cum_pct[["Niezadowolony"]]
-        tagList(
-          "Sumujemy częstości narastająco. Dla zmiennej porządkowej wynik da się
-           odczytać: ", lc_fmt(low_pct, 1), "% studentów jest niezadowolonych
-           lub bardzo niezadowolonych, a ", lc_fmt(100 - low_pct, 1),
-          "% neutralnych lub bardziej zadowolonych.")
-      } else {
-        cum_pct <- cumsum(prop.table(table(student_data$kierunek))) * 100
-        tagList(
-          "Sumujemy częstości narastająco. Dla zmiennej nominalnej kolejność
-           kategorii jest umowna, więc wynik nic nie znaczy: „",
-          lc_fmt(cum_pct[["Informatyka"]], 1), "% studentów studiuje kierunki
-           do Informatyki włącznie” to tylko skutek porządku alfabetycznego.")
-      }
-    }
-  })
-
-  output$ch2_freq_table <- renderUI({
-    step <- ch2_freq_step()
-
-    var_name <- input$ch2_freq_var
-    is_ord <- (!is.null(var_name) && var_name == "zadowolenie")
-    x <- if (is_ord) student_data$zadowolenie else student_data$kierunek
-    col_label <- if (is_ord) "Zadowolenie" else "Kierunek"
-
-    if (step == 1) {
-      raw <- data.frame(V = as.character(head(x, 20)))
-      return(lc_table_preview(raw, n = 20, total = length(x),
-                              cols = list(lc_col("V", col_label, "text"))))
-    }
-
-    counts <- table(x)
-    df <- data.frame(
-      kat = names(counts),
-      n = as.integer(counts)
-    )
-    df$f <- round(df$n / sum(df$n), 3)
-    df$p <- round(df$f * 100, 1)
-    df$cn <- cumsum(df$n)
-    df$cp <- round(cumsum(df$f) * 100, 1)
-    foot <- list(kat = "Razem", n = sum(df$n), f = 1, p = 100, cn = "", cp = "")
-
-    with_class <- function(col, class) { col$class <- class; col }
-    cols <- list(
-      kat = lc_col("kat", col_label, "row"),
-      n   = lc_col("n", "Liczebność", short = "n", desc = "liczebność"),
-      f   = lc_col("f", "Częstość względna", digits = 3, short = "f",
-                   desc = "częstość względna (n / N)"),
-      p   = lc_col("p", "Procent", digits = 1, short = "%",
-                   desc = "procent (f · 100)"),
-      cn  = lc_col("cn", "Liczebność skumulowana", short = "N skum.",
-                   desc = "liczebność skumulowana"),
-      cp  = lc_col("cp", "Procent skumulowany", digits = 1, short = "% skum.",
-                   desc = "procent skumulowany")
-    )
-
-    if (step == 2) {
-      return(lc_table(df, list(cols$kat, with_class(cols$n, "is-new")), foot = foot))
-    }
-    if (step == 3) {
-      return(lc_table(df, list(cols$kat, cols$n, with_class(cols$f, "is-new"),
-                               with_class(cols$p, "is-new")),
-                      foot = foot, scroll = TRUE, label = "Tabela częstości"))
-    }
-    # Krok 4: dla zmiennej nominalnej skumulowane wartości są wyszarzone.
-    cum_class <- if (is_ord) "is-new" else "is-new is-dim"
-    lc_table_split(df,
-      list(cols$kat, cols$n, cols$f, cols$p,
-           with_class(cols$cn, cum_class), with_class(cols$cp, cum_class)),
-      groups = list(c("n", "f", "p"), c("cn", "cp")),
-      foot = foot, label = "Tabela częstości")
-  })
-
-
-  # ========================================================================
-  # Widget 1b: Nominal vs Ordinal comparison
-  # ========================================================================
-
-  # Ryc. 2.2 rysuje stat_charts.js; opis kolejności jest w UI dla obu stanów.
-
-
-  # ========================================================================
-  # Widget 2: Pie vs Bar — scenario comparison (ECharts)
-  # ========================================================================
-
-  # Zmiana scenariusza zaczyna rundę od nowa: nowy identyfikator widgetu
-  # ustawień (bez starych przeciągnięć) i schowane wartości.
-  ch2_round <- reactiveVal(0)
-  ch2_revealed <- reactiveVal(FALSE)
-
-  observeEvent(input$ch2_scenario, {
-    ch2_scenario_idx(as.integer(input$ch2_scenario))
-    ch2_round(ch2_round() + 1)
-    ch2_revealed(FALSE)
-  })
-
-  observeEvent(input$ch2_reveal, ch2_revealed(TRUE))
-
-  ch2_current_scenario <- reactive({
-    pie_vs_bar_scenarios[[ch2_scenario_idx()]]
-  })
-
-  ch2_widget_id <- reactive(paste0("ch2_order_", ch2_round()))
-
-  # Send scenario data to ECharts (scenario_chart.js) via custom message
-  observe({
-    s <- ch2_current_scenario()
-    session$sendCustomMessage("render_scenario", list(
-      labels = as.list(s$labels),
-      data   = as.list(s$data),
-      colors = as.list(s$colors),
-      reveal = ch2_revealed()
-    ))
-  })
-
-  output$ch2_scenario_pie_verdict <- renderUI({
-    if (!ch2_revealed()) return(NULL)
-    s <- ch2_current_scenario()
-    lc_caption(lc_verdict(b_(if (s$pie_ok) "OK." else "Problem."),
-                          type = if (s$pie_ok) "ok" else "danger"),
-               " ", s$pie_verdict)
-  })
-
-  output$ch2_scenario_bar_verdict <- renderUI({
-    if (!ch2_revealed()) return(NULL)
-    s <- ch2_current_scenario()
-    lc_caption(lc_verdict(b_("OK."), type = "ok"), " ", s$bar_verdict)
-  })
-
-  output$ch2_bar_cover <- renderUI({
-    if (ch2_revealed()) return(NULL)
-    tags$div(
-      style = "position: absolute; inset: 0; display: flex; align-items: center;
-        justify-content: center; padding: 1em; text-align: center;
-        background: var(--upwr-surface); color: var(--upwr-ink-soft);",
-      "Słupki i wartości odsłonimy po ułożeniu produktów"
-    )
-  })
-
-  output$ch2_scenario_legend <- renderUI({
-    s <- ch2_current_scenario()
-    # Odczyty w kolorach wycinków pełnią rolę legendy obu wykresów.
-    # Przed odsłonięciem zamiast wartości pokazują kreskę.
-    tagList(mapply(function(label, color, value) {
-      shown <- if (ch2_revealed()) paste0(value, "%") else "—"
-      lc_readout(label, shown, color = color, swatch = TRUE)
-    }, s$labels, s$colors, s$data, SIMPLIFY = FALSE))
-  })
-
-  # Karty w puli nie są posortowane (kolejność stała dla każdego scenariusza).
-  ch2_pool_order <- c(4, 1, 5, 2, 3)
-  ch2_position_zones <- c(
-    pos1 = "1. najmniejszy", pos2 = "2.", pos3 = "3.",
-    pos4 = "4.", pos5 = "5. największy"
-  )
-
-  output$ch2_order_widget <- renderUI({
-    s <- ch2_current_scenario()
-    ids <- LETTERS[seq_along(s$labels)]
-    lc_drop_match(
-      input_id = ch2_widget_id(),
-      items = data.frame(
-        id   = ids[ch2_pool_order],
-        text = s$labels[ch2_pool_order],
-        stringsAsFactors = FALSE
-      ),
-      zones = ch2_position_zones,
-      colors = rep(upwr_reference, length(ch2_position_zones)),
-      # Karty w kolorach wycinków — łatwiej powiązać produkt z kołem.
-      item_colors = s$colors[ch2_pool_order],
-      hint = "Przeciągnijcie produkty na pozycje od najmniejszego udziału do największego.",
-      actions = lc_action("ch2_reveal", "Odsłoń odpowiedź", variant = "solid")
-    )
-  })
-
-  # Porównanie ułożenia z prawidłową kolejnością. Ułożenie zamrażamy w chwili
-  # odsłonięcia, żeby kolejne przeciągnięcia nie zmieniały wyniku.
-  output$ch2_order_result <- renderUI({
-    if (!ch2_revealed()) return(NULL)
-    s <- ch2_current_scenario()
-    assignment <- isolate(input[[ch2_widget_id()]])
-    ids <- LETTERS[seq_along(s$labels)]
-    correct_idx <- order(s$data)
-    correct_ids <- ids[correct_idx]
-    chosen <- vapply(names(ch2_position_zones), function(pos) {
-      value <- assignment[[pos]]
-      if (is.null(value)) NA_character_ else as.character(value)
-    }, character(1))
-    hits <- sum(chosen == correct_ids, na.rm = TRUE)
-    lc_caption(
-      paste0("Trafionych pozycji: ", hits, " z 5. Od najmniejszego udziału: ",
-             paste0(s$labels[correct_idx], " (", s$data[correct_idx], "%)",
-                    collapse = ", "), ".")
-    )
-  })
-
-  # Ryc. 2.4 (palety kolorów) rysuje stat_charts.js.
-
-
-  # ========================================================================
-  # Widget 5: Mode (dominanta)
-  # ========================================================================
-
-  # Ryc. 2.5 (dominanta) losuje i rysuje stat_charts.js.
-
-
+  # Rozdział nie ma logiki serwera:
+  #   Ryc. 2.1 (tabela częstości krok po kroku) — widoki w dokumencie, .ch2_freq_views();
+  #   Ryc. 2.2, 2.4 i 2.5 — stat_charts.js;
+  #   Ryc. 2.3 (koło a słupki) — modules/scenario_chart.js.
 }

@@ -748,5 +748,4 @@ fta_server <- function(input, output, session) {
                                      "Porównanie dotyczy modelu bazowego i jednakowej redukcji względnej.",
                                      tone = "info"
                                    ))
-  risk_assessment_server("f9", fta_quiz, input, output)
 }

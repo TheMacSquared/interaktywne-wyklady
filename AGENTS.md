@@ -35,6 +35,8 @@ Statystyka 2 (`statystyka-2/`) zawiera symulacje, Bayesa, materiały kierunkowe 
 
 Statystyka i analiza ryzyka korzystają z jednego wspólnego rdzenia w `shared/` (layout, paleta, motyw wykresów, style, biblioteki JS). Zmianę rdzenia robi się raz, dla obu kursów. Katalog `<kurs>/R/` zawiera tylko to, co własne dla kursu: `course.R` (nazwa, logo, mapa wykładów, tryb rozdziałów), ewentualny `course_styles.css` (elementy kursu i świadome odstępstwa od rdzenia) oraz pliki przedmiotowe. Opis w `shared/README.md`. Narzędzia pomocnicze statystyki są w `statystyka/scripts/`.
 
+Na gałęzi `statyczny-js` statystyka i analiza ryzyka przechodzą na strony statyczne (bez serwera R); plan i stan są w `TODO.md` („Przejście na strony statyczne”), narzędzia w `scripts/` (`check_static_ready.R`, `build_static.R`, `check_static_page.R`), opis w `shared/README.md`. Nowy kod widgetów nie dodaje wyjść ani wejść serwera (`render*`, `observe*`, `input$…`): to, co zależy od ruchu studenta, liczy JS, resztę R przy budowaniu.
+
 Ekonometria jest archiwalna i znajduje się w `deprecated/ekonometria/`. Nie należy traktować jej jako aktywnego przedmiotu ani włączać do huba lub kontroli aktywnych wykładów. Materiały pozostają dostępne jako referencja.
 
 ## Konwencje kodowania

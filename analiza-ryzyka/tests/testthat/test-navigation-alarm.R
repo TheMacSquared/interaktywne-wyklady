@@ -63,7 +63,8 @@ testthat::test_that("wykład 02: Monty Hall, drzewo i tablica działają bez ser
   testthat::expect_equal(res$figs, "w2_monty")
   testthat::expect_equal(res$tree, 1L)
   testthat::expect_equal(res$plot_outputs, 0L)
-  testthat::expect_equal(res$html_outputs, "w2_quiz_feedback")
+  # Quiz ocenia przeglądarka: wykład nie ma już żadnego wyjścia serwera.
+  testthat::expect_length(res$html_outputs, 0L)
   testthat::expect_true(grepl("lcW2Monty", res$head, fixed = TRUE))
   testthat::expect_false(res$has_server)
 })

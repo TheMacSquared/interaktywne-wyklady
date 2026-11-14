@@ -52,7 +52,7 @@ testthat::test_that("karty, scenariusze i notatka reagują na wejścia aplikacji
         i10_controller = .95, i10_init = .005, i10_sens = .95, i10_fpr = .05,
         i10_n = 100, i10_p = .02, i10_question = "bayes", i10_budget = 2,
         i10_intervention = "prevention", i10_recommend = "prevention",
-        i10_uncertainty = .2, i10_target = .002, i10_quiz_check = 0)
+        i10_uncertainty = .2, i10_target = .002)
       initial <- top_p()
       stopifnot(nrow(scenario_results()) == 12)
       stopifnot(abs(life_r() - exp(-1000 / 1500)) < 1e-12)
@@ -71,8 +71,6 @@ testthat::test_that("karty, scenariusze i notatka reagują na wejścia aplikacji
       stopifnot(grepl("poza budżetem", output$i10_memo$html, fixed = TRUE))
       session$setInputs(i10_target = .0001)
       stopifnot(grepl("nie jest spełniony", output$i10_memo$html, fixed = TRUE))
-      session$setInputs(i10_quiz_check = 1)
-      stopifnot(grepl("Poprawna odpowiedź", output$i10_quiz_feedback$html, fixed = TRUE))
     })
     TRUE
   }, args = list(path = file.path(risk_root, "10-model-do-decyzji")), timeout = 60)

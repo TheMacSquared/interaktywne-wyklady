@@ -2,6 +2,30 @@
 # CHAPTER 1: Typy danych
 # ============================================================================
 
+# Opisy typów zmiennych pokazywane po kliknięciu liścia drzewa (Ryc. 1.2).
+.ch1_leaf_info <- list(
+  ciagla = list(
+    label = "Ciągłe", color = type_colors["ilosciowa_ciagla"],
+    desc = "Wartości liczbowe, które mogą przyjmować dowolną wartość z przedziału (także ułamkowe).",
+    examples = "wzrost (cm), waga (kg), czas dojazdu (min), średnia ocen"
+  ),
+  dyskretna = list(
+    label = "Dyskretne", color = type_colors["ilosciowa_dyskretna"],
+    desc = "Wartości liczbowe, ale tylko całkowite — można je policzyć.",
+    examples = "liczba kursów, liczba nieobecności"
+  ),
+  porzadkowa = list(
+    label = "Porządkowe", color = type_colors["porzadkowa"],
+    desc = "Kategorie z naturalnym porządkiem, ale odległości między nimi nie są znane.",
+    examples = "rok studiów (1 < 2 < 3 < ...), zadowolenie ze studiów, ocena wykładowcy"
+  ),
+  nominalna = list(
+    label = "Nominalne", color = type_colors["nominalna"],
+    desc = "Kategorie bez naturalnego porządku — można je tylko liczyć.",
+    examples = "płeć, kierunek studiów, grupa krwi"
+  )
+)
+
 ch1_ui <- list(
   id = "ch-typy", num = "01", title = "Typy danych",
   content = tagList(
@@ -74,14 +98,16 @@ ch1_ui <- list(
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_ciagla",
                       style = paste0("background:", type_colors["ilosciowa_ciagla"], ";"),
-                      onclick = "Shiny.setInputValue('ch1_leaf_click', 'ciagla', {priority:'event'})",
+                      `data-lc-pick` = "ch1_leaf", `data-value` = "ciagla", role = "button",
+                      tabindex = "0", `aria-pressed` = "false",
                       "Ciągłe"
                     )
                   ),
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_dyskretna",
                       style = paste0("background:", type_colors["ilosciowa_dyskretna"], ";"),
-                      onclick = "Shiny.setInputValue('ch1_leaf_click', 'dyskretna', {priority:'event'})",
+                      `data-lc-pick` = "ch1_leaf", `data-value` = "dyskretna", role = "button",
+                      tabindex = "0", `aria-pressed` = "false",
                       "Dyskretne"
                     )
                   )
@@ -93,14 +119,16 @@ ch1_ui <- list(
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_porzadkowa",
                       style = paste0("background:", type_colors["porzadkowa"], ";"),
-                      onclick = "Shiny.setInputValue('ch1_leaf_click', 'porzadkowa', {priority:'event'})",
+                      `data-lc-pick` = "ch1_leaf", `data-value` = "porzadkowa", role = "button",
+                      tabindex = "0", `aria-pressed` = "false",
                       "Porządkowe"
                     )
                   ),
                   tags$li(
                     div(class = "tax-leaf", id = "ch1_leaf_nominalna",
                       style = paste0("background:", type_colors["nominalna"], ";"),
-                      onclick = "Shiny.setInputValue('ch1_leaf_click', 'nominalna', {priority:'event'})",
+                      `data-lc-pick` = "ch1_leaf", `data-value` = "nominalna", role = "button",
+                      tabindex = "0", `aria-pressed` = "false",
                       "Nominalne"
                     )
                   )
@@ -111,7 +139,15 @@ ch1_ui <- list(
         )
       ),
       lc_caption("Kliknij kolorowy liść drzewa, aby zobaczyć przykłady."),
-      uiOutput("ch1_leaf_detail")
+      # Opisy wszystkich typów są w dokumencie; pokazuje je kliknięcie liścia.
+      lc_variants("ch1_leaf", pick = TRUE, lapply(.ch1_leaf_info, function(info) {
+        # Znacznik w kolorze typu, jak liść drzewa.
+        lc_status(
+          p(tags$i(class = "lc-th-swatch", style = paste0("--lc-sw:", info$color)),
+            b_(info$label), " ", info$desc),
+          lc_caption(tagList(tags$em("W naszych danych: "), info$examples))
+        )
+      }))
     ),
 
     lc_p("Typy różnią się tym, ile operacji na danych ma sens. Kategorie nominalne
@@ -219,7 +255,8 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.4",
       title = "Pierwsze 10 obserwacji — nasz zbiór danych",
-      uiOutput("ch1_data_preview")
+      lc_table(head(student_data, 10), scroll = TRUE, sticky_first = TRUE,
+               label = "Pierwsze 10 obserwacji ankiety")
     ),
 
     lc_p("W tabeli są zmienne wszystkich czterech typów. Płeć, kierunek i grupa
@@ -243,13 +280,9 @@ ch1_ui <- list(
         "Wybierz jedną zmienną ilościową. Każdy kolejny rozdział pokaże,
          jakie nowe informacje dają kolejne narzędzia statystyczne zastosowane
          do tej samej zmiennej."),
+      # Zwykła lista przeglądarki (selectize = FALSE): działa bez skryptów Shiny.
       lc_toolbar(selectInput("tracked_var", "Zmienna do śledzenia",
-        choices = c("Wzrost (cm)" = "wzrost",
-                    "Waga (kg)" = "waga",
-                    "Czas dojazdu (min)" = "czas_dojazdu",
-                    "Średnia ocen" = "srednia_ocen"),
-        selected = "wzrost"
-          ))
+        choices = tracked_vars, selected = "wzrost", selectize = FALSE))
     ),
 
     lc_chapter_next(
@@ -270,65 +303,6 @@ ch1_ui <- list(
 # --------------------------------------------------------------------------
 
 ch1_server <- function(input, output, session) {
-
-  # Ryc. 1.1 i 1.3 rysuje stat_charts.js (dane ankiety w przeglądarce).
-
-
-  ch1_selected_leaf <- reactiveVal(NULL)
-
-  # --- Widget 1: Taxonomy tree (HTML) ---
-
-  .leaf_info <- list(
-    ciagla = list(
-      label = "Ciągłe", color = type_colors["ilosciowa_ciagla"],
-      desc = "Wartości liczbowe, które mogą przyjmować dowolną wartość z przedziału (także ułamkowe).",
-      examples = "wzrost (cm), waga (kg), czas dojazdu (min), średnia ocen"
-    ),
-    dyskretna = list(
-      label = "Dyskretne", color = type_colors["ilosciowa_dyskretna"],
-      desc = "Wartości liczbowe, ale tylko całkowite — można je policzyć.",
-      examples = "liczba kursów, liczba nieobecności"
-    ),
-    porzadkowa = list(
-      label = "Porządkowe", color = type_colors["porzadkowa"],
-      desc = "Kategorie z naturalnym porządkiem, ale odległości między nimi nie są znane.",
-      examples = "rok studiów (1 < 2 < 3 < ...), zadowolenie ze studiów, ocena wykładowcy"
-    ),
-    nominalna = list(
-      label = "Nominalne", color = type_colors["nominalna"],
-      desc = "Kategorie bez naturalnego porządku — można je tylko liczyć.",
-      examples = "płeć, kierunek studiów, grupa krwi"
-    )
-  )
-
-  observeEvent(input$ch1_leaf_click, {
-    leaf_id <- input$ch1_leaf_click
-    if (identical(ch1_selected_leaf(), leaf_id)) {
-      ch1_selected_leaf(NULL)
-    } else {
-      ch1_selected_leaf(leaf_id)
-    }
-  })
-
-  output$ch1_leaf_detail <- renderUI({
-    sel <- ch1_selected_leaf()
-    if (is.null(sel)) return(NULL)
-    info <- .leaf_info[[sel]]
-    # Znacznik w kolorze typu, jak liść drzewa.
-    lc_status(
-      p(tags$i(class = "lc-th-swatch", style = paste0("--lc-sw:", info$color)),
-        b_(info$label), " ", info$desc),
-      lc_caption(tagList(tags$em("W naszych danych: "), info$examples))
-    )
-  })
-
-  # --- Widget 2: Examples gallery ---
-
-  # --- Widget 4: Dataset preview ---
-
-  output$ch1_data_preview <- renderUI({
-    lc_table(head(student_data, 10), scroll = TRUE, sticky_first = TRUE,
-             label = "Pierwsze 10 obserwacji ankiety")
-  })
-
+  # Rozdział nie ma logiki serwera: opisy typów pokazuje lc_variants(pick = TRUE),
+  # podgląd danych jest w dokumencie, a Ryc. 1.1 i 1.3 rysuje stat_charts.js.
 }

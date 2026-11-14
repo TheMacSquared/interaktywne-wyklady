@@ -49,8 +49,12 @@ risk_widget_panel <- function(label = "Eksperyment", title, controls,
 
 # correct: wartość poprawnej odpowiedzi (karta zielenieje po „Sprawdź intuicję”);
 # NULL, gdy żadna odpowiedź nie jest jedyną poprawną.
+# feedback: komentarze do odpowiedzi jako nazwana lista tagów (nazwa = wartość
+# odpowiedzi; ".other" = komentarz do pozostałych). Pokazuje je przeglądarka
+# (shared/lc_widgets.js, sekcja „Głosowanie”). Bez feedback komentarz renderuje
+# serwer bloku w output[[output_id]] (wykłady jeszcze nieprzeniesione).
 risk_vote_panel <- function(input_id, output_id, question, choices, full_width = TRUE,
-                            correct = NULL) {
+                            correct = NULL, feedback = NULL) {
   figure_panel(
     label = "Najpierw zdecyduj",
     title = question,
@@ -58,8 +62,16 @@ risk_vote_panel <- function(input_id, output_id, question, choices, full_width =
       `data-reveal` = if (!is.null(correct)) paste0(input_id, "_check"),
       radioButtons(input_id, NULL, choices = choices, selected = character(0))
     ),
-    lc_action(paste0(input_id, "_check"), "Sprawdź intuicję", variant = "solid"),
-    uiOutput(output_id),
+    if (is.null(feedback)) {
+      tagList(lc_action(paste0(input_id, "_check"), "Sprawdź intuicję", variant = "solid"),
+              uiOutput(output_id))
+    } else {
+      stopifnot(all(names(feedback) %in% c(unname(choices), ".other")))
+      tagList(
+        lc_check_button(paste0(input_id, "_check"), "Sprawdź intuicję", input_id),
+        lc_choice_feedback(input_id, output_id, feedback)
+      )
+    },
     full_width = full_width
   )
 }
@@ -69,6 +81,24 @@ risk_quiz_questions <- function(quiz) {
     stop("Quiz musi zawierać jawny zestaw pytań tematycznych.")
   }
   quiz$questions
+}
+
+# Dane quizu dla przeglądarki: nazwa grupy radio, pytanie, klucz, etykieta
+# poprawnej odpowiedzi i omówienie. Teksty są zwykłym tekstem (bez HTML).
+risk_quiz_data <- function(prefix, questions) {
+  items <- lapply(seq_along(questions), function(index) {
+    question <- questions[[index]]
+    list(
+      name = paste0(prefix, "_quiz_", index),
+      question = question$question,
+      correct = question$correct,
+      correct_label = names(question$choices)[match(question$correct, unname(question$choices))],
+      explanation = question$explanation
+    )
+  })
+  json <- jsonlite::toJSON(items, auto_unbox = TRUE)
+  tags$script(type = "application/json", `data-lc-quiz-data` = prefix,
+              HTML(gsub("</", "<\\/", json, fixed = TRUE)))
 }
 
 # `quiz$intro` i `quiz$outro` (opcjonalne) to akapity przed panelem quizu i po nim;
@@ -93,8 +123,14 @@ risk_assessment_ui <- function(prefix, quiz, exercises, exercises_intro = NULL) 
           )
         )
       })),
-      lc_action(paste0(prefix, "_quiz_check"), "Sprawdź wszystkie", variant = "solid"),
-      uiOutput(paste0(prefix, "_quiz_feedback")),
+      # Ocenę i omówienie pisze przeglądarka (shared/lc_widgets.js, sekcja „Quiz
+      # z kluczem”): przycisk wskazuje quiz, dane pytań są w skrypcie JSON obok.
+      htmltools::tagAppendAttributes(
+        lc_action(paste0(prefix, "_quiz_check"), "Sprawdź wszystkie", variant = "solid"),
+        `data-lc-quiz-check` = prefix
+      ),
+      risk_quiz_data(prefix, questions),
+      tags$div(id = paste0(prefix, "_quiz_feedback"), class = "lc-quiz-feedback"),
       full_width = TRUE
     ),
     if (!is.null(quiz$outro)) risk_prose(quiz$outro),
@@ -123,41 +159,6 @@ risk_assessment_ui <- function(prefix, quiz, exercises, exercises_intro = NULL) 
       full_width = TRUE
     )
   )
-}
-
-risk_assessment_server <- function(prefix, quiz, input, output) {
-  questions <- risk_quiz_questions(quiz)
-  submitted <- reactiveVal(NULL)
-  observeEvent(input[[paste0(prefix, "_quiz_check")]], {
-    submitted(vapply(seq_along(questions), function(index) {
-      input[[paste0(prefix, "_quiz_", index)]] %||% ""
-    }, character(1)))
-  })
-  output[[paste0(prefix, "_quiz_feedback")]] <- renderUI({
-    answers <- submitted()
-    req(!is.null(answers))
-    correct <- vapply(seq_along(questions), function(index) {
-      identical(answers[[index]], questions[[index]]$correct)
-    }, logical(1))
-    score <- sum(correct)
-    missing <- sum(!nzchar(answers))
-    tagList(
-      lc_status(
-        lc_verdict(tags$strong(sprintf("Wynik: %d/%d.", score, length(questions))), type = if (score == length(questions)) "ok" else "warning"),
-        if (missing) paste0(" Bez odpowiedzi: ", missing, ".") else " Poniżej omówienie każdej odpowiedzi."
-      ),
-      tags$ol(lapply(seq_along(questions), function(i) {
-        question <- questions[[i]]
-        answer_label <- names(question$choices)[match(question$correct, unname(question$choices))]
-        tags$li(
-          lc_status(
-            lc_verdict(tags$strong(if (correct[i]) "Poprawnie:" else if (!nzchar(answers[i])) "Brak odpowiedzi:" else "Do poprawy:"), type = if (correct[i]) "ok" else "warning"),
-            paste0(" ", question$question, " Poprawna odpowiedź: ", answer_label, ". ", question$explanation)
-          )
-        )
-      }))
-    )
-  })
 }
 
 # --------------------------------------------------------------------------

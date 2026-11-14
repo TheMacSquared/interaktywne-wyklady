@@ -100,26 +100,61 @@ test("lejek odtwarza serie po powrocie, także po wiadomości bez obecnego DOM",
   assert.equal(env.errors.length, 0);
 });
 
-test("scenariusz koło/słupki obsługuje obie kolejności wiadomości i DOM", () => {
-  for (const beforeDom of [false, true]) {
-    const env = environment();
-    env.load("01-typy-danych/modules/scenario_chart.js");
-    const message = env.handlers.get("render_scenario");
-    const data = { labels: ["A", "B"], data: [60, 40], colors: ["#aaa", "#bbb"], reveal: true };
-    if (beforeDom) message(data);
-    const makeRoot = () => root("lc-scenario", [ecbox("pie", { id: "ch2_pie_canvas" }), ecbox("bar", { id: "ch2_bar_canvas" })]);
-    const bars = () => [...env.live][1].series.get("bar").data.length;
-    let el = makeRoot(); env.mount(el);
-    if (!beforeDom) message(data);
-    assert.equal(env.live.size, 2); assert.equal(bars(), 2);
-    message({ ...data, reveal: false }); assert.equal(bars(), 0, "słupki dopiero po odsłonięciu");
-    message(data); assert.equal(bars(), 2);
-    env.unmount(el); assert.equal(env.live.size, 0);
-    el = makeRoot(); env.mount(el);
-    assert.equal(bars(), 2, "dane wracają bez kolejnej wiadomości z R");
-    env.unmount(el);
-    assert.equal(env.errors.length, 0);
-  }
+// Ryc. 2.3 bez serwera: scenariusze w data-config, wybór z segmentu, odsłonięcie przyciskiem.
+const scenarioConfig = {
+  input: "ch2_scenario",
+  scenarios: [
+    { labels: ["A", "B"], data: [60, 40], colors: ["#aaa", "#bbb"], order: ["B", "A"] },
+    { labels: ["A", "B"], data: [45, 55], colors: ["#ccc", "#ddd"], order: ["A", "B"] }
+  ]
+};
+function scenarioRoot(extra = []) {
+  const pick = new Element("input", { name: "ch2_scenario", value: "1" });
+  pick.name = "ch2_scenario";               // atrapa Element nie ma własności name
+  const reveal = new Element("button", { "data-scn-reveal-button": "true" });
+  const shown = new Element("div", { "data-scn-reveal": "true" });
+  const cover = new Element("div", { "data-scn-hide": "true" });
+  shown.hidden = true;
+  const el = root("lc-scenario", [...extra, pick, reveal, shown, cover,
+    ecbox("pie", { id: "ch2_pie_canvas" }), ecbox("bar", { id: "ch2_bar_canvas" })],
+    { "data-config": JSON.stringify(scenarioConfig) });
+  const choose = (value) => { pick.attrs.value = value; pick.value = value; el.emit("change", { target: pick }); };
+  return { el, reveal: () => el.emit("click", { target: reveal }), choose, shown, cover };
+}
+
+test("scenariusz koło/słupki: dane z dokumentu, słupki po odsłonięciu, nowa runda po zmianie", () => {
+  const env = environment();
+  env.load("01-typy-danych/modules/scenario_chart.js");
+  const s = scenarioRoot();
+  env.mount(s.el);
+  assert.equal(env.live.size, 2);
+  // Tablice ze skryptu pochodzą z innego kontekstu vm, więc porównujemy napisy.
+  const pie = () => [...env.live][0].series.get("pie").data;
+  const bars = () => [...env.live][1].series.get("bar").data;
+  assert.equal(pie().map(d => d.value).join(), "60,40", "koło od razu, bez wiadomości z R");
+  assert.equal(bars().length, 0, "słupki dopiero po odsłonięciu");
+  assert.equal([s.shown.hidden, s.cover.hidden].join(), "true,false");
+  s.reveal();
+  assert.equal(bars().map(d => d.value).join(), "60,40");
+  assert.equal([s.shown.hidden, s.cover.hidden].join(), "false,true");
+  s.choose("2");
+  assert.equal(pie().map(d => d.value).join(), "45,55", "zmiana scenariusza podmienia dane");
+  assert.equal(bars().length, 0, "zmiana scenariusza chowa odpowiedź");
+  assert.equal([s.shown.hidden, s.cover.hidden].join(), "true,false");
+  assert.equal(pie().map(d => d.itemStyle.color).join(), "#ccc,#ddd");
+  env.unmount(s.el); assert.equal(env.live.size, 0);
+  assert.equal(env.errors.length, 0);
+});
+
+test("scenariusz koło/słupki: liczba trafionych pozycji", () => {
+  const env = environment();
+  env.load("01-typy-danych/modules/scenario_chart.js");
+  const hits = env.window.lcS01Scenario.hits;
+  const order = ["B", "D", "E", "A", "C"];
+  assert.equal(hits({ pos1: "B", pos2: "D", pos3: "E", pos4: "A", pos5: "C" }, order), 5);
+  assert.equal(hits({ pos1: "B", pos2: "D", pos3: "E", pos4: "C", pos5: "A" }, order), 3);
+  assert.equal(hits({ pos2: "D" }, order), 1, "puste pola nie są trafieniem");
+  assert.equal(hits({}, order), 0);
 });
 
 test("pole pod krzywą niszczy obsługę przeciągania i poprawnie wraca", () => {
@@ -444,19 +479,16 @@ const zoomButton = () => new Element("button", { "data-lc-chart-zoom": "true" })
 test("koło/słupki: lupa zachowuje ukrycie, odsłonięcie i paletę scenariusza", () => {
   const env = environment();
   env.load("01-typy-danych/modules/scenario_chart.js");
-  const el = root("lc-scenario", [zoomButton(), ecbox("pie", {id:"ch2_pie_canvas"}), ecbox("bar", {id:"ch2_bar_canvas"})]);
-  env.mount(el);
-  const message = env.handlers.get("render_scenario");
-  const data = {labels:["A","B"],data:[45,25],colors:["#aaa","#bbb"],reveal:false};
-  message(data);
-  zoomWithoutChangingData(env, el);
+  const s = scenarioRoot([zoomButton()]);
+  env.mount(s.el);
+  zoomWithoutChangingData(env, s.el);
   const bar = [...env.live][1];
   assert.equal(bar.series.get("bar").data.length, 0, "lupa nie odsłania słupków");
-  message({...data,reveal:true});
+  s.reveal();
   const font = bar.axisFont;
-  zoomWithoutChangingData(env, el);
+  zoomWithoutChangingData(env, s.el);
   assert.ok(bar.axisFont < font, "wyłączenie lupy przywraca mniejszą czcionkę");
-  assert.equal(bar.series.get("bar").data.map(d => d.itemStyle.color).join(), data.colors.join());
+  assert.equal(bar.series.get("bar").data.map(d => d.itemStyle.color).join(), scenarioConfig.scenarios[0].colors.join());
 });
 
 test("odporność miar: lupa zachowuje pensje i średnią uciętą", () => {

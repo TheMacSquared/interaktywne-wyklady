@@ -7,42 +7,6 @@
 # UI
 # ============================================================================
 
-ch8_ui <- list(
-  id = "ch-cwiczenia", num = "07", title = "Ćwiczenia",
-  content = tagList(
-
-    # --- Chapter hero ---
-    lc_chapter_hero(
-      kicker = "Rozdział 07 · Statystyka opisowa",
-      num    = "07",
-      title  = "Ćwiczenia.",
-      lead   = "Czas na praktykę — trzy bloki zadań w Jamovi: rozpoznawanie
-                typów zmiennych, dobór narzędzi, analiza prawdziwych danych.
-                Planowany czas: 90 minut. Każde zadanie ma ukryte rozwiązanie."
-    ),
-
-    figure_panel(
-      label = "Wariant",
-      title = "Wybierz wariant dla kierunku",
-      color = upwr_single_alt,
-      selectInput("ch8_kierunek", NULL,
-        choices = list(
-          "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
-          "Rolnictwo"                       = "rol",
-          "Technologia żywności"            = "zyw",
-          "Inżynieria danych satelitarnych i kosmicznych" = "sat"
-        ),
-        selected = "bhp",
-        width = "100%"
-      )
-    ),
-
-    uiOutput("ch8_content"),
-
-    br(), br(), br()
-  )
-)
-
 # ============================================================================
 # TRESC ZADAN — funkcje zwracajace tagList per kierunek
 # ============================================================================
@@ -660,49 +624,97 @@ source(file.path(app_dir, "modules", "ch8_sat.R"), local = TRUE)
 
 .ch8_solutions$sat <- .ch8_sat_solutions
 
+# ============================================================================
+# WARIANTY W DOKUMENCIE (bez serwera)
+# ============================================================================
+
+.ch8_directions <- c("bhp", "rol", "zyw", "sat")
+
+# Treść wariantu z wypełnionymi miejscami, które dawniej renderował serwer:
+# tabela zadania 1 (bez odpowiedzi i z odpowiedziami, przełącza je przycisk)
+# oraz rozwiązania w zwijanych blokach. Identyfikatory dostają przyrostek
+# kierunku, bo w dokumencie są wszystkie cztery warianty naraz.
+.ch8_static_content <- function(k) {
+  content <- switch(k,
+    bhp = .ch8_content_bhp(),
+    rol = .ch8_content_rol(),
+    zyw = .ch8_content_zyw(),
+    sat = .ch8_content_sat()
+  )
+  button_id <- paste0("ch8_ans1_", k)
+  q <- htmltools::tagQuery(tags$div(content))
+  # Nagłówki sekcji: identyfikator z przyrostkiem kierunku, żeby spis sekcji
+  # prowadził do widocznego wariantu.
+  q <- q$find("h2.lc-h2")$each(function(h, i) {
+    id <- paste0(htmltools::tagGetAttribute(h, "id"), "-", k)
+    h$attribs$id <- id
+    h$attribs[["data-lc-section"]] <- id
+    h
+  })$resetSelected()
+  q <- q$find("#ch8_table1")$replaceWith(
+    lc_toggle_content(button_id, off = .ch8_task1_table(k, reveal = FALSE),
+                      on = .ch8_task1_table(k, reveal = TRUE))
+  )$resetSelected()
+  q <- q$find("#ch8_ans1")$replaceWith(
+    lc_toggle_button(button_id, "Pokaż rozwiązanie", "Ukryj rozwiązanie")
+  )$resetSelected()
+  for (sid in c("sol1", "sol2", "sol3", "sol4", "sol5", "sol6", "sol_summary")) {
+    solution <- .ch8_solutions[[k]][[sid]]
+    hit <- q$find(paste0("#ch8_", sid))
+    if (length(hit$selectedTags()) > 0) q <- hit$replaceWith(tags$div(solution))$resetSelected()
+    else q <- hit$resetSelected()
+  }
+  q$allTags()
+}
+
+# ============================================================================
+# UI
+# ============================================================================
+
+ch8_ui <- list(
+  id = "ch-cwiczenia", num = "07", title = "Ćwiczenia",
+  content = tagList(
+
+    # --- Chapter hero ---
+    lc_chapter_hero(
+      kicker = "Rozdział 07 · Statystyka opisowa",
+      num    = "07",
+      title  = "Ćwiczenia.",
+      lead   = "Czas na praktykę — trzy bloki zadań w Jamovi: rozpoznawanie
+                typów zmiennych, dobór narzędzi, analiza prawdziwych danych.
+                Planowany czas: 90 minut. Każde zadanie ma ukryte rozwiązanie."
+    ),
+
+    figure_panel(
+      label = "Wariant",
+      title = "Wybierz wariant dla kierunku",
+      color = upwr_single_alt,
+      # Zwykła lista przeglądarki (selectize = FALSE): działa bez skryptów Shiny.
+      selectInput("ch8_kierunek", NULL, selectize = FALSE,
+        choices = list(
+          "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
+          "Rolnictwo"                       = "rol",
+          "Technologia żywności"            = "zyw",
+          "Inżynieria danych satelitarnych i kosmicznych" = "sat"
+        ),
+        selected = "bhp",
+        width = "100%"
+      )
+    ),
+
+    # Wszystkie warianty są w dokumencie; widoczny jest wariant wybranego kierunku.
+    lc_variants("ch8_kierunek", selected = "bhp",
+      stats::setNames(lapply(.ch8_directions, .ch8_static_content), .ch8_directions)),
+
+    br(), br(), br()
+  )
+)
 
 # ============================================================================
 # SERVER
 # ============================================================================
 
 ch8_server <- function(input, output, session) {
-
-  sol_ids <- c("sol1", "sol2", "sol3", "sol4", "sol5", "sol6", "sol_summary")
-
-  # Zadanie 1: przycisk odsłania odpowiedzi w tabeli widgetu.
-  table_revealed <- reactiveVal(FALSE)
-  observeEvent(input$ch8_ans1, {
-    table_revealed(!table_revealed())
-    updateActionButton(session, "ch8_ans1",
-      label = if (table_revealed()) "Ukryj rozwiązanie" else "Pokaż rozwiązanie")
-  }, ignoreInit = TRUE)
-
-  output$ch8_table1 <- renderUI({
-    k <- input$ch8_kierunek
-    req(k %in% names(.ch8_task1_specs))
-    .ch8_task1_table(k, reveal = table_revealed())
-  })
-
-  # Treść wariantu po zmianie kierunku.
-  observeEvent(input$ch8_kierunek, {
-    k <- input$ch8_kierunek
-    table_revealed(FALSE)
-    updateActionButton(session, "ch8_ans1", label = "Pokaż rozwiązanie")
-    output$ch8_content <- renderUI({
-      switch(k,
-        bhp = .ch8_content_bhp(),
-        rol = .ch8_content_rol(),
-        zyw = .ch8_content_zyw(),
-        sat = .ch8_content_sat()
-      )
-    })
-  }, ignoreNULL = FALSE)
-
-  # Rozwiązania siedzą w lc_more(): Shiny renderuje je dopiero po rozwinięciu.
-  lapply(sol_ids, function(sid) {
-    output[[paste0("ch8_", sid)]] <- renderUI({
-      req(input$ch8_kierunek)
-      .ch8_solutions[[input$ch8_kierunek]][[sid]]
-    })
-  })
+  # Rozdział nie ma logiki serwera: warianty, tabela zadania 1 i rozwiązania
+  # są w dokumencie (lc_variants(), lc_toggle_content()).
 }

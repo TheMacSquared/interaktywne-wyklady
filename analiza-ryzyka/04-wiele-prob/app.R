@@ -72,6 +72,7 @@ ui <- lecture_page(
     includeScript(file.path(shared_root, "lc_dist.js")),
     includeScript(file.path(shared_root, "lc_stat_figures.js")),
     includeScript(file.path(app_dir, "modules", "wykresy.js")),
+    includeScript(file.path(app_dir, "modules", "seria.js")),
     lc_sf_styles(),
     tags$style(HTML("
     :is(p, li) > .MathJax {

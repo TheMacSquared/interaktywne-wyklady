@@ -78,6 +78,10 @@
   // buildTOC — odkrywa h2 w aktywnym rozdziale i wypełnia TOC w sidebarze
   // Wywoływane z opóźnieniem po renderUI Shiny (DOM musi być gotowy)
   // -------------------------------------------------------------------------
+  function headingShown(h) {
+    return !h.closest("[data-lc-variant][hidden], [data-lc-toggle-state][hidden]");
+  }
+
   function buildTOC(chapterId) {
     if (!sidebar) sidebar = document.getElementById("lc-sidebar");
     if (!main)    main    = document.getElementById("lc-main");
@@ -93,10 +97,11 @@
       main.querySelector("[data-lc-chapter-content]");
     tocList.replaceChildren();
 
+    // Nagłówki w ukrytym wariancie treści (lc_variants) nie trafiają do spisu.
     var headings = section
       ? Array.from(section.querySelectorAll(
           "h2[data-lc-section], h2.lc-h2[id]"
-        ))
+        )).filter(headingShown)
       : [];
 
     headings.forEach(function (h) {
@@ -150,7 +155,7 @@
       section.querySelectorAll(
         "h2[data-lc-section], h2.lc-h2[id]"
       )
-    );
+    ).filter(headingShown);
 
     var activeSectionId = null;
     headings.forEach(function (h) {
@@ -187,12 +192,77 @@
   }
 
   // -------------------------------------------------------------------------
+  // Strona statyczna (scripts/build_static.R): wszystkie rozdziały są
+  // w dokumencie jako section[data-lc-static-chapter]; pokazujemy jeden naraz.
+  // -------------------------------------------------------------------------
+  function staticChapters() {
+    return document.querySelectorAll("section[data-lc-static-chapter]");
+  }
+
+  function isStatic() {
+    return staticChapters().length > 0;
+  }
+
+  function showStaticChapter(chapterId, updateHash) {
+    var sections = staticChapters();
+    var target = document.getElementById(chapterId);
+    if (!target || !target.hasAttribute("data-lc-static-chapter")) target = sections[0];
+    if (!target) return;
+    sections.forEach(function (s) {
+      var on = s === target;
+      s.hidden = !on;
+      // Skrypty wykładu i spis sekcji szukają aktywnego rozdziału po tym atrybucie.
+      if (on) s.setAttribute("data-lc-chapter-content", "true");
+      else s.removeAttribute("data-lc-chapter-content");
+    });
+    setActiveChapter(target.id);
+    buildTOC(target.id);
+    if (updateHash !== false) {
+      try { history.replaceState(null, "", "#" + target.id); } catch (e) {}
+    }
+    // Wykresy w rozdziale ukrytym przy starcie mierzą się dopiero teraz.
+    setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 50);
+    document.dispatchEvent(new CustomEvent("lc:chapter", { detail: { id: target.id } }));
+  }
+
+  function initStatic() {
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest && e.target.closest(".lc-nav-chapter-btn");
+      var ch = btn && btn.closest("[data-lc-chapter]");
+      if (ch) showStaticChapter(ch.getAttribute("data-lc-chapter"));
+    });
+    // Adres z kotwicą rozdziału albo sekcji otwiera właściwy rozdział.
+    var hash = decodeURIComponent((window.location.hash || "").slice(1));
+    var el = hash && document.getElementById(hash);
+    var section = el && el.closest("section[data-lc-static-chapter]");
+    showStaticChapter(section ? section.id : "", false);
+    if (el && section && el !== section) el.scrollIntoView();
+  }
+
+  // Zmiana wariantu treści (lc_variants) może zmienić zestaw sekcji rozdziału.
+  document.addEventListener("lc:variants", function () {
+    if (scrollSpyChapterId) buildTOC(scrollSpyChapterId);
+  });
+
+  // Przełączenie rozdziału z treści (lc_chapter_next(), skrypty wykładu).
+  window.lcGoToChapter = function (chapterId) {
+    if (isStatic()) showStaticChapter(chapterId);
+    else if (window.Shiny && window.Shiny.setInputValue) {
+      window.Shiny.setInputValue("lc__switch_chapter", chapterId, { priority: "event" });
+    }
+  };
+
+  // -------------------------------------------------------------------------
   // Start
   // -------------------------------------------------------------------------
-  if (document.readyState === "complete" || document.readyState === "interactive") {
+  function start() {
     init();
+    if (isStatic()) initStatic();
+  }
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    start();
   } else {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", start);
   }
 
   // Shiny.addCustomMessageHandler można wywołać przed inicjalizacją Shiny
@@ -202,8 +272,8 @@
     document.addEventListener("DOMContentLoaded", function () {
       if (window.Shiny) {
         setupShinyHandlers();
-      } else {
-        $(document).one("shiny:idle", setupShinyHandlers);
+      } else if (!isStatic() && window.jQuery) {
+        window.jQuery(document).one("shiny:idle", setupShinyHandlers);
       }
     });
   }

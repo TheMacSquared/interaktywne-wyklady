@@ -45,7 +45,16 @@ ch4_ui <- list(
                       mx = mean(tenure_bio$staz), my = mean(tenure_bio$pensja),
                       r = cor(tenure_bio$staz, tenure_bio$pensja),
                       xlim = c(0, 16), ylim = c(6, 14),
-                      aria = "Pracownik firmy biotechnologicznej staje się punktem na wykresie stażu i pensji; po dodaniu całej firmy linie średnich dzielą wykres na ćwiartki"))
+                      aria = "Pracownik firmy biotechnologicznej staje się punktem na wykresie stażu i pensji; po dodaniu całej firmy linie średnich dzielą wykres na ćwiartki"),
+        texts = list(
+          tagList("Pracowniczka firmy biotechnologicznej ma dwie liczby: staż
+            5.9 roku i pensję 10.3 tys. zł."),
+          tagList("Te dwie liczby wyznaczają jeden punkt: staż na osi poziomej,
+            pensja na pionowej."),
+          tagList("Każda z 40 osób w firmie to jeden punkt. Chmura wznosi się w prawo."),
+          tagList("Linie średnich dzielą wykres na ćwiartki. W ćwiartkach „oba powyżej”
+            i „oba poniżej” leży 28 osób, w pozostałych 12.")
+        ))
     ),
 
     lc_p("Obraz z kadru 3 to ", gloss("wykres rozrzutu"), ": każdy punkt to jedna
@@ -182,13 +191,5 @@ ch4_ui <- list(
 )
 
 ch4_server <- function(input, output, session) {
-  scene_texts(input, output, "ch4_tenure", list(
-    tagList("Pracowniczka firmy biotechnologicznej ma dwie liczby: staż
-      5.9 roku i pensję 10.3 tys. zł."),
-    tagList("Te dwie liczby wyznaczają jeden punkt: staż na osi poziomej,
-      pensja na pionowej."),
-    tagList("Każda z 40 osób w firmie to jeden punkt. Chmura wznosi się w prawo."),
-    tagList("Linie średnich dzielą wykres na ćwiartki. W ćwiartkach „oba powyżej”
-      i „oba poniżej” leży 28 osób, w pozostałych 12.")
-  ))
+  # Rozdział nie ma logiki serwera: opisy kadrów są w dokumencie (lc_step_widget(texts = )).
 }

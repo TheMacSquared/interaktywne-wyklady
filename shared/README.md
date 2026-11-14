@@ -17,9 +17,10 @@ nie korzysta.
 | `lc_charts.js` | wspólna obsługa wykresów ECharts (`window.lcCharts`) |
 | `lc_dist.js` | rozkłady i losowanie (`window.lcDist`) |
 | `lc_widgets.js`, `lc_dragdrop.js`, `lc_formula.js`, `shared_toc.js` | kontrolki v2, przeciąganie kart, wzór ze znacznikami, spis sekcji |
+| `lc_quiz.js` | quiz kafelkowy `lc_tile_quiz()`: losowanie pytań, ocena, wynik (`window.lcTileQuiz`) |
 | `shared_styles.css` | style powłoki i komponentów |
 | `halloween.css`, `halloween.js` | tryb sezonowy (wyłączony) |
-| `fonts/` | IBM Plex Sans i Mono dla wykresów R |
+| `fonts/` | IBM Plex Sans i Mono (wagi 400–700): wykresy R i strony statyczne |
 | `DESIGN_CONTRACT.md`, `LECTURE_LAYOUT.md` | kontrakt designu i opis komponentów |
 
 ## Co zostaje w kursie
@@ -64,6 +65,49 @@ osobną kopią pliku:
 
 Przełączniki `chapter_mode` i `plot_scaling` dotyczą kodu, który znika razem
 z serwerem Shiny (wykresy ggplot, `renderUI` rozdziału).
+
+## Strony statyczne
+
+`lecture_page()` ma dwa tryby. Z serwerem Shiny (domyślnie) rozdział wstawia
+`renderUI`. W trybie statycznym (`options(lc.static = TRUE)`, ustawia go
+`scripts/build_static.R`) wszystkie rozdziały są w dokumencie, a przełącza je
+`shared_toc.js`; strona nie ładuje Shiny.
+
+| Skrypt | Rola |
+|---|---|
+| `scripts/check_static_ready.R` | licznik zależności wykładów od serwera (wykresy, `renderUI`, reakcje, wejścia); wykład z samymi zerami można budować statycznie |
+| `scripts/build_static.R` | buduje `dist/<kurs>/<wykład>.html`: style i skrypty wbudowane w plik, biblioteki z sieci pobrane raz do `dist/.cache/`, kroje IBM Plex wbudowane w plik, wzory złożone jako SVG |
+| `scripts/check_static_page.R` | otwiera zbudowaną stronę w Chromium bez okna: błędy konsoli, żądania sieciowe, nawigacja, suwaki, quiz, niezłożony TeX, szerokość 390 px |
+
+Co działa bez serwera we wspólnych komponentach:
+
+- nawigacja rozdziałów, spis sekcji, „Dalej” (`lcGoToChapter()` w `shared_toc.js`);
+- suwak `lc_slider()` (ionRangeSlider uruchamiany w `lc_widgets.js`);
+- karty odpowiedzi z kluczem i quiz z omówieniem (`lc_widgets.js`, sekcja „Quiz
+  z kluczem”; w analizie ryzyka dane pytań wstawia `risk_quiz_data()`);
+- treść wybierana kontrolką: `lc_variants()` trzyma wszystkie warianty
+  w dokumencie i pokazuje ten, który odpowiada wartości radia, segmentu albo
+  listy (opcjonalnie dopiero po kliknięciu przycisku); zastępuje `uiOutput()`
+  z `renderUI()` zależnym od `input$…`;
+- komentarz do wybranej odpowiedzi: `lc_choice_feedback()` z przyciskiem
+  `lc_check_button()` (w analizie ryzyka także `risk_vote_panel(feedback = )`);
+- treść odsłaniana przyciskiem, np. tok rozwiązania: `lc_reveal()`;
+- opisy kroków widgetu krokowego: `lc_step_widget(texts = )`;
+- quiz losujący pytania z puli: `lc_tile_quiz()` (także ze stałymi odpowiedziami
+  w kolorach, argument `options`);
+- treść wybierana kliknięciem (`lc_variants(pick = TRUE)` + atrybuty `lc_pick()`),
+  przełączana przyciskiem (`lc_toggle_button()` + `lc_toggle_content()`) albo
+  krokiem widgetu (`lc_step_views()`);
+- `conditionalPanel()` z warunkami na `input.…` (ocenia je `lc_widgets.js`);
+- obrazki z katalogów `addResourcePath()` (build wbudowuje je w plik);
+- ryciny `lcSF`, wykresy `lcCharts`, wzór ze znacznikami.
+
+Skrypty strony statycznej są na końcu dokumentu (w nagłówku zostają tylko
+oznaczone `data-lc-early`), więc widgety inicjują się na kompletnej treści.
+
+Wzory wpisane w treść składa MathJax przy budowaniu. Tekst, który skrypt
+wykładu tworzy w przeglądarce, nie może zawierać TeX-a: na stronie statycznej
+MathJax nie jest ładowany (`check_static_page.R` wykrywa niezłożony zapis).
 
 ## Testy
 

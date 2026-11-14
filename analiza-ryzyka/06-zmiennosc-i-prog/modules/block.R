@@ -804,5 +804,4 @@ prog_server <- function(input, output, session) {
       lc_readout("P(T > 91°C)", formatC(tail_p(91), format = "f", digits = 4), color = upwr_accent)
     )
   })
-  risk_assessment_server("z6", prog_quiz, input, output)
 }

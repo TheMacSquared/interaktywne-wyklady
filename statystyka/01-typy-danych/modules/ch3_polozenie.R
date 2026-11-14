@@ -151,7 +151,7 @@ ch3_ui <- list(
                 i percentyle robią to na różne sposoby i każda z nich ma słabe miejsca."
     ),
 
-    uiOutput("tracker_ch3"),
+    tracker_variants(3),
 
     lc_p("W poprzednim rozdziale opisywaliśmy zmienne jakościowe: liczyliśmy
       kategorie i szukaliśmy najczęstszej z nich. ",
@@ -361,7 +361,12 @@ ch3_ui <- list(
         lc_action("ch3_six_low", "Praktykant: 1 tys. zł", variant = "outline"),
         lc_action("ch3_six_ceo", "Prezes: 60 tys. zł", variant = "outline"),
         lc_action("ch3_six_clear", icon = "reset", variant = "ghost", aria_label = "Wyczyść"),
-        lc_readouts(uiOutput("ch3_six_stats"))
+        lc_readouts(
+          lc_readout("Średnia", tags$span(`data-six` = "mean",
+            paste0(lc_fmt(mean(ch3_six_base), 1), " tys. zł")), color = upwr_accent),
+          lc_readout("Mediana", tags$span(`data-six` = "median",
+            paste0(lc_fmt(median(ch3_six_base), 1), " tys. zł")), color = upwr_cat[["niebo"]])
+        )
       ),
 
       tags$div(class = "ch3-six-row", role = "group", `aria-label` = "Obserwacje",
@@ -378,7 +383,11 @@ ch3_ui <- list(
         )
       ),
 
-      uiOutput("ch3_six_formulas")
+      # Średnią, medianę i rozpisane wzory liczy przeglądarka (modules/six_obs.js).
+      tags$div(id = "ch3_six_formulas", `data-six-obs` = "true",
+        `data-config` = jsonlite::toJSON(auto_unbox = TRUE, list(
+          base = ch3_six_base, input = "ch3_six_x",
+          low = "ch3_six_low", ceo = "ch3_six_ceo", clear = "ch3_six_clear")))
     ),
 
     lc_p("W liczniku średniej stoi suma, więc szósta pensja wchodzi do niej całą
@@ -632,96 +641,6 @@ ch3_ui <- list(
 # --------------------------------------------------------------------------
 
 ch3_server <- function(input, output, session) {
-
-  # Ryc. 3.1 (budowa histogramu) rysuje stat_charts.js; suwak i tabela w przeglądarce.
-
-  # --------------------------------------------------------------------------
-  # Widget 1b: Sixth observation -- formulas step by step
-  # --------------------------------------------------------------------------
-
-  observeEvent(input$ch3_six_low, {
-    session$sendInputMessage("ch3_six_x", list(value = 1))
-  })
-
-  observeEvent(input$ch3_six_ceo, {
-    session$sendInputMessage("ch3_six_x", list(value = 60))
-  })
-
-  observeEvent(input$ch3_six_clear, {
-    session$sendInputMessage("ch3_six_x", list(value = ""))
-  })
-
-  # Szósta wartość albo NULL, gdy pole jest puste lub niepoprawne
-  ch3_six_new <- reactive({
-    v <- input$ch3_six_x
-    if (is.null(v) || !is.numeric(v) || !is.finite(v)) NULL else v
-  })
-
-  ch3_six_values <- reactive(c(ch3_six_base, ch3_six_new()))
-
-  # Liczba w TeX-u: spacja tysięcy jako \, , najwyżej jedno miejsce po przecinku
-  ch3_six_tex <- function(v) gsub(" ", "\\\\,", lc_fmt(v, 1, big_mark = " "))
-
-  output$ch3_six_stats <- renderUI({
-    x <- ch3_six_values()
-    tagList(
-      lc_readout("Średnia", paste0(lc_fmt(mean(x), 1), " tys. zł"), color = upwr_accent),
-      lc_readout("Mediana", paste0(lc_fmt(median(x), 1), " tys. zł"), color = upwr_cat[["niebo"]])
-    )
-  })
-
-  output$ch3_six_formulas <- renderUI({
-    x <- ch3_six_values()
-    n <- length(x)
-    has_new <- n > length(ch3_six_base)
-    m <- mean(x)
-    med <- median(x)
-
-    # Licznik średniej w kolejności wpisania; szósta wartość wyróżniona
-    terms <- ch3_six_tex(x)
-    if (has_new) terms[n] <- paste0("\\class{ch3-six-new}{", terms[n], "}")
-    m_eq <- if (abs(round(m, 1) - m) > 1e-9) "\\approx" else "="
-    mean_tex <- paste0(
-      "\\bar{x} = \\frac{", paste(terms, collapse = " + "), "}{", n, "} = \\frac{",
-      ch3_six_tex(sum(x)), "}{", n, "} ", m_eq, " ", ch3_six_tex(m)
-    )
-
-    # Posortowane obserwacje; środkowe pozycje i nowa wartość wyróżnione
-    ord <- order(x)
-    mid <- if (n %% 2 == 1) (n + 1) / 2 else c(n / 2, n / 2 + 1)
-    sorted_cells <- lapply(seq_len(n), function(i) {
-      tags$div(
-        class = paste("ch3-six-cell", if (i %in% mid) "is-mid", if (has_new && ord[i] == n) "is-new"),
-        tags$span(class = "ch3-six-idx", paste0("x(", i, ")")),
-        tags$span(class = "ch3-six-val", lc_fmt(x[ord][i], 1, big_mark = " "))
-      )
-    })
-    xs <- ch3_six_tex(x[ord])
-    median_tex <- if (n %% 2 == 1) {
-      paste0("n = ", n, " \\text{ (nieparzyste):} \\quad \\text{Me} = x_{(", mid, ")} = ", xs[mid])
-    } else {
-      paste0("n = ", n, " \\text{ (parzyste):} \\quad \\text{Me} = \\frac{x_{(", mid[1], ")} + x_{(", mid[2],
-             ")}}{2} = \\frac{", xs[mid[1]], " + ", xs[mid[2]], "}{2} = ", ch3_six_tex(med))
-    }
-
-    base_m <- mean(ch3_six_base)
-    base_med <- median(ch3_six_base)
-    signed <- function(d) paste0(if (d > 0) "+" else if (d < 0) "−", lc_fmt(abs(d), 1), " tys. zł")
-
-    tagList(
-      tags$div(class = "ch3-six-label", "Średnia: suma wszystkich wartości przez ich liczbę"),
-      lc_formula_box(withMathJax(paste0("$$", mean_tex, "$$"))),
-      tags$div(class = "ch3-six-label", "Mediana: najpierw sortujemy, potem bierzemy środek"),
-      tags$div(class = "ch3-six-row is-sorted", sorted_cells),
-      lc_formula_box(withMathJax(paste0("$$", median_tex, "$$"))),
-      if (has_new) {
-        lc_caption(paste0("Względem pięciu pensji średnia zmieniła się o ", signed(m - base_m),
-                          ", a mediana o ", signed(med - base_med), "."))
-      } else {
-        lc_caption("Pole x6 jest puste: liczymy z pięciu obserwacji.")
-      }
-    )
-  })
-
-
+  # Rozdział nie ma logiki serwera: Ryc. 3.1 rysuje stat_charts.js, a szóstą
+  # obserwację (Ryc. 3.5) liczy modules/six_obs.js.
 }

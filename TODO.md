@@ -37,6 +37,66 @@ Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
 ## Globalne
 
+### Przejście na strony statyczne (bez serwera R)
+
+Decyzje (14 listopada 2026): statystyka i analiza ryzyka przechodzą na strony
+statyczne, statystyka 2 zostaje na Shiny; treść nadal w R i `htmltools`,
+uruchamianych tylko przy budowaniu; jeden plik HTML na wykład; wzory składane
+przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. Zasada:
+R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
+
+Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
+2026: gotowe 8 z 21 wykładów (analiza ryzyka 01–05, statystyka 00–02, zbudowane i sprawdzone
+przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
+z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 141 wykresów
+R, 258 wyjść tekstowych i 233 wejścia czytane przez serwer. Quiz analizy ryzyka
+(wszystkie 10 wykładów) ocenia już przeglądarka; głosowanie „Najpierw zdecyduj”
+w 03–05 także (`risk_vote_panel(feedback = )`). Treść wybieraną kontrolką
+(dawniej `uiOutput()` + `renderUI()` po `input$…`) zastępuje `lc_variants()`,
+komentarz do wyboru `lc_choice_feedback()`, treść odsłanianą przyciskiem
+`lc_reveal()`, opis kroku z serwera `lc_step_widget(texts = )`, a quiz
+losujący pytania z puli `lc_tile_quiz()` (`shared/lc_quiz.js`). Warianty mogą
+też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z powrotem
+(`lc_toggle_button()` + `lc_toggle_content()`) albo kroku (`lc_step_views()`);
+`conditionalPanel()` działa na stronie statycznej dla warunków z `input.…`.
+
+- [x] Faza 0: licznik zależności od serwera (`scripts/check_static_ready.R`).
+- [x] Faza 1: tryb statyczny `lecture_page()`, `scripts/build_static.R`,
+  `scripts/check_static_page.R`; pilot: analiza ryzyka 02.
+- [ ] Faza 2: kontrolki bez Shiny (segment, lista, kroki `lc_step_nav`,
+  `lc_chips`, `lc_drop_match`, `conditionalPanel`), głosowanie w pozostałych
+  wykładach (06–10: dopisać `feedback` do `risk_vote_panel()`) i ćwiczenia
+  w przeglądarce; statystyka 03 i 04 (bez wykresów R).
+  Zrobione: analiza ryzyka 01, 03, 04 i 05; statystyka 00, 01 i 02.
+- [ ] Opisy kroków scen w pozostałych wykładach statystyki: `scene_texts()`
+  (serwer) → `lc_step_widget(texts = )`, tak jak w 00–02. Zostało 16 wywołań:
+  03 (4), 04 (1), 05 (4), 06 (4), 07 (2), 08 (1). Każdy wykład ma własną kopię
+  `scene_texts()` w `modules/`.
+- [ ] Quiz statystyki 03 przenieść na `lc_tile_quiz()` (ma wykres do pytania:
+  komponent trzeba o to rozszerzyć; 00 i 01 są przeniesione).
+- [ ] Wzory liczone w przeglądarce są składane w HTML (`.lc-hmath`, `.lc-hfrac`),
+  bo strona statyczna nie ładuje MathJax; dziś tylko statystyka 01, Ryc. 3.5.
+  Krój i wielkość różnią się od wzorów składanych przy budowaniu: do oceny na ekranie.
+- [ ] Test losowy w `statystyka/tests/js/lc_charts.test.js` („symulacje (03):
+  losowanie lcDist…”, asercja „SD średnich”) zawodzi mniej więcej raz na sześć
+  uruchomień (zaobserwowane 14 listopada 2026, kod 03 bez zmian): ustawić ziarno
+  albo poszerzyć tolerancję.
+- [ ] Faza 3: `lc_stats.js` (regresja prosta, wielomianowa, wieloraka; testy t;
+  QQ) z wynikami R jako wzorcem testów.
+- [ ] Faza 4: analiza ryzyka 06–10 (26 wykresów R).
+- [ ] Faza 5: statystyka 05–06 (29 wykresów R; Shapiro, Levene).
+- [ ] Faza 6: statystyka 07–08 (66 wykresów R).
+- [ ] Faza 7: statystyka 09–10 (20 wykresów R; modele na stałych zbiorach
+  liczone przy budowaniu).
+- [ ] Faza 8: usunąć `app.R` i kod serwera, statyczny spis wykładów zamiast
+  huba, wycofać `przedmioty/*/skrypt/build`, zaktualizować `AGENTS.md`,
+  kontrakt i testy.
+- [ ] Strona statyczna: spis wykładów kursu (`index.html`); zakładki górnego
+  paska prowadzą dziś tylko do wykładów już zbudowanych w `dist/<kurs>/`.
+- [ ] Kroje na stronie statycznej są wbudowane w każdy plik (decyzja
+  14 listopada 2026): dwanaście plików TTF z `shared/fonts/`, wagi 400–700 jak
+  w Google Fonts, ok. 3 MB na wykład. Do rozważenia: format WOFF2 (mniejszy).
+
 ### Wspólny rdzeń `shared/`
 
 Stan (14 listopada 2026, gałąź `statyczny-js`): statystyka i analiza ryzyka

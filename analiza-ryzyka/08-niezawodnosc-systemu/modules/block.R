@@ -923,5 +923,4 @@ system_server <- function(input, output, session) {
       lc_readout("Zasilanie", risk_fmt_p(gains[3]))
     )
   })
-  risk_assessment_server("s8", system_quiz, input, output)
 }

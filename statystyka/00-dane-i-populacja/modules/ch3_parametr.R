@@ -93,7 +93,22 @@ ch3_ui <- list(
         options = list(list(name = "n", label = "Osób w grupce (n)",
                             values = c(10, 25, 100), selected = 25)),
         config = list(kind = "bag", p = round(pop_zdal, 4), n = 25,
-                      aria = "Drzwi z napisem egzamin, grupka osób, które wyszły, i histogram odsetków p̂ z kolejnych grupek"))
+                      aria = "Drzwi z napisem egzamin, grupka osób, które wyszły, i histogram odsetków p̂ z kolejnych grupek"),
+        texts = list(
+        tagList("Za drzwiami z napisem EGZAMIN siedzi cały wydział. Nie widzimy, kto zdał. Wywołaj grupkę:
+        wyjdzie kilka osób i powie, jak im poszło. Uśmiechnięta zielona buźka to ktoś, kto zdał, smutna czerwona to ktoś, kto nie zdał."),
+        tagList("Liczymy, ilu z grupki zdało, i dzielimy przez liczbę osób. To statystyka ",
+        tags$code("p̂", .noWS = "outside"), ": znamy ją, bo grupka stoi przed nami. Wywołaj kilka grupek
+        i porównaj wyniki."),
+        tagList("Grupka wraca za drzwi, wywołujemy kolejną i znowu liczymy ",
+        tags$code("p̂", .noWS = "outside"), ". Każda grupka spada żetonem nad swoją wartością. Dokładaj po 10,
+        100 i 1000, a potem zmień liczbę osób w grupce."),
+        tagList("Otwieramy drzwi: ", tags$code("p", .noWS = "outside"), " to prawdziwy odsetek tych, którzy zdali.
+        Parametr jest jeden i stały, a statystyka skacze wokół niego. Im większa grupka,
+        tym ciaśniej skupiają się wyniki, ale z jednej grupki nie wiemy, po której
+        stronie ", tags$code("p", .noWS = "outside"), " leży.")
+        )
+      )
     ),
 
     lc_p("Prawdziwy odsetek zdających na wydziale wynosi p = ",
@@ -139,7 +154,20 @@ ch3_ui <- list(
         more_from = 3,
         config = list(kind = "spot", n = 50, mu = round(pop_zdal, 4),
                       d = as.integer(faculty$zdal), a = as.integer(faculty$biblioteka),
-                      aria = "Tłum studentów po egzaminie, telefon do losowych osób, ankieta w bibliotece i odsetki zdających w próbach"))
+                      aria = "Tłum studentów po egzaminie, telefon do losowych osób, ankieta w bibliotece i odsetki zdających w próbach"),
+        texts = list(
+        tagList("Każda kropka to student po egzaminie, ciemne kropki to ci, którzy siedzą w bibliotece. Dzwonisz do losowych osób
+        z listy i pytasz, czy zdały. Buźki pokazują ich odpowiedzi, a na dole ląduje ", tags$code("p̂", .noWS = "outside"),
+        " z tej próby. Linia to prawdziwy odsetek ", tags$code("p", .noWS = "outside"), "."),
+        tagList("Teraz nie chce Ci się dzwonić. Idziesz do biblioteki i pytasz tych, których tam spotkasz. W bibliotece
+        siedzą ci, którzy się uczą, więc prawie wszyscy zdali: same uśmiechnięte buźki. Wynik wygląda świetnie,
+        ale mówi o bibliotece, a nie o całym wydziale, i ",
+        tags$code("p̂", .noWS = "outside"), " ucieka w prawo od ", tags$code("p", .noWS = "outside"), "."),
+        tagList("Dokładaj próby obu rodzajów. Wyniki z telefonów rozkładają się wokół ", tags$code("p", .noWS = "outside"), ",
+        wyniki z biblioteki wokół zbyt wysokiej wartości. Zwiększ n: obie chmury się zwężają,
+        ale biblioteka trafia coraz pewniej obok ", tags$code("p", .noWS = "outside"), ". Duże n zmniejsza zmienność, ale nie usuwa obciążenia.")
+        )
+      )
     ),
 
     lc_p("W 1936 roku tygodnik Literary Digest zebrał ponad dwa miliony
@@ -172,32 +200,5 @@ ch3_ui <- list(
 # ============================================================================
 
 ch3_server <- function(input, output, session) {
-
-  scene_texts(input, output, "ch3_worek", list(
-    tagList("Za drzwiami z napisem EGZAMIN siedzi cały wydział. Nie widzimy, kto zdał. Wywołaj grupkę:
-      wyjdzie kilka osób i powie, jak im poszło. Uśmiechnięta zielona buźka to ktoś, kto zdał, smutna czerwona to ktoś, kto nie zdał."),
-    tagList("Liczymy, ilu z grupki zdało, i dzielimy przez liczbę osób. To statystyka ",
-      tags$code("p̂", .noWS = "outside"), ": znamy ją, bo grupka stoi przed nami. Wywołaj kilka grupek
-      i porównaj wyniki."),
-    tagList("Grupka wraca za drzwi, wywołujemy kolejną i znowu liczymy ",
-      tags$code("p̂", .noWS = "outside"), ". Każda grupka spada żetonem nad swoją wartością. Dokładaj po 10,
-      100 i 1000, a potem zmień liczbę osób w grupce."),
-    tagList("Otwieramy drzwi: ", tags$code("p", .noWS = "outside"), " to prawdziwy odsetek tych, którzy zdali.
-      Parametr jest jeden i stały, a statystyka skacze wokół niego. Im większa grupka,
-      tym ciaśniej skupiają się wyniki, ale z jednej grupki nie wiemy, po której
-      stronie ", tags$code("p", .noWS = "outside"), " leży.")
-  ))
-
-  scene_texts(input, output, "ch3_latarka", list(
-    tagList("Każda kropka to student po egzaminie, ciemne kropki to ci, którzy siedzą w bibliotece. Dzwonisz do losowych osób
-      z listy i pytasz, czy zdały. Buźki pokazują ich odpowiedzi, a na dole ląduje ", tags$code("p̂", .noWS = "outside"),
-      " z tej próby. Linia to prawdziwy odsetek ", tags$code("p", .noWS = "outside"), "."),
-    tagList("Teraz nie chce Ci się dzwonić. Idziesz do biblioteki i pytasz tych, których tam spotkasz. W bibliotece
-      siedzą ci, którzy się uczą, więc prawie wszyscy zdali: same uśmiechnięte buźki. Wynik wygląda świetnie,
-      ale mówi o bibliotece, a nie o całym wydziale, i ",
-      tags$code("p̂", .noWS = "outside"), " ucieka w prawo od ", tags$code("p", .noWS = "outside"), "."),
-    tagList("Dokładaj próby obu rodzajów. Wyniki z telefonów rozkładają się wokół ", tags$code("p", .noWS = "outside"), ",
-      wyniki z biblioteki wokół zbyt wysokiej wartości. Zwiększ n: obie chmury się zwężają,
-      ale biblioteka trafia coraz pewniej obok ", tags$code("p", .noWS = "outside"), ". Duże n zmniejsza zmienność, ale nie usuwa obciążenia.")
-  ))
+  # Rozdział nie ma logiki serwera: opisy kroków scen są w dokumencie (lc_step_widget(texts = )).
 }

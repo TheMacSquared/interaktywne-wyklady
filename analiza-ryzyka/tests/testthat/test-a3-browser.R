@@ -27,7 +27,8 @@ testthat::test_that("wykład 03: detektor, drzewo i ryciny działają w przeglą
   testthat::expect_true(all(c("a3_prev", "a3_sens", "a3_fpr", "a3_dependence", "a3_cost_c", "a3_cost_L",
     "a3_sp_prior", "a3_sp_lr", "a3_sp_radar") %in% res$sliders))
   testthat::expect_equal(res$plot_outputs, 0L)
-  testthat::expect_setequal(res$html_outputs, c("a3_vote_feedback", "a3_quiz_feedback"))
+  # Głosowanie i quiz ocenia przeglądarka: wykład nie ma wyjść serwera.
+  testthat::expect_length(res$html_outputs, 0L)
   for (s in c("lcA3", "window.lcSF", "echarts/6.1.0/echarts.min.js")) {
     testthat::expect_true(grepl(s, res$head, fixed = TRUE), info = s)
   }

@@ -1,11 +1,24 @@
-// Ryc. 2.3: wykres kołowy i słupkowy (ECharts). Scenariusz przychodzi z serwera
-// (komunikat render_scenario: {labels, data, colors, reveal}); ostatni przeżywa
-// zmianę rozdziału. Słupki i wartości pojawiają się dopiero po odsłonięciu.
-// Kontener .lc-scenario z <div class="lc-ec" id="ch2_pie_canvas"> i
-// <div class="lc-ec" id="ch2_bar_canvas">.
+// Ryc. 2.3: wykres kołowy i słupkowy (ECharts) w trzech scenariuszach, bez serwera.
+// Kontener .lc-scenario z data-config = { input, scenarios: [{ labels, data, colors,
+// order }] } oraz <div class="lc-ec" id="ch2_pie_canvas"> i id="ch2_bar_canvas">.
+// Scenariusz wybiera segment (radio o nazwie `input`); treści scenariuszy przełącza
+// lc_variants(). Słupki, wartości i werdykty ([data-scn-reveal]) pojawiają się po
+// kliknięciu [data-scn-reveal-button]; zmiana scenariusza zaczyna rundę od nowa
+// (schowane wartości, karty z powrotem w puli).
+// Ocena ułożenia: window.lcS01Scenario.hits() (testy: tests/js/scenario.test.js).
 (function () {
+  // Liczba pozycji obsadzonych właściwą kartą. assignment: { pos1: "C", … },
+  // order: identyfikatory kart od najmniejszego udziału do największego.
+  function hits(assignment, order) {
+    var n = 0;
+    order.forEach(function (id, i) { if (assignment["pos" + (i + 1)] === id) n += 1; });
+    return n;
+  }
+  (typeof window !== "undefined" ? window : globalThis).lcS01Scenario = { hits: hits };
+  if (typeof document === "undefined") return;
+
   var Charts = window.lcCharts;
-  var latest = null, current = null;
+  var current = null;
 
   // ECharts nie rozumie var() ani color-mix(): kolor liczy przeglądarka.
   function resolve(css) {
@@ -47,6 +60,33 @@
     current.pie.setOption({ series: [{ id: "pie", itemStyle: { borderColor: Charts.alpha(P.surface, 0.6) } }] });
   }
 
+  function scenarioIndex(root, cfg) {
+    var checked = root.querySelector('input[name="' + cfg.input + '"]:checked');
+    var i = checked ? Number(checked.value) - 1 : 0;
+    return i >= 0 && i < cfg.scenarios.length ? i : 0;
+  }
+
+  // Stan widoku: scenariusz z segmentu, odsłonięcie z current.revealed.
+  function apply(root) {
+    if (!current || current.root !== root) return;
+    var cfg = current.cfg, s = cfg.scenarios[scenarioIndex(root, cfg)];
+    render(root, { labels: s.labels, data: s.data, colors: s.colors, reveal: current.revealed });
+    root.querySelectorAll("[data-scn-reveal]").forEach(function (el) { el.hidden = !current.revealed; });
+    root.querySelectorAll("[data-scn-hide]").forEach(function (el) { el.hidden = current.revealed; });
+  }
+
+  // Ułożenie kart w widocznym scenariuszu: { pos1: "C", … } (puste pola pominięte).
+  function assignment(root, i) {
+    var out = {};
+    var dm = root.querySelector('[data-lc-variant="' + (i + 1) + '"] .lc-dm');
+    if (!dm) return out;
+    dm.querySelectorAll("[data-lc-dm-zone]").forEach(function (zone) {
+      var card = zone.querySelector("[data-lc-dm-item]");
+      if (card) out[zone.getAttribute("data-lc-dm-zone")] = card.getAttribute("data-lc-dm-item");
+    });
+    return out;
+  }
+
   Charts.onReady(".lc-scenario", function (root) {
     var ePie = root.querySelector("#ch2_pie_canvas"), eBar = root.querySelector("#ch2_bar_canvas");
     if (!ePie || !eBar) return false;
@@ -64,17 +104,33 @@
       yAxis: { type: "category", data: [], inverse: true },
       series: [{ id: "bar", type: "bar", data: [], barWidth: "70%", itemStyle: { borderRadius: 4 } }]
     });
-    current = { root: root, pie: pie, bar: bar, el: { pie: ePie, bar: eBar } };
+    current = { root: root, pie: pie, bar: bar, el: { pie: ePie, bar: eBar },
+      cfg: JSON.parse(root.getAttribute("data-config")), revealed: false };
     Charts.zoomControl(root);
     Charts.onTheme(root, function () { paint(root); });
     Charts.onDispose(root, function () { current = null; });
     paint(root);
     eBar.style.visibility = "hidden";
-    if (latest) render(root, latest);
-  });
 
-  Charts.onMessage("render_scenario", function (msg) {
-    latest = msg;
-    if (current && current.root.isConnected) render(current.root, msg);
+    // Zmiana scenariusza: nowa runda.
+    root.addEventListener("change", function (e) {
+      if (!current || e.target.name !== current.cfg.input) return;
+      current.revealed = false;
+      root.querySelectorAll("[data-lc-dm-reset]").forEach(function (b) { b.click(); });
+      apply(root);
+    });
+    // Odsłonięcie: liczba trafień zamrożona w tej chwili.
+    root.addEventListener("click", function (e) {
+      var btn = e.target.closest && e.target.closest("[data-scn-reveal-button]");
+      if (!btn || !current) return;
+      var i = scenarioIndex(root, current.cfg);
+      var n = hits(assignment(root, i), current.cfg.scenarios[i].order);
+      root.querySelectorAll('[data-lc-variant="' + (i + 1) + '"] [data-scn-hits]').forEach(function (el) {
+        el.textContent = String(n);
+      });
+      current.revealed = true;
+      apply(root);
+    });
+    apply(root);
   });
 })();

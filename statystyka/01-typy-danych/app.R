@@ -96,6 +96,8 @@ app_extras <- tagList(
   ")),
   # Szósta obserwacja we wzorach (rozdz. 3, Ryc. 3.5)
   tags$style(HTML("
+    /* Ryc. 2.3: elementy ukryte przed odsłonięciem albo po nim (także te ze stylem display). */
+    .lc-scenario [hidden] { display: none !important; }
     .ch3-six-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
     .ch3-six-cell { display: flex; flex-direction: column; align-items: center; gap: 2px;
       min-width: 76px; padding: 6px 10px; border: 1px solid var(--upwr-rule);
@@ -145,6 +147,7 @@ app_extras <- tagList(
       background: var(--upwr-accent); color: var(--upwr-surface); }
   ")),
   includeScript(file.path(app_dir, "modules", "scenario_chart.js")),
+  includeScript(file.path(app_dir, "modules", "six_obs.js")),
   tags$style(HTML("
 
   /* Taxonomy tree (HTML/CSS) */
@@ -310,44 +313,10 @@ server <- function(input, output, session) {
 
   lc <- lecture_server(.chapters, input, output, session)
 
-  # Nawigacja między rozdziałami idzie przez lc_chapter_next() w modułach
-  # (sendCustomMessage("switchToChapter", ...) → lc__switch_chapter).
-  # Stare observeEvent(input$chN_next) zostały usunięte razem z buttonami.
+  # Nawigacja między rozdziałami idzie przez lc_chapter_next() w modułach.
 
-  # ==========================================================================
-  # VARIABLE TRACKER
-  # ==========================================================================
-
-  output$tracker_ch3 <- renderUI({
-    var_name <- input$tracked_var
-    req(var_name)
-    vals <- student_data[[var_name]]
-    label <- variable_meta[[var_name]]$label
-
-    lc_tracker(label, c("Średnia" = lc_fmt(mean(vals), 2), "Mediana" = lc_fmt(median(vals), 2)))
-  })
-
-  output$tracker_ch4 <- renderUI({
-    var_name <- input$tracked_var
-    req(var_name)
-    vals <- student_data[[var_name]]
-    label <- variable_meta[[var_name]]$label
-
-    lc_tracker(label, c("x̄" = lc_fmt(mean(vals), 2), "Me" = lc_fmt(median(vals), 2),
-                       "SD" = lc_fmt(sd(vals), 2), "IQR" = lc_fmt(IQR(vals), 2)))
-  })
-
-  output$tracker_ch5 <- renderUI({
-    var_name <- input$tracked_var
-    req(var_name)
-    vals <- student_data[[var_name]]
-    label <- variable_meta[[var_name]]$label
-    sk <- round(e1071::skewness(vals), 2)
-    ku <- round(e1071::kurtosis(vals), 2)
-
-    lc_tracker(label, c("x̄" = lc_fmt(mean(vals), 2), "SD" = lc_fmt(sd(vals), 2),
-                       "Skośność" = lc_fmt(sk, 2), "Kurtoza" = lc_fmt(ku, 2)))
-  })
+  # Śledzona zmienna: odczyty dla wszystkich zmiennych są w dokumencie
+  # (tracker_variants() w modules/helpers.R), przełącza je lista tracked_var.
 
   # ==========================================================================
   # CHAPTER SERVERS

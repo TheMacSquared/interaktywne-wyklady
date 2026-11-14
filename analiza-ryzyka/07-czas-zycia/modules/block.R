@@ -1024,5 +1024,4 @@ zycie_server <- function(input, output, session) {
       lc_readout("Ryzyko awarii", risk_fmt_p(1 - r))
     )
   })
-  risk_assessment_server("c7", zycie_quiz, input, output)
 }

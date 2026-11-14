@@ -36,6 +36,18 @@
 
 .LC_MODULES <- .LC_COURSE$modules
 
+# Tryb statyczny (scripts/build_static.R ustawia options(lc.static = TRUE)):
+# strona bez serwera Shiny, wszystkie rozdziały w dokumencie, nawigacja w JS.
+.lc_static <- function() isTRUE(getOption("lc.static", FALSE))
+
+# Plik strony statycznej wykładu o danym lecture_id (np. "02-warunki.html");
+# NULL, gdy wykład nie jest zbudowany (lista w options(lc.static.lectures)).
+.lc_static_href <- function(lecture_id) {
+  built <- getOption("lc.static.lectures", character(0))
+  folder <- names(built)[match(lecture_id, built)]
+  if (length(folder) != 1L || is.na(folder)) NULL else paste0(folder, ".html")
+}
+
 # Mapowanie lecture_id → slug modułu
 .LC_LECTURE_MODULE <- .LC_COURSE$lecture_module
 
@@ -50,6 +62,11 @@
 # ze stanem suwaków i quizów. Bez LC_HUB_URL zakładki zostają placeholderami.
 .lc_module_link <- function(m, is_active, hub_url) {
   plain <- list(href = m$href, tab = NULL)
+  if (.lc_static()) {
+    hits <- vapply(.LC_LECTURE_MODULE, identical, logical(1), m$slug)
+    href <- if (any(hits) && !is_active) .lc_static_href(names(.LC_LECTURE_MODULE)[hits][[1]])
+    return(list(href = if (is.null(href)) m$href else href, tab = NULL))
+  }
   if (!nzchar(hub_url) || is_active) return(plain)
 
   hits <- vapply(.LC_LECTURE_MODULE, identical, logical(1), m$slug)
@@ -372,8 +389,11 @@ lecture_page <- function(lecture_id      = NULL,
       .lc_palette_css(),
       # Tryb halloweenowy wyłączony (bez przycisku H, bez trybu wg daty); kod zostaje na przyszły rok.
       includeCSS(file.path(shared_root, "halloween.css")),
-      includeScript(file.path(shared_root, "halloween.js")),
-      tags$script(HTML("
+      # data-lc-early: te dwa skrypty ustawiają tryb i rozmiar tekstu przed pierwszym
+      # rysowaniem strony, więc build statyczny zostawia je w nagłówku (pozostałe
+      # przenosi na koniec dokumentu).
+      includeScript(file.path(shared_root, "halloween.js"), `data-lc-early` = "true"),
+      tags$script(`data-lc-early` = "true", HTML("
 (function() {
   try {
     var size = window.localStorage.getItem('lc-font-size');
@@ -391,6 +411,7 @@ lecture_page <- function(lecture_id      = NULL,
       includeScript(file.path(shared_root, "lc_widgets.js")),
       includeScript(file.path(shared_root, "lc_dragdrop.js")),
       includeScript(file.path(shared_root, "lc_formula.js")),
+      includeScript(file.path(shared_root, "lc_quiz.js")),
       tags$script(HTML("
 function lcUpdateTabsScrollState(list) {
   if (!list) return;
@@ -471,11 +492,26 @@ document.addEventListener('DOMContentLoaded', lcInitTabsScroll);
           theme_control
         ),
 
-        # Główna treść — jeden rozdział na raz (renderUI po stronie serwera)
+        # Główna treść. Z serwerem Shiny: jeden rozdział na raz (renderUI).
+        # W trybie statycznym: wszystkie rozdziały w dokumencie, widoczny pierwszy;
+        # przełącza je shared/shared_toc.js.
         tags$main(
           id    = "lc-main",
           class = "lc-main",
-          uiOutput("lc__chapter_content")
+          if (.lc_static()) {
+            lapply(seq_along(chapters), function(i) {
+              ch <- chapters[[i]]
+              tags$section(
+                id = ch$id, class = "lc-chapter lc-content-wrap",
+                `data-lc-static-chapter` = "true",
+                `data-lc-chapter-content` = if (i == 1L) "true",
+                hidden = if (i > 1L) NA,
+                ch$content
+              )
+            })
+          } else {
+            uiOutput("lc__chapter_content")
+          }
         )
       )
     )
@@ -881,11 +917,9 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
     class = "lc-next",
     href  = "#",
     `data-lc-next-target` = target_id,
-    onclick = paste0(
-      "event.preventDefault();",
-      "Shiny.setInputValue('lc__switch_chapter', '", target_id,
-      "', {priority:'event'});"
-    ),
+    # lcGoToChapter() (shared/shared_toc.js) przełącza rozdział przez Shiny
+    # albo, na stronie statycznej, bezpośrednio w dokumencie.
+    onclick = paste0("event.preventDefault();lcGoToChapter('", target_id, "');"),
     tags$span(class = "lc-next-l", "Dalej"),
     tags$span(class = "lc-next-t",
       tags$span(class = "lc-next-num", num), title
@@ -1850,6 +1884,159 @@ lc_verdict <- function(..., type = c("ok", "warning", "danger", "info")) {
   tags$span(class = paste0("lc-status-", type), ...)
 }
 
+# Komentarz do wybranej odpowiedzi (radio `input_id`), bez serwera. Pojawia się po
+# kliknięciu przycisku z atrybutem data-lc-vote-check = input_id (lc_check_button()),
+# a potem podąża za zmianą wyboru.
+#   feedback  nazwana lista tagów: nazwa = wartość odpowiedzi, ".other" = pozostałe
+#   none      komentarz, gdy nic nie zaznaczono
+# Logika: shared/lc_widgets.js, sekcja „Głosowanie”.
+lc_choice_feedback <- function(input_id, output_id, feedback,
+                               none = lc_caption("Najpierw zaznacz jedną z odpowiedzi.", tone = "info")) {
+  stopifnot(is.list(feedback), length(feedback) > 0, !is.null(names(feedback)),
+            all(nzchar(names(feedback))))
+  html <- lapply(feedback, function(x) as.character(htmltools::tagList(x)))
+  html[[".none"]] <- as.character(htmltools::tagList(none))
+  json <- jsonlite::toJSON(list(output = output_id, feedback = html), auto_unbox = TRUE)
+  tagList(
+    tags$script(type = "application/json", `data-lc-vote-data` = input_id,
+                HTML(gsub("</", "<\\/", json, fixed = TRUE))),
+    tags$div(id = output_id, class = "lc-vote-feedback")
+  )
+}
+
+# Przycisk lc_action(), który pokazuje komentarz lc_choice_feedback() do `input_id`.
+lc_check_button <- function(button_id, label, input_id, variant = "solid") {
+  htmltools::tagAppendAttributes(lc_action(button_id, label, variant = variant),
+                                 `data-lc-vote-check` = input_id)
+}
+
+# Quiz kafelkowy bez serwera: losuje `n` pytań z puli, pokazuje je po jednym,
+# po odpowiedzi daje omówienie, na końcu wynik. Zwraca elementy do wstawienia
+# w figure_panel(). Logika i opis danych: shared/lc_quiz.js.
+#   questions  lista pytań: scenario, question, options, correct (numer od 1), explanation
+#   summary    nazwany wektor „próg w % = tekst”, od najwyższego progu, np.
+#              c("90" = "Świetnie.", "70" = "Dobry wynik.", "0" = "Spróbuj ponownie.")
+lc_tile_quiz <- function(id, questions, n = length(questions), summary,
+                         start_label = "Rozpocznij quiz", options = NULL,
+                         labels = list(), colors = list(), tiles_class = "quiz-cols-2") {
+  stopifnot(length(questions) > 0, !is.null(names(summary)))
+  # options: te same odpowiedzi w każdym pytaniu, jako lista list(value, label, color);
+  # wtedy `correct` pytania jest wartością (value), a kafelek ma kolor odpowiedzi.
+  if (!is.null(options)) {
+    values <- vapply(options, function(o) o$value, character(1))
+    questions <- lapply(questions, function(q) {
+      stopifnot(q$correct %in% values)
+      q$options <- vapply(options, function(o) o$label, character(1))
+      q$correct <- match(q$correct, values)
+      q
+    })
+  }
+  for (q in questions) {
+    stopifnot(is.character(q$question), length(q$options) >= 2,
+              q$correct >= 1, q$correct <= length(q$options), is.character(q$explanation))
+  }
+  config <- list(
+    n = min(n, length(questions)),
+    questions = lapply(questions, function(q) {
+      list(scenario = q$scenario %||% "", question = q$question,
+           options = as.list(unlist(q$options)), correct = as.integer(q$correct),
+           explanation = q$explanation)
+    }),
+    # colors: letter (tło litery kafelka), score (odczyt wyniku), question i correct
+    # (pozostałe odczyty), score_levels = list(start, ok, mid, low): kolor wyniku
+    # w trakcie gry (≥ 70%, ≥ 50%, mniej).
+    colors = utils::modifyList(list(letter = upwr_secondary, score = upwr_accent), colors),
+    option_colors = if (!is.null(options)) {
+      as.list(unname(vapply(options, function(o) as.character(o$color), character(1))))
+    },
+    # labels: question, score (odczyty w trakcie), result, correct (podsumowanie),
+    # next, finish, again (przyciski).
+    labels = labels,
+    tiles_class = tiles_class,
+    summary = lapply(seq_along(summary), function(i) {
+      list(min = as.numeric(names(summary)[[i]]), text = unname(summary[[i]]))
+    })
+  )
+  json <- jsonlite::toJSON(config, auto_unbox = TRUE, null = "null")
+  slot <- function(name) tags$div(id = paste0(id, "_", name), `data-lc-quiz-slot` = name)
+  tagList(
+    lc_toolbar(
+      htmltools::tagAppendAttributes(lc_action(paste0(id, "_start"), start_label, variant = "solid"),
+                                     `data-lc-quiz-start` = id),
+      lc_readouts(slot("progress"))
+    ),
+    tags$script(type = "application/json", `data-lc-tile-quiz` = id,
+                HTML(gsub("</", "<\\/", json, fixed = TRUE))),
+    slot("question"), slot("options"), slot("feedback"), slot("summary")
+  )
+}
+
+# Treść odsłaniana przyciskiem `button_id` (np. tok rozwiązania), bez serwera.
+# Zastępuje uiOutput() + renderUI() z req() po kliknięciu. Logika: shared/lc_widgets.js.
+lc_reveal <- function(button_id, ..., id = NULL) {
+  tags$div(id = id, class = "lc-reveal", `data-lc-reveal` = button_id, hidden = NA, ...)
+}
+
+# Warianty treści przełączane kontrolką, bez serwera: wszystkie warianty są
+# w dokumencie, widoczny jest ten, którego nazwa równa się wartości kontrolki
+# `input_id` (radio, segment albo lista). Zastępuje uiOutput() + renderUI()
+# z treścią wybieraną po input$<input_id>.
+#   variants  nazwana lista tagów (nazwa = wartość kontrolki)
+#   selected  wariant widoczny na starcie (domyślnie pierwszy)
+#   reveal    id przycisku: treść pojawia się dopiero po jego kliknięciu,
+#             a zmiana wyboru znów ją chowa
+# Logika: shared/lc_widgets.js.
+lc_variants <- function(input_id, variants, selected = NULL, reveal = NULL, class = NULL,
+                        inline = FALSE, pick = FALSE) {
+  stopifnot(is.list(variants), length(variants) > 0, !is.null(names(variants)),
+            all(nzchar(names(variants))))
+  if (is.null(selected)) selected <- names(variants)[[1]]
+  el <- if (isTRUE(inline)) tags$span else tags$div
+  # pick = TRUE: wariant wybiera kliknięcie elementu lc_pick() (drugie kliknięcie
+  # chowa treść); na starcie nic nie jest widoczne.
+  hide_all <- !is.null(reveal) || isTRUE(pick)
+  el(
+    class = paste(c("lc-variants", class), collapse = " "),
+    `data-lc-variants` = input_id, `data-lc-variants-reveal` = reveal,
+    `data-lc-variants-pick` = if (isTRUE(pick)) "true",
+    lapply(names(variants), function(value) {
+      el(`data-lc-variant` = value,
+         hidden = if (hide_all || !identical(value, selected)) NA,
+         variants[[value]])
+    })
+  )
+}
+
+# Atrybuty elementu, którego kliknięcie wybiera wariant lc_variants(pick = TRUE):
+#   tags$div(..., !!!lc_pick("grupa", "wartość"))  albo  do.call(tags$div, c(list(...), lc_pick(...)))
+lc_pick <- function(group, value) {
+  list(`data-lc-pick` = group, `data-value` = value, role = "button", tabindex = "0",
+       `aria-pressed` = "false")
+}
+
+# Treść przełączana przyciskiem tam i z powrotem (np. tabela bez odpowiedzi i z odpowiedziami).
+# lc_toggle_button() zmienia etykietę, lc_toggle_content() pokazuje `off` albo `on`.
+lc_toggle_button <- function(button_id, label_off, label_on, variant = "solid") {
+  htmltools::tagAppendAttributes(lc_action(button_id, label_off, variant = variant),
+    `data-lc-toggle-button` = "true", `data-label-off` = label_off, `data-label-on` = label_on,
+    `aria-pressed` = "false")
+}
+lc_toggle_content <- function(button_id, off, on) {
+  tags$div(class = "lc-variants", `data-lc-toggle` = button_id,
+    tags$div(`data-lc-toggle-state` = "off", off),
+    tags$div(`data-lc-toggle-state` = "on", hidden = NA, on))
+}
+
+# Treść zależna od kroku widgetu krokowego (np. tabela budowana krok po kroku):
+# wszystkie widoki są w dokumencie, widoczny jest widok bieżącego kroku.
+# Wstawiać w body albo above lc_step_widget().
+lc_step_views <- function(views) {
+  tags$div(class = "lc-step-texts",
+    lapply(seq_along(views), function(i) {
+      tags$div(`data-lc-step-text` = i, hidden = if (i > 1L) NA, views[[i]])
+    }))
+}
+
 # Przełączniki drugorzędne (np. hipotezy): jeden aktywny albo żaden.
 # Wartość w input$<input_id> (NULL, gdy nic nie wybrano). Logika: shared/lc_widgets.js.
 lc_chips <- function(input_id, choices, label = NULL) {
@@ -1875,12 +2062,15 @@ em_ <- function(...) tags$em(..., .noWS = "outside")
 # Układ: tytuł + sterowanie, pasek kroków, wykres o stałej proporcji, opis
 # kroku i nawigacja. Kroki od 1. Serwer czyta input$<id>_step (lc_step_server),
 # opis kroku renderuje output$<id>_text jako tekst inline. Logika: shared/lc_widgets.js.
+# Z `texts` (lista opisów, po jednym na krok) opisy są w dokumencie i serwer nie jest potrzebny.
 # Widget bez wykresu (np. tabela budowana krok po kroku): body zamiast plot_id.
 # above: treść między paskiem kroków a wykresem (np. tabela i odczyty w rzędzie).
 lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NULL,
-                           extra = NULL, ratio = "2.5/1", body = NULL, above = NULL) {
+                           extra = NULL, ratio = "2.5/1", body = NULL, above = NULL,
+                           texts = NULL) {
   n <- length(steps)
-  stopifnot(n >= 2, !is.null(plot_id) || !is.null(body))
+  stopifnot(n >= 2, !is.null(plot_id) || !is.null(body),
+            is.null(texts) || length(texts) == n)
   tags$div(
     class = "lc-stepper", id = id, `data-lc-step` = 1L,
     tags$div(class = "lc-stepper-head",
@@ -1908,7 +2098,16 @@ lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NU
     tags$div(class = "lc-stepper-foot",
       tags$div(class = "lc-stepper-text", `aria-live` = "polite",
         tags$span(class = "lc-stepper-kicker", sprintf("Krok 1 z %d · %s", n, steps[[1]])),
-        uiOutput(paste0(id, "_text"), inline = TRUE)
+        if (is.null(texts)) {
+          uiOutput(paste0(id, "_text"), inline = TRUE)
+        } else {
+          # Opisy wszystkich kroków są w dokumencie; widoczny jest opis bieżącego
+          # kroku (shared/lc_widgets.js). Bez serwera.
+          tags$span(id = paste0(id, "_text"), class = "lc-step-texts",
+            lapply(seq_len(n), function(i) {
+              tags$span(`data-lc-step-text` = i, hidden = if (i > 1L) NA, texts[[i]])
+            }))
+        }
       ),
       tags$div(class = "lc-stepper-actions",
         tags$button(type = "button", class = "lc-action is-ghost is-icon",

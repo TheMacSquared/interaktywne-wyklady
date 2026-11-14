@@ -12,7 +12,7 @@
 #   p4_proto_oc_ui          — Piaskownica „Krzywa operacyjna planu (n, c)” (10), zaakceptowany 2026-10-28
 #   p4_proto_zero_ui        — Galeria „Trzech dostawców bez wad” (12), zaakceptowany 2026-10-28
 #   p4_proto_closing_ui     — Domknięcie „Jeden rozkład, pięć pytań” (13), zaakceptowany 2026-10-28
-# Serwer: p4_proto_charts_server(input, output, session) — tylko przykłady (8).
+# Bez serwera: przykłady (8) przełącza lc_variants(), wykresy liczy przeglądarka.
 # Wymaga: palette.R, lecture_layout.R, lc_stat_figures.R, risk_math.R, risk_block.R.
 
 # proto = FALSE: prototyp zaakceptowany, zwykła plakietka rodzaju.
@@ -178,13 +178,6 @@ p4_examples <- data.frame(
 )
 p4_examples$risk <- 1 - (1 - p4_examples$p)^p4_examples$n
 
-p4_proto_examples_ui <- p4_proto_panel("Przykłady", "Ten sam wzór w trzech sytuacjach", proto = FALSE,
-  width_mode = "text",
-  lc_toolbar(lc_segmented("p4p_ex", NULL, choices = c(setNames(p4_examples$key, p4_examples$name),
-    "Zestawienie" = "all"))),
-  uiOutput("p4p_ex_out")
-)
-
 p4_examples_axis_svg <- function(d = p4_examples) {
   x <- function(v) 40 + v * 600
   ax <- 150
@@ -204,6 +197,32 @@ p4_examples_axis_svg <- function(d = p4_examples) {
   HTML(paste0('<svg class="p4p-svg" style="max-width:700px" viewBox="0 0 680 190" role="img" aria-label="Trzy ryzyka skumulowane na jednej osi, z n i p każdej sytuacji.">',
     sprintf('<line class="p4p-axis" x1="%g" x2="%g" y1="%g" y2="%g"/>', x(0), x(1), ax, ax), ticks, pts, '</svg>'))
 }
+
+# Karta jednego przykładu: sytuacja, rachunek i wniosek.
+p4_example_card <- function(e) {
+  tags$div(class = "p4p-card",
+    tags$h4(e$name),
+    tags$p(e$situation),
+    tags$p(class = "p4p-calc", sprintf("n = %s · p = %s", format(e$n, big.mark = " "), format(e$p, scientific = FALSE))),
+    tags$p(class = "p4p-calc", sprintf("P(X ≥ 1) = 1 - %s%s ≈ %.3f", format(1 - e$p, scientific = FALSE),
+      chartr("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹", format(e$n, big.mark = "")), e$risk)),
+    tags$p(class = "p4p-verdict", e$decision)
+  )
+}
+
+# Wszystkie widoki są w dokumencie; przełącza je segment p4p_ex (lc_variants).
+p4_proto_examples_ui <- p4_proto_panel("Przykłady", "Ten sam wzór w trzech sytuacjach", proto = FALSE,
+  width_mode = "text",
+  lc_toolbar(lc_segmented("p4p_ex", NULL, choices = c(setNames(p4_examples$key, p4_examples$name),
+    "Zestawienie" = "all"))),
+  p4_proto_css,
+  lc_variants("p4p_ex", c(
+    setNames(lapply(seq_len(nrow(p4_examples)), function(i) p4_example_card(p4_examples[i, ])),
+             p4_examples$key),
+    list(all = tagList(p4_examples_axis_svg(),
+      lc_caption("Trzy sytuacje, jeden wzór 1 - (1 - p)ⁿ. Ryzyko zależy od p i n naraz: kierowca ma p sto razy mniejsze niż mocowania, a ryzyko prawie takie samo, bo przejazdów jest 2500, a mocowań 30.")))
+  ))
+)
 
 # ============================================================================
 # (10) PIASKOWNICA „KRZYWA OPERACYJNA PLANU (n, c)”
@@ -240,26 +259,3 @@ p4_proto_zero_ui <- p4_proto_panel("Galeria", "Trzech dostawców bez wad", proto
 p4_proto_closing_ui <- p4_proto_panel("Domknięcie", "Jeden rozkład, pięć pytań: B(100, 0.02)", proto = FALSE,
   lc_sf_figure("p4_closing", ratio = "2/1", max_height = "420px")
 )
-
-# ============================================================================
-# SERWER — tylko przykłady (8); wykresy liczy przeglądarka
-# ============================================================================
-
-p4_proto_charts_server <- function(input, output, session) {
-  output$p4p_ex_out <- renderUI({
-    key <- input$p4p_ex %||% p4_examples$key[1]
-    if (identical(key, "all")) {
-      return(tagList(p4_proto_css, p4_examples_axis_svg(),
-        lc_caption("Trzy sytuacje, jeden wzór 1 - (1 - p)ⁿ. Ryzyko zależy od p i n naraz: kierowca ma p sto razy mniejsze niż mocowania, a ryzyko prawie takie samo, bo przejazdów jest 2500, a mocowań 30.")))
-    }
-    e <- p4_examples[p4_examples$key == key, ]
-    tagList(p4_proto_css, tags$div(class = "p4p-card",
-      tags$h4(e$name),
-      tags$p(e$situation),
-      tags$p(class = "p4p-calc", sprintf("n = %s · p = %s", format(e$n, big.mark = " "), format(e$p, scientific = FALSE))),
-      tags$p(class = "p4p-calc", sprintf("P(X ≥ 1) = 1 - %s%s ≈ %.3f", format(1 - e$p, scientific = FALSE),
-        chartr("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹", format(e$n, big.mark = "")), e$risk)),
-      tags$p(class = "p4p-verdict", e$decision)
-    ))
-  })
-}

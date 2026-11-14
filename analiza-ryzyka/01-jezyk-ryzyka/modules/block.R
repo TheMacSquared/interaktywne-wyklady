@@ -64,7 +64,7 @@ jezyk_quiz <- list(
 
 .required_report_fields <- c("definition", "exposure", "period", "consequence")
 
-# Ćwiczenia 1–4 są interaktywne (ocena w jezyk_cwiczenia_server), 5–7 mają
+# Ćwiczenia 1–4 są interaktywne (ocena w przeglądarce: modules/jezyk.js), 5–7 mają
 # zwinięte odpowiedzi, a 8–12 to pytania przeniesione z dawnego, dłuższego quizu.
 jezyk_exercises <- list(
   list(task = tagList(
@@ -99,7 +99,14 @@ jezyk_exercises <- list(
       )
     ),
     lc_action("ch8_check", "Sprawdź rekomendację", variant = "solid"),
-    uiOutput("ch8_feedback")
+    # Ocenę pisze modules/jezyk.js (lcJ1.reportFeedback) po kliknięciu przycisku.
+    tags$div(id = "ch8_feedback", `data-j1-report` = "true",
+      `data-config` = jsonlite::toJSON(auto_unbox = TRUE, list(
+        button = "ch8_check", fields = "ch8_fields", conclusion = "ch8_conclusion",
+        required = .required_report_fields, correct = "insufficient",
+        labels = list(definition = "definicja zdarzenia", exposure = "mianownik ekspozycji",
+                      period = "wspólny okres i warunki", consequence = "rodzaj skutków")
+      )))
   )),
   list(task = tagList(
     tags$p(tags$strong("Policz działania na zdarzeniach:"), " sto kontroli rampy."),
@@ -115,7 +122,14 @@ jezyk_exercises <- list(
       tags$li("Czy A i B są rozłączne? Uzasadnij jednym zdaniem.")
     ),
     lc_action("ch8_sets_solution", "Pokaż tok rozwiązania", variant = "solid"),
-    uiOutput("ch8_sets_feedback")
+    lc_reveal("ch8_sets_solution", id = "ch8_sets_feedback", lc_status(
+      tags$ol(
+        tags$li("A ∩ B zawiera 6 kontroli — tę liczbę podano w treści."),
+        tags$li(sprintf("A ∪ B zawiera 28 + 17 - 6 = %d kontroli.", 28 + 17 - 6)),
+        tags$li(sprintf("Ani A, ani B: 100 - %d = %d kontroli.", 28 + 17 - 6, 100 - (28 + 17 - 6))),
+        tags$li("Zdarzenia nie są rozłączne, ponieważ ich część wspólna zawiera 6 wyników.")
+      )
+    ))
   )),
   list(task = tagList(
     tags$p(tags$strong("Rozpoznaj punkt startu:"), " nie każdy ułamek znaczy to samo."),
@@ -131,7 +145,8 @@ jezyk_exercises <- list(
         "Definicja klasyczna" = "classical",
         "Częstość empiryczna" = "empirical",
         "Dalszy model i dane" = "model"
-      )
+      ),
+      selectize = FALSE
     ),
     selectInput(
       "ch8_model_2",
@@ -141,7 +156,8 @@ jezyk_exercises <- list(
         "Definicja klasyczna" = "classical",
         "Częstość empiryczna" = "empirical",
         "Dalszy model i dane" = "model"
-      )
+      ),
+      selectize = FALSE
     ),
     selectInput(
       "ch8_model_3",
@@ -151,10 +167,25 @@ jezyk_exercises <- list(
         "Definicja klasyczna" = "classical",
         "Częstość empiryczna" = "empirical",
         "Dalszy model i dane" = "model"
-      )
+      ),
+      selectize = FALSE
     ),
     lc_action("ch8_models_check", "Sprawdź dobór", variant = "solid"),
-    uiOutput("ch8_models_feedback")
+    # Wynik liczy modules/jezyk.js (lcJ1.modelsScore); omówienie jest stałe.
+    tags$div(id = "ch8_models_feedback", hidden = NA, `data-j1-models` = "true",
+      `data-config` = jsonlite::toJSON(auto_unbox = TRUE, list(
+        button = "ch8_models_check",
+        inputs = c("ch8_model_1", "ch8_model_2", "ch8_model_3"),
+        correct = c("classical", "empirical", "model")
+      )),
+      lc_status(
+        tags$span(`data-j1-verdict` = "true", tags$strong()),
+        tags$ol(
+          tags$li("Losowanie palety: definicja klasyczna, jeśli procedura zapewnia równe szanse."),
+          tags$li("Rejestr zmian: częstość empiryczna z konkretnych obserwacji."),
+          tags$li("Prognoza przy nowych warunkach: potrzebny dalszy model i dane o warunkach.")
+        )
+      ))
   )),
   list(task = tagList(
     tags$p(tags$strong("Przenieś język poza Bananpol:"), " alarm gazowy w laboratorium."),
@@ -171,7 +202,16 @@ jezyk_exercises <- list(
       placeholder = "Zagrożenie: ... Ekspozycja: ... Zdarzenie: ..."
     ),
     lc_action("ch8_transfer_rubric", "Pokaż kryteria samooceny", variant = "solid"),
-    uiOutput("ch8_transfer_feedback")
+    lc_reveal("ch8_transfer_rubric", id = "ch8_transfer_feedback", lc_status(
+      tags$strong("Sprawdź, czy odpowiedź zawiera:"),
+      tags$ul(
+        tags$li("źródło możliwej szkody, a nie tylko nazwę wypadku;"),
+        tags$li("osoby i warunki ekspozycji;"),
+        tags$li("jedno obserwowalne zdarzenie;"),
+        tags$li("możliwy skutek oraz barierę;"),
+        tags$li("mianownik, np. zmianę laboratoryjną, i jednoznaczny okres.")
+      )
+    ))
   )),
   list(
     task = "Audytor losuje jedną zmianę z 15 par dzień–zmiana (przykład 1.3).
@@ -320,6 +360,14 @@ jezyk_chain_terms <- list(
 )
 
 # Ćwiczenia 1.1 i 1.2: przycisk i pole wyniku oceniane w przeglądarce (modules/jezyk.js).
+# Komentarz do zbyt szybkiego rankingu (zła odpowiedź albo brak odpowiedzi) w decyzji z rozdz. 5.
+jezyk_too_fast_feedback <- function() {
+  lc_status(
+    lc_verdict(tags$strong("To zbyt szybki ranking."), type = "warning"),
+    "Wybrany argument może być ważny, ale sam nie wystarcza. Najpierw uzupełnij profil obu problemów i kryteria decyzji."
+  )
+}
+
 jezyk_check_button <- function(dm_id) {
   b <- lc_action(paste0(dm_id, "_check"), "Sprawdź klasyfikację", variant = "solid")
   b$attribs$id <- NULL
@@ -1316,8 +1364,16 @@ jezyk_block <- list(
                   selected = character(0)
                 )
               ),
-              lc_action("ch5_check", "Sprawdź rozumowanie", variant = "solid"),
-              uiOutput("ch5_feedback")
+              lc_check_button("ch5_check", "Sprawdź rozumowanie", "ch5_priority"),
+              lc_choice_feedback("ch5_priority", "ch5_feedback",
+                feedback = list(
+                  insufficient = lc_status(
+                    lc_verdict(tags$strong("Dobrze."), type = "ok"),
+                    "Prawdopodobieństwa odpowiadają tylko na część pytania. Priorytet wymaga jawnych kryteriów skutku, ekspozycji, barier i wykonalności działań."
+                  ),
+                  .other = jezyk_too_fast_feedback()
+                ),
+                none = jezyk_too_fast_feedback())
             ),
             "Każda z pierwszych trzech odpowiedzi opiera się na jednym wymiarze
                problemu. Większe prawdopodobieństwo poślizgnięcia jest faktem, ale nie
@@ -1620,137 +1676,7 @@ jezyk_chapters <- risk_block_chapters(jezyk_block)
 # działają w przeglądarce (modules/jezyk.js, modules/rysunki.R); serwer obsługuje
 # tylko sprawdzenie decyzji, ćwiczenia z rozdziału „Ćwiczenia” i quiz.
 
-jezyk_decyzja_server <- function(input, output, session) {
-  check_count <- reactiveVal(0L)
-
-  observeEvent(input$ch5_check, {
-    check_count(check_count() + 1L)
-  })
-
-  output$ch5_feedback <- renderUI({
-    req(check_count() > 0)
-    answer <- input$ch5_priority
-    if (is.null(answer)) answer <- ""
-    is_correct <- identical(answer, "insufficient")
-
-    lc_status(
-      lc_verdict(tags$strong(if (is_correct) "Dobrze." else "To zbyt szybki ranking."), type = if (is_correct) "ok" else "warning"),
-      if (is_correct) {
-        paste(
-          "Prawdopodobieństwa odpowiadają tylko na część pytania.",
-          "Priorytet wymaga jawnych kryteriów skutku, ekspozycji, barier i wykonalności działań."
-        )
-      } else {
-        paste(
-          "Wybrany argument może być ważny, ale sam nie wystarcza.",
-          "Najpierw uzupełnij profil obu problemów i kryteria decyzji."
-        )
-      }
-    )
-  })
-}
-
-jezyk_cwiczenia_server <- function(input, output, session) {
-  check_count <- reactiveVal(0L)
-  sets_revealed <- reactiveVal(FALSE)
-  models_check_count <- reactiveVal(0L)
-  rubric_revealed <- reactiveVal(FALSE)
-
-  observeEvent(input$ch8_check, {
-    check_count(check_count() + 1L)
-  })
-
-  observeEvent(input$ch8_sets_solution, sets_revealed(TRUE))
-  observeEvent(input$ch8_models_check, models_check_count(models_check_count() + 1L))
-  observeEvent(input$ch8_transfer_rubric, rubric_revealed(TRUE))
-
-  output$ch8_feedback <- renderUI({
-    req(check_count() > 0)
-    selected_fields <- input$ch8_fields
-    if (is.null(selected_fields)) selected_fields <- character()
-    selected_conclusion <- input$ch8_conclusion
-    if (is.null(selected_conclusion)) selected_conclusion <- ""
-
-    missing_fields <- setdiff(.required_report_fields, selected_fields)
-    extra_fields <- setdiff(selected_fields, .required_report_fields)
-    fields_ok <- length(missing_fields) == 0 && length(extra_fields) == 0
-    conclusion_ok <- identical(selected_conclusion, "insufficient")
-    all_ok <- fields_ok && conclusion_ok
-
-    missing_labels <- c(
-      definition = "definicja zdarzenia",
-      exposure = "mianownik ekspozycji",
-      period = "wspólny okres i warunki",
-      consequence = "rodzaj skutków"
-    )
-
-    lc_status(
-      lc_verdict(tags$strong(if (all_ok) "Rekomendacja jest kompletna." else "Wstrzymaj decyzję."), type = if (all_ok) "ok" else "warning"),
-      if (!fields_ok) {
-        paste0(
-          " Brakuje: ",
-          paste(unname(missing_labels[missing_fields]), collapse = ", "),
-          "."
-        )
-      },
-      if (!conclusion_ok) {
-        " Same liczniki 3 i 5 nie pozwalają jeszcze ustalić, który magazyn jest bezpieczniejszy."
-      },
-      if (all_ok) {
-        " Najpierw ujednolicamy definicje i ekspozycję, potem porównujemy częstości i skutki."
-      }
-    )
-  })
-
-  output$ch8_sets_feedback <- renderUI({
-    req(sets_revealed())
-    union_count <- 28 + 17 - 6
-    neither_count <- 100 - union_count
-
-    lc_status(
-      tags$ol(
-        tags$li("A ∩ B zawiera 6 kontroli — tę liczbę podano w treści."),
-        tags$li(sprintf("A ∪ B zawiera 28 + 17 - 6 = %d kontroli.", union_count)),
-        tags$li(sprintf("Ani A, ani B: 100 - %d = %d kontroli.", union_count, neither_count)),
-        tags$li("Zdarzenia nie są rozłączne, ponieważ ich część wspólna zawiera 6 wyników.")
-      )
-    )
-  })
-
-  output$ch8_models_feedback <- renderUI({
-    req(models_check_count() > 0)
-    answers <- c(input$ch8_model_1, input$ch8_model_2, input$ch8_model_3)
-    answers[is.na(answers)] <- ""
-    correct <- c("classical", "empirical", "model")
-    score <- sum(answers == correct)
-
-    lc_status(
-      lc_verdict(tags$strong(sprintf("Wynik: %d/3.", score)), type = if (score == 3) "ok" else "warning"),
-      tags$ol(
-        tags$li("Losowanie palety: definicja klasyczna, jeśli procedura zapewnia równe szanse."),
-        tags$li("Rejestr zmian: częstość empiryczna z konkretnych obserwacji."),
-        tags$li("Prognoza przy nowych warunkach: potrzebny dalszy model i dane o warunkach.")
-      )
-    )
-  })
-
-  output$ch8_transfer_feedback <- renderUI({
-    req(rubric_revealed())
-    lc_status(
-      tags$strong("Sprawdź, czy odpowiedź zawiera:"),
-      tags$ul(
-        tags$li("źródło możliwej szkody, a nie tylko nazwę wypadku;"),
-        tags$li("osoby i warunki ekspozycji;"),
-        tags$li("jedno obserwowalne zdarzenie;"),
-        tags$li("możliwy skutek oraz barierę;"),
-        tags$li("mianownik, np. zmianę laboratoryjną, i jednoznaczny okres.")
-      )
-    )
-  })
-}
-
 jezyk_server <- function(input, output, session) {
-  jezyk_decyzja_server(input, output, session)
-  jezyk_cwiczenia_server(input, output, session)
-  risk_assessment_server("j1", jezyk_quiz, input, output)
+  # Wykład nie ma logiki serwera: decyzję (rozdz. 5), ćwiczenia i quiz ocenia
+  # przeglądarka (shared/lc_widgets.js i modules/jezyk.js).
 }
