@@ -183,6 +183,45 @@
     var d = po.map(function (v, i) { return v - przed[i]; }), n = d.length, m = T.mean(d), s = T.sd(d), t = m / (s / Math.sqrt(n));
     return { n: n, mean: m, sd: s, t: t, df: n - 1, p: 2 * D.pt(-Math.abs(t), n - 1) };
   }
+  // Dane do ANOVA jak generate_fermentation_data(), generate_workplace_data() i generate_student_data():
+  // n obserwacji przydzielonych losowo do grup; zwraca wartości każdej zmiennej w podziale na grupy.
+  function anovaData(r, scenario, n) {
+    var round = function (v, d) { var k = Math.pow(10, d); return Math.round(v * k) / k; };
+    var S3 = { fermentation: { groups: ["20°C", "25°C", "30°C"], vars: { pH: function (g) { return round([4.55, 4.30, 4.05][g] + r.norm(0, 0.14), 2); },
+                                                                       kwasowosc_SH: function (g) { return round([28, 33, 38][g] + r.norm(0, 3.5), 1); } } },
+               workplace: { groups: ["Budowa", "Magazyn", "Biuro"], vars: { nieobecnosci: function (g) { return Math.max(0, Math.round([9, 5, 2][g] + r.norm(0, 3))); },
+                                                                           stres: function (g) { return Math.min(100, Math.max(0, Math.round([62, 58, 48][g] + r.norm(0, 12)))); } } } };
+    var out = { vars: {} }, i, g;
+    if (S3[scenario]) {
+      var cfg = S3[scenario];
+      out.groups = cfg.groups;
+      Object.keys(cfg.vars).forEach(function (name) { out.vars[name] = cfg.groups.map(function () { return []; }); });
+      for (i = 0; i < n; i++) {
+        g = r.int(3) - 1;
+        Object.keys(cfg.vars).forEach(function (name) { out.vars[name][g].push(cfg.vars[name](g)); });
+      }
+      return out;
+    }
+    // Studenci: grupy to kierunki w kolejności alfabetycznej; wzrost zależy od płci, średnia od kierunku.
+    var order = ["Biologia", "Ekonomia", "Informatyka", "Psychologia"], prob = [0.2, 0.25, 0.3, 0.25], gpa = [3.5, 3.4, 3.6, 3.8];
+    out.groups = order;
+    ["srednia_ocen", "wzrost", "czas_dojazdu"].forEach(function (name) { out.vars[name] = order.map(function () { return []; }); });
+    for (i = 0; i < n; i++) {
+      g = r.choose(prob) - 1;
+      var female = r.u() < 0.55;
+      out.vars.wzrost[g].push(round(female ? r.norm(166, 6) : r.norm(178, 7), 1));
+      out.vars.srednia_ocen[g].push(round(Math.min(5, Math.max(2, gpa[g] + r.norm(0, 0.4))), 2));
+      out.vars.czas_dojazdu[g].push(round(r.gamma(3, 10), 1));
+    }
+    return out;
+  }
+  // Ryzyko co najmniej jednego błędu I rodzaju przy wszystkich testach t par k grup (α = 0.05).
+  function fwer(k) { var tests = k * (k - 1) / 2; return { tests: tests, risk: 1 - Math.pow(0.95, tests) }; }
+  // Odmiana: 1 istotna różnica, 2–4 istotne różnice, 5+ istotnych różnic.
+  function pluralDiff(n) {
+    if (n === 1) return "istotna różnica";
+    return n % 10 >= 2 && n % 10 <= 4 && !(n % 100 >= 12 && n % 100 <= 14) ? "istotne różnice" : "istotnych różnic";
+  }
   // Wartości krytyczne rozkładu statystyki testowej (α = 0.05) i funkcja „w obszarze odrzucenia”.
   function critical(type, df, alternative) {
     if (type === "chisq") { var c = D.qchisq(0.95, df); return { values: [c], reject: function (x) { return x >= c; } }; }
@@ -194,7 +233,8 @@
   root.lcS05 = { phoneData: phoneData, nullDiffs: nullDiffs, simP: simP, power: power, quizAnswer: quizAnswer,
                  tOne: tOne, hist15: hist15, critical: critical, binomTest: binomTest, propTest: propTest,
                  corData: corData, corTest: corTest, tableSample: tableSample, chisqTest: chisqTest, fisherTest: fisherTest,
-                 studentVar: studentVar, pairedData: pairedData, pairedTest: pairedTest };
+                 studentVar: studentVar, pairedData: pairedData, pairedTest: pairedTest,
+                 anovaData: anovaData, fwer: fwer, pluralDiff: pluralDiff };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -833,6 +873,125 @@
             " pkt) mieści się w zakresie wahań losowych.</p>"));
     },
     noteKey: function (vals, state) { return state.d ? "data" : "empty"; }
+  };
+
+  // ---- Rozdział 9: ANOVA i porównania par -------------------------------------
+  // Ryc. 9.1: rysunki dla 2–8 grup są w dokumencie (R); tu licznik grup i odczyty.
+  figures.s05_fwer = {
+    init: function (state) { state.k = 2; },
+    act: function (state, action) { state.k = action === "reset" ? 2 : Math.min(state.k + 1, 8); },
+    update: function (el, state) {
+      var f = fwer(state.k), node = el.querySelector('[data-v="fwer_risk"]'), read = node && node.closest(".lc-read");
+      S.setValue(el, "fwer_k", String(state.k)); S.setValue(el, "fwer_tests", String(f.tests));
+      S.setValue(el, "fwer_risk", T.round(f.risk * 100, 1) + "%");
+      if (read) read.style.setProperty("--lc-read-color", f.risk < 0.10 ? "var(--upwr-sage)" : f.risk < 0.30 ? "var(--upwr-warning)" : "var(--upwr-accent)");
+    },
+    noteKey: function (vals, state) { return String(state.k); }
+  };
+
+  // Ryc. 9.2 i 9.3 pracują na jednych danych; po zmianie scenariusza albo n dane są nieaktualne.
+  store.anova = null;
+  function anovaControls() {
+    var sc = document.getElementById("ch7_scenario"), n = document.getElementById("ch7_n"), v = document.getElementById("ch7_var");
+    return { scenario: sc ? sc.value : "fermentation", n: n ? Number(n.value) : 160, variable: v ? v.value : null };
+  }
+  // Grupy wybranej zmiennej zależnej albo null, gdy nie ma aktualnych danych.
+  function anovaGroups() {
+    var c = anovaControls(), s = store.anova;
+    if (!s || s.scenario !== c.scenario || s.n !== c.n || !s.data.vars[c.variable]) return null;
+    return { names: s.data.groups, values: s.data.vars[c.variable], variable: c.variable, jitter: s.jitter };
+  }
+  figures.s05_anova = {
+    act: function (state) {
+      var c = anovaControls();
+      store.anova = { scenario: c.scenario, n: c.n, data: anovaData(rng, c.scenario, c.n), jitter: rng.many(c.n, function () { return rng.unif(-0.15, 0.15); }) };
+    },
+    // Lista „Zmienna zależna” zależy od scenariusza: przy jego zmianie wymieniamy pozycje.
+    prepare: function (state, v, vals, el) {
+      var c = anovaControls(), sel = el.querySelector("#ch7_var"), cfg = state.config.scenarios[c.scenario];
+      if (!sel || sel.getAttribute("data-scenario") === c.scenario) return;
+      sel.textContent = "";
+      Object.keys(cfg.vars).forEach(function (label) { var o = document.createElement("option"); o.value = cfg.vars[label]; o.textContent = label; sel.appendChild(o); });
+      sel.setAttribute("data-scenario", c.scenario);
+    },
+    draw: function (v, P, k, state) {
+      var d = anovaGroups();
+      if (!d) return null;
+      var cfg = state.config.scenarios[anovaControls().scenario], cols = [P.ink, P.bursztyn, P.niebo, P.szalwia], layers = [], labels = {}, out = [], pts = [], all = [], pos = 0;
+      var boxes = d.values.map(function (gr, i) {
+        labels[i + 1] = d.names[i];
+        var bx = boxOf(gr);
+        gr.forEach(function (y) { all.push(y); pts.push([i + 1 + d.jitter[pos++ % d.jitter.length], y]); if (y < bx.lo || y > bx.hi) out.push([i + 1, y]); });
+        return { pos: i + 1, width: 0.75, q1: bx.q1, med: bx.med, q3: bx.q3, lo: bx.lo, hi: bx.hi, fill: C.alpha(cols[i], 0.6) };
+      });
+      var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all), pad = (hi - lo) * 0.05 || 1;
+      return { x: [0.4, d.names.length + 0.6], y: [lo - pad, hi + pad], xLabels: labels,
+        layers: [{ type: "box", boxes: boxes, stroke: P.accent }, { type: "points", data: out, color: P.accent, size: 6, alpha: 0.3 },
+                 { type: "points", data: pts, color: P.accent, size: 4, alpha: 0.2 }],
+        xName: cfg.group_label, yName: cfg.var_labels[d.variable], aria: "Wykresy pudełkowe zmiennej zależnej w grupach." };
+    },
+    update: function (el) {
+      var box = el.querySelector('[data-role="result"]'), d = anovaGroups();
+      notify(["s05_gh"]);
+      if (!box) return;
+      if (!d) { box.innerHTML = ""; return; }
+      var a = T.anovaF(d.values);
+      box.innerHTML = S.status("<p><strong>Wynik ANOVA jednoczynnikowej:</strong></p><p>F(" + a.df1 + ", " + a.df2 + ") = " + T.round(a.F, 3) + "</p>" + pValueHtml(a.p) + decisionHtml(a.p));
+    },
+    noteKey: function () { return anovaGroups() ? "data" : "empty"; }
+  };
+
+  // Ryc. 9.3: porównania par Gamesa-Howella na danych z Ryc. 9.2 (macierz p, wykres różnic, lista).
+  figures.s05_gh = {
+    act: function (state) { state.asked = true; },
+    prepare: function (state) {
+      var d = state.asked ? anovaGroups() : null;
+      state.d = d; state.gh = d ? T.gamesHowell(d.values) : null;
+    },
+    draw: function (v, P, k, state) {
+      var d = state.d;
+      if (!d) return null;
+      var rows = state.gh.map(function (g) { return { label: d.names[g.i] + " — " + d.names[g.j], g: g }; });
+      rows.sort(function (a, b) { return a.label < b.label ? -1 : a.label > b.label ? 1 : 0; });   // oś kategorii: alfabetycznie od dołu
+      var labels = {}, layers = [], lo = 0, hi = 0, sig = {};
+      rows.forEach(function (r, i) {
+        var y = i + 1, col = r.g.p < 0.05 ? P.accent : P.szalwia;
+        labels[y] = r.label; lo = Math.min(lo, r.g.lo); hi = Math.max(hi, r.g.hi); sig[r.g.p < 0.05] = true;
+        layers.push({ type: "segs", color: col, width: 1.8, items: [{ from: [r.g.lo, y], to: [r.g.hi, y] }, { from: [r.g.lo, y - 0.1], to: [r.g.lo, y + 0.1] }, { from: [r.g.hi, y - 0.1], to: [r.g.hi, y + 0.1] }] });
+        layers.push({ type: "point", x: r.g.estimate, y: y, color: col, size: 10 });
+      });
+      layers.push({ type: "vline", x: 0, color: P.secondary, width: 1.4, dash: [6, 5] });
+      var legend = [];
+      if (sig[false]) legend.push({ color: P.szalwia, text: "p ≥ 0.05", box: true });
+      if (sig[true]) legend.push({ color: P.accent, text: "p < 0.05", box: true });
+      var pad = (hi - lo) * 0.05 || 1;
+      return { x: [lo - pad, hi + pad], y: [0.4, rows.length + 0.6], layers: layers, yLabels: labels, noYGrid: true, legend: legend,
+        xName: "Różnica średnich", yName: "", aria: "Różnice średnich między parami grup z 95% przedziałami ufności." };
+    },
+    update: function (el, state) {
+      var matrix = el.querySelector('[data-role="matrix"]'), result = el.querySelector('[data-role="result"]'), d = state.d, e = S.esc;
+      el.querySelectorAll("[data-gh-part]").forEach(function (n) { n.hidden = !d; });
+      if (!d) { matrix.innerHTML = ""; result.innerHTML = state.asked ? "" : ""; return; }
+      // Macierz p-wartości (format jamovi: dolno-trójkątna, z gwiazdkami istotności).
+      var k = d.names.length, pOf = function (i, j) { return state.gh.filter(function (g) { return g.i === j && g.j === i; })[0].p; };
+      var head = '<th scope="col"></th>' + d.names.map(function (n) { return '<th scope="col" class="n">' + e(n) + "</th>"; }).join("");
+      var body = d.names.map(function (name, i) {
+        return '<tr><th scope="row">' + e(name) + "</th>" + d.names.map(function (col, j) {
+          if (j > i) return '<td class="n" data-label="' + e(col) + '"></td>';
+          if (j === i) return '<td class="n is-dim" data-label="' + e(col) + '">—</td>';
+          var p = pOf(i, j), stars = p < 0.001 ? " ***" : p < 0.01 ? " **" : p < 0.05 ? " *" : "";
+          return '<td class="n' + (p < 0.05 ? " is-base" : "") + '" data-label="' + e(col) + '">' + (p < 0.001 ? "&lt; 0.001" : p.toFixed(3)) + stars + "</td>";
+        }).join("") + "</tr>";
+      }).join("");
+      matrix.innerHTML = '<div class="lc-tbl-block"><table class="lc-tbl is-fit"><thead><tr>' + head + "</tr></thead><tbody>" + body +
+        '</tbody></table><div class="lc-tbl-note">p-wartości skorygowane metodą Games-Howella. * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</div></div>';
+      var sigPairs = state.gh.filter(function (g) { return g.p < 0.05; });
+      result.innerHTML = !sigPairs.length
+        ? '<div class="lc-caption" data-tone="info"><div><strong>Żadna para nie różni się istotnie</strong> (po korekcie Games-Howella).</div></div>'
+        : S.status('<p><span class="lc-status-ok"><strong>' + sigPairs.length + " " + pluralDiff(sigPairs.length) + ":</strong></span></p><ul>" +
+            sigPairs.map(function (g) { return "<li>" + e(d.names[g.i] + " — " + d.names[g.j] + ": Δ = " + T.round(g.estimate, 2) + ", p.adj = " + T.fmtPValue(g.p)) + "</li>"; }).join("") + "</ul>");
+    },
+    noteKey: function (vals, state) { return !state.asked ? "none" : state.d ? "data" : "nodata"; }
   };
 
   S.register(figures);

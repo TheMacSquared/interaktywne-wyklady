@@ -53,7 +53,21 @@ lm_fixture <- lapply(list(mpg ~ wt, mpg ~ wt + hp + factor(cyl), mpg ~ wt + hp +
        p = unname(s$coefficients[, 4]), lo = unname(ci[, 1]), hi = unname(ci[, 2]),
        r2 = s$r.squared, adj = s$adj.r.squared, aic = AIC(m), sigma = s$sigma)
 })
-out <- list(shapiro = shapiro, two = two, tables = tables, lm = lm_fixture,
+# Rozkład rozstępu i porównania Gamesa-Howella (trzy i cztery grupy o różnych wariancjach).
+tukey_args <- list(c(3.5, 3, 20), c(1.2, 4, 7.5), c(5.1, 5, 120), c(2.8, 3, 55.3), c(0.4, 2, 10), c(6.5, 4, 14.2), c(3.3, 3, 900))
+tukey <- list(args = tukey_args,
+  lower = vapply(tukey_args, function(a) ptukey(a[1], a[2], a[3]), 0),
+  q95 = vapply(tukey_args, function(a) qtukey(0.95, a[2], a[3]), 0))
+gh_fixture <- lapply(list(list(c(20, 35, 28), c(4.5, 4.3, 4.0), c(0.14, 0.2, 0.3)),
+                          list(c(30, 30, 25, 40), c(50, 53, 58, 51), c(8, 12, 5, 10))), function(s) {
+  values <- lapply(seq_along(s[[1]]), function(i) round(rnorm(s[[1]][i], s[[2]][i], s[[3]][i]), 2))
+  d <- data.frame(y = unlist(values), g = factor(rep(paste0("g", seq_along(values)), lengths(values))))
+  gh <- as.data.frame(rstatix::games_howell_test(d, y ~ g))
+  av <- as.data.frame(rstatix::anova_test(d, y ~ g))
+  list(groups = values, estimate = gh$estimate, lo = gh$conf.low, hi = gh$conf.high, p = gh$p.adj,
+       F = av$F, df1 = av$DFn, df2 = av$DFd, anova_p = summary(aov(y ~ g, d))[[1]][["Pr(>F)"]][1])
+})
+out <- list(shapiro = shapiro, two = two, tables = tables, lm = lm_fixture, tukey = tukey, gh = gh_fixture,
   pf = list(args = list(c(2.5, 1, 58), c(0.3, 3, 20), c(11, 2, 7), c(1, 1, 1), c(45, 4, 100)),
             upper = c(pf(2.5, 1, 58, lower.tail = FALSE), pf(.3, 3, 20, lower.tail = FALSE), pf(11, 2, 7, lower.tail = FALSE),
                       pf(1, 1, 1, lower.tail = FALSE), pf(45, 4, 100, lower.tail = FALSE))),

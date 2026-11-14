@@ -21,10 +21,12 @@ p5 <- function(num) get(paste0("p5_", num, "_ui"), inherits = TRUE)
 
 # Scena krokowa z przyciskiem czynności i opcjonalnie +10/+100/+1000.
 p5_scene_widget <- function(id, title, steps, config, action = NULL, options = NULL,
-                            more_from = 2, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000")) {
+                            more_from = 2, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000"),
+                         texts = NULL) {
   lc_step_widget(id,
     title = title,
     steps = steps,
+    texts = texts,
     toolbar = if (length(options) || !is.null(action)) lc_toolbar(
       .scene_options(options),
       if (!is.null(action)) tags$button(type = "button", class = "lc-action is-solid",
@@ -99,7 +101,22 @@ p5_5D_ui <- local({
       steps = c("Pytanie", "Podział na kolory", "Gazeta", "Cała seria"),
       config = c(list(kind = "jelly", colors = p5_jelly_colors, names = p5_jelly_names,
         hit = hit, alpha = 0.05, height = 640), d,
-        list(aria = "Wyniki 400 osób jedzących żelki i 100 niejedzących; jedzący zostają podzieleni na 20 podgrup według ulubionego koloru, średnie podgrup rozrzuca przypadek i jedna, zielona, wypada poza zakres przypadku; gazeta pokazuje tylko ją"))),
+        list(aria = "Wyniki 400 osób jedzących żelki i 100 niejedzących; jedzący zostają podzieleni na 20 podgrup według ulubionego koloru, średnie podgrup rozrzuca przypadek i jedna, zielona, wypada poza zakres przypadku; gazeta pokazuje tylko ją")),
+      texts = list(
+      tagList("Każda kropka to jedna osoba i jej liczba wyprysków. Średnia jedzących
+      żelki leży w szarym pasie: tyle może się różnić od niejedzących przez sam
+      przypadek. Związku nie ma."),
+      tagList("Badacz dzieli tych samych 400 jedzących na 20 grup według ulubionego
+      koloru. W grupie 20 osób średnia skacze bardziej, więc pas jest szerszy.
+      Średnie rozrzucają się wokół wspólnej, a zielone wypadają poza pas:
+      mają średnio więcej wyprysków."),
+      tagList("Tak wynik widzi czytelnik gazety: jeden kolor, jedno badanie i p poniżej
+      0.05. Wygląda przekonująco."),
+      tagList("Wszystkie 20 grup pochodzi z tej samej chmury wyników. 19 średnich jest
+      w pasie, jedna poza nim. Przy 20 podgrupach i α = 0.05 tyle właśnie daje
+      przypadek.")
+      )
+    ),
     lc_caption("Na podstawie komiksu: Randall Munroe, „Significant”, xkcd nr 882 (",
       tags$a(href = "https://xkcd.com/882/", target = "_blank", rel = "noopener", "xkcd.com/882"),
       "), licencja CC BY-NC 2.5. Grafika i dane własne."))
@@ -117,32 +134,19 @@ p5_tickets_steps <- c("Kontrole", "Świat bez związku", "Porównaj", "Jedna lic
 
 p5_5E_ui <- p5_panel("5E", "scena", "Mandaty: jak by było, gdyby płeć nie miała znaczenia?",
   p5_scene_widget("p5_tickets", "200 kontroli drogowych, 100 kobiet i 100 mężczyzn",
-    steps = p5_tickets_steps, config = c(p5_tickets_config, list(height = 450))))
+    steps = p5_tickets_steps, config = c(p5_tickets_config, list(height = 450)),
+    texts = list(
+    tagList("Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet
+    i 50 mężczyzn."),
+    tagList("Gdyby płeć nie miała znaczenia, w obu grupach mandat dostawałby ten sam
+    odsetek kierowców, co w całej próbie. To liczebności oczekiwane."),
+    tagList("Obrysy pokazują różnice: u kobiet brakuje 10 mandatów, u mężczyzn jest
+    10 nadmiarowych. Tyle samo różnią się komórki bez mandatu."),
+    tagList("Każdą różnicę podnosimy do kwadratu i dzielimy przez liczbę oczekiwaną.
+    Suma czterech wkładów to statystyka χ².")
+    )
+  ))
 
 # --- teksty kroków ------------------------------------------------------------
 p5_server <- function(input, output, session) {
-  scene_texts(input, output, "p5_jelly", list(
-    tagList("Każda kropka to jedna osoba i jej liczba wyprysków. Średnia jedzących
-      żelki leży w szarym pasie: tyle może się różnić od niejedzących przez sam
-      przypadek. Związku nie ma."),
-    tagList("Badacz dzieli tych samych 400 jedzących na 20 grup według ulubionego
-      koloru. W grupie 20 osób średnia skacze bardziej, więc pas jest szerszy.
-      Średnie rozrzucają się wokół wspólnej, a zielone wypadają poza pas:
-      mają średnio więcej wyprysków."),
-    tagList("Tak wynik widzi czytelnik gazety: jeden kolor, jedno badanie i p poniżej
-      0.05. Wygląda przekonująco."),
-    tagList("Wszystkie 20 grup pochodzi z tej samej chmury wyników. 19 średnich jest
-      w pasie, jedna poza nim. Przy 20 podgrupach i α = 0.05 tyle właśnie daje
-      przypadek.")
-  ))
-  scene_texts(input, output, "p5_tickets", list(
-    tagList("Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet
-      i 50 mężczyzn."),
-    tagList("Gdyby płeć nie miała znaczenia, w obu grupach mandat dostawałby ten sam
-      odsetek kierowców, co w całej próbie. To liczebności oczekiwane."),
-    tagList("Obrysy pokazują różnice: u kobiet brakuje 10 mandatów, u mężczyzn jest
-      10 nadmiarowych. Tyle samo różnią się komórki bez mandatu."),
-    tagList("Każdą różnicę podnosimy do kwadratu i dzielimy przez liczbę oczekiwaną.
-      Suma czterech wkładów to statystyka χ².")
-  ))
 }

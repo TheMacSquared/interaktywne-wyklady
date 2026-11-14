@@ -151,3 +151,57 @@ ch6_compare_paired_fig <- function() {
       xLabels = sf_labels(c("Przed", "Po"))),
     ratio = "1.5/1", max_height = "260px")
 }
+
+# ---------------------------------------------------------------------------
+# Rozdział 9: ANOVA
+# ---------------------------------------------------------------------------
+
+# Ryc. 9.1: k grup na okręgu i wszystkie pary połączone odcinkami; barwa odcinków
+# zależy od ryzyka co najmniej jednego błędu I rodzaju. Rysunki dla k = 2…8.
+ch7_fwer_svg <- function(k) {
+  angles <- seq(0, 2 * pi, length.out = k + 1)[-(k + 1)]
+  x <- 150 + 100 * cos(angles); y <- 150 - 100 * sin(angles)
+  pairs_idx <- utils::combn(k, 2)
+  fwer <- 1 - (1 - 0.05)^ncol(pairs_idx)
+  edge <- if (fwer < 0.15) "var(--upwr-accent)" else if (fwer < 0.35) "#D4860A" else "#9B1C1C"
+  HTML(paste0(
+    sprintf('<svg viewBox="0 0 300 300" style="display:block;width:100%%;max-width:340px;margin:0 auto" role="img" aria-label="%d grup i %d porównań par">', k, ncol(pairs_idx)),
+    paste0(sprintf('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="%s" stroke-opacity="0.55" stroke-width="3"/>',
+                   x[pairs_idx[1, ]], y[pairs_idx[1, ]], x[pairs_idx[2, ]], y[pairs_idx[2, ]], edge), collapse = ""),
+    paste0(sprintf('<circle cx="%.1f" cy="%.1f" r="24" fill="var(--upwr-accent)" stroke="var(--upwr-surface)" stroke-width="2"/><text x="%.1f" y="%.1f" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="20" fill="var(--upwr-surface)">%s</text>',
+                   x, y, x, y, LETTERS[seq_len(k)]), collapse = ""),
+    "</svg>"))
+}
+ch7_fwer_fig <- function() {
+  s05_reads_figure("s05_fwer",
+    lc_toolbar(
+      lc_sf_action("add", "ch7_motyw_add", "Dodaj grupę +", variant = "solid"),
+      lc_sf_action("reset", "ch7_motyw_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+      lc_readouts(
+        lc_readout("Grup", lc_sf_value("fwer_k")),
+        lc_readout("Testów t", lc_sf_value("fwer_tests")),
+        lc_readout("Ryzyko ≥ 1 błędu", lc_sf_value("fwer_risk"), color = "var(--upwr-sage)")
+      )
+    ),
+    lapply(2:8, function(k) tags$div(`data-when` = k, hidden = if (k > 2) NA, ch7_fwer_svg(k)))
+  )
+}
+
+# Konfiguracja scenariuszy ANOVA (Ryc. 9.2 i 9.3): etykieta grup, zmienne zależne, podpisy osi.
+ch7_anova_config <- list(scenarios = list(
+  fermentation = list(
+    group_label = "Temperatura fermentacji",
+    vars = list("pH jogurtu" = "pH", "Kwasowość miareczkowa (°SH)" = "kwasowosc_SH"),
+    var_labels = list(pH = "pH jogurtu", kwasowosc_SH = "Kwasowość (°SH)")
+  ),
+  workplace = list(
+    group_label = "Stanowisko pracy",
+    vars = list("Dni nieobecności (urazy) / rok" = "nieobecnosci", "Poziom stresu (0–100)" = "stres"),
+    var_labels = list(nieobecnosci = "Dni nieobecności / rok", stres = "Poziom stresu (0–100)")
+  ),
+  students = list(
+    group_label = "Kierunek",
+    vars = list("Średnia ocen" = "srednia_ocen", "Wzrost" = "wzrost", "Czas dojazdu" = "czas_dojazdu"),
+    var_labels = list(srednia_ocen = "Średnia ocen", wzrost = "Wzrost (cm)", czas_dojazdu = "Czas dojazdu (min)")
+  )
+))

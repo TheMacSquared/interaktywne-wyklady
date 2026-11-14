@@ -430,10 +430,12 @@ generate_phone_data <- function(n_per_group = 40) {
     `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA))
 }
 
-scene_widget <- function(id, title, steps, config, options = NULL) {
+scene_widget <- function(id, title, steps, config, options = NULL,
+                         texts = NULL) {
   lc_step_widget(id,
     title = title,
     steps = steps,
+    texts = texts,
     toolbar = if (length(options)) lc_toolbar(.scene_options(options)),
     body = .scene_body(config)
   )
@@ -446,7 +448,3 @@ scene_static <- function(config, options = NULL) {
   )
 }
 
-scene_texts <- function(input, output, id, texts) {
-  step <- lc_step_server(id, input)$step
-  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
-}

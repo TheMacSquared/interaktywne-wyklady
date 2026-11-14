@@ -86,3 +86,29 @@ test("regresja liniowa jak lm()", () => {
   // Kolumny liniowo zależne: brak rozwiązania.
   assert.equal(S.lm([[1, 2, 3, 4], [2, 4, 6, 8]], [1, 3, 2, 5]), null);
 });
+
+test("rozkład studentyzowanego rozstępu jak ptukey() i qtukey()", () => {
+  F.tukey.args.forEach((a, i) => {
+    close(S.ptukey(a[0], a[1], a[2]), F.tukey.lower[i], 1e-8, `ptukey ${a}`);
+    close(S.qtukey(0.95, a[1], a[2]), F.tukey.q95[i], 1e-6, `qtukey ${a}`);
+  });
+  assert.equal(S.ptukey(0, 3, 20), 0);
+  close(S.ptukey(3.5, 3, 20, false), 1 - F.tukey.lower[0], 1e-8, "górny ogon");
+});
+
+test("porównania Gamesa-Howella i ANOVA jak rstatix", () => {
+  F.gh.forEach((g, n) => {
+    const res = S.gamesHowell(g.groups);
+    assert.equal(res.length, g.estimate.length);
+    res.forEach((r, i) => {
+      close(r.estimate, g.estimate[i], 1e-9, `GH ${n} różnica ${i}`);
+      close(r.lo, g.lo[i], 1e-5, `GH ${n} dolna ${i}`); close(r.hi, g.hi[i], 1e-5, `GH ${n} górna ${i}`);
+      // rstatix zaokrągla p.adj do trzech cyfr znaczących.
+      assert.ok(Math.abs(r.p - g.p[i]) <= 6e-3 * Math.max(g.p[i], 1e-4) + 1e-9, `GH ${n} p ${i}: ${r.p} vs ${g.p[i]}`);
+    });
+    const av = S.anovaF(g.groups);
+    close(av.F, g.F, 2e-3, `ANOVA ${n} F`);          // rstatix zaokrągla F do trzech miejsc
+    assert.deepEqual([av.df1, av.df2], [g.df1, g.df2]);
+    close(av.p, g.anova_p, 1e-8, `ANOVA ${n} p`);
+  });
+});
