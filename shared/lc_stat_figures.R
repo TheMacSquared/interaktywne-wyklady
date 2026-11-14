@@ -32,6 +32,9 @@ lc_sf_action_group <- function(label, ...) {
       lapply(names(acts), function(a) tags$button(type = "button", `data-stat-act` = a, acts[[a]]))))
 }
 
+# Stan pusty ryciny (przed pierwszym losowaniem): widoczny, gdy noteKey ryciny zwraca "empty".
+lc_sf_empty <- function(text) tags$div(`data-when` = "empty", class = "lc-sf-empty", tags$p(text))
+
 # Wartość wypełniana przez JS (odczyt, komórka tabeli).
 lc_sf_value <- function(key, text = "–") tags$span(`data-v` = key, text)
 
@@ -239,6 +242,7 @@ lc_sf_styles <- function() tags$style(HTML("
   /* Rycina chowa elementy atrybutem hidden; style przycisków (display) by go przebiły. */
   .lc-sf [hidden] { display: none !important; }
   .lc-sf-zoom { position: absolute; right: .3em; top: .3em; z-index: 3; }
+  .lc-sf-empty { text-align: center; color: var(--upwr-reference); font-size: 1.2em; padding: 3em 0; }
   .lc-sf-chart { position: relative; width: 100%; min-height: 14em; }
   .lc-sf-chart.is-strip { min-height: 7em; }
   .lc-sf[data-lc-chart-large='true'] .lc-sf-chart.is-strip { min-height: 9em; }

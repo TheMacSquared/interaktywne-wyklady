@@ -48,6 +48,7 @@ source(file.path(shared_root, "palette.R"),          local = TRUE)
 source(file.path(shared_root, "theme_upwr.R"),       local = TRUE)
 source(file.path(shared_root, "shared.R"),           local = TRUE)
 source(file.path(shared_root, "lecture_layout.R"),   local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"),  local = TRUE)
 
 # Globalne defaulty ggplot2 — motyw upwr + IBM Plex Sans + kolory geom-ów
 lc_apply_ggplot_defaults()
@@ -55,6 +56,7 @@ lc_apply_ggplot_defaults()
 addResourcePath("assets", file.path(app_dir, "assets"))
 
 source(file.path(app_dir, "modules", "helpers.R"),              local = TRUE)
+source(file.path(app_dir, "modules", "figures.R"),              local = TRUE)
 source(file.path(app_dir, "modules", "proto05.R"),              local = TRUE)  # PROTOTYPY 5A–5E
 source(file.path(app_dir, "modules", "ch1_logika.R"),           local = TRUE)
 source(file.path(app_dir, "modules", "ch2_hipotezy.R"),         local = TRUE)
@@ -83,6 +85,12 @@ header_extras <- tagList(
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
   includeScript(file.path(shared_root, "lc_charts.js")),
   includeScript(file.path(app_dir, "modules", "ws_charts.js")),
+  # Ryciny liczone w przeglądarce: silnik lcSF, rozkłady, testy i ryciny wykładu.
+  includeScript(file.path(shared_root, "lc_dist.js")),
+  includeScript(file.path(shared_root, "lc_stats.js")),
+  includeScript(file.path(shared_root, "lc_stat_figures.js")),
+  includeScript(file.path(app_dir, "modules", "figures.js")),
+  lc_sf_styles(),
   tags$style(HTML("
     .ws-chart-wrap {
       position: relative;
