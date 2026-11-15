@@ -144,8 +144,9 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
 - [ ] Faza 8: usunąć `app.R` i kod serwera, statyczny spis wykładów zamiast
   huba, wycofać `przedmioty/*/skrypt/build`, zaktualizować `AGENTS.md`,
   kontrakt i testy.
-- [ ] Strona statyczna: spis wykładów kursu (`index.html`); zakładki górnego
-  paska prowadzą dziś tylko do wykładów już zbudowanych w `dist/<kurs>/`.
+- [x] Strona statyczna: spis wykładów (`Rscript scripts/build_index.R` → `dist/index.html`
+  i `dist/<kurs>/index.html`); wykłady jeszcze niezbudowane są na liście bez odnośnika.
+  Zakładki górnego paska prowadzą tylko do wykładów już zbudowanych w `dist/<kurs>/`.
 - [ ] Kroje na stronie statycznej są wbudowane w każdy plik (decyzja
   14 listopada 2026): dwanaście plików TTF z `shared/fonts/`, wagi 400–700 jak
   w Google Fonts, ok. 3 MB na wykład. Do rozważenia: format WOFF2 (mniejszy).
