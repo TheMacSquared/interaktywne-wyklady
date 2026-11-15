@@ -46,6 +46,19 @@ done
 for f in dist/*/[0-9][0-9]-*.html; do
   grep -q 'name="robots" content="noindex' "$f" || { echo "$f bez noindex — przebuduj wykład." >&2; exit 1; }
 done
+# Zakładki górnego paska: każda (poza bieżącym wykładem) prowadzi do istniejącego pliku.
+LINK_ERR=0
+for f in dist/*/[0-9][0-9]-*.html; do
+  dir=$(dirname "$f")
+  while read -r href; do
+    if [ "$href" = "#" ]; then
+      echo "$f: zakładka górnego paska bez linku (href=\"#\")." >&2; LINK_ERR=1
+    elif [ ! -f "$dir/$href" ]; then
+      echo "$f: zakładka prowadzi do brakującego pliku $href." >&2; LINK_ERR=1
+    fi
+  done < <(grep -oE '<a class="(lc-tab|lc-tabs-menu-item) ?" href="[^"]*"' "$f" | sed -E 's/.*href="([^"]*)"/\1/')
+done
+[ "$LINK_ERR" = 0 ] || { echo "Przebuduj wykłady (scripts/publish_pages.sh --build)." >&2; exit 1; }
 
 SRC_COMMIT=$(git rev-parse --short HEAD)
 SRC_BRANCH=$(git rev-parse --abbrev-ref HEAD)

@@ -73,11 +73,11 @@ build_one <- function(app_dir) {
   dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
   dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
 
-  # Wykłady kursu dostępne jako strony statyczne: budowany teraz i zbudowane wcześniej.
+  # Wykłady kursu jako strony statyczne: wszystkie z app.R, niezależnie od tego,
+  # czy ich plik już jest w dist/ (inaczej zakładki zależałyby od kolejności
+  # budowania). Linki do niezbudowanych stron wyłapuje publish_pages.sh.
   # Nazwy = katalog wykładu, wartości = lecture_id (dla zakładek górnego paska).
-  siblings <- dirname(Sys.glob(file.path(course_dir, "[0-9]*", "app.R")))
-  built <- siblings[basename(siblings) == folder |
-                    file.exists(file.path(out_dir, paste0(basename(siblings), ".html")))]
+  built <- dirname(Sys.glob(file.path(course_dir, "[0-9]*", "app.R")))
   built_ids <- stats::setNames(
     vapply(file.path(built, "app.R"), app_field, character(1), field = "lecture_id"),
     basename(built)
