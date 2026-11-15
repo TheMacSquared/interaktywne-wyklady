@@ -59,6 +59,9 @@ trap cleanup EXIT
 if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
   git fetch -q origin gh-pages
   git worktree add -q -B gh-pages "$WT" origin/gh-pages
+elif git show-ref --verify --quiet refs/heads/gh-pages; then
+  # Gałąź jest tylko lokalnie (np. po --dry-run przed pierwszą publikacją).
+  git worktree add -q "$WT" gh-pages
 else
   # Pierwsza publikacja: osierocona gałąź bez historii kodu.
   git worktree add -q --detach "$WT"
@@ -77,11 +80,11 @@ touch "$WT/.nojekyll"   # bez przetwarzania przez Jekyll
 
 git -C "$WT" add -A
 if git -C "$WT" diff --cached --quiet; then
-  echo "Bez zmian względem opublikowanej wersji."
-  exit 0
+  echo "Strony bez zmian względem ostatniego commitu gałęzi gh-pages."
+else
+  git -C "$WT" commit -q -m "Publikacja stron z $SRC_BRANCH@$SRC_COMMIT$DIRTY"
 fi
-git -C "$WT" commit -q -m "Publikacja stron z $SRC_BRANCH@$SRC_COMMIT$DIRTY"
-echo "Przygotowano: $(git -C "$WT" log -1 --format='%h %s')"
+echo "Gałąź gh-pages: $(git -C "$WT" log -1 --format='%h %s')"
 echo "Pliki: $(git -C "$WT" ls-files | wc -l), rozmiar: $(du -sh --exclude=.git "$WT" | cut -f1)"
 
 if [ "$DRY" = 1 ]; then
