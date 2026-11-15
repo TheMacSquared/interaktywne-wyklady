@@ -252,12 +252,19 @@
       render();
     }
 
-    if (cfg.limit_input && window.jQuery) {
-      window.jQuery(document).on("shiny:inputchanged", function (e) {
-        if (e.name !== cfg.limit_input || e.value === null) return;
-        limSel = Number(e.value);
+    // Suwak limitu: wartość czytamy z kontrolki strony (ionRangeSlider albo zwykły suwak).
+    if (cfg.limit_input) {
+      var onLimit = function (e) {
+        if (!e.target || e.target.id !== cfg.limit_input) return;
+        var sl = window.jQuery && window.jQuery(e.target).data("ionRangeSlider");
+        var v = Number(sl ? sl.result.from : e.target.value);
+        if (!isFinite(v)) return;
+        limSel = v;
         if (!api.busy()) render();
-      });
+      };
+      // ionRangeSlider zgłasza zmianę przez jQuery (trigger), więc nasłuch przez jQuery, gdy jest.
+      if (window.jQuery) window.jQuery(document).on("input change", "#" + cfg.limit_input, onLimit);
+      else { document.addEventListener("input", onLimit); document.addEventListener("change", onLimit); }
     }
 
     return {

@@ -27,7 +27,7 @@
       var digits = Number(o.getAttribute('data-digits')) || 0;
       var suffix = o.getAttribute('data-suffix');
       o.textContent = lcFormat(value, digits, suffix);
-      // Końce toru: aktualne min i max (updateSliderInput może je zmienić).
+      // Końce toru: aktualne min i max suwaka.
       var group = o.closest('.lc-slider');
       var ends = group && group.querySelectorAll('.lc-slider-ends span');
       if (slider && ends && ends.length === 2) {
@@ -41,18 +41,13 @@
   });
   if (window.jQuery) {
     window.jQuery(document).on('change', '.js-range-slider', function() { updateSliderOutput(this); });
-    // updateSliderInput(): stan suwaka zmienia się po obsłudze komunikatu.
-    window.jQuery(document).on('shiny:updateinput', '.js-range-slider', function() {
-      var input = this;
-      setTimeout(function() { updateSliderOutput(input); }, 0);
-    });
   }
 
-  // Strona statyczna (bez Shiny): suwaki uruchamiamy sami. ionRangeSlider czyta
-  // konfigurację z atrybutów data-* i sam zgłasza zdarzenia input i change.
+  // Suwaki uruchamiamy sami. ionRangeSlider czyta konfigurację z atrybutów data-*
+  // i sam zgłasza zdarzenia input i change.
   function initStaticSliders() {
     var $ = window.jQuery;
-    if (window.Shiny || !$ || !$.fn || !$.fn.ionRangeSlider) return;
+    if (!$ || !$.fn || !$.fn.ionRangeSlider) return;
     $('.js-range-slider').each(function() {
       if (!$(this).data('ionRangeSlider')) $(this).ionRangeSlider();
       updateSliderOutput(this);
@@ -176,8 +171,7 @@
   // div[data-lc-variants="<id kontrolki>"] > div[data-lc-variant="<wartość>"].
   // Z data-lc-variants-reveal="<id przycisku>" treść pojawia się po kliknięciu
   // przycisku, a zmiana wyboru ją chowa.
-  // Ostatnia wartość kontrolki: w wersji Shiny rozdziały są wstawiane pojedynczo,
-  // więc kontrolka z innego rozdziału (np. śledzona zmienna) bywa poza dokumentem.
+  // Ostatnia znana wartość kontrolki, gdyby kontrolki nie było w dokumencie.
   var rememberedValues = {};
   function controlValue(id) {
     var el = document.getElementById(id);
@@ -286,28 +280,12 @@
     });
   });
 
-  // --- Klikalne komórki tabeli: input$<id> = c(i, j) ---
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest && e.target.closest('.lc-cell-btn[data-lc-cell-input]');
-    if (!btn || !window.Shiny) return;
-    window.Shiny.setInputValue(btn.getAttribute('data-lc-cell-input'),
-      [Number(btn.getAttribute('data-i')), Number(btn.getAttribute('data-j'))],
-      { priority: 'event' });
-  });
-
-  // --- Stronicowanie tabel ---
-  // Z data-lc-page-input stronę renderuje serwer (input$<id> = numer strony);
-  // bez niego przeglądarka ukrywa wiersze spoza bieżącej strony.
+  // --- Stronicowanie tabel: przeglądarka ukrywa wiersze spoza bieżącej strony ---
   document.addEventListener('click', function(e) {
     var btn = e.target.closest && e.target.closest('.lc-pager [data-lc-page-to]');
     if (!btn || btn.disabled) return;
     var pager = btn.closest('.lc-pager');
     var to = Number(btn.getAttribute('data-lc-page-to'));
-    var inputId = pager.getAttribute('data-lc-page-input');
-    if (inputId) {
-      if (window.Shiny) window.Shiny.setInputValue(inputId, to, { priority: 'event' });
-      return;
-    }
     var size = Number(pager.getAttribute('data-lc-page-size'));
     var total = Number(pager.getAttribute('data-lc-total'));
     var pages = Math.ceil(total / size);
@@ -333,14 +311,10 @@
     var on = chip.getAttribute('aria-pressed') !== 'true';
     group.querySelectorAll('.lc-chip').forEach(function(x) { x.setAttribute('aria-pressed', 'false'); });
     if (on) chip.setAttribute('aria-pressed', 'true');
-    if (window.Shiny) {
-      window.Shiny.setInputValue(group.getAttribute('data-lc-chips'),
-        on ? chip.getAttribute('data-value') : null, { priority: 'event' });
-    }
   });
 
-  // --- Widget krokowy z paskiem kroków: stan w przeglądarce, input$<id>_step ---
-  function stepperSync(root, k, send) {
+  // --- Widget krokowy z paskiem kroków: stan w atrybucie data-lc-step ---
+  function stepperSync(root, k) {
     var tabs = root.querySelectorAll('.lc-step-tab'), n = tabs.length;
     k = Math.max(1, Math.min(n, k | 0 || 1));
     root.setAttribute('data-lc-step', k);
@@ -362,19 +336,16 @@
       c.classList.toggle('lc-is-off', off);
       c.setAttribute('aria-disabled', off ? 'true' : 'false');
     });
-    if (send && window.Shiny && window.Shiny.setInputValue) {
-      window.Shiny.setInputValue(root.id + '_step', k, { priority: 'event' });
-    }
   }
   document.addEventListener('click', function(e) {
     var root = e.target.closest && e.target.closest('.lc-stepper');
     if (!root) return;
     var cur = Number(root.getAttribute('data-lc-step')) || 1;
     var go = e.target.closest('[data-lc-go]'), nav = e.target.closest('[data-lc-nav]');
-    if (go) stepperSync(root, Number(go.getAttribute('data-lc-go')), true);
+    if (go) stepperSync(root, Number(go.getAttribute('data-lc-go')));
     else if (nav) {
       var a = nav.getAttribute('data-lc-nav');
-      stepperSync(root, a === 'next' ? cur + 1 : a === 'prev' ? cur - 1 : 1, true);
+      stepperSync(root, a === 'next' ? cur + 1 : a === 'prev' ? cur - 1 : 1);
     }
   });
   document.addEventListener('keydown', function(e) {
@@ -382,27 +353,17 @@
     if (!root || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
     if (e.target.closest('.irs, .lc-seg')) return;
     var cur = Number(root.getAttribute('data-lc-step')) || 1;
-    if (e.key === 'ArrowRight') { stepperSync(root, cur + 1, true); e.preventDefault(); }
-    if (e.key === 'ArrowLeft') { stepperSync(root, cur - 1, true); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { stepperSync(root, cur + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { stepperSync(root, cur - 1); e.preventDefault(); }
   });
   function stepperInitAll() {
     document.querySelectorAll('.lc-stepper').forEach(function(r) {
-      stepperSync(r, Number(r.getAttribute('data-lc-step')) || 1, false);
+      stepperSync(r, Number(r.getAttribute('data-lc-step')) || 1);
     });
   }
   document.addEventListener('DOMContentLoaded', stepperInitAll);
-  if (window.jQuery) {
-    window.jQuery(document).on('shiny:connected', function() {
-      window.Shiny.addCustomMessageHandler('lc-step-set', function(m) {
-        var r = document.getElementById(m.id);
-        if (r) stepperSync(r, m.step, true);
-      });
-    });
-    // Kontrolki z renderUI pojawiają się później: odśwież stan po każdym renderze.
-    window.jQuery(document).on('shiny:value', function() { setTimeout(stepperInitAll, 0); });
-  }
 
-  // --- Kroki demonstracji: input binding, wartość = numer kroku ---
+  // --- Kroki demonstracji (lc_step_nav): numer kroku w atrybucie data-step ---
   function renderSteps(el) {
     var n = Number(el.getAttribute('data-lc-steps'));
     var step = Number(el.getAttribute('data-step')) || 0;
@@ -429,7 +390,6 @@
     step = Math.max(min, Math.min(n, step));
     el.setAttribute('data-step', step);
     renderSteps(el);
-    if (window.jQuery) window.jQuery(el).trigger('lc-step-change');
   }
   document.addEventListener('click', function(e) {
     var target = e.target.closest && e.target.closest('.lc-step-nav [data-lc-step], .lc-step-nav [data-lc-step-to]');
@@ -443,27 +403,11 @@
     }
   });
 
-  function registerBindings() {
-    if (!window.Shiny || !window.Shiny.InputBinding || registerBindings.done) return;
-    registerBindings.done = true;
-    var $ = window.jQuery;
-    var stepBinding = new window.Shiny.InputBinding();
-    $.extend(stepBinding, {
-      find: function(scope) { return $(scope).find('.lc-step-nav[data-lc-steps]'); },
-      initialize: function(el) { renderSteps(el); },
-      getValue: function(el) { return Number(el.getAttribute('data-step')) || 0; },
-      setValue: function(el, value) { setStep(el, Number(value)); },
-      receiveMessage: function(el, data) { if (data && data.step !== undefined) setStep(el, data.step); },
-      subscribe: function(el, callback) { $(el).on('lc-step-change.lcSteps', function() { callback(false); }); },
-      unsubscribe: function(el) { $(el).off('.lcSteps'); }
-    });
-    window.Shiny.inputBindings.register(stepBinding, 'lc.stepNav');
-  }
-  registerBindings();
-  document.addEventListener('DOMContentLoaded', registerBindings);
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.lc-step-nav[data-lc-steps]').forEach(renderSteps);
+  });
 
-  // --- conditionalPanel() na stronie statycznej ---
-  // Shiny ocenia warunki data-display-if w przeglądarce; bez Shiny robimy to sami.
+  // --- conditionalPanel(): warunki data-display-if ocenia przeglądarka ---
   // W warunku dostępne jest `input` z wartościami kontrolek czytanymi z dokumentu:
   // kroki lc_step_nav, widget krokowy (<id>_step), pola wyboru, radio, listy, pola liczbowe.
   function staticInputValue(id) {
@@ -491,7 +435,7 @@
     get: function(_, name) { return typeof name === 'string' ? staticInputValue(name) : undefined; }
   });
   function syncConditionalPanels() {
-    if (window.Shiny || !staticInput) return;
+    if (!staticInput) return;
     var shown = false;
     document.querySelectorAll('[data-display-if]').forEach(function(panel) {
       var visible;
@@ -499,7 +443,7 @@
         visible = !!(new Function('input', 'output', 'return (' + panel.getAttribute('data-display-if') + ');'))(staticInput, {});
       } catch (err) { visible = false; }
       var was = panel.classList.contains('shiny-conditional--shown');
-      // Arkusz Shiny chowa panele bez tej klasy; display ustawiamy jak Shiny.
+      // Arkusz stylów chowa panele bez tej klasy; display ustawiamy też wprost.
       panel.classList.toggle('shiny-conditional--shown', visible);
       panel.style.display = visible ? '' : 'none';
       if (visible && !was) shown = true;
@@ -517,21 +461,4 @@
     document.addEventListener(type, queueConditionalPanels);
   });
   document.addEventListener('DOMContentLoaded', syncConditionalPanels);
-
-  // lc_more(): wyjście Shiny w zwiniętym <details> jest ukryte i nie renderuje
-  // się; po rozwinięciu trzeba powiedzieć Shiny, że stało się widoczne.
-  document.addEventListener('toggle', function(e) {
-    var d = e.target;
-    if (d.classList && d.classList.contains('lc-more') && d.open && window.jQuery) {
-      window.jQuery(d).trigger('shown');
-    }
-  }, true);
-
-  // Treść dodana przez renderUI: odśwież stan segmentów i kroków.
-  if (window.jQuery) {
-    window.jQuery(document).on('shiny:value shiny:bound', function() {
-      syncAllExclusive(document);
-      document.querySelectorAll('.lc-step-nav[data-lc-steps]').forEach(renderSteps);
-    });
-  }
 })();

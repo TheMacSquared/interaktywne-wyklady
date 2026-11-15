@@ -68,13 +68,8 @@
     const kind = holder.dataset.kind, diff = kind === 'diff';
     const bank = JSON.parse(holder.dataset.config), el = holder.querySelector('.lc-ec');
     let data = bank[0], lastText = '';
-    // Tekst kroku pisze przeglądarka: #<id>_text nie jest wyjściem Shiny (jak w lcSF).
+    // Tekst kroku pisze przeglądarka (jak w lcSF).
     const textEl = root.querySelector('#' + root.id + '_text');
-    if (textEl) {
-      if (window.Shiny && window.Shiny.unbindAll && textEl.classList.contains('shiny-bound-output'))
-        window.Shiny.unbindAll(textEl.parentNode);
-      textEl.classList.remove('shiny-html-output', 'shiny-bound-output', 'recalculating');
-    }
     const chart = C.chart(el, {}, {renderer: 'svg'});
     const f = n => n.toFixed(2), avg = xs => xs.reduce((a,b) => a+b,0)/xs.length;
     function draw() {

@@ -6,23 +6,6 @@
 (function () {
   "use strict";
   var widgets = new Map(), registrations = [];
-  var messages = new Map(), registeredMessages = new Set();
-
-  // Kanały sesji żyją dłużej niż kontenery rozdziałów. Widget przechowuje
-  // ostatnie dane i odtwarza je w onReady(), także gdy wiadomość wyprzedzi DOM.
-  function registerMessages() {
-    if (!window.Shiny || !window.Shiny.addCustomMessageHandler) return;
-    messages.forEach(function (fn, name) {
-      if (registeredMessages.has(name)) return;
-      window.Shiny.addCustomMessageHandler(name, fn);
-      registeredMessages.add(name);
-    });
-  }
-
-  function onMessage(name, fn) {
-    messages.set(name, fn);
-    registerMessages();
-  }
 
   function owner(node) {
     var found;
@@ -371,20 +354,12 @@
     attributeFilter: ["data-lc-theme", "data-lc-font-size", "data-lc-chart-large"]
   });
   document.addEventListener("DOMContentLoaded", scan);
-  document.addEventListener("shiny:connected", scan);
   window.addEventListener("load", scan);
-  document.addEventListener("DOMContentLoaded", registerMessages);
-  document.addEventListener("shiny:connected", registerMessages);
-  window.addEventListener("load", registerMessages);
-  if (window.jQuery) window.jQuery(document).on("shiny:connected", function () {
-    registerMessages();
-    scan();
-  });
 
   window.lcCharts = {
     onReady: onReady, chart: chart, ecAxis: ecAxis, ecPointer: ecPointer, ecName: ecName,
     destroy: destroy, listen: listen,
-    onTheme: onTheme, onDispose: onDispose, onMessage: onMessage,
+    onTheme: onTheme, onDispose: onDispose,
     tween: tween, cancelTween: cancelTween,
     token: token, alpha: alpha, palette: palette, normalCdf: normalCdf,
     linearFit: fit, normalQuantile: normalQuantile,

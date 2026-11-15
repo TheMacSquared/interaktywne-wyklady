@@ -4,8 +4,7 @@
    w shared_styles.css (sekcja .lc-dm*). Bez zależności zewnętrznych.
 
    Stan trzymamy wyłącznie w DOM: karta leży albo w .lc-dm-pool, albo w
-   .lc-dm-slot pola. Po każdej zmianie wysyłamy do Shiny mapę
-   { kod_pola: id_karty } — puste pola są pomijane.
+   .lc-dm-slot pola; odpowiedzi sprawdza skrypt wykładu z dokumentu.
    ========================================================================== */
 
 (function () {
@@ -53,19 +52,6 @@
     return 'W puli zostało ' + n + ' kart.';
   }
 
-  // ---- Synchronizacja z Shiny -------------------------------------------
-  function sync(container) {
-    var inputId = container.getAttribute('data-lc-dm-input');
-    if (!inputId || typeof Shiny === 'undefined' || !Shiny.setInputValue) return;
-
-    var value = {};
-    zones(container).forEach(function (zone) {
-      var card = cardIn(zone);
-      if (card) value[zone.getAttribute('data-lc-dm-zone')] = card.getAttribute('data-lc-dm-item');
-    });
-    Shiny.setInputValue(inputId, value, { priority: 'event' });
-  }
-
   // ---- Przenoszenie kart -------------------------------------------------
   function toPool(container, card) {
     var p = pool(container);
@@ -96,7 +82,6 @@
     var displaced = toZone(container, card, zone);
     if (displaced === null && cardIn(zone) !== card) return;
 
-    sync(container);
     announce(
       container,
       'Karta trafiła do pola ' + zoneLabel(zone) + '. ' +
@@ -203,7 +188,6 @@
     if (target.classList.contains('lc-dm-pool')) {
       if (card.closest('.lc-dm-zone')) {
         toPool(container, card);
-        sync(container);
         announce(container, 'Karta wróciła do puli. ' + remaining(container));
       }
       return;
@@ -249,7 +233,6 @@
       event.preventDefault();
       drop_release();
       toPool(container, card);
-      sync(container);
       announce(container, 'Karta wróciła do puli. ' + remaining(container));
       card.focus();
       return;
@@ -286,7 +269,6 @@
       var card = cardIn(zone);
       if (card) toPool(container, card);
     });
-    sync(container);
     announce(container, 'Wszystkie karty wróciły do puli.');
   });
 })();

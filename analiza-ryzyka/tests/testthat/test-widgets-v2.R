@@ -64,10 +64,9 @@ testthat::test_that("lc_crosstab oznacza podstawę procentów i komórkę docelo
   env <- load_v2_env()
   tab <- table(c("a", "a", "b"), c("x", "y", "y"))
   out <- html(env$lc_crosstab(tab, "row", target = c(1, 2), row_name = "R",
-                              col_name = "K", input_id = "cell"))
+                              col_name = "K"))
   testthat::expect_match(out, "is-target", fixed = TRUE)
   testthat::expect_match(out, "is-base-val", fixed = TRUE)
-  testthat::expect_match(out, 'data-lc-cell-input="cell"', fixed = TRUE)
   testthat::expect_match(out, "% wierszowe:", fixed = TRUE)
 })
 
@@ -101,15 +100,13 @@ testthat::test_that("lc_table stronicuje po stronie przeglądarki i serwera", {
   testthat::expect_match(client, "1 / 3", fixed = TRUE)
   testthat::expect_false(grepl("data-lc-page-input", client, fixed = TRUE))
 
-  server <- html(env$lc_table(df, cols, page_size = 10, page = 3, page_input = "pg"))
-  testthat::expect_match(server, 'data-lc-page-input="pg"', fixed = TRUE)
-  testthat::expect_match(server, "Wiersze 21–25 z 25", fixed = TRUE)
-  testthat::expect_equal(lengths(regmatches(server, gregexpr("<tr", server))), 6L)
+  # Strona startowa `page`: pozostałe wiersze są w dokumencie, ale schowane.
+  third <- html(env$lc_table(df, cols, page_size = 10, page = 3))
+  testthat::expect_match(third, "Wiersze 21–25 z 25", fixed = TRUE)
+  testthat::expect_equal(lengths(regmatches(third, gregexpr("is-paged-out", third))), 20L)
   # Szerokość części całkowitej liczona z całego zbioru: 1.5 dopełnione do 100.
-  first <- html(env$lc_table(df, cols, page_size = 10, page = 1, page_input = "pg"))
-  testthat::expect_match(first, '<span class="lc-pad" aria-hidden="true">00</span>1.5', fixed = TRUE)
-  testthat::expect_match(html(env$lc_table(df, cols, page_size = 10, page = 99, page_input = "pg")),
-                         "3 / 3", fixed = TRUE)
+  testthat::expect_match(client, '<span class="lc-pad" aria-hidden="true">00</span>1.5', fixed = TRUE)
+  testthat::expect_match(html(env$lc_table(df, cols, page_size = 10, page = 99)), "3 / 3", fixed = TRUE)
   testthat::expect_false(grepl("lc-pager", html(env$lc_table(df, cols, page_size = 50)), fixed = TRUE))
 })
 

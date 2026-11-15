@@ -113,6 +113,4 @@
       if (e.target && (e.target.id === "ch2h_alpha" || e.target.name === "ch2h_sided")) sidedFromControls();
     });
   });
-  Charts.onMessage("ws_sided_chart", function (msg) { window.wsRenderWhenReady("sided", msg); });
-  Charts.onMessage("ws_pvalue_chart", function (msg) { window.wsRenderWhenReady("pvalue", msg); });
 })();

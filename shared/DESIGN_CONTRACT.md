@@ -457,7 +457,7 @@ i `DT::datatable()` wycofujemy: `renderTable()` zastępuje
 | Tabela z deklaracją kolumn | `lc_table(df, cols)` + `lc_col()` |
 | Jedna tabela szeroko, dwie wąsko | `lc_table_split()` |
 | Podgląd surowych danych | `lc_table_preview()` |
-| Stronicowanie | `lc_table(page_size = )`; duże zbiory z `page_input` |
+| Stronicowanie | `lc_table(page_size = )` (strony przełącza przeglądarka) |
 | Tabela krzyżowa z sumami | `lc_crosstab()` |
 | Pusta tabela | `lc_table_empty()` |
 | Liczba w komórce / tekście | `lc_num()` / `lc_fmt()` |
@@ -484,9 +484,7 @@ Zasady:
    dla tabel tekstowych (`narrow = "cards" / "stack-last"`), przewijanie tylko
    dla danych surowych (`scroll = TRUE`). Tekstu nie zmniejszamy.
 8. Stronicowanie: `lc_table(page_size = 10)` przełącza strony w przeglądarce
-   (w HTML są wszystkie wiersze; tylko małe tabele). Duże zbiory renderują
-   jedną stronę na serwerze: `lc_table(..., page = input$x_page,
-   page_input = "x_page")`.
+   (w HTML są wszystkie wiersze).
 9. Stany komórek i kolumn: `is-new` (dodane w bieżącym kroku), `is-best`,
    `is-dim` (bez interpretacji), `is-target`, `is-base`.
 10. Do 3 liczb o jednym obiekcie: `lc_readout()` w pasku. Co najmniej

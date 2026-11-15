@@ -2152,9 +2152,6 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 @media (prefers-reduced-motion:reduce){.lc-tbl .is-new,.lc-tbl .is-changed{animation:none}}
 
 /* Komórka klikalna (wybór komórki, o której mówi podpis) */
-.lc-cell-btn{all:unset;display:block;width:100%;text-align:inherit;cursor:pointer;border-radius:2px}
-.lc-cell-btn:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
-.lc-tbl td:has(.lc-cell-btn):hover{background:var(--upwr-surface-sunken)}
 .lc-cell-tag{display:block;font:500 .66em var(--upwr-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--upwr-ink-subtle);margin-bottom:.15em}
 
 /* Legenda skrótów (widoczna, działa na dotyku) i notka pod tabelą */

@@ -76,7 +76,7 @@
 
   // -------------------------------------------------------------------------
   // buildTOC — odkrywa h2 w aktywnym rozdziale i wypełnia TOC w sidebarze
-  // Wywoływane z opóźnieniem po renderUI Shiny (DOM musi być gotowy)
+  // Wywoływane po przełączeniu rozdziału
   // -------------------------------------------------------------------------
   function headingShown(h) {
     return !h.closest("[data-lc-variant][hidden], [data-lc-toggle-state][hidden]");
@@ -175,23 +175,6 @@
   }
 
   // -------------------------------------------------------------------------
-  // Shiny message handlers
-  // -------------------------------------------------------------------------
-  function setupShinyHandlers() {
-    // Serwer → klient: przełącz aktywny rozdział i po 250ms zbuduj TOC
-    Shiny.addCustomMessageHandler("setActiveChapter", function (chapterId) {
-      setActiveChapter(chapterId);
-      setTimeout(function () { buildTOC(chapterId); }, 250);
-    });
-
-    // Serwer → klient: wymuś przełączenie rozdziału przez Shiny input
-    // (używane przez session$sendCustomMessage("switchToChapter", id) w modułach)
-    Shiny.addCustomMessageHandler("switchToChapter", function (chapterId) {
-      Shiny.setInputValue("lc__switch_chapter", chapterId, { priority: "event" });
-    });
-  }
-
-  // -------------------------------------------------------------------------
   // Strona statyczna (scripts/build_static.R): wszystkie rozdziały są
   // w dokumencie jako section[data-lc-static-chapter]; pokazujemy jeden naraz.
   // -------------------------------------------------------------------------
@@ -247,9 +230,6 @@
   // Przełączenie rozdziału z treści (lc_chapter_next(), skrypty wykładu).
   window.lcGoToChapter = function (chapterId) {
     if (isStatic()) showStaticChapter(chapterId);
-    else if (window.Shiny && window.Shiny.setInputValue) {
-      window.Shiny.setInputValue("lc__switch_chapter", chapterId, { priority: "event" });
-    }
   };
 
   // -------------------------------------------------------------------------
@@ -263,19 +243,6 @@
     start();
   } else {
     document.addEventListener("DOMContentLoaded", start);
-  }
-
-  // Shiny.addCustomMessageHandler można wywołać przed inicjalizacją Shiny
-  if (window.Shiny) {
-    setupShinyHandlers();
-  } else {
-    document.addEventListener("DOMContentLoaded", function () {
-      if (window.Shiny) {
-        setupShinyHandlers();
-      } else if (!isStatic() && window.jQuery) {
-        window.jQuery(document).one("shiny:idle", setupShinyHandlers);
-      }
-    });
   }
 
   // ===========================================================================
@@ -332,8 +299,7 @@
 
   // Event delegation — łapiemy kliki tylko w statyczne <img> które są
   // bezpośrednim dzieckiem .lc-figure-panel, lub explicit opt-in przez
-  // klasę .lc-zoomable. Pomijamy obrazki w plotOutput (Shiny) bo niektóre
-  // mają zarejestrowany click handler.
+  // klasę .lc-zoomable.
   document.addEventListener("click", function (e) {
     var img = e.target.closest(
       ".lc-figure-panel > img, .lc-figure-panel .lc-zoomable img"

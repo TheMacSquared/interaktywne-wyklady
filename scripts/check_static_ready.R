@@ -110,7 +110,8 @@ scan_js <- function(files) {
   n <- 0L
   for (file in files) {
     txt <- readLines(file, warn = FALSE, encoding = "UTF-8")
-    n <- n + sum(grepl("Shiny\\.(setInputValue|onInputChange|addCustomMessageHandler)", txt))
+    # Wywołania Shiny.* i zdarzenia „shiny:…” (np. shiny:inputchanged) działają tylko z serwerem.
+    n <- n + sum(grepl("Shiny\\.(setInputValue|onInputChange|addCustomMessageHandler|unbindAll)|[\"']shiny:", txt))
   }
   n
 }

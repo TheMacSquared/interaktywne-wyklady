@@ -1445,16 +1445,14 @@ lc_table_key <- function(cols, class = NULL) {
 # narrow: zachowanie tabeli tekstowej na wąskim kontenerze.
 # fit = TRUE: tabela liczbowa nie rozciąga się na pełną szerokość.
 # cell_class: nazwana lista klucz kolumny → wektor klas (is-target, is-best…).
-# page_size: stronicowanie. Bez page_input strony przełącza przeglądarka
-# (w HTML są wszystkie wiersze; dla małych tabel). Z page_input renderowana
-# jest tylko strona `page`, a przyciski ustawiają input$<page_input>
-# (dla dużych zbiorów): lc_table(..., page = input$x_page, page_input = "x_page").
+# page_size: stronicowanie w przeglądarce (w HTML są wszystkie wiersze, widoczna
+# strona `page`); przyciski obsługuje shared/lc_widgets.js.
 lc_table <- function(df, cols = NULL, foot = NULL, caption = NULL, number = NULL,
                      narrow = c("none", "cards", "stack-last"), fit = NULL,
                      row_class = NULL, cell_class = NULL, key = TRUE,
                      scroll = FALSE, sticky_first = FALSE, label = NULL,
                      prose = FALSE, colgroup = FALSE, lead = NULL, note = NULL,
-                     page_size = NULL, page = 1, page_input = NULL) {
+                     page_size = NULL, page = 1) {
   narrow <- match.arg(narrow)
   if (is.null(cols)) cols <- .lc_auto_cols(df)
   pager <- NULL
@@ -1471,18 +1469,10 @@ lc_table <- function(df, cols = NULL, foot = NULL, caption = NULL, number = NULL
     n_pages <- ceiling(total / page_size)
     page <- max(1L, min(n_pages, as.integer(page %||% 1L)))
     rows <- ((page - 1) * page_size + 1):min(total, page * page_size)
-    if (is.null(page_input)) {
-      paged_out <- ifelse(seq_len(total) %in% rows, NA_character_, "is-paged-out")
-      row_class <- if (is.null(row_class)) paged_out else
-        ifelse(is.na(paged_out), row_class, paste(row_class, paged_out))
-    } else {
-      df <- df[rows, , drop = FALSE]
-      if (!is.null(row_class)) row_class <- row_class[rows]
-      if (!is.null(cell_class)) cell_class <- lapply(cell_class, function(v) {
-        if (length(v) == 1) v else v[rows]
-      })
-    }
-    pager <- .lc_pager(page, n_pages, min(rows), max(rows), total, page_size, page_input)
+    paged_out <- ifelse(seq_len(total) %in% rows, NA_character_, "is-paged-out")
+    row_class <- if (is.null(row_class)) paged_out else
+      ifelse(is.na(paged_out), row_class, paste(row_class, paged_out))
+    pager <- .lc_pager(page, n_pages, min(rows), max(rows), total, page_size)
   }
   types <- vapply(cols, `[[`, character(1), "type")
   if (is.null(fit)) fit <- narrow == "none" && any(types == "num")
@@ -1509,13 +1499,13 @@ lc_table <- function(df, cols = NULL, foot = NULL, caption = NULL, number = NULL
 }
 
 # Pasek stronicowania pod tabelą. Logika przycisków: shared/lc_widgets.js.
-.lc_pager <- function(page, n_pages, from, to, total, page_size, page_input = NULL) {
+.lc_pager <- function(page, n_pages, from, to, total, page_size) {
   nav_button <- function(to_page, label, icon, disabled) {
     tags$button(type = "button", class = "lc-action is-ghost is-icon",
       `data-lc-page-to` = to_page, `aria-label` = label, title = label,
       disabled = if (disabled) NA, lc_icon(icon))
   }
-  tags$div(class = "lc-pager", `data-lc-page-input` = page_input,
+  tags$div(class = "lc-pager",
     `data-lc-page-size` = page_size, `data-lc-total` = total,
     tags$span(class = "lc-pager-info", `aria-live` = "polite",
       `data-lc-page-range` = NA, sprintf("Wiersze %d–%d z %d", from, to, total)),
@@ -1579,14 +1569,13 @@ lc_table_preview <- function(df, n = 20, split = 2, cols = NULL, total = nrow(df
 
 # Tabela krzyżowa z sumami brzegowymi. measure: "n", "row" (% wierszowe),
 # "col" (% kolumnowe). target = c(i, j): komórka opisana w tekście.
-# input_id: komórki stają się przyciskami; kliknięcie ustawia input$<id>
-# na c(i, j). short_labels: krótkie etykiety kolumn na wąskim kontenerze.
+# short_labels: krótkie etykiety kolumn na wąskim kontenerze.
 # cell_tags: macierz etykiet znaczeniowych komórek (np. „trafienie”).
 # col_colours: kolory kategorii kolumn (próbka w nagłówku zamiast legendy wykresu).
 # big_mark: separator tysięcy liczebności, np. " " (10 000).
 lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
                         row_name = "", col_name = "", short_labels = NULL,
-                        cell_tags = NULL, input_id = NULL, digits = 1,
+                        cell_tags = NULL, digits = 1,
                         lead = TRUE, label = "Tabela krzyżowa", col_colours = NULL,
                         big_mark = "") {
   measure <- match.arg(measure)
@@ -1631,11 +1620,6 @@ lc_crosstab <- function(tab, measure = c("n", "row", "col"), target = NULL,
       if (!is.null(cell_tags)) tags$span(class = "lc-cell-tag", cell_tags[i, j]),
       shown
     )
-    if (!is.null(input_id)) {
-      content <- tags$button(type = "button", class = "lc-cell-btn",
-        `data-lc-cell-input` = input_id, `data-i` = i, `data-j` = j,
-        `aria-pressed` = if (is_target(i, j)) "true" else "false", content)
-    }
     tags$td(
       class = .lc_classes("n", if (is_target(i, j)) "is-target"
                           else if (is_base_row(i) || is_base_col(j)) "is-base"),

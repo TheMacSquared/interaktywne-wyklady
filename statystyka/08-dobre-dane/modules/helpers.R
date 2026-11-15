@@ -350,12 +350,10 @@ dd_decimals <- function(x) {
 # Tabela surowych danych (lc_table v2). Typy kolumn z R, pierwsza kolumna jako
 # nagłówek wiersza, typ zmiennej w drugiej linii nagłówka (types), braki jako
 # szara kreska. n: liczba pokazanych wierszy (reszta opisana w notce).
-# page_size + page_input: cały zbiór ze stronicowaniem po stronie serwera
-# (page = input$<page_input>); wtedy n jest pomijane.
+# page_size: cały zbiór ze stronicowaniem w przeglądarce; wtedy n jest pomijane.
 # cell_class: nazwana lista klucz kolumny → wektor klas (np. is-target).
 dd_data_table <- function(df, types = NULL, n = NULL, cell_class = NULL,
-                          label = "Podgląd danych", page_size = NULL,
-                          page = 1, page_input = NULL) {
+                          label = "Podgląd danych", page_size = NULL) {
   df <- as.data.frame(df, stringsAsFactors = FALSE)
   total <- nrow(df)
   if (is.null(page_size) && !is.null(n) && total > n) df <- utils::head(df, n)
@@ -389,7 +387,7 @@ dd_data_table <- function(df, types = NULL, n = NULL, cell_class = NULL,
   lc_table(df, cols,
     cell_class = if (length(classes)) classes,
     scroll = TRUE, sticky_first = TRUE, label = label,
-    page_size = page_size, page = page, page_input = page_input,
+    page_size = page_size,
     note = if (nrow(df) < total) {
       sprintf("Pierwsze %d z %d obserwacji", nrow(df), total)
     }

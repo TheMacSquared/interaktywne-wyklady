@@ -168,7 +168,7 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
 - [ ] `scripts/check_static_page.R` nie zauważa ryciny, która przy każdym
   rysowaniu rzuca wyjątek (silnik łapie go i ponawia, strona się zawiesza):
   wykrywa to `scripts/migracja/gdzie_wisi.R`. Dodać taki test do kontroli strony.
-- [ ] Faza 8: usunąć `app.R` i kod serwera, statyczny spis wykładów zamiast
+- [x] Faza 8: usunąć `app.R` i kod serwera, statyczny spis wykładów zamiast
   huba, wycofać `przedmioty/*/skrypt/build`, zaktualizować `AGENTS.md`,
   kontrakt i testy. Zrobione (15 listopada 2026, wariant „zostaw `app.R`, usuń
   serwer”): `app.R` opisuje treść (`ui`), bez `server` i `shinyApp()`; puste
@@ -182,9 +182,18 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   test nieistniejącego widgetu „zmienne p” (05 analizy ryzyka) usunięty;
   AGENTS.md, kontrakty i opis rdzenia zaktualizowane. Zostało: kod huba
   (`hub/`, linki `LC_HUB_URL` w `lecture_layout.R`, `.LC_HUB_TABS_JS`) — hub
-  obsługuje też statystykę 2; stronicowanie tabel z serwera (`lc_table(page_input =)`)
-  i gałęzie Shiny w skryptach JS rdzenia (nieszkodliwe); wycofanie
-  `przedmioty/*/skrypt/build` (zewnętrzne repozytorium).
+  obsługuje też statystykę 2; uruchamianie z huba wykładów statystyki i analizy
+  ryzyka już nie działa, bo ich `app.R` nie ma serwera). Dokończone tego samego
+  dnia: `lc_table()` bez stronicowania przez serwer (`page_input`), `lc_crosstab()`
+  bez klikalnych komórek (`input_id`), skrypty JS rdzenia bez gałęzi Shiny
+  (`lc_widgets.js`, `shared_toc.js`, `lc_charts.js` bez `onMessage()`,
+  `lc_dragdrop.js`, `lc_stat_figures.js`). Przy okazji naprawione: scena
+  autobusu w statystyce 01 słuchała `shiny:inputchanged` i bez serwera nie
+  reagowała na suwak zapasu; `check_static_ready.R` liczy teraz też zdarzenia
+  `shiny:…` i `Shiny.unbindAll` w skryptach wykładów. `przedmioty/*/skrypt/build`
+  (repo dydaktyka): dawny zrzut przez Shiny usunięty, `build_offline.R` składa
+  paczkę ze stron `build_static.R` (spis bez odnośnika do innych kursów, ZIP,
+  `zrodla.json` z commitem repo wykładów); README obu przedmiotów przepisane.
 - [x] Strona statyczna: spis wykładów (`Rscript scripts/build_index.R` → `dist/index.html`
   i `dist/<kurs>/index.html`); wykłady jeszcze niezbudowane są na liście bez odnośnika.
   Zakładki górnego paska prowadzą tylko do wykładów już zbudowanych w `dist/<kurs>/`.
@@ -211,9 +220,8 @@ Stan (14 listopada 2026, gałąź `statyczny-js`): statystyka i analiza ryzyka
   zostawić w kursie tylko reguły własne (`risk_*`, nagłówki rozdziałów).
 - [ ] Testy rdzenia (`test-widgets-v2.R`, `test-panel-layout.R`) są w dwóch
   kopiach w `<kurs>/tests/`; przenieść do jednego miejsca.
-- [ ] Build offline w `przedmioty/*/skrypt/build/build_offline.R` czyta czcionki
-  z `<kurs>/R/fonts` i śledzi zmiany w `<kurs>/R`; na tej gałęzi wymaga
-  wskazania `shared/` (albo znika razem z przejściem na strony statyczne).
+- [x] Build offline w `przedmioty/*/skrypt/build/build_offline.R` składa paczkę
+  ze stron statycznych (15 listopada 2026); dawny zrzut przez Shiny wycofany.
 
 ### Migracja widgetów do v2
 
@@ -359,7 +367,7 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     Wzór mostka: 05 Ryc. 2.4 (`"live": true`, `build/widgets/05-ch2-hipotezy.js`).
     Widgety z `data-config` działają offline bez dodatkowych wpisów
     (`lcCharts` ustawia `data-ready`, build wstawia czystą kopię z pristine.js).
-  - [ ] Wersje offline statystyki (`przedmioty/statystyka/skrypt/`): przebudować
+  - [x] (nieaktualne od 15 listopada 2026: paczka offline to strony statyczne) Wersje offline statystyki (`przedmioty/statystyka/skrypt/`): przebudować
     00, 04, 06–10 (`build_offline.R --check`). 03 wymaga tylko `--stamp --only=03`
     — po zrzucie zmienił się wyłącznie `shared/DESIGN_CONTRACT.md`. 01, 02, 03 (treść)
     i 05 aktualne na 2026-11-05.
