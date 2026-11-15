@@ -52,64 +52,17 @@
 .LC_LECTURE_MODULE <- .LC_COURSE$lecture_module
 
 # ============================================================================
-# Przełączanie wykładów z górnego paska (tylko gdy wykład uruchomił hub)
+# Przełączanie wykładów z górnego paska
 # ============================================================================
 
-# Zakładka innego wykładu prowadzi przez hub (?open=…), który uruchamia wykład
-# albo bierze już działający i przekierowuje kartę na jego port. Nazwa karty
-# (data-lc-hub-tab) jest ta sama, której używa hub/app.R (hub_tab_name()), więc
-# klik w wykład otwarty już w innej karcie tylko ją przełącza — bez przeładowania,
-# ze stanem suwaków i quizów. Bez LC_HUB_URL zakładki zostają placeholderami.
-.lc_module_link <- function(m, is_active, hub_url) {
-  plain <- list(href = m$href, tab = NULL)
-  if (.lc_static()) {
-    hits <- vapply(.LC_LECTURE_MODULE, identical, logical(1), m$slug)
-    href <- if (any(hits) && !is_active) .lc_static_href(names(.LC_LECTURE_MODULE)[hits][[1]])
-    return(list(href = if (is.null(href)) m$href else href, tab = NULL))
-  }
-  if (!nzchar(hub_url) || is_active) return(plain)
-
+# Zakładka innego wykładu prowadzi do jego pliku zbudowanego przez
+# scripts/build_static.R (lista w options(lc.static.lectures)); wykład jeszcze
+# niezbudowany zostaje placeholderem z course.R.
+.lc_module_link <- function(m, is_active) {
   hits <- vapply(.LC_LECTURE_MODULE, identical, logical(1), m$slug)
-  if (!any(hits)) return(plain)
-  lecture_id <- names(.LC_LECTURE_MODULE)[hits][[1]]
-  subject <- basename(normalizePath(.LC_PROJ_ROOT, mustWork = FALSE))
-
-  list(
-    href = sprintf(
-      "%s/?open=%s&lecture=%s&title=%s", hub_url,
-      utils::URLencode(subject, reserved = TRUE),
-      utils::URLencode(lecture_id, reserved = TRUE),
-      utils::URLencode(enc2utf8(m$title), reserved = TRUE)
-    ),
-    tab = paste0("wyklad_", gsub("[^A-Za-z0-9]", "_", paste(subject, lecture_id, sep = "/")))
-  )
+  href <- if (any(hits) && !is_active) .lc_static_href(names(.LC_LECTURE_MODULE)[hits][[1]])
+  if (is.null(href)) m$href else href
 }
-
-# window.open('', nazwa) zwraca istniejącą kartę o tej nazwie albo nową, pustą.
-# Karta z działającym wykładem jest na innym porcie, czyli innym originie —
-# odczyt jej adresu rzuca wyjątek i po tym poznajemy, że wystarczy ją przełączyć.
-.LC_HUB_TABS_JS <- "
-(function () {
-  if (window.__lcHubTabs) return;
-  window.__lcHubTabs = true;
-  document.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('a[data-lc-hub-tab]');
-    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    e.preventDefault();
-    var menu = a.closest('details');
-    if (menu) menu.open = false;
-
-    var win = null;
-    try { win = window.open('', a.getAttribute('data-lc-hub-tab')); } catch (err) { win = null; }
-    if (!win) { window.location.href = a.href; return; }
-
-    var blank = false;
-    try { blank = win.location.href === 'about:blank'; } catch (err) { blank = false; }
-    if (blank) win.location.href = a.href;
-    win.focus();
-  });
-})();
-"
 
 # ============================================================================
 # module_tabs() — górny pasek zakładek modułów
@@ -122,17 +75,12 @@ module_tabs <- function(current_slug = NULL) {
     if (length(idx) > 0) current_module <- .LC_MODULES[[idx[[1]]]]
   }
 
-  # Gdy wykład uruchomił hub (hub/app.R), logo wraca do spisu wykładów.
-  # Bez zmiennej LC_HUB_URL zostaje placeholderem "#", dokładnie jak dotąd, więc
-  # ręczne shiny::runApp() zachowuje się bez zmian. Nazwany target sprawia, że
-  # klik przełącza na kartę huba, a nie nadpisuje karty wykładu.
-  .lc_hub_url <- Sys.getenv("LC_HUB_URL", "")
-
+  # Logo prowadzi do spisu wykładów kursu (index.html obok plików wykładów,
+  # scripts/build_index.R).
   logo <- tags$a(
     class  = "lc-tabs-logo",
-    href   = if (nzchar(.lc_hub_url)) .lc_hub_url else "#",
-    target = if (nzchar(.lc_hub_url)) "wyklady_hub" else NULL,
-    title  = if (nzchar(.lc_hub_url)) "Powrót do spisu wykładów" else NULL,
+    href   = "index.html",
+    title  = "Spis wykładów",
     tags$div(class = "lc-tabs-logo-mark", .LC_COURSE$logo_mark),
     tags$div(
       class = "lc-tabs-logo-text",
@@ -143,11 +91,10 @@ module_tabs <- function(current_slug = NULL) {
 
   tabs <- lapply(.LC_MODULES, function(m) {
     is_active <- !is.null(current_slug) && identical(m$slug, current_slug)
-    link <- .lc_module_link(m, is_active, .lc_hub_url)
+    href <- .lc_module_link(m, is_active)
     tags$a(
       class = paste("lc-tab", if (is_active) "lc-tab-active"),
-      href  = link$href,
-      `data-lc-hub-tab` = link$tab,
+      href  = href,
       title = m$title,
       tags$span(class = "lc-tab-num", m$num),
       tags$span(class = "lc-tab-title-full", m$title),
@@ -157,11 +104,10 @@ module_tabs <- function(current_slug = NULL) {
 
   menu_items <- lapply(.LC_MODULES, function(m) {
     is_active <- !is.null(current_slug) && identical(m$slug, current_slug)
-    link <- .lc_module_link(m, is_active, .lc_hub_url)
+    href <- .lc_module_link(m, is_active)
     tags$a(
       class = paste("lc-tabs-menu-item", if (is_active) "lc-tabs-menu-item-active"),
-      href  = link$href,
-      `data-lc-hub-tab` = link$tab,
+      href  = href,
       title = m$title,
       tags$span(class = "lc-tab-num", m$num),
       tags$span(class = "lc-tabs-menu-item-title", m$title)
@@ -210,8 +156,7 @@ module_tabs <- function(current_slug = NULL) {
       tags$div(class = "lc-tabs-list", tabs),
       scroll_controls[[2]]
     ),
-    menu,
-    if (nzchar(.lc_hub_url)) tags$script(HTML(.LC_HUB_TABS_JS))
+    menu
   )
 }
 

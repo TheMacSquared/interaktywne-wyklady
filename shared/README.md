@@ -2,8 +2,6 @@
 
 Jeden system layoutu, stylów i bibliotek dla kursów `statystyka/` i
 `analiza-ryzyka/`. Zmianę robi się tutaj raz i obowiązuje w obu kursach.
-`statystyka-2/` ma osobny, starszy snapshot we własnym `R/` i z tego katalogu
-nie korzysta.
 
 ## Zawartość
 
@@ -29,7 +27,7 @@ Katalog `<kurs>/R/` zawiera tylko pliki własne kursu:
 
 - `course.R` — lista `.LC_COURSE`: nazwa i znak w logo, moduły górnego paska,
   mapowanie `lecture_id → moduł` oraz przełączniki zachowania (niżej). Po tym
-  pliku hub i `.find_app_dir()` rozpoznają katalog kursu.
+  pliku `.find_app_dir()` rozpoznaje katalog kursu.
 - `course_styles.css` (opcjonalnie, wymieniony w `.LC_COURSE$styles`) — arkusz
   ładowany po `shared_styles.css`: elementy własne kursu i świadome odstępstwa
   od rdzenia.

@@ -2,9 +2,9 @@
 
 ## Kontekst projektu
 
-- **Cel:** interaktywne narzędzia R Shiny do nauczania przedmiotów ilościowych.
+- **Cel:** interaktywne wykłady do nauczania przedmiotów ilościowych, jako strony statyczne (bez serwera R).
 - **Struktura:** każdy przedmiot ma własny katalog na najwyższym poziomie repo.
-- **Obecne przedmioty:** `statystyka/`, `statystyka-2/` i `analiza-ryzyka/`.
+- **Obecne przedmioty:** `statystyka/` i `analiza-ryzyka/`.
 - **Odbiorcy:** studenci na zajęciach akademickich.
 - **Język interfejsu:** polski.
 - **Język kodu:** angielski dla nazw zmiennych i funkcji.
@@ -19,25 +19,17 @@ interaktywne-wyklady/
 │   ├── scripts/
 │   ├── README.md
 │   └── */app.R
-├── statystyka-2/
-│   ├── R/                # własny, osobny snapshot layoutu
-│   ├── scripts/
-│   ├── tests/
-│   └── */app.R
 ├── analiza-ryzyka/
 │   ├── R/                # course.R, course_styles.css + pliki własne kursu
 │   └── */app.R
-└── deprecated/
-    └── ekonometria/
+└── scripts/              # build_static.R, build_index.R, kontrole stron
 ```
-
-Statystyka 2 (`statystyka-2/`) zawiera symulacje, Bayesa, materiały kierunkowe i szeregi czasowe. Ma własny snapshot `R/`, skrypty i testy. Podstawowy kurs nie wymaga zależności tej części.
 
 Statystyka i analiza ryzyka korzystają z jednego wspólnego rdzenia w `shared/` (layout, paleta, motyw wykresów, style, biblioteki JS). Zmianę rdzenia robi się raz, dla obu kursów. Katalog `<kurs>/R/` zawiera tylko to, co własne dla kursu: `course.R` (nazwa, logo, mapa wykładów, tryb rozdziałów), ewentualny `course_styles.css` (elementy kursu i świadome odstępstwa od rdzenia) oraz pliki przedmiotowe. Opis w `shared/README.md`. Narzędzia pomocnicze statystyki są w `statystyka/scripts/`.
 
-Na gałęzi `statyczny-js` statystyka i analiza ryzyka działają jako strony statyczne (bez serwera R): wszystkie 21 wykładów budują się do `dist/<kurs>/<wykład>.html` (`Rscript scripts/build_static.R <kurs>/<wykład>`, spis: `Rscript scripts/build_index.R`). Plan i stan są w `TODO.md` („Przejście na strony statyczne”), narzędzia w `scripts/` (`check_static_ready.R`, `build_static.R`, `check_static_page.R`), opis w `shared/README.md`. Nowy kod widgetów nie dodaje wyjść ani wejść serwera (`render*`, `observe*`, `input$…`): to, co zależy od ruchu studenta, liczy JS (silnik ryciny `lcSF`, `shared/lc_stat_figures.js`), resztę R przy budowaniu (`lc_sf_spec()`, wykres ggplot na stałych danych: `lc_sf_ggplot()`, treść wybierana kontrolką: `lc_variants()`, odsłaniana przyciskiem: `lc_reveal()`). Kodu serwera (`server`, `chN_server`, `lecture_server()`, `zoom_plot_server()`) już nie ma: `app.R` opisuje tylko treść.
+Statystyka i analiza ryzyka działają jako strony statyczne (bez serwera R): wszystkie 21 wykładów budują się do `dist/<kurs>/<wykład>.html` (`Rscript scripts/build_static.R <kurs>/<wykład>`, spis: `Rscript scripts/build_index.R`). Plan i stan są w `TODO.md` („Przejście na strony statyczne”), narzędzia w `scripts/` (`check_static_ready.R`, `build_static.R`, `check_static_page.R`), opis w `shared/README.md`. Nowy kod widgetów nie dodaje wyjść ani wejść serwera (`render*`, `observe*`, `input$…`): to, co zależy od ruchu studenta, liczy JS (silnik ryciny `lcSF`, `shared/lc_stat_figures.js`), resztę R przy budowaniu (`lc_sf_spec()`, wykres ggplot na stałych danych: `lc_sf_ggplot()`, treść wybierana kontrolką: `lc_variants()`, odsłaniana przyciskiem: `lc_reveal()`). Kodu serwera (`server`, `chN_server`, `lecture_server()`, `zoom_plot_server()`) już nie ma: `app.R` opisuje tylko treść.
 
-Ekonometria jest archiwalna i znajduje się w `deprecated/ekonometria/`. Nie należy traktować jej jako aktywnego przedmiotu ani włączać do huba lub kontroli aktywnych wykładów. Materiały pozostają dostępne jako referencja.
+Ostatnią wersję z aplikacjami Shiny (z hubem, kursem „Statystyka 2” i archiwum ekonometrii) oznacza tag `shiny-final`.
 
 ## Konwencje kodowania
 
@@ -45,7 +37,7 @@ Kanoniczne reguły designu są w `shared/DESIGN_CONTRACT.md`. Przy pracy nad wyk
 
 ### Struktura wykładu
 
-Każdy wykład statystyki i analizy ryzyka używa systemu layoutu z `shared/lecture_layout.R` (statystyka 2: z własnego `statystyka-2/R/`, nadal jako aplikacja Shiny). `app.R` wykładu statystyki i analizy ryzyka opisuje treść (`ui`); nie ma funkcji `server` ani `shinyApp()`, bo strona jest statyczna (`Rscript scripts/build_static.R <kurs>/<wykład>`). Nie twórz nowych wykładów na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
+Każdy wykład statystyki i analizy ryzyka używa systemu layoutu z `shared/lecture_layout.R`. `app.R` wykładu statystyki i analizy ryzyka opisuje treść (`ui`); nie ma funkcji `server` ani `shinyApp()`, bo strona jest statyczna (`Rscript scripts/build_static.R <kurs>/<wykład>`). Nie twórz nowych wykładów na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
 
 ```r
 # Tytuł aplikacji

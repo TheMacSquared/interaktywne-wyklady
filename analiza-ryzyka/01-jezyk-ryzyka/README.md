@@ -7,7 +7,7 @@ możliwych wyników.
 ## Uruchamianie
 
 ```r
-shiny::runApp("analiza-ryzyka/01-jezyk-ryzyka")
+system("Rscript scripts/build_static.R analiza-ryzyka/01-jezyk-ryzyka")   # → dist/analiza-ryzyka/01-jezyk-ryzyka.html
 ```
 
 ## Efekty uczenia się

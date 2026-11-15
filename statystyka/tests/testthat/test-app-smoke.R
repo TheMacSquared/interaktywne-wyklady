@@ -30,7 +30,7 @@ testthat::test_that("każda aplikacja ładuje UI i kompletną listę rozdziałó
           stopifnot(length(env$.LC_MODULES) == length(app_dirs))
           stopifnot(length(env$.LC_LECTURE_MODULE) == length(app_dirs))
           html <- htmltools::renderTags(env$ui)$html
-          subject_title <- if (basename(subject_root) == "statystyka-2") "Statystyka 2" else "Statystyka"
+          subject_title <- "Statystyka"
           stopifnot(grepl(paste0('class="lc-tabs-logo-title">', subject_title, '</div>'), html, fixed = TRUE))
           TRUE
         },

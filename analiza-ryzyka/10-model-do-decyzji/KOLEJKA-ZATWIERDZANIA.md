@@ -6,7 +6,7 @@ Stan: 14 listopada 2026. Opis i uzasadnienie w
 Oglądanie (z katalogu repo, osobny port, bez restartu huba):
 
 ```r
-shiny::runApp("analiza-ryzyka/10-model-do-decyzji", port = 8840)
+system("Rscript scripts/build_static.R analiza-ryzyka/10-model-do-decyzji")   # → dist/analiza-ryzyka/10-model-do-decyzji.html
 ```
 
 Każdy prototyp ma złotą plakietkę „Prototyp Pn · rodzaj” i stoi w miejscu,

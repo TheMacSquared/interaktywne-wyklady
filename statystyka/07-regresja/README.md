@@ -12,7 +12,7 @@ czasu oraz kierunku studiów, bez utrzymywania osobnych wersji aplikacji.
 ## Uruchamianie
 
 ```r
-shiny::runApp("statystyka/07-regresja")
+system("Rscript scripts/build_static.R statystyka/07-regresja")   # → dist/statystyka/07-regresja.html
 ```
 
 ## Organizacja materiału

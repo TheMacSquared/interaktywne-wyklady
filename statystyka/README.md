@@ -1,12 +1,10 @@
 # Statystyka
 
-Podstawowy kurs statystyki: od opisu danych do samodzielnego wniosku z analizy. Interaktywne aplikacje R Shiny wspierają wykład dla początkujących.
+Podstawowy kurs statystyki: od opisu danych do samodzielnego wniosku z analizy. Interaktywne wykłady (strony statyczne, bez serwera R) wspierają wykład dla początkujących.
 
 ## Cel i zakres
 
 Student potrafi opisać dane, odczytać niepewność wyniku, wybrać podstawową metodę i wyjaśnić wniosek w kontekście pytania. Przykłady budują intuicję; szczegóły metodologiczne pojawiają się tylko tam, gdzie są potrzebne do zrozumienia wyniku.
-
-Symulacje, Bayes, rozszerzenia kierunkowe i szeregi czasowe należą do oddzielnego przedmiotu [Statystyka 2](../statystyka-2/README.md). Nie są wymagane do ukończenia kursu podstawowego.
 
 ## Wykłady
 
@@ -47,16 +45,10 @@ Pakiety BayesFactor, rstanarm i pakiety szeregów czasowych nie należą do wyma
 
 ## Uruchamianie
 
-Z katalogu głównego repozytorium:
+Z katalogu głównego repozytorium budujemy stronę wykładu i otwieramy ją w przeglądarce:
 
 ```sh
-scripts/hub
-```
-
-Hub pokazuje „Statystykę” i „Statystykę 2” jako oddzielne przedmioty. Pojedyncza aplikacja:
-
-```r
-shiny::runApp("statystyka/01-typy-danych")
+Rscript scripts/build_static.R statystyka/01-typy-danych   # → dist/statystyka/01-typy-danych.html
 ```
 
 ## Kontrola

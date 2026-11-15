@@ -26,7 +26,7 @@ library(dplyr)
   if (length(file_arg) > 0) {
     candidates <- c(candidates, dirname(normalizePath(sub("--file=", "", file_arg[[1]]))))
   }
-  # 3) Katalog roboczy — shiny::runApp() ustawia go na katalog aplikacji.
+  # 3) Katalog roboczy — scripts/build_static.R ustawia go na katalog wykładu.
   candidates <- c(candidates, getwd())
 
   valid <- Filter(has_project_root, candidates)

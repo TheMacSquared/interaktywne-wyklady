@@ -194,6 +194,13 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   (repo dydaktyka): dawny zrzut przez Shiny usunięty, `build_offline.R` składa
   paczkę ze stron `build_static.R` (spis bez odnośnika do innych kursów, ZIP,
   `zrodla.json` z commitem repo wykładów); README obu przedmiotów przepisane.
+  Potem (15 listopada 2026) z gałęzi usunięte wszystko, co było Shiny: kurs
+  `statystyka-2/`, hub (`hub/`, `scripts/hub`, `Wyklady.command`, `Wyklady.bat`,
+  linki `LC_HUB_URL` w `lecture_layout.R` — logo prowadzi teraz do spisu kursu
+  `index.html`), menu `analiza-ryzyka/scripts/wyklad`, audyt
+  `statystyka/scripts/audit_panels.R`, prototyp `statystyka/prototypy/chart-dostepnosc`
+  i aplikacje źródłowe `statystyka/materialy-zrodlowe/regresja-2025`. Ostatnią
+  wersję z Shiny oznacza tag `shiny-final` (`main` sprzed scalenia).
 - [x] Strona statyczna: spis wykładów (`Rscript scripts/build_index.R` → `dist/index.html`
   i `dist/<kurs>/index.html`); wykłady jeszcze niezbudowane są na liście bez odnośnika.
   Zakładki górnego paska prowadzą tylko do wykładów już zbudowanych w `dist/<kurs>/`.
