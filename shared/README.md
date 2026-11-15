@@ -170,4 +170,6 @@ pole wyboru, grupa pól), R liczy każdy wariant: `lc_sf_spec(variants = list(wa
 reads = …, html = …, control = …)`. `reads` wypełnia odczyty `lc_sf_value()`,
 `html` wstawia gotowe fragmenty (np. tabelę) do elementów `[data-role]`.
 Klucz grupy pól wyboru to zaznaczone wartości złączone „+”, a pustej — `none`.
+Gdy wariant zależy od kilku kontrolek, `key = c("id1", "id2")` składa klucz
+z ich wartości (`"TZ|0.5"`).
 Wzorzec: `statystyka/09-case-studies/modules/figures.R`.

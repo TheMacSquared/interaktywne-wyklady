@@ -488,6 +488,7 @@
   //   {variants: {wartość: opis lub {charts}, …}, reads: {wartość: {klucz: tekst}},
   //    html: {wartość: {rola: "<…>"}}}        — opis wybierany pierwszą kontrolką (lista, segment,
   //                                            pole wyboru: "on"/"off", grupa pól: "a+b", pusta: "none").
+  //   key: [id kontrolki, …]                 — wariant zależy od kilku kontrolek: klucz „wartość|wartość”.
   // R: lc_sf_spec() i funkcje sf_*() w lc_stat_figures.R.
   function specColor(s, P) {
     if (typeof s !== "string" || s.charAt(0) !== "@") return s;
@@ -506,16 +507,22 @@
   // Klucz wariantu: wartość kontrolki; dla grupy pól wyboru zaznaczone wartości złączone „+”.
   // Nic nie zaznaczono: klucz "none".
   function specKey(v) { return Array.isArray(v) ? (v.length ? v.join("+") : "none") : v; }
-  function specPick(cfg, v) { return cfg.variants ? cfg.variants[specKey(v)] || cfg.variants[Object.keys(cfg.variants)[0]] : cfg; }
+  function specPick(cfg, key) { return cfg.variants ? cfg.variants[key] || cfg.variants[Object.keys(cfg.variants)[0]] : cfg; }
   FIGURES.lc_spec = {
+    // Klucz wariantu: pierwsza kontrolka albo — gdy config.key wymienia identyfikatory kontrolek —
+    // ich wartości złączone „|” (np. przykład i poziom efektu).
+    prepare: function (state, v, vals) {
+      var ids = state.config.key;
+      state.key = ids ? [].concat(ids).map(function (id) { return specKey(vals[id]); }).join("|") : specKey(v);
+    },
     draw: function (v, P, k, state) {
-      var spec = specPick(state.config, v);
+      var spec = specPick(state.config, state.key);
       if (spec.charts) spec = spec.charts[k];
       return spec ? specResolve(spec, P) : null;
     },
     // reads: teksty do lc_sf_value(); html: gotowe fragmenty (np. tabela) do elementów [data-role].
-    update: function (root, state, v) {
-      var cfg = state.config, key = specKey(v);
+    update: function (root, state) {
+      var cfg = state.config, key = state.key;
       var reads = cfg.reads && (cfg.variants ? cfg.reads[key] : cfg.reads);
       if (reads) Object.keys(reads).forEach(function (name) { setValue(root, name, reads[name]); });
       var html = cfg.html && (cfg.variants ? cfg.html[key] : cfg.html);

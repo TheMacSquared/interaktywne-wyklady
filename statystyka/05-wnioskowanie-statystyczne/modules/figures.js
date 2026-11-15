@@ -222,6 +222,11 @@
     if (n === 1) return "istotna różnica";
     return n % 10 >= 2 && n % 10 <= 4 && !(n % 100 >= 12 && n % 100 <= 14) ? "istotne różnice" : "istotnych różnic";
   }
+  // Ryc. 10.1: test t dwóch grup o tej samej liczebności n i rozrzucie 1 dla różnicy średnich d.
+  function effectTest(d, n) {
+    var t = d / Math.sqrt(2 / n), df = 2 * n - 2, a = Math.abs(d);
+    return { t: t, df: df, p: 2 * D.pt(-Math.abs(t), df), label: a < 0.2 ? "pomijalna" : a < 0.5 ? "mała" : a < 0.8 ? "średnia" : "duża" };
+  }
   // Wartości krytyczne rozkładu statystyki testowej (α = 0.05) i funkcja „w obszarze odrzucenia”.
   function critical(type, df, alternative) {
     if (type === "chisq") { var c = D.qchisq(0.95, df); return { values: [c], reject: function (x) { return x >= c; } }; }
@@ -234,7 +239,7 @@
                  tOne: tOne, hist15: hist15, critical: critical, binomTest: binomTest, propTest: propTest,
                  corData: corData, corTest: corTest, tableSample: tableSample, chisqTest: chisqTest, fisherTest: fisherTest,
                  studentVar: studentVar, pairedData: pairedData, pairedTest: pairedTest,
-                 anovaData: anovaData, fwer: fwer, pluralDiff: pluralDiff };
+                 anovaData: anovaData, fwer: fwer, pluralDiff: pluralDiff, effectTest: effectTest };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -992,6 +997,33 @@
             sigPairs.map(function (g) { return "<li>" + e(d.names[g.i] + " — " + d.names[g.j] + ": Δ = " + T.round(g.estimate, 2) + ", p.adj = " + T.fmtPValue(g.p)) + "</li>"; }).join("") + "</ul>");
     },
     noteKey: function (vals, state) { return !state.asked ? "none" : state.d ? "data" : "nodata"; }
+  };
+
+  // ---- Rozdział 10: siła efektu ------------------------------------------------
+  // Ryc. 10.1: ten sam efekt d przy różnych n daje różne p. Pozostałe ryciny rozdziału
+  // (przykłady w surowych liczbach) opisuje R wariantami (modules/figures.R).
+  figures.s05_dist = {
+    draw: function (v, P, k, state, vals) {
+      var d = Number(vals.ch10_d), a = -4, bb = d + 4, g1 = [], g2 = [], i, x;
+      for (i = 0; i < 600; i++) { x = a + (bb - a) * i / 599; g1.push([x, D.dnorm(x, 0, 1)]); g2.push([x, D.dnorm(x, d, 1)]); }
+      return { x: [a, bb], y: [0, 0.52],
+        layers: [{ type: "line", data: g1, color: P.niebo, width: 1.8, fill: P.niebo, fillAlpha: 0.35 },
+                 { type: "line", data: g2, color: P.accent, width: 1.8, fill: P.accent, fillAlpha: 0.35 },
+                 { type: "vline", x: 0, color: P.niebo, width: 1.6, dash: [6, 5] },
+                 { type: "vline", x: d, color: P.accent, width: 1.6, dash: [6, 5] },
+                 { type: "arrows", both: true, items: [{ from: [0, 0.45], to: [d, 0.45] }], color: P.soft, width: 1.4 },
+                 { type: "text", x: d / 2, y: 0.465, text: "d = " + d, color: P.ink, bold: true }],
+        legend: [{ color: P.niebo, text: "Grupa 1 (średnia = 0)", box: true }, { color: P.accent, text: "Grupa 2 (średnia = d = " + d + ")", box: true }],
+        xName: "", yName: "Gęstość", aria: "Dwa rozkłady normalne przesunięte o d odchyleń standardowych." };
+    },
+    update: function (el) {
+      var d = Number(el.querySelector("#ch10_d").value), n = Number(el.querySelector("#ch10_n").value), r = effectTest(d, n);
+      S.setValue(el, "dist_n", String(n)); S.setValue(el, "dist_d", d + "  (" + r.label + ")");
+      S.setValue(el, "dist_t", T.round(r.t, 2)); S.setValue(el, "dist_p", T.fmtPValue(r.p));
+      var box = el.querySelector('[data-role="verdict"]');
+      if (box) box.innerHTML = S.status('<span class="lc-status-' + (r.p < 0.05 ? "warning" : "ok") + '"><strong>' +
+        (r.p < 0.05 ? "Odrzucamy H₀" : "Brak podstaw do odrzucenia H₀") + "</strong></span>");
+    }
   };
 
   S.register(figures);

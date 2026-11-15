@@ -205,3 +205,179 @@ ch7_anova_config <- list(scenarios = list(
     var_labels = list(srednia_ocen = "Średnia ocen", wzrost = "Wzrost (cm)", czas_dojazdu = "Czas dojazdu (min)")
   )
 ))
+
+# ---------------------------------------------------------------------------
+# Rozdział 10: siła efektu
+# ---------------------------------------------------------------------------
+# Ryc. 10.2–10.5 mają dwie kontrolki dyskretne (przykład i poziom efektu), więc R liczy
+# każdy wariant: opis rysunku i fragment HTML z odczytami, tabelą i komentarzem.
+# Dane przykładów (ch10_*_scenarios, ch10_*_examples) są w ch10_sila_efektu.R.
+
+s05_html <- function(...) as.character(tagList(...))
+# Warianty dla wszystkich par (przykład, poziom): nazwy "przykład|poziom".
+s05_grid <- function(scenarios, levels, fun) {
+  keys <- unlist(lapply(scenarios, function(s) paste(s, levels, sep = "|")))
+  stats::setNames(lapply(keys, function(k) { part <- strsplit(k, "|", fixed = TRUE)[[1]]; fun(part[1], part[2]) }), keys)
+}
+ch10_scenario_ids <- c("TZ", "ROL", "IB")
+
+# Ryc. 10.2: Cohen's d w surowych liczbach — dwa rozkłady normalne z przykładu.
+ch10_d_fig <- function() {
+  levels <- c("0.2", "0.5", "0.8", "1.2")
+  one <- function(scenario, level) {
+    e <- ch10_d_scenarios[[scenario]][[level]]
+    x <- seq(min(e$x1, e$x2) - 3 * e$s, max(e$x1, e$x2) + 3 * e$s, length.out = 600)
+    list(
+      spec = sf_spec(range(x), c(0, dnorm(0, 0, e$s) * 1.08), list(
+          sf_line(x, dnorm(x, e$x1, e$s), color = "@niebo", width = 1.8, fill = "@niebo", fill_alpha = 0.35),
+          sf_line(x, dnorm(x, e$x2, e$s), color = "@accent", width = 1.8, fill = "@accent", fill_alpha = 0.35),
+          sf_vline(e$x1, color = "@niebo"), sf_vline(e$x2, color = "@accent")),
+        paste0("Wartość (", e$jednostka, ")"), "Gęstość", aria = "Rozkłady wartości w dwóch grupach przykładu.",
+        legend = sf_legend(c(e$etyk1, e$etyk2), c("@niebo", "@accent"), box = TRUE)),
+      html = list(table = s05_html(
+        lc_readouts(lc_readout("Różnica", paste0(round(e$x2 - e$x1, 2), " ", e$jednostka)), lc_readout("d", level)),
+        lc_table(data.frame(group = c(e$etyk1, e$etyk2), ms = paste0(c(e$x1, e$x2), " ± ", e$s, " ", e$jednostka)),
+                 cols = list(lc_col("group", "Grupa", "row"), lc_col("ms", "x̄ ± s"))),
+        lc_caption(e$kontekst)))
+    )
+  }
+  res <- s05_grid(ch10_scenario_ids, levels, one)
+  lc_sf_spec(variants = lapply(res, `[[`, "spec"), html = lapply(res, `[[`, "html"), key = c("ch10_d_scenario", "ch10_d_level"),
+    control = list(
+      selectInput("ch10_d_scenario", "Przykład", selectize = FALSE,
+        choices = c("Jogurt (TŻ)" = "TZ", "Pszenica (ROL)" = "ROL", "BHP (IB)" = "IB"), selected = "TZ"),
+      lc_segmented("ch10_d_level", "Wielkość efektu", choices = c(
+        "d = 0.2 (mały)" = "0.2", "d = 0.5 (średni)" = "0.5", "d = 0.8 (duży)" = "0.8", "d = 1.2 (b. duży)" = "1.2"), selected = "0.5")
+    ),
+    legend = TRUE, body = tagList(lc_sf_chart(0, "3/1", "240px"), tags$div(`data-role` = "table")))
+}
+
+# Ryc. 10.3: r w surowych liczbach — 50 punktów o zadanej korelacji (stałe ziarno przykładu).
+ch10_r_data <- function(scenario, level) {
+  r_target <- as.numeric(level)
+  sc <- ch10_r_scenarios[[scenario]]
+  set.seed(sc$seed)
+  z <- rnorm(50); e <- rnorm(50)
+  y_raw <- sc$r_sign * r_target * z + sqrt(1 - r_target^2) * e
+  data.frame(x = sc$x_center + sc$x_scale * z, y = sc$y_center + sc$y_scale * y_raw)
+}
+ch10_r_fig <- function() {
+  levels <- c("0.1", "0.3", "0.5", "0.7", "0.9")
+  opis <- c(
+    "0.1" = "Punkty rozproszone, ledwo widoczny trend — czynnik tłumaczy 1% zmienności y.",
+    "0.3" = "Trend zauważalny, ale duży rozrzut wokół linii — 9% zmienności wyjaśnione.",
+    "0.5" = "Wyraźny trend, około ¼ zmienności y wyjaśniona przez x — reszta na inne czynniki.",
+    "0.7" = "Mocny związek liniowy, prawie połowa zmienności y wyjaśniona.",
+    "0.9" = "Punkty bardzo blisko linii prostej — 81% zmienności y wyjaśnione przez x.")
+  one <- function(scenario, level) {
+    sc <- ch10_r_scenarios[[scenario]]; df <- ch10_r_data(scenario, level); r_val <- as.numeric(level)
+    list(
+      spec = sf_spec(sf_range(df$x), sf_range(df$y), c(
+          sf_smooth_lm(df$x, df$y, color = "@ref", width = 2, se = FALSE),
+          list(sf_points(df$x, df$y, color = "@wrzos", size = 8, alpha = 0.7))),
+        sc$x_label, sc$y_label, aria = "Wykres rozrzutu pięćdziesięciu punktów o zadanej korelacji."),
+      html = list(table = s05_html(
+        lc_readouts(
+          lc_readout("r zadane", r_val),
+          lc_readout("r w próbie", round(cor(df$x, df$y), 2), color = col_effect),
+          lc_readout("r²", round(r_val^2, 2)),
+          lc_readout("Wariancji wyjaśnione", paste0(round(100 * r_val^2), "%"))),
+        lc_caption(opis[[level]])))
+    )
+  }
+  res <- s05_grid(ch10_scenario_ids, levels, one)
+  lc_sf_spec(variants = lapply(res, `[[`, "spec"), html = lapply(res, `[[`, "html"), key = c("ch10_r_scenario", "ch10_r_level"),
+    control = list(
+      selectInput("ch10_r_scenario", "Przykład", selectize = FALSE,
+        choices = c("Jogurt (TŻ)" = "TZ", "Plon (ROL)" = "ROL", "Wypadki (IB)" = "IB"), selected = "TZ"),
+      lc_segmented("ch10_r_level", "Wielkość korelacji", choices = c(
+        "r = 0.1 (mała)" = "0.1", "r = 0.3 (średnia)" = "0.3", "r = 0.5 (duża)" = "0.5",
+        "r = 0.7 (b. duża)" = "0.7", "r = 0.9 (b. duża)" = "0.9"), selected = "0.5")
+    ),
+    body = tagList(lc_sf_chart(0, "3/1", "240px"), tags$div(`data-role` = "table"),
+                   lc_variants("ch10_r_scenario", lapply(ch10_r_hints, lc_caption))))
+}
+
+# Ryc. 10.4: Cramér's V w tabeli 2 × 2 — odsetki w dwóch grupach (słupki skumulowane do 100%).
+ch10_v_fig <- function() {
+  levels <- c("0.10", "0.30", "0.50", "0.70")
+  one <- function(scenario, level) {
+    e <- ch10_v_examples[[level]]; sc <- ch10_v_scenarios[[scenario]]
+    pos <- 100 * c(e$p_a, e$p_b)
+    list(
+      spec = sf_spec(c(0.4, 2.6), c(0, 104), c(list(
+          sf_bars(c(1, 2) - 0.275, c(1, 2) + 0.275, rep(100, 2), color = "@niebo", alpha = 0.9, stroke = NULL),
+          sf_bars(c(1, 2) - 0.275, c(1, 2) + 0.275, pos, color = "@accent", alpha = 0.9, stroke = NULL)),
+          sf_texts(c(1, 2), pos / 2, paste0(round(pos), "%"), color = "#ffffff", bold = TRUE, valign = "middle", size = 1.25),
+          sf_texts(c(1, 2), pos + (100 - pos) / 2, paste0(round(100 - pos), "%"), color = "#ffffff", bold = TRUE, valign = "middle", size = 1.25)),
+        "", "Odsetek w grupie", aria = "Odsetki stanu w dwóch grupach jako słupki skumulowane.",
+        xLabels = sf_labels(c(sc$grp_a, sc$grp_b)), yLabels = sf_labels(paste0(seq(0, 100, 25), "%"), seq(0, 100, 25)),
+        legend = sf_legend(c(sc$stan_neg, sc$stan_pos), c("@niebo", "@accent"), box = TRUE)),
+      html = list(table = s05_html(
+        lc_readouts(lc_readout("Różnica", paste0(round(100 * (e$p_b - e$p_a)), " pp")), lc_readout("V", level)),
+        lc_table(
+          data.frame(group = c(sc$grp_a, sc$grp_b), pos = round(100 * c(e$p_a, e$p_b)), neg = round(100 * (1 - c(e$p_a, e$p_b)))),
+          cols = list(lc_col("group", "Grupa", "row"), lc_col("pos", paste0(sc$stan_pos, " (%)")), lc_col("neg", paste0(sc$stan_neg, " (%)"))))))
+    )
+  }
+  res <- s05_grid(ch10_scenario_ids, levels, one)
+  lc_sf_spec(variants = lapply(res, `[[`, "spec"), html = lapply(res, `[[`, "html"), key = c("ch10_v_scenario", "ch10_v_level"),
+    control = list(
+      selectInput("ch10_v_scenario", "Przykład", selectize = FALSE,
+        choices = c("Pleśń (TŻ)" = "TZ", "Chwasty (ROL)" = "ROL", "Szczepienie (IB)" = "IB"), selected = "TZ"),
+      lc_segmented("ch10_v_level", "Wielkość efektu", choices = c(
+        "V = 0.10 (mały)" = "0.10", "V = 0.30 (średni)" = "0.30", "V = 0.50 (duży)" = "0.50", "V = 0.70 (b. duży)" = "0.70"), selected = "0.30")
+    ),
+    legend = TRUE,
+    body = tagList(lc_sf_chart(0, "3/1", "240px"), tags$div(`data-role` = "table"),
+                   lc_variants("ch10_v_scenario", lapply(ch10_v_scenarios, function(sc) lc_caption(sc$hint)))))
+}
+
+# Ryc. 10.5: η² w ANOVA — trzy grupy o średnich rozsuniętych tak, by dać zadane η² (stałe ziarno).
+ch10_eta_means <- function(eta, mu_ctr, s) {
+  delta <- sqrt(3 * eta * s^2 / (2 * (1 - eta)))
+  c(mu_ctr - delta, mu_ctr, mu_ctr + delta)
+}
+ch10_eta_fig <- function() {
+  levels <- c("0.01", "0.06", "0.14", "0.30")
+  fills <- c("@grafit/0.5", "@bursztyn/0.5", "@niebo/0.5")
+  one <- function(scenario, level) {
+    eta <- as.numeric(level); sc <- ch10_eta_scenarios[[scenario]]
+    mus <- ch10_eta_means(eta, sc$mu_ctr, sc$s)
+    set.seed(202)
+    df <- data.frame(grupa = factor(rep(sc$grp, each = 30), levels = sc$grp),
+                     y = c(rnorm(30, mus[1], sc$s), rnorm(30, mus[2], sc$s), rnorm(30, mus[3], sc$s)))
+    groups <- split(df$y, df$grupa)
+    set.seed(105)
+    jit <- stats::runif(nrow(df), -0.15, 0.15)
+    out <- do.call(rbind, lapply(seq_along(groups), function(i) { o <- sf_box_stats(groups[[i]])$out; if (length(o)) data.frame(x = i, y = o) }))
+    grand <- mean(df$y); grp_means <- tapply(df$y, df$grupa, mean)
+    eta_sample <- sum(table(df$grupa) * (grp_means - grand)^2) / sum((df$y - grand)^2)
+    list(
+      spec = sf_spec(c(0.4, 3.6), sf_range(df$y), list(
+          sf_boxes(groups, fills),
+          if (!is.null(out)) sf_points(out$x, out$y, color = "@accent", size = 6, alpha = 0.5),
+          sf_points(as.integer(df$grupa) + jit, df$y, color = "@accent", size = 5.5, alpha = 0.4)),
+        "", sc$y_lab, aria = "Wykresy pudełkowe trzech grup przykładu.", xLabels = sf_labels(sc$grp)),
+      html = list(table = s05_html(
+        lc_readouts(lc_readout("η² w populacji", level), lc_readout("η² w próbie", sprintf("%.3f", eta_sample), color = col_effect)),
+        lc_table(
+          data.frame(group = sc$grp[1:3], mu = mus[1:3], mean = unname(grp_means[sc$grp[1:3]]), s = sc$s),
+          cols = list(lc_col("group", "Grupa", "row"), lc_col("mu", "μ (populacja)", digits = 1),
+                      lc_col("mean", "x̄ (próba)", digits = 1), lc_col("s", "σ", digits = if (sc$s %% 1 == 0) 0 else 1))),
+        lc_caption(ch10_eta_examples[[level]]$kontekst)))
+    )
+  }
+  res <- s05_grid(ch10_scenario_ids, levels, one)
+  lc_sf_spec(variants = lapply(res, `[[`, "spec"), html = lapply(res, `[[`, "html"), key = c("ch10_eta_scenario", "ch10_eta_level"),
+    control = list(
+      selectInput("ch10_eta_scenario", "Przykład", selectize = FALSE,
+        choices = c("Pasteryzacja (TŻ)" = "TZ", "Nawozy (ROL)" = "ROL", "Zmiany (IB)" = "IB"), selected = "TZ"),
+      lc_segmented("ch10_eta_level", "Wielkość efektu", choices = c(
+        "η² = 0.01 (mały)" = "0.01", "η² = 0.06 (średni)" = "0.06", "η² = 0.14 (duży)" = "0.14", "η² = 0.30 (b. duży)" = "0.30"), selected = "0.06")
+    ),
+    body = tagList(lc_sf_chart(0, "3/1", "240px"), tags$div(`data-role` = "table"),
+                   lc_variants("ch10_eta_scenario", lapply(ch10_eta_scenarios, function(sc) {
+                     lc_caption(paste0("3 grupy (", paste(sc$grp, collapse = " / "), ") × ", sc$y_lab, "."))
+                   }))))
+}

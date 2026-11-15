@@ -2,6 +2,177 @@
 # CHAPTER 10: Siła efektu
 # ============================================================================
 
+# Dane przykładów rozdziału (dawniej w serwerze): podpowiedzi, scenariusze i poziomy efektu.
+ch10_dist_hints <- list(
+  TZ  = "Np. czas inaktywacji enzymu (s) w dwóch temperaturach blanszowania.",
+  ROL = "Np. masa ziarna (g) z dwóch odmian pszenicy.",
+  IB  = "Np. czas reakcji operatora (ms) na zmianie rannej vs nocnej."
+)
+
+ch10_d_scenarios <- list(
+  TZ = list(
+    "0.2" = list(
+      x1 = 4.50, x2 = 4.56, s = 0.30,
+      kontekst  = "pH jogurtu po fermentacji — różnica 0.06 pH między dwoma zakwasami.",
+      jednostka = "pH",
+      etyk1 = "Zakwas A", etyk2 = "Zakwas B"
+    ),
+    "0.5" = list(
+      x1 = 20.0, x2 = 22.5, s = 5.0,
+      kontekst  = "Wilgotność produktu suszonego (%) — bez vs ze stabilizatorem, różnica 2.5 pp.",
+      jednostka = "%",
+      etyk1 = "Bez stabilizatora", etyk2 = "Ze stabilizatorem"
+    ),
+    "0.8" = list(
+      x1 = 8.0, x2 = 10.0, s = 2.5,
+      kontekst  = "Czas inaktywacji enzymów (min) — blanszowanie 80°C vs 95°C, różnica 2 min.",
+      jednostka = "min",
+      etyk1 = "Blanszowanie 80°C", etyk2 = "Blanszowanie 95°C"
+    ),
+    "1.2" = list(
+      x1 = 5.0, x2 = 8.6, s = 3.0,
+      kontekst  = "Liczba drożdży (×10⁶/mL) — dwa szczepy hodowlane, różnica 3.6 × 10⁶/mL.",
+      jednostka = "×10⁶/mL",
+      etyk1 = "Szczep A", etyk2 = "Szczep B"
+    )
+  ),
+  ROL = list(
+    "0.2" = list(
+      x1 = 5.0, x2 = 5.4, s = 2.0,
+      kontekst  = "Plon pszenicy (t/ha) — kontrola vs nawożenie lekkie, różnica 0.4 t/ha.",
+      jednostka = "t/ha",
+      etyk1 = "Kontrola", etyk2 = "Nawożenie lekkie"
+    ),
+    "0.5" = list(
+      x1 = 72, x2 = 78, s = 12,
+      kontekst  = "Kiełkowalność nasion (%) — nasiona standardowe vs z podkładem, różnica 6 pp.",
+      jednostka = "%",
+      etyk1 = "Nasiona standardowe", etyk2 = "Nasiona z podkładem"
+    ),
+    "0.8" = list(
+      x1 = 120, x2 = 140, s = 25,
+      kontekst  = "Zawartość azotu w glebie (mg/kg) — bez nawozu vs z nawozem azotowym, różnica 20 mg/kg.",
+      jednostka = "mg/kg",
+      etyk1 = "Bez nawozu azotowego", etyk2 = "Z nawozem azotowym"
+    ),
+    "1.2" = list(
+      x1 = 5.0, x2 = 8.6, s = 3.0,
+      kontekst  = "Wzrost sadzonek w 30 dni (cm) — kontrola vs fitohormon, różnica 3.6 cm.",
+      jednostka = "cm",
+      etyk1 = "Kontrola", etyk2 = "Fitohormon"
+    )
+  ),
+  IB = list(
+    "0.2" = list(
+      x1 = 72, x2 = 74, s = 10,
+      kontekst  = "Tętno spoczynkowe (ud./min) — bez kofeiny vs po wypiciu herbaty czarnej, różnica 2 ud./min.",
+      jednostka = "ud./min",
+      etyk1 = "Bez kofeiny", etyk2 = "Po herbacie"
+    ),
+    "0.5" = list(
+      x1 = 60, x2 = 66, s = 12,
+      kontekst  = "Wynik egzaminu BHP (pkt) — bez korepetycji vs z korepetycjami, różnica 6 pkt.",
+      jednostka = "pkt",
+      etyk1 = "Bez korepetycji", etyk2 = "Z korepetycjami"
+    ),
+    "0.8" = list(
+      x1 = 12.0, x2 = 14.0, s = 2.5,
+      kontekst  = "Czas reakcji operatora (s) — zmiana ranna vs nocna, różnica 2 s.",
+      jednostka = "s",
+      etyk1 = "Zmiana ranna", etyk2 = "Zmiana nocna"
+    ),
+    "1.2" = list(
+      x1 = 5.0, x2 = 8.6, s = 3.0,
+      kontekst  = "Sen (godz.) — okres egzaminacyjny vs ferie, różnica 3.6 h.",
+      jednostka = "godz.",
+      etyk1 = "Egzaminy", etyk2 = "Ferie"
+    )
+  )
+)
+
+ch10_r_scenarios <- list(
+  TZ = list(
+    x_label   = "Temperatura fermentacji (°C)",
+    y_label   = "pH jogurtu po 24 h",
+    seed      = 101,
+    x_center  = 42, x_scale = 5,
+    y_center  = 4.5, y_scale = 0.2,
+    r_sign    = 1
+  ),
+  ROL = list(
+    x_label   = "Opad atmosferyczny (mm)",
+    y_label   = "Plon pszenicy (t/ha)",
+    seed      = 202,
+    x_center  = 450, x_scale = 80,
+    y_center  = 5.0, y_scale = 0.8,
+    r_sign    = 1
+  ),
+  IB = list(
+    x_label   = "Godziny szkolenia BHP",
+    y_label   = "Wypadki na 100 pracowników",
+    seed      = 303,
+    x_center  = 20, x_scale = 8,
+    y_center  = 8.0, y_scale = 2.0,
+    r_sign    = -1
+  )
+)
+
+ch10_r_hints <- list(
+  TZ  = "Korelacja między temperaturą fermentacji a pH jogurtu.",
+  ROL = "Korelacja między opadem atmosferycznym a plonem pszenicy.",
+  IB  = "Korelacja ujemna: im więcej godzin szkolenia BHP, tym mniej wypadków."
+)
+
+ch10_v_scenarios <- list(
+  TZ = list(
+    grp_a = "Opakowanie A", grp_b = "Opakowanie B",
+    stan_pos = "Pleśń", stan_neg = "Brak pleśni",
+    hint = "Opakowanie a pojawienie się pleśni na produkcie."
+  ),
+  ROL = list(
+    grp_a = "Odmiana A", grp_b = "Odmiana B",
+    stan_pos = "Zachwaszczenie powyżej progu", stan_neg = "Zachwaszczenie poniżej progu",
+    hint = "Odmiana rośliny a przekroczenie progu zachwaszczenia pola."
+  ),
+  IB = list(
+    grp_a = "Zaszczepieni", grp_b = "Niezaszczepieni",
+    stan_pos = "Infekcja", stan_neg = "Brak infekcji",
+    hint = "Zaszczepieni vs niezaszczepieni — odsetek infekcji."
+  )
+)
+
+ch10_v_examples <- list(
+  "0.10" = list(p_a = 0.45, p_b = 0.55),
+  "0.30" = list(p_a = 0.35, p_b = 0.65),
+  "0.50" = list(p_a = 0.25, p_b = 0.75),
+  "0.70" = list(p_a = 0.15, p_b = 0.85)
+)
+
+ch10_eta_scenarios <- list(
+  TZ = list(
+    grp    = c("Metoda A", "Metoda B", "Metoda C"),
+    y_lab  = "Liczba kolonii bakterii (jedn.)",
+    mu_ctr = 50, s = 10
+  ),
+  ROL = list(
+    grp    = c("Nawóz A", "Nawóz B", "Nawóz C"),
+    y_lab  = "Plon pszenicy (t/ha)",
+    mu_ctr = 5.0, s = 1.5
+  ),
+  IB = list(
+    grp    = c("Zmiana ranna", "Zmiana popołudniowa", "Zmiana nocna"),
+    y_lab  = "Liczba wypadków na 100 pracowników (rocznie)",
+    mu_ctr = 12, s = 4
+  )
+)
+
+ch10_eta_examples <- list(
+  "0.01" = list(kontekst = "Grupy dają niemal identyczne wyniki — czynnik symboliczny."),
+  "0.06" = list(kontekst = "Grupy zauważalnie się różnią, ale rozrzut wewnątrz grup nadal dominuje."),
+  "0.14" = list(kontekst = "Czynnik wyraźnie liczy się — 14% zmienności tłumaczy badany czynnik."),
+  "0.30" = list(kontekst = "Dominujący efekt — czynnik wyjaśnia 30% wszystkich różnic.")
+)
+
 ch10_ui <- list(
   id = "ch-sila-efektu", num = "10", title = "Siła efektu",
   content = tagList(
@@ -64,8 +235,10 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.1",
       title = "p kontra d: to nie to samo",
-      lc_toolbar(
-        selectInput("ch10_dist_scenario", "Przykład",
+      # Wykres i statystyki liczy przeglądarka (modules/figures.js, rycina s05_dist).
+      lc_sf_figure("s05_dist",
+        control = list(
+          selectInput("ch10_dist_scenario", "Przykład", selectize = FALSE,
             choices = c(
               "Enzym (TŻ)"   = "TZ",
               "Ziarno (ROL)" = "ROL",
@@ -73,12 +246,24 @@ ch10_ui <- list(
             ),
             selected = "TZ"
           ),
-        lc_slider("ch10_d", "Cohen's d (wielkość efektu)", 0.1, 1.5, 0.3, 0.05),
-        lc_slider("ch10_n", "n na grupę", 20, 300, 50, 10)
-      ),
-      lc_plot("ch10_dist_plot", max_height = "280px"),
-      uiOutput("ch10_dist_stats"),
-      uiOutput("ch10_dist_hint")
+          lc_sf_slider("ch10_d", "Cohen's d (wielkość efektu)", 0.1, 1.5, 0.3, 0.05),
+          lc_sf_slider("ch10_n", "n na grupę", 20, 300, 50, 10)
+        ),
+        ratio = "2.6/1", max_height = "280px", legend = TRUE,
+        after = tagList(
+          lc_sf_fill_table(lc_table(
+            data.frame(c1 = "@@dist_n@@", c2 = "@@dist_d@@", c3 = "@@dist_t@@", c4 = "@@dist_p@@"),
+            cols = list(
+              lc_col("c1", "n / grupę", "row"),
+              lc_col("c2", "Cohen's d", "text"),
+              lc_col("c3", "t", "text"),
+              lc_col("c4", "p", "text")
+            ),
+            narrow = "cards"
+          )),
+          tags$div(`data-role` = "verdict"),
+          lc_variants("ch10_dist_scenario", lapply(ch10_dist_hints, lc_caption))
+        ))
     ),
 
     lc_p("Przy ustawieniach startowych (d = 0.3, po 50 obserwacji w grupie)
@@ -166,24 +351,7 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.2",
       title = "Cohen's d w surowych liczbach",
-      lc_toolbar(
-        selectInput("ch10_d_scenario", "Przykład",
-            choices = c(
-              "Jogurt (TŻ)"    = "TZ",
-              "Pszenica (ROL)" = "ROL",
-              "BHP (IB)"       = "IB"
-            ),
-            selected = "TZ"
-          ),
-        lc_segmented("ch10_d_level", "Wielkość efektu", choices = c(
-              "d = 0.2 (mały)"      = "0.2",
-              "d = 0.5 (średni)"    = "0.5",
-              "d = 0.8 (duży)"      = "0.8",
-              "d = 1.2 (b. duży)"   = "1.2"
-            ), selected = "0.5")
-      ),
-      lc_plot("ch10_d_plot", max_height = "240px"),
-      uiOutput("ch10_d_table")
+      ch10_d_fig()
     ),
 
     lc_p("Nawet efekt średni oznacza silnie zachodzące na siebie rozkłady.
@@ -242,29 +410,7 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.3",
       title = "r w surowych liczbach",
-      lc_toolbar(
-        selectInput("ch10_r_scenario", "Przykład",
-            choices = c(
-              "Jogurt (TŻ)"   = "TZ",
-              "Plon (ROL)"    = "ROL",
-              "Wypadki (IB)"  = "IB"
-            ),
-            selected = "TZ"
-          ),
-        lc_segmented("ch10_r_level", "Wielkość korelacji",
-            choices = c(
-              "r = 0.1 (mała)"       = "0.1",
-              "r = 0.3 (średnia)"    = "0.3",
-              "r = 0.5 (duża)"       = "0.5",
-              "r = 0.7 (b. duża)"    = "0.7",
-              "r = 0.9 (b. duża)"    = "0.9"
-            ),
-            selected = "0.5"
-          )
-      ),
-      lc_plot("ch10_r_plot", max_height = "240px"),
-      uiOutput("ch10_r_table"),
-      uiOutput("ch10_r_hint")
+      ch10_r_fig()
     ),
 
     lc_p("Przy ustawieniach startowych (zadane r = 0.5) z wylosowanych punktów
@@ -323,25 +469,7 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.4",
       title = "Cramér's V w tabeli 2×2",
-      lc_toolbar(
-        selectInput("ch10_v_scenario", "Przykład",
-            choices = c(
-              "Pleśń (TŻ)"      = "TZ",
-              "Chwasty (ROL)"   = "ROL",
-              "Szczepienie (IB)" = "IB"
-            ),
-            selected = "TZ"
-          ),
-        lc_segmented("ch10_v_level", "Wielkość efektu", choices = c(
-              "V = 0.10 (mały)"   = "0.10",
-              "V = 0.30 (średni)" = "0.30",
-              "V = 0.50 (duży)"   = "0.50",
-              "V = 0.70 (b. duży)" = "0.70"
-            ), selected = "0.30")
-      ),
-      lc_plot("ch10_v_plot", max_height = "240px"),
-      uiOutput("ch10_v_table"),
-      uiOutput("ch10_v_hint")
+      ch10_v_fig()
     ),
 
     lc_p("Przy ustawieniach startowych pleśń pojawia się na 35% produktów
@@ -404,25 +532,7 @@ ch10_ui <- list(
     figure_panel(
       label = "Ryc. 10.5",
       title = "η² w ANOVA — trzy grupy",
-      lc_toolbar(
-        selectInput("ch10_eta_scenario", "Przykład",
-            choices = c(
-              "Pasteryzacja (TŻ)" = "TZ",
-              "Nawozy (ROL)"      = "ROL",
-              "Zmiany (IB)"       = "IB"
-            ),
-            selected = "TZ"
-          ),
-        lc_segmented("ch10_eta_level", "Wielkość efektu", choices = c(
-              "η² = 0.01 (mały)"    = "0.01",
-              "η² = 0.06 (średni)"  = "0.06",
-              "η² = 0.14 (duży)"    = "0.14",
-              "η² = 0.30 (b. duży)" = "0.30"
-            ), selected = "0.06")
-      ),
-      lc_plot("ch10_eta_plot", max_height = "240px"),
-      uiOutput("ch10_eta_table"),
-      uiOutput("ch10_eta_hint")
+      ch10_eta_fig()
     ),
 
     lc_p("Przy ustawieniach startowych (η² = 0.06) średnie grup wynoszą 46.9,
@@ -482,491 +592,6 @@ ch10_ui <- list(
 # SERVER
 # ============================================================================
 
-ch10_server <- function(input, output, session) {
-
-  # --------------------------------------------------------------------------
-  # Dane domenowe
-  # --------------------------------------------------------------------------
-
-  ch10_dist_hints <- list(
-    TZ  = "Np. czas inaktywacji enzymu (s) w dwóch temperaturach blanszowania.",
-    ROL = "Np. masa ziarna (g) z dwóch odmian pszenicy.",
-    IB  = "Np. czas reakcji operatora (ms) na zmianie rannej vs nocnej."
-  )
-
-  ch10_d_scenarios <- list(
-    TZ = list(
-      "0.2" = list(
-        x1 = 4.50, x2 = 4.56, s = 0.30,
-        kontekst  = "pH jogurtu po fermentacji — różnica 0.06 pH między dwoma zakwasami.",
-        jednostka = "pH",
-        etyk1 = "Zakwas A", etyk2 = "Zakwas B"
-      ),
-      "0.5" = list(
-        x1 = 20.0, x2 = 22.5, s = 5.0,
-        kontekst  = "Wilgotność produktu suszonego (%) — bez vs ze stabilizatorem, różnica 2.5 pp.",
-        jednostka = "%",
-        etyk1 = "Bez stabilizatora", etyk2 = "Ze stabilizatorem"
-      ),
-      "0.8" = list(
-        x1 = 8.0, x2 = 10.0, s = 2.5,
-        kontekst  = "Czas inaktywacji enzymów (min) — blanszowanie 80°C vs 95°C, różnica 2 min.",
-        jednostka = "min",
-        etyk1 = "Blanszowanie 80°C", etyk2 = "Blanszowanie 95°C"
-      ),
-      "1.2" = list(
-        x1 = 5.0, x2 = 8.6, s = 3.0,
-        kontekst  = "Liczba drożdży (×10⁶/mL) — dwa szczepy hodowlane, różnica 3.6 × 10⁶/mL.",
-        jednostka = "×10⁶/mL",
-        etyk1 = "Szczep A", etyk2 = "Szczep B"
-      )
-    ),
-    ROL = list(
-      "0.2" = list(
-        x1 = 5.0, x2 = 5.4, s = 2.0,
-        kontekst  = "Plon pszenicy (t/ha) — kontrola vs nawożenie lekkie, różnica 0.4 t/ha.",
-        jednostka = "t/ha",
-        etyk1 = "Kontrola", etyk2 = "Nawożenie lekkie"
-      ),
-      "0.5" = list(
-        x1 = 72, x2 = 78, s = 12,
-        kontekst  = "Kiełkowalność nasion (%) — nasiona standardowe vs z podkładem, różnica 6 pp.",
-        jednostka = "%",
-        etyk1 = "Nasiona standardowe", etyk2 = "Nasiona z podkładem"
-      ),
-      "0.8" = list(
-        x1 = 120, x2 = 140, s = 25,
-        kontekst  = "Zawartość azotu w glebie (mg/kg) — bez nawozu vs z nawozem azotowym, różnica 20 mg/kg.",
-        jednostka = "mg/kg",
-        etyk1 = "Bez nawozu azotowego", etyk2 = "Z nawozem azotowym"
-      ),
-      "1.2" = list(
-        x1 = 5.0, x2 = 8.6, s = 3.0,
-        kontekst  = "Wzrost sadzonek w 30 dni (cm) — kontrola vs fitohormon, różnica 3.6 cm.",
-        jednostka = "cm",
-        etyk1 = "Kontrola", etyk2 = "Fitohormon"
-      )
-    ),
-    IB = list(
-      "0.2" = list(
-        x1 = 72, x2 = 74, s = 10,
-        kontekst  = "Tętno spoczynkowe (ud./min) — bez kofeiny vs po wypiciu herbaty czarnej, różnica 2 ud./min.",
-        jednostka = "ud./min",
-        etyk1 = "Bez kofeiny", etyk2 = "Po herbacie"
-      ),
-      "0.5" = list(
-        x1 = 60, x2 = 66, s = 12,
-        kontekst  = "Wynik egzaminu BHP (pkt) — bez korepetycji vs z korepetycjami, różnica 6 pkt.",
-        jednostka = "pkt",
-        etyk1 = "Bez korepetycji", etyk2 = "Z korepetycjami"
-      ),
-      "0.8" = list(
-        x1 = 12.0, x2 = 14.0, s = 2.5,
-        kontekst  = "Czas reakcji operatora (s) — zmiana ranna vs nocna, różnica 2 s.",
-        jednostka = "s",
-        etyk1 = "Zmiana ranna", etyk2 = "Zmiana nocna"
-      ),
-      "1.2" = list(
-        x1 = 5.0, x2 = 8.6, s = 3.0,
-        kontekst  = "Sen (godz.) — okres egzaminacyjny vs ferie, różnica 3.6 h.",
-        jednostka = "godz.",
-        etyk1 = "Egzaminy", etyk2 = "Ferie"
-      )
-    )
-  )
-
-  ch10_r_scenarios <- list(
-    TZ = list(
-      x_label   = "Temperatura fermentacji (°C)",
-      y_label   = "pH jogurtu po 24 h",
-      seed      = 101,
-      x_center  = 42, x_scale = 5,
-      y_center  = 4.5, y_scale = 0.2,
-      r_sign    = 1
-    ),
-    ROL = list(
-      x_label   = "Opad atmosferyczny (mm)",
-      y_label   = "Plon pszenicy (t/ha)",
-      seed      = 202,
-      x_center  = 450, x_scale = 80,
-      y_center  = 5.0, y_scale = 0.8,
-      r_sign    = 1
-    ),
-    IB = list(
-      x_label   = "Godziny szkolenia BHP",
-      y_label   = "Wypadki na 100 pracowników",
-      seed      = 303,
-      x_center  = 20, x_scale = 8,
-      y_center  = 8.0, y_scale = 2.0,
-      r_sign    = -1
-    )
-  )
-
-  ch10_r_hints <- list(
-    TZ  = "Korelacja między temperaturą fermentacji a pH jogurtu.",
-    ROL = "Korelacja między opadem atmosferycznym a plonem pszenicy.",
-    IB  = "Korelacja ujemna: im więcej godzin szkolenia BHP, tym mniej wypadków."
-  )
-
-  ch10_v_scenarios <- list(
-    TZ = list(
-      grp_a = "Opakowanie A", grp_b = "Opakowanie B",
-      stan_pos = "Pleśń", stan_neg = "Brak pleśni",
-      hint = "Opakowanie a pojawienie się pleśni na produkcie."
-    ),
-    ROL = list(
-      grp_a = "Odmiana A", grp_b = "Odmiana B",
-      stan_pos = "Zachwaszczenie powyżej progu", stan_neg = "Zachwaszczenie poniżej progu",
-      hint = "Odmiana rośliny a przekroczenie progu zachwaszczenia pola."
-    ),
-    IB = list(
-      grp_a = "Zaszczepieni", grp_b = "Niezaszczepieni",
-      stan_pos = "Infekcja", stan_neg = "Brak infekcji",
-      hint = "Zaszczepieni vs niezaszczepieni — odsetek infekcji."
-    )
-  )
-
-  ch10_v_examples <- list(
-    "0.10" = list(p_a = 0.45, p_b = 0.55),
-    "0.30" = list(p_a = 0.35, p_b = 0.65),
-    "0.50" = list(p_a = 0.25, p_b = 0.75),
-    "0.70" = list(p_a = 0.15, p_b = 0.85)
-  )
-
-  ch10_eta_scenarios <- list(
-    TZ = list(
-      grp    = c("Metoda A", "Metoda B", "Metoda C"),
-      y_lab  = "Liczba kolonii bakterii (jedn.)",
-      mu_ctr = 50, s = 10
-    ),
-    ROL = list(
-      grp    = c("Nawóz A", "Nawóz B", "Nawóz C"),
-      y_lab  = "Plon pszenicy (t/ha)",
-      mu_ctr = 5.0, s = 1.5
-    ),
-    IB = list(
-      grp    = c("Zmiana ranna", "Zmiana popołudniowa", "Zmiana nocna"),
-      y_lab  = "Liczba wypadków na 100 pracowników (rocznie)",
-      mu_ctr = 12, s = 4
-    )
-  )
-
-  ch10_eta_examples <- list(
-    "0.01" = list(kontekst = "Grupy dają niemal identyczne wyniki — czynnik symboliczny."),
-    "0.06" = list(kontekst = "Grupy zauważalnie się różnią, ale rozrzut wewnątrz grup nadal dominuje."),
-    "0.14" = list(kontekst = "Czynnik wyraźnie liczy się — 14% zmienności tłumaczy badany czynnik."),
-    "0.30" = list(kontekst = "Dominujący efekt — czynnik wyjaśnia 30% wszystkich różnic.")
-  )
-
-  # --------------------------------------------------------------------------
-  # Ryc. 10.1
-  # --------------------------------------------------------------------------
-
-  output$ch10_dist_hint <- renderUI({
-    req(input$ch10_dist_scenario)
-    lc_caption(ch10_dist_hints[[input$ch10_dist_scenario]])
-  })
-
-  zoom_plot_server("ch10_dist_plot", reactive({
-    d <- input$ch10_d
-    x_lo <- -4
-    x_hi <- d + 4
-    x_seq <- seq(x_lo, x_hi, length.out = 600)
-
-    df_g1 <- data.frame(x = x_seq, y = dnorm(x_seq, 0, 1), grupa = "Grupa 1 (średnia = 0)")
-    df_g2 <- data.frame(x = x_seq, y = dnorm(x_seq, d, 1), grupa = paste0("Grupa 2 (średnia = d = ", d, ")"))
-
-    df_all <- rbind(df_g1, df_g2)
-    df_all$grupa <- factor(df_all$grupa, levels = unique(df_all$grupa))
-
-    ggplot(df_all, aes(x = x, y = y, fill = grupa, color = grupa)) +
-      geom_area(alpha = 0.35, position = "identity") +
-      geom_line(linewidth = 0.9) +
-      geom_vline(xintercept = 0, color = col_h0,     linetype = "dashed", linewidth = 0.8) +
-      geom_vline(xintercept = d, color = col_reject, linetype = "dashed", linewidth = 0.8) +
-      annotate("segment",
-               x = 0, xend = d, y = 0.45, yend = 0.45,
-               arrow = arrow(ends = "both", length = unit(0.08, "inches")),
-               color = "grey30", linewidth = 0.7) +
-      annotate("text", x = d / 2, y = 0.48, label = paste0("d = ", d),
-               color = "grey20", fontface = "bold", size = 4) +
-      scale_fill_manual(values  = c(col_h0, col_reject)) +
-      scale_color_manual(values = c(col_h0, col_reject)) +
-      labs(x = NULL, y = "Gęstość", fill = NULL, color = NULL) +
-      theme(legend.position = "bottom")
-  }))
-
-  output$ch10_dist_stats <- renderUI({
-    d     <- input$ch10_d
-    n     <- input$ch10_n
-    se    <- sqrt(2 / n)
-    t_val <- d / se
-    df_t  <- 2 * n - 2
-    p_val <- 2 * pt(-abs(t_val), df_t)
-
-    res   <- format_test_result(p_val)
-    fb_type <- if (p_val < 0.05) "warning" else "ok"
-
-    effect_label <- if (abs(d) < 0.2) "pomijalna" else if (abs(d) < 0.5) "mała" else
-                    if (abs(d) < 0.8) "średnia" else "duża"
-
-    tagList(
-      lc_table(
-        data.frame(
-          c1 = I(list(
-            n
-          )),
-          c2 = I(list(
-            paste0(d, "  (", effect_label, ")")
-          )),
-          c3 = I(list(
-            round(t_val, 2)
-          )),
-          c4 = I(list(
-            format_p_value(p_val)
-          ))
-        ),
-        cols = list(
-          lc_col("c1", "n / grupę", "row"),
-          lc_col("c2", "Cohen's d", "text"),
-          lc_col("c3", "t", "num"),
-          lc_col("c4", "p", "num")
-        ),
-        narrow = "cards"
-      ),
-      lc_status(
-        lc_verdict(tags$strong(res$decision), type = fb_type)
-      )
-    )
-  })
-
-  # --------------------------------------------------------------------------
-  # Ryc. 10.2: Cohen's d w surowych liczbach
-  # --------------------------------------------------------------------------
-
-  zoom_plot_server("ch10_d_plot", reactive({
-    req(input$ch10_d_level, input$ch10_d_scenario)
-    e <- ch10_d_scenarios[[input$ch10_d_scenario]][[input$ch10_d_level]]
-    x_lo <- min(e$x1, e$x2) - 3 * e$s
-    x_hi <- max(e$x1, e$x2) + 3 * e$s
-    x_seq <- seq(x_lo, x_hi, length.out = 600)
-
-    df_g1 <- data.frame(x = x_seq, y = dnorm(x_seq, e$x1, e$s), grupa = e$etyk1)
-    df_g2 <- data.frame(x = x_seq, y = dnorm(x_seq, e$x2, e$s), grupa = e$etyk2)
-    df_all <- rbind(df_g1, df_g2)
-    df_all$grupa <- factor(df_all$grupa, levels = c(e$etyk1, e$etyk2))
-
-    ggplot(df_all, aes(x = x, y = y, fill = grupa, color = grupa)) +
-      geom_area(alpha = 0.35, position = "identity") +
-      geom_line(linewidth = 0.9) +
-      geom_vline(xintercept = e$x1, color = col_h0,     linetype = "dashed", linewidth = 0.7) +
-      geom_vline(xintercept = e$x2, color = col_reject, linetype = "dashed", linewidth = 0.7) +
-      scale_fill_manual(values  = c(col_h0, col_reject)) +
-      scale_color_manual(values = c(col_h0, col_reject)) +
-      labs(x = paste0("Wartość (", e$jednostka, ")"),
-           y = "Gęstość", fill = NULL, color = NULL) +
-      theme(legend.position = "bottom")
-  }))
-
-  output$ch10_d_table <- renderUI({
-    req(input$ch10_d_level, input$ch10_d_scenario)
-    e <- ch10_d_scenarios[[input$ch10_d_scenario]][[input$ch10_d_level]]
-    diff <- e$x2 - e$x1
-    tagList(
-      lc_readouts(
-        lc_readout("Różnica", paste0(round(diff, 2), " ", e$jednostka)),
-        lc_readout("d", input$ch10_d_level)
-      ),
-      lc_table(
-        data.frame(
-          group = c(e$etyk1, e$etyk2),
-          ms = paste0(c(e$x1, e$x2), " ± ", e$s, " ", e$jednostka)
-        ),
-        cols = list(lc_col("group", "Grupa", "row"), lc_col("ms", "x̄ ± s"))
-      ),
-      lc_caption(e$kontekst)
-    )
-  })
-
-  # --------------------------------------------------------------------------
-  # Ryc. 10.3: r w surowych liczbach
-  # --------------------------------------------------------------------------
-
-  output$ch10_r_hint <- renderUI({
-    req(input$ch10_r_scenario)
-    lc_caption(ch10_r_hints[[input$ch10_r_scenario]])
-  })
-
-  ch10_r_data <- reactive({
-    req(input$ch10_r_level, input$ch10_r_scenario)
-    r_target <- as.numeric(input$ch10_r_level)
-    sc <- ch10_r_scenarios[[input$ch10_r_scenario]]
-    set.seed(sc$seed)
-    n_pts <- 50
-    z <- rnorm(n_pts)
-    e <- rnorm(n_pts)
-    y_raw <- sc$r_sign * r_target * z + sqrt(1 - r_target^2) * e
-    data.frame(x = sc$x_center + sc$x_scale * z,
-               y = sc$y_center + sc$y_scale * y_raw)
-  })
-
-  zoom_plot_server("ch10_r_plot", reactive({
-    sc <- ch10_r_scenarios[[input$ch10_r_scenario]]
-    ggplot(ch10_r_data(), aes(x = x, y = y)) +
-      geom_smooth(method = "lm", se = FALSE, color = upwr_reference,
-                  linewidth = 1, formula = y ~ x) +
-      geom_point(color = col_effect, alpha = 0.7, size = 2.5) +
-      labs(x = sc$x_label, y = sc$y_label)
-  }))
-
-  output$ch10_r_table <- renderUI({
-    req(input$ch10_r_level)
-    r_val <- as.numeric(input$ch10_r_level)
-    r2 <- r_val^2
-    opis <- switch(input$ch10_r_level,
-      "0.1" = "Punkty rozproszone, ledwo widoczny trend — czynnik tłumaczy 1% zmienności y.",
-      "0.3" = "Trend zauważalny, ale duży rozrzut wokół linii — 9% zmienności wyjaśnione.",
-      "0.5" = "Wyraźny trend, około ¼ zmienności y wyjaśniona przez x — reszta na inne czynniki.",
-      "0.7" = "Mocny związek liniowy, prawie połowa zmienności y wyjaśniona.",
-      "0.9" = "Punkty bardzo blisko linii prostej — 81% zmienności y wyjaśnione przez x."
-    )
-    df <- ch10_r_data()
-    tagList(
-      lc_readouts(
-        lc_readout("r zadane", r_val),
-        lc_readout("r w próbie", round(cor(df$x, df$y), 2), color = col_effect),
-        lc_readout("r²", round(r2, 2)),
-        lc_readout("Wariancji wyjaśnione", paste0(round(100 * r2), "%"))
-      ),
-      lc_caption(opis)
-    )
-  })
-
-  # --------------------------------------------------------------------------
-  # Ryc. 10.4: Cramér's V w 2×2
-  # --------------------------------------------------------------------------
-
-  output$ch10_v_hint <- renderUI({
-    req(input$ch10_v_scenario)
-    lc_caption(ch10_v_scenarios[[input$ch10_v_scenario]]$hint)
-  })
-
-  zoom_plot_server("ch10_v_plot", reactive({
-    req(input$ch10_v_level, input$ch10_v_scenario)
-    e  <- ch10_v_examples[[input$ch10_v_level]]
-    sc <- ch10_v_scenarios[[input$ch10_v_scenario]]
-    df <- data.frame(
-      grupa = factor(c(sc$grp_a, sc$grp_a, sc$grp_b, sc$grp_b),
-                     levels = c(sc$grp_a, sc$grp_b)),
-      stan  = factor(c(sc$stan_pos, sc$stan_neg, sc$stan_pos, sc$stan_neg),
-                     levels = c(sc$stan_neg, sc$stan_pos)),
-      pct   = c(e$p_a, 1 - e$p_a, e$p_b, 1 - e$p_b)
-    )
-    ggplot(df, aes(x = grupa, y = pct, fill = stan)) +
-      geom_col(width = 0.55, alpha = 0.9) +
-      geom_text(aes(label = paste0(round(100 * pct), "%")),
-                position = position_stack(vjust = 0.5),
-                color = "white", fontface = "bold", size = 5) +
-      scale_y_continuous(labels = scales::percent_format()) +
-      scale_fill_manual(
-        values = setNames(c(col_h0, col_reject), c(sc$stan_neg, sc$stan_pos))
-      ) +
-      labs(x = NULL, y = "Odsetek w grupie", fill = NULL) +
-      theme(legend.position = "bottom")
-  }))
-
-  output$ch10_v_table <- renderUI({
-    req(input$ch10_v_level, input$ch10_v_scenario)
-    e  <- ch10_v_examples[[input$ch10_v_level]]
-    sc <- ch10_v_scenarios[[input$ch10_v_scenario]]
-    diff_pp <- round(100 * (e$p_b - e$p_a))
-    tagList(
-      lc_readouts(
-        lc_readout("Różnica", paste0(diff_pp, " pp")),
-        lc_readout("V", input$ch10_v_level)
-      ),
-      lc_table(
-        data.frame(
-          group = c(sc$grp_a, sc$grp_b),
-          pos = round(100 * c(e$p_a, e$p_b)),
-          neg = round(100 * (1 - c(e$p_a, e$p_b)))
-        ),
-        cols = list(
-          lc_col("group", "Grupa", "row"),
-          lc_col("pos", paste0(sc$stan_pos, " (%)")),
-          lc_col("neg", paste0(sc$stan_neg, " (%)"))
-        )
-      )
-    )
-  })
-
-  # --------------------------------------------------------------------------
-  # Ryc. 10.5: η² w ANOVA — trzy grupy
-  # --------------------------------------------------------------------------
-
-  output$ch10_eta_hint <- renderUI({
-    req(input$ch10_eta_scenario)
-    sc <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
-    lc_caption(paste0("3 grupy (", paste(sc$grp, collapse = " / "), ") × ", sc$y_lab, "."))
-  })
-
-  ch10_eta_means <- function(eta, mu_ctr, s) {
-    delta <- sqrt(3 * eta * s^2 / (2 * (1 - eta)))
-    c(mu_ctr - delta, mu_ctr, mu_ctr + delta)
-  }
-
-  ch10_eta_data <- reactive({
-    req(input$ch10_eta_level, input$ch10_eta_scenario)
-    eta <- as.numeric(input$ch10_eta_level)
-    sc  <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
-    mus <- ch10_eta_means(eta, sc$mu_ctr, sc$s)
-    set.seed(202)
-    n_per <- 30
-    data.frame(
-      grupa = factor(rep(sc$grp, each = n_per), levels = sc$grp),
-      y = c(rnorm(n_per, mus[1], sc$s),
-            rnorm(n_per, mus[2], sc$s),
-            rnorm(n_per, mus[3], sc$s))
-    )
-  })
-
-  zoom_plot_server("ch10_eta_plot", reactive({
-    sc <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
-    ggplot(ch10_eta_data(), aes(x = grupa, y = y, fill = grupa)) +
-      geom_boxplot(alpha = 0.5, outlier.alpha = 0.5) +
-      geom_jitter(width = 0.15, alpha = 0.4, size = 1.5) +
-      scale_fill_upwr() +
-      labs(x = NULL, y = sc$y_lab, fill = NULL) +
-      theme(legend.position = "none")
-  }))
-
-  output$ch10_eta_table <- renderUI({
-    req(input$ch10_eta_level, input$ch10_eta_scenario)
-    eta <- as.numeric(input$ch10_eta_level)
-    sc  <- ch10_eta_scenarios[[input$ch10_eta_scenario]]
-    e   <- ch10_eta_examples[[input$ch10_eta_level]]
-    mus <- ch10_eta_means(eta, sc$mu_ctr, sc$s)
-    df <- ch10_eta_data()
-    grand <- mean(df$y)
-    grp_means <- tapply(df$y, df$grupa, mean)
-    eta_sample <- sum(table(df$grupa) * (grp_means - grand)^2) / sum((df$y - grand)^2)
-    tagList(
-      lc_readouts(
-        lc_readout("η² w populacji", input$ch10_eta_level),
-        lc_readout("η² w próbie", sprintf("%.3f", eta_sample), color = col_effect)
-      ),
-      lc_table(
-        data.frame(group = sc$grp[1:3], mu = mus[1:3],
-                   mean = unname(grp_means[sc$grp[1:3]]), s = sc$s),
-        cols = list(
-          lc_col("group", "Grupa", "row"),
-          lc_col("mu", "μ (populacja)", digits = 1),
-          lc_col("mean", "x̄ (próba)", digits = 1),
-          lc_col("s", "σ", digits = if (sc$s %% 1 == 0) 0 else 1)
-        )
-      ),
-      lc_caption(e$kontekst)
-    )
-  })
-
-}
+# Rozdział nie ma logiki serwera: Ryc. 10.1 liczy przeglądarka (modules/figures.js), a przykłady
+# w surowych liczbach (Ryc. 10.2–10.5) R opisuje wariantami przy budowaniu (modules/figures.R).
+ch10_server <- function(input, output, session) {}

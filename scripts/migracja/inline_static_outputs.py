@@ -2,6 +2,7 @@
 """Przenosi treść stałych wyjść serwera do dokumentu.
 
     output$ID <- renderUI(WYRAŻENIE)        (w funkcji *_server; WYRAŻENIE nie czyta input$…)
+    exercise_solution_server(output, "ID", function() WYRAŻENIE)   (drugi obsługiwany wzorzec)
     … uiOutput("ID") …                      (w opisie rozdziału)
   →
     ID_ui <- function() WYRAŻENIE           (przed instrukcją najwyższego poziomu, która zawiera uiOutput)
@@ -53,10 +54,15 @@ def main():
         pattern = re.compile(r"^([ \t]*)output\$" + re.escape(out_id) + r" <- renderUI\(", re.M)
         source = next(((p, m) for p, t in files.items() for m in [pattern.search(t)] if m), None)
         if source is None:
+            # Drugi wzorzec: exercise_solution_server(output, "ID", function() { … }).
+            pattern = re.compile(r"^([ \t]*)exercise_solution_server\(output, \"" + re.escape(out_id) + r"\", function\(\) ", re.M)
+            source = next(((p, m) for p, t in files.items() for m in [pattern.search(t)] if m), None)
+        if source is None:
             sys.exit(f"{out_id}: nie znaleziono output${out_id} <- renderUI(")
         p, m = source
         t = files[p]
-        close = match_paren(t, m.end() - 1)
+        # Nawias wywołania renderUI( albo exercise_solution_server( — treść to reszta argumentów.
+        close = match_paren(t, t.index("(", m.start() + len(m.group(1))))
         expr = t[m.end():close].strip()
         if re.search(r"\binput\$", expr):
             sys.exit(f"{out_id}: wyrażenie czyta input$…, nie jest stałe")

@@ -46,11 +46,11 @@ przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. 
 R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
 
 Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
-2026: gotowe 18 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–04, 06, 09 i 10, zbudowane i sprawdzone
+2026: gotowe 19 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–06, 09 i 10, zbudowane i sprawdzone
 przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
-z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 115 wykresów
-R, 197 wyjść tekstowych i 168 wejść czytanych przez serwer. Zostały tylko
-wykłady statystyki 05, 07 i 08; cała analiza ryzyka działa bez serwera. Wykresy analizy
+z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 66 wykresów
+R (wykłady 07 i 08). Zostały tylko
+wykłady statystyki 07 i 08; cała analiza ryzyka działa bez serwera. Wykresy analizy
 ryzyka rysuje silnik `lcSF` przez `risk_sf_panel()` (dane ze stałym ziarnem
 z R w `config`, funkcje kursu w `analiza-ryzyka/R/risk_figures.js`); wzorzec: 06. Quiz analizy ryzyka
 (wszystkie 10 wykładów) ocenia już przeglądarka; głosowanie „Najpierw zdecyduj”
@@ -90,8 +90,11 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   `statystyka/tests/js/fixtures/make_lc_stats.R`). Jest: Shapiro–Wilk, Levene,
   Bartlett, test t Studenta i Welcha, χ² i Fisher dla tabeli 2×2, rozkład F,
   kwantyle, wykres Q-Q, regresja liniowa (`lm()`: współczynniki, błędy, p,
-  95% CI, R², AIC). Brakuje (dla 05 i 07–09): ANOVA z post hoc, korelacje,
-  testy rangowe, diagnostyka regresji.
+  95% CI, R², AIC), ANOVA jednoczynnikowa, rozkład studentyzowanego rozstępu
+  (`ptukey`, `qtukey`) i porównania Gamesa-Howella. Testy wykładu 05 (t jednej
+  próby i par, dwumianowy, proporcji, korelacji, χ² i Fishera dla tabel r × c)
+  są w `05-…/modules/figures.js` z własnymi wzorcami R (`tests/js/stat05.test.js`).
+  Brakuje (dla 07–08): diagnostyka regresji, regresja wielomianowa, testy rangowe.
 - [x] Faza 4 (15 listopada 2026): analiza ryzyka 06–10 (26 wykresów R). Gotowe: 06 (6 wykresów), 07 (8 wykresów; ryciny główne mają przedrostek `c7m_`, bo prototypy zajęły nazwy `c7_gamma` i `c7_weibull` — `lcSF.register` zgłasza teraz powtórzoną nazwę w konsoli), 08 (5 wykresów; schemat
   blokowy to trzy rysunki SVG z R przełączane listą — bez lupy, którą miał wykres),
   09 (2 wykresy; drzewo to rysunek SVG z R z liczbami wpisywanymi przez JS, panele
@@ -108,15 +111,14 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   i `lcRisk.fmtP()` (analiza ryzyka 06–10) robią to jak R; własne formatowanie
   w skryptach wykładów 03–05 analizy ryzyka i w statystyce nie było pod tym
   kątem sprawdzane.
-- [ ] Faza 5: statystyka 05–06 (29 wykresów R; Shapiro, Levene). Gotowe: 06
-  **05 w toku** (15 listopada 2026): bez serwera są rozdziały logiki testu
-  (`ch1_logika.R`), hipotez (`ch2_hipotezy.R`) i jednej zmiennej ilościowej
-  (`ch2_jedna_ilosciowa.R`); zostały `ch3_jedna_jakosciowa.R`,
-  `ch4_korelacja.R`, `ch5_dwie_jakosciowe.R`, `ch6_dwie_grupy.R`,
-  `ch7_anova.R`, `ch10_sila_efektu.R` (stan: `Rscript scripts/check_static_ready.R
-  --details 05-wnioskowanie-statystyczne`). Wspólne części rycin „test krok po
-  kroku” (rozkład statystyki testowej, werdykt, role kroków) są w
-  `05-…/modules/figures.js`. Wykład częściowo przeniesiony działa pod Shiny.
+- [x] Faza 5 (15 listopada 2026): statystyka 05–06 (29 wykresów R; Shapiro, Levene). Gotowe: 06
+  05 (23 wykresy): testy „krok po kroku” (t jednej próby, dwumianowy, korelacji,
+  χ², t dwóch grup) na wspólnym szkielecie w `05-…/modules/figures.js`
+  (rozkład statystyki testowej, werdykt, role kroków), ANOVA z porównaniami
+  Gamesa-Howella, rozdział o sile efektu jako warianty z R (`lc_sf_spec(key = )`),
+  rozwiązania ćwiczeń składane przy budowaniu. Jedna świadoma różnica wobec
+  wersji Shiny: w tabeli Ryc. 10.1 statystyka t ma dwa miejsca po kropce
+  (dawniej kolumna zaokrąglała ją do całości: 1.5 pokazywała jako „2”).
   (6 wykresów; dane losowane na jednej rycinie testują panele obok — wspólny
   magazyn w `modules/figures.js` i zdarzenie `lc:sf-redraw`; stan przed
   losowaniem i warianty wyniku w elementach `[data-when]`).

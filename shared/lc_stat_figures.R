@@ -90,8 +90,11 @@ lc_sf_figure <- function(fig, control = NULL, ratio = "2/1", max_height = "340px
 #   reads     odczyty lc_sf_value(): nazwana lista tekstów (dla wariantów: lista list)
 # Barwy w opisie: "@niebo", "@accent", "@ref", "@wrzos", …; z przezroczystością "@niebo/0.6".
 #   html      gotowe fragmenty HTML do elementów [data-role = nazwa] (np. tabela wariantu)
-lc_sf_spec <- function(spec = NULL, variants = NULL, reads = NULL, charts = NULL, html = NULL, ...) {
+#   key       identyfikatory kontrolek, od których zależy wariant (domyślnie pierwsza);
+#             nazwy wariantów to wtedy wartości złączone „|”, np. "TZ|0.5"
+lc_sf_spec <- function(spec = NULL, variants = NULL, reads = NULL, charts = NULL, html = NULL, key = NULL, ...) {
   config <- if (!is.null(variants)) list(variants = variants) else spec
+  if (!is.null(key)) config$key <- as.list(key)
   if (!is.null(reads)) config$reads <- reads
   if (!is.null(html)) config$html <- html
   first <- if (!is.null(variants)) variants[[1]] else spec

@@ -93,10 +93,6 @@ hypothesis_practice <- function(prefix, questions) {
 
 # Rozwiązanie ćwiczenia w lc_more("Rozwiązanie", uiOutput(output_id)):
 # Shiny renderuje je dopiero po rozwinięciu.
-exercise_solution_server <- function(output, output_id, sol_fn) {
-  output[[output_id]] <- renderUI(sol_fn())
-}
-
 
 # Generowanie danych studenckich (n=200)
 # equal_sex = TRUE: po n/2 kobiet i mężczyzn (porównanie dwóch grup).
