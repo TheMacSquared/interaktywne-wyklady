@@ -278,6 +278,8 @@ build_one <- function(app_dir) {
     "<html lang=\"pl\" data-lc-static=\"true\">",
     "<head>",
     "<meta charset=\"utf-8\">",
+    # Strony nie trafiają do wyszukiwarek (publikacja na GitHub Pages bez indeksowania).
+    "<meta name=\"robots\" content=\"noindex, nofollow\">",
     sprintf("<title>%s</title>", htmltools::htmlEscape(page_title)),
     sprintf("<style>\n%s\n</style>", fonts_css),
     head_all,

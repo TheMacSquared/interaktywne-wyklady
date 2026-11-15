@@ -1,63 +1,60 @@
 # Interaktywne wykłady
 
-Interaktywne wykłady R Shiny do nauczania przedmiotów ilościowych. Każdy numerowany katalog wykładu jest osobną aplikacją z rozdziałami, uruchamianą niezależnie od pozostałych.
+Interaktywne wykłady do nauczania przedmiotów ilościowych: statystyki i analizy ryzyka. Każdy wykład to jedna strona HTML z rozdziałami, rycinami, suwakami, quizami i ćwiczeniami. Strona działa bez serwera R i bez internetu — wystarczy ją otworzyć w przeglądarce. Wszystko, co zależy od ruchu studenta, liczy przeglądarka; resztę (dane, modele, wzory) liczy R przy budowaniu strony.
 
 ## Struktura
 
 ```text
 interaktywne-wyklady/
-├── hub/            # launcher: spis wszystkich wykładów w przeglądarce
-├── statystyka/     # podstawowy kurs statystyki
-├── statystyka-2/   # symulacje, Bayes, kierunkowe, szeregi czasowe
-├── analiza-ryzyka/ # interaktywne wykłady z analizy ryzyka
-├── audyty/         # ustalenia audytu i stan poprawek
-└── deprecated/     # archiwum, pomijane przez hub
-    └── ekonometria/
+├── shared/         # wspólny rdzeń: layout, paleta, style, silnik rycin (JS)
+├── statystyka/     # podstawowy kurs statystyki (11 wykładów)
+├── analiza-ryzyka/ # wykłady z analizy ryzyka (10 wykładów)
+├── scripts/        # budowanie i kontrola stron statycznych
+└── audyty/         # ustalenia audytu i stan poprawek
 ```
 
-## Zestawy wykładów
+| Folder | Wykłady | Dokumentacja |
+|--------|---------|--------------|
+| `statystyka/` | 00–10 | [statystyka/README.md](statystyka/README.md) |
+| `analiza-ryzyka/` | 01–10 | [analiza-ryzyka/README.md](analiza-ryzyka/README.md) |
 
-| Folder | Status | Dokumentacja |
-|--------|--------|--------------|
-| `statystyka/` | podstawy: 9 aplikacji | [statystyka/README.md](statystyka/README.md) |
-| `statystyka-2/` | rozszerzenia: 4 aplikacje | [statystyka-2/README.md](statystyka-2/README.md) |
-| `analiza-ryzyka/` | 10 aplikacji z analizy ryzyka | [analiza-ryzyka/README.md](analiza-ryzyka/README.md) |
+Opis rdzenia i silnika rycin: [shared/README.md](shared/README.md). Reguły designu: [shared/DESIGN_CONTRACT.md](shared/DESIGN_CONTRACT.md).
 
-## Obecny stan — 11 września 2026
+## Budowanie stron
 
-Aktywne są 23 aplikacje: 9 w Statystyce, 4 w Statystyce 2 i 10 w analizie ryzyka. Podstawowy kurs statystyki kończy się projektem badawczym; symulacje, Bayes, materiały kierunkowe i szeregi czasowe tworzą oddzielny przedmiot. Siedem aplikacji ekonometrii znajduje się w [archiwum](deprecated/ekonometria/README.md).
-
-Wykonano poprawki ustaleń 1–8 [audytu](audyty/2026-09-11-statystyka-analiza-ryzyka.md): skorygowano interpretacje i obliczenia, oznaczono syntetyczne dane i poprawiono ich generator. CASchools zachowuje intuicyjną narrację dla początkujących. Hub ma powiększone czcionki.
-
-Kontrole po poprawkach: 36 sprawdzeń Statystyki, 73 Statystyki 2 i 472 analizy ryzyka — bez błędów, ostrzeżeń i pominięć. To nie jest pełny test wszystkich interakcji przeglądarkowych. Pozostałe zadania, w tym rozszerzenie pokrycia testami i pilotaż tempa zajęć, są opisane w audycie.
+Z katalogu głównego repozytorium:
 
 ```sh
-Rscript statystyka/scripts/run_tests.R
-Rscript statystyka-2/scripts/run_tests.R
-Rscript analiza-ryzyka/scripts/check_design_contract.R --strict
+Rscript scripts/build_static.R statystyka/01-typy-danych   # jeden wykład → dist/statystyka/01-typy-danych.html
+Rscript scripts/build_index.R                              # spis: dist/index.html i dist/<kurs>/index.html
+```
+
+Każdy plik w `dist/` jest samodzielny (style, skrypty, kroje i wzory w środku) i działa także otwarty z dysku. Paczkę offline dla studentów składa `przedmioty/<przedmiot>/skrypt/build/build_offline.R` w repozytorium `dydaktyka`.
+
+## Publikacja (GitHub Pages)
+
+Strony są publikowane z gałęzi `gh-pages` pod adresem <https://themacsquared.github.io/interaktywne-wyklady/>:
+
+```sh
+scripts/publish_pages.sh            # publikuje zbudowane dist/
+scripts/publish_pages.sh --build    # najpierw buduje wszystkie wykłady i spis
+```
+
+Każda strona ma `<meta name="robots" content="noindex, nofollow">`: nie trafia do wyszukiwarek, ale jest dostępna dla każdego, kto zna adres (GitHub Pages nie ma kontroli dostępu poza GitHub Enterprise Cloud). Jednorazowo w ustawieniach repozytorium: Settings → Pages → Deploy from a branch → `gh-pages`, folder `/ (root)`.
+
+Do składania wzorów przy budowaniu potrzebna jest przeglądarka oparta na Chromium (zmienna `CHROMOTE_CHROME`, jeśli `chromote` jej nie znajduje); szczegóły w [shared/README.md](shared/README.md).
+
+## Kontrole
+
+```sh
+Rscript scripts/check_static_ready.R              # czy kod wykładów nie zależy od serwera
+Rscript scripts/check_static_page.R dist/statystyka/01-typy-danych.html   # strona w przeglądarce
+Rscript statystyka/tests/testthat.R
 Rscript analiza-ryzyka/tests/testthat.R
+node --test statystyka/tests/js/*.test.js analiza-ryzyka/tests/js/*.test.js
+Rscript analiza-ryzyka/scripts/check_design_contract.R --strict
 ```
 
-## Uruchamianie
+## Historia
 
-Najprościej hubem — jeden spis wszystkich wykładów w przeglądarce, bez wracania
-do terminala między wykładami:
-
-```bash
-scripts/hub          # albo dwuklik w Wyklady.command (macOS) / Wyklady.bat (Windows)
-```
-
-Pliki do dwukliku sprawdzają przed startem, czy jest R i pakiety potrzebne
-wykładom, i proponują doinstalowanie brakujących.
-
-Hub wykrywa wykłady sam, więc lista nigdy się nie rozjeżdża z repo. Uruchomione
-wykłady zostają żywe, dzięki czemu powrót do wcześniejszego zachowuje jego stan —
-opis w [hub/README.md](hub/README.md).
-
-Pojedynczy wykład można nadal uruchomić bezpośrednio:
-
-```r
-shiny::runApp("statystyka/01-typy-danych")
-```
-
-Szczegółowe wymagania pakietów i opis aplikacji są w dokumentacji konkretnego zestawu.
+Do listopada 2026 wykłady były aplikacjami R Shiny uruchamianymi przez hub; repozytorium zawierało też kurs „Statystyka 2” i archiwum ekonometrii. Ostatnią wersję z Shiny oznacza tag `shiny-final`.

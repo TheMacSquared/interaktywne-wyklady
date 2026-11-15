@@ -71,6 +71,8 @@ check_page <- function(file) {
   Sys.sleep(2)
 
   note(identical(ev("typeof window.Shiny"), "undefined"), "strona nie ładuje Shiny")
+  note(isTRUE(grepl("noindex", ev("(document.querySelector('meta[name=robots]') || {}).content || ''"))),
+       "strona zakazuje indeksowania (meta robots noindex)")
   ids <- jsonlite::fromJSON(ev(
     "JSON.stringify(Array.from(document.querySelectorAll('section[data-lc-static-chapter]')).map(s => s.id))"))
   note(length(ids) > 0, sprintf("rozdziały w dokumencie: %d", length(ids)))

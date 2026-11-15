@@ -82,6 +82,8 @@ course_list <- function(course, prefix = "") {
 page <- function(title, body) {
   paste0('<!doctype html>\n<html lang="pl"><head><meta charset="utf-8">',
          '<meta name="viewport" content="width=device-width, initial-scale=1">',
+         # Spis nie trafia do wyszukiwarek (publikacja na GitHub Pages bez indeksowania).
+         '<meta name="robots" content="noindex, nofollow">',
          "<title>", esc(title), "</title><style>", css, "</style></head><body><main>", body, "</main></body></html>\n")
 }
 
