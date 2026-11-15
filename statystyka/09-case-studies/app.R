@@ -14,9 +14,9 @@ library(AER)
 # ============================================================================
 
 .find_app_dir <- function() {
-  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/lecture_layout.R.
+  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/course.R.
   has_project_root <- function(dir) {
-    file.exists(file.path(dirname(dir), "R", "lecture_layout.R"))
+    file.exists(file.path(dirname(dir), "R", "course.R"))
   }
 
   candidates <- character(0)
@@ -30,7 +30,7 @@ library(AER)
   if (length(file_arg) > 0) {
     candidates <- c(candidates, dirname(normalizePath(sub("--file=", "", file_arg[[1]]))))
   }
-  # 3) Katalog roboczy — shiny::runApp() ustawia go na katalog aplikacji.
+  # 3) Katalog roboczy — scripts/build_static.R ustawia go na katalog wykładu.
   candidates <- c(candidates, getwd())
 
   # Pierwszy kandydat leżący w projekcie; gdy żaden nie pasuje, zachowaj stare zachowanie.
@@ -42,15 +42,20 @@ library(AER)
 app_dir <- .find_app_dir()
 
 project_root <- dirname(app_dir)
+shared_root <- file.path(dirname(project_root), "shared")
 
-source(file.path(project_root, "R", "palette.R"),        local = TRUE)
-source(file.path(project_root, "R", "theme_upwr.R"),     local = TRUE)
-source(file.path(project_root, "R", "shared.R"),         local = TRUE)
-source(file.path(project_root, "R", "lecture_layout.R"), local = TRUE)
+source(file.path(project_root, "R", "course.R"), local = TRUE)
+
+source(file.path(shared_root, "palette.R"),        local = TRUE)
+source(file.path(shared_root, "theme_upwr.R"),     local = TRUE)
+source(file.path(shared_root, "shared.R"),         local = TRUE)
+source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"), local = TRUE)
 
 lc_apply_ggplot_defaults()
 
 source(file.path(app_dir, "modules", "helpers.R"),       local = TRUE)
+source(file.path(app_dir, "modules", "figures.R"),       local = TRUE)
 source(file.path(app_dir, "modules", "ch1_caschools.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_pingwiny.R"),  local = TRUE)
 source(file.path(app_dir, "modules", "ch3_titanic.R"),   local = TRUE)
@@ -112,18 +117,13 @@ ui <- lecture_page(
   lecture_title = "Case studies",
   module_label  = "Statystyka",
   chapters      = .chapters,
-  header_extras = case_extras
+  # Ryciny rysuje przeglądarka z opisów policzonych w R (rycina lc_spec silnika lcSF).
+  header_extras = tagList(
+    case_extras,
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(shared_root, "lc_charts.js")),
+    includeScript(file.path(shared_root, "lc_dist.js")),
+    includeScript(file.path(shared_root, "lc_stat_figures.js")),
+    lc_sf_styles()
+  )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-  ch3_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)

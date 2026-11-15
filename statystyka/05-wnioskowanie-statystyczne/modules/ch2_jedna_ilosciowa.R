@@ -2,6 +2,184 @@
 # CHAPTER 4: Jedna zmienna ilościowa — test t jednej próby
 # ============================================================================
 
+# Dane ćwiczeń CASchools: potrzebne już przy składaniu rozwiązań (niżej).
+.ch2_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
+
+# Treść stała (dawniej output$cas_ch2_sol1 na serwerze): składana przy budowaniu strony.
+cas_ch2_sol1_ui <- function() {
+  r <- local({
+    x <- .ch2_cas$read; mu <- 650
+    n <- length(x); m <- mean(x); s <- sd(x); se <- s / sqrt(n)
+    t_val <- (m - mu) / se; df <- n - 1
+    p_val <- 2 * pt(-abs(t_val), df)
+    d <- (m - mu) / s
+    list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
+  })
+  div(class = "ch2-step-panel",
+    tagList(
+      p(tags$b("H₀:"), " μ_read = 650 · ", tags$b("Hₐ:"), " μ_read ≠ 650"),
+      tags$ul(
+        tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$m, r$s)),
+        tags$li(sprintf("t(%s) = %.3f, p %s %s",
+          round(r$df, 1), r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+      ),
+      lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                 type = if (r$p < 0.05) "danger" else "ok"),
+      p(tags$b("Interpretacja:"), " ",
+        if (r$p < 0.05) {
+          sprintf(
+            "średni wynik z czytania (%.2f pkt) istotnie statystycznie różni się
+             od normy 650 pkt. Różnica wynosi %.2f pkt.",
+            r$m, r$m - 650
+          )
+        } else {
+          sprintf(
+            "nie mamy podstaw, by twierdzić, że średni wynik z czytania (%.2f pkt)
+             różni się od normy 650 pkt.",
+            r$m
+          )
+        })
+    )
+  )
+}
+
+# Treść stała (dawniej output$cas_ch2_sol2 na serwerze): składana przy budowaniu strony.
+cas_ch2_sol2_ui <- function() {
+  r <- local({
+    x <- .ch2_cas$income; mu <- 15
+    n <- length(x); m <- mean(x); s <- sd(x); se <- s / sqrt(n)
+    t_val <- (m - mu) / se; df <- n - 1
+    p_val <- pt(t_val, df, lower.tail = FALSE)
+    d <- (m - mu) / s
+    list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
+  })
+  div(class = "ch2-step-panel",
+    tagList(
+      p(tags$b("H₀:"), " μ_income ≤ 15 · ", tags$b("Hₐ:"), " μ_income > 15"),
+      tags$ul(
+        tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$m, r$s)),
+        tags$li(sprintf("t(%s) = %.3f, p %s %s (jednostronnie)",
+          round(r$df, 1), r$t,
+          if (r$p < 0.001) "<" else "=",
+          if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
+      ),
+      lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+                 type = if (r$p < 0.05) "danger" else "ok"),
+      p(tags$b("Interpretacja:"), " ",
+        if (r$p < 0.05) {
+          sprintf(
+            "średni dochód okręgu (%.2f tys. USD) jest istotnie statystycznie wyższy
+             od 15 tys. USD. Różnica wynosi %.2f tys. USD.",
+            r$m, r$m - 15
+          )
+        } else {
+          sprintf(
+            "średni dochód w próbie (%.2f tys. USD) jest wyższy od 15 tys. USD
+             o %.2f tys. USD, ale taka nadwyżka mieści się w przypadkowych wahaniach.
+             Nie mamy podstaw, by twierdzić, że średni dochód okręgu przekracza
+             15 tys. USD. Brak istotności nie dowodzi też, że średnia wynosi
+             15 tys. USD lub mniej. Praktycznie różnica też jest niewielka:
+             to około %.2f odchylenia standardowego dochodu.",
+            r$m, r$m - 15, r$d
+          )
+        }),
+      p("Hipotezę kierunkową formułujemy przed zebraniem danych; wybór kierunku
+        po obejrzeniu wyników zawyża ryzyko błędu I rodzaju.")
+    )
+  )
+}
+
+# Scenariusze testu t jednej próby (Ryc. 4.1 i 4.2): parametry losowania i teksty hipotez.
+ch2_scenario_params <- list(
+  concentration = list(mu0 = 70, mu_true = 72, sd = 13,
+                       xlab = "Wynik testu koncentracji (pkt)",
+                       title = "Koncentracja studentów",
+                       question = "Czy nasi studenci mają typowy poziom koncentracji?",
+                       h0_text = "\\(H_0: \\mu = 70\\) (koncentracja jest typowa)",
+                       h1_text = "\\(H_a: \\mu \\neq 70\\) (koncentracja odbiega od normy)"),
+  water  = list(mu0 = 150, mu_true = 158, sd = 25,
+                xlab = "Zużycie wody (l/osobę/dobę)",
+                title = "Zużycie wody w gminie",
+                question = "Czy zużycie wody w naszej gminie spełnia normę projektową 150 l/osobę?",
+                h0_text = "\\(H_0: \\mu = 150\\) (zużycie zgodne z normą)",
+                h1_text = "\\(H_a: \\mu \\neq 150\\) (zużycie odbiega od normy)"),
+  yield  = list(mu0 = 5, mu_true = 5.4, sd = 0.8,
+                xlab = "Plon pszenicy (t/ha)",
+                title = "Plony na poletku doświadczalnym",
+                question = "Czy średni plon pszenicy na naszych poletkach odpowiada średniej krajowej 5 t/ha?",
+                h0_text = "\\(H_0: \\mu = 5\\) (plon typowy dla kraju)",
+                h1_text = "\\(H_a: \\mu \\neq 5\\) (plon odbiega od średniej krajowej)"),
+  yogurt = list(mu0 = 14, mu_true = 15.2, sd = 2.5,
+                xlab = "Trwałość (dni do przeterminowania)",
+                title = "Trwałość jogurtu naturalnego",
+                question = "Czy trwałość naszego jogurtu spełnia deklarowane 14 dni?",
+                h0_text = "\\(H_0: \\mu = 14\\) (trwałość zgodna z deklaracją)",
+                h1_text = "\\(H_a: \\mu \\neq 14\\) (trwałość odbiega od deklaracji)"),
+  noise  = list(mu0 = 85, mu_true = 87.5, sd = 4,
+                xlab = "Poziom hałasu (dB)",
+                title = "Hałas w hali produkcyjnej",
+                question = "Czy średni poziom hałasu w hali mieści się w normie NDS 85 dB?",
+                h0_text = "\\(H_0: \\mu = 85\\) (hałas zgodny z normą)",
+                h1_text = "\\(H_a: \\mu \\neq 85\\) (hałas odbiega od normy)")
+)
+
+# Te same scenariusze z pytaniem kierunkowym (test jednostronny).
+ch2_scenario_params_1s <- list(
+  concentration = list(alt = "less",
+                       question = "Czy studenci mają niższą koncentrację niż norma 70 pkt?",
+                       h0_text = "\\(H_0: \\mu \\geq 70\\) (koncentracja nie jest niższa)",
+                       h1_text = "\\(H_a: \\mu < 70\\) (koncentracja jest niższa niż norma)"),
+  water  = list(alt = "greater",
+                question = "Czy zużycie wody w gminie przekracza normę projektową 150 l/osobę?",
+                h0_text = "\\(H_0: \\mu \\leq 150\\) (zużycie nie przekracza normy)",
+                h1_text = "\\(H_a: \\mu > 150\\) (zużycie przekracza normę)"),
+  yield  = list(alt = "greater",
+                question = "Czy nowa odmiana daje wyższy plon niż średnia krajowa 5 t/ha?",
+                h0_text = "\\(H_0: \\mu \\leq 5\\) (plon nie jest wyższy)",
+                h1_text = "\\(H_a: \\mu > 5\\) (plon jest wyższy niż średnia krajowa)"),
+  yogurt = list(alt = "greater",
+                question = "Czy trwałość jogurtu jest dłuższa niż deklarowane 14 dni?",
+                h0_text = "\\(H_0: \\mu \\leq 14\\) (trwałość nie przekracza deklaracji)",
+                h1_text = "\\(H_a: \\mu > 14\\) (trwałość jest dłuższa niż deklarowana)"),
+  noise  = list(alt = "greater",
+                question = "Czy średni poziom hałasu w hali przekracza normę NDS 85 dB?",
+                h0_text = "\\(H_0: \\mu \\leq 85\\) (hałas w normie)",
+                h1_text = "\\(H_a: \\mu > 85\\) (hałas przekracza normę)")
+)
+
+# Panel hipotezy nad krokami: wariant wybiera lista „Scenariusz”; podpowiedź widać,
+# dopóki nie ma próby (element [data-when = "empty"], przełącza rycina).
+ch2_hypothesis_panel <- function(one_sided = FALSE) {
+  pars <- if (one_sided) ch2_scenario_params_1s else ch2_scenario_params
+  tagList(
+    lc_variants("ch2_scenario", lapply(pars, function(par) {
+      div(class = "ch2-step-panel",
+        lc_status(
+          p(tags$b(if (one_sided) "Pytanie potoczne (kierunkowe):" else "Pytanie potoczne:")),
+          p(tags$em(paste0("„", par$question, "”")))
+        ),
+        lc_formula_box(
+          p(tags$b(if (one_sided) "Hipoteza formalna (jednostronna):" else "Hipoteza formalna (dwustronna):")),
+          p(withMathJax(par$h0_text)),
+          p(withMathJax(par$h1_text))
+        )
+      )
+    })),
+    tags$div(`data-when` = "empty", lc_empty(if (one_sided) {
+      "Najpierw wylosuj próbę w teście dwustronnym powyżej"
+    } else {
+      "Kliknij „Losuj próbę”, żeby zebrać dane"
+    }))
+  )
+}
+# Dane dla rycin s05_t1 i s05_t1b (modules/figures.js).
+ch2_t1_config <- list(scenarios = lapply(names(ch2_scenario_params), function(k) {
+  c(ch2_scenario_params[[k]][c("mu0", "mu_true", "sd", "xlab")], list(alt = ch2_scenario_params_1s[[k]]$alt))
+}) |> stats::setNames(names(ch2_scenario_params)))
+
 ch2_ui <- list(
   id = "ch-jedna-ilosciowa", num = "04", title = "Test t jednej próby",
   content = tagList(
@@ -151,26 +329,30 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 4.1",
       title = "Test t jednej próby — krok po kroku",
-      uiOutput("ch2_hypothesis_panel"),
-      lc_step_widget("ch2_test",
-        steps = c("Dane", "Statystyki opisowe", "Statystyka testowa",
-                  "p-wartość i decyzja"),
-        toolbar = lc_toolbar(
-          selectInput("ch2_scenario", "Scenariusz",
-            choices = c(
-              "Koncentracja (μ₀ = 70 pkt)" = "concentration",
-              "Zużycie wody (μ₀ = 150 l)" = "water",
-              "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
-              "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
-              "Hałas w hali (μ₀ = 85 dB, IB)" = "noise"
-            ),
-            selected = "concentration"
+      # Losowanie, wykresy kroków i opisy liczy przeglądarka (modules/figures.js, rycina s05_t1).
+      lc_sf_figure("s05_t1", bare = TRUE, config = ch2_t1_config, body = tagList(
+        ch2_hypothesis_panel(),
+        lc_step_widget("ch2_test",
+          steps = c("Dane", "Statystyki opisowe", "Statystyka testowa",
+                    "p-wartość i decyzja"),
+          toolbar = lc_toolbar(
+            lc_sf_ctl(selectInput("ch2_scenario", "Scenariusz", selectize = FALSE,
+              choices = c(
+                "Koncentracja (μ₀ = 70 pkt)" = "concentration",
+                "Zużycie wody (μ₀ = 150 l)" = "water",
+                "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
+                "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
+                "Hałas w hali (μ₀ = 85 dB, IB)" = "noise"
+              ),
+              selected = "concentration"
+            )),
+            lc_sf_slider("ch2_n", "Wielkość próby (n)", 10, 100, 40, 5),
+            lc_sf_action("new", "ch2_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
+            lc_chart_zoom_button()
           ),
-          lc_slider("ch2_n", "Wielkość próby (n)", 10, 100, 40, 5),
-          lc_action("ch2_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid")
-        ),
-        plot_id = "ch2_step_plot"
-      )
+          body = lc_sf_chart(0, "2.5/1", "380px")
+        )
+      ))
     ),
 
     lc_p("Cztery kroki panelu to cały test. Najpierw oglądamy próbę. Potem
@@ -251,15 +433,18 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 4.2",
       title = "Test t jednostronny — krok po kroku",
-      uiOutput("ch2b_hypothesis_panel"),
-      lc_step_widget("ch2b_test",
-        steps = c("Dane", "Statystyki opisowe", "Statystyka testowa",
-                  "p-wartość i decyzja"),
-        toolbar = lc_toolbar(
-          lc_caption("Dane: te same co w teście dwustronnym powyżej.")
-        ),
-        plot_id = "ch2b_step_plot"
-      )
+      lc_sf_figure("s05_t1b", bare = TRUE, config = ch2_t1_config, body = tagList(
+        ch2_hypothesis_panel(one_sided = TRUE),
+        lc_step_widget("ch2b_test",
+          steps = c("Dane", "Statystyki opisowe", "Statystyka testowa",
+                    "p-wartość i decyzja"),
+          toolbar = lc_toolbar(
+            lc_caption("Dane: te same co w teście dwustronnym powyżej."),
+            lc_chart_zoom_button()
+          ),
+          body = lc_sf_chart(0, "2.5/1", "380px")
+        )
+      ))
     ),
 
     lc_p("Średnia, odchylenie standardowe i statystyka t są takie same jak
@@ -310,7 +495,7 @@ ch2_ui <- list(
         tags$code("read"), " w okręgach Kalifornii istotnie różni się",
         " od 650. Sformułuj H₀ i Hₐ, wykonaj test t jednej próby (α = 0.05).
         Co należy zaraportować departamentowi?"),
-      lc_more("Rozwiązanie", uiOutput("cas_ch2_sol1"))
+      lc_more("Rozwiązanie", cas_ch2_sol1_ui())
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -320,7 +505,7 @@ ch2_ui <- list(
         " zmienną ", tags$code("income"),
         ". Sformułuj H₀ i Hₐ dla hipotezy kierunkowej.
         Czy wynik jest istotny statystycznie? A praktycznie?"),
-      lc_more("Rozwiązanie", uiOutput("cas_ch2_sol2"))
+      lc_more("Rozwiązanie", cas_ch2_sol2_ui())
     ),
 
     lc_p("Oba zadania mają ten sam schemat: pytanie, hipotezy, statystyka t,
@@ -337,388 +522,3 @@ ch2_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# DANE — CASchools (wczytane raz przy ładowaniu modułu)
-# ============================================================================
-
-.ch2_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
-                     stringsAsFactors = FALSE)
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch2_server <- function(input, output, session) {
-
-  # --- Dane scenariuszy ---
-  scenario_params <- list(
-    concentration = list(mu0 = 70, mu_true = 72, sd = 13,
-                         xlab = "Wynik testu koncentracji (pkt)",
-                         title = "Koncentracja studentów",
-                         question = "Czy nasi studenci mają typowy poziom koncentracji?",
-                         h0_text = "\\(H_0: \\mu = 70\\) (koncentracja jest typowa)",
-                         h1_text = "\\(H_a: \\mu \\neq 70\\) (koncentracja odbiega od normy)"),
-    water  = list(mu0 = 150, mu_true = 158, sd = 25,
-                  xlab = "Zużycie wody (l/osobę/dobę)",
-                  title = "Zużycie wody w gminie",
-                  question = "Czy zużycie wody w naszej gminie spełnia normę projektową 150 l/osobę?",
-                  h0_text = "\\(H_0: \\mu = 150\\) (zużycie zgodne z normą)",
-                  h1_text = "\\(H_a: \\mu \\neq 150\\) (zużycie odbiega od normy)"),
-    yield  = list(mu0 = 5, mu_true = 5.4, sd = 0.8,
-                  xlab = "Plon pszenicy (t/ha)",
-                  title = "Plony na poletku doświadczalnym",
-                  question = "Czy średni plon pszenicy na naszych poletkach odpowiada średniej krajowej 5 t/ha?",
-                  h0_text = "\\(H_0: \\mu = 5\\) (plon typowy dla kraju)",
-                  h1_text = "\\(H_a: \\mu \\neq 5\\) (plon odbiega od średniej krajowej)"),
-    yogurt = list(mu0 = 14, mu_true = 15.2, sd = 2.5,
-                  xlab = "Trwałość (dni do przeterminowania)",
-                  title = "Trwałość jogurtu naturalnego",
-                  question = "Czy trwałość naszego jogurtu spełnia deklarowane 14 dni?",
-                  h0_text = "\\(H_0: \\mu = 14\\) (trwałość zgodna z deklaracją)",
-                  h1_text = "\\(H_a: \\mu \\neq 14\\) (trwałość odbiega od deklaracji)"),
-    noise  = list(mu0 = 85, mu_true = 87.5, sd = 4,
-                  xlab = "Poziom hałasu (dB)",
-                  title = "Hałas w hali produkcyjnej",
-                  question = "Czy średni poziom hałasu w hali mieści się w normie NDS 85 dB?",
-                  h0_text = "\\(H_0: \\mu = 85\\) (hałas zgodny z normą)",
-                  h1_text = "\\(H_a: \\mu \\neq 85\\) (hałas odbiega od normy)")
-  )
-
-  # Jedna wspólna próba dla widgetu dwustronnego i jednostronnego.
-  # Trzymamy metadane próbki, żeby po zmianie scenariusza albo n stara
-  # próbka była traktowana jako nieaktualna, a nie jako dane do nowego pytania.
-  ch2_sample_state <- reactiveVal(NULL)
-
-  observeEvent(input$ch2_new_sample, {
-    req(input$ch2_scenario, input$ch2_n)
-    par <- scenario_params[[input$ch2_scenario]]
-    req(!is.null(par))
-    n <- input$ch2_n
-
-    ch2_sample_state(list(
-      scenario = input$ch2_scenario,
-      n = n,
-      values = rnorm(n, mean = par$mu_true, sd = par$sd)
-    ))
-  }, ignoreInit = TRUE)
-
-  ch2_sample <- reactive({
-    state <- ch2_sample_state()
-    if (is.null(state)) return(NULL)
-    req(input$ch2_scenario, input$ch2_n)
-
-    if (!identical(state$scenario, input$ch2_scenario) ||
-        !isTRUE(state$n == input$ch2_n)) {
-      return(NULL)
-    }
-
-    state$values
-  })
-
-  # Krok widgetu (1..4) żyje w przeglądarce; nowa próba ani zmiana
-  # scenariusza nie cofa kroku.
-  ch2_step <- lc_step_server("ch2_test", input)$step
-
-  # Histogram danych (kroki 1–2): rama z danych i μ₀, wspólna dla obu kroków.
-  ch2_hist_plot <- function(samp, mu0, xlab, step) {
-    rng <- range(c(samp, mu0))
-    pad <- diff(rng) * 0.06
-    breaks <- seq(min(samp), max(samp), length.out = 16)
-    y_top <- max(hist(samp, breaks = breaks, plot = FALSE)$counts) * 1.3
-    x_bar <- mean(samp)
-
-    p <- ggplot(data.frame(x = samp), aes(x = x)) +
-      step_result(geom_histogram, breaks = breaks) +
-      labs(x = xlab, y = "Liczba")
-
-    if (step >= 2) {
-      # μ₀ znamy z hipotezy; średnia z próby jest nowa w kroku 2.
-      mean_right <- x_bar >= mu0
-      p <- p +
-        step_line("known", xintercept = mu0) +
-        step_line(step_role(step, 2), xintercept = x_bar, helper = FALSE) +
-        step_symbol_label(mu0, y_top * 0.95, paste0("mu[0] == ", mu0), role = "known",
-                          hjust = if (mean_right) 1.1 else -0.1, vjust = 1) +
-        step_symbol_label(x_bar, y_top * 0.95, paste0("bar(x) == ", lc_fmt(x_bar, 2)),
-                          role = step_role(step, 2),
-                          hjust = if (mean_right) -0.1 else 1.1, vjust = 1)
-    }
-    p + step_frame(xlim = rng + c(-pad, pad), ylim = c(0, y_top))
-  }
-
-  # --- Panel hipotezy (zawsze widoczny) ---
-  output$ch2_hypothesis_panel <- renderUI({
-    par <- scenario_params[[input$ch2_scenario]]
-    samp <- ch2_sample()
-
-    div(class = "ch2-step-panel",
-      lc_status(
-        p(tags$b("Pytanie potoczne:")),
-        p(tags$em(paste0("„", par$question, "”")))
-      ),
-      lc_formula_box(
-        p(tags$b("Hipoteza formalna (dwustronna):")),
-        p(withMathJax(par$h0_text)),
-        p(withMathJax(par$h1_text))
-      ),
-      if (is.null(samp)) {
-        lc_empty("Kliknij „Losuj próbę”, żeby zebrać dane")
-      }
-    )
-  })
-
-  # --- Krokowy wykres ---
-  zoom_plot_server("ch2_step_plot", reactive({
-    samp <- ch2_sample()
-    step <- ch2_step()
-    par <- scenario_params[[input$ch2_scenario]]
-    mu0 <- par$mu0
-
-    if (is.null(samp)) return(NULL)
-
-    if (step <= 2) {
-      ch2_hist_plot(samp, mu0, par$xlab, step)
-    } else {
-      n <- length(samp)
-      t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
-      step_null_plot(t_stat, df = n - 1, type = "t",
-                     phase = if (step == 3) "stat" else "decision")
-    }
-  }))
-
-  # --- Opis kroku ---
-  output$ch2_test_text <- renderUI({
-    samp <- ch2_sample()
-    step <- ch2_step()
-    par <- scenario_params[[input$ch2_scenario]]
-    mu0 <- par$mu0
-
-    if (is.null(samp)) return(NULL)
-
-    n <- length(samp)
-    x_bar <- mean(samp)
-    s <- sd(samp)
-    se <- s / sqrt(n)
-    t_stat <- (x_bar - mu0) / se
-    p_val <- 2 * pt(-abs(t_stat), df = n - 1)
-
-    switch(as.character(step),
-      "1" = tagList(
-        "Mamy próbę ", step_num(n), " obserwacji. Chcemy sprawdzić, czy średnia
-        różni się od μ₀ = ", step_num(mu0), "."
-      ),
-      "2" = tagList(
-        "x̄ = ", step_num(lc_fmt(x_bar, 2)), ", s = ", step_num(lc_fmt(s, 2)),
-        ", SE = s/√n = ", step_num(lc_fmt(se, 2)), ". Różnica między x̄ a μ₀: ",
-        step_num(lc_fmt(x_bar - mu0, 2)),
-        ". Żeby ocenić, czy to dużo, odnosimy ją do SE."
-      ),
-      "3" = tagList(
-        paste0("t = (", lc_fmt(x_bar, 2), " − ", mu0, ") / ", lc_fmt(se, 2), " = "),
-        step_num(lc_fmt(t_stat, 3)), ". Statystyka t mówi: średnia z próby jest ",
-        step_num(lc_fmt(abs(t_stat), 1)), " błędów standardowych od μ₀."
-      ),
-      "4" = step_verdict(p_val)
-    )
-  })
-
-  # --- Widget 2: Test jednostronny (te same dane co Widget 1) ---
-  scenario_params_1s <- list(
-    concentration = list(alt = "less",
-                         question = "Czy studenci mają niższą koncentrację niż norma 70 pkt?",
-                         h0_text = "\\(H_0: \\mu \\geq 70\\) (koncentracja nie jest niższa)",
-                         h1_text = "\\(H_a: \\mu < 70\\) (koncentracja jest niższa niż norma)"),
-    water  = list(alt = "greater",
-                  question = "Czy zużycie wody w gminie przekracza normę projektową 150 l/osobę?",
-                  h0_text = "\\(H_0: \\mu \\leq 150\\) (zużycie nie przekracza normy)",
-                  h1_text = "\\(H_a: \\mu > 150\\) (zużycie przekracza normę)"),
-    yield  = list(alt = "greater",
-                  question = "Czy nowa odmiana daje wyższy plon niż średnia krajowa 5 t/ha?",
-                  h0_text = "\\(H_0: \\mu \\leq 5\\) (plon nie jest wyższy)",
-                  h1_text = "\\(H_a: \\mu > 5\\) (plon jest wyższy niż średnia krajowa)"),
-    yogurt = list(alt = "greater",
-                  question = "Czy trwałość jogurtu jest dłuższa niż deklarowane 14 dni?",
-                  h0_text = "\\(H_0: \\mu \\leq 14\\) (trwałość nie przekracza deklaracji)",
-                  h1_text = "\\(H_a: \\mu > 14\\) (trwałość jest dłuższa niż deklarowana)"),
-    noise  = list(alt = "greater",
-                  question = "Czy średni poziom hałasu w hali przekracza normę NDS 85 dB?",
-                  h0_text = "\\(H_0: \\mu \\leq 85\\) (hałas w normie)",
-                  h1_text = "\\(H_a: \\mu > 85\\) (hałas przekracza normę)")
-  )
-
-  # Krok widgetu 2 (1..4); wspólna próba nie cofa kroku.
-  ch2b_step <- lc_step_server("ch2b_test", input)$step
-
-  # Panel hipotezy (jednostronny) — zawsze widoczny jako nagłówek
-  output$ch2b_hypothesis_panel <- renderUI({
-    par1s <- scenario_params_1s[[input$ch2_scenario]]
-    samp <- ch2_sample()
-
-    div(class = "ch2-step-panel",
-      lc_status(
-        p(tags$b("Pytanie potoczne (kierunkowe):")),
-        p(tags$em(paste0("„", par1s$question, "”")))
-      ),
-      lc_formula_box(
-        p(tags$b("Hipoteza formalna (jednostronna):")),
-        p(withMathJax(par1s$h0_text)),
-        p(withMathJax(par1s$h1_text))
-      ),
-      if (is.null(samp)) {
-        lc_empty("Najpierw wylosuj próbę w teście dwustronnym powyżej")
-      }
-    )
-  })
-
-  # Krokowy wykres (jednostronny)
-  zoom_plot_server("ch2b_step_plot", reactive({
-    samp <- ch2_sample()
-    step <- ch2b_step()
-    par <- scenario_params[[input$ch2_scenario]]
-    par1s <- scenario_params_1s[[input$ch2_scenario]]
-    mu0 <- par$mu0
-
-    if (is.null(samp)) return(NULL)
-
-    if (step <= 2) {
-      ch2_hist_plot(samp, mu0, par$xlab, step)
-    } else {
-      n <- length(samp)
-      t_stat <- (mean(samp) - mu0) / (sd(samp) / sqrt(n))
-      step_null_plot(t_stat, df = n - 1, type = "t", alternative = par1s$alt,
-                     phase = if (step == 3) "stat" else "decision")
-    }
-  }))
-
-  # Opis kroku (jednostronny)
-  output$ch2b_test_text <- renderUI({
-    samp <- ch2_sample()
-    step <- ch2b_step()
-    par <- scenario_params[[input$ch2_scenario]]
-    par1s <- scenario_params_1s[[input$ch2_scenario]]
-    mu0 <- par$mu0
-
-    if (is.null(samp)) return(NULL)
-
-    n <- length(samp)
-    x_bar <- mean(samp)
-    s <- sd(samp)
-    se <- s / sqrt(n)
-    t_stat <- (x_bar - mu0) / se
-
-    # p-wartość jednostronna
-    p_val <- if (par1s$alt == "less") {
-      pt(t_stat, df = n - 1)
-    } else {
-      pt(t_stat, df = n - 1, lower.tail = FALSE)
-    }
-
-    dir_label <- if (par1s$alt == "less") "mniejsza" else "większa"
-
-    switch(as.character(step),
-      "1" = tagList(
-        "n = ", step_num(n), " (te same dane co wyżej). Pytamy, czy średnia jest ",
-        dir_label, " niż μ₀ = ", step_num(mu0), "."
-      ),
-      "2" = tagList(
-        "x̄ = ", step_num(lc_fmt(x_bar, 2)), ", s = ", step_num(lc_fmt(s, 2)),
-        ", SE = s/√n = ", step_num(lc_fmt(se, 2)), ", t = ",
-        step_num(lc_fmt(t_stat, 3)), " — te same wartości co w teście dwustronnym."
-      ),
-      "3" = tagList(
-        "t = ", step_num(lc_fmt(t_stat, 3)), ". W teście jednostronnym patrzymy
-        tylko na ", if (par1s$alt == "less") "lewy" else "prawy", " ogon rozkładu."
-      ),
-      "4" = tagList(
-        "Jednostronnie: ", step_verdict(p_val)
-      )
-    )
-  })
-
-  # --- Ćwiczenia CASchools ---
-
-  output$cas_ch2_sol1 <- renderUI({
-    r <- local({
-      x <- .ch2_cas$read; mu <- 650
-      n <- length(x); m <- mean(x); s <- sd(x); se <- s / sqrt(n)
-      t_val <- (m - mu) / se; df <- n - 1
-      p_val <- 2 * pt(-abs(t_val), df)
-      d <- (m - mu) / s
-      list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
-    })
-    div(class = "ch2-step-panel",
-      tagList(
-        p(tags$b("H₀:"), " μ_read = 650 · ", tags$b("Hₐ:"), " μ_read ≠ 650"),
-        tags$ul(
-          tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$m, r$s)),
-          tags$li(sprintf("t(%s) = %.3f, p %s %s",
-            round(r$df, 1), r$t,
-            if (r$p < 0.001) "<" else "=",
-            if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        ),
-        lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
-                   type = if (r$p < 0.05) "danger" else "ok"),
-        p(tags$b("Interpretacja:"), " ",
-          if (r$p < 0.05) {
-            sprintf(
-              "średni wynik z czytania (%.2f pkt) istotnie statystycznie różni się
-               od normy 650 pkt. Różnica wynosi %.2f pkt.",
-              r$m, r$m - 650
-            )
-          } else {
-            sprintf(
-              "nie mamy podstaw, by twierdzić, że średni wynik z czytania (%.2f pkt)
-               różni się od normy 650 pkt.",
-              r$m
-            )
-          })
-      )
-    )
-  })
-
-  output$cas_ch2_sol2 <- renderUI({
-    r <- local({
-      x <- .ch2_cas$income; mu <- 15
-      n <- length(x); m <- mean(x); s <- sd(x); se <- s / sqrt(n)
-      t_val <- (m - mu) / se; df <- n - 1
-      p_val <- pt(t_val, df, lower.tail = FALSE)
-      d <- (m - mu) / s
-      list(n = n, m = m, s = s, t = t_val, df = df, p = p_val, d = d)
-    })
-    div(class = "ch2-step-panel",
-      tagList(
-        p(tags$b("H₀:"), " μ_income ≤ 15 · ", tags$b("Hₐ:"), " μ_income > 15"),
-        tags$ul(
-          tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$m, r$s)),
-          tags$li(sprintf("t(%s) = %.3f, p %s %s (jednostronnie)",
-            round(r$df, 1), r$t,
-            if (r$p < 0.001) "<" else "=",
-            if (r$p < 0.001) "0.001" else format(round(r$p, 4), nsmall = 4))),
-        ),
-        lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
-                   type = if (r$p < 0.05) "danger" else "ok"),
-        p(tags$b("Interpretacja:"), " ",
-          if (r$p < 0.05) {
-            sprintf(
-              "średni dochód okręgu (%.2f tys. USD) jest istotnie statystycznie wyższy
-               od 15 tys. USD. Różnica wynosi %.2f tys. USD.",
-              r$m, r$m - 15
-            )
-          } else {
-            sprintf(
-              "średni dochód w próbie (%.2f tys. USD) jest wyższy od 15 tys. USD
-               o %.2f tys. USD, ale taka nadwyżka mieści się w przypadkowych wahaniach.
-               Nie mamy podstaw, by twierdzić, że średni dochód okręgu przekracza
-               15 tys. USD. Brak istotności nie dowodzi też, że średnia wynosi
-               15 tys. USD lub mniej. Praktycznie różnica też jest niewielka:
-               to około %.2f odchylenia standardowego dochodu.",
-              r$m, r$m - 15, r$d
-            )
-          }),
-        p("Hipotezę kierunkową formułujemy przed zebraniem danych; wybór kierunku
-          po obejrzeniu wyników zawyża ryzyko błędu I rodzaju.")
-      )
-    )
-  })
-}

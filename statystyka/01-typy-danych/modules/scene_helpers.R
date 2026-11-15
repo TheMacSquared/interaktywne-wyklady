@@ -1,14 +1,17 @@
 # Sceny (widget krokowy z SVG rysowanym w modules/scenes.js).
-# Skopiowane ze statystyki 00 (modules/helpers.R): scene_widget(), scene_texts().
+# Skopiowane ze statystyki 00 (modules/helpers.R): scene_widget().
 
 # options: lista list(name, label, values = c(etykieta = "wartość"), selected, from)
 # extra: dodatkowe kontrolki na końcu paska (np. lc_step_from(3, lc_slider(...)));
 #   scena czyta je sama przez shiny:inputchanged, serwer R ich nie potrzebuje.
+# texts: opisy kroków, po jednym na krok (w dokumencie, bez serwera).
 scene_widget <- function(id, title, steps, config, labels, options = NULL, extra = NULL,
-                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000")) {
+                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000"),
+                         texts) {
   lc_step_widget(id,
     title = title,
     steps = steps,
+    texts = texts,
     toolbar = lc_toolbar(
       lapply(options, function(o) {
         lc_step_from(o$from %||% 1, lc_group(o$label,
@@ -37,10 +40,4 @@ scene_widget <- function(id, title, steps, config, labels, options = NULL, extra
     body = tags$div(class = "lc-sc",
       `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA))
   )
-}
-
-# Teksty kroków: lista fragmentów HTML, po jednym na krok.
-scene_texts <- function(input, output, id, texts) {
-  step <- lc_step_server(id, input)$step
-  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
 }

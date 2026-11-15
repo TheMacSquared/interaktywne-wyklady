@@ -1,12 +1,10 @@
 # Statystyka
 
-Podstawowy kurs statystyki: od opisu danych do samodzielnego wniosku z analizy. Interaktywne aplikacje R Shiny wspierają wykład dla początkujących.
+Podstawowy kurs statystyki: od opisu danych do samodzielnego wniosku z analizy. Interaktywne wykłady (strony statyczne, bez serwera R) wspierają wykład dla początkujących.
 
 ## Cel i zakres
 
 Student potrafi opisać dane, odczytać niepewność wyniku, wybrać podstawową metodę i wyjaśnić wniosek w kontekście pytania. Przykłady budują intuicję; szczegóły metodologiczne pojawiają się tylko tam, gdzie są potrzebne do zrozumienia wyniku.
-
-Symulacje, Bayes, rozszerzenia kierunkowe i szeregi czasowe należą do oddzielnego przedmiotu [Statystyka 2](../statystyka-2/README.md). Nie są wymagane do ukończenia kursu podstawowego.
 
 ## Wykłady
 
@@ -47,16 +45,10 @@ Pakiety BayesFactor, rstanarm i pakiety szeregów czasowych nie należą do wyma
 
 ## Uruchamianie
 
-Z katalogu głównego repozytorium:
+Z katalogu głównego repozytorium budujemy stronę wykładu i otwieramy ją w przeglądarce:
 
 ```sh
-scripts/hub
-```
-
-Hub pokazuje „Statystykę” i „Statystykę 2” jako oddzielne przedmioty. Pojedyncza aplikacja:
-
-```r
-shiny::runApp("statystyka/01-typy-danych")
+Rscript scripts/build_static.R statystyka/01-typy-danych   # → dist/statystyka/01-typy-danych.html
 ```
 
 ## Kontrola
@@ -72,6 +64,6 @@ Pełna kontrola obejmuje zależności, design, testy i wczytanie jedenastu aplik
 
 ## Organizacja kodu
 
-Każdy katalog wykładu zawiera `app.R` i moduły rozdziałów. Wspólne komponenty są w `R/`, narzędzia w `scripts/`, testy w `tests/`. Reguły wyglądu określa [kontrakt designu](R/DESIGN_CONTRACT.md).
+Każdy katalog wykładu zawiera `app.R` i moduły rozdziałów. Wspólne komponenty (layout, paleta, style, biblioteki JS) są w `../shared/`, pliki własne kursu w `R/`, narzędzia w `scripts/`, testy w `tests/`. Reguły wyglądu określa [kontrakt designu](../shared/DESIGN_CONTRACT.md).
 
 Po podziale kursu dawne wykłady 09, 10 i 12 dostały numery 07, 08 i 09; po dodaniu wykładu o związkach dwóch zmiennych (02) są to 08, 09 i 10. Pozostałe cztery bloki przeniesiono do `statystyka-2/`; treść ćwiczeń kierunkowych wewnątrz podstawowych wykładów pozostaje częścią kursu podstawowego.

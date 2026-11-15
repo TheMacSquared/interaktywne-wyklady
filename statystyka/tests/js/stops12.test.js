@@ -8,7 +8,7 @@ const { environment, Element, root } = require("./harness");
 
 function setup() {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   env.load("03-rozklady-prawdopodobienstwa/modules/sim_charts.js");
   env.load("03-rozklady-prawdopodobienstwa/modules/stops12_charts.js");
   const S = env.window.lcSF, P = env.window.lcCharts.palette();

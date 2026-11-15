@@ -49,10 +49,12 @@ dist_names_pl <- c(
 # options: lista list(name, label, values, selected, from = 1), przełączniki opcji.
 # more_from: od którego kroku aktywne są przyciski +10, +100, +1000.
 scene_widget <- function(id, title, steps, config, labels, options = NULL,
-                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000")) {
+                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000"),
+                         texts = NULL) {
   lc_step_widget(id,
     title = title,
     steps = steps,
+    texts = texts,
     toolbar = lc_toolbar(
       lapply(options, function(o) {
         lc_step_from(o$from %||% 1, lc_group(o$label,
@@ -82,10 +84,28 @@ scene_widget <- function(id, title, steps, config, labels, options = NULL,
   )
 }
 
-# Teksty kroków: lista fragmentów HTML, po jednym na krok.
-scene_texts <- function(input, output, id, texts) {
-  step <- lc_step_server(id, input)$step
-  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
+
+# Teksty kroków podaje się w scene_widget(texts = ): są w dokumencie, bez serwera.
+
+# Stan pusty ryciny lcSF (przed pierwszym losowaniem) i treść widoczna po losowaniu:
+# elementy [data-when], które przełącza rycina (noteKey w modules/figures.js).
+s06_empty <- function(text) {
+  tags$div(`data-when` = "empty", class = "lc-sf-empty", tags$p(text))
+}
+
+# Rycina bez wykresu (wynik testu dla danych z innego panelu): kontener lcSF
+# z atrybutem data-lc-nochart; warianty treści w elementach [data-when].
+s06_result_figure <- function(fig, ...) {
+  tags$div(class = "lc-sf", `data-fig` = fig, `data-lc-nochart` = NA, ...)
+}
+s06_when <- function(key, ..., hidden = TRUE) {
+  tags$div(`data-when` = key, hidden = if (hidden) NA, ...)
+}
+
+# Tabela lc_table() z komórkami wypełnianymi przez przeglądarkę: napis „@@klucz@@”
+# w danych staje się elementem lc_sf_value(klucz).
+s06_fill_table <- function(table) {
+  HTML(gsub("@@([a-z_]+)@@", '<span data-v="\\1">–</span>', as.character(table)))
 }
 
 # ============================================================================

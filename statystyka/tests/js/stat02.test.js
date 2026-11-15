@@ -17,7 +17,7 @@ function setup() {
   const env = environment();
   env.window.lc01Survey = SURVEY;
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_stat_figures.js");
   env.load("02-zwiazki-zmiennych/modules/survey_charts.js");
   return { env, S: env.window.lcSF, X: env.window.lc02Survey, P: env.window.lcCharts.palette() };
 }

@@ -1,5 +1,10 @@
 # Tab 10: Studenci — wzorcowa ankieta studencka, dobry zbiór
 
+# Tabela dawnego serwera, składana przy budowaniu strony.
+tab9_table_html <- function(view = NULL) {
+  dd_data_table(round_df(survey_data), page_size = 8)
+}
+
 ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content = tagList(
 
   lc_chapter_hero(
@@ -10,7 +15,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
               odpowiedzi sprawiają, że dane nadają się do analizy bez czyszczenia."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch10-sec-01", "Opis"),
 
   lc_p("Ankietę wypełniło 150 studentów. Każdy podał płeć, kierunek i rok
     studiów, liczbę godzin nauki, poziom stresu na skali od 1 do 10, średnią
@@ -36,7 +41,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch10-sec-02", "Podgląd danych"),
 
   lc_p("Oceniając tabelę, sprawdź, czy każda kolumna ma jeden typ i spójny
     zapis wartości."),
@@ -44,7 +49,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
   figure_panel(
     label = "Ryc. 10.2",
     title = "Odpowiedzi 150 studentów",
-    uiOutput("tab9_table")
+    tab9_table_html()
   ),
 
   lc_p("Siedem zmiennych reprezentuje wszystkie cztery typy z wykładu 01:"),
@@ -73,7 +78,7 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     To jedyny ślad problemu, który w katalogu z rozdziału 1 nazwaliśmy „za mało
     danych”, i dotyczy tylko jednej podgrupy."),
 
-  lc_h2("sec-03", "Werdykt"),
+  lc_h2("ch10-sec-03", "Werdykt"),
 
   lc_p("Ta ankieta pokazuje, jak wyglądają dane zaprojektowane z myślą
     o analizie: zamknięte pytania, spójne skale, jedna osoba w jednym wierszu.
@@ -104,11 +109,3 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     target_id = "ch11"
   )
 ))
-
-ch10_server <- function(input, output, session) {
-
-  output$tab9_table <- renderUI({
-    dd_data_table(round_df(survey_data), page_size = 8, page = input$tab9_table_page, page_input = "tab9_table_page")
-  })
-
-}

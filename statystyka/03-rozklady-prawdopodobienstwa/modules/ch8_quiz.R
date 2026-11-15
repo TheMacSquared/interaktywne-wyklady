@@ -76,6 +76,32 @@ quiz_example_config <- function(ex, n = QUIZ_EXAMPLE_N) {
        sample = vapply(shown, function(v) if (spec$disc) as.character(v) else formatC(v, format = "f", digits = digits), ""))
 }
 
+# Blok „przykładowa realizacja” pokazywany po odpowiedzi: model, pierwsze wyniki,
+# histogram i podpis. Losowanie ma stałe ziarno (numer pytania), więc strona
+# buduje się zawsze tak samo.
+quiz_example_block <- function(q) {
+  ex <- q$example
+  if (is.null(ex)) return(NULL)
+  old_seed <- if (exists(".Random.seed", envir = globalenv())) get(".Random.seed", envir = globalenv())
+  on.exit(if (is.null(old_seed)) rm(".Random.seed", envir = globalenv()) else
+    assign(".Random.seed", old_seed, envir = globalenv()), add = TRUE)
+  set.seed(2026L + as.integer(q$id))
+  cfg <- quiz_example_config(ex)
+  tags$div(class = "lc-quizex",
+    `data-config` = jsonlite::toJSON(cfg, auto_unbox = TRUE, digits = NA),
+    lc_readouts(lc_readout("Model", cfg$model, color = upwr_accent)),
+    tags$p(class = "lc-quizex-sample", "Pierwsze wylosowane wyniki: ",
+           tags$span(paste(c(cfg$sample, "…"), collapse = ", "))),
+    tags$div(class = "lc-quizex-canvas",
+      tags$div(class = "lc-ec", `data-role` = "hist", role = "img",
+        `aria-label` = sprintf("Histogram %d losowań z rozkładu %s i rozkład teoretyczny", cfg$n, cfg$model))),
+    lc_caption(sprintf("%d przykładowych realizacji: słupki to odsetek %s, %s to rozkład teoretyczny %s.%s",
+      cfg$n, if (cfg$perValue) "każdego wyniku" else "wyników w każdym przedziale",
+      if (cfg$discrete) "punkty" else "linia", cfg$model,
+      if (cfg$outside > 0) sprintf(" Pominięto %d skrajnych wyników spoza osi.", cfg$outside) else ""))
+  )
+}
+
 # ============================================================================
 # UI
 # ============================================================================
@@ -106,23 +132,24 @@ ch8_ui <- list(
       title = "Dopasuj rozkład do zjawiska",
       full_width = TRUE,
 
-      # Start / status bar
-      lc_toolbar(
-        lc_action("ch8_start", "Rozpocznij quiz", variant = "solid"),
-        lc_readouts(uiOutput("ch8_progress"))
-      ),
-
-      # Pytanie
-      uiOutput("ch8_question_ui"),
-
-      # Opcje odpowiedzi (3 przyciski)
-      uiOutput("ch8_options_ui"),
-
-      # Feedback
-      uiOutput("ch8_feedback_ui"),
-
-      # Podsumowanie
-      uiOutput("ch8_summary_ui")
+      # Quiz prowadzi przeglądarka (shared/lc_quiz.js): losowanie pytań i dwóch
+      # błędnych odpowiedzi, ocena, wynik. Przykładowe realizacje liczy R przy
+      # budowaniu strony (stałe ziarno), wykres rysuje quiz_chart.js.
+      lc_tile_quiz("ch8", .load_quiz_questions(), n = QUIZ_MAX_QUESTIONS,
+        options = lapply(names(QUIZ_OPTIONS), function(v) list(value = v, label = QUIZ_OPTIONS[[v]])),
+        option_count = 3, tiles_class = "quiz-cols-3",
+        extra = quiz_example_block,
+        labels = list(question = "Pytanie", score = "Wynik", result = "Wynik",
+                      correct = "Poprawne odpowiedzi"),
+        colors = list(letter = NULL, question = upwr_secondary, correct = upwr_secondary,
+          score_levels = list(start = upwr_secondary, ok = unname(upwr_cat["szalwia"]),
+                              mid = unname(upwr_cat["bursztyn"]), low = unname(upwr_cat["terakota"]))),
+        summary = c(
+          "90" = "Ćwiczenie zakończone celująco!",
+          "70" = "Dobry wynik!",
+          "50" = "Nieźle, ale warto powtórzyć.",
+          "0"  = "Powtórz materiał z wcześniejszych rozdziałów."
+        ))
     ),
 
     lc_chapter_next(
@@ -133,224 +160,3 @@ ch8_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch8_server <- function(input, output, session) {
-
-  # --- Stan quizu ---
-  quiz_state <- reactiveValues(
-    active       = FALSE,
-    questions    = list(),    # wylosowane pytania (lista)
-    current_idx  = 0,         # ktore pytanie (1-based)
-    total        = 0,
-    correct      = 0,
-    wrong        = 0,
-    answered     = FALSE,     # czy odpowiedziano na biezace
-    current_options = list(), # 3 opcje {value, label}
-    finished     = FALSE
-  )
-
-  all_questions <- NULL
-
-  # --- Start quizu ---
-  observeEvent(input$ch8_start, {
-    # Wczytaj pytania (leniwe ladowanie)
-    if (is.null(all_questions)) {
-      all_questions <<- .load_quiz_questions()
-    }
-
-    # Losuj 10 pytan
-    n <- min(QUIZ_MAX_QUESTIONS, length(all_questions))
-    selected <- sample(all_questions, n)
-
-    quiz_state$questions <- selected
-    quiz_state$total <- n
-    quiz_state$current_idx <- 1
-    quiz_state$correct <- 0
-    quiz_state$wrong <- 0
-    quiz_state$answered <- FALSE
-    quiz_state$finished <- FALSE
-    quiz_state$active <- TRUE
-
-    # Przygotuj opcje dla pierwszego pytania
-    prepare_options()
-  })
-
-  # Przygotuj 3 opcje: 1 poprawna + 2 losowe bledne
-  prepare_options <- function() {
-    q <- quiz_state$questions[[quiz_state$current_idx]]
-    correct_val <- q$correct
-    all_vals <- names(QUIZ_OPTIONS)
-    wrong_vals <- setdiff(all_vals, correct_val)
-    selected_wrong <- sample(wrong_vals, 2)
-    opts <- sample(c(correct_val, selected_wrong))
-    quiz_state$current_options <- lapply(opts, function(v) {
-      list(value = v, label = QUIZ_OPTIONS[[v]])
-    })
-  }
-
-  # --- Pasek postepu ---
-  output$ch8_progress <- renderUI({
-    if (!quiz_state$active) return(NULL)
-
-    answered <- quiz_state$correct + quiz_state$wrong
-    total <- quiz_state$total
-    pct <- round(answered / total * 100)
-
-    score_color <- if (answered == 0) upwr_secondary
-                   else if (quiz_state$correct / answered >= 0.7) unname(upwr_cat["szalwia"])
-                   else if (quiz_state$correct / answered >= 0.5) unname(upwr_cat["bursztyn"])
-                   else unname(upwr_cat["terakota"])
-    tagList(
-      lc_readout("Pytanie", paste0(quiz_state$current_idx, " / ", total), color = upwr_secondary),
-      lc_readout("Wynik", paste0(quiz_state$correct, " / ", answered), color = score_color)
-    )
-  })
-
-  # --- Pytanie ---
-  output$ch8_question_ui <- renderUI({
-    if (!quiz_state$active || quiz_state$finished) return(NULL)
-
-    q <- quiz_state$questions[[quiz_state$current_idx]]
-
-    tags$h4(q$question)
-  })
-
-  # --- Opcje (3 przyciski) ---
-  output$ch8_options_ui <- renderUI({
-    if (!quiz_state$active || quiz_state$finished) return(NULL)
-    if (quiz_state$answered) return(NULL)
-
-    opts <- quiz_state$current_options
-    letters <- c("A", "B", "C")
-
-    div(class = "quiz-tiles quiz-cols-3",
-      lapply(seq_along(opts), function(i) {
-        btn_id <- paste0("ch8_answer_", i)
-        actionButton(btn_id,
-          tagList(
-            div(class = "tile-letter", letters[i]),
-            div(class = "tile-text", opts[[i]]$label)
-          ),
-          class = "quiz-tile"
-        )
-      })
-    )
-  })
-
-  # --- Obsluga klikniec odpowiedzi ---
-  observe({
-    for (i in 1:3) {
-      local({
-        idx <- i
-        btn_id <- paste0("ch8_answer_", idx)
-        observeEvent(input[[btn_id]], {
-          if (quiz_state$answered) return()
-
-          q <- quiz_state$questions[[quiz_state$current_idx]]
-          selected_val <- quiz_state$current_options[[idx]]$value
-          is_correct <- (selected_val == q$correct)
-
-          if (is_correct) {
-            quiz_state$correct <- quiz_state$correct + 1
-          } else {
-            quiz_state$wrong <- quiz_state$wrong + 1
-          }
-
-          quiz_state$answered <- TRUE
-          quiz_state$last_correct <- is_correct
-          quiz_state$last_selected <- selected_val
-          quiz_state$last_explanation <- q$explanation
-          quiz_state$last_correct_val <- q$correct
-        }, ignoreInit = TRUE)
-      })
-    }
-  })
-
-  # --- Feedback po odpowiedzi ---
-  output$ch8_feedback_ui <- renderUI({
-    if (!quiz_state$active || !quiz_state$answered || quiz_state$finished) return(NULL)
-
-    is_correct <- quiz_state$last_correct
-    explanation <- quiz_state$last_explanation
-    correct_label <- QUIZ_OPTIONS[[quiz_state$last_correct_val]]
-
-    ex <- quiz_state$questions[[quiz_state$current_idx]]$example
-    cfg <- if (!is.null(ex)) quiz_example_config(ex)
-
-    tagList(
-      # Wynik
-      lc_status(
-        lc_verdict(tags$strong(if (is_correct) "Dobrze!" else "Nie tym razem."), type = if (is_correct) "ok" else "danger"),
-        if (!is_correct) tagList(" Poprawna odpowiedź: ", b_(correct_label)),
-        p(explanation)
-        ),
-
-      # Przykładowa realizacja: histogram 500 losowań i rozkład teoretyczny
-      if (!is.null(cfg)) tags$div(class = "lc-quizex",
-        `data-config` = jsonlite::toJSON(cfg, auto_unbox = TRUE, digits = NA),
-        lc_readouts(lc_readout("Model", cfg$model, color = upwr_accent)),
-        tags$p(class = "lc-quizex-sample", "Pierwsze wylosowane wyniki: ",
-               tags$span(paste(c(cfg$sample, "…"), collapse = ", "))),
-        tags$div(class = "lc-quizex-canvas",
-          tags$div(class = "lc-ec", `data-role` = "hist", role = "img",
-            `aria-label` = sprintf("Histogram %d losowań z rozkładu %s i rozkład teoretyczny", cfg$n, cfg$model))),
-        lc_caption(sprintf("%d przykładowych realizacji: słupki to odsetek %s, %s to rozkład teoretyczny %s.%s",
-          cfg$n, if (cfg$perValue) "każdego wyniku" else "wyników w każdym przedziale",
-          if (cfg$discrete) "punkty" else "linia", cfg$model,
-          if (cfg$outside > 0) sprintf(" Pominięto %d skrajnych wyników spoza osi.", cfg$outside) else ""))
-      ),
-
-      # Przycisk dalej
-      if (quiz_state$current_idx < quiz_state$total) {
-        lc_action("ch8_next", "Następne pytanie", variant = "solid")
-      } else {
-        lc_action("ch8_finish", "Zobacz wynik", variant = "solid")
-      }
-    )
-  })
-
-  # --- Nastepne pytanie ---
-  observeEvent(input$ch8_next, {
-    quiz_state$current_idx <- quiz_state$current_idx + 1
-    quiz_state$answered <- FALSE
-    prepare_options()
-  })
-
-  # --- Zakonczenie ---
-  observeEvent(input$ch8_finish, {
-    quiz_state$finished <- TRUE
-    quiz_state$answered <- FALSE
-  })
-
-  # --- Podsumowanie ---
-  output$ch8_summary_ui <- renderUI({
-    if (!quiz_state$finished) return(NULL)
-
-    total <- quiz_state$total
-    correct <- quiz_state$correct
-    pct <- round(correct / total * 100)
-
-    result_type <- if (pct >= 70) "ok" else if (pct >= 50) "warning" else "danger"
-
-    result_text <- if (pct >= 90) "Ćwiczenie zakończone celująco!"
-                   else if (pct >= 70) "Dobry wynik!"
-                   else if (pct >= 50) "Nieźle, ale warto powtórzyć."
-                   else "Powtórz materiał z wcześniejszych rozdziałów."
-
-    tagList(
-      lc_readouts(
-        lc_readout("Wynik", paste0(pct, "%"), color = upwr_accent),
-        lc_readout("Poprawne odpowiedzi", paste0(correct, " / ", total), color = upwr_secondary)
-      ),
-      lc_status(lc_verdict(tags$strong(result_text), type = result_type)),
-      lc_toolbar(
-        lc_action("ch8_start", "Spróbuj ponownie", variant = "solid")
-      )
-    )
-  })
-
-}

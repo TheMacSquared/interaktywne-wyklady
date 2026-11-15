@@ -6,7 +6,7 @@ w gicie.
 Jak przypisać zadanie:
 
 - **Globalne** — zmienia wspólne komponenty, konwencje lub testy używane przez
-  więcej niż jeden kurs (np. snapshoty `statystyka/R/` i `analiza-ryzyka/R/`).
+  więcej niż jeden kurs (np. wspólny rdzeń `shared/`).
 - **Cały kurs** — zmienia wspólne `R/` jednego kursu albo dotyczy wszystkich
   jego wykładów.
 - **Wykład** — zmienia tylko katalog jednego wykładu.
@@ -37,13 +37,206 @@ Kolejność najbliższych prac (szczegóły w „Migracja widgetów do v2”):
 
 ## Globalne
 
+### Przejście na strony statyczne (bez serwera R)
+
+Decyzje (14 listopada 2026): statystyka i analiza ryzyka przechodzą na strony
+statyczne, statystyka 2 zostaje na Shiny; treść nadal w R i `htmltools`,
+uruchamianych tylko przy budowaniu; jeden plik HTML na wykład; wzory składane
+przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. Zasada:
+R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
+
+Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 15 listopada
+2026: gotowe 21 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–10, zbudowane i sprawdzone
+przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
+z wersją Shiny co do liczby wykresów, kontrolek i tekstu). Oba kursy działają bez
+serwera; zostały porządki fazy 8 (usunięcie kodu serwera, przełączenie). Wykresy analizy
+ryzyka rysuje silnik `lcSF` przez `risk_sf_panel()` (dane ze stałym ziarnem
+z R w `config`, funkcje kursu w `analiza-ryzyka/R/risk_figures.js`); wzorzec: 06. Quiz analizy ryzyka
+(wszystkie 10 wykładów) ocenia już przeglądarka; głosowanie „Najpierw zdecyduj”
+w 03–05 także (`risk_vote_panel(feedback = )`). Treść wybieraną kontrolką
+(dawniej `uiOutput()` + `renderUI()` po `input$…`) zastępuje `lc_variants()`,
+komentarz do wyboru `lc_choice_feedback()`, treść odsłanianą przyciskiem
+`lc_reveal()`, opis kroku z serwera `lc_step_widget(texts = )`, a quiz
+losujący pytania z puli `lc_tile_quiz()` (`shared/lc_quiz.js`). Warianty mogą
+też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z powrotem
+(`lc_toggle_button()` + `lc_toggle_content()`) albo kroku (`lc_step_views()`);
+`conditionalPanel()` działa na stronie statycznej dla warunków z `input.…`.
+
+- [x] Faza 0: licznik zależności od serwera (`scripts/check_static_ready.R`).
+- [x] Faza 1: tryb statyczny `lecture_page()`, `scripts/build_static.R`,
+  `scripts/check_static_page.R`; pilot: analiza ryzyka 02.
+- [x] Faza 2 (15 listopada 2026): wykłady bez wykresów R — analiza ryzyka 01–05
+  i statystyka 00–04 — nie mają logiki serwera. Strona statyczna wstawia treść
+  rozdziałów po wczytaniu skryptów (jak renderUI w Shiny).
+- [ ] Faza 2, reszta: kontrolki bez Shiny (segment, lista, kroki `lc_step_nav`,
+  `lc_chips`, `lc_drop_match`, `conditionalPanel`), głosowanie w pozostałych
+  wykładach (06–10: dopisać `feedback` do `risk_vote_panel()`) i ćwiczenia
+  w przeglądarce — przy wykładach z wykresami R (fazy 4–7).
+- [ ] Opisy kroków scen w pozostałych wykładach statystyki: `scene_texts()`
+  (serwer) → `lc_step_widget(texts = )`, tak jak w 00–04
+  (`scripts/migracja/move_scene_texts.py`). Zostało 11 wywołań: 05 (4), 06 (4),
+  07 (2), 08 (1). Ćwiczenia w wariantach kierunków przenosi
+  `scripts/migracja/port_exercises.py` (`lc_static_fill()`).
+- [ ] Wzory liczone w przeglądarce są składane w HTML (`.lc-hmath`, `.lc-hfrac`),
+  bo strona statyczna nie ładuje MathJax; dziś tylko statystyka 01, Ryc. 3.5.
+  Krój i wielkość różnią się od wzorów składanych przy budowaniu: do oceny na ekranie.
+- [ ] Test losowy w `statystyka/tests/js/lc_charts.test.js` („symulacje (03):
+  losowanie lcDist…”, asercja „SD średnich”) zawodzi mniej więcej raz na sześć
+  uruchomień (zaobserwowane 14 listopada 2026, kod 03 bez zmian): ustawić ziarno
+  albo poszerzyć tolerancję.
+- [ ] Faza 3: `shared/lc_stats.js` — testy liczone w przeglądarce, wzorcem są
+  wyniki R (`statystyka/tests/js/lc_stats.test.js`, wzorce generuje
+  `statystyka/tests/js/fixtures/make_lc_stats.R`). Jest: Shapiro–Wilk, Levene,
+  Bartlett, test t Studenta i Welcha, χ² i Fisher dla tabeli 2×2, rozkład F,
+  kwantyle, wykres Q-Q, regresja liniowa (`lm()`: współczynniki, błędy, p,
+  95% CI, R², AIC), ANOVA jednoczynnikowa, rozkład studentyzowanego rozstępu
+  (`ptukey`, `qtukey`) i porównania Gamesa-Howella. Testy wykładu 05 (t jednej
+  próby i par, dwumianowy, proporcji, korelacji, χ² i Fishera dla tabel r × c)
+  są w `05-…/modules/figures.js` z własnymi wzorcami R (`tests/js/stat05.test.js`).
+  Brakuje (dla 07–08): diagnostyka regresji, regresja wielomianowa, testy rangowe.
+- [x] Faza 4 (15 listopada 2026): analiza ryzyka 06–10 (26 wykresów R). Gotowe: 06 (6 wykresów), 07 (8 wykresów; ryciny główne mają przedrostek `c7m_`, bo prototypy zajęły nazwy `c7_gamma` i `c7_weibull` — `lcSF.register` zgłasza teraz powtórzoną nazwę w konsoli), 08 (5 wykresów; schemat
+  blokowy to trzy rysunki SVG z R przełączane listą — bez lupy, którą miał wykres),
+  09 (2 wykresy; drzewo to rysunek SVG z R z liczbami wpisywanymi przez JS, panele
+  z samymi odczytami to ryciny bez wykresu: `lc_sf_figure(chartless = TRUE)` /
+  atrybut `data-lc-nochart`),
+  10 (4 wykresy; wszystkie panele liczą na jednym kontrakcie misji w JS i czytają
+  ustawienia z kart w innych rozdziałach — zdarzenie `lc:sf-redraw` odświeża ryciny).
+- [ ] Test `analiza-ryzyka/tests/testthat/test-mission-analysis.R` „porównanie
+  zmiennego p…” odwołuje się do widżetu wykładu 05 (`d5_variation`,
+  `failure_data()`), którego nie było już przed migracją: usunąć albo przepisać.
+  Pozostałe dwa stałe błędy zestawu (`test-content-contract.R`) też są sprzed migracji.
+- [ ] Zaokrąglanie dokładnych połówek: `sprintf()` w R zaokrągla do parzystej,
+  `toFixed()` w JS w górę (0.0625 → „0.062” w R, „0.063” w JS). `lcRisk.fixed()`
+  i `lcRisk.fmtP()` (analiza ryzyka 06–10) robią to jak R; własne formatowanie
+  w skryptach wykładów 03–05 analizy ryzyka i w statystyce nie było pod tym
+  kątem sprawdzane.
+- [x] Faza 5 (15 listopada 2026): statystyka 05–06 (29 wykresów R; Shapiro, Levene). Gotowe: 06
+  05 (23 wykresy): testy „krok po kroku” (t jednej próby, dwumianowy, korelacji,
+  χ², t dwóch grup) na wspólnym szkielecie w `05-…/modules/figures.js`
+  (rozkład statystyki testowej, werdykt, role kroków), ANOVA z porównaniami
+  Gamesa-Howella, rozdział o sile efektu jako warianty z R (`lc_sf_spec(key = )`),
+  rozwiązania ćwiczeń składane przy budowaniu. Jedna świadoma różnica wobec
+  wersji Shiny: w tabeli Ryc. 10.1 statystyka t ma dwa miejsca po kropce
+  (dawniej kolumna zaokrąglała ją do całości: 1.5 pokazywała jako „2”).
+  (6 wykresów; dane losowane na jednej rycinie testują panele obok — wspólny
+  magazyn w `modules/figures.js` i zdarzenie `lc:sf-redraw`; stan przed
+  losowaniem i warianty wyniku w elementach `[data-when]`).
+- [x] Faza 6: statystyka 07–08 (66 wykresów R). Gotowe: 07 (15 listopada 2026;
+  `modules/figures.R` + `modules/figures.js`, test `tests/js/stat07.test.js` ze
+  wzorcami z R w `fixtures/make_stat07.R`). Ryciny na stałych danych (CASchools,
+  pingwiny, Anscombe, scenariusze ze stałym ziarnem) opisuje R jako warianty
+  `lc_sf_spec()`; kroki z R obsługuje rycina `s07_steps`. Przeglądarka liczy
+  losowanie, MNK, wielomian ortogonalny jak `poly()` (rekurencja trójczłonowa),
+  regresję logistyczną IRLS jak `glm(binomial)` z przedziałami profilowymi jak
+  `confint()` (zgodność z R do ~1e-3, bo R interpoluje profil splajnem) oraz
+  ćwiczenie z klikaniem w wykres (ECharts `convertFromPixel`). Ryc. 3.1 (128
+  modeli): tabele i miary z R jako liczby, tabelę jak `lc_table_split()` i panele
+  składa JS. Nowe w rdzeniu: `lc_plots(triple = TRUE)` / `lc_sf_figure(triple = TRUE)`,
+  opis `xInterval` / `yInterval`, nazwa osi X zawijana także w wąskich wykresach.
+  Świadome odstępstwa: Ryc. 4.2 ma na osi X numery modeli z legendą zamiast
+  obróconych nazw; ryciny 3.1 (panele) i 4.2 mają własne, krótkie style siatki
+  w `figures.R`. Gotowe: 08 (15 listopada 2026; wszystkie zbiory stałe, więc 34
+  wykresy ggplot przeniósł konwerter `shared/lc_sf_ggplot.R`: `sf_ggplot()` czyta
+  `ggplot_build()` i składa opis ryciny `lc_spec`, `lc_sf_ggplot()` robi z wykresu
+  albo listy wariantów rycinę; test `tests/testthat/test-sf-ggplot.R`). Treści
+  wybierane kontrolką: `lc_variants()`, odsłaniane przyciskiem: `lc_reveal()`;
+  w przeglądarce tylko suwak liczby obserwacji (Ryc. 3.2: te same losowania co
+  `set.seed(42)` w R), lista kontrolna, quiz kafelkowy i ćwiczenie z 5 pytaniami.
+  Identyfikatory nagłówków sekcji dostały przedrostek rozdziału (`ch3-sec-02`).
+  Przy okazji: `lcSF.binsGgplot` (i kopia w 01) liczy przedziały jak ggplot2 4.x
+  (pierwszy przedział wyśrodkowany na minimum; dawniej reguła ggplot ≤ 3.4) —
+  histogramy w 01, 03, 05 i 08 zgadzają się teraz z wersją Shiny; nowa opcja
+  opisu `yBig`, odstęp nazwy osi Y liczony z długości podpisów. Do rozważenia:
+  strona 08 ma 8.8 MB, z czego ok. 3.4 MB to pełne tabele stronicowane w HTML
+  (Wage 3000 wierszy, Tarantino 1894, CASchools 420); dane jako JSON
+  i stronicowanie w JS zmniejszyłyby ją o około 3 MB.
+- [x] Faza 7 (15 listopada 2026): statystyka 09–10 (20 wykresów R; modele na stałych zbiorach
+  liczone przy budowaniu). Gotowe: 10 (5 wykresów; treści stałe przeniesione
+  z serwera do dokumentu narzędziem `scripts/migracja/inline_static_outputs.py`,
+  model własny liczy `lcStats.lm()` z kolumn danych w `config`, podgląd danych
+  to cała tabela w dokumencie sortowana i okienkowana w przeglądarce);
+  09 (15 wykresów; bez własnego JS — każdy wariant kontrolki liczy R, a rysuje
+  ogólna rycina „opis z R”: `lc_sf_spec()` i funkcje `sf_*()` w
+  `shared/lc_stat_figures.R`; model wieloraki to 32 warianty, po jednym na
+  podzbiór predyktorów; przycisk „Dopasuj” zniknął, bo model zmienia się od razu).
+- [ ] Drugi test losowy bez ziarna: `statystyka/tests/js/stops34.test.js` zawiódł raz
+  na pięć uruchomień (15 listopada 2026), bez związku ze zmienianym kodem.
+- [x] Ramki wzorów (`.lc-formula-box`) na stronach statycznych były wyrównane do lewej
+  i mniejsze niż pod Shiny: reguła w `shared_styles.css` nie znała klasy `MathJax_SVG`
+  wzorów złożonych przy budowaniu (poprawione 15 listopada 2026; dotyczyło wszystkich
+  zbudowanych wykładów, więc strony trzeba zbudować ponownie).
+- [ ] `scripts/check_static_page.R` nie zauważa ryciny, która przy każdym
+  rysowaniu rzuca wyjątek (silnik łapie go i ponawia, strona się zawiesza):
+  wykrywa to `scripts/migracja/gdzie_wisi.R`. Dodać taki test do kontroli strony.
+- [x] Faza 8: usunąć `app.R` i kod serwera, statyczny spis wykładów zamiast
+  huba, wycofać `przedmioty/*/skrypt/build`, zaktualizować `AGENTS.md`,
+  kontrakt i testy. Zrobione (15 listopada 2026, wariant „zostaw `app.R`, usuń
+  serwer”): `app.R` opisuje treść (`ui`), bez `server` i `shinyApp()`; puste
+  funkcje `*_server` usunięte z modułów (`scripts/migracja/usun_serwer.R`);
+  z rdzenia zniknęły `lecture_server()`, `lc_step_server()`, `lc_update_step()`,
+  `zoom_plot_ui()`/`zoom_plot_server()`, `lc_plot()`, `lc_plot_fullscreen()`
+  i tryb Shiny w `lecture_page()` (zawsze strona statyczna); `lc_step_widget()`
+  przyjmuje tylko `body`. Drzewo decyzyjne w statystyce 05 (visNetwork) było
+  wypełniane przez serwer i na stronie statycznej było puste — widget jest teraz
+  wstawiony do dokumentu. Testy `testServer()` zastąpione sprawdzeniem dokumentu,
+  test nieistniejącego widgetu „zmienne p” (05 analizy ryzyka) usunięty;
+  AGENTS.md, kontrakty i opis rdzenia zaktualizowane. Zostało: kod huba
+  (`hub/`, linki `LC_HUB_URL` w `lecture_layout.R`, `.LC_HUB_TABS_JS`) — hub
+  obsługuje też statystykę 2; uruchamianie z huba wykładów statystyki i analizy
+  ryzyka już nie działa, bo ich `app.R` nie ma serwera). Dokończone tego samego
+  dnia: `lc_table()` bez stronicowania przez serwer (`page_input`), `lc_crosstab()`
+  bez klikalnych komórek (`input_id`), skrypty JS rdzenia bez gałęzi Shiny
+  (`lc_widgets.js`, `shared_toc.js`, `lc_charts.js` bez `onMessage()`,
+  `lc_dragdrop.js`, `lc_stat_figures.js`). Przy okazji naprawione: scena
+  autobusu w statystyce 01 słuchała `shiny:inputchanged` i bez serwera nie
+  reagowała na suwak zapasu; `check_static_ready.R` liczy teraz też zdarzenia
+  `shiny:…` i `Shiny.unbindAll` w skryptach wykładów. `przedmioty/*/skrypt/build`
+  (repo dydaktyka): dawny zrzut przez Shiny usunięty, `build_offline.R` składa
+  paczkę ze stron `build_static.R` (spis bez odnośnika do innych kursów, ZIP,
+  `zrodla.json` z commitem repo wykładów); README obu przedmiotów przepisane.
+  Potem (15 listopada 2026) z gałęzi usunięte wszystko, co było Shiny: kurs
+  `statystyka-2/`, hub (`hub/`, `scripts/hub`, `Wyklady.command`, `Wyklady.bat`,
+  linki `LC_HUB_URL` w `lecture_layout.R` — logo prowadzi teraz do spisu kursu
+  `index.html`), menu `analiza-ryzyka/scripts/wyklad`, audyt
+  `statystyka/scripts/audit_panels.R`, prototyp `statystyka/prototypy/chart-dostepnosc`
+  i aplikacje źródłowe `statystyka/materialy-zrodlowe/regresja-2025`. Ostatnią
+  wersję z Shiny oznacza tag `shiny-final` (`main` sprzed scalenia).
+- [x] Strona statyczna: spis wykładów (`Rscript scripts/build_index.R` → `dist/index.html`
+  i `dist/<kurs>/index.html`); wykłady jeszcze niezbudowane są na liście bez odnośnika.
+  Zakładki górnego paska prowadzą tylko do wykładów już zbudowanych w `dist/<kurs>/`.
+- [ ] Kroje na stronie statycznej są wbudowane w każdy plik (decyzja
+  14 listopada 2026): dwanaście plików TTF z `shared/fonts/`, wagi 400–700 jak
+  w Google Fonts, ok. 3 MB na wykład. Do rozważenia: format WOFF2 (mniejszy).
+
+### Wspólny rdzeń `shared/`
+
+Stan (14 listopada 2026, gałąź `statyczny-js`): statystyka i analiza ryzyka
+ładują layout, paletę, style i biblioteki JS z `shared/`; w `<kurs>/R/` zostały
+`course.R`, pliki przedmiotowe i (analiza ryzyka) `course_styles.css`. Opis:
+`shared/README.md`. Statystyka 2 ma nadal własny snapshot.
+
+- [ ] **Decyzja:** odstępstwa analizy ryzyka w `analiza-ryzyka/R/course_styles.css`
+  (sekcja „Odstępstwa od rdzenia”): wciśnięty segment w kolorze akcentu, dwa
+  wykresy obok siebie od 640 px (rdzeń 760 px), szersze pola `lc_drop_match`
+  (rdzeń: kolumny 120 px). Każde: zostawić, przyjąć zachowanie rdzenia albo
+  przenieść do rdzenia dla obu kursów.
+- [ ] **Decyzja:** przełączniki `.LC_COURSE` (`chapter_mode`, `plot_scaling`)
+  zachowują dawne zachowanie każdego kursu. Znikają razem z serwerem Shiny;
+  do tego czasu można je ujednolicić albo zostawić.
+- [ ] Uzgodnić `analiza-ryzyka/R/DESIGN_CONTRACT.md` z `shared/DESIGN_CONTRACT.md`:
+  zostawić w kursie tylko reguły własne (`risk_*`, nagłówki rozdziałów).
+- [ ] Testy rdzenia (`test-widgets-v2.R`, `test-panel-layout.R`) są w dwóch
+  kopiach w `<kurs>/tests/`; przenieść do jednego miejsca.
+- [x] Build offline w `przedmioty/*/skrypt/build/build_offline.R` składa paczkę
+  ze stron statycznych (15 listopada 2026); dawny zrzut przez Shiny wycofany.
+
 ### Migracja widgetów do v2
 
 Stan:
 
-- Komponenty v2 (widgety, tabele, bloki tekstu) są we wspólnym `R/`
-  (`lecture_layout.R`, `shared_styles.css`, `lc_widgets.js`), identyczne we
-  wszystkich kursach. Zasady: `R/DESIGN_CONTRACT.md`.
+- Komponenty v2 (widgety, tabele, bloki tekstu) są we wspólnym `shared/`
+  (`lecture_layout.R`, `shared_styles.css`, `lc_widgets.js`); statystyka 2 ma
+  własną kopię w `statystyka-2/R/`. Zasady: `shared/DESIGN_CONTRACT.md`.
 - Audyt z 3 października 2026 (`statystyka/scripts/audit_panels.R`,
   24 aplikacje, 1440 i 390 px, stan po wejściu do rozdziału, bez interakcji):
   510 paneli, 405 bez starych elementów, 0 wylewa się na telefonie,
@@ -63,8 +256,8 @@ układ kolumn / pudełka statystyk / wykres o stałej wysokości / `lc_feedback`
 | statystyka-2 03-kierunkowe | 14 | 0 | 14 | 11 | 14 | 3 |
 | statystyka-2 04-szeregi-czasowe | 41 | 4 | 37 | 4 | 35 | 21 |
 
-W statystyce i analizie ryzyka został tylko jeden wykres z kliknięciem
-na `zoom_plot_ui` (statystyka 07, ćwiczenie z prostą).
+W statystyce i analizie ryzyka nie ma już wykresu z kliknięciem na `zoom_plot_ui`
+(ćwiczenie z prostą w statystyce 07 liczy przeglądarka).
 
 Zostało:
 
@@ -122,12 +315,12 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 - [ ] **Decyzja:** czy interaktywny łańcuch pojęć z analizy ryzyka 01 ma być
   wspólnym komponentem.
 - [ ] Więcej wykresów JS (ECharts). Kryterium (2026-11-05, zasada
-  w `statystyka/R/DESIGN_CONTRACT.md`): wykres JS działa w wersji
+  w `shared/DESIGN_CONTRACT.md`): wykres JS działa w wersji
   offline dla studentów (`przedmioty/statystyka/skrypt/`, bez serwera R)
   i zwiększa responsywność, więc wierne odtworzenie wykresu R też jest
   zyskiem — nie tylko widgety ggplot + suwak. Prowadzący potwierdził na
   zajęciach, że wykresy Chart.js są wyraźnie bardziej responsywne niż
-  renderowane w Shiny (2026-10-29). Wspólna obsługa: `statystyka/R/lc_charts.js`.
+  renderowane w Shiny (2026-10-29). Wspólna obsługa: `shared/lc_charts.js`.
   Stan 2026-11-09: statystyka 01, 02, 03, 04 i 05 na ECharts. W 04 wszystkie
   ryciny rysuje ECharts: eksploratory w `ci_explorers.js`, wykresy ggplot przez
   most `ci_echarts.R` / `ci_echarts.js` (obliczenia w R, rysunek w JS).
@@ -160,7 +353,7 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     na ECharts (2026-11-09). Ryciny rysowane przez most `ci_echarts` nadal
     potrzebują serwera R do obliczeń; w pełni offline działają eksploratory,
     Ryc. 2.1 i 4.2 oraz sceny SVG.
-  - [x] Most ggplot → ECharts we wspólnym `statystyka/R/lc_ggplot_echarts.*`
+  - [x] Most ggplot → ECharts we wspólnym `shared/lc_ggplot_echarts.*`
     (2026-11-09); wykład 02 w całości na ECharts (tabela krzyżowa, pudełka).
     Od 2026-11-13 wykład 02 działa w całości offline: tabela krzyżowa i pudełka
     w `survey_charts.js` na danych ankiety z wykładu 01; mostu już nie ładuje.
@@ -169,8 +362,8 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     Ryciny działają offline; opisy dla danych ankiety liczone w R z góry.
   - [x] Statystyka 03: wszystkie wykresy R przepisane w JS (2026-11-13). Rozkłady
     teoretyczne w `dist_charts.js`, symulacje w `sim_charts.js`, punkty stop
-    w `stops12/34/56_charts.js`, wspólny silnik `statystyka/R/lc_stat_figures.*`,
-    rozkłady i losowanie `R/lc_dist.js`. Ryc. 1.2 (lejek) nadal dostaje serie
+    w `stops12/34/56_charts.js`, wspólny silnik `shared/lc_stat_figures.*`,
+    rozkłady i losowanie `shared/lc_dist.js`. Ryc. 1.2 (lejek) nadal dostaje serie
     z serwera.
   - [ ] Statystyka 05–10: audyt kandydatów (najwięcej suwaków: 05 i 07).
   - [ ] Statystyka 03 offline, Ryc. 1.2 (lejek): odczyty przechodzą zapisane
@@ -181,9 +374,9 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
     Wzór mostka: 05 Ryc. 2.4 (`"live": true`, `build/widgets/05-ch2-hipotezy.js`).
     Widgety z `data-config` działają offline bez dodatkowych wpisów
     (`lcCharts` ustawia `data-ready`, build wstawia czystą kopię z pristine.js).
-  - [ ] Wersje offline statystyki (`przedmioty/statystyka/skrypt/`): przebudować
+  - [x] (nieaktualne od 15 listopada 2026: paczka offline to strony statyczne) Wersje offline statystyki (`przedmioty/statystyka/skrypt/`): przebudować
     00, 04, 06–10 (`build_offline.R --check`). 03 wymaga tylko `--stamp --only=03`
-    — po zrzucie zmienił się wyłącznie `R/DESIGN_CONTRACT.md`. 01, 02, 03 (treść)
+    — po zrzucie zmienił się wyłącznie `shared/DESIGN_CONTRACT.md`. 01, 02, 03 (treść)
     i 05 aktualne na 2026-11-05.
   - [ ] Statystyka 03, quiz: przejrzeć parametry przykładowych realizacji
     (pole `example` w `modules/quiz_rozklady.json`). Część dobrana, bo pytania
@@ -197,7 +390,7 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
   sterowaniu klawiaturą (Tab, strzałki, większy krok z Shiftem, Home/End),
   skalowaniu napisów wraz z S/M/L oraz lokalnym powiększeniu wykresu małą,
   ujednoliconą lupą z boku. Wzorzec: statystyka 03, Ryc. 4.3
-  (`modules/area_chart.js`, `lc_chart_zoom_button()`, `R/lc_charts.js`).
+  (`modules/area_chart.js`, `lc_chart_zoom_button()`, `shared/lc_charts.js`).
   Dobierać mechanizmy do celu dydaktycznego; zachować minimalizm. Pola liczbowe
   dodawać tylko tam, gdzie dokładna wartość jest istotna, nie automatycznie
   w demonstracjach pojęć (zaakceptowane 2026-10-31).
@@ -214,11 +407,11 @@ Obecnie lokalne; uogólnienie wymaga osobnej decyzji.
 ### Zapis liczb: kropka dziesiętna i zwykły minus
 
 Decyzja: wszędzie kropka dziesiętna i zwykły minus `-`, jak w R i jamovi.
-Helpery v2 (`lc_fmt()`, `lc_num()`, `lc_pval()`, `R/lc_widgets.js`) już
+Helpery v2 (`lc_fmt()`, `lc_num()`, `lc_pval()`, `shared/lc_widgets.js`) już
 to stosują.
 
 - [x] Przestawić stare formatery na kropkę: `format_p_value()` / `format_p()` /
-  `ui_p_value()` we wspólnym `R/shared.R`, `risk_format_probability()` i
+  `ui_p_value()` we wspólnym `shared/shared.R`, `risk_format_probability()` i
   lokalne formatery analizy ryzyka.
 - [ ] Przejrzeć teksty wykładów we wszystkich kursach i zamienić przecinek
   dziesiętny na kropkę (np. „p = 0,10” w analizie ryzyka 05 obok widgetu

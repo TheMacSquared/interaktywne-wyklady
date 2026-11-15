@@ -68,7 +68,21 @@ ch2_ui <- list(
                             values = c(20, 50, 200), selected = 50)),
         more = NULL,
         config = list(kind = "pop", n = 50, z = as.integer(faculty$zdal),
-                      aria = "Dwa tysiące czterysta kropek reprezentujących studentów po egzaminie, wylosowana próba i odsetek, który zdał"))
+                      aria = "Dwa tysiące czterysta kropek reprezentujących studentów po egzaminie, wylosowana próba i odsetek, który zdał"),
+        texts = list(
+        tagList("Każda kropka to student, który właśnie wyszedł z egzaminu. Wyników jeszcze nie ma, więc nikt nie wie,
+        ilu zdało. Razem jest ", tags$code("N", .noWS = "outside"), " = ", lc_fmt(pop_N), " osób. Zadzwoń do kilku losowych kolegów
+        i zapytaj, jak im poszło."),
+        tagList("Zanim zadzwonisz, potrzebujesz listy numerów. Najlepsza jest lista obecności, ale ktoś był chory,
+        ktoś na wymianie. Puste kółka to osoby poza listą: nie ma ich w operacie, więc nigdy do nich nie zadzwonisz.
+        Losujemy tylko z tego, co mamy."),
+        tagList("Dzwonisz do losowych osób i każda mówi, czy zdała. Zielone to zdali, czerwone to nie. Zmień ",
+        tags$code("n", .noWS = "outside"), " i dzwoń kilka razy. Kto odbierze, zmienia się za każdym razem."),
+        tagList("Wyniki wchodzą do USOS i wiemy, jak było naprawdę. Dolny pasek porównuje rzeczywistość z tym,
+        co usłyszałeś. Z kilkudziesięciu telefonów wyszło zwykle blisko prawdy. Przy ", tags$code("n", .noWS = "outside"),
+        " = 200 jeszcze bliżej, a przy 20 zdarza się spora pomyłka.")
+        )
+      )
     ),
 
     lc_p("Nawet przy n = 200 próba to tylko ",
@@ -94,23 +108,3 @@ ch2_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch2_server <- function(input, output, session) {
-  scene_texts(input, output, "ch2_populacja", list(
-    tagList("Każda kropka to student, który właśnie wyszedł z egzaminu. Wyników jeszcze nie ma, więc nikt nie wie,
-      ilu zdało. Razem jest ", tags$code("N", .noWS = "outside"), " = ", lc_fmt(pop_N), " osób. Zadzwoń do kilku losowych kolegów
-      i zapytaj, jak im poszło."),
-    tagList("Zanim zadzwonisz, potrzebujesz listy numerów. Najlepsza jest lista obecności, ale ktoś był chory,
-      ktoś na wymianie. Puste kółka to osoby poza listą: nie ma ich w operacie, więc nigdy do nich nie zadzwonisz.
-      Losujemy tylko z tego, co mamy."),
-    tagList("Dzwonisz do losowych osób i każda mówi, czy zdała. Zielone to zdali, czerwone to nie. Zmień ",
-      tags$code("n", .noWS = "outside"), " i dzwoń kilka razy. Kto odbierze, zmienia się za każdym razem."),
-    tagList("Wyniki wchodzą do USOS i wiemy, jak było naprawdę. Dolny pasek porównuje rzeczywistość z tym,
-      co usłyszałeś. Z kilkudziesięciu telefonów wyszło zwykle blisko prawdy. Przy ", tags$code("n", .noWS = "outside"),
-      " = 200 jeszcze bliżej, a przy 20 zdarza się spora pomyłka.")
-  ))
-}

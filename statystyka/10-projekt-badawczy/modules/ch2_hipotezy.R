@@ -1,3 +1,21 @@
+# Treść stała (dawniej output$ch2_bundle na serwerze): składana przy budowaniu strony.
+ch2_bundle_ui <- function() {
+  cards <- lapply(tr_trop_order, function(id) {
+    tr <- tr_tropy[[id]]
+    tagList(
+      lc_h3(tr$short),
+      p(tags$strong("Pytanie:"), " ", tr$question),
+      p(tags$strong("Robocza hipoteza:"), " ",
+        HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$hypothesis))),
+      p(tags$strong("Alternatywne wyjaśnienia:")),
+      tags$ul(lapply(tr$alt, tags$li)),
+        lc_note("Dane i braki", p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$data_check)))),
+        lc_note("W analizie", p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$plan_check))))
+      )
+  })
+  tagList(cards)
+}
+
 ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", content = tagList(
   lc_chapter_hero(
     kicker = "Rozdział 02 · Hipotezy",
@@ -11,7 +29,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
 
   proj_stage_map(current = 2),  # Pasek etapów
 
-  lc_h2("sec-01", "Od pytania do hipotezy badawczej"),
+  lc_h2("ch2-sec-01", "Od pytania do hipotezy badawczej"),
 
   lc_p("W rozdziale 1 postawiliśmy cel: ", tags$em(tr_goal), " Do celu
     dobraliśmy pięć tropów, każdy w postaci ",
@@ -30,7 +48,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
     Ten krok wykonamy w rozdziale 5, przy wyborze testu. Na razie
     porządkujemy projekt, a nie liczymy."),
 
-  lc_h2("sec-02", "Alternatywne wyjaśnienia"),
+  lc_h2("ch2-sec-02", "Alternatywne wyjaśnienia"),
 
   lc_p("Nawet jeśli dane wesprą hipotezę, nie musi to oznaczać, że trop jest
     prawdziwy w tej postaci, w jakiej go zapisaliśmy. Ten sam wynik może
@@ -55,7 +73,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
      nie pozwalają, zapisz to jako ograniczenie."
   ),
 
-  lc_h2("sec-03", "Cała wiązka jako hipotezy"),
+  lc_h2("ch2-sec-03", "Cała wiązka jako hipotezy"),
 
   lc_p("Poniżej wszystkie pięć tropów zapisanych w tym samym układzie:
     pytanie, hipoteza robocza, alternatywne wyjaśnienia, dostępne dane
@@ -65,7 +83,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
   figure_panel(
     label = "Ryc. 2.1",
     title = "Wiązka tropów zapisana jako hipotezy",
-    uiOutput("ch2_bundle")
+    ch2_bundle_ui()
   ),
 
   lc_p("W każdym tropie brakuje w danych czegoś, co pomogłoby rozstrzygnąć
@@ -87,22 +105,3 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
     "ch3")
   )
 )
-
-ch2_server <- function(input, output, session) {
-  output$ch2_bundle <- renderUI({
-    cards <- lapply(tr_trop_order, function(id) {
-      tr <- tr_tropy[[id]]
-      tagList(
-        lc_h3(tr$short),
-        p(tags$strong("Pytanie:"), " ", tr$question),
-        p(tags$strong("Robocza hipoteza:"), " ",
-          HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$hypothesis))),
-        p(tags$strong("Alternatywne wyjaśnienia:")),
-        tags$ul(lapply(tr$alt, tags$li)),
-          lc_note("Dane i braki", p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$data_check)))),
-          lc_note("W analizie", p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", tr$plan_check))))
-        )
-    })
-    tagList(cards)
-  })
-}

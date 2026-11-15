@@ -41,7 +41,22 @@ ch4_ui <- list(
         options = list(list(name = "hits", label = "Pani trafiła",
                             values = c(6, 7, 8, 9, 10), selected = 9)),
         config = list(kind = "tea", cups = 10, hits = 9,
-                      aria = "Dziesięć filiżanek herbaty, wynik pani, zgadujący i histogram liczby trafień zgadujących"))
+                      aria = "Dziesięć filiżanek herbaty, wynik pani, zgadujący i histogram liczby trafień zgadujących"),
+        texts = list(
+        tagList("Pani próbuje po kolei dziesięciu filiżanek i za każdym razem mówi, czy najpierw
+        wlano mleko, czy herbatę. Wybierz, ile razy trafiła, i obejrzyj próbę. Czy ten wynik
+        świadczy o umiejętności?"),
+        tagList("Żeby ocenić wynik pani, potrzebujemy punktu odniesienia: kogoś, kto na pewno nie ma
+        żadnej umiejętności. Zgadujący do każdej filiżanki rzuca monetą. Zobacz, ile trafień
+        wychodzi mu w jednej próbie."),
+        tagList("Sprowadzamy tłum zgadujących. Każdy dostaje te same dziesięć filiżanek i zgaduje,
+        a jego liczba trafień spada słupkiem nad swoją wartością. Dokładaj po 10, 100
+        i 1000. Czerwone słupki to wyniki równie dobre jak wynik pani albo lepsze."),
+        tagList("Ułamek tłumu w czerwonych słupkach to szansa, że sam przypadek da wynik pani albo
+        lepszy. Kropki pokazują ją dla modelu. Zmień liczbę trafień pani i patrz, jak
+        zmienia się ta szansa: rzadki wynik daje powód, by uznać, że to nie przypadek.")
+        )
+      )
     ),
 
     lc_p("Wynik 9 na 10 robi wrażenie, ale wystarczy zmienić liczbę trafień
@@ -82,24 +97,3 @@ ch4_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch4_server <- function(input, output, session) {
-  scene_texts(input, output, "ch4_herbata", list(
-    tagList("Pani próbuje po kolei dziesięciu filiżanek i za każdym razem mówi, czy najpierw
-      wlano mleko, czy herbatę. Wybierz, ile razy trafiła, i obejrzyj próbę. Czy ten wynik
-      świadczy o umiejętności?"),
-    tagList("Żeby ocenić wynik pani, potrzebujemy punktu odniesienia: kogoś, kto na pewno nie ma
-      żadnej umiejętności. Zgadujący do każdej filiżanki rzuca monetą. Zobacz, ile trafień
-      wychodzi mu w jednej próbie."),
-    tagList("Sprowadzamy tłum zgadujących. Każdy dostaje te same dziesięć filiżanek i zgaduje,
-      a jego liczba trafień spada słupkiem nad swoją wartością. Dokładaj po 10, 100
-      i 1000. Czerwone słupki to wyniki równie dobre jak wynik pani albo lepsze."),
-    tagList("Ułamek tłumu w czerwonych słupkach to szansa, że sam przypadek da wynik pani albo
-      lepszy. Kropki pokazują ją dla modelu. Zmień liczbę trafień pani i patrz, jak
-      zmienia się ta szansa: rzadki wynik daje powód, by uznać, że to nie przypadek.")
-  ))
-}

@@ -2,6 +2,14 @@
 # CHAPTER 1: Logika testowania hipotez
 # ============================================================================
 
+# Komentarz do błędnej interpretacji p-wartości (dwie odpowiedzi w pytaniu przy Ryc. 3.3).
+ch1_pvalue_wrong <- lc_status(
+  lc_verdict(tags$strong("Nie."), type = "danger"),
+  " p-wartość liczymy przy założeniu, że H₀ jest prawdziwa, więc nie jest
+  prawdopodobieństwem H₀ ani „przypadkowości” wyniku. To prawdopodobieństwo
+  wyniku co najmniej tak skrajnego przy prawdziwej H₀."
+)
+
 ch1_ui <- list(
   id = "ch-logika", num = "01", title = "Logika testowania",
   content = tagList(
@@ -50,11 +58,17 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.1",
       title = "Wyniki eksperymentu",
-      lc_toolbar(
-        lc_action("ch1_case_generate", "Przeprowadź eksperyment", variant = "solid"),
-        lc_readouts(uiOutput("ch1_case_stats"))
-      ),
-      lc_plot("ch1_case_plot", max_height = "350px")
+      # Losowanie, wykres i odczyty liczy przeglądarka (modules/figures.js, rycina s05_case).
+      lc_sf_figure("s05_case",
+        toolbar = tagList(
+          lc_sf_action("gen", "ch1_case_generate", "Przeprowadź eksperyment", variant = "solid"),
+          lc_readouts(
+            lc_readout("Plecak", lc_sf_value("case_a"), color = col_accept),
+            lc_readout("Biurko", lc_sf_value("case_b"), color = col_pvalue),
+            lc_readout("Różnica", lc_sf_value("case_diff"), color = upwr_secondary)
+          )
+        ),
+        ratio = "1.8/1", max_height = "350px")
     ),
 
     lc_p("W typowym losowaniu średnia w grupie „biurko” wypada o kilka punktów
@@ -264,13 +278,17 @@ ch1d_ui <- list(
     figure_panel(
       label = "Ryc. 3.1",
       title = "Moc testu i błędy",
-      lc_toolbar(
-        lc_slider("ch1_alpha", "α (poziom istotności)", 0.01, 0.20, 0.05, 0.01),
-        lc_slider("ch1_effect", "Odległość μ od μ₀ (pkt)", 0, 15, 7, 1),
-        lc_slider("ch1_power_n", "n (liczebność próby)", 10, 200, 40, 5),
-        lc_readouts(uiOutput("ch1_power_stats"))
-      ),
-      lc_plot("ch1_power_plot", ratio = "1.6/1", max_height = "380px")
+      lc_sf_figure("s05_power",
+        control = list(
+          lc_sf_slider("ch1_alpha", "α (poziom istotności)", 0.01, 0.20, 0.05, 0.01),
+          lc_sf_slider("ch1_effect", "Odległość μ od μ₀ (pkt)", 0, 15, 7, 1),
+          lc_sf_slider("ch1_power_n", "n (liczebność próby)", 10, 200, 40, 5)
+        ),
+        toolbar = lc_readouts(
+          lc_readout("Moc", lc_sf_value("power_value"), color = col_accept),
+          lc_readout("Błąd II", lc_sf_value("power_beta"), color = upwr_secondary)
+        ),
+        ratio = "1.6/1", max_height = "380px", legend = TRUE)
     ),
 
     lc_p("Przy ustawieniach startowych (\\(\\alpha = 0.05\\), różnica 7 pkt,
@@ -345,12 +363,18 @@ ch1d_ui <- list(
     figure_panel(
       label = "Ryc. 3.2",
       title = "Powtórzone eksperymenty pod H₀",
-      lc_toolbar(
-        lc_action_group(ch1_sim_10 = "10×", ch1_sim_200 = "200×", label = "Powtórz eksperyment"),
-        lc_action("ch1_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-        lc_readouts(uiOutput("ch1_sim_info"))
-      ),
-      lc_plot("ch1_sim_plot", max_height = "350px"),
+      lc_sf_figure("s05_sim",
+        toolbar = tagList(
+          lc_sf_action_group("Powtórz eksperyment", sim10 = "10×", sim200 = "200×"),
+          lc_sf_action("reset", "ch1_sim_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
+          lc_readouts(
+            lc_readout("Eksperymentów", lc_sf_value("sim_n"), color = col_h0),
+            lc_readout("Obs. różnica", lc_sf_value("sim_obs"), color = col_reject),
+            lc_readout("p z symulacji", lc_sf_value("sim_p"), color = col_pvalue)
+          )
+        ),
+        ratio = "1.9/1", max_height = "350px", legend = TRUE,
+        after = lc_sf_empty("Kliknij „Powtórz” — symulujemy eksperymenty bez efektu")),
       lc_caption("Każdy eksperyment: dwie grupy po 40 osób z tej samej populacji, jak w rozdziale 01.")
     ),
 
@@ -402,7 +426,14 @@ ch1d_ui <- list(
           selected = character(0)
         )
       ),
-      uiOutput("ch1_pvalue_meaning_feedback")
+      lc_variants("ch1_pvalue_meaning", selected = ".none", list(
+        tail_prob = lc_status(
+          lc_verdict(tags$strong("Tak."), type = "ok"),
+          " p-wartość zakłada, że H₀ jest prawdziwa, i mówi, jak często wynik
+          byłby co najmniej tak skrajny jak nasz."
+        ),
+        h0_prob = ch1_pvalue_wrong, random_prob = ch1_pvalue_wrong
+      ))
     ),
 
     lc_p("Najczęstszy błąd polega na odwróceniu warunku. p-wartość liczymy przy
@@ -436,12 +467,7 @@ ch1d_ui <- list(
       label = "Ryc. 3.5",
       title = "p-wartość a α",
       width_mode = "text",
-      lc_toolbar(
-        lc_segmented("ch1d_palpha_case", "Wynik",
-          choices = c("z = 2.17" = "2.17", "z = 1.50" = "1.50"), selected = "2.17"),
-        lc_readouts(uiOutput("ch1d_palpha_read", inline = TRUE))
-      ),
-      lc_plot("ch1d_palpha_plot", ratio = "2/1", max_height = "380px")
+      ch1_palpha_fig()
     ),
 
     # Odczyt ryciny
@@ -493,11 +519,7 @@ ch1d_ui <- list(
     figure_panel(
       label = "Ryc. 3.6",
       title = "Quiz: odrzucić czy nie?",
-      uiOutput("ch1_quiz_scenario"),
-      p("Decyzja:"),
-      uiOutput("ch1_quiz_options"),
-      uiOutput("ch1_quiz_feedback"),
-      lc_action("ch1_quiz_next", "Nowy scenariusz", variant = "outline")
+      ch1_quiz_fig()
     ),
 
     lc_p("Reguła \\(p < \\alpha\\) wyznacza ostrą granicę, choć siła dowodów
@@ -516,377 +538,3 @@ ch1d_ui <- list(
     )
   )
 )
-
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch1_server <- function(input, output, session) {
-
-  # Jeden wynik naraz na N(0, 1) pod H₀. Środek (|z| < 1.96)
-  # podpisany H₀, krańce Hₐ; pole za ±|z| = p-wartość, jej liczba w odczycie.
-  ch1d_palpha_z <- reactive(as.numeric(input$ch1d_palpha_case %||% "2.17"))
-
-  output$ch1d_palpha_read <- renderUI({
-    z <- ch1d_palpha_z()
-    p <- 2 * pnorm(-abs(z))
-    tagList(
-      lc_readout("p", sprintf("%.3f", p), color = col_pvalue, swatch = TRUE),
-      lc_readout("α", "0.05", color = col_reject, swatch = TRUE),
-      lc_readout(NULL, if (p < 0.05) "p < α" else "p ≥ α")
-    )
-  })
-
-  zoom_plot_server("ch1d_palpha_plot", reactive({
-    z <- ch1d_palpha_z()
-    crit <- qnorm(0.975)
-    x <- seq(-4, 4, length.out = 801)
-    curve_df <- data.frame(x = x, y = dnorm(x))
-    p_df <- curve_df[abs(curve_df$x) >= abs(z), ]
-    p_df$side <- ifelse(p_df$x < 0, "l", "r")
-    regions <- data.frame(
-      x = c(-3.05, 0, 3.05), y = 0.22,
-      lab = c("bold(H[a])", "bold(H[0])", "bold(H[a])"),
-      col = c(col_reject, col_h0, col_reject)
-    )
-
-    ggplot() +
-      annotate("rect", xmin = -4, xmax = -crit, ymin = 0, ymax = 0.43,
-               fill = col_reject, alpha = 0.06) +
-      annotate("rect", xmin = crit, xmax = 4, ymin = 0, ymax = 0.43,
-               fill = col_reject, alpha = 0.06) +
-      geom_area(data = p_df, aes(x, y, group = side), fill = col_pvalue, alpha = 0.6) +
-      geom_line(data = curve_df, aes(x, y), color = col_h0, linewidth = 1.2) +
-      geom_vline(xintercept = c(-crit, crit), linetype = "dashed", color = col_reject) +
-      geom_segment(aes(x = z, xend = z, y = 0, yend = 0.41),
-                   color = upwr_secondary, linewidth = 1.1) +
-      annotate("label", x = z, y = 0.41, label = sprintf("z = %.2f", z),
-               family = lc_mono_family, size = 4.2, label.size = 0,
-               fill = "white", color = upwr_secondary) +
-      geom_text(data = regions, aes(x, y, label = lab, color = col), parse = TRUE,
-                size = 9) +
-      scale_color_identity() +
-      scale_x_continuous(breaks = c(-crit, 0, crit), labels = c("-1.96", "0", "1.96"),
-                         expand = c(0, 0)) +
-      scale_y_continuous(expand = expansion(mult = c(0, 0.04))) +
-      labs(x = "Statystyka testowa", y = NULL) +
-      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-            panel.grid.major.y = element_blank(), panel.grid.minor = element_blank())
-  }))
-
-  observe({
-    session$sendCustomMessage("ws_pvalue_chart", list(
-      id = "ch1_pvalue_chart",
-      stat = 2.17
-    ))
-  })
-
-  # --- Sekcja 0: Case study ---
-  ch1_case_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch1_case_generate, {
-    ch1_case_data(generate_phone_data(40))
-  })
-
-  # Generuj dane na starcie
-  observe({
-    if (is.null(ch1_case_data())) {
-      ch1_case_data(generate_phone_data(40))
-    }
-  })
-
-  zoom_plot_server("ch1_case_plot", reactive({
-    d <- ch1_case_data()
-    if (is.null(d)) return(NULL)
-
-    ggplot(d, aes(x = grupa, y = koncentracja, fill = grupa, color = grupa)) +
-      geom_boxplot(alpha = 0.6, outlier.shape = NA, width = 0.5) +
-      geom_jitter(width = 0.15, alpha = 0.5, size = 2) +
-      scale_fill_manual(values = c(col_accept, col_pvalue)) +
-      scale_color_manual(values = c(col_accept, col_pvalue)) +
-      labs(
-           x = NULL, y = "Wynik (0–100 pkt)") +
-      theme(legend.position = "none") +
-      coord_cartesian(ylim = c(20, 100))
-  }))
-
-  output$ch1_case_stats <- renderUI({
-    d <- ch1_case_data()
-    if (is.null(d)) return(NULL)
-
-    stats <- d %>%
-      group_by(grupa) %>%
-      summarise(m = round(mean(koncentracja), 1),
-                s = round(sd(koncentracja), 1),
-                .groups = "drop")
-
-    diff_val <- round(stats$m[1] - stats$m[2], 1)
-
-    tagList(
-      lc_readout("Plecak", paste0(stats$m[1], " pkt"), color = col_accept),
-      lc_readout("Biurko", paste0(stats$m[2], " pkt"), color = col_pvalue),
-      lc_readout("Różnica", paste0(diff_val, " pkt"), color = upwr_secondary)
-    )
-  })
-
-  # Obserwowana różnica średnich z case study
-  ch1_observed_diff <- reactive({
-    d <- ch1_case_data()
-    if (is.null(d)) return(0)
-    means <- tapply(d$koncentracja, d$grupa, mean)
-    unname(means["Telefon w plecaku"] - means["Telefon na biurku"])
-  })
-
-  # --- Widget 1: Histogram różnic z powtórzonych eksperymentów ---
-  ch1_sim_diffs <- reactiveVal(numeric(0))
-
-  do_simulations <- function(k) {
-    n <- 40  # jak w eksperymencie z rozdziału 01
-    new_diffs <- sapply(seq_len(k), function(i) {
-      g1 <- rnorm(n, mean = 70, sd = 13)
-      g2 <- rnorm(n, mean = 70, sd = 13)
-      mean(g1) - mean(g2)
-    })
-    ch1_sim_diffs(c(ch1_sim_diffs(), new_diffs))
-  }
-
-  observeEvent(input$ch1_sim_10, do_simulations(10))
-  observeEvent(input$ch1_sim_200, do_simulations(200))
-  observeEvent(input$ch1_sim_reset, ch1_sim_diffs(numeric(0)))
-
-  output$ch1_sim_info <- renderUI({
-    n_s <- length(ch1_sim_diffs())
-    obs <- round(ch1_observed_diff(), 1)
-    diffs <- ch1_sim_diffs()
-    tagList(
-      lc_readout("Eksperymentów", n_s, color = col_h0),
-      lc_readout("Obs. różnica", paste0(obs, " pkt"), color = col_reject),
-      lc_readout("p z symulacji",
-                 if (n_s) sprintf("%.3f", mean(abs(diffs) >= abs(ch1_observed_diff()))) else "—",
-                 color = col_pvalue)
-    )
-  })
-
-  zoom_plot_server("ch1_sim_plot", reactive({
-    diffs <- ch1_sim_diffs()
-    obs <- ch1_observed_diff()
-
-    if (length(diffs) == 0) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5,
-                 label = "Kliknij „Powtórz” —\nsymulujemy eksperymenty bez efektu",
-                 size = 5, color = upwr_reference) +
-        theme_void()
-    } else {
-      df <- data.frame(diff = diffs, extreme = abs(diffs) >= abs(obs))
-      ggplot(df, aes(x = diff, fill = extreme)) +
-        geom_histogram(bins = 30, color = "white") +
-        geom_vline(xintercept = obs, color = col_reject,
-                   linewidth = 1.5, linetype = "solid") +
-        geom_vline(xintercept = -obs, color = col_reject,
-                   linewidth = 1, linetype = "dashed") +
-        scale_fill_manual(values = c("TRUE" = col_pvalue, "FALSE" = col_h0),
-                          labels = c("TRUE" = "co najmniej tak skrajne",
-                                     "FALSE" = "bliżej zera"),
-                          name = NULL) +
-        labs(
-             
-             x = "Różnica średnich (grupa A − grupa B)", y = "Liczba") +
-                theme(legend.position = "top")
-    }
-  }))
-
-  output$ch1_pvalue_meaning_feedback <- renderUI({
-    choice <- input$ch1_pvalue_meaning
-    if (is.null(choice) || identical(choice, character(0))) return(NULL)
-
-    if (identical(choice, "tail_prob")) {
-      lc_status(
-        lc_verdict(tags$strong("Tak."), type = "ok"),
-        " p-wartość zakłada, że H₀ jest prawdziwa, i mówi, jak często wynik
-        byłby co najmniej tak skrajny jak nasz."
-      )
-    } else {
-      lc_status(
-        lc_verdict(tags$strong("Nie."), type = "danger"),
-        " p-wartość liczymy przy założeniu, że H₀ jest prawdziwa, więc nie jest
-        prawdopodobieństwem H₀ ani „przypadkowości” wyniku. To prawdopodobieństwo
-        wyniku co najmniej tak skrajnego przy prawdziwej H₀."
-      )
-    }
-  })
-
-  # --- Widget 2: Moc testu ---
-  zoom_plot_server("ch1_power_plot", reactive({
-    alpha <- input$ch1_alpha
-    diff_means <- input$ch1_effect  # różnica średnich w punktach
-    n <- input$ch1_power_n
-    sigma <- 13  # stałe odchylenie standardowe (ukryte)
-    mu0 <- 70
-    mu1 <- mu0 + diff_means
-
-    x <- seq(mu0 - 4 * sigma / sqrt(n), max(mu1, mu0) + 4 * sigma / sqrt(n), length.out = 500)
-    se <- sigma / sqrt(n)
-
-    y_h0 <- dnorm(x, mean = mu0, sd = se)
-    y_h1 <- dnorm(x, mean = mu1, sd = se)
-
-    crit_low <- mu0 + qnorm(alpha / 2) * se
-    crit_high <- mu0 + qnorm(1 - alpha / 2) * se
-
-    df_plot <- data.frame(
-      x = rep(x, 2),
-      y = c(y_h0, y_h1),
-      dist = rep(c("H₀: μ = 70", "Hₐ: μ = 70 + odległość"), each = 500)
-    )
-
-    p <- ggplot(df_plot, aes(x = x, y = y, color = dist)) +
-      geom_line(linewidth = 1.2) +
-      geom_vline(xintercept = c(crit_low, crit_high), linetype = "dashed",
-                 color = upwr_secondary) +
-      scale_color_manual(values = c(col_h0, col_h1), name = "Rozkład") +
-      labs(
-           x = "Średnia koncentracja w próbie", y = "Gęstość") +
-      theme(legend.position = "top")
-
-    # Obszar odrzucenia H0 w teście dwustronnym.
-    h0_tail <- x <= crit_low | x >= crit_high
-    shade_h0 <- data.frame(
-      x = x[h0_tail],
-      y = y_h0[h0_tail],
-      tail = ifelse(x[h0_tail] <= crit_low, "lewy", "prawy")
-    )
-    if (nrow(shade_h0) > 0) {
-      p <- p + geom_area(data = shade_h0, aes(x = x, y = y, group = tail),
-                         fill = col_reject, alpha = 0.2, inherit.aes = FALSE)
-    }
-
-    h1_tail <- x <= crit_low | x >= crit_high
-    shade_h1 <- data.frame(
-      x = x[h1_tail],
-      y = y_h1[h1_tail],
-      tail = ifelse(x[h1_tail] <= crit_low, "lewy", "prawy")
-    )
-    if (nrow(shade_h1) > 0) {
-      p <- p + geom_area(data = shade_h1, aes(x = x, y = y, group = tail),
-                         fill = col_accept, alpha = 0.2, inherit.aes = FALSE)
-    }
-
-    p
-  }))
-
-  output$ch1_power_stats <- renderUI({
-    alpha <- input$ch1_alpha
-    diff_means <- input$ch1_effect
-    n <- input$ch1_power_n
-    sigma <- 13
-    se <- sigma / sqrt(n)
-    mu0 <- 70
-    mu1 <- mu0 + diff_means
-    crit_low <- mu0 + qnorm(alpha / 2) * se
-    crit_high <- mu0 + qnorm(1 - alpha / 2) * se
-    power <- pnorm(crit_low, mean = mu1, sd = se) +
-      (1 - pnorm(crit_high, mean = mu1, sd = se))
-
-    tagList(
-      lc_readout("Moc", paste0(round(power * 100, 1), "%"), color = col_accept),
-      lc_readout("Błąd II", paste0(round((1 - power) * 100, 1), "%"), color = upwr_secondary)
-    )
-  })
-
-  # --- Widget 3: Quiz (tiles) ---
-  ch1_quiz_data <- reactiveVal(NULL)
-  ch1_quiz_answered <- reactiveVal(FALSE)
-  ch1_quiz_selected <- reactiveVal(NULL)
-
-  generate_quiz <- function() {
-    scenarios <- list(
-      list(p = 0.003, alpha = 0.05,
-           context = "Badanie wpływu kawy na czas reakcji: p = 0.003, α = 0.05"),
-      list(p = 0.12, alpha = 0.05,
-           context = "Czy notatki odręczne dają lepsze wyniki niż notatki na laptopie? p = 0.12, α = 0.05"),
-      list(p = 0.048, alpha = 0.05,
-           context = "Korelacja między długością snu a oceną z egzaminu: p = 0.048, α = 0.05"),
-      list(p = 0.06, alpha = 0.01,
-           context = "Czy kierunek studiów wpływa na zarobki po 5 latach? ANOVA: p = 0.06, α = 0.01"),
-      list(p = 0.001, alpha = 0.01,
-           context = "Czy płeć wpływa na wybór specjalizacji? Test χ²: p = 0.001, α = 0.01"),
-      list(p = 0.052, alpha = 0.05,
-           context = "Porównanie skuteczności dwóch metod nauki: p = 0.052, α = 0.05")
-    )
-    ch1_quiz_data(scenarios[[sample(length(scenarios), 1)]])
-    ch1_quiz_answered(FALSE)
-    ch1_quiz_selected(NULL)
-  }
-
-  observe({ generate_quiz() })
-  observeEvent(input$ch1_quiz_next, { generate_quiz() })
-
-  output$ch1_quiz_scenario <- renderUI({
-    sc <- ch1_quiz_data()
-    if (is.null(sc)) return(NULL)
-    lc_status(
-      p(tags$strong("Scenariusz:"), " ", sc$context)
-    )
-  })
-
-  ch1_quiz_choices <- list(
-    list(letter = "A", value = "reject", text = "Odrzucamy H₀"),
-    list(letter = "B", value = "fail_to_reject", text = "Brak podstaw do odrzucenia H₀")
-  )
-
-  output$ch1_quiz_options <- renderUI({
-    ch1_quiz_data()
-    if (ch1_quiz_answered()) return(NULL)
-    div(class = "quiz-tiles quiz-cols-2",
-      lapply(ch1_quiz_choices, function(opt) {
-        actionButton(paste0("ch1_tile_", opt$value),
-          tagList(
-            div(class = "tile-letter", opt$letter),
-            div(class = "tile-text", opt$text)
-          ),
-          class = "quiz-tile"
-        )
-      })
-    )
-  })
-
-  observe({
-    for (opt in ch1_quiz_choices) {
-      local({
-        val <- opt$value
-        observeEvent(input[[paste0("ch1_tile_", val)]], {
-          if (ch1_quiz_answered()) return()
-          ch1_quiz_selected(val)
-          ch1_quiz_answered(TRUE)
-        }, ignoreInit = TRUE)
-      })
-    }
-  })
-
-  output$ch1_quiz_feedback <- renderUI({
-    req(ch1_quiz_answered())
-    sc <- ch1_quiz_data()
-    answer <- ch1_quiz_selected()
-    if (is.null(sc) || is.null(answer)) return(NULL)
-
-    correct <- if (sc$p < sc$alpha) "reject" else "fail_to_reject"
-    fmt <- function(x) format(x)
-    comparison <- paste0("p = ", fmt(sc$p), " ", ifelse(sc$p < sc$alpha, "<", "≥"),
-                         " α = ", fmt(sc$alpha))
-    if (answer == correct) {
-      lc_status(
-        lc_verdict(tags$strong("Poprawnie."), type = "ok"),
-        p(comparison)
-      )
-    } else {
-      lc_status(
-        lc_verdict(tags$strong("Niepoprawnie."), type = "danger"),
-        p(paste0(comparison, ", zatem ",
-                 ifelse(correct == "reject", "odrzucamy H₀",
-                        "nie mamy podstaw do odrzucenia H₀"), "."))
-      )
-    }
-  })
-}

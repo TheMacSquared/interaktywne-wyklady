@@ -28,7 +28,8 @@ testthat::test_that("wykład 05: punkty stop i rozkład geometryczny działają 
   testthat::expect_equal(sort(res$scenes), sort(c("kadry", "geo", "kadry", "kadry", "kadry", "oddzialy", "ciecie", "kadry")))
   testthat::expect_equal(res$figs, "d5_geom")
   testthat::expect_equal(res$plot_outputs, 0L)
-  testthat::expect_setequal(res$html_outputs, c("d5_vote_feedback", "d5_quiz_feedback"))
+  # Głosowanie i quiz ocenia przeglądarka: wykład nie ma wyjść serwera.
+  testthat::expect_length(res$html_outputs, 0L)
   testthat::expect_false(res$shiny_scene_ids)
   for (s in c("lcD5Scenes", "window.lcSF", "echarts/6.1.0/echarts.min.js", "lcD5Nb", "lcD5Mix")) {
     testthat::expect_true(grepl(s, res$head, fixed = TRUE), info = s)

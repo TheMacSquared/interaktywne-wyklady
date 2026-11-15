@@ -16,7 +16,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
     Ten rozdział składa je we wniosek i pokazuje, co z tego trafia do
     raportu."),
 
-  lc_h2("sec-01", "Konspekt po analizie"),
+  lc_h2("ch8-sec-01", "Konspekt po analizie"),
 
   lc_p("Po analizie konspekt nie znika. Jego cztery części z rozdziału 4
     (cel, zmienne i pomiar, tropy, plan interpretacji) zostają, a obok
@@ -52,7 +52,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
   lc_note("U nas", p("Pomiar efektów uczenia się, dane o trudności kursu
     i oczekiwanej ocenie, komentarze z ankiet.")),
 
-  lc_h2("sec-02", "Wniosek dla naszych danych"),
+  lc_h2("ch8-sec-02", "Wniosek dla naszych danych"),
 
   lc_p("Wniosek odpowiada na cel, podaje skalę efektów i od razu mówi,
     czego nie wiadomo. Dla naszej wiązki wygląda tak."),
@@ -119,7 +119,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
     dopiero wtedy, gdy wyniki zestawi się razem i z tym, czego w danych
     nie ma."),
 
-  lc_h2("sec-03", "Domknięcie kursu"),
+  lc_h2("ch8-sec-03", "Domknięcie kursu"),
 
   lc_p("Ten wykład kończy kurs statystyki. Jego projekt badawczy korzystał
     po trochu z każdego wcześniejszego wykładu. Typy zmiennych z wykładu
@@ -140,6 +140,3 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
     przejść na własnych danych.")
   )
 )
-
-ch8_server <- function(input, output, session) {
-}

@@ -66,7 +66,17 @@ ch2_ev_var_ui <- list(
         config = list(kind = "scratch", ticket = "main", price = scene_ticket_price, height = 436,
                       tickets = lapply(scene_tickets, function(t) {
                         t$prizes <- I(t$prizes); t$probs <- I(t$probs); t }),
-                      aria = "Kupujący zdrapuje los z kiosku; histogram bilansów (wygrana minus cena) i bieżący średni bilans na tle wartości oczekiwanej"))
+                      aria = "Kupujący zdrapuje los z kiosku; histogram bilansów (wygrana minus cena) i bieżący średni bilans na tle wartości oczekiwanej"),
+        texts = list(
+        tagList("W kiosku los kosztuje ", lc_fmt(scene_ticket_price), " zł. Na zdrapce można wygrać 4, 10 albo 100 zł,
+        ale najczęściej pod srebrną farbą nie ma nic. ", tags$code("X", .noWS = "outside"), " to bilans losu: wygrana
+        minus cena. Kup i zdrap kilka losów."),
+        tagList("Lewy wykres zlicza bilanse, prawy pokazuje średni bilans wszystkich kupionych losów. Dołóż 100
+        i 1000 losów."),
+        tagList("Średni bilans na dłuższą metę to E(X) = ", sprintf("%.2f", scene_ticket_ev(scene_tickets$main)), " zł,
+        a Var(X) mówi, jak bardzo pojedyncze losy od niego odbiegają.")
+        )
+      )
     ),
 
     lc_p("Nazwa „oczekiwana” bierze się z gier losowych. Wartość oczekiwana
@@ -213,23 +223,3 @@ ch2_ev_var_ui <- list(
     )
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 2 Server
-# --------------------------------------------------------------------------
-
-ch2_ev_var_server <- function(input, output, session) {
-
-  # --- Scena: Zdrap los ---
-  tk <- scene_tickets$main
-  scene_texts(input, output, "ch2_zdrapka", list(
-    tagList("W kiosku los kosztuje ", lc_fmt(scene_ticket_price), " zł. Na zdrapce można wygrać 4, 10 albo 100 zł,
-      ale najczęściej pod srebrną farbą nie ma nic. ", tags$code("X", .noWS = "outside"), " to bilans losu: wygrana
-      minus cena. Kup i zdrap kilka losów."),
-    tagList("Lewy wykres zlicza bilanse, prawy pokazuje średni bilans wszystkich kupionych losów. Dołóż 100
-      i 1000 losów."),
-    tagList("Średni bilans na dłuższą metę to E(X) = ", sprintf("%.2f", scene_ticket_ev(tk)), " zł,
-      a Var(X) mówi, jak bardzo pojedyncze losy od niego odbiegają.")
-  ))
-
-}

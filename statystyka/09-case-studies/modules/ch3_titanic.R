@@ -15,6 +15,25 @@ tt$przezyl <- as.integer(tt$Survived == "Yes")
 tt_cols <- c(`1. klasa` = case_explore, `2. klasa` = case_test,
              `3. klasa` = case_conclude, `Załoga` = case_muted)
 
+# Treść stała (dawniej output$ch3_crosstab na serwerze): składana przy budowaniu strony.
+ch3_crosstab_ui <- function() {
+  tab <- table(tt$klasa, factor(tt$przezyl, levels = c(1, 0),
+                                labels = c("Przeżyli", "Zginęli")))
+  lc_crosstab(tab, measure = "row", row_name = "Klasa", col_name = "Przeżycie",
+              big_mark = " ")
+}
+
+# Treść stała (dawniej output$ch3_chi2 na serwerze): składana przy budowaniu strony.
+ch3_chi2_ui <- function() {
+  tab <- table(tt$klasa, tt$przezyl)
+  ch <- suppressWarnings(chisq.test(tab))
+  v <- rstatix::cramer_v(tab)
+  lc_caption(HTML(paste0("Test χ² niezależności: χ²(", ch$parameter, ") = ",
+                         formatC(ch$statistic, format = "f", digits = 1),
+                         ", p ", lc_pval(ch$p.value), ", V Cramera = ",
+                         formatC(v, format = "f", digits = 2), ".")))
+}
+
 ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = tagList(
 
   lc_chapter_hero(
@@ -66,12 +85,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
   figure_panel(
     label = "Ryc. 3.2",
     title = "Odsetek ocalałych w grupach",
-    lc_toolbar(
-      lc_segmented("ch3_desc_by", "Podział",
-        choices = c("Klasa" = "klasa", "Płeć" = "plec", "Wiek" = "wiek")),
-      lc_readouts(uiOutput("ch3_desc_reads"))
-    ),
-    lc_plot("ch3_desc_plot", ratio = "1.8/1", max_height = "320px")
+    ch3_desc_fig()
   ),
 
   lc_p("Odsetek ocalałych maleje z klasą: 62.5% w pierwszej, 41.4% w drugiej,
@@ -93,8 +107,8 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
   figure_panel(
     label = "Ryc. 3.3",
     title = "Klasa a przeżycie",
-    uiOutput("ch3_crosstab"),
-    uiOutput("ch3_chi2")
+    ch3_crosstab_ui(),
+    ch3_chi2_ui()
   ),
 
   lc_p("Test odrzuca hipotezę o niezależności (χ²(3) = 190.4, p < 0.001).
@@ -111,7 +125,17 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
       "Każda klasa różniła się od każdej innej odsetkiem ocalałych." = "all_pairs",
       "Gdyby powtórzyć rejs, w 1. klasie znów przeżyłoby 62.5%." = "repeat"
     ),
-    correct = "assoc"
+    correct = "assoc",
+    feedback = list(
+    causal = "Test stwierdza związek, nie przyczynę. Klasa mogła się wiązać
+    z przeżyciem także przez to, kto podróżował w danej klasie.",
+    assoc = "Test χ² mówi tylko, że klasa i przeżycie nie są niezależne.
+    Dlaczego, trzeba sprawdzić osobno.",
+    all_pairs = "Istotny wynik oznacza, że nie wszystkie klasy są takie same.
+    Załoga i trzecia klasa mają prawie ten sam odsetek ocalałych.",
+    `repeat` = "62.5% to wynik tej jednej katastrofy. Test nie przewiduje
+    wyniku innego zdarzenia."
+    )
   ),
 
   lc_p("Test χ² stwierdza związek, ale nie jego przyczynę. Co więcej, nie
@@ -147,12 +171,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
   figure_panel(
     label = "Ryc. 3.5",
     title = "Odsetek ocalałych w klasach, osobno dla płci",
-    lc_toolbar(
-      lc_segmented("ch3_sex_group", "Grupa",
-        choices = c("Mężczyźni" = "Mężczyźni", "Kobiety" = "Kobiety")),
-      lc_readouts(uiOutput("ch3_sex_reads"))
-    ),
-    lc_plot("ch3_sex_plot", ratio = "1.8/1", max_height = "320px")
+    ch3_sex_fig()
   ),
 
   lc_p("Załoga to prawie sami mężczyźni (862 z 885), a mężczyźni przeżywali
@@ -181,13 +200,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
   figure_panel(
     label = "Ryc. 3.6",
     title = "Ilorazy szans przeżycia",
-    lc_toolbar(
-      lc_segmented("ch3_model", "Model",
-        choices = c("Sama klasa" = "m0", "Klasa, płeć i wiek" = "m1"),
-        selected = "m1")
-    ),
-    lc_plot("ch3_or_plot", ratio = "2/1", max_height = "300px"),
-    uiOutput("ch3_or_table")
+    ch3_or_fig()
   ),
 
   lc_p("W modelu z samą klasą załoga i trzecia klasa mają prawie ten sam
@@ -209,7 +222,18 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
       "Przeżyło o 11.25% więcej kobiet niż mężczyzn." = "pct",
       "W każdej klasie przeżyło 11.25 razy więcej kobiet niż mężczyzn." = "count"
     ),
-    correct = "odds"
+    correct = "odds",
+    feedback = list(
+    prob = "Iloraz szans to nie stosunek prawdopodobieństw. Dla dorosłych
+    z trzeciej klasy prawdopodobieństwa wynoszą 0.57 i 0.10: ich stosunek
+    to 5.7, a stosunek szans około 11.",
+    odds = "Iloraz szans porównuje szanse, czyli p/(1 - p), przy tych samych
+    wartościach pozostałych zmiennych w modelu.",
+    pct = "11.25 to krotność szans, a nie różnica w punktach procentowych.",
+    count = "Model nie mówi o liczbie ocalałych, tylko o szansach jednej
+    osoby. Do tego zakłada ten sam iloraz we wszystkich klasach, a w danych
+    różnice między płciami nie są w każdej klasie takie same."
+    )
   ),
 
   # Iloraz szans jako stosunek dwóch szans
@@ -258,150 +282,3 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
      różnią się składem. Porównuje się grupy podobne pod względem tego, co
      wpływa na wynik.")
 ))
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch3_server <- function(input, output, session) {
-
-  pct1 <- function(v) paste0(formatC(v * 100, format = "f", digits = 1), "%")
-
-  ch3_rates <- function(d, by) {
-    agg <- aggregate(przezyl ~ g, data = data.frame(g = d[[by]], przezyl = d$przezyl),
-                     FUN = function(x) c(p = mean(x), n = length(x)))
-    data.frame(g = agg$g, p = agg$przezyl[, "p"], n = agg$przezyl[, "n"])
-  }
-
-  ch3_bar <- function(r, fills) {
-    ggplot(r, aes(g, p, fill = g)) +
-      geom_col(width = 0.6, alpha = 0.85) +
-      geom_text(aes(label = pct1(p)), vjust = -0.5, size = 4.2) +
-      geom_text(aes(y = 0, label = paste0("n = ", n)), vjust = 1.6, size = 3.4,
-                colour = case_reference) +
-      scale_fill_manual(values = fills, guide = "none") +
-      scale_y_continuous(labels = function(v) paste0(v * 100, "%"),
-                         expand = expansion(mult = c(0.12, 0.08))) +
-      coord_cartesian(ylim = c(0, 1)) +
-      labs(x = NULL, y = "Odsetek ocalałych")
-  }
-
-  # --- Krok 1 ---
-  output$ch3_desc_reads <- renderUI({
-    lc_readout("Wszyscy", pct1(mean(tt$przezyl)))
-  })
-
-  zoom_plot_server("ch3_desc_plot", reactive({
-    by <- input$ch3_desc_by %||% "klasa"
-    r <- ch3_rates(tt, by)
-    fills <- switch(by,
-      klasa = tt_cols,
-      plec = c(`Mężczyźni` = case_explore, `Kobiety` = case_conclude),
-      wiek = c(`Dorośli` = case_explore, `Dzieci` = case_conclude))
-    ch3_bar(r, fills)
-  }), alt = "Odsetek ocalałych w grupach wybranej cechy.")
-
-  # --- Krok 2 ---
-  output$ch3_crosstab <- renderUI({
-    tab <- table(tt$klasa, factor(tt$przezyl, levels = c(1, 0),
-                                  labels = c("Przeżyli", "Zginęli")))
-    lc_crosstab(tab, measure = "row", row_name = "Klasa", col_name = "Przeżycie",
-                big_mark = " ")
-  })
-
-  output$ch3_chi2 <- renderUI({
-    tab <- table(tt$klasa, tt$przezyl)
-    ch <- suppressWarnings(chisq.test(tab))
-    v <- rstatix::cramer_v(tab)
-    lc_caption(HTML(paste0("Test χ² niezależności: χ²(", ch$parameter, ") = ",
-                           formatC(ch$statistic, format = "f", digits = 1),
-                           ", p ", lc_pval(ch$p.value), ", V Cramera = ",
-                           formatC(v, format = "f", digits = 2), ".")))
-  })
-
-  case_quiz_server(input, output, "ch3_quiz_chi2", "assoc", list(
-    causal = "Test stwierdza związek, nie przyczynę. Klasa mogła się wiązać
-      z przeżyciem także przez to, kto podróżował w danej klasie.",
-    assoc = "Test χ² mówi tylko, że klasa i przeżycie nie są niezależne.
-      Dlaczego, trzeba sprawdzić osobno.",
-    all_pairs = "Istotny wynik oznacza, że nie wszystkie klasy są takie same.
-      Załoga i trzecia klasa mają prawie ten sam odsetek ocalałych.",
-    `repeat` = "62.5% to wynik tej jednej katastrofy. Test nie przewiduje
-      wyniku innego zdarzenia."
-  ))
-
-  # --- Krok 3 ---
-  output$ch3_sex_reads <- renderUI({
-    g <- input$ch3_sex_group %||% "Mężczyźni"
-    d <- tt[tt$plec == g, ]
-    lc_readout(paste0(g, ": wszyscy"), pct1(mean(d$przezyl)))
-  })
-
-  zoom_plot_server("ch3_sex_plot", reactive({
-    g <- input$ch3_sex_group %||% "Mężczyźni"
-    ch3_bar(ch3_rates(tt[tt$plec == g, ], "klasa"), tt_cols)
-  }), alt = "Odsetek ocalałych w klasach dla wybranej płci.")
-
-  # --- Krok 4 ---
-  tt_m <- tt
-  tt_m$klasa <- relevel(tt_m$klasa, "1. klasa")
-  ch3_models <- list(
-    m0 = glm(przezyl ~ klasa, data = tt_m, family = binomial),
-    m1 = glm(przezyl ~ klasa + plec + wiek, data = tt_m, family = binomial)
-  )
-  ch3_terms <- c("klasa2. klasa" = "2. klasa", "klasa3. klasa" = "3. klasa",
-                 "klasaZałoga" = "Załoga", "plecKobiety" = "Kobieta",
-                 "wiekDzieci" = "Dziecko")
-
-  ch3_or <- reactive({
-    m <- ch3_models[[input$ch3_model %||% "m1"]]
-    co <- summary(m)$coefficients
-    ci <- confint.default(m)
-    keep <- rownames(co) != "(Intercept)"
-    data.frame(term = unname(ch3_terms[rownames(co)[keep]]),
-               or = exp(co[keep, 1]), lo = exp(ci[keep, 1]), hi = exp(ci[keep, 2]),
-               p = co[keep, 4])
-  })
-
-  zoom_plot_server("ch3_or_plot", reactive({
-    d <- ch3_or()
-    d$term <- factor(d$term, levels = rev(unname(ch3_terms)))
-    ggplot(d, aes(or, term)) +
-      geom_vline(xintercept = 1, linetype = "dashed", colour = case_reference) +
-      geom_errorbar(aes(xmin = lo, xmax = hi), width = 0.2, orientation = "y",
-                    colour = case_test, linewidth = 0.9) +
-      geom_point(size = 3, colour = case_test) +
-      scale_x_log10(breaks = c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20),
-                    labels = c("0.1", "0.2", "0.5", "1", "2", "5", "10", "20")) +
-      coord_cartesian(xlim = c(0.08, 25)) +
-      scale_y_discrete(drop = FALSE) +
-      labs(x = "Iloraz szans (skala logarytmiczna), 95% przedział ufności", y = NULL)
-  }), alt = "Ilorazy szans przeżycia z przedziałami ufności.")
-
-  output$ch3_or_table <- renderUI({
-    d <- ch3_or()
-    f2 <- function(v) formatC(v, format = "f", digits = 2)
-    lc_table(
-      data.frame(term = d$term, or = f2(d$or),
-                 ci = paste0(f2(d$lo), " do ", f2(d$hi)), p = lc_pval(d$p)),
-      cols = list(
-        lc_col("term", "Względem: dorosły mężczyzna, 1. klasa", "row"),
-        lc_col("or", "Iloraz szans", "text"),
-        lc_col("ci", "95% przedział", "text"),
-        lc_col("p", "p")
-      )
-    )
-  })
-
-  case_quiz_server(input, output, "ch3_quiz_or", "odds", list(
-    prob = "Iloraz szans to nie stosunek prawdopodobieństw. Dla dorosłych
-      z trzeciej klasy prawdopodobieństwa wynoszą 0.57 i 0.10: ich stosunek
-      to 5.7, a stosunek szans około 11.",
-    odds = "Iloraz szans porównuje szanse, czyli p/(1 - p), przy tych samych
-      wartościach pozostałych zmiennych w modelu.",
-    pct = "11.25 to krotność szans, a nie różnica w punktach procentowych.",
-    count = "Model nie mówi o liczbie ocalałych, tylko o szansach jednej
-      osoby. Do tego zakłada ten sam iloraz we wszystkich klasach, a w danych
-      różnice między płciami nie są w każdej klasie takie same."
-  ))
-}

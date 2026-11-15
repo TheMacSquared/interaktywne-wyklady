@@ -23,7 +23,7 @@ expected_apps <- c(
 load_lecture_helpers <- function() {
   env <- new.env(parent = globalenv())
   env$app_dir <- app_dir
-  sys.source(file.path(risk_root, "R", "palette.R"), envir = env)
+  sys.source(file.path(dirname(risk_root), "shared", "palette.R"), envir = env)
   sys.source(file.path(app_dir, "modules", "helpers.R"), envir = env)
   env
 }

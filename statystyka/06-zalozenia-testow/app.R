@@ -13,9 +13,9 @@ library(lmtest)
 # ============================================================================
 
 .find_app_dir <- function() {
-  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/lecture_layout.R.
+  # Katalog aplikacji rozpoznajemy po tym, że jego rodzic zawiera R/course.R.
   has_project_root <- function(dir) {
-    file.exists(file.path(dirname(dir), "R", "lecture_layout.R"))
+    file.exists(file.path(dirname(dir), "R", "course.R"))
   }
 
   candidates <- character(0)
@@ -29,7 +29,7 @@ library(lmtest)
   if (length(file_arg) > 0) {
     candidates <- c(candidates, dirname(normalizePath(sub("--file=", "", file_arg[[1]]))))
   }
-  # 3) Katalog roboczy — shiny::runApp() ustawia go na katalog aplikacji.
+  # 3) Katalog roboczy — scripts/build_static.R ustawia go na katalog wykładu.
   candidates <- c(candidates, getwd())
 
   # Pierwszy kandydat leżący w projekcie; gdy żaden nie pasuje, zachowaj stare zachowanie.
@@ -40,11 +40,15 @@ library(lmtest)
 }
 app_dir <- .find_app_dir()
 project_root <- dirname(app_dir)
+shared_root <- file.path(dirname(project_root), "shared")
 
-source(file.path(project_root, "R", "palette.R"),          local = TRUE)
-source(file.path(project_root, "R", "theme_upwr.R"),       local = TRUE)
-source(file.path(project_root, "R", "shared.R"),           local = TRUE)
-source(file.path(project_root, "R", "lecture_layout.R"),   local = TRUE)
+source(file.path(project_root, "R", "course.R"), local = TRUE)
+
+source(file.path(shared_root, "palette.R"),          local = TRUE)
+source(file.path(shared_root, "theme_upwr.R"),       local = TRUE)
+source(file.path(shared_root, "shared.R"),           local = TRUE)
+source(file.path(shared_root, "lecture_layout.R"),   local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"),  local = TRUE)
 
 lc_apply_ggplot_defaults()
 
@@ -70,25 +74,19 @@ ui <- lecture_page(
   header_extras = tagList(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
+    # Ryciny liczone w przeglądarce: silnik lcSF na ECharts, rozkłady, testy i ryciny wykładu.
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(shared_root, "lc_charts.js")),
+    includeScript(file.path(shared_root, "lc_dist.js")),
+    includeScript(file.path(shared_root, "lc_stats.js")),
+    includeScript(file.path(shared_root, "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "figures.js")),
+    lc_sf_styles(),
     tags$style(HTML("
       .lc-stepper-head .lc-toolbar > .lc-grp { flex: 0 0 auto; }
       .lc-stepper-head .lc-toolbar .lc-seg { flex-wrap: nowrap; }
       .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+      .lc-sf-empty { text-align: center; color: var(--upwr-reference); font-size: 1.2em; padding: 3em 0; }
     "))
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-  ch3_server(input, output, session)
-  ch4_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)

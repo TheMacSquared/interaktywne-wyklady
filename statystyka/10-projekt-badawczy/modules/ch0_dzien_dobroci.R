@@ -8,7 +8,7 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Dzień Dobroci dla Stu
             a potem sprawdzamy, co los wie o statystyce."
   ),
 
-  lc_h2("sec-00", "Losowanie nagrody"),
+  lc_h2("ch0-sec-00", "Losowanie nagrody"),
 
   div(class = "lc-prose",
     p("Na kole są same znakomite możliwości: punkty z aktywności,
@@ -59,6 +59,3 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Dzień Dobroci dla Stu
     "ch1")
   )
 )
-
-ch0_server <- function(input, output, session) {
-}

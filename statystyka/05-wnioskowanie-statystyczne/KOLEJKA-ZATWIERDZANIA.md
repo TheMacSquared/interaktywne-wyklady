@@ -6,7 +6,7 @@ Stan: 9 listopada 2026. Opis i uzasadnienie w
 Oglądanie (z katalogu repo, osobny port):
 
 ```r
-shiny::runApp("statystyka/05-wnioskowanie-statystyczne", port = 8755)
+system("Rscript scripts/build_static.R statystyka/05-wnioskowanie-statystyczne")   # → dist/statystyka/05-wnioskowanie-statystyczne.html
 ```
 
 ## Inwentarz

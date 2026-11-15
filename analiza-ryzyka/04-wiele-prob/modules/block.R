@@ -178,7 +178,13 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
               "Każdy dzień; wynik: dowolna liczba usterek" = "day",
               "Cała fabryka; wynik: wszystkie obserwacje" = "factory"
             ),
-            correct = "valve"
+            correct = "valve",
+            feedback = list(
+              "valve" = lc_status(lc_verdict(tags$strong("Jednostka:"), type = "ok"),
+                                  " jeden zawór i dwa rozłączne wyniki."),
+              ".other" = lc_status(lc_verdict(tags$strong("Jednostka:"), type = "warning"),
+                                   " jeden zawór i dwa rozłączne wyniki.")
+            )
           ),
           "Definicja „dzień i dowolna liczba usterek” łamie kryterium dwóch wyników, a „cała fabryka” nie wyodrębnia żadnej powtarzalnej jednostki — mamy jedną obserwację, a nie serię. Tylko kontrola pojedynczego zaworu daje sto porównywalnych prób, a wtedy pytanie „ile niesprawnych w partii?” ma jasny sens.",
           risk_check("p4_chk_proba",
@@ -210,9 +216,16 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
             lc_toolbar(
               lc_slider("p4_series_n", "Liczba kontroli", 10, 200, 100, 10),
               lc_action("p4_run", "Uruchom serię", variant = "solid"),
-              lc_readouts(uiOutput("p4_series_stats"))
+              lc_readouts(
+                lc_readout("Niesprawne", tags$span(`data-p4-series` = "bad", "–"), color = upwr_accent),
+                lc_readout("Oczekiwano średnio", tags$span(`data-p4-series` = "expected", "–"))
+              )
             ),
-            verbatimTextOutput("p4_sequence"), full_width = TRUE
+            # Serię losuje przeglądarka (modules/seria.js): p = 0.02, n z suwaka.
+            tags$pre(class = "p4-series", style = "word-wrap:normal;", `data-p4-series-root` = "true",
+                     `data-slider` = "p4_series_n", `data-button` = "p4_run", `data-p` = "0.02",
+                     role = "status", `aria-live` = "polite"),
+            full_width = TRUE
           ),
           c(
             "Symulacja używa \\(p = 0.02\\), więc w serii stu kontroli średnio pojawiają się dwa niesprawne zawory. Poszczególne serie rzadko trafiają dokładnie w tę liczbę: mniej więcej jedna seria na siedem–osiem nie ma ani jednego krzyżyka (prawdopodobieństwo \\(0.98^{100} \\approx 0.133\\)), a mniej więcej co siódma ma cztery lub więcej. Krzyżyki obok siebie nie świadczą o żadnej zależności — w losowym ciągu skupiska pojawiają się same.",
@@ -288,11 +301,21 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
           figure_panel(
             label = "Diagnoza", title = "Scenariusz partii",
             lc_toolbar(
-              selectInput("p4_scenario", "Sytuacja", c("Zwykły dzień na linii" = "stable", "Paleta z dwóch magazynów" = "mixture", "Ciasna skrzynia" = "dependent")),
+              lc_group("Sytuacja", lc_select("p4_scenario", c("Zwykły dzień na linii" = "stable", "Paleta z dwóch magazynów" = "mixture", "Ciasna skrzynia" = "dependent"), aria_label = "Sytuacja")),
               lc_action("p4_scenario_show", "Pokaż diagnozę", variant = "solid")
             ),
-            uiOutput("p4_scenario_story"),
-            uiOutput("p4_scenario_feedback"), full_width = TRUE
+            lc_variants("p4_scenario", list(
+              stable = tags$p("Wszystkie sto zaworów zjechało z jednej linii tego samego dnia. Kontroler sprawdza je po kolei tą samą procedurą."),
+              mixture = tags$p("Połowa palety przyjechała z magazynu w Gdyni, połowa z Poznania. Przy rozładunku zawory wymieszano i nikt nie zapisał, który skąd jest."),
+              dependent = tags$p("Zawory jechały ciasno upakowane w jednej skrzyni. Gdy jeden pęknie na wyboju, odłamki mogą uszkodzić sąsiednie.")
+            )),
+            # Diagnoza jest ukryta do kliknięcia; zmiana scenariusza chowa ją z powrotem.
+            lc_variants("p4_scenario", reveal = "p4_scenario_show", list(
+              stable = lc_caption("Założenia są wiarygodne, jeśli kontrole nie wpływają na siebie."),
+              mixture = lc_caption("Zagrożona jest stałość p: dwa magazyny mogą mieć różną jakość. Rozważ warstwy dostaw."),
+              dependent = lc_caption("Zagrożona jest niezależność prób: wada jednego zaworu zwiększa ryzyko wady sąsiada.")
+            )),
+            full_width = TRUE
           ),
           p4_proto_assumptions_ui,
           "Diagnoza nie mówi „model jest zły”, lecz wskazuje, które założenie trzeba sprawdzić w danych. Mieszankę dostaw leczy się podziałem na warstwy: osobno partie od A, osobno od B, każda z własnym \\(p\\). Zależność prób wymaga innego modelu albo zmiany jednostki — na przykład próbą staje się cała skrzynia zaworów, a nie pojedynczy zawór.",
@@ -703,52 +726,3 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
 ))
 
 proby_chapters <- risk_block_chapters(proby_block)
-
-proby_server <- function(input, output, session) {
-  vote <- reactiveVal(FALSE)
-  observeEvent(input$p4_vote_check, vote(TRUE))
-  output$p4_vote_feedback <- renderUI({
-    req(vote())
-    if (is.null(input$p4_vote)) {
-      return(lc_caption(
-               "Najpierw zaznacz jedną z odpowiedzi.",
-               tone = "info"
-             ))
-    }
-    lc_status(
-      lc_verdict(tags$strong("Jednostka:"), type = if (identical(input$p4_vote, "valve")) "ok" else "warning"),
-      " jeden zawór i dwa rozłączne wyniki."
-    )
-  })
-  series <- reactive({
-    input$p4_run
-    rbinom(input$p4_series_n, 1, .02)
-  })
-  output$p4_sequence <- renderText(paste(ifelse(series() == 1, "×", "·"), collapse = " "))
-  output$p4_series_stats <- renderUI(tagList(
-    lc_readout("Niesprawne", sum(series()), color = upwr_accent),
-    lc_readout("Oczekiwano średnio", round(length(series()) * .02, 1))
-  ))
-  # Diagnoza jest ukryta do kliknięcia; zmiana scenariusza chowa ją z powrotem.
-  scenario_shown <- reactiveVal(FALSE)
-  observeEvent(input$p4_scenario, scenario_shown(FALSE))
-  observeEvent(input$p4_scenario_show, scenario_shown(TRUE))
-  output$p4_scenario_story <- renderUI({
-    stories <- c(
-      stable = "Wszystkie sto zaworów zjechało z jednej linii tego samego dnia. Kontroler sprawdza je po kolei tą samą procedurą.",
-      mixture = "Połowa palety przyjechała z magazynu w Gdyni, połowa z Poznania. Przy rozładunku zawory wymieszano i nikt nie zapisał, który skąd jest.",
-      dependent = "Zawory jechały ciasno upakowane w jednej skrzyni. Gdy jeden pęknie na wyboju, odłamki mogą uszkodzić sąsiednie."
-    )
-    tags$p(stories[[input$p4_scenario]])
-  })
-  output$p4_scenario_feedback <- renderUI({
-    req(scenario_shown())
-    messages <- c(stable = "Założenia są wiarygodne, jeśli kontrole nie wpływają na siebie.", mixture = "Zagrożona jest stałość p: dwa magazyny mogą mieć różną jakość. Rozważ warstwy dostaw.", dependent = "Zagrożona jest niezależność prób: wada jednego zaworu zwiększa ryzyko wady sąsiada.")
-    lc_caption(
-      messages[[input$p4_scenario]]
-    )
-  })
-  # Rozkład, Powtórzenia i Krzywa rysuje przeglądarka (modules/wykresy.js).
-  risk_assessment_server("p4", proby_quiz, input, output)
-  p4_proto_charts_server(input, output, session)
-}

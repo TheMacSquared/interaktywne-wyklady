@@ -923,9 +923,3 @@ warunki_block <- list(
 )
 
 warunki_chapters <- risk_block_chapters(warunki_block)
-
-warunki_server <- function(input, output, session) {
-  # Monty Hall (modules/monty.js), trzy widoki (stałe liczby) i pozostałe widgety
-  # działają bez serwera; tu zostaje tylko quiz.
-  risk_assessment_server("w2", warunki_quiz, input, output)
-}

@@ -12,6 +12,97 @@ ca$comp_per_student <- ca$computer / ca$students
 ca$poverty <- ifelse(ca$lunch >= 50, "Wysoki", ifelse(ca$lunch >= 25, "Średni", "Niski"))
 ca$poverty <- factor(ca$poverty, levels = c("Niski", "Średni", "Wysoki"))
 
+# Treść stała (dawniej output$ch1_str_test na serwerze): składana przy budowaniu strony.
+ch1_str_test_ui <- function() {
+  cor_res <- rstatix::cor_test(ca, str, score, method = "pearson")
+  tidy_cor <- as.data.frame(cor_res)
+
+  model <- lm(score ~ str, data = ca)
+  coefs <- broom::tidy(model)
+  g <- broom::glance(model)
+
+  lc_status(
+    p(tags$strong("Korelacja Pearsona:"), paste0(" r = ", round(tidy_cor$cor, 3),
+               ", p ", if (tidy_cor$p < 0.001) "< 0.001" else paste0("= ", round(tidy_cor$p, 4)))),
+                 p(tags$strong("Regresja prosta:"), paste0(" wynik = ", round(coefs$estimate[1], 1),
+               if (coefs$estimate[2] < 0) " - " else " + ",
+               abs(round(coefs$estimate[2], 2)), " × STR")),
+      p(paste0("R² = ", round(g$r.squared, 3),
+               " (STR wyjaśnia ", round(g$r.squared * 100, 1), "% zmienności wyników)")),
+      p(paste0("Uczeń więcej na nauczyciela: wynik niższy średnio o ",
+               abs(round(coefs$estimate[2], 2)), " pkt"))
+               )
+}
+
+# Treść stała (dawniej output$ch1_conf_stats na serwerze): składana przy budowaniu strony.
+ch1_conf_stats_ui <- function() {
+  r_lunch_score <- cor(ca$lunch, ca$score)
+  r_lunch_str <- cor(ca$lunch, ca$str)
+  tagList(
+    lc_readout("r: dotacje a wynik", lc_fmt(r_lunch_score, 3), color = case_highlight),
+    lc_readout("r: dotacje a STR", lc_fmt(r_lunch_str, 3), color = case_test)
+  )
+}
+
+# Treść stała (dawniej output$ch1_anova_result na serwerze): składana przy budowaniu strony.
+ch1_anova_result_ui <- function() {
+  result <- rstatix::anova_test(ca, score ~ poverty)
+  tidy_res <- as.data.frame(result)
+
+  tukey <- rstatix::tukey_hsd(ca, score ~ poverty)
+  tukey_df <- as.data.frame(tukey)
+
+  means <- ca %>% group_by(poverty) %>%
+    summarise(m = round(mean(score), 1), n = n(), .groups = "drop")
+
+  lc_status(
+    p(tags$strong("Średnie w grupach:")),
+      lapply(1:nrow(means), function(i) {
+        p(paste0(means$poverty[i], ": ", means$m[i], " pkt (n = ", means$n[i], ")"))
+      }),
+        p(tags$strong("ANOVA:")),
+      p(paste0("F(", tidy_res$DFn, ",", tidy_res$DFd, ") = ",
+               round(tidy_res$F, 1), ", p ",
+               if (tidy_res$p < 0.001) "< 0.001" else paste0("= ", round(tidy_res$p, 3)),
+               ", η² = ", round(tidy_res$ges, 3))),
+      p(tags$strong("Tukey HSD:")),
+      tags$ul(lapply(1:nrow(tukey_df), function(i) {
+        tags$li(paste0(tukey_df$group1[i], " vs ", tukey_df$group2[i],
+                       ": Δ = ", round(tukey_df$estimate[i], 1),
+                       " pkt, p.adj ", if (tukey_df$p.adj[i] < 0.001) "< 0.001"
+                       else paste0("= ", round(tukey_df$p.adj[i], 3))))
+                         }))
+                       )
+}
+
+# Treść stała (dawniej output$ch1_model_comparison na serwerze): składana przy budowaniu strony.
+ch1_model_comparison_ui <- function() {
+  df <- ch1_models_data()
+  if (is.null(df)) return(NULL)
+
+  tagList(
+    # Model z nieistotnym β przy STR jest wyszarzony.
+    lc_table(
+      data.frame(model = df$model, beta = df$beta_str, p = lc_pval(df$p_str),
+                 r2 = df$adj_r2, aic = df$aic),
+      cols = list(
+        lc_col("model", "Model", "row"),
+        lc_col("beta", "β STR", digits = 2),
+        lc_col("p", "p (STR)"),
+        lc_col("r2", "R² skor.", digits = 3),
+        lc_col("aic", "AIC", digits = 0)
+      ),
+      row_class = ifelse(df$p_str < 0.05, NA_character_, "is-dim"),
+      label = "Seria modeli"
+    ),
+    lc_caption(paste0(
+      "β przy STR: ", round(df$beta_str[1], 2), " w modelu 1, ",
+      round(df$beta_str[4], 2), " w modelu 4, czyli ",
+      round(abs(df$beta_str[4]) / abs(df$beta_str[1]) * 100), "% pierwotnej wartości."
+    ))
+  )
+}
+
 ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = tagList(
 
   lc_chapter_hero(
@@ -91,22 +182,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   figure_panel(
     label = "Ryc. 1.2",
     title = "Przegląd zmiennych",
-    lc_toolbar(
-      selectInput("ch1_eda_var", "Zmienna",
-          choices = c(
-            "Średni wynik testu (pkt)" = "score",
-            "Uczniowie na nauczyciela (STR)" = "str",
-            "Wydatki na ucznia (USD)" = "expenditure",
-            "Dochód okręgu (tys. USD)" = "income",
-            "Uczniowie uczący się angielskiego (%)" = "english",
-            "Uczniowie z dotacją do obiadu (%)" = "lunch",
-            "Uczniowie z rodzin na zasiłku CalWORKs (%)" = "calworks"
-          ),
-          selected = "score"
-          ),
-          lc_readouts(uiOutput("ch1_eda_stats"))
-          ),
-          lc_plot("ch1_eda_plot", max_height = "280px")
+    ch1_eda_fig()
   ),
 
   lc_p("Średni wynik okręgu wynosi 654.2 pkt przy ", gloss("odchylenie standardowe", "odchyleniu standardowym"), "
@@ -130,7 +206,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   figure_panel(
     label = "Ryc. 1.3",
     title = "Macierz korelacji",
-    lc_plot("ch1_corr_plot", max_height = "400px")
+    ch1_corr_fig()
   ),
 
   lc_p("Wiersz wyniku pokazuje, że zmienne opisujące zamożność są z nim
@@ -179,11 +255,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   figure_panel(
     label = "Ryc. 1.4",
     title = "Wynik a liczba uczniów na nauczyciela",
-    lc_toolbar(
-      checkboxInput("ch1_str_color", "Koloruj wg poziomu ubóstwa", value = FALSE)
-    ),
-    lc_plot("ch1_str_plot", max_height = "380px"),
-    uiOutput("ch1_str_test")
+    ch1_str_fig(),
+    ch1_str_test_ui()
   ),
 
   lc_p("Korelacja wynosi \\(r = -0.23\\) (95% przedział ufności od -0.32
@@ -205,7 +278,15 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
       "STR wyjaśnia większość różnic w wynikach między okręgami." = "most",
       "Związek jest nieistotny, bo korelacja jest słaba." = "ns"
     ),
-    correct = "assoc"
+    correct = "assoc",
+    feedback = list(
+    causal = "Nachylenie z regresji prostej na danych obserwacyjnych opisuje
+    różnice między okręgami, a nie skutek zmiany STR w jednym okręgu.",
+    assoc = "Związek jest istotny, ale obserwacyjny. Czy wynika z liczby
+    uczniów, pokażą dopiero kolejne kroki.",
+    most = "R² = 0.05: STR wyjaśnia około 5% zmienności wyników.",
+    ns = "Słaby związek może być istotny: przy 420 okręgach p < 0.001."
+    )
   ),
 
   lc_p("Na tym etapie polityk mógłby powiedzieć, że mniejsze klasy dają
@@ -242,10 +323,10 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   figure_panel(
     label = "Ryc. 1.5",
     title = "Dotacje do obiadów, wyniki i liczba uczniów na nauczyciela",
-    lc_readouts(uiOutput("ch1_conf_stats")),
+    lc_readouts(ch1_conf_stats_ui()),
     lc_plots(
-      lc_plot("ch1_conf_a", max_height = "280px"),
-      lc_plot("ch1_conf_b", max_height = "280px")
+      ch1_conf_fig("score", "Średni wynik testu (pkt)", "@accent"),
+      ch1_conf_fig("str", "Uczniowie na nauczyciela (STR)", "@wrzos")
     )
   ),
 
@@ -283,8 +364,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   figure_panel(
     label = "Ryc. 1.7",
     title = "Wyniki w grupach ubóstwa",
-    lc_plot("ch1_anova_plot", max_height = "320px"),
-    uiOutput("ch1_anova_result")
+    ch1_anova_fig(),
+    ch1_anova_result_ui()
   ),
 
   lc_p("Średnie wynoszą 674.4 pkt w okręgach o niskim ubóstwie, 658.3 pkt
@@ -347,8 +428,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   figure_panel(
     label = "Ryc. 1.8",
     title = "Seria modeli i współczynnik przy STR",
-    uiOutput("ch1_model_comparison"),
-    lc_plot("ch1_beta_str_plot", max_height = "250px")
+    ch1_model_comparison_ui(),
+    ch1_beta_str_fig()
   ),
 
   case_quiz_ui("ch1_quiz_drop",
@@ -361,7 +442,17 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
       "Model z dochodem jest gorzej dopasowany, więc współczynnik jest mniej wiarygodny." = "worse",
       "STR i dochód mierzą to samo, więc model nie umie ich rozdzielić." = "collinear"
     ),
-    correct = "confound"
+    correct = "confound",
+    feedback = list(
+    mechanism = "Model nie mówi, że dochód zmienia STR. Współczynnik maleje,
+    bo porównujemy teraz okręgi o tym samym dochodzie.",
+    confound = "Zamożniejsze okręgi mają i nieco mniejszy STR, i lepsze
+    wyniki. Po wyrównaniu dochodu zostaje mniejsza różnica.",
+    worse = "Model z dochodem jest lepiej dopasowany: skorygowany R² rośnie
+    z 0.049 do 0.509.",
+    collinear = "STR i dochód są skorelowane słabo (r = -0.23), więc model
+    bez trudu je rozdziela."
+    )
   ),
 
   lc_p("Po dodaniu dochodu współczynnik przy STR spada z -2.28 do -0.65
@@ -418,22 +509,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
   figure_panel(
     label = "Ryc. 1.9",
     title = "Model wieloraki — wybór predyktorów",
-    lc_toolbar(
-      checkboxGroupInput("ch1_reg_vars", "Predyktory", inline = TRUE,
-          choices = c(
-            "Uczniowie na nauczyciela (STR)" = "str",
-            "Dochód okręgu (tys. USD)" = "income",
-            "Uczniowie uczący się angielskiego (%)" = "english",
-            "Uczniowie z dotacją do obiadu (%)" = "lunch",
-            "Wydatki na ucznia (USD)" = "expenditure"
-          ),
-          selected = c("str", "income", "english", "lunch")
-          ),
-          lc_action("ch1_fit_model", "Dopasuj", variant = "solid"),
-          lc_readouts(uiOutput("ch1_reg_metrics"))
-          ),
-          uiOutput("ch1_reg_coefs"),
-          lc_plot("ch1_reg_coef_plot", max_height = "230px")
+    # Model każdego podzbioru predyktorów jest policzony w R; pola wyboru przełączają wariant.
+    ch1_reg_fig()
   ),
 
   lc_p("W modelu startowym przedział ufności dla STR rozciąga się od -1.01
@@ -539,360 +616,5 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     pytanie: jak duża różnica w wynikach zostaje po uwzględnieniu tego, co
     udało się zmierzyć.")
 
-
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch1_server <- function(input, output, session) {
-
-  # --- Krok 1: EDA ---
-  zoom_plot_server("ch1_eda_plot", reactive({
-    var <- input$ch1_eda_var
-    var_label <- switch(var,
-      "score" = "Średni wynik testu (pkt)", "str" = "Uczniowie na nauczyciela",
-      "expenditure" = "Wydatki na ucznia (USD)", "income" = "Dochód okręgu (tys. USD)",
-      "english" = "Uczący się angielskiego (%)", "lunch" = "Z dotacją do obiadu (%)",
-      "calworks" = "Z rodzin na zasiłku (%)")
-
-    p1 <- ggplot(ca, aes(x = .data[[var]])) +
-      geom_histogram(bins = 30, fill = case_explore, alpha = 0.6, color = "white") +
-      labs( x = var_label, y = "Liczba okręgów") +
-      theme_upwr()
-
-    p2 <- ggplot(ca, aes(y = .data[[var]])) +
-      geom_boxplot(fill = case_explore, alpha = 0.4) +
-      labs(y = var_label) +
-      theme_upwr()
-
-    gridExtra::arrangeGrob(p1, p2, ncol = 2, widths = c(2, 1))
-  }))
-
-  output$ch1_eda_stats <- renderUI({
-    var <- input$ch1_eda_var
-    x <- ca[[var]]
-    tagList(
-      lc_readout("n", length(x), color = case_explore),
-      lc_readout("Średnia", lc_fmt(mean(x), 1), color = case_reference),
-      lc_readout("SD", lc_fmt(sd(x), 1), color = case_reference),
-      lc_readout("Zakres", paste0(lc_fmt(min(x), 1), "–", lc_fmt(max(x), 1)), color = case_reference)
-    )
-  })
-
-  zoom_plot_server("ch1_corr_plot", reactive({
-    vars <- c("score", "str", "expenditure", "income", "english", "lunch", "calworks")
-    cor_mat <- cor(ca[, vars], use = "complete.obs")
-
-    cor_df <- as.data.frame(as.table(cor_mat))
-    names(cor_df) <- c("Var1", "Var2", "value")
-
-    labels_pl <- c(
-      "score" = "Wynik", "str" = "STR", "expenditure" = "Wydatki",
-      "income" = "Dochód", "english" = "Angielski (%)", "lunch" = "Dotacje (%)",
-      "calworks" = "CalWORKs (%)")
-    cor_df$Var1 <- labels_pl[as.character(cor_df$Var1)]
-    cor_df$Var2 <- labels_pl[as.character(cor_df$Var2)]
-
-    ggplot(cor_df, aes(x = Var1, y = Var2, fill = value)) +
-      geom_tile(color = "white") +
-      geom_text(aes(label = round(value, 2)), size = 3.5) +
-      scale_fill_gradient2(low = case_highlight, mid = "white", high = case_explore,
-                           midpoint = 0, limits = c(-1, 1), name = "r") +
-      labs(
-           x = NULL, y = NULL) +
-      theme_upwr() +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  }))
-
-  # --- Krok 2: STR vs wyniki ---
-  zoom_plot_server("ch1_str_plot", reactive({
-    p <- ggplot(ca, aes(x = str, y = score))
-
-    if (input$ch1_str_color) {
-      p <- p + geom_point(aes(color = poverty), alpha = 0.6, size = 2) +
-        scale_color_manual(values = c(case_explore, case_conclude, case_highlight),
-                           name = "Poziom ubóstwa")
-    } else {
-      p <- p + geom_point(color = case_reference, alpha = 0.4, size = 2)
-    }
-
-    p + geom_smooth(method = "lm", se = TRUE,
-                    color = case_model, fill = case_model, alpha = 0.1) +
-      labs(
-           
-           x = "Uczniowie na nauczyciela (STR)",
-           y = "Średni wynik testu (pkt)") +
-      theme_upwr()
-  }))
-
-  output$ch1_str_test <- renderUI({
-    cor_res <- rstatix::cor_test(ca, str, score, method = "pearson")
-    tidy_cor <- as.data.frame(cor_res)
-
-    model <- lm(score ~ str, data = ca)
-    coefs <- broom::tidy(model)
-    g <- broom::glance(model)
-
-    lc_status(
-      p(tags$strong("Korelacja Pearsona:"), paste0(" r = ", round(tidy_cor$cor, 3),
-                 ", p ", if (tidy_cor$p < 0.001) "< 0.001" else paste0("= ", round(tidy_cor$p, 4)))),
-                   p(tags$strong("Regresja prosta:"), paste0(" wynik = ", round(coefs$estimate[1], 1),
-                 if (coefs$estimate[2] < 0) " - " else " + ",
-                 abs(round(coefs$estimate[2], 2)), " × STR")),
-        p(paste0("R² = ", round(g$r.squared, 3),
-                 " (STR wyjaśnia ", round(g$r.squared * 100, 1), "% zmienności wyników)")),
-        p(paste0("Uczeń więcej na nauczyciela: wynik niższy średnio o ",
-                 abs(round(coefs$estimate[2], 2)), " pkt"))
-                 )
-  })
-
-  case_quiz_server(input, output, "ch1_quiz_simple", "assoc", list(
-    causal = "Nachylenie z regresji prostej na danych obserwacyjnych opisuje
-      różnice między okręgami, a nie skutek zmiany STR w jednym okręgu.",
-    assoc = "Związek jest istotny, ale obserwacyjny. Czy wynika z liczby
-      uczniów, pokażą dopiero kolejne kroki.",
-    most = "R² = 0.05: STR wyjaśnia około 5% zmienności wyników.",
-    ns = "Słaby związek może być istotny: przy 420 okręgach p < 0.001."
-  ))
-
-  # --- Krok 3: Zmienne zakłócające ---
-  zoom_plot_server("ch1_conf_a", reactive({
-    ggplot(ca, aes(x = lunch, y = score)) +
-      geom_point(color = case_reference, alpha = 0.3, size = 1.5) +
-      geom_smooth(method = "lm", se = FALSE, color = case_highlight, linewidth = 1.2) +
-      labs(
-           
-           x = "Uczniowie z dotacją do obiadu (%)", y = "Średni wynik testu (pkt)") +
-      theme_upwr()
-  }))
-
-  zoom_plot_server("ch1_conf_b", reactive({
-    ggplot(ca, aes(x = lunch, y = str)) +
-      geom_point(color = case_reference, alpha = 0.3, size = 1.5) +
-      geom_smooth(method = "lm", se = FALSE, color = case_test, linewidth = 1.2) +
-      labs(
-           
-           x = "Uczniowie z dotacją do obiadu (%)", y = "Uczniowie na nauczyciela (STR)") +
-      theme_upwr()
-  }))
-
-  output$ch1_conf_stats <- renderUI({
-    r_lunch_score <- cor(ca$lunch, ca$score)
-    r_lunch_str <- cor(ca$lunch, ca$str)
-    tagList(
-      lc_readout("r: dotacje a wynik", lc_fmt(r_lunch_score, 3), color = case_highlight),
-      lc_readout("r: dotacje a STR", lc_fmt(r_lunch_str, 3), color = case_test)
-    )
-  })
-
-  # ANOVA
-  zoom_plot_server("ch1_anova_plot", reactive({
-    means <- ca %>% group_by(poverty) %>%
-      summarise(m = mean(score), .groups = "drop")
-
-    ggplot(ca, aes(x = poverty, y = score, fill = poverty)) +
-      geom_boxplot(alpha = 0.6, outlier.alpha = 0.2) +
-      geom_jitter(width = 0.15, alpha = 0.1, size = 1) +
-      scale_fill_manual(values = c(case_explore, case_conclude, case_highlight)) +
-      labs(
-           x = "Poziom ubóstwa (odsetek uczniów z dotacją do obiadu)",
-           y = "Średni wynik testu (pkt)") +
-      theme_upwr() +
-      theme(legend.position = "none")
-  }))
-
-  output$ch1_anova_result <- renderUI({
-    result <- rstatix::anova_test(ca, score ~ poverty)
-    tidy_res <- as.data.frame(result)
-
-    tukey <- rstatix::tukey_hsd(ca, score ~ poverty)
-    tukey_df <- as.data.frame(tukey)
-
-    means <- ca %>% group_by(poverty) %>%
-      summarise(m = round(mean(score), 1), n = n(), .groups = "drop")
-
-    lc_status(
-      p(tags$strong("Średnie w grupach:")),
-        lapply(1:nrow(means), function(i) {
-          p(paste0(means$poverty[i], ": ", means$m[i], " pkt (n = ", means$n[i], ")"))
-        }),
-          p(tags$strong("ANOVA:")),
-        p(paste0("F(", tidy_res$DFn, ",", tidy_res$DFd, ") = ",
-                 round(tidy_res$F, 1), ", p ",
-                 if (tidy_res$p < 0.001) "< 0.001" else paste0("= ", round(tidy_res$p, 3)),
-                 ", η² = ", round(tidy_res$ges, 3))),
-        p(tags$strong("Tukey HSD:")),
-        tags$ul(lapply(1:nrow(tukey_df), function(i) {
-          tags$li(paste0(tukey_df$group1[i], " vs ", tukey_df$group2[i],
-                         ": Δ = ", round(tukey_df$estimate[i], 1),
-                         " pkt, p.adj ", if (tukey_df$p.adj[i] < 0.001) "< 0.001"
-                         else paste0("= ", round(tukey_df$p.adj[i], 3))))
-                           }))
-                         )
-  })
-
-  # --- Krok 4: Seria modeli ---
-  # Seria modeli jest deterministyczna, więc liczymy ją raz, bez przycisku.
-  ch1_models_data <- reactive({
-    m1 <- lm(score ~ str, data = ca)
-    m2 <- lm(score ~ str + income, data = ca)
-    m3 <- lm(score ~ str + income + english, data = ca)
-    m4 <- lm(score ~ str + income + english + lunch, data = ca)
-
-    models <- list(m1, m2, m3, m4)
-    labels <- c("1: sam STR", "2: + dochód", "3: + dochód + angielski",
-                "4: + dochód + angielski + dotacje")
-
-    results <- lapply(seq_along(models), function(i) {
-      m <- models[[i]]
-      g <- broom::glance(m)
-      coefs <- broom::tidy(m)
-      beta_str <- coefs$estimate[coefs$term == "str"]
-      p_str <- coefs$p.value[coefs$term == "str"]
-      data.frame(
-        model = labels[i], r2 = g$r.squared, adj_r2 = g$adj.r.squared,
-        aic = g$AIC, rmse = sqrt(mean(residuals(m)^2)),
-        beta_str = beta_str, p_str = p_str
-      )
-    })
-
-    do.call(rbind, results)
-  })
-
-  output$ch1_model_comparison <- renderUI({
-    df <- ch1_models_data()
-    if (is.null(df)) return(NULL)
-
-    tagList(
-      # Model z nieistotnym β przy STR jest wyszarzony.
-      lc_table(
-        data.frame(model = df$model, beta = df$beta_str, p = lc_pval(df$p_str),
-                   r2 = df$adj_r2, aic = df$aic),
-        cols = list(
-          lc_col("model", "Model", "row"),
-          lc_col("beta", "β STR", digits = 2),
-          lc_col("p", "p (STR)"),
-          lc_col("r2", "R² skor.", digits = 3),
-          lc_col("aic", "AIC", digits = 0)
-        ),
-        row_class = ifelse(df$p_str < 0.05, NA_character_, "is-dim"),
-        label = "Seria modeli"
-      ),
-      lc_caption(paste0(
-        "β przy STR: ", round(df$beta_str[1], 2), " w modelu 1, ",
-        round(df$beta_str[4], 2), " w modelu 4, czyli ",
-        round(abs(df$beta_str[4]) / abs(df$beta_str[1]) * 100), "% pierwotnej wartości."
-      ))
-    )
-  })
-
-  zoom_plot_server("ch1_beta_str_plot", reactive({
-    df <- ch1_models_data()
-    if (is.null(df)) return(NULL)
-
-    df$model <- factor(df$model, levels = df$model)
-    df$sig <- df$p_str < 0.05
-
-    ggplot(df, aes(x = model, y = beta_str, fill = sig)) +
-      geom_col(alpha = 0.8, width = 0.6) +
-      geom_hline(yintercept = 0, linetype = "dashed") +
-      scale_fill_manual(values = c("TRUE" = case_model, "FALSE" = case_muted),
-                        labels = c("TRUE" = "p < 0.05", "FALSE" = "nieistotny"),
-                        name = NULL) +
-      labs(x = NULL, y = "β przy STR") +
-      theme_upwr() +
-      theme(legend.position = "top",
-            axis.text.x = element_text(angle = 20, hjust = 1))
-  }))
-
-  case_quiz_server(input, output, "ch1_quiz_drop", "confound", list(
-    mechanism = "Model nie mówi, że dochód zmienia STR. Współczynnik maleje,
-      bo porównujemy teraz okręgi o tym samym dochodzie.",
-    confound = "Zamożniejsze okręgi mają i nieco mniejszy STR, i lepsze
-      wyniki. Po wyrównaniu dochodu zostaje mniejsza różnica.",
-    worse = "Model z dochodem jest lepiej dopasowany: skorygowany R² rośnie
-      z 0.049 do 0.509.",
-    collinear = "STR i dochód są skorelowane słabo (r = -0.23), więc model
-      bez trudu je rozdziela."
-  ))
-
-  # --- Krok 5: Model interaktywny ---
-  ch1_model <- reactiveVal(NULL)
-
-  # ignoreNULL = FALSE: model z domyślnymi predyktorami jest widoczny od razu.
-  observeEvent(input$ch1_fit_model, ignoreNULL = FALSE, {
-    preds <- input$ch1_reg_vars
-    if (length(preds) == 0) preds <- "str"
-    formula <- as.formula(paste("score ~", paste(preds, collapse = " + ")))
-    ch1_model(lm(formula, data = ca))
-  })
-
-  output$ch1_reg_coefs <- renderUI({
-    model <- ch1_model()
-    if (is.null(model)) return(NULL)
-
-    coefs <- broom::tidy(model)
-    labels_pl <- c(
-      "(Intercept)" = "Wyraz wolny", "str" = "STR",
-      "income" = "Dochód (tys. USD)", "english" = "Angielski (%)",
-      "expenditure" = "Wydatki (USD)", "lunch" = "Dotacje (%)")
-    coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
-                             labels_pl[coefs$term], coefs$term)
-
-    sig <- coefs$p.value < 0.05
-    # Nieistotne predyktory są wyszarzone; gwiazdka oznacza p < 0.05.
-    lc_table(
-      data.frame(term = unname(coefs$term_pl), estimate = coefs$estimate,
-                 se = coefs$std.error,
-                 p = paste0(lc_pval(coefs$p.value), ifelse(sig, " *", ""))),
-      cols = list(
-        lc_col("term", "Zmienna", "row"),
-        lc_col("estimate", "β", digits = 3),
-        lc_col("se", "SE", digits = 3),
-        lc_col("p", "p")
-      ),
-      row_class = ifelse(!sig & coefs$term != "(Intercept)", "is-dim", NA_character_),
-      label = "Współczynniki modelu"
-    )
-  })
-
-  zoom_plot_server("ch1_reg_coef_plot", reactive({
-    model <- ch1_model()
-    if (is.null(model)) return(NULL)
-
-    coefs <- broom::tidy(model, conf.int = TRUE)
-    coefs <- coefs[coefs$term != "(Intercept)", ]
-    if (nrow(coefs) == 0) return(NULL)
-
-    labels_pl <- c("str" = "STR", "income" = "Dochód", "english" = "Angielski (%)",
-                    "expenditure" = "Wydatki", "lunch" = "Dotacje (%)")
-    coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
-                             labels_pl[coefs$term], coefs$term)
-    coefs$sig <- coefs$p.value < 0.05
-
-    ggplot(coefs, aes(x = estimate, y = term_pl, color = sig)) +
-      geom_point(size = 3) +
-      geom_errorbar(aes(xmin = conf.low, xmax = conf.high), width = 0.2, orientation = "y") +
-      geom_vline(xintercept = 0, linetype = "dashed", color = case_reference) +
-      scale_color_manual(values = c("TRUE" = case_model, "FALSE" = case_highlight),
-                         labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
-                         name = NULL) +
-      labs(x = "β", y = NULL) +
-      theme_upwr() + theme(legend.position = "top")
-  }))
-
-  output$ch1_reg_metrics <- renderUI({
-    model <- ch1_model()
-    if (is.null(model)) return(NULL)
-    g <- broom::glance(model)
-    rmse <- sqrt(mean(residuals(model)^2))
-    tagList(
-      lc_readout("R² skor.", lc_fmt(g$adj.r.squared, 3), color = case_model),
-      lc_readout("AIC", lc_fmt(g$AIC, 0), color = case_conclude),
-      lc_readout("RMSE", lc_fmt(rmse, 1), color = case_highlight)
-    )
-  })
-}

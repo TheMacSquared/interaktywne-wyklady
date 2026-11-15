@@ -175,5 +175,3 @@ ch5_ui <- list(
     )
   )
 )
-
-ch5_server <- function(input, output, session) {}

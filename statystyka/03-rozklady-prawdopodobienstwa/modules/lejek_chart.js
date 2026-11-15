@@ -2,9 +2,12 @@
 // ECharts (renderer canvas — serii przybywa z każdym kliknięciem): pas i linia
 // 1/6 są stałe, starsze serie leżą w tle jako jedna seria „lines”, najnowsza
 // rysuje się punkt po punkcie (jak kolejne rzuty).
-// Serwer wysyła komunikat "lejek_series": {series: [[...], ...]}, gdzie każda
-// seria to częstości w punktach siatki NS (ta sama co s3p_11c_nn w R).
+// Serie losuje przeglądarka: każda to 1000 rzutów kostką i częstość szóstek
+// w punktach siatki NS. Przyciski #s3p_11c_s1 (+1), #s3p_11c_s10 (+10)
+// i #s3p_11c_reset; odczyty [data-lejek="count" | "sd10" | "sd100" | "sd1000"],
+// podpisy [data-lejek-caption="few" | "many"] (od pięciu serii).
 // Kontener: .lc-lejek z <div class="lc-ec" data-role="lejek">.
+// Funkcje liczące: window.lcS03Lejek (testy: tests/js/lc_charts.test.js).
 (function () {
   var Charts = window.lcCharts;
   var alpha = Charts.alpha;
@@ -18,6 +21,33 @@
   for (var i = 0; i <= 199; i++) {
     var v = Math.round(Math.exp(i / 199 * Math.log(N_MAX)));
     if (NS.indexOf(v) < 0) NS.push(v);
+  }
+
+  // Jedna seria: częstość szóstek po n rzutach dla n z siatki NS. Częstości po
+  // dokładnie 10, 100 i 1000 rzutach (do odczytów rozrzutu) są w polu .at —
+  // siatka logarytmiczna nie zawiera każdej z tych liczb.
+  var READ_AT = [10, 100, 1000];
+  function drawSeries(random) {
+    var out = [], sixes = 0, j = 0;
+    out.at = {};
+    for (var n = 1; n <= N_MAX; n++) {
+      if (Math.floor(random() * 6) === 5) sixes += 1;
+      if (NS[j] === n) { out.push(sixes / n); j += 1; }
+      if (READ_AT.indexOf(n) >= 0) out.at[n] = sixes / n;
+    }
+    return out;
+  }
+  // Odchylenie standardowe (z próby) częstości po n rzutach między seriami; od pięciu serii.
+  function sdAt(series, n) {
+    if (series.length < 5) return null;
+    var j = NS.indexOf(n);
+    var x = series.map(function (f) { return f.at && f.at[n] !== undefined ? f.at[n] : f[j]; });
+    var m = x.reduce(function (a, b) { return a + b; }, 0) / x.length;
+    return Math.sqrt(x.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / (x.length - 1));
+  }
+  // Jak lc_fmt(x, 3) w R: trzy miejsca po kropce bez końcowych zer.
+  function fmt3(x) {
+    return x === null ? "–" : x.toFixed(3).replace(/\.?0+$/, "");
   }
 
   function se(n) { return 2 * Math.sqrt(P * (1 - P) / n); }
@@ -120,6 +150,44 @@
   // Dane sesji przeżywają usunięcie rozdziału; instancja wykresu nie.
   var latest = null;
 
+  // Odczyty i podpis w panelu ryciny.
+  function readouts(root) {
+    var series = latest ? latest.series : [];
+    var set = function (name, text) {
+      var el = root.querySelector('[data-lejek="' + name + '"]');
+      if (el) el.textContent = text;
+    };
+    set("count", String(series.length));
+    set("sd10", fmt3(sdAt(series, 10)));
+    set("sd100", fmt3(sdAt(series, 100)));
+    set("sd1000", fmt3(sdAt(series, 1000)));
+    root.querySelectorAll("[data-lejek-caption]").forEach(function (el) {
+      el.hidden = (el.getAttribute("data-lejek-caption") === "many") !== (series.length >= 5);
+    });
+  }
+
+  // Nowy zestaw serii: zapamiętany, narysowany i opisany.
+  function setSeries(series) {
+    latest = { series: series };
+    if (current && current.el.isConnected) {
+      render(current, latest, true);
+      readouts(current.root);
+    }
+  }
+  function addSeries(k) {
+    var series = latest ? latest.series.slice() : [];
+    for (var i = 0; i < k; i++) series.push(drawSeries(Math.random));
+    setSeries(series);
+  }
+  window.lcS03Lejek = { NS: NS, drawSeries: drawSeries, sdAt: sdAt, fmt3: fmt3, set: setSeries };
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest("#s3p_11c_s1, #s3p_11c_s10, #s3p_11c_reset");
+    if (!btn) return;
+    if (btn.id === "s3p_11c_reset") setSeries([]);
+    else addSeries(btn.id === "s3p_11c_s10" ? 10 : 1);
+  });
+
   Charts.onReady(".lc-lejek", function (root) {
     var el = root.querySelector('.lc-ec[data-role="lejek"]');
     if (!el) return false;
@@ -135,10 +203,6 @@
     Charts.onTheme(root, function () { paint(w); });
     paint(w);
     if (latest) render(w, latest, false);
-  });
-
-  Charts.onMessage("lejek_series", function (msg) {
-    latest = msg;
-    if (current && current.el.isConnected) render(current, msg, true);
+    readouts(root);
   });
 })();

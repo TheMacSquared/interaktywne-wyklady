@@ -1,3 +1,46 @@
+# Treść stała (dawniej output$ch3_construct_maps na serwerze): składana przy budowaniu strony.
+ch3_construct_maps_ui <- function() {
+  maps <- list(
+    list(name = "Jakość nauczania", cells = list(
+      c("Pojęcie", "Jakość nauczania: czy zajęcia realnie pomagają studentom uczyć się."),
+      c("Wskaźnik", "Ogólna ocena kursu wystawiona przez studentów."),
+      c("Zmienna", "`eval`: średnia z ankiet, skala 1–5."),
+      c("Ograniczenie", "Może mierzyć satysfakcję, łatwość, sympatię lub oczekiwaną ocenę.")
+    )),
+    list(name = "Atrakcyjność", cells = list(
+      c("Pojęcie", "Atrakcyjność jako możliwe źródło obciążenia ocen."),
+      c("Wskaźnik", "Średnia ocena wyglądu wystawiona przez panel sześciu studentów."),
+      c("Zmienna", "`beauty`: ocena wyglądu przesunięta tak, by średnia wynosiła 0."),
+      c("Ograniczenie", "To ocena społeczna, nie obiektywna cecha osoby.")
+    )),
+    list(name = "Sprawiedliwość ocen", cells = list(
+      c("Pojęcie", "Sprawiedliwość oceniania prowadzących."),
+      c("Wskaźnik", "Porównanie ocen między grupami prowadzących."),
+      c("Zmienna", "`gender`, `native`, `minority`, `tenure`."),
+      c("Ograniczenie", "Przynależność do grupy to etykieta, nie pomiar samego traktowania.")
+    )),
+    list(name = "Reprezentatywność opinii", cells = list(
+      c("Pojęcie", "Reprezentatywność opinii studentów."),
+      c("Wskaźnik", "Odsetek zapisanych osób, które wypełniły ankietę."),
+      c("Zmienna", "`response.rate`."),
+      c("Ograniczenie", "Nie wiemy, kto nie odpowiedział i dlaczego.")
+    ))
+  )
+  blocks <- lapply(maps, function(m) {
+    cells <- lapply(m$cells, function(item) {
+      div(class = "construct-cell",
+        h4(item[[1]]),
+        p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", item[[2]])))
+      )
+    })
+    tagList(
+      tags$h4(m$name),
+      div(class = "construct-map", cells)
+    )
+  })
+  div(blocks)
+}
+
 ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Pomiar", content = tagList(
   lc_chapter_hero(
     kicker = "Rozdział 03 · Pomiar",
@@ -10,7 +53,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Pomiar", content = tag
 
   proj_stage_map(current = 3),  # Pasek etapów
 
-  lc_h2("sec-01", "Pojęcie → wskaźnik → zmienna → ograniczenie"),
+  lc_h2("ch3-sec-01", "Pojęcie → wskaźnik → zmienna → ograniczenie"),
 
   lc_p("Cel z rozdziału 1 mówi o jakości nauczania, a hipotezy z rozdziału 2
     o atrakcyjności, sprawiedliwości ocen i reprezentatywności ankiety.
@@ -30,7 +73,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Pomiar", content = tag
   figure_panel(
     label = "Ryc. 3.1",
     title = "Od pojęcia do zmiennej",
-    uiOutput("ch3_construct_maps")
+    ch3_construct_maps_ui()
   ),
 
   lc_p("Ograniczenia widać też w samych liczbach. Eval ma skalę od 1 do 5,
@@ -56,7 +99,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Pomiar", content = tag
      prowadzący lepiej uczą."
   ),
 
-  lc_h2("sec-02", "Trzy pytania do każdej zmiennej"),
+  lc_h2("ch3-sec-02", "Trzy pytania do każdej zmiennej"),
 
   lc_p("Tę samą analizę warto przeprowadzić we własnym projekcie dla każdej
     zmiennej, która trafia do hipotez. Pomagają w tym trzy pytania.
@@ -79,48 +122,3 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Pomiar", content = tag
     "ch4")
   )
 )
-
-ch3_server <- function(input, output, session) {
-  output$ch3_construct_maps <- renderUI({
-    maps <- list(
-      list(name = "Jakość nauczania", cells = list(
-        c("Pojęcie", "Jakość nauczania: czy zajęcia realnie pomagają studentom uczyć się."),
-        c("Wskaźnik", "Ogólna ocena kursu wystawiona przez studentów."),
-        c("Zmienna", "`eval`: średnia z ankiet, skala 1–5."),
-        c("Ograniczenie", "Może mierzyć satysfakcję, łatwość, sympatię lub oczekiwaną ocenę.")
-      )),
-      list(name = "Atrakcyjność", cells = list(
-        c("Pojęcie", "Atrakcyjność jako możliwe źródło obciążenia ocen."),
-        c("Wskaźnik", "Średnia ocena wyglądu wystawiona przez panel sześciu studentów."),
-        c("Zmienna", "`beauty`: ocena wyglądu przesunięta tak, by średnia wynosiła 0."),
-        c("Ograniczenie", "To ocena społeczna, nie obiektywna cecha osoby.")
-      )),
-      list(name = "Sprawiedliwość ocen", cells = list(
-        c("Pojęcie", "Sprawiedliwość oceniania prowadzących."),
-        c("Wskaźnik", "Porównanie ocen między grupami prowadzących."),
-        c("Zmienna", "`gender`, `native`, `minority`, `tenure`."),
-        c("Ograniczenie", "Przynależność do grupy to etykieta, nie pomiar samego traktowania.")
-      )),
-      list(name = "Reprezentatywność opinii", cells = list(
-        c("Pojęcie", "Reprezentatywność opinii studentów."),
-        c("Wskaźnik", "Odsetek zapisanych osób, które wypełniły ankietę."),
-        c("Zmienna", "`response.rate`."),
-        c("Ograniczenie", "Nie wiemy, kto nie odpowiedział i dlaczego.")
-      ))
-    )
-    blocks <- lapply(maps, function(m) {
-      cells <- lapply(m$cells, function(item) {
-        div(class = "construct-cell",
-          h4(item[[1]]),
-          p(HTML(gsub("`([^`]+)`", "<code>\\1</code>", item[[2]])))
-        )
-      })
-      tagList(
-        tags$h4(m$name),
-        div(class = "construct-map", cells)
-      )
-    })
-    div(blocks)
-  })
-
-}

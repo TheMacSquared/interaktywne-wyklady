@@ -28,28 +28,11 @@ języka zdarzeń i podstaw prawdopodobieństwa.
 
 ## Uruchamianie
 
-Najprościej hubem — spis wszystkich wykładów w przeglądarce, bez wracania do
-terminala między wykładami (lista wykrywana automatycznie, więc zawsze aktualna):
+Z katalogu głównego repozytorium budujemy stronę wykładu i otwieramy ją w przeglądarce:
 
-```bash
-scripts/hub          # z katalogu głównego repo; albo dwuklik w Wyklady.command
+```sh
+Rscript scripts/build_static.R analiza-ryzyka/01-jezyk-ryzyka   # → dist/analiza-ryzyka/01-jezyk-ryzyka.html
 ```
-
-Szczegóły: [hub/README.md](../hub/README.md).
-
-Pojedynczy wykład bezpośrednio — z katalogu głównego repo:
-
-```r
-shiny::runApp("analiza-ryzyka/01-jezyk-ryzyka")
-```
-
-Albo z katalogu `analiza-ryzyka/`:
-
-```r
-shiny::runApp("01-jezyk-ryzyka")
-```
-
-Menu wykładów tylko dla tego przedmiotu, w terminalu: `scripts/wyklad`.
 
 
 ## Kontrola
@@ -63,10 +46,11 @@ Rscript analiza-ryzyka/tests/testthat.R
 
 ```text
 analiza-ryzyka/
-├── R/                    # własny snapshot layoutu i model Bananpolu
+├── R/                    # course.R, course_styles.css i model Bananpolu
+│                         # (layout i style wspólne: ../shared/)
 ├── docs/                 # plany źródłowe, ocena i plan kanoniczny
 ├── scripts/              # kontrole projektu
-├── tests/                # testy funkcji oraz smoke test aplikacji
+├── tests/                # testy funkcji, rycin i stron
 ├── 01-jezyk-ryzyka/      # wykład 01 (block.R + helpers.R widżetów)
 └── 02-warunki/ ... 10-model-do-decyzji/
                           # pełne bloki z lokalnym modules/block.R

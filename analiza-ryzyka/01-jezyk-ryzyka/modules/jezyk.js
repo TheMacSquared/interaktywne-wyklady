@@ -4,6 +4,7 @@
 //   Demonstracja 1.1   — przełącza kadry SVG diagramu Venna za krokiem lc_step_widget
 //   rycina j1_freq     — „Teoria kontra kolejne zmiany”: ukryte P, siatka i częstość
 //   rycina j1_events   — „Suma, iloczyn i dopełnienie”: siatka 100 kontroli z suwakami
+//   ćwiczenia 1 i 3    — ocena notatki dla dyrektora i doboru punktu startu
 // Ryciny rysuje lcSF (R/lc_stat_figures.js, ECharts). Funkcje liczące są
 // w window.lcJ1 (testy: tests/js/j1_jezyk.test.js).
 (function () {
@@ -73,7 +74,78 @@
 
   root.lcJ1 = { big: big, fmtP: fmtP, classify: classify, classificationHtml: classificationHtml,
                 eventCounts: eventCounts, gridLayers: gridLayers, cumulative: cumulative };
+  // --- Ćwiczenie 1 (notatka dla dyrektora) i 3 (punkt startu) --------------------------
+
+  // fields: zaznaczone pola, conclusion: wybrany wniosek; cfg: required, correct, labels.
+  function reportFeedback(fields, conclusion, cfg) {
+    var missing = cfg.required.filter(function (f) { return fields.indexOf(f) < 0; });
+    var extra = fields.filter(function (f) { return cfg.required.indexOf(f) < 0; });
+    var fieldsOk = missing.length === 0 && extra.length === 0;
+    var conclusionOk = conclusion === cfg.correct;
+    var ok = fieldsOk && conclusionOk;
+    var text = "";
+    if (!fieldsOk) text += " Brakuje: " + missing.map(function (f) { return cfg.labels[f]; }).join(", ") + ".";
+    if (!conclusionOk) text += " Same liczniki 3 i 5 nie pozwalają jeszcze ustalić, który magazyn jest bezpieczniejszy.";
+    if (ok) text += " Najpierw ujednolicamy definicje i ekspozycję, potem porównujemy częstości i skutki.";
+    return { ok: ok, verdict: ok ? "Rekomendacja jest kompletna." : "Wstrzymaj decyzję.", text: text };
+  }
+  function reportHtml(res) {
+    return '<div class="lc-status" role="status" aria-live="polite"><span class="lc-status-' +
+      (res.ok ? "ok" : "warning") + '"><strong>' + esc(res.verdict) + "</strong></span>" + esc(res.text) + "</div>";
+  }
+  function modelsScore(answers, correct) {
+    var score = 0;
+    correct.forEach(function (c, i) { if (answers[i] === c) score += 1; });
+    return { score: score, total: correct.length, ok: score === correct.length,
+      verdict: "Wynik: " + score + "/" + correct.length + "." };
+  }
+  root.lcJ1 = root.lcJ1 || {};
+  root.lcJ1.reportFeedback = reportFeedback;
+  root.lcJ1.reportHtml = reportHtml;
+  root.lcJ1.modelsScore = modelsScore;
+
   if (typeof document === "undefined") return;
+
+  // Po pierwszym kliknięciu „Sprawdź…” ocena podąża za zmianą odpowiedzi.
+  function renderReport(out) {
+    var cfg = JSON.parse(out.getAttribute("data-config"));
+    var fields = Array.prototype.map.call(
+      document.querySelectorAll('input[name="' + cfg.fields + '"]:checked'), function (x) { return x.value; });
+    var picked = document.querySelector('input[name="' + cfg.conclusion + '"]:checked');
+    out.innerHTML = reportHtml(reportFeedback(fields, picked ? picked.value : "", cfg));
+    out.setAttribute("data-open", "true");
+  }
+  function renderModels(out) {
+    var cfg = JSON.parse(out.getAttribute("data-config"));
+    var answers = cfg.inputs.map(function (id) { var el = document.getElementById(id); return el ? el.value : ""; });
+    var res = modelsScore(answers, cfg.correct);
+    var verdict = out.querySelector("[data-j1-verdict]");
+    verdict.className = "lc-status-" + (res.ok ? "ok" : "warning");
+    verdict.querySelector("strong").textContent = res.verdict;
+    out.hidden = false;
+    out.setAttribute("data-open", "true");
+  }
+  function eachExercise(test, render) {
+    document.querySelectorAll("[data-j1-report]").forEach(function (out) {
+      if (test(JSON.parse(out.getAttribute("data-config")), out, "report")) renderReport(out);
+    });
+    document.querySelectorAll("[data-j1-models]").forEach(function (out) {
+      if (test(JSON.parse(out.getAttribute("data-config")), out, "models")) renderModels(out);
+    });
+  }
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest("button[id]");
+    if (!btn) return;
+    eachExercise(function (cfg) { return cfg.button === btn.id; });
+  });
+  document.addEventListener("change", function (e) {
+    var id = e.target.name || e.target.id;
+    if (!id) return;
+    eachExercise(function (cfg, out, kind) {
+      if (!out.hasAttribute("data-open")) return false;
+      return kind === "report" ? (id === cfg.fields || id === cfg.conclusion) : cfg.inputs.indexOf(id) >= 0;
+    });
+  });
 
   // --- Łańcuch ryzyka --------------------------------------------------------------
 

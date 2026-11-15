@@ -6,7 +6,7 @@ Stan: 14 listopada 2026. Opis i uzasadnienie w
 Oglądanie (z katalogu repo, osobny port, bez restartu huba):
 
 ```r
-shiny::runApp("analiza-ryzyka/06-zmiennosc-i-prog", port = 8780)
+system("Rscript scripts/build_static.R analiza-ryzyka/06-zmiennosc-i-prog")   # → dist/analiza-ryzyka/06-zmiennosc-i-prog.html
 ```
 
 Każdy prototyp ma złotą plakietkę „Prototyp Pn · rodzaj” i stoi w miejscu,

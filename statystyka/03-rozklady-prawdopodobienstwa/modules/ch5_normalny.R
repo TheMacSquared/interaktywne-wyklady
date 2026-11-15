@@ -79,7 +79,6 @@ ch5_lnorm_stat <- function(s) {
   paste0(s$label, ":  E(X) = ", round(ev, 1), ",  Me = ", round(exp(s$mu), 1), ",  SD = ", round(sd_val, 1))
 }
 
-
 ch5_ui <- list(
   id = "ch-normalny", num = "05", title = "Rozkład normalny",
   content = tagList(
@@ -141,7 +140,19 @@ ch5_ui <- list(
       exp_widget("ch5_waga", "Ważenie ludzi: od jednej osoby do rozkładu normalnego", "Zważ osobę",
         list(kind = "weight", mu = 70, sd = 12, lo = 30, hi = 110, width = 5,
              sub = "masa ciała tej osoby", xTitle = "X, czyli masa ciała (kg)",
-             aria = "Ważenie losowych osób, masa ciała i histogram powtórzeń"))
+             aria = "Ważenie losowych osób, masa ciała i histogram powtórzeń"),
+        texts = list(
+        tagList("Losujemy osobę z dużej grupy dorosłych i ważymy ją. Waga pokazuje masę ciała
+        w kilogramach, ale przed ważeniem nie wiemy, ile to będzie. Zważ kilka osób."),
+        tagList(exp_X(), " to masa ciała wylosowanej osoby w kilogramach. Może wynieść dowolną wartość
+        z przedziału, nie tylko całkowitą, więc to zmienna losowa ciągła."),
+        tagList("Ważymy kolejne osoby i zliczamy, ile mas trafia do przedziałów po 5 kg.
+        Dokładaj po 10, 100 i 1000 osób."),
+        tagList("Częstości w przedziałach układają się w dzwon. Krzywa to rozkład normalny
+        N(μ, σ) z μ = 70 kg i σ = 12 kg. Taki kształt pojawia się, gdy cecha jest sumą wielu
+        drobnych, niezależnych wpływów. Dlaczego tak się dzieje, wyjaśni następny rozdział.")
+        )
+      )
     ),
 
     # ========================================================================
@@ -395,7 +406,18 @@ ch5_ui <- list(
              xTitle = "X, czyli kwadrat chybienia (m²)",
              aria = "Lądowania drona wokół celu, kwadrat chybienia i histogram powtórzeń"),
         options = list(label = "Gdzie", values = c("Lądowisko (2 osie)" = 2, "Balkon (3 osie)" = 3),
-                       selected = 2))
+                       selected = 2),
+        texts = list(
+        tagList("Dron leci do celu, ale GPS myli się o kilkadziesiąt centymetrów, czasem o metr
+        lub dwa. Wyślij kilka lotów i zobacz, gdzie dron ląduje."),
+        tagList(exp_X(), " to kwadrat chybienia, czyli kwadrat odległości od celu. Z Pitagorasa to suma
+        kwadratów błędów na osiach, widocznych w dzienniku."),
+        tagList("Wysyłamy drona wiele razy i zliczamy kwadraty chybień w przedziałach po 0.5 m².
+        Dokładaj po 10, 100 i 1000 lotów, potem przełącz na balkon."),
+        tagList("Krzywa to model sumy kwadratów błędów normalnych. Średni kwadrat chybienia zbliża się
+        do liczby osi: 2 przy lądowisku, 3 przy balkonie.")
+        )
+      )
     ),
 
     lc_p("Kwadrat chybienia to z twierdzenia Pitagorasa suma kwadratów błędów
@@ -583,42 +605,3 @@ ch5_ui <- list(
     )
   )
 )
-
-
-# --------------------------------------------------------------------------
-# Chapter 5 Server
-# --------------------------------------------------------------------------
-
-ch5_server <- function(input, output, session) {
-
-  # --- Ryc. 5.1: ważenie osób → rozkład normalny (experiment.js) ---
-  X <- exp_X
-  exp_texts(input, output, "ch5_waga", list(
-    tagList("Losujemy osobę z dużej grupy dorosłych i ważymy ją. Waga pokazuje masę ciała
-      w kilogramach, ale przed ważeniem nie wiemy, ile to będzie. Zważ kilka osób."),
-    tagList(X(), " to masa ciała wylosowanej osoby w kilogramach. Może wynieść dowolną wartość
-      z przedziału, nie tylko całkowitą, więc to zmienna losowa ciągła."),
-    tagList("Ważymy kolejne osoby i zliczamy, ile mas trafia do przedziałów po 5 kg.
-      Dokładaj po 10, 100 i 1000 osób."),
-    tagList("Częstości w przedziałach układają się w dzwon. Krzywa to rozkład normalny
-      N(μ, σ) z μ = 70 kg i σ = 12 kg. Taki kształt pojawia się, gdy cecha jest sumą wielu
-      drobnych, niezależnych wpływów. Dlaczego tak się dzieje, wyjaśni następny rozdział.")
-  ))
-
-  # --- Ryc. 5.10: dron z GPS → rozkład χ² (experiment.js, kind = "drone") ---
-  exp_texts(input, output, "ch5_dron", list(
-    tagList("Dron leci do celu, ale GPS myli się o kilkadziesiąt centymetrów, czasem o metr
-      lub dwa. Wyślij kilka lotów i zobacz, gdzie dron ląduje."),
-    tagList(X(), " to kwadrat chybienia, czyli kwadrat odległości od celu. Z Pitagorasa to suma
-      kwadratów błędów na osiach, widocznych w dzienniku."),
-    tagList("Wysyłamy drona wiele razy i zliczamy kwadraty chybień w przedziałach po 0.5 m².
-      Dokładaj po 10, 100 i 1000 lotów, potem przełącz na balkon."),
-    tagList("Krzywa to model sumy kwadratów błędów normalnych. Średni kwadrat chybienia zbliża się
-      do liczby osi: 2 przy lądowisku, 3 przy balkonie.")
-  ))
-
-  # Ryc. 5.2 i 5.6 (z presetami i odczytami) rysuje dist_charts.js w przeglądarce.
-
-  # Ryc. 5.11, 5.12 i 5.14 rysuje dist_charts.js w przeglądarce.
-
-}

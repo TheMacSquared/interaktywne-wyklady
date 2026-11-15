@@ -1,0 +1,297 @@
+/* course_styles.css — arkusz kursu „Analiza ryzyka”.
+   Ładowany po shared/shared_styles.css (lista .LC_COURSE$styles w R/course.R).
+   Zawiera elementy własne kursu oraz świadome odstępstwa od wspólnego rdzenia. */
+
+/* === Elementy skryptu (R/risk_block.R) === */
+.lc-check {
+  max-width: 680px;
+  margin: 1.4em 0;
+  padding: 12px 16px;
+  background: var(--upwr-surface);
+  border: 1px solid var(--upwr-rule);
+  border-left: 4px solid var(--upwr-accent);
+  border-radius: 2px;
+  font-family: var(--upwr-serif);
+  font-size: calc(17px * var(--lc-font-scale));
+  line-height: 1.6;
+  color: var(--upwr-ink-soft);
+}
+
+.lc-check { border-left-color: var(--upwr-reference); }
+.lc-check.is-correct { border-left-color: var(--upwr-sage); background: var(--upwr-sage-tint); }
+.lc-check.is-wrong { border-left-color: var(--upwr-accent); }
+
+.lc-check-label {
+  margin-bottom: 6px;
+  font-family: var(--upwr-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--upwr-accent);
+}
+
+.lc-check-label { color: var(--upwr-reference); }
+
+.lc-check p { margin: 0 0 0.6em; }
+
+@counter-style lc-alpha-paren { system: extends lower-alpha; suffix: ") "; }
+/* Przykład omawiany (risk_example(open = TRUE)): pełna szerokość, rozwiązanie widoczne. */
+.risk-case { margin: 1.6em 0; padding-top: .8em; border-top: 1px solid var(--upwr-rule); }
+.risk-case-l { font: 700 .64em/2 var(--upwr-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--upwr-ink-subtle); }
+.risk-case-t { font-weight: 700; font-size: 1.1em; color: var(--upwr-ink); margin: .1em 0 .5em; }
+.risk-case .lc-example-list li { margin-bottom: 8px; }
+.lc-example-list { margin: 8px 0 0; padding-left: 1.6em; list-style-type: lc-alpha-paren; }
+.lc-example-list li { margin-bottom: 6px; padding-left: 0.2em; }
+.lc-example-list li::marker { color: var(--upwr-single-alt); font-weight: 600; }
+
+.lc-exercise-answer {
+  margin-top: 10px;
+  border-top: 1px solid var(--upwr-rule-soft);
+  padding-top: 8px;
+}
+
+.lc-exercise-answer > summary {
+  cursor: pointer;
+  font-family: var(--upwr-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--upwr-single-alt);
+}
+
+.lc-formula-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lc-formula-tex { flex: 1 1 auto; min-width: 0; overflow-x: auto; font-size: 1.3em; color: var(--upwr-ink); }
+.lc-formula-num { flex: 0 0 auto; color: var(--upwr-reference); }
+.lc-formula-legend {
+  margin-top: 6px;
+  font-family: var(--upwr-serif);
+  font-size: calc(15.5px * var(--lc-font-scale));
+  line-height: 1.5;
+  color: var(--upwr-ink-soft);
+}
+
+/* „W praktyce”: język inżyniera przy wzorze lub definicji (risk_practice()). */
+.risk-practice {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .2em .6em;
+  margin: 10px auto 18px; max-width: 46em; padding: 2px 0 2px 10px;
+  border-left: 3px solid var(--upwr-cat-kurkuma);
+  font-family: var(--upwr-serif);
+  font-size: calc(15.5px * var(--lc-font-scale)); line-height: 1.5;
+  color: var(--upwr-ink-soft);
+}
+.lc-note-b .risk-practice { margin: 10px 0 0; }
+.risk-practice-l {
+  font-family: var(--upwr-mono); font-size: .72em; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--upwr-ink-subtle);
+}
+.risk-practice-t { font-weight: 600; color: var(--upwr-ink); }
+.risk-practice-q { font-style: italic; }
+
+.lc-check-question { font-weight: 600; }
+.lc-check-options { display: flex; flex-direction: column; gap: 4px; }
+.lc-check-option { font-weight: 400; cursor: pointer; }
+.lc-check-feedback:not(:empty) { margin-top: 8px; font-weight: 600; }
+.lc-check-explanation { margin-top: 4px; }
+
+.lc-derivation-lines {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  background: var(--upwr-surface-sunken);
+  border: none;
+  font-family: var(--upwr-mono);
+  font-size: calc(13px * var(--lc-font-scale));
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--upwr-ink);
+}
+
+/* === Tablica wyników detektora 2×2 === */
+.lc-cm {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 6px;
+  margin: 16px 0 20px;
+  max-width: 640px;
+}
+.lc-cm-head,
+.lc-cm-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--upwr-mono);
+  font-size: calc(12px * var(--lc-font-scale));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--upwr-reference);
+  text-align: center;
+}
+.lc-cm-side { padding-right: 8px; justify-content: flex-end; text-align: right; }
+.lc-cm-cell {
+  padding: 14px 16px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  border-left-width: 5px;
+}
+.lc-cm-ok  { background: #dfead6; border-color: #b9cfa9; border-left-color: #3f7a3a; }
+.lc-cm-bad { background: #f3dcd8; border-color: #dfb4ad; border-left-color: #a3342a; }
+.lc-cm-abbr {
+  font-family: var(--upwr-mono);
+  font-size: calc(20px * var(--lc-font-scale));
+  font-weight: 700;
+  line-height: 1.1;
+}
+.lc-cm-ok .lc-cm-abbr  { color: #2f5f2b; }
+.lc-cm-bad .lc-cm-abbr { color: #8a271e; }
+.lc-cm-name { font-weight: 600; margin-top: 4px; }
+.lc-cm-desc { color: var(--upwr-ink-soft); font-size: 0.95em; }
+
+/* === Wzór z opisami (risk_annotated_formula) === */
+.lc-formula-box.lc-annot {
+  display: grid;
+  column-gap: 12px;
+  row-gap: 4px;
+  align-items: start;
+  padding: 20px 24px;
+}
+.lc-annot-cell { text-align: center; min-width: 0; }
+.lc-annot-op {
+  align-self: center;
+  font-size: calc(24px * var(--lc-font-scale));
+  color: var(--upwr-reference);
+  text-align: center;
+}
+.lc-annot-symbol {
+  font-family: var(--upwr-serif);
+  font-size: calc(22px * var(--lc-font-scale));
+  color: var(--upwr-ink-soft);
+}
+.lc-annot-value {
+  font-family: var(--upwr-mono);
+  font-size: calc(30px * var(--lc-font-scale));
+  font-weight: 700;
+  color: var(--annot-color);
+}
+.lc-annot-cell.lc-annot-symbol,
+.lc-annot-cell.lc-annot-value { padding: 2px 0; }
+.lc-annot-note {
+  font-family: var(--upwr-sans);
+  font-size: calc(15px * var(--lc-font-scale));
+  color: var(--upwr-ink-soft);
+  line-height: 1.4;
+  padding: 0 4px;
+}
+.lc-annot-note::before {
+  content: "↓";
+  display: block;
+  font-size: calc(26px * var(--lc-font-scale));
+  line-height: 1;
+  margin-bottom: 4px;
+  color: var(--annot-color);
+}
+
+/* === Schemat łańcucha pojęć (wykład 01, Schemat 1.1) === */
+.lc-chain { display: block; width: 100%; max-width: 960px; height: auto; margin: 4px auto 0; }
+.lc-chain-node { cursor: pointer; outline: none; }
+.lc-chain-node rect {
+  fill: var(--upwr-surface);
+  stroke: var(--node-color);
+  stroke-width: 2;
+  transition: fill 0.15s, stroke-width 0.15s;
+}
+.lc-chain-node:hover rect,
+.lc-chain-node:focus-visible rect { stroke-width: 3; }
+.lc-chain-node.is-active rect { fill: var(--node-color); stroke-width: 3; }
+.lc-chain-name {
+  font-family: var(--upwr-serif);
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--node-color);
+}
+.lc-chain-caption {
+  font-family: var(--upwr-sans);
+  font-size: 16px;
+  text-anchor: middle;
+  fill: var(--upwr-ink-soft);
+}
+.lc-chain-node.is-active .lc-chain-name,
+.lc-chain-node.is-active .lc-chain-caption { fill: #fff; }
+.lc-chain-arrow { stroke: var(--upwr-reference); stroke-width: 2.5; }
+.lc-chain-headfill { fill: var(--upwr-reference); }
+.lc-chain-link {
+  fill: none;
+  stroke: var(--upwr-cat-szalwia);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+}
+.lc-chain-cut { stroke: var(--upwr-cat-szalwia); stroke-width: 5; stroke-linecap: round; }
+.lc-chain-where {
+  font-family: var(--upwr-mono);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-anchor: middle;
+  fill: var(--upwr-cat-szalwia);
+}
+.lc-chain-hint {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: calc(13px * var(--lc-font-scale));
+  color: var(--upwr-reference);
+}
+.lc-chain-detail {
+  max-width: 680px;
+  margin: 14px auto 0;
+  padding: 12px 16px;
+  border-left: 4px solid var(--node-color);
+  background: var(--upwr-surface);
+  font-family: var(--upwr-serif);
+  font-size: calc(16px * var(--lc-font-scale));
+  line-height: 1.55;
+  color: var(--upwr-ink-soft);
+}
+.lc-chain-detail p { margin: 6px 0 0; }
+.lc-chain-detail-name {
+  font-size: calc(20px * var(--lc-font-scale));
+  font-weight: 700;
+  color: var(--node-color);
+}
+
+/* Numer wzoru przy wzorze ze znacznikami (risk_formula z notes) */
+.lc-fa-tex > .lc-formula-num {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  font-size: .77em; font-family: var(--upwr-sans);
+}
+
+/* Lista definicji w treści */
+.lc-def-list{margin:.3em 0 .6em;padding-left:1.3em}
+.lc-def-list li{margin-bottom:.35em;padding-left:.2em}
+.lc-def-list li::marker{color:var(--upwr-ink-subtle)}
+
+/* === Odstępstwa od rdzenia ================================================
+   Reguły, które w tym kursie różniły się od statystyki w chwili scalenia
+   rdzenia (listopad 2026). Każdą można usunąć (kurs przejmuje zachowanie
+   rdzenia) albo przenieść do shared/shared_styles.css (oba kursy). */
+
+/* Wciśnięty przycisk segmentu (aria-pressed) w kolorze akcentu. */
+.lc-seg button[aria-pressed="true"]{background:var(--upwr-accent);color:var(--upwr-surface)}
+/* Pola przeciągania (lc_drop_match): szersze pola i większe gniazda niż w rdzeniu
+   (rdzeń: kolumny po 120 px, gniazdo 36 px). */
+.lc-dm-zones {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  justify-content: normal;
+  gap: 12px;
+  margin: 18px 0 4px;
+}
+.lc-dm-zone { gap: 8px; padding: 10px; }
+.lc-dm-slot { min-height: 62px; padding: 6px; }
+@media (max-width: 620px) {
+  .lc-dm-zones { grid-template-columns: 1fr; }
+}
+/* Dwa wykresy obok siebie już od 640 px szerokości panelu (rdzeń: 760 px). */
+@container lc-fig (min-width:640px){.lc-plots{grid-template-columns:repeat(2,minmax(0,1fr))}.lc-plots .lc-plot{--lc-plot-ratio:1.6/1}}

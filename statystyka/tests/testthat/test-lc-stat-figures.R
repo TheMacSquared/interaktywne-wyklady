@@ -1,9 +1,9 @@
 testthat::test_that("lc_sf_figure oznacza kontrolki i przekazuje config jako JSON bez pól NULL", {
   suppressPackageStartupMessages(library(shiny))
   env <- new.env(parent = globalenv())
-  sys.source(file.path(stat_root, "R", "palette.R"), env)
-  sys.source(file.path(stat_root, "R", "lecture_layout.R"), env)
-  sys.source(file.path(stat_root, "R", "lc_stat_figures.R"), env)
+  sys.source(file.path(dirname(stat_root), "shared", "palette.R"), env)
+  sys.source(file.path(dirname(stat_root), "shared", "lecture_layout.R"), env)
+  sys.source(file.path(dirname(stat_root), "shared", "lc_stat_figures.R"), env)
   fig <- env$lc_sf_figure("demo",
     control = list(shiny::checkboxInput("a", "A"), env$lc_sf_slider("b", "B", 0, 1, 0.5, 0.1)),
     config = list(n = 3, defs = list(x = list(label = "X", p = 0.25))), legend = TRUE)
@@ -29,9 +29,9 @@ testthat::test_that("lc_sf_figure oznacza kontrolki i przekazuje config jako JSO
 testthat::test_that("lc_sf_chart oznacza niskie paski, a style wypełniają wykres i trzymają jednostkę suwaka w linii", {
   suppressPackageStartupMessages(library(shiny))
   env <- new.env(parent = globalenv())
-  sys.source(file.path(stat_root, "R", "palette.R"), env)
-  sys.source(file.path(stat_root, "R", "lecture_layout.R"), env)
-  sys.source(file.path(stat_root, "R", "lc_stat_figures.R"), env)
+  sys.source(file.path(dirname(stat_root), "shared", "palette.R"), env)
+  sys.source(file.path(dirname(stat_root), "shared", "lecture_layout.R"), env)
+  sys.source(file.path(dirname(stat_root), "shared", "lc_stat_figures.R"), env)
   testthat::expect_match(as.character(env$lc_sf_chart(0, ratio = "5/1")), 'class="lc-sf-chart is-strip"', fixed = TRUE)
   testthat::expect_match(as.character(env$lc_sf_chart(0, ratio = "2/1")), 'class="lc-sf-chart"', fixed = TRUE)
   css <- as.character(env$lc_sf_styles())

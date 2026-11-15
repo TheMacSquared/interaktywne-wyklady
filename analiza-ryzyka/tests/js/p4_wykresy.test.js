@@ -7,7 +7,7 @@ const { test } = require("node:test");
 const path = require("node:path");
 
 globalThis.window = globalThis;
-require(path.resolve(__dirname, "../../R/lc_dist.js"));
+require(path.resolve(__dirname, "../../../shared/lc_dist.js"));
 const figures = {};
 const values = {};
 globalThis.lcCharts = { token: name => name };

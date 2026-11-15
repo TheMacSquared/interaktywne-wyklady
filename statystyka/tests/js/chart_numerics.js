@@ -11,7 +11,7 @@ const context = vm.createContext({
   window, document,
   MutationObserver: class { observe() {} }
 });
-for (const file of ["R/lc_charts.js", "01-typy-danych/modules/chart_utils.js", "01-typy-danych/modules/kurtosis_chart.js", "R/lc_dist.js"]) {
+for (const file of ["../shared/lc_charts.js", "01-typy-danych/modules/chart_utils.js", "01-typy-danych/modules/kurtosis_chart.js", "../shared/lc_dist.js"]) {
   vm.runInContext(fs.readFileSync(path.join(statRoot, file), "utf8"), context, { filename: file });
 }
 const C = window.lcCharts, U = window.lc01, D = window.lcDist;

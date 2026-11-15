@@ -1,6 +1,6 @@
 // Symulacje wykładu 03 liczone w przeglądarce (dawniej losowanie i ggplot na
-// serwerze). Silnik: window.lcSF (statystyka/R/lc_stat_figures.js), rozkłady
-// i losowanie: window.lcDist (statystyka/R/lc_dist.js).
+// serwerze). Silnik: window.lcSF (shared/lc_stat_figures.js), rozkłady
+// i losowanie: window.lcDist (shared/lc_dist.js).
 //
 //   d03-emp   — Ryc. 1.3: próba z modelu (histogram lub słupki) i model
 //   d03-freq  — Ryc. 1.4: częstości z rzutów a prawdopodobieństwa modelu

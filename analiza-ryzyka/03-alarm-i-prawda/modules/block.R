@@ -432,7 +432,21 @@ alarm_block <- list(
               "a3_vote", "a3_vote_feedback",
               "Po alarmie: jak duża jest szansa rzeczywistej awarii?",
               c("Około 95%" = "95", "Około 16%" = "16", "Nie da się określić bez częstości bazowej" = "base"),
-              correct = "16"
+              correct = "16",
+              feedback = list(
+                "16" = lc_status(
+                  lc_verdict(tags$strong("Około 16%."), type = "ok"),
+                  " Na 1000 zmian przypada około 10 awarii i 9–10 prawdziwych alarmów, ale też około 50 fałszywych alarmów z 990 zmian bez awarii. Większość alarmów jest fałszywa."
+                ),
+                "base" = lc_status(
+                  tags$strong("Dobry odruch, ale częstość bazowa jest podana:"),
+                  " 1 awaria na 100 zmian. Z nią wynik da się policzyć — około 16%. Bez częstości bazowej odpowiedź rzeczywiście byłaby niemożliwa."
+                ),
+                "95" = lc_status(
+                  lc_verdict(tags$strong("95% to czułość, czyli P(alarm | awaria)."), type = "warning"),
+                  " Pytanie po alarmie dotyczy P(awaria | alarm). Przy rzadkich awariach większość alarmów pochodzi ze zmian bez awarii i wynik spada do około 16%."
+                )
+              )
             ),
             "Sprawdźmy zakład na dzienniku dyżurnego. Przejdź kadry i policz telefony, zanim zobaczysz jakikolwiek wzór.",
             alarm_dziennik_widget,
@@ -949,35 +963,3 @@ alarm_block <- list(
 )
 
 alarm_chapters <- risk_block_chapters(alarm_block)
-
-alarm_server <- function(input, output, session) {
-  checked <- reactiveVal(FALSE)
-  observeEvent(input$a3_vote_check, checked(TRUE))
-  output$a3_vote_feedback <- renderUI({
-    req(checked())
-    if (is.null(input$a3_vote)) {
-      return(lc_caption(
-               "Najpierw zaznacz jedną z odpowiedzi.",
-               tone = "info"
-             ))
-    }
-    if (identical(input$a3_vote, "16")) {
-      lc_status(
-        lc_verdict(tags$strong("Około 16%."), type = "ok"),
-        " Na 1000 zmian przypada około 10 awarii i 9–10 prawdziwych alarmów, ale też około 50 fałszywych alarmów z 990 zmian bez awarii. Większość alarmów jest fałszywa."
-      )
-    } else if (identical(input$a3_vote, "base")) {
-      lc_status(
-        tags$strong("Dobry odruch, ale częstość bazowa jest podana:"),
-        " 1 awaria na 100 zmian. Z nią wynik da się policzyć — około 16%. Bez częstości bazowej odpowiedź rzeczywiście byłaby niemożliwa."
-      )
-    } else {
-      lc_status(
-        lc_verdict(tags$strong("95% to czułość, czyli P(alarm | awaria)."), type = "warning"),
-        " Pytanie po alarmie dotyczy P(awaria | alarm). Przy rzadkich awariach większość alarmów pochodzi ze zmian bez awarii i wynik spada do około 16%."
-      )
-    }
-  })
-  # Tablica 2×2, drzewo, dwa alarmy, próg reakcji i Serpuchów: modules/detektor.js.
-  risk_assessment_server("a3", alarm_quiz, input, output)
-}

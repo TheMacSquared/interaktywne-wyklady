@@ -332,7 +332,6 @@ ch5_ui <- list(
       Kto najpierw patrzy na przedziały, a potem wybiera poziom, przy którym
       wniosek wychodzi „po jego myśli”, przestaje mierzyć siłę dowodów."),
 
-
     lc_note("Zasada", rule = TRUE,
       "Poziom ufności ustal przed analizą danych i zawsze podawaj go w raporcie
        razem z przedziałem."
@@ -358,13 +357,3 @@ ch5_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch5_server <- function(input, output, session) {
-  # Ryc. 5.2–5.4 i Przykłady 1–3 liczy przeglądarka (sf_ch5.js): suwaki, kalkulator,
-  # trzy przedziały, przyciski poziomu ufności i werdykty. Serwer nie ma tu nic do roboty.
-  invisible(NULL)
-}

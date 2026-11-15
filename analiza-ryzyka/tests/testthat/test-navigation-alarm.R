@@ -18,23 +18,19 @@ testthat::test_that("dwa alarmy wynikają z jawnego rozkładu wspólnego", {
 # Odczyty detektora (posterior, dwa alarmy, tablica, drzewo) liczy od 2026-11-13
 # modules/detektor.js: rachunek sprawdza tests/js/a3_detektor.test.js, a wpięcie
 # test-a3-browser.R. Tu zostaje nawigacja: suwaki żyją dłużej niż rozdział.
-testthat::test_that("zmiana rozdziału nie odtwarza suwaków detektora z wartościami początkowymi", {
-  result <- callr::r(function(path) {
+testthat::test_that("suwaki detektora są w dokumencie raz i zmiana rozdziału ich nie odtwarza", {
+  testthat::skip_if_not_installed("xml2")
+  ids <- callr::r(function(path) {
     setwd(path)
     app <- new.env()
     sys.source("app.R", app)
-    # Zmiana rozdziału nie odtwarza kontrolek z wartościami początkowymi.
-    shiny::testServer(app$server, {
-      first <- output$lc__chapter_content$html
-      session$setInputs(a3_prev = .023, lc__switch_chapter = "ch-baza")
-      stopifnot(identical(first, output$lc__chapter_content$html))
-      stopifnot(identical(input$a3_prev, .023))
-      stopifnot(grepl('id="a3_prev"', first, fixed = TRUE))
-      stopifnot(grepl('id="a3_dependence"', first, fixed = TRUE))
-    })
-    TRUE
+    doc <- xml2::read_html(paste0("<div>", htmltools::renderTags(app$ui)$html, "</div>"))
+    xml2::xml_attr(xml2::xml_find_all(doc, "//*[@id]"), "id")
   }, args = list(path = file.path(risk_root, "03-alarm-i-prawda")), timeout = 60)
-  testthat::expect_true(result)
+  # Wszystkie rozdziały są w dokumencie naraz (przełącza je przeglądarka), więc
+  # kontrolka istnieje dokładnie raz i zachowuje wartość przy zmianie rozdziału.
+  testthat::expect_equal(sum(ids == "a3_prev"), 1L)
+  testthat::expect_equal(sum(ids == "a3_dependence"), 1L)
 })
 
 # Grę Monty Halla prowadzi od 2026-11-14 modules/monty.js (logika: tests/js/w2_monty.test.js).
@@ -63,7 +59,8 @@ testthat::test_that("wykład 02: Monty Hall, drzewo i tablica działają bez ser
   testthat::expect_equal(res$figs, "w2_monty")
   testthat::expect_equal(res$tree, 1L)
   testthat::expect_equal(res$plot_outputs, 0L)
-  testthat::expect_equal(res$html_outputs, "w2_quiz_feedback")
+  # Quiz ocenia przeglądarka: wykład nie ma już żadnego wyjścia serwera.
+  testthat::expect_length(res$html_outputs, 0L)
   testthat::expect_true(grepl("lcW2Monty", res$head, fixed = TRUE))
   testthat::expect_false(res$has_server)
 })

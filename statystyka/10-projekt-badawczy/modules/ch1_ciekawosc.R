@@ -1,3 +1,34 @@
+# Treść stała (dawniej output$ch1_tropy_bundle na serwerze): składana przy budowaniu strony.
+ch1_tropy_bundle_ui <- function() {
+  tags$ul(lapply(tr_trop_order, function(id) {
+    tr <- tr_tropy[[id]]
+    tags$li(b_(paste0(tr$short, ":")), " ", tr$question)
+  }))
+}
+
+# Treść stała (dawniej output$ch1_extra_tropy na serwerze): składana przy budowaniu strony.
+ch1_extra_tropy_ui <- function() {
+  extra <- list(
+    c("Wielkość kursu", "Czy bardzo duże grupy są oceniane inaczej niż kameralne?"),
+    c("Pora i dzień zajęć", "Czy zajęcia o poranku albo w piątek dostają niższe oceny?"),
+    c("Trudność i obciążenie", "Czy łatwiejsze kursy dostają wyższe oceny niezależnie od jakości?"),
+    c("Dyscyplina / wydział", "Czy kursy ścisłe są oceniane surowiej niż humanistyczne?"),
+    c("Powtarzalność prowadzącego", "Czy ten sam prowadzący dostaje podobne oceny na różnych kursach?")
+  )
+  lc_table(
+    data.frame(
+      trop = vapply(extra, `[[`, character(1), 1),
+      question = vapply(extra, `[[`, character(1), 2),
+      stringsAsFactors = FALSE
+    ),
+    cols = list(
+      lc_col("trop", "Trop", "row"),
+      lc_col("question", "Przykładowe pytanie", "text")
+    ),
+    narrow = "stack-last"
+  )
+}
+
 ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu", content = tagList(
   lc_chapter_hero(
     kicker = "Rozdział 01 · Start badania",
@@ -8,7 +39,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
             cel ocenić."
   ),
 
-  lc_h2("sec-01", "Zaczynamy od sytuacji, nie od metody"),
+  lc_h2("ch1-sec-01", "Zaczynamy od sytuacji, nie od metody"),
 
   lc_p("Wykład 09 przeprowadził jedną analizę od pytania do wniosku. Na końcu
     padła odpowiedź ostrożna: dane są obserwacyjne, efekt podaliśmy
@@ -51,22 +82,25 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
   figure_panel(
     label = "Ryc. 1.2",
     title = "Podgląd danych",
-    lc_toolbar(
-      numericInput("ch1_row_from", "Pokaż od wiersza", value = 1,
-                   min = 1, max = nrow(tr_data), step = 10),
-      selectInput("ch1_col_view", "Zakres kolumn",
-          choices = c("Kluczowe zmienne" = "key", "Wszystkie zmienne" = "all"),
-          selected = "key"
-          ),
-          selectInput("ch1_sort_var", "Sortuj wg",
-          choices = setNames(
-            c("none", "eval", "beauty", "response.rate", "age"),
-            c("bez sortowania", tr_labels[c("eval", "beauty", "response.rate", "age")])
-          ),
-          selected = "none"
-          )
-          ),
-          uiOutput("ch1_data_view"),
+    # Cała tabela jest w dokumencie; sortowanie, okno wierszy i zakres kolumn obsługuje
+    # przeglądarka (modules/figures.js, rycina s10_data).
+    tags$div(class = "lc-sf s10-data is-key", `data-fig` = "s10_data", `data-lc-nochart` = NA,
+      `data-config` = as.character(jsonlite::toJSON(s10_data_config, auto_unbox = TRUE, digits = NA)),
+      lc_toolbar(
+        lc_sf_ctl(numericInput("ch1_row_from", "Pokaż od wiersza", value = 1,
+                     min = 1, max = nrow(tr_data), step = 10)),
+        lc_sf_ctl(selectInput("ch1_col_view", "Zakres kolumn", selectize = FALSE,
+            choices = c("Kluczowe zmienne" = "key", "Wszystkie zmienne" = "all"),
+            selected = "key")),
+        lc_sf_ctl(selectInput("ch1_sort_var", "Sortuj wg", selectize = FALSE,
+            choices = setNames(
+              c("none", "eval", "beauty", "response.rate", "age"),
+              c("bez sortowania", tr_labels[c("eval", "beauty", "response.rate", "age")])
+            ),
+            selected = "none"))
+      ),
+      s10_data_table()
+    ),
     lc_table(
       data.frame(
         var = c("eval", "beauty", "gender, age", "minority", "native, tenure", "division, credits", "students, allstudents", "response.rate", "prof"),
@@ -107,7 +141,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     z mniejszości, a 28 kursów osoby, dla których angielski nie jest językiem
     ojczystym. Te liczby wrócą, gdy będziemy porównywać grupy."),
 
-  lc_h2("sec-02", "Od pomysłu do celu badania"),
+  lc_h2("ch1-sec-02", "Od pomysłu do celu badania"),
 
   lc_p("Tabela podsuwa wiele pytań naraz: czy atrakcyjni prowadzący dostają
     lepsze oceny, czy kobiety są oceniane surowiej, czy w dużych kursach
@@ -135,7 +169,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     część grupy wypełniła ankietę. Jeśli zależy, to ocena miesza jakość
     z czymś innym. Każde takie podejrzenie nazywamy w tym wykładzie tropem."),
 
-  lc_h2("sec-03", "Wiązka tropów, którą będziemy śledzić"),
+  lc_h2("ch1-sec-03", "Wiązka tropów, którą będziemy śledzić"),
 
   lc_p("Trop to robocze przypuszczenie o jednym możliwym składniku oceny
     z ankiety. Zestaw tropów podporządkowanych wspólnemu celowi nazywamy
@@ -144,7 +178,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     pozwala powiedzieć coś o tym, co mierzy eval. Nasza wiązka ma pięć
     tropów."),
 
-  uiOutput("ch1_tropy_bundle"),
+  ch1_tropy_bundle_ui(),
 
   lc_p("Cztery pierwsze tropy dotyczą cech prowadzącego, za które nie
     powinien być ani nagradzany, ani karany. Piąty jest innego rodzaju:
@@ -159,7 +193,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
      tropu, a nie punktem wyjścia badania."
   ),
 
-  lc_h2("sec-04", "Tablica tropów"),
+  lc_h2("ch1-sec-04", "Tablica tropów"),
 
   lc_p("Wyniki będziemy zbierać w jednej tablicy, do której wraca cały wykład.
     Każdy wiersz to jeden trop z pytaniem badawczym. Kolumny z narzędziem,
@@ -179,13 +213,13 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     jakikolwiek wynik, więc nie da się ich później dopasować do tego,
     co akurat wyszło."),
 
-  lc_h2("sec-05", "Tropy poza naszą wiązką"),
+  lc_h2("ch1-sec-05", "Tropy poza naszą wiązką"),
 
   lc_p("Pięć tropów to wybór na potrzeby tego wykładu, a nie pełna lista.
     Ten sam cel można badać wieloma innymi pytaniami. Kilka przykładów
     zebrano w tabeli."),
 
-  uiOutput("ch1_extra_tropy"),
+  ch1_extra_tropy_ui(),
 
   lc_p("Część z tych tropów da się sprawdzić na naszych danych: wielkość
     kursu opisuje liczba zapisanych (od 8 do 581 osób), a identyfikator
@@ -200,68 +234,3 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     "ch2")
   )
 )
-
-ch1_server <- function(input, output, session) {
-  output$ch1_tropy_bundle <- renderUI({
-    tags$ul(lapply(tr_trop_order, function(id) {
-      tr <- tr_tropy[[id]]
-      tags$li(b_(paste0(tr$short, ":")), " ", tr$question)
-    }))
-  })
-
-  output$ch1_extra_tropy <- renderUI({
-    extra <- list(
-      c("Wielkość kursu", "Czy bardzo duże grupy są oceniane inaczej niż kameralne?"),
-      c("Pora i dzień zajęć", "Czy zajęcia o poranku albo w piątek dostają niższe oceny?"),
-      c("Trudność i obciążenie", "Czy łatwiejsze kursy dostają wyższe oceny niezależnie od jakości?"),
-      c("Dyscyplina / wydział", "Czy kursy ścisłe są oceniane surowiej niż humanistyczne?"),
-      c("Powtarzalność prowadzącego", "Czy ten sam prowadzący dostaje podobne oceny na różnych kursach?")
-    )
-    lc_table(
-      data.frame(
-        trop = vapply(extra, `[[`, character(1), 1),
-        question = vapply(extra, `[[`, character(1), 2),
-        stringsAsFactors = FALSE
-      ),
-      cols = list(
-        lc_col("trop", "Trop", "row"),
-        lc_col("question", "Przykładowe pytanie", "text")
-      ),
-      narrow = "stack-last"
-    )
-  })
-
-  output$ch1_data_view <- renderUI({
-    key_cols <- c(
-      "eval", "beauty", "gender", "age", "minority", "native",
-      "division", "credits", "students", "allstudents",
-      "response.rate"
-    )
-    cols <- if (identical(input$ch1_col_view, "all")) names(tr_data) else key_cols
-    show <- tr_data[, cols, drop = FALSE]
-
-    if (!is.null(input$ch1_sort_var) && !identical(input$ch1_sort_var, "none")) {
-      show <- show[order(show[[input$ch1_sort_var]], decreasing = TRUE), , drop = FALSE]
-    }
-
-    start <- min(max(1, input$ch1_row_from), nrow(show))
-    idx <- start:min(nrow(show), start + 9)
-    out <- show[idx, , drop = FALSE]
-    out <- cbind(data.frame(row = rownames(out), stringsAsFactors = FALSE), out)
-    # Jak wcześniej w renderTable(): liczby całkowite bez miejsc po kropce,
-    # pozostałe liczby z 2 miejscami.
-    cols <- c(
-      list(lc_col("row", "", "row")),
-      lapply(names(out)[-1], function(key) {
-        x <- out[[key]]
-        if (is.numeric(x)) {
-          lc_col(key, key, "num", digits = if (is.integer(x)) 0 else 2)
-        } else {
-          lc_col(key, key, "text")
-        }
-      })
-    )
-    lc_table(out, cols, scroll = TRUE, sticky_first = TRUE,
-             label = "Podgląd danych TeachingRatings")
-  })
-}

@@ -54,7 +54,17 @@ ch1_ui <- list(
         more_from = 3, more = c("+10" = "m10", "+100" = "m100"),
         config = list(kind = "rows", rok = faculty$rok, a = as.integer(faculty$akademik),
                       d = faculty$dojazd, pr = as.integer(faculty$praca),
-                      aria = "Student podchodzi do tabeli i jego cechy zapisują się w nowym wierszu"))
+                      aria = "Student podchodzi do tabeli i jego cechy zapisują się w nowym wierszu"),
+        texts = list(
+        tagList("Student podchodzi do stołu i podaje o sobie cztery rzeczy: rok studiów, to, czy mieszka
+        w akademiku, czas dojazdu i to, czy pracuje. Cały zapis jednej osoby ląduje w jednym wierszu
+        i to jest jedna obserwacja."),
+        tagList("Kolumna to ta sama cecha zapisana dla wszystkich osób, czyli zmienna. Wybierz jedną
+        i zobacz, że jej wartości różnią się między osobami. Komórka to wartość zmiennej dla jednej osoby."),
+        tagList("Kolejni studenci dopisują kolejne wiersze. Liczba wierszy to ", tags$code("n", .noWS = "outside"),
+        ". Dokładaj po 10 i 100 i patrz, jak rośnie tabela, a jej układ w kolumnach się nie zmienia.")
+        )
+      )
     ),
 
     lc_p("Studenci z tej sceny pochodzą z danych, które będą nam towarzyszyć przez
@@ -90,10 +100,39 @@ ch1_ui <- list(
           "Osoba"    = "wide",
           "Przejazd" = "long"
         ), selected = "wide"),
-        lc_readouts(uiOutput("ch1_layout_reads"))
+        # Oba układy są w dokumencie; przełącza je segment (lc_variants()).
+        lc_readouts(lc_variants("ch1_layout", list(
+          wide = tagList(
+            lc_readout("obserwacje (n)", nrow(commute_people), color = col_sample),
+            lc_readout("zmienne", ncol(commute_people), color = upwr_secondary)
+          ),
+          long = tagList(
+            lc_readout("obserwacje (n)", nrow(commute_long), color = col_sample),
+            lc_readout("zmienne", ncol(commute_long), color = upwr_secondary)
+          )
+        )))
       ),
-      uiOutput("ch1_layout_table"),
-      uiOutput("ch1_layout_caption")
+      lc_variants("ch1_layout", list(
+        wide = lc_table(commute_people, list(
+          lc_col("osoba", "Osoba", "row"),
+          lc_col("kierunek", "Kierunek", "text"),
+          lc_col("pon", "Pon (min)"),
+          lc_col("wt", "Wt (min)"),
+          lc_col("sr", "Śr (min)")
+        ), scroll = TRUE, label = "Czas dojazdu: wiersz to osoba"),
+        long = lc_table(commute_long, list(
+          lc_col("osoba", "Osoba", "row"),
+          lc_col("kierunek", "Kierunek", "text"),
+          lc_col("dzien", "Dzień", "text"),
+          lc_col("czas", "Czas (min)")
+        ), scroll = TRUE, label = "Czas dojazdu: wiersz to przejazd")
+      )),
+      lc_variants("ch1_layout", list(
+        wide = lc_caption("Jednostką obserwacji jest osoba: 5 wierszy, a dni tygodnia
+                  są rozpisane na trzy kolumny."),
+        long = lc_caption("Jednostką obserwacji jest przejazd: 15 wierszy, a dzień
+                  tygodnia jest zwykłą zmienną w jednej kolumnie.")
+      ))
     ),
 
     lc_p("W obu układach jest dokładnie ta sama informacja, ale liczba
@@ -124,61 +163,3 @@ ch1_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch1_server <- function(input, output, session) {
-
-  ch1_layout <- reactive(input$ch1_layout %||% "wide")
-
-  output$ch1_layout_reads <- renderUI({
-    wide <- ch1_layout() == "wide"
-    tagList(
-      lc_readout("obserwacje (n)", if (wide) nrow(commute_people) else nrow(commute_long),
-                 color = col_sample),
-      lc_readout("zmienne", if (wide) ncol(commute_people) else ncol(commute_long),
-                 color = upwr_secondary)
-    )
-  })
-
-  output$ch1_layout_table <- renderUI({
-    if (ch1_layout() == "wide") {
-      lc_table(commute_people, list(
-        lc_col("osoba", "Osoba", "row"),
-        lc_col("kierunek", "Kierunek", "text"),
-        lc_col("pon", "Pon (min)"),
-        lc_col("wt", "Wt (min)"),
-        lc_col("sr", "Śr (min)")
-      ), scroll = TRUE, label = "Czas dojazdu: wiersz to osoba")
-    } else {
-      lc_table(commute_long, list(
-        lc_col("osoba", "Osoba", "row"),
-        lc_col("kierunek", "Kierunek", "text"),
-        lc_col("dzien", "Dzień", "text"),
-        lc_col("czas", "Czas (min)")
-      ), scroll = TRUE, label = "Czas dojazdu: wiersz to przejazd")
-    }
-  })
-
-  output$ch1_layout_caption <- renderUI({
-    if (ch1_layout() == "wide") {
-      lc_caption("Jednostką obserwacji jest osoba: 5 wierszy, a dni tygodnia
-                  są rozpisane na trzy kolumny.")
-    } else {
-      lc_caption("Jednostką obserwacji jest przejazd: 15 wierszy, a dzień
-                  tygodnia jest zwykłą zmienną w jednej kolumnie.")
-    }
-  })
-
-  scene_texts(input, output, "ch1_tabela", list(
-    tagList("Student podchodzi do stołu i podaje o sobie cztery rzeczy: rok studiów, to, czy mieszka
-      w akademiku, czas dojazdu i to, czy pracuje. Cały zapis jednej osoby ląduje w jednym wierszu
-      i to jest jedna obserwacja."),
-    tagList("Kolumna to ta sama cecha zapisana dla wszystkich osób, czyli zmienna. Wybierz jedną
-      i zobacz, że jej wartości różnią się między osobami. Komórka to wartość zmiennej dla jednej osoby."),
-    tagList("Kolejni studenci dopisują kolejne wiersze. Liczba wierszy to ", tags$code("n", .noWS = "outside"),
-      ". Dokładaj po 10 i 100 i patrz, jak rośnie tabela, a jej układ w kolumnach się nie zmienia.")
-  ))
-}

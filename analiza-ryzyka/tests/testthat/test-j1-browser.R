@@ -34,9 +34,8 @@ testthat::test_that("wykład 01: łańcuch, ćwiczenia, częstość, Venn i siat
   testthat::expect_false(res$venn_text_output)
   testthat::expect_equal(res$ops, 1L)
   testthat::expect_equal(res$plot_outputs, 0L)
-  # W R zostają: sprawdzenie decyzji, ćwiczenia z rozdziału „Ćwiczenia” i quiz.
-  testthat::expect_setequal(res$html_outputs, c("ch5_feedback", "j1_quiz_feedback", "ch8_feedback",
-    "ch8_sets_feedback", "ch8_models_feedback", "ch8_transfer_feedback"))
+  # Decyzję, ćwiczenia i quiz ocenia przeglądarka: wykład nie ma wyjść serwera.
+  testthat::expect_length(res$html_outputs, 0L)
   testthat::expect_true(grepl("lcJ1", res$head, fixed = TRUE))
   testthat::expect_false(any(res$servers))
 })

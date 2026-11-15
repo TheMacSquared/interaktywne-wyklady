@@ -8,7 +8,8 @@
 .ch9_sat_exercise <- function(id, title, ...) {
   figure_panel(
     label = paste("Ćwiczenie S", id), h4(title), tagList(...),
-    lc_more("Rozwiązanie", uiOutput(paste0("ch9_s_sol", id)))
+    # Rozwiązanie składa R przy budowaniu: funkcja ch9_s_sol<id>_ui() niżej.
+    lc_more("Rozwiązanie", get(paste0("ch9_s_sol", id, "_ui"))())
   )
 }
 
@@ -57,52 +58,56 @@ ch9_sat_ui <- function() tagList(
   )
 )
 
-ch9_sat_server <- function(input, output, session) {
+# Rozwiązania ćwiczeń (dawniej wyjścia serwera): treść stała, składana przy budowaniu strony.
+ch9_s_sol1_ui <- function() {
   d <- .ch9_sat_data
-  exercise_solution_server(output, "ch9_s_sol1", function() {
-    r <- .ch9_t1(d$roznica_temp_c, mu = 0)
-    tagList(
-      .ch9_sol_t1(r, "μ różnicy = 0", "μ różnicy ≠ 0",
-                  "różnica temperatur", 0, "°C"),
-      p(sprintf("Średnia różnica %.2f°C wskazuje na przeciętne zawyżanie pomiaru.", r$m))
-    )
-  })
+  r <- .ch9_t1(d$roznica_temp_c, mu = 0)
+  tagList(
+    .ch9_sol_t1(r, "μ różnicy = 0", "μ różnicy ≠ 0",
+                "różnica temperatur", 0, "°C"),
+    p(sprintf("Średnia różnica %.2f°C wskazuje na przeciętne zawyżanie pomiaru.", r$m))
+  )
+}
 
-  exercise_solution_server(output, "ch9_s_sol2", function() {
-    x <- sum(d$pomiar_dostepny == "tak"); n <- nrow(d)
-    bt <- binom.test(x, n, p = 0.75, alternative = "greater")
-    tagList(
-      p(sprintf("Dostępnych %d/%d = %.1f%%; %s.", x, n, 100*x/n,
-                .ch9_fmt_p(bt$p.value))),
-      .ch9_decision(bt$p.value)
-    )
-  })
+ch9_s_sol2_ui <- function() {
+  d <- .ch9_sat_data
+  x <- sum(d$pomiar_dostepny == "tak"); n <- nrow(d)
+  bt <- binom.test(x, n, p = 0.75, alternative = "greater")
+  tagList(
+    p(sprintf("Dostępnych %d/%d = %.1f%%; %s.", x, n, 100*x/n,
+              .ch9_fmt_p(bt$p.value))),
+    .ch9_decision(bt$p.value)
+  )
+}
 
-  exercise_solution_server(output, "ch9_s_sol3", function() {
-    r <- .ch9_cor_test(d$zachmurzenie_pct, d$roznica_temp_c)
-    tagList(
-      .ch9_sol_cor(r, "zachmurzenie", "różnicy temperatur"),
-      p("Korelacja opisuje związek. Bez planu eksperymentalnego i kontroli innych
-         warunków nie dowodzi wyłącznej przyczyny.")
-    )
-  })
+ch9_s_sol3_ui <- function() {
+  d <- .ch9_sat_data
+  r <- .ch9_cor_test(d$zachmurzenie_pct, d$roznica_temp_c)
+  tagList(
+    .ch9_sol_cor(r, "zachmurzenie", "różnicy temperatur"),
+    p("Korelacja opisuje związek. Bez planu eksperymentalnego i kontroli innych
+       warunków nie dowodzi wyłącznej przyczyny.")
+  )
+}
 
-  exercise_solution_server(output, "ch9_s_sol4", function() {
-    r <- .ch9_t2(d$sat_temp_c, d$strefa)
-    tagList(
-      .ch9_sol_t2(r, "°C"),
-      p("Różnica dotyczy związku strefy z temperaturą w danych obserwacyjnych,
-         nie izolowanego efektu przyczynowego zabudowy.")
-    )
-  })
+ch9_s_sol4_ui <- function() {
+  d <- .ch9_sat_data
+  r <- .ch9_t2(d$sat_temp_c, d$strefa)
+  tagList(
+    .ch9_sol_t2(r, "°C"),
+    p("Różnica dotyczy związku strefy z temperaturą w danych obserwacyjnych,
+       nie izolowanego efektu przyczynowego zabudowy.")
+  )
+}
 
-  exercise_solution_server(output, "ch9_s_sol5", function() {
-    r <- .ch9_chi2(table(strefa = d$strefa, dostepny = d$pomiar_dostepny))
-    .ch9_sol_chi2(r)
-  })
+ch9_s_sol5_ui <- function() {
+  d <- .ch9_sat_data
+  r <- .ch9_chi2(table(strefa = d$strefa, dostepny = d$pomiar_dostepny))
+  .ch9_sol_chi2(r)
+}
 
-  exercise_solution_server(output, "ch9_s_sol6", function() {
-    r <- .ch9_anova_f(d$sat_temp_c, d$typ_pokrycia)
-    .ch9_sol_anova(r, "temperatura (°C)")
-  })
+ch9_s_sol6_ui <- function() {
+  d <- .ch9_sat_data
+  r <- .ch9_anova_f(d$sat_temp_c, d$typ_pokrycia)
+  .ch9_sol_anova(r, "temperatura (°C)")
 }

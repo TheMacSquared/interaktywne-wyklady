@@ -62,21 +62,11 @@ test("nowa animacja zastępuje starą, a usunięcie widgetu anuluje klatki", () 
   env.frame(800); assert.equal(value, 2);
 });
 
-test("kanały wiadomości czekają na Shiny i rejestrują się tylko raz", () => {
-  const env = environment(false);
-  let received;
-  env.window.lcCharts.onMessage("data", msg => { received = msg; });
-  assert.equal(env.handlers.size, 0);
-  env.connect(); env.connect();
-  assert.equal(env.registrations, 1);
-  env.handlers.get("data")({ x: 42 });
-  assert.equal(received.x, 42);
-});
-
 test("lejek odtwarza serie po powrocie, także po wiadomości bez obecnego DOM", () => {
   const env = environment();
   env.load("03-rozklady-prawdopodobienstwa/modules/lejek_chart.js");
-  const message = env.handlers.get("lejek_series");
+  // Serie ustawia sam skrypt (window.lcS03Lejek.set); serwer ich nie przysyła.
+  const message = (m) => env.window.lcS03Lejek.set(m.series);
   message({ series: [[0, 0.5, 0.33]] });
   for (let i = 0; i < 10; i++) {
     const el = root("lc-lejek", [ecbox("lejek")]);
@@ -100,26 +90,61 @@ test("lejek odtwarza serie po powrocie, także po wiadomości bez obecnego DOM",
   assert.equal(env.errors.length, 0);
 });
 
-test("scenariusz koło/słupki obsługuje obie kolejności wiadomości i DOM", () => {
-  for (const beforeDom of [false, true]) {
-    const env = environment();
-    env.load("01-typy-danych/modules/scenario_chart.js");
-    const message = env.handlers.get("render_scenario");
-    const data = { labels: ["A", "B"], data: [60, 40], colors: ["#aaa", "#bbb"], reveal: true };
-    if (beforeDom) message(data);
-    const makeRoot = () => root("lc-scenario", [ecbox("pie", { id: "ch2_pie_canvas" }), ecbox("bar", { id: "ch2_bar_canvas" })]);
-    const bars = () => [...env.live][1].series.get("bar").data.length;
-    let el = makeRoot(); env.mount(el);
-    if (!beforeDom) message(data);
-    assert.equal(env.live.size, 2); assert.equal(bars(), 2);
-    message({ ...data, reveal: false }); assert.equal(bars(), 0, "słupki dopiero po odsłonięciu");
-    message(data); assert.equal(bars(), 2);
-    env.unmount(el); assert.equal(env.live.size, 0);
-    el = makeRoot(); env.mount(el);
-    assert.equal(bars(), 2, "dane wracają bez kolejnej wiadomości z R");
-    env.unmount(el);
-    assert.equal(env.errors.length, 0);
-  }
+// Ryc. 2.3 bez serwera: scenariusze w data-config, wybór z segmentu, odsłonięcie przyciskiem.
+const scenarioConfig = {
+  input: "ch2_scenario",
+  scenarios: [
+    { labels: ["A", "B"], data: [60, 40], colors: ["#aaa", "#bbb"], order: ["B", "A"] },
+    { labels: ["A", "B"], data: [45, 55], colors: ["#ccc", "#ddd"], order: ["A", "B"] }
+  ]
+};
+function scenarioRoot(extra = []) {
+  const pick = new Element("input", { name: "ch2_scenario", value: "1" });
+  pick.name = "ch2_scenario";               // atrapa Element nie ma własności name
+  const reveal = new Element("button", { "data-scn-reveal-button": "true" });
+  const shown = new Element("div", { "data-scn-reveal": "true" });
+  const cover = new Element("div", { "data-scn-hide": "true" });
+  shown.hidden = true;
+  const el = root("lc-scenario", [...extra, pick, reveal, shown, cover,
+    ecbox("pie", { id: "ch2_pie_canvas" }), ecbox("bar", { id: "ch2_bar_canvas" })],
+    { "data-config": JSON.stringify(scenarioConfig) });
+  const choose = (value) => { pick.attrs.value = value; pick.value = value; el.emit("change", { target: pick }); };
+  return { el, reveal: () => el.emit("click", { target: reveal }), choose, shown, cover };
+}
+
+test("scenariusz koło/słupki: dane z dokumentu, słupki po odsłonięciu, nowa runda po zmianie", () => {
+  const env = environment();
+  env.load("01-typy-danych/modules/scenario_chart.js");
+  const s = scenarioRoot();
+  env.mount(s.el);
+  assert.equal(env.live.size, 2);
+  // Tablice ze skryptu pochodzą z innego kontekstu vm, więc porównujemy napisy.
+  const pie = () => [...env.live][0].series.get("pie").data;
+  const bars = () => [...env.live][1].series.get("bar").data;
+  assert.equal(pie().map(d => d.value).join(), "60,40", "koło od razu, bez wiadomości z R");
+  assert.equal(bars().length, 0, "słupki dopiero po odsłonięciu");
+  assert.equal([s.shown.hidden, s.cover.hidden].join(), "true,false");
+  s.reveal();
+  assert.equal(bars().map(d => d.value).join(), "60,40");
+  assert.equal([s.shown.hidden, s.cover.hidden].join(), "false,true");
+  s.choose("2");
+  assert.equal(pie().map(d => d.value).join(), "45,55", "zmiana scenariusza podmienia dane");
+  assert.equal(bars().length, 0, "zmiana scenariusza chowa odpowiedź");
+  assert.equal([s.shown.hidden, s.cover.hidden].join(), "true,false");
+  assert.equal(pie().map(d => d.itemStyle.color).join(), "#ccc,#ddd");
+  env.unmount(s.el); assert.equal(env.live.size, 0);
+  assert.equal(env.errors.length, 0);
+});
+
+test("scenariusz koło/słupki: liczba trafionych pozycji", () => {
+  const env = environment();
+  env.load("01-typy-danych/modules/scenario_chart.js");
+  const hits = env.window.lcS01Scenario.hits;
+  const order = ["B", "D", "E", "A", "C"];
+  assert.equal(hits({ pos1: "B", pos2: "D", pos3: "E", pos4: "A", pos5: "C" }, order), 5);
+  assert.equal(hits({ pos1: "B", pos2: "D", pos3: "E", pos4: "C", pos5: "A" }, order), 3);
+  assert.equal(hits({ pos2: "D" }, order), 1, "puste pola nie są trafieniem");
+  assert.equal(hits({}, order), 0);
 });
 
 test("pole pod krzywą niszczy obsługę przeciągania i poprawnie wraca", () => {
@@ -444,19 +469,16 @@ const zoomButton = () => new Element("button", { "data-lc-chart-zoom": "true" })
 test("koło/słupki: lupa zachowuje ukrycie, odsłonięcie i paletę scenariusza", () => {
   const env = environment();
   env.load("01-typy-danych/modules/scenario_chart.js");
-  const el = root("lc-scenario", [zoomButton(), ecbox("pie", {id:"ch2_pie_canvas"}), ecbox("bar", {id:"ch2_bar_canvas"})]);
-  env.mount(el);
-  const message = env.handlers.get("render_scenario");
-  const data = {labels:["A","B"],data:[45,25],colors:["#aaa","#bbb"],reveal:false};
-  message(data);
-  zoomWithoutChangingData(env, el);
+  const s = scenarioRoot([zoomButton()]);
+  env.mount(s.el);
+  zoomWithoutChangingData(env, s.el);
   const bar = [...env.live][1];
   assert.equal(bar.series.get("bar").data.length, 0, "lupa nie odsłania słupków");
-  message({...data,reveal:true});
+  s.reveal();
   const font = bar.axisFont;
-  zoomWithoutChangingData(env, el);
+  zoomWithoutChangingData(env, s.el);
   assert.ok(bar.axisFont < font, "wyłączenie lupy przywraca mniejszą czcionkę");
-  assert.equal(bar.series.get("bar").data.map(d => d.itemStyle.color).join(), data.colors.join());
+  assert.equal(bar.series.get("bar").data.map(d => d.itemStyle.color).join(), scenarioConfig.scenarios[0].colors.join());
 });
 
 test("odporność miar: lupa zachowuje pensje i średnią uciętą", () => {
@@ -482,16 +504,56 @@ test("Simpson: lupa zachowuje widok osobnych branż", () => {
   assert.ok(ch.series.get("g0").data.length);assert.equal(ch.series.get("all").lineStyle.type.join(),"6,4");
 });
 
+test("lejek: losowanie serii, rozrzut między seriami i odczyty", () => {
+  const env = environment();
+  env.load("03-rozklady-prawdopodobienstwa/modules/lejek_chart.js");
+  const L = env.window.lcS03Lejek;
+  let seed = 11;                                   // mulberry32
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let x = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; };
+  const s = L.drawSeries(rnd);
+  assert.equal(s.length, L.NS.length, "jedna częstość na punkt siatki");
+  assert.equal(L.NS[0], 1); assert.equal(L.NS[L.NS.length - 1], 1000);
+  assert.ok(s[0] === 0 || s[0] === 1, "po jednym rzucie częstość to 0 albo 1");
+  assert.ok(s.every(f => f >= 0 && f <= 1));
+  assert.ok(Math.abs(s[s.length - 1] - 1 / 6) < 0.05, "po 1000 rzutach blisko 1/6: " + s[s.length - 1]);
+  // stała funkcja losowa: zawsze szóstka albo nigdy
+  assert.ok(L.drawSeries(() => 0.99).every(f => f === 1));
+  assert.ok(L.drawSeries(() => 0).every(f => f === 0));
+  // rozrzut dopiero od pięciu serii; wzór z próby (n - 1)
+  const flat = (v) => L.NS.map(() => v);
+  assert.equal(L.sdAt([flat(0.1), flat(0.2), flat(0.3), flat(0.4)], 10), null);
+  const sd = L.sdAt([flat(0.1), flat(0.2), flat(0.3), flat(0.4), flat(0.5)], 10);
+  assert.ok(Math.abs(sd - 0.158113883) < 1e-9, String(sd));     // R: sd(c(.1, .2, .3, .4, .5))
+  assert.equal(L.fmt3(sd), "0.158"); assert.equal(L.fmt3(null), "–"); assert.equal(L.fmt3(0.1), "0.1");
+  // rozrzut maleje z n (lejek): 40 serii
+  const many = Array.from({ length: 40 }, () => L.drawSeries(rnd));
+  assert.ok(L.sdAt(many, 10) > L.sdAt(many, 100) && L.sdAt(many, 100) > L.sdAt(many, 1000));
+  // odczyty i podpis w panelu
+  const read = (name) => new Element("span", { "data-lejek": name });
+  const few = new Element("div", { "data-lejek-caption": "few" }), lots = new Element("div", { "data-lejek-caption": "many" });
+  const reads = ["count", "sd10", "sd100", "sd1000"].map(read);
+  const el = root("lc-lejek", [...reads, few, lots, ecbox("lejek")]);
+  env.mount(el);
+  assert.equal(reads[0].textContent, "0"); assert.equal(reads[1].textContent, "–");
+  assert.equal([few.hidden, lots.hidden].join(), "false,true");
+  L.set(many);
+  assert.equal(reads[0].textContent, "40");
+  assert.match(reads[3].textContent, /^0\.0\d+$/);
+  assert.equal([few.hidden, lots.hidden].join(), "true,false");
+  assert.equal(env.errors.length, 0);
+});
+
 test("lejek: lupa nie kończy animacji, nie zmienia serii i zachowuje skalę log", () => {
   const env=environment();env.load("03-rozklady-prawdopodobienstwa/modules/lejek_chart.js");
   const el=root("lc-lejek",[zoomButton(),ecbox("lejek")]);env.mount(el);
-  env.handlers.get("lejek_series")({series:[[.1,.2,.15]]});
+  env.window.lcS03Lejek.set([[.1,.2,.15]]);
   assert.equal(env.timers.size,1);
   zoomWithoutChangingData(env,el);
   assert.equal(env.timers.size,1);
   const ch=[...env.live][0];assert.equal(ch.xAxis.type,"log");
   assert.equal(ch.series.get("last").data.length,1);
-  env.handlers.get("lejek_series")({series:[]});assert.equal(env.timers.size,0);
+  env.window.lcS03Lejek.set([]);assert.equal(env.timers.size,0);
   assert.equal(ch.series.get("last").data.length,0);assert.equal(ch.series.get("old").data.length,0);
 });
 
@@ -559,7 +621,7 @@ test("ryciny statystyk z ankiety (01, rozdz. 3): kontrolka, opisy dla opcji i sp
     liczba_kursow: { label: "Liczba kursów", values: [3, 4, 4, 5, 5, 5] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { value: "wzrost" });
   const notes = ["wzrost", "waga"].map(v => new Element("div", { "data-when": v }));
   const fig = root("lc-sf", [root("lc-sf-ctl", [select]), ecbox("0"), ...notes], { "data-fig": "mean" });
@@ -597,7 +659,7 @@ test("ryciny statystyk ze stanem (01): przyciski, pole wyboru i wartości w tabe
                    values: [1, 2, 3, 4, 5, 3, 3, 4] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   // Ryc. 4.7: dopisanie wartości odstającej aktualizuje n i komórki tabeli.
   const add = new Element("button", { "data-stat-act": "add1" }), reset = new Element("button", { "data-stat-act": "reset" });
   const n = new Element("span", { "data-v": "n" }), range = new Element("span", { "data-v": "range" });
@@ -638,7 +700,7 @@ test("pudełka w grupach (01, Ryc. 4.6): kilka kontrolek wybiera opis pary zmien
     kierunek: { label: "Kierunek", levels: ["A", "B"], values: [1, 2, 1, 2, 1, 2] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { id: "ch4_grp_var", value: "wzrost" });
   const by = new Element("input", { type: "radio", name: "ch4_grp_by", value: "plec", checked: "" });
   const violin = new Element("input", { type: "checkbox", id: "ch4_grp_violin" });
@@ -660,9 +722,9 @@ test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę;
   const env = environment();
   env.window.lc01Survey = { n: 0, columns: {} };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const stepper = (id, charts, extra = []) => {
-    const text = new Element("div", { id: id + "_text", class: "shiny-html-output shiny-bound-output recalculating" });
+    const text = new Element("div", { id: id + "_text" });
     const boxes = charts.map(k => root("lc-sf-chart", [ecbox(String(k))], { "data-k": String(k) }));
     const st = root("lc-stepper", [...boxes, text, ...extra], { id, "data-lc-step": "1" });
     return { st, text, boxes };
@@ -673,7 +735,6 @@ test("ryciny krokowe (01, Ryc. 4.2 i 4.5): krok zmienia wykres, tekst i tabelę;
   env.mount(fig);
   assert.equal(env.errors.length, 0);
   assert.match(sd.text.innerHTML, /Dziesięć pomiarów/);
-  assert.equal(sd.text.getAttribute("class"), "", "tekst kroku przestaje być wyjściem Shiny (bez wiecznego .recalculating)");
   assert.equal(table.innerHTML, "", "tabela dopiero od kroku 2");
   sd.st.setAttribute("data-lc-step", "3"); env.theme(sd.st);
   assert.match(sd.text.innerHTML, /Wariancja/);
@@ -702,7 +763,7 @@ test("palety kolorów (01, Ryc. 2.4): losowanie i zmiana palety przełączają o
     waga: { label: "Waga (kg)", values: [55, 60, 66, 70, 80, 90] }
   } };
   env.load("01-typy-danych/modules/chart_utils.js");
-  env.load("R/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
+  env.load("../shared/lc_stat_figures.js"); env.load("01-typy-danych/modules/stat_charts.js");
   const select = new Element("select", { id: "ch2_color_palette", value: "neutral" });
   const random = new Element("button", { "data-stat-act": "random" });
   const legend = new Element("div", { class: "lc-sf-legend" });
@@ -722,7 +783,7 @@ test("palety kolorów (01, Ryc. 2.4): losowanie i zmiana palety przełączają o
 
 test("ryciny rozkładów (03): scenariusze z pól wyboru, podpisy, presety i pole pod N(0, 1)", () => {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   env.load("03-rozklady-prawdopodobienstwa/modules/dist_charts.js");
   // Ryc. 3.4: grupa pól wyboru daje listę zaznaczonych scenariuszy.
   const cfg = { dist: "binom", xName: "k", yName: "P", defs: {
@@ -780,7 +841,7 @@ test("ryciny rozkładów (03): scenariusze z pól wyboru, podpisy, presety i pol
 
 test("symulacje (03): losowanie lcDist, histogram ggplot i ryciny Ryc. 1.3–6.4 bez serwera", () => {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   env.load("03-rozklady-prawdopodobienstwa/modules/sim_charts.js");
   const D = env.window.lcDist, S = env.window.lcSF, F = S.figures;
   // Generatory z ziarnem: średnie i SD zgodne z rozkładami.
@@ -807,6 +868,11 @@ test("symulacje (03): losowanie lcDist, histogram ggplot i ryciny Ryc. 1.3–6.4
   const b = S.binsGgplot([0, 1, 2, 3, 9], 5);
   assert.equal(b.length, 5);
   assert.equal(b.reduce((s, r) => s + r.n, 0), 5);
+  // ggplot2 4.x: pierwszy przedział wyśrodkowany na minimum. R (ggplot2 4.0.3):
+  // ggplot_build(ggplot(data.frame(v), aes(v)) + geom_histogram(bins = 5))$data[[1]][, c("xmin", "count")]
+  const g4 = S.binsGgplot([5.011, 3.762, 4.583, 5.172, 2.967, 3.633, 3.720, 4.182], 5);
+  assert.ok(Math.abs(g4[0].l - 2.691375) < 1e-9, `xmin ${g4[0].l}`);
+  assert.equal(JSON.stringify(g4.map((r) => r.n)), "[1,3,1,1,2]");   // tablica z innego kontekstu vm: porównanie tekstowe
 
   const P = env.window.lcCharts.palette();
   const run = (name, vals, step) => {
@@ -872,7 +938,7 @@ test("symulacje (03): losowanie lcDist, histogram ggplot i ryciny Ryc. 1.3–6.4
 
 test("silnik lcSF: etykiety yLabels przy krańcach, kolejność warstw, tabela ze skrótami, binsWidth, akcja z kontenerem", () => {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   const S = env.window.lcSF, P = env.window.lcCharts.palette();
   const opt = S.option({ x: [0, 1], y: [0.5, 3.5], yLabels: { 1: "A", 2: "B", 3: "C" },
     layers: [{ type: "points", data: [[0.5, 1]], color: "#000", size: 15 },
@@ -903,7 +969,7 @@ test("silnik lcSF: etykiety yLabels przy krańcach, kolejność warstw, tabela z
 
 test("lcDist: pt i qt zgodne z R (rozkład t, wykład 04)", () => {
   const env = environment();
-  env.load("R/lc_dist.js");
+  env.load("../shared/lc_dist.js");
   const D = env.window.lcDist;
   // Wartości z R: qt(p, df), pt(x, df).
   for (const [p, df, r] of [[0.975, 1, 12.7062047], [0.975, 5, 2.5705818], [0.975, 29, 2.0452296],

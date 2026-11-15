@@ -38,7 +38,10 @@ testthat::test_that("wykład 07: prototypy punktów stop są wpięte i działaj�
   }
   testthat::expect_setequal(res$figs, c("c7_staly", "c7_gestosci", "c7_gestosci_b", "c7_cztery",
     "c7_pole_hazardu", "c7_koniec", "c7_powtorki", "c7_gamma", "c7_weibull", "c7_rodzina",
-    "c7_ranking", "c7_wanna", "c7_jeden_weibull", "c7_termin", "c7_termin_pole", "c7_stary_nowy"))
+    "c7_ranking", "c7_wanna", "c7_jeden_weibull", "c7_termin", "c7_termin_pole", "c7_stary_nowy",
+    # Osiem głównych wykresów wykładu (dawniej ggplot na serwerze): modules/wykresy.js.
+    "c7m_timeline", "c7m_functions", "c7m_exp", "c7m_gamma", "c7m_weibull", "c7m_same_mean",
+    "c7m_bathtub", "c7m_plan"))
   testthat::expect_equal(anyDuplicated(res$ids), 0L)
 
   # Liczby scen zgadzają się z tekstem wykładu (przykłady 7.1, 7.2, 7.5, 7.6, 7.11).

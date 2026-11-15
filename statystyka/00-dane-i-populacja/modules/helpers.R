@@ -88,11 +88,14 @@ commute_long <- local({
 # labels: podpisy głównego przycisku w kolejnych krokach.
 # options: lista list(name, label, values, selected, from = 1), przełączniki opcji.
 # more_from: od którego kroku aktywne są przyciski +10, +100, +1000.
+# texts: opisy kroków, po jednym na krok (w dokumencie, bez serwera).
 scene_widget <- function(id, title, steps, config, labels, options = NULL,
-                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000")) {
+                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000"),
+                         texts) {
   lc_step_widget(id,
     title = title,
     steps = steps,
+    texts = texts,
     toolbar = lc_toolbar(
       lapply(options, function(o) {
         lc_step_from(o$from %||% 1, lc_group(o$label,
@@ -122,8 +125,3 @@ scene_widget <- function(id, title, steps, config, labels, options = NULL,
   )
 }
 
-# Teksty kroków: lista fragmentów HTML, po jednym na krok.
-scene_texts <- function(input, output, id, texts) {
-  step <- lc_step_server(id, input)$step
-  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
-}

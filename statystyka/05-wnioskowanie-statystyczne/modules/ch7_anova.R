@@ -62,6 +62,65 @@
   list(jars = jars, worlds = worlds, stress = stress)
 })
 
+.ch7_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
+
+# ============================================================================
+# SERVER
+# ============================================================================
+
+# Odmiana: 1 istotna różnica, 2–4 istotne różnice, 5+ istotnych różnic
+ch7_plural_diff <- function(n) {
+  if (n == 1) "istotna różnica"
+  else if (n %% 10 %in% 2:4 && !(n %% 100 %in% 12:14)) "istotne różnice"
+  else "istotnych różnic"
+}
+
+# Treść stała (dawniej output$cas_ch7_sol10 na serwerze): składana przy budowaniu strony.
+cas_ch7_sol10_ui <- function() {
+  r <- local({
+    edu <- .ch7_cas
+    q   <- quantile(edu$income, probs = c(0, 1/3, 2/3, 1))
+    edu$income_group <- cut(edu$income, breaks = q,
+      labels = c("Niski", "Średni", "Wysoki"), include.lowest = TRUE)
+    grp_stats <- tapply(edu$read, edu$income_group, function(x)
+      c(n = length(x), m = mean(x), s = sd(x)))
+    av <- rstatix::anova_test(edu, read ~ income_group)
+    gh <- as.data.frame(rstatix::games_howell_test(edu, read ~ income_group))
+    list(grp_stats = grp_stats, F = av$F, df1 = av$DFn, df2 = av$DFd,
+         p = av$p, gh = gh)
+  })
+  tagList(
+    p(tags$b("H₀:"), " μ_niski = μ_średni = μ_wysoki · ",
+      tags$b("Hₐ:"), " co najmniej jedna para się różni"),
+    local({
+      lv <- c("Niski", "Średni", "Wysoki")
+      stat <- function(k) vapply(lv, function(g) unname(r$grp_stats[[g]][k]), numeric(1))
+      lc_table(
+        data.frame(group = lv, n = stat("n"), m = stat("m"), s = stat("s")),
+        cols = list(
+          lc_col("group", "Tercyl", "row"),
+          lc_col("n", "n"),
+          lc_col("m", "x̄ read", digits = 2),
+          lc_col("s", "s", digits = 2)
+        )
+      )
+    }),
+    tags$ul(
+      tags$li(sprintf("F(%d, %d) = %.3f, %s",
+        r$df1, r$df2, r$F, format_p(r$p)))
+    ),
+    lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+               type = if (r$p < 0.05) "danger" else "ok"),
+    p(tags$b("Post hoc Games-Howell:")),
+    tags$ul(lapply(seq_len(nrow(r$gh)), function(i) {
+      g <- r$gh[i, ]
+      tags$li(sprintf("%s − %s: Δ = %.2f pkt, p.adj = %s",
+        g$group2, g$group1, g$estimate, format_p_value(g$p.adj)))
+    }))
+  )
+}
+
 ch7_ui <- list(
   id = "ch-anova", num = "09", title = "ANOVA",
   content = tagList(
@@ -121,12 +180,8 @@ ch7_ui <- list(
     figure_panel(
       label = "Ryc. 9.1",
       title = "Dodaj grupy i obserwuj inflację błędu I rodzaju",
-      lc_toolbar(
-        lc_action("ch7_motyw_add", "Dodaj grupę +", variant = "solid"),
-        lc_action("ch7_motyw_reset", icon = "reset", variant = "ghost", aria_label = "Reset"),
-        lc_readouts(uiOutput("ch7_motyw_stats"))
-      ),
-      lc_plot("ch7_motyw_plot", max_height = "340px"),
+      # Rysunki dla 2–8 grup składa R (modules/figures.R); licznik i odczyty prowadzi przeglądarka.
+      ch7_fwer_fig(),
       lc_caption("Start od 2 grup. Każde kliknięcie dodaje jedną.")
     ),
 
@@ -195,7 +250,14 @@ ch7_ui <- list(
       scene_widget("ch7_sc_jars",
         title = "Skąd się bierze rozrzut",
         steps = c("Słoiki", "Całość", "Dwie części", "F"),
-        config = .ch7_scenes$jars)
+        config = .ch7_scenes$jars,
+        texts = list(
+        "Pięć słoików z każdej komory. Przerywana linia to średnie pH wszystkich piętnastu.",
+        "Każdy słoik leży w pewnej odległości od średniej ogólnej. Suma kwadratów tych odległości to cały rozrzut.",
+        "Drogę do słoika dzielimy w średniej jego komory: bursztynowy odcinek należy do komory, niebieski do słoika.",
+        "Każdą część dzielimy przez jej stopnie swobody. F to stosunek górnego paska do dolnego."
+        )
+      )
     ),
 
     # PROTOTYP SCENY (2026-10-08): Dwie partie
@@ -286,8 +348,10 @@ ch7_ui <- list(
     figure_panel(
       label = "Ryc. 9.2",
       title = "ANOVA jednoczynnikowa",
-      lc_toolbar(
-        selectInput("ch7_scenario", "Scenariusz",
+      # Losowanie, wykres i ANOVA liczy przeglądarka (modules/figures.js, rycina s05_anova).
+      lc_sf_figure("s05_anova", config = ch7_anova_config,
+        control = list(
+          selectInput("ch7_scenario", "Scenariusz", selectize = FALSE,
             choices = c(
               "Fermentacja jogurtu (TŻ)" = "fermentation",
               "Kierunki studiów" = "students",
@@ -295,12 +359,17 @@ ch7_ui <- list(
             ),
             selected = "fermentation"
           ),
-        lc_slider("ch7_n", "n (ogółem)", 80, 300, 160, 20),
-        lc_action("ch7_run_anova", "Generuj i testuj", variant = "solid")
-      ),
-      lc_plot("ch7_boxplot", max_height = "350px"),
-      uiOutput("ch7_anova_result"),
-      uiOutput("ch7_var_ui")
+          lc_sf_slider("ch7_n", "n (ogółem)", 80, 300, 160, 20)
+        ),
+        toolbar = lc_sf_action("gen", "ch7_run_anova", "Generuj i testuj", variant = "solid"),
+        ratio = "2.2/1", max_height = "350px",
+        after = tagList(
+          lc_sf_empty("Kliknij „Generuj i testuj”"),
+          tags$div(`data-role` = "result"),
+          # Pozycje listy zależą od scenariusza: wymienia je przeglądarka.
+          lc_sf_ctl(selectInput("ch7_var", "Zmienna zależna", selectize = FALSE,
+            choices = unlist(ch7_anova_config$scenarios$fermentation$vars)))
+        ))
     ),
 
     lc_p("W domyślnym scenariuszu dane pochodzą z populacji, w których średnie pH
@@ -346,7 +415,13 @@ ch7_ui <- list(
       scene_widget("ch7_sc_stress",
         title = "Co odstaje?",
         steps = c("Trzy grupy", "ANOVA", "Które pary"),
-        config = .ch7_scenes$stress)
+        config = .ch7_scenes$stress,
+        texts = list(
+        "Po dwanaście osób z budowy, magazynu i biura. Kreska to średnia grupy.",
+        "ANOVA odrzuca H₀: co najmniej jedna średnia odstaje. Nie mówi, która.",
+        "Games-Howell porównuje każdą parę ze skorygowaną p-wartością."
+        )
+      )
     ),
 
     lc_p("Panel używa ", gloss("test Games-Howella", "testu Games-Howella"), ".
@@ -371,16 +446,18 @@ ch7_ui <- list(
     figure_panel(
       label = "Ryc. 9.3",
       title = "Games-Howell",
-      lc_toolbar(
-        lc_action("ch7_run_tukey", "Testuj Games-Howellem", variant = "solid")
-      ),
-      lc_caption("Panel używa danych z Ryc. 9.2. Najpierw uruchom tam ANOVA."),
-      tags$h4("Macierz p-wartości"),
-      uiOutput("ch7_tukey_matrix"),
-      tags$h4("Różnice parowe z 95% CI"),
-      lc_plot("ch7_tukey_plot", ratio = "2.4/1", max_height = "260px"),
-
-      uiOutput("ch7_tukey_result")
+      # Porównania par liczy przeglądarka na danych z Ryc. 9.2 (shared/lc_stats.js, rycina s05_gh).
+      lc_sf_figure("s05_gh", legend = TRUE,
+        toolbar = lc_sf_action("test", "ch7_run_tukey", "Testuj Games-Howellem", variant = "solid"),
+        body = tagList(
+          lc_caption("Panel używa danych z Ryc. 9.2. Najpierw uruchom tam ANOVA."),
+          tags$div(`data-when` = "nodata", hidden = NA, lc_caption("Najpierw uruchom ANOVA.")),
+          tags$h4(`data-gh-part` = NA, hidden = NA, "Macierz p-wartości"),
+          tags$div(`data-role` = "matrix"),
+          tags$h4(`data-gh-part` = NA, hidden = NA, "Różnice parowe z 95% CI"),
+          lc_sf_chart(0, "2.4/1", "260px"),
+          tags$div(`data-role` = "result")
+        ))
     ),
 
     lc_p("Przedział ufności różnicy i skorygowana p-wartość mówią tu to samo, tak
@@ -423,7 +500,7 @@ ch7_ui <- list(
         Wykonaj jednoczynnikową ANOVA dla zmiennej ", tags$code("read"),
         " między grupami. Zapisz: F, df, p.
         Wykonaj test post hoc Games-Howella i wskaż, które pary różnią się istotnie."),
-      lc_more("Rozwiązanie", uiOutput("cas_ch7_sol10"))
+      lc_more("Rozwiązanie", cas_ch7_sol10_ui())
     ),
 
     lc_p("Zadanie przechodzi oba kroki rozdziału: najpierw ANOVA odpowiada, czy
@@ -442,367 +519,3 @@ ch7_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# DANE — CASchools (wczytane raz przy ładowaniu modułu)
-# ============================================================================
-
-.ch7_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
-                     stringsAsFactors = FALSE)
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Odmiana: 1 istotna różnica, 2–4 istotne różnice, 5+ istotnych różnic
-ch7_plural_diff <- function(n) {
-  if (n == 1) "istotna różnica"
-  else if (n %% 10 %in% 2:4 && !(n %% 100 %in% 12:14)) "istotne różnice"
-  else "istotnych różnic"
-}
-
-ch7_server <- function(input, output, session) {
-
-  # PROTOTYP SCENY (2026-10-08): teksty kroków scen „Skąd się bierze rozrzut” i „Co odstaje?”
-  scene_texts(input, output, "ch7_sc_jars", list(
-    "Pięć słoików z każdej komory. Przerywana linia to średnie pH wszystkich piętnastu.",
-    "Każdy słoik leży w pewnej odległości od średniej ogólnej. Suma kwadratów tych odległości to cały rozrzut.",
-    "Drogę do słoika dzielimy w średniej jego komory: bursztynowy odcinek należy do komory, niebieski do słoika.",
-    "Każdą część dzielimy przez jej stopnie swobody. F to stosunek górnego paska do dolnego."
-  ))
-  scene_texts(input, output, "ch7_sc_stress", list(
-    "Po dwanaście osób z budowy, magazynu i biura. Kreska to średnia grupy.",
-    "ANOVA odrzuca H₀: co najmniej jedna średnia odstaje. Nie mówi, która.",
-    "Games-Howell porównuje każdą parę ze skorygowaną p-wartością."
-  ))
-
-  # --- Widget: inflacja błędu I rodzaju (Ryc. 9.1) ---
-
-  ch7_motyw_k <- reactiveVal(2L)
-
-  observeEvent(input$ch7_motyw_add, {
-    ch7_motyw_k(min(ch7_motyw_k() + 1L, 8L))
-  })
-  observeEvent(input$ch7_motyw_reset, {
-    ch7_motyw_k(2L)
-  })
-
-  zoom_plot_server("ch7_motyw_plot", reactive({
-    k <- ch7_motyw_k()
-    angles <- seq(0, 2 * pi, length.out = k + 1)[-(k + 1)]
-    nodes <- data.frame(
-      x     = cos(angles),
-      y     = sin(angles),
-      label = LETTERS[1:k]
-    )
-    pairs_idx <- combn(k, 2)
-    edges <- data.frame(
-      x1 = nodes$x[pairs_idx[1, ]],
-      y1 = nodes$y[pairs_idx[1, ]],
-      x2 = nodes$x[pairs_idx[2, ]],
-      y2 = nodes$y[pairs_idx[2, ]]
-    )
-    n_tests <- ncol(pairs_idx)
-    fwer    <- 1 - (1 - 0.05)^n_tests
-    edge_col <- if (fwer < 0.15) upwr_accent else if (fwer < 0.35) "#D4860A" else "#9B1C1C"
-
-    ggplot() +
-      geom_segment(data = edges,
-                   aes(x = x1, y = y1, xend = x2, yend = y2),
-                   color = edge_col, alpha = 0.55, linewidth = 1.1) +
-      geom_point(data = nodes, aes(x = x, y = y),
-                 shape = 21, size = 16, fill = upwr_accent,
-                 color = "white", stroke = 1.5) +
-      geom_text(data = nodes, aes(x = x, y = y, label = label),
-                color = "white", fontface = "bold", size = 5.5) +
-      coord_equal(xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5)) +
-      theme_void()
-  }))
-
-  output$ch7_motyw_stats <- renderUI({
-    k       <- ch7_motyw_k()
-    n_tests <- k * (k - 1L) / 2L
-    fwer    <- 1 - (1 - 0.05)^n_tests
-    fwer_pct <- round(fwer * 100, 1)
-
-    risk_color <- if (fwer < 0.10) "var(--upwr-sage)"
-                  else if (fwer < 0.30) "var(--upwr-warning)"
-                  else "var(--upwr-accent)"
-
-    tagList(
-      lc_readout("Grup", k),
-      lc_readout("Testów t", n_tests),
-      lc_readout("Ryzyko ≥ 1 błędu", paste0(format(fwer_pct), "%"), color = risk_color)
-    )
-  })
-
-  # Shared ANOVA data
-  ch7_data_state <- reactiveVal(NULL)
-  ch7_data <- reactive({
-    state <- ch7_data_state()
-    if (is.null(state)) return(NULL)
-    req(input$ch7_scenario, input$ch7_n)
-
-    if (!identical(state$scenario, input$ch7_scenario) ||
-        !isTRUE(state$n == input$ch7_n)) {
-      return(NULL)
-    }
-
-    state$data
-  })
-
-  # Konfiguracja scenariuszy: jakie zmienne zależne, jaka kolumna grupująca, etykiety
-  ch7_scenario_cfg <- function(scenario) {
-    if (identical(scenario, "fermentation")) {
-      list(
-        group_col = "temperatura",
-        group_label = "Temperatura fermentacji",
-        vars = c("pH jogurtu" = "pH", "Kwasowość miareczkowa (°SH)" = "kwasowosc_SH"),
-        var_labels = c(pH = "pH jogurtu", kwasowosc_SH = "Kwasowość (°SH)")
-      )
-    } else if (identical(scenario, "workplace")) {
-      list(
-        group_col = "stanowisko",
-        group_label = "Stanowisko pracy",
-        vars = c("Dni nieobecności (urazy) / rok" = "nieobecnosci",
-                 "Poziom stresu (0–100)" = "stres"),
-        var_labels = c(nieobecnosci = "Dni nieobecności / rok",
-                       stres = "Poziom stresu (0–100)")
-      )
-    } else {
-      list(
-        group_col = "kierunek",
-        group_label = "Kierunek",
-        vars = c("Średnia ocen" = "srednia_ocen", "Wzrost" = "wzrost", "Czas dojazdu" = "czas_dojazdu"),
-        var_labels = c(srednia_ocen = "Średnia ocen", wzrost = "Wzrost (cm)", czas_dojazdu = "Czas dojazdu (min)")
-      )
-    }
-  }
-
-  output$ch7_var_ui <- renderUI({
-    cfg <- ch7_scenario_cfg(input$ch7_scenario)
-    selectInput("ch7_var", "Zmienna zależna",
-                choices = cfg$vars,
-                selected = unname(cfg$vars[1]))
-  })
-
-  observeEvent(input$ch7_run_anova, {
-    req(input$ch7_scenario, input$ch7_n)
-    data <- if (identical(input$ch7_scenario, "fermentation")) {
-      generate_fermentation_data(input$ch7_n)
-    } else if (identical(input$ch7_scenario, "workplace")) {
-      generate_workplace_data(input$ch7_n)
-    } else {
-      generate_student_data(input$ch7_n)
-    }
-
-    ch7_data_state(list(
-      scenario = input$ch7_scenario,
-      n = input$ch7_n,
-      data = data
-    ))
-  }, ignoreInit = TRUE)
-
-  # --- Widget 1: ANOVA ---
-  zoom_plot_server("ch7_boxplot", reactive({
-    data <- ch7_data()
-    if (is.null(data)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj i testuj”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      cfg <- ch7_scenario_cfg(input$ch7_scenario)
-      var <- input$ch7_var
-      req(var %in% names(data))
-      var_label <- cfg$var_labels[[var]]
-      group_col <- cfg$group_col
-
-      ggplot(data, aes(x = .data[[group_col]], y = .data[[var]], fill = .data[[group_col]])) +
-        geom_boxplot(alpha = 0.6, outlier.alpha = 0.3) +
-        geom_jitter(width = 0.15, alpha = 0.2, size = 1) +
-        scale_fill_upwr() +
-        labs(
-             x = cfg$group_label, y = var_label) +
-                theme(legend.position = "none")
-    }
-  }))
-
-  output$ch7_anova_result <- renderUI({
-    data <- ch7_data()
-    if (is.null(data)) return(NULL)
-
-    cfg <- ch7_scenario_cfg(input$ch7_scenario)
-    var <- input$ch7_var
-    req(var %in% names(data))
-    formula <- as.formula(paste(var, "~", cfg$group_col))
-
-    result <- rstatix::anova_test(data, formula)
-    tidy_res <- as.data.frame(result)
-
-    p_val <- tidy_res$p
-    res <- format_test_result(p_val)
-
-    lc_status(
-      p(tags$strong("Wynik ANOVA jednoczynnikowej:")),
-      p(paste0("F(", tidy_res$DFn, ", ", tidy_res$DFd, ") = ",
-               round(tidy_res$F, 3))),
-      ui_p_value(p_val),
-      p(lc_verdict(tags$strong(res$decision), type = res$verdict))
-    )
-  })
-
-  # --- Widget 2: Games-Howell post-hoc ---
-
-  # Pomocnicza: licz raz, podawaj do plot/matrix/result
-  ch7_gh_data <- reactive({
-    req(input$ch7_run_tukey)
-    data <- ch7_data()
-    if (is.null(data)) return(NULL)
-    cfg <- ch7_scenario_cfg(input$ch7_scenario)
-    var <- input$ch7_var
-    req(var %in% names(data))
-    formula <- as.formula(paste(var, "~", cfg$group_col))
-    list(
-      gh     = as.data.frame(rstatix::games_howell_test(data, formula)),
-      groups = levels(factor(data[[cfg$group_col]]))
-    )
-  })
-
-  # Macierz p-wartości (format jamovi: dolno-trójkątna, z gwiazdkami istotności)
-  output$ch7_tukey_matrix <- renderUI({
-    gd <- ch7_gh_data()
-    if (is.null(gd)) return(NULL)
-    groups <- gd$groups
-    gh <- gd$gh
-    k <- length(groups)
-
-    # Pretty-print p (z gwiazdką przy istotnym)
-    fmt_p <- function(p) {
-      stars <- if (p < 0.001) " ***" else if (p < 0.01) " **" else if (p < 0.05) " *" else ""
-      txt <- if (p < 0.001) "< 0.001" else sprintf("%.3f", p)
-      list(txt = txt, stars = stars, sig = p < 0.05)
-    }
-
-    # Macierz dolno-trójkątna: wiersz i, kolumna j < i to para (j, i).
-    cell <- function(i, j) {
-      if (j > i) return(list(txt = "", cls = NA))
-      if (j == i) return(list(txt = "—", cls = "is-dim"))
-      idx <- which((gh$group1 == groups[j] & gh$group2 == groups[i]) |
-                   (gh$group1 == groups[i] & gh$group2 == groups[j]))
-      if (length(idx) == 0) return(list(txt = "", cls = NA))
-      fp <- fmt_p(gh$p.adj[idx[1]])
-      list(txt = paste0(fp$txt, fp$stars), cls = if (fp$sig) "is-base" else NA)
-    }
-    df <- data.frame(group = groups)
-    cell_class <- list()
-    for (j in seq_len(k)) {
-      key <- paste0("g", j)
-      cells <- lapply(seq_len(k), function(i) cell(i, j))
-      df[[key]] <- vapply(cells, `[[`, character(1), "txt")
-      cell_class[[key]] <- vapply(cells, function(x) as.character(x$cls), character(1))
-    }
-    lc_table(df,
-      cols = c(list(lc_col("group", "", "row")),
-               lapply(seq_len(k), function(j) lc_col(paste0("g", j), groups[j], "num"))),
-      cell_class = cell_class,
-      note = "p-wartości skorygowane metodą Games-Howella. * p < 0.05, ** p < 0.01, *** p < 0.001"
-    )
-  })
-
-  zoom_plot_server("ch7_tukey_plot", reactive({
-    gd <- ch7_gh_data()
-    if (is.null(gd)) return(NULL)
-
-    gh_df <- gd$gh
-    gh_df$comparison <- paste0(gh_df$group1, " — ", gh_df$group2)
-    gh_df$significant <- gh_df$p.adj < 0.05
-
-    ggplot(gh_df, aes(x = estimate, y = comparison, color = significant)) +
-      geom_point(size = 3) +
-      geom_errorbar(aes(xmin = conf.low, xmax = conf.high), width = 0.2, orientation = "y") +
-      geom_vline(xintercept = 0, linetype = "dashed", color = upwr_secondary) +
-      scale_color_manual(values = c("TRUE" = col_reject, "FALSE" = col_accept),
-                         labels = c("TRUE" = "p < 0.05", "FALSE" = "p ≥ 0.05"),
-                         name = NULL) +
-      labs(x = "Różnica średnich", y = NULL) +
-      theme(legend.position = "top")
-  }))
-
-  output$ch7_tukey_result <- renderUI({
-    gd <- ch7_gh_data()
-    if (is.null(gd)) {
-      return(lc_caption(
-               "Najpierw uruchom ANOVA."
-             ))
-    }
-    gh_df <- gd$gh
-    sig_pairs <- gh_df[gh_df$p.adj < 0.05, ]
-    n_sig <- nrow(sig_pairs)
-
-    if (n_sig == 0) {
-      lc_caption(
-        tags$strong("Żadna para nie różni się istotnie"),
-        " (po korekcie Games-Howella).",
-        tone = "info"
-      )
-    } else {
-      lc_status(
-        p(lc_verdict(tags$strong(paste0(n_sig, " ", ch7_plural_diff(n_sig), ":")), type = "ok")),
-        tags$ul(
-          lapply(1:n_sig, function(i) {
-            tags$li(paste0(sig_pairs$group1[i], " — ", sig_pairs$group2[i],
-                           ": Δ = ", round(sig_pairs$estimate[i], 2),
-                           ", p.adj = ", format_p_value(sig_pairs$p.adj[i])))
-          })
-        )
-      )
-    }
-  })
-
-  # --- Ćwiczenia CASchools ---
-
-  output$cas_ch7_sol10 <- renderUI({
-    r <- local({
-      edu <- .ch7_cas
-      q   <- quantile(edu$income, probs = c(0, 1/3, 2/3, 1))
-      edu$income_group <- cut(edu$income, breaks = q,
-        labels = c("Niski", "Średni", "Wysoki"), include.lowest = TRUE)
-      grp_stats <- tapply(edu$read, edu$income_group, function(x)
-        c(n = length(x), m = mean(x), s = sd(x)))
-      av <- rstatix::anova_test(edu, read ~ income_group)
-      gh <- as.data.frame(rstatix::games_howell_test(edu, read ~ income_group))
-      list(grp_stats = grp_stats, F = av$F, df1 = av$DFn, df2 = av$DFd,
-           p = av$p, gh = gh)
-    })
-    tagList(
-      p(tags$b("H₀:"), " μ_niski = μ_średni = μ_wysoki · ",
-        tags$b("Hₐ:"), " co najmniej jedna para się różni"),
-      local({
-        lv <- c("Niski", "Średni", "Wysoki")
-        stat <- function(k) vapply(lv, function(g) unname(r$grp_stats[[g]][k]), numeric(1))
-        lc_table(
-          data.frame(group = lv, n = stat("n"), m = stat("m"), s = stat("s")),
-          cols = list(
-            lc_col("group", "Tercyl", "row"),
-            lc_col("n", "n"),
-            lc_col("m", "x̄ read", digits = 2),
-            lc_col("s", "s", digits = 2)
-          )
-        )
-      }),
-      tags$ul(
-        tags$li(sprintf("F(%d, %d) = %.3f, %s",
-          r$df1, r$df2, r$F, format_p(r$p)))
-      ),
-      lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
-                 type = if (r$p < 0.05) "danger" else "ok"),
-      p(tags$b("Post hoc Games-Howell:")),
-      tags$ul(lapply(seq_len(nrow(r$gh)), function(i) {
-        g <- r$gh[i, ]
-        tags$li(sprintf("%s − %s: Δ = %.2f pkt, p.adj = %s",
-          g$group2, g$group1, g$estimate, format_p_value(g$p.adj)))
-      }))
-    )
-  })
-}

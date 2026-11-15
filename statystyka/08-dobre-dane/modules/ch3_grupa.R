@@ -1,5 +1,10 @@
 # Tab 3: Grupa — za mało danych (n=8), zły zbiór
 
+# Tabela dawnego serwera, składana przy budowaniu strony.
+tab2_table_html <- function(view = NULL) {
+  dd_data_table(round_df(small_data), n = 10)
+}
+
 ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagList(
 
   lc_chapter_hero(
@@ -10,7 +15,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
               którego nie da się naprawić kosmetyką: zbyt małe n."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch3-sec-01", "Opis"),
 
   lc_p("Drugie studium przypadku to typowy projekt zaliczeniowy. Dzień przed
     terminem oddania student pyta 8 znajomych o płeć, kierunek studiów,
@@ -35,7 +40,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch3-sec-02", "Podgląd danych"),
 
   lc_p("W podglądzie policz, ile osób trafia do każdej grupy, którą
     student chciałby porównać."),
@@ -43,7 +48,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
   figure_panel(
     label = "Tab. 3.1",
     title = "Ankieta: 8 odpowiedzi",
-    uiOutput("tab2_table")
+    tab2_table_html()
   ),
 
   lc_p("Same zmienne nie budzą zastrzeżeń: dwie jakościowe (płeć, kierunek)
@@ -53,7 +58,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     Porównanie kierunków opierałoby się więc na pojedynczych odpowiedziach,
     a porównanie płci na czterech osobach z każdej strony."),
 
-  lc_h2("sec-03", "Ile obserwacji naprawdę potrzeba?"),
+  lc_h2("ch3-sec-03", "Ile obserwacji naprawdę potrzeba?"),
 
   lc_p("Z wykładu 04 wiemy, że precyzję oszacowania średniej opisuje
     szerokość ", gloss("przedział ufności", "przedziału ufności"), ".
@@ -78,12 +83,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
   figure_panel(
     label = "Ryc. 3.2",
     title = "Liczba obserwacji a precyzja i moc",
-    lc_slider("tab2_n", "Liczba obserwacji", 5, 200, 8, 1),
-    lc_plots(
-      lc_plot("tab2_hist", max_height = "280px"),
-      lc_plot("tab2_ci", max_height = "280px")
-    ),
-    lc_plot("tab2_power", max_height = "280px")
+    s08_n_figure()
   ),
 
   lc_p("Wszystkie trzy wykresy prowadzą do tego samego wniosku. Przy n = 8
@@ -103,7 +103,7 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     To problem „Za mało danych” z katalogu z rozdziału 1, i w tym zbiorze
     dotyka on każdej analizy naraz."),
 
-  lc_h2("sec-04", "Werdykt"),
+  lc_h2("ch3-sec-04", "Werdykt"),
 
   lc_p("Tego zbioru nie da się uratować czyszczeniem ani przekodowaniem, bo
     brakuje w nim nie jakości, lecz informacji. Jedyną naprawą jest zebranie
@@ -130,62 +130,3 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     target_id = "ch4"
   )
 ))
-
-ch3_server <- function(input, output, session) {
-
-  output$tab2_table <- renderUI({
-    dd_data_table(round_df(small_data), n = 10)
-  })
-
-  # Slider simulations
-  sim_data <- reactive({
-    n <- input$tab2_n
-    set.seed(42)
-    data.frame(
-      godziny = rnorm(n, 15, 5),
-      oceny = rnorm(n, 3.8, 0.6)
-    )
-  })
-
-  zoom_plot_server("tab2_hist", reactive({
-    d <- sim_data()
-    ggplot(d, aes(x = oceny)) +
-      geom_histogram(bins = max(5L, round(input$tab2_n / 5)), fill = data_primary, color = "white", alpha = 0.8) +
-      labs(x = "Średnia ocen", y = "Liczebność") +
-      theme_upwr(base_size = 14)
-  }))
-
-  zoom_plot_server("tab2_ci", reactive({
-    ns <- 5:200
-    ci_width <- function(n) 2 * qt(0.975, n - 1) * 0.6 / sqrt(n)  # SD = 0.6
-    df_ci <- data.frame(n = ns, ci_width = ci_width(ns))
-    n_now <- input$tab2_n
-
-    ggplot(df_ci, aes(x = n, y = ci_width)) +
-      geom_line(color = data_bad, linewidth = 1.2) +
-      annotate("point", x = n_now, y = ci_width(n_now), color = data_bad, size = 4) +
-      labs(x = "Liczba obserwacji (n)", y = "Szerokość przedziału ufności") +
-      theme_upwr(base_size = 14)
-  }))
-
-  # Moc testu t dla d = 0.5 liczona dokładnie (power.t.test), przy nieparzystym n
-  # liczymy po floor(n/2) osób w grupie.
-  tab2_power_at <- function(n) {
-    vapply(n, function(k) power.t.test(n = floor(k / 2), delta = 0.5, sd = 1)$power,
-           numeric(1))
-  }
-  tab2_power_curve <- data.frame(n = 5:200, power = tab2_power_at(5:200))
-
-  zoom_plot_server("tab2_power", reactive({
-    n_now <- input$tab2_n
-    ggplot(tab2_power_curve, aes(x = n, y = power)) +
-      geom_line(color = data_primary, linewidth = 1.2) +
-      annotate("point", x = n_now, y = tab2_power_at(n_now), color = data_primary, size = 4) +
-      geom_hline(yintercept = 0.8, linetype = "dashed", color = data_reference) +
-      annotate("text", x = 150, y = 0.83, label = "Moc 80%", color = data_reference, size = 4) +
-      scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
-      labs(x = "Liczba obserwacji (n)", y = "Moc testu") +
-      theme_upwr(base_size = 14)
-  }))
-
-}

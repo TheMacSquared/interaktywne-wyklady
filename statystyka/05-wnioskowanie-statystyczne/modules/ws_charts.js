@@ -97,6 +97,20 @@
     if (live[msg.id]) draw(live[msg.id], latest[msg.id]);
     return true;
   };
-  Charts.onMessage("ws_sided_chart", function (msg) { window.wsRenderWhenReady("sided", msg); });
-  Charts.onMessage("ws_pvalue_chart", function (msg) { window.wsRenderWhenReady("pvalue", msg); });
+  // Ryc. 2.4 bez serwera: typ testu i α czytamy z kontrolek strony, wartość krytyczną
+  // liczy window.lcDist (shared/lc_dist.js), jak dawniej qnorm() na serwerze.
+  function sidedFromControls() {
+    var el = document.getElementById("ch2h_alpha"), q = window.lcDist && window.lcDist.qnorm;
+    if (!el || !q) return;
+    var radio = document.querySelector('input[name="ch2h_sided"]:checked'), sided = radio ? radio.value : "two.sided";
+    var slider = window.jQuery && window.jQuery(el).data("ionRangeSlider");
+    var alpha = Number(slider ? slider.result.from : el.value) || 0.05;
+    var crit = sided === "two.sided" ? q(1 - alpha / 2) : sided === "greater" ? q(1 - alpha) : q(alpha);
+    window.wsRenderWhenReady("sided", { id: "ch2h_sided_chart", sided: sided, crit: crit });
+  }
+  ["input", "change"].forEach(function (type) {
+    document.addEventListener(type, function (e) {
+      if (e.target && (e.target.id === "ch2h_alpha" || e.target.name === "ch2h_sided")) sidedFromControls();
+    });
+  });
 })();

@@ -87,6 +87,7 @@ system_sciaga_widget <- figure_panel(
 
 # Nazwy kroków redukcji układu mieszanego (kropki lc_step_nav i znacznik opisu).
 s8_reduction_steps <- c("Zdefiniuj sukces", "Zredukuj A/B", "Połącz szeregowo")
+s8_reduction_texts <- c("Zdefiniuj sukces: C działa oraz A lub B działa.", "Zredukuj A/B: R_AB=1-(1-R_A)(1-R_B).", "Połącz szeregowo: R_sys=R_C·R_AB.")
 
 system_block <- list(id = "system", title = "Niezawodność systemu", chapters = list(
   list(
@@ -109,7 +110,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       # PROTOTYP P1 (wariant B): scena przed głosowaniem
       s8p_variant("scena P1 przed głosowaniem (wariant B). Ta sama scena stoi też po głosowaniu (wariant A)."),
       s8p_get("s8p_1_ui"),
-      risk_vote_panel("s8_vote", "s8_vote_feedback", "Dwa elementy mają R=0.9. Czy R systemu wynosi 0.81, 0.9 czy 0.99?", c("0.81" = "series", "0.90" = "single", "0.99" = "parallel")),
+      risk_vote_panel("s8_vote", "s8_vote_feedback", "Dwa elementy mają R=0.9. Czy R systemu wynosi 0.81, 0.9 czy 0.99?", c("0.81" = "series", "0.90" = "single", "0.99" = "parallel"),
+        feedback = list(".other" = lc_status(
+          tags$strong("Każda odpowiedź może być poprawna:"),
+          " 0.81 dla szeregu, 0.90 dla pojedynczego wymagania i 0.99 dla redundancji równoległej."
+        ))),
       "Pytanie było celowo niedookreślone. Nie powiedzieliśmy, czy system potrzebuje obu elementów, jednego konkretnego, czy któregokolwiek z nich. Każda z trzech liczb jest poprawną odpowiedzią na inne pytanie — i właśnie dlatego lista części wraz z ich niezawodnościami nie wystarcza do obliczenia niezawodności systemu.",
       # PROTOTYP P1 (wariant A): scena po głosowaniu, przed przykładem 8.1
       s8p_variant("scena P1 po głosowaniu (wariant A)."),
@@ -216,7 +221,13 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Schemat zapisuje logikę sukcesu dla ustalonej funkcji, a nie fizyczne połączenia elektryczne czy przepływ powietrza."
           )),
           risk_try("przełącz kolejno „Szeregowy”, „Równoległy” i „Mieszany”. Dla każdego schematu wskaż, ile bloków musi zawieść, żeby zniknęła ostatnia droga od lewej do prawej."),
-          risk_widget_panel("Schemat", "Trzy architektury tych samych elementów", selectInput("s8_diagram", "Układ", c("Szeregowy" = "series", "Równoległy" = "parallel", "Mieszany" = "mixed")), plot_id = "s8_diagram_plot", note = "Blok to element, linia to wymaganie drogi sukcesu; schemat opisuje logikę niezawodności, nie fizyczne połączenia."),
+          figure_panel(label = "Schemat", title = "Trzy architektury tych samych elementów", width_mode = "wide",
+            lc_toolbar(selectInput("s8_diagram", "Układ", selectize = FALSE,
+              c("Szeregowy" = "series", "Równoległy" = "parallel", "Mieszany" = "mixed"))),
+            # Trzy schematy narysowane przy budowaniu (modules/wykresy.R); lista wybiera widoczny.
+            lc_variants("s8_diagram", list(
+              series = s8_diagram_svg("series"), parallel = s8_diagram_svg("parallel"), mixed = s8_diagram_svg("mixed"))),
+            lc_caption("Blok to element, linia to wymaganie drogi sukcesu; schemat opisuje logikę niezawodności, nie fizyczne połączenia.")),
           # PROTOTYPY P5A i P5B: klikalny schemat
           s8p_variant("P5A — jeden schemat z przełącznikiem architektury."),
           s8p_get("s8p_5a_ui"),
@@ -243,7 +254,13 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Układ n elementów jest szeregowy, jeśli działa wtedy i tylko wtedy, gdy działają wszystkie elementy. Równoważnie: awaria dowolnego elementu jest awarią systemu, a czas życia systemu to T_s = min(T₁, …, Tₙ)."
           )),
           risk_try("odznaczaj po jednym elemencie, potem po dwa. Policz, ile z ośmiu możliwych kombinacji stanów daje „System działa”."),
-          figure_panel(label = "Stany", title = "Wszystkie muszą działać", checkboxGroupInput("s8_series_states", "Działające elementy", choices = c("Czujnik" = "sensor", "Sterownik" = "controller", "Wentylator" = "fan"), selected = c("sensor", "controller", "fan")), uiOutput("s8_series_state"), full_width = TRUE),
+          figure_panel(label = "Stany", title = "Wszystkie muszą działać", checkboxGroupInput("s8_series_states", "Działające elementy", choices = c("Czujnik" = "sensor", "Sterownik" = "controller", "Wentylator" = "fan"), selected = c("sensor", "controller", "fan")),
+            # Werdykt wybiera przeglądarka z zaznaczonych pól (conditionalPanel bez serwera).
+            conditionalPanel("input.s8_series_states.length == 3", lc_status(
+              lc_verdict(tags$strong("System działa."), type = "ok"), " Układ szeregowy wymaga wszystkich elementów.")),
+            conditionalPanel("input.s8_series_states.length < 3", lc_status(
+              lc_verdict(tags$strong("System nie działa."), type = "warning"), " Układ szeregowy wymaga wszystkich elementów.")),
+            full_width = TRUE),
           # PROTOTYP P6: osiem stanów szeregu
           s8p_get("s8p_6_ui"),
           "Kombinacja wygrywająca jest dokładnie jedna: wszyscy działają. Skoro system wymaga wszystkich elementów naraz, a awarie są niezależne, prawdopodobieństwa działania mnożą się wzdłuż łańcucha:",
@@ -281,7 +298,12 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           risk_definition("8.4", "Układ równoległy (redundancja czynna)", c(
             "Układ n elementów jest równoległy, jeśli działa wtedy i tylko wtedy, gdy działa co najmniej jeden element. Wszystkie gałęzie pracują od początku misji (redundancja czynna, gorąca), a czas życia systemu to T_s = max(T₁, …, Tₙ)."
           )),
-          figure_panel(label = "Stany", title = "Co najmniej jedna gałąź musi działać", checkboxGroupInput("s8_parallel_states", "Działające wentylatory", choices = c("A" = "a", "B" = "b"), selected = c("a", "b")), uiOutput("s8_parallel_state"), full_width = TRUE),
+          figure_panel(label = "Stany", title = "Co najmniej jedna gałąź musi działać", checkboxGroupInput("s8_parallel_states", "Działające wentylatory", choices = c("A" = "a", "B" = "b"), selected = c("a", "b")),
+            conditionalPanel("input.s8_parallel_states.length >= 1", lc_status(
+              lc_verdict(tags$strong("System działa."), type = "ok"), " Wystarcza co najmniej jedna gałąź.")),
+            conditionalPanel("input.s8_parallel_states.length < 1", lc_status(
+              lc_verdict(tags$strong("System nie działa."), type = "warning"), " Wystarcza co najmniej jedna gałąź.")),
+            full_width = TRUE),
           # PROTOTYP P8: cztery stany układu równoległego
           s8p_get("s8p_8_ui"),
           "Tym razem przegrywająca kombinacja jest jedna — i to jest zaproszenie do triku z dopełnieniem, znanego z wykładu o wielu próbach: zamiast wielu scenariuszy sukcesu liczymy jeden scenariusz porażki.",
@@ -312,7 +334,10 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         text = "Ten widget to eksperyment kontrolowany: dwa elementy o ustalonych niezawodnościach i jeden przełącznik logiki. Zanim klikniesz, oszacuj: o ile system równoległy będzie lepszy od szeregowego przy R₁ = 0.92 i R₂ = 0.95? Potem sprawdź, jak różnica reaguje na pogorszenie jednego z elementów.",
         body = list(
           risk_try("przy domyślnych suwakach przełącz układ z szeregowego na równoległy. Potem obniż R₂ do 0.60 i znów porównaj oba układy."),
-          risk_widget_panel("Architektura", "Te same R, inny system", tagList(selectInput("s8_arch", "Układ", c("Szeregowy" = "series", "Równoległy" = "parallel")), lc_slider("s8_r1", "R₁", .5, 1, .92, .01), lc_slider("s8_r2", "R₂", .5, 1, .95, .01)), "s8_arch_plot", "s8_arch_stats"),
+          risk_sf_panel("Architektura", "Te same R, inny system", "s8m_arch",
+            controls = list(selectInput("s8_arch", "Układ", selectize = FALSE, c("Szeregowy" = "series", "Równoległy" = "parallel")),
+                            lc_sf_slider("s8_r1", "R₁", .5, 1, .92, .01), lc_sf_slider("s8_r2", "R₂", .5, 1, .95, .01)),
+            reads = list(risk_sf_read("arch_r", "R systemu", color = upwr_accent), risk_sf_read("arch_risk", "Ryzyko systemu"))),
           # PROTOTYPY P9A i P9B: te same R, dwie architektury naraz
           s8p_variant("P9A — kwadrat czterech pól."),
           s8p_get("s8p_9a_ui"),
@@ -342,7 +367,12 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Redukcja wykorzystuje prostą własność wzorów (8.2) i (8.3): grupa niezależnych elementów połączonych równolegle zachowuje się jak jeden blok o niezawodności R_p, a grupa połączona szeregowo — jak jeden blok o niezawodności R_s. Schemat zwija się więc od środka, aż zostanie jeden blok. Warunek: grupy nie mogą dzielić elementów, bo wtedy ich zastępcze bloki nie są niezależne."
           ),
           risk_try("klikaj „Dalej” i przy każdym kroku zapisz, który fragment schematu z poprzedniego rozdziału został właśnie zastąpiony jednym blokiem."),
-          figure_panel(label = "Krok po kroku", title = "Sterownik C oraz wentylatory A/B", lc_toolbar(lc_step_nav("s8_step", s8_reduction_steps, start = 1L)), uiOutput("s8_reduction"), full_width = TRUE),
+          figure_panel(label = "Krok po kroku", title = "Sterownik C oraz wentylatory A/B", lc_toolbar(lc_step_nav("s8_step", s8_reduction_steps, start = 1L)),
+            # Opis kroku wybiera przeglądarka (conditionalPanel bez serwera).
+            lapply(seq_along(s8_reduction_steps), function(k) conditionalPanel(
+              c("input.s8_step <= 1", "input.s8_step == 2", "input.s8_step >= 3")[[k]],
+              lc_step_text(paste0("Krok ", k, " z 3 · ", s8_reduction_steps[[k]]), s8_reduction_texts[[k]]))),
+            full_width = TRUE),
           # PROTOTYP P10: schemat zwija się krok po kroku
           s8p_get("s8p_10_ui"),
           "Trzy kroki redukcji, które właśnie przeszliśmy, składają się w gotowy wzór całego układu:",
@@ -387,7 +417,10 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             answer = "R_sys(1000) ≈ 0.558, MTTF systemu ≈ 1470 h. System ma niższą niezawodność niż sam wentylator A (0.574), bo sterownik o R = 0.670 jest wymagany na każdej drodze sukcesu. Dla porównania szereg wszystkich trzech elementów miałby MTTF = 1/(1/1800 + 1/2000 + 1/2500) ≈ 687 h."
           ),
           risk_try("ustaw czas misji na 1000 h i odczytaj R systemu. Potem przesuń suwak na 100 h i na 3000 h; za każdym razem porównaj krzywą systemu z krzywą sterownika i wentylatora A."),
-          risk_widget_panel("Czas", "Elementy i system mieszany", lc_slider("s8_mission", "Czas misji (h)", 100, 3000, 1000, 50), "s8_time_plot", "s8_time_stats"),
+          risk_sf_panel("Czas", "Elementy i system mieszany", "s8m_time", legend = TRUE,
+            controls = lc_sf_slider("s8_mission", "Czas misji (h)", 100, 3000, 1000, 50),
+            reads = list(risk_sf_read("time_a", "R wentylatora A"), risk_sf_read("time_b", "R wentylatora B"),
+                         risk_sf_read("time_c", "R sterownika"), risk_sf_read("time_sys", "R systemu", color = upwr_accent))),
           # PROTOTYPY P11A i P11B: systemowa R(t), dwie puenty
           s8p_variant("P11A — puenta „system leży pod najsłabszym szeregiem”."),
           s8p_get("s8p_11a_ui"),
@@ -506,7 +539,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             answer = "R ≈ 0.986. Około 72% ryzyka to jedno zdarzenie — utrata zasilania — którego redundancja wentylatorów w ogóle nie dotyka. Następny wentylator nic tu nie da; pomoże tylko poprawa lub zdublowanie zasilania."
           ),
           risk_try("zacznij od q = 0 i odczytaj R. Następnie ustaw q = 0.01 (dane Bananpolu) i q = 0.05; porównaj spadek R z ryzykiem 0.004, które obiecywał sam układ równoległy."),
-          risk_widget_panel("Zależność", "Wspólne zasilanie", lc_slider("s8_common", "P(utraty wspólnego zasilania)", 0, .15, .01, .005), "s8_common_plot", "s8_common_stats"),
+          risk_sf_panel("Zależność", "Wspólne zasilanie", "s8m_common",
+            controls = lc_sf_slider("s8_common", "P(utraty wspólnego zasilania)", 0, .15, .01, .005),
+            reads = list(risk_sf_read("common_r", "R z przyczyną wspólną", color = upwr_accent), risk_sf_read("common_risk", "Ryzyko"),
+                         risk_sf_read("common_share", "Udział wspólnej przyczyny")),
+            config = s8_common_config),
           # PROTOTYPY P16A i P16B: ile zostaje z obietnicy redundancji
           s8p_variant("P16A — linia R(q) z obiecanym 0.996."),
           s8p_get("s8p_16a_ui"),
@@ -583,7 +620,10 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             answer = "Bez wspólnej przyczyny wystarczą 4 gałęzie. Ze wspólnym zasilaniem cel jest nieosiągalny dla dowolnego n; już trzecia gałąź daje tylko około 0.009, a czwarta niecałą jedną tysięczną."
           ),
           risk_try("przy R jednej gałęzi 0.9 przesuwaj liczbę gałęzi od 1 do 6 i zapisuj przyrost R po każdym kroku. Potem zmień R gałęzi na 0.6 i powtórz."),
-          risk_widget_panel("Trade-off", "Liczba gałęzi i koszt", tagList(lc_slider("s8_branches", "Liczba gałęzi", 1, 6, 2, 1), lc_slider("s8_branch_r", "R jednej gałęzi", .5, .99, .9, .01)), "s8_redundancy", "s8_redundancy_stats"),
+          risk_sf_panel("Trade-off", "Liczba gałęzi i koszt", "s8m_redundancy",
+            controls = list(lc_sf_slider("s8_branches", "Liczba gałęzi", 1, 6, 2, 1), lc_sf_slider("s8_branch_r", "R jednej gałęzi", .5, .99, .9, .01)),
+            reads = list(risk_sf_read("red_r", "R", color = upwr_accent), risk_sf_read("red_gain", "Przyrost od poprzedniej gałęzi"),
+                         risk_sf_read("red_cost", "Koszt demonstracyjny"))),
           # PROTOTYPY P19A i P19B: krzywa nasycenia i sufit wspólnej przyczyny
           s8p_variant("P19A — R na osi liniowej."),
           s8p_get("s8p_19a_ui"),
@@ -654,7 +694,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             answer = "W szeregu najwięcej daje poprawa najsłabszego wentylatora, choć przewaga jest mała. W układzie mieszanym poprawa sterownika daje około dwudziestokrotnie więcej niż poprawa wentylatora A — tej samej wielkości poprawa ma zupełnie inną wartość w zależności od miejsca w architekturze."
           ),
           risk_try("odczytaj trzy zyski w panelu i porównaj je z krokiem (a) przykładu 8.11. Zastanów się, jak zmieniłaby się kolejność, gdyby zasilanie miało R = 0.90."),
-          figure_panel(label = "Porównanie", title = "Spadek ryzyka po poprawie R o 0.02", lc_readouts(uiOutput("s8_improvement")), lc_plot("s8_improvement_plot", ratio = "3/1", max_height = "260px"), full_width = TRUE),
+          risk_sf_panel("Porównanie", "Spadek ryzyka po poprawie R o 0.02", "s8m_improvement",
+            # Liczby stałe: policzone w R (modules/wykresy.R).
+            reads = list(lc_readout("Wentylator", s8_improvement_config$reads[[1]]), lc_readout("Czujnik", s8_improvement_config$reads[[2]]),
+                         lc_readout("Zasilanie", s8_improvement_config$reads[[3]])),
+            ratio = "3/1", max_height = "260px", config = s8_improvement_config, full_width = TRUE),
           # PROTOTYP P23: ta sama poprawa w trzech miejscach
           s8p_get("s8p_23_ui"),
           c(
@@ -707,221 +751,3 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
   )
 ))
 system_chapters <- risk_block_chapters(system_block)
-
-system_server <- function(input, output, session) {
-  v <- reactiveVal(FALSE)
-  observeEvent(input$s8_vote_check, v(TRUE))
-  output$s8_vote_feedback <- renderUI({
-    req(v())
-    if (is.null(input$s8_vote)) {
-      return(lc_caption(
-               "Najpierw zaznacz jedną z odpowiedzi.",
-               tone = "info"
-             ))
-    }
-    lc_status(
-      tags$strong("Każda odpowiedź może być poprawna:"),
-      " 0.81 dla szeregu, 0.90 dla pojedynczego wymagania i 0.99 dla redundancji równoległej."
-    )
-  })
-  output$s8_series_state <- renderUI({
-    ok <- length(input$s8_series_states) == 3
-    lc_status(
-      lc_verdict(tags$strong(if (ok) "System działa." else "System nie działa."), type = if (ok) "ok" else "warning"),
-      " Układ szeregowy wymaga wszystkich elementów."
-    )
-  })
-  output$s8_parallel_state <- renderUI({
-    ok <- length(input$s8_parallel_states) >= 1
-    lc_status(
-      lc_verdict(tags$strong(if (ok) "System działa." else "System nie działa."), type = if (ok) "ok" else "warning"),
-      " Wystarcza co najmniej jedna gałąź."
-    )
-  })
-  diagram_plot <- reactive({
-    if (input$s8_diagram == "series") {
-      boxes <- data.frame(x = c(2, 4.5, 7), y = 0, w = 1, label = c("Czujnik", "Sterownik", "Wentylator"))
-      lines <- data.frame(xs = c(.3, 3, 5.5, 8), xe = c(1, 3.5, 6, 8.7), ys = 0, ye = 0)
-      title <- "Układ szeregowy: jedna droga przez wszystkie bloki"
-      limits <- list(x = c(0, 9), y = c(-1.5, 1.5))
-    } else if (input$s8_diagram == "parallel") {
-      boxes <- data.frame(x = 4.5, y = c(.9, -.9), w = 1.4, label = c("Wentylator A", "Wentylator B"))
-      lines <- data.frame(
-        xs = c(.5, 2, 2, 2, 2, 5.9, 5.9, 7, 7, 7),
-        xe = c(2, 2, 2, 3.1, 3.1, 7, 7, 7, 7, 8.5),
-        ys = c(0, 0, 0, .9, -.9, .9, -.9, .9, -.9, 0),
-        ye = c(0, .9, -.9, .9, -.9, .9, -.9, 0, 0, 0)
-      )
-      title <- "Układ równoległy: wystarczy jedna droga"
-      limits <- list(x = c(0, 9), y = c(-1.8, 1.8))
-    } else {
-      boxes <- data.frame(
-        x = c(1.9, 6.4, 6.4), y = c(0, .9, -.9), w = c(1.2, 1.4, 1.4),
-        label = c("Sterownik C", "Wentylator A", "Wentylator B")
-      )
-      lines <- data.frame(
-        xs = c(0, 3.1, 4.2, 4.2, 4.2, 4.2, 7.8, 7.8, 8.6, 8.6, 8.6),
-        xe = c(.7, 4.2, 4.2, 4.2, 5, 5, 8.6, 8.6, 8.6, 8.6, 9.5),
-        ys = c(0, 0, 0, 0, .9, -.9, .9, -.9, .9, -.9, 0),
-        ye = c(0, 0, .9, -.9, .9, -.9, .9, -.9, 0, 0, 0)
-      )
-      title <- "Układ mieszany: szereg C z redundancją A/B"
-      limits <- list(x = c(-.2, 9.7), y = c(-1.8, 1.8))
-    }
-    ggplot() +
-      geom_segment(data = lines, aes(x = xs, xend = xe, y = ys, yend = ye), colour = upwr_reference, linewidth = 1) +
-      geom_rect(data = boxes, aes(xmin = x - w, xmax = x + w, ymin = y - .45, ymax = y + .45), fill = upwr_secondary, colour = "white") +
-      geom_text(data = boxes, aes(x = x, y = y, label = label), colour = "white", fontface = "bold", size = 4.2) +
-      # Wejście i wyjście schematu: droga sukcesu biegnie od lewej kropki do prawej.
-      annotate("point", x = c(min(lines$xs), max(lines$xe)), y = 0, colour = upwr_accent, size = 3.2) +
-      annotate("text", x = c(min(lines$xs), max(lines$xe)), y = -.42, label = c("wejście", "wyjście"),
-        colour = upwr_reference, size = 3.6, hjust = c(0, 1)) +
-      coord_equal(xlim = limits$x, ylim = limits$y) +
-      labs(x = NULL, y = NULL) +
-      theme_upwr() +
-      theme(
-        axis.text = element_blank(), axis.ticks = element_blank(),
-        axis.line = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()
-      )
-  })
-  zoom_plot_server("s8_diagram_plot", diagram_plot, alt = "Schemat blokowy niezawodności: bloki elementów połączone liniami dróg sukcesu dla wybranej architektury.")
-  arch_value <- reactive(if (input$s8_arch == "series") risk_series_reliability(c(input$s8_r1, input$s8_r2)) else risk_parallel_reliability(c(input$s8_r1, input$s8_r2)))
-  arch_plot <- reactive({
-    dat <- data.frame(element = c("Element 1", "Element 2", "System"), r = c(input$s8_r1, input$s8_r2, arch_value()))
-    ggplot(dat, aes(element, r, fill = element)) +
-      geom_col(width = .65) +
-      geom_text(aes(label = sprintf("%.3f", r)), vjust = -.5, size = 4.6, family = "mono") +
-      coord_cartesian(ylim = c(0, 1.08)) +
-      scale_y_continuous(breaks = seq(0, 1, .25)) +
-      # Elementy w kolorze kontekstu, system w akcencie.
-      scale_fill_manual(values = c("Element 1" = upwr_secondary, "Element 2" = upwr_secondary, "System" = upwr_accent), guide = "none") +
-      labs(x = NULL, y = "Niezawodność") +
-      theme_upwr()
-  })
-  zoom_plot_server("s8_arch_plot", arch_plot, alt = "Słupki niezawodności dwóch elementów i systemu dla wybranej architektury.")
-  output$s8_arch_stats <- renderUI(tagList(
-    lc_readout("R systemu", risk_fmt_p(arch_value()), color = upwr_accent),
-    lc_readout("Ryzyko systemu", risk_fmt_p(1 - arch_value()))
-  ))
-  output$s8_reduction <- renderUI({
-    # Kroki od 1; cofnięcie przed krok 1 pokazuje nadal krok 1.
-    k <- max(1L, as.integer(input$s8_step %||% 1L))
-    texts <- c("Zdefiniuj sukces: C działa oraz A lub B działa.", "Zredukuj A/B: R_AB=1-(1-R_A)(1-R_B).", "Połącz szeregowo: R_sys=R_C·R_AB.")
-    lc_step_text(paste0("Krok ", k, " z 3 · ", s8_reduction_steps[[k]]), texts[[k]])
-  })
-  # R elementów i systemu mieszanego w chwili t (MTTF 1800, 2000 i 2500 h, przykład 8.6).
-  time_values <- function(t) {
-    ra <- exp(-t / 1800); rb <- exp(-t / 2000); rc <- exp(-t / 2500)
-    c("Wentylator A" = ra, "Wentylator B" = rb, "Sterownik" = rc, "System" = rc * (1 - (1 - ra) * (1 - rb)))
-  }
-  time_plot <- reactive({
-    t <- seq(0, 3000, length.out = 400)
-    ra <- exp(-t / 1800)
-    rb <- exp(-t / 2000)
-    rc <- exp(-t / 2500)
-    rs <- rc * (1 - (1 - ra) * (1 - rb))
-    dat <- rbind(data.frame(t, r = ra, name = "Wentylator A"), data.frame(t, r = rb, name = "Wentylator B"), data.frame(t, r = rc, name = "Sterownik"), data.frame(t, r = rs, name = "System"))
-    now <- time_values(input$s8_mission)
-    pts <- data.frame(t = input$s8_mission, r = unname(now), name = names(now))
-    ggplot(dat, aes(t, r, colour = name)) +
-      geom_line(aes(linewidth = name)) +
-      geom_vline(xintercept = input$s8_mission, linetype = 2) +
-      geom_point(data = pts, size = 3) +
-      # System w akcencie i grubszą linią; oś pionowa od zera.
-      scale_colour_manual(values = c("Wentylator A" = upwr_cat_n(4)[[3]], "Wentylator B" = upwr_cat_n(4)[[4]],
-        "Sterownik" = upwr_secondary, "System" = upwr_accent)) +
-      scale_linewidth_manual(values = c("Wentylator A" = .9, "Wentylator B" = .9, "Sterownik" = .9, "System" = 1.7), guide = "none") +
-      coord_cartesian(ylim = c(0, 1)) +
-      labs(x = "Czas (h)", y = "R(t)", colour = NULL) +
-      theme_upwr()
-  })
-  zoom_plot_server("s8_time_plot", time_plot, alt = "Krzywe niezawodności trzech elementów i systemu mieszanego.")
-  output$s8_time_stats <- renderUI({
-    now <- time_values(input$s8_mission)
-    tagList(
-      lc_readout("R wentylatora A", risk_fmt_p(now[["Wentylator A"]])),
-      lc_readout("R wentylatora B", risk_fmt_p(now[["Wentylator B"]])),
-      lc_readout("R sterownika", risk_fmt_p(now[["Sterownik"]])),
-      lc_readout("R systemu", risk_fmt_p(now[["System"]]), color = upwr_accent)
-    )
-  })
-  common_plot <- reactive({
-    q <- seq(0, .15, length.out = 200)
-    base <- risk_parallel_reliability(c(.92, .95))
-    ggplot(data.frame(q, r = (1 - q) * base), aes(q, r)) +
-      geom_line(colour = upwr_accent, linewidth = 1.1) +
-      # Obietnica samego układu równoległego (przykład 8.4) jako linia odniesienia.
-      geom_hline(yintercept = base, colour = upwr_reference, linetype = 2) +
-      annotate("text", x = .15, y = base, label = "bez wspólnej przyczyny: 0.996", hjust = 1, vjust = -.6,
-        colour = upwr_reference, size = 3.8) +
-      geom_point(data = data.frame(q = input$s8_common, r = (1 - input$s8_common) * base), colour = upwr_secondary, size = 3) +
-      coord_cartesian(ylim = c(.84, 1)) +
-      labs(x = "P(wspólnej awarii)", y = "R systemu") +
-      theme_upwr()
-  })
-  zoom_plot_server("s8_common_plot", common_plot, alt = "Malejąca niezawodność układu redundantnego wraz ze wzrostem wspólnej przyczyny.")
-  output$s8_common_stats <- renderUI({
-    r <- risk_common_cause_reliability(risk_parallel_reliability(c(.92, .95)), input$s8_common)
-    tagList(
-      lc_readout("R z przyczyną wspólną", risk_fmt_p(r), color = upwr_accent),
-      lc_readout("Ryzyko", risk_fmt_p(1 - r)),
-      # Część ryzyka, która pochodzi ze zdarzenia wspólnego (przykład 8.8: 0.72).
-      lc_readout("Udział wspólnej przyczyny", sprintf("%.0f%%", 100 * input$s8_common / (1 - r)))
-    )
-  })
-  redundancy_plot <- reactive({
-    n <- 1:6
-    r <- 1 - (1 - input$s8_branch_r)^n
-    dat <- data.frame(n, r, cost = n * 100)
-    ggplot(dat, aes(n, r)) +
-      geom_line(colour = upwr_accent, linewidth = 1.1) +
-      geom_point() +
-      geom_point(data = dat[dat$n == input$s8_branches, ], colour = upwr_secondary, size = 4) +
-      # Stała oś: suwak R gałęzi zmienia krzywą, nie skalę.
-      scale_x_continuous(breaks = 1:6) +
-      coord_cartesian(ylim = c(.5, 1)) +
-      labs(x = "Liczba gałęzi", y = "R systemu") +
-      theme_upwr()
-  })
-  zoom_plot_server("s8_redundancy", redundancy_plot, alt = "Krzywa niezawodności równoległej względem liczby gałęzi.")
-  output$s8_redundancy_stats <- renderUI({
-    r <- 1 - (1 - input$s8_branch_r)^input$s8_branches
-    tagList(
-      lc_readout("R", risk_fmt_p(r), color = upwr_accent),
-      lc_readout("Przyrost od poprzedniej gałęzi", if (input$s8_branches > 1) {
-        risk_fmt_p(r - (1 - (1 - input$s8_branch_r)^(input$s8_branches - 1)))
-      } else "—"),
-      lc_readout("Koszt demonstracyjny", paste(input$s8_branches * 100, "jedn."))
-    )
-  })
-  improvement_gains <- function() {
-    base <- c(.92, .95, .98)
-    sys0 <- risk_series_reliability(base)
-    vapply(seq_along(base), function(i) {
-      x <- base
-      x[i] <- min(1, x[i] + .02)
-      risk_series_reliability(x) - sys0
-    }, numeric(1))
-  }
-  improvement_plot <- reactive({
-    dat <- data.frame(element = factor(c("Wentylator (0.92)", "Czujnik (0.95)", "Zasilanie (0.98)"),
-      levels = c("Wentylator (0.92)", "Czujnik (0.95)", "Zasilanie (0.98)")), gain = improvement_gains())
-    ggplot(dat, aes(element, gain)) +
-      geom_col(width = .55, fill = upwr_secondary) +
-      geom_text(aes(label = sprintf("%.4f", gain)), vjust = -.5, size = 4.4, family = "mono") +
-      coord_cartesian(ylim = c(0, .022)) +
-      labs(x = NULL, y = "Wzrost R systemu") +
-      theme_upwr()
-  })
-  zoom_plot_server("s8_improvement_plot", improvement_plot, alt = "Słupki wzrostu niezawodności szeregu po poprawie każdego z trzech elementów o 0.02.")
-  output$s8_improvement <- renderUI({
-    gains <- improvement_gains()
-    tagList(
-      lc_readout("Wentylator", risk_fmt_p(gains[1])),
-      lc_readout("Czujnik", risk_fmt_p(gains[2])),
-      lc_readout("Zasilanie", risk_fmt_p(gains[3]))
-    )
-  })
-  risk_assessment_server("s8", system_quiz, input, output)
-}

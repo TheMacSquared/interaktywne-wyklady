@@ -2,6 +2,206 @@
 # CHAPTER 7: Dwie zmienne jakościowe (chi-kwadrat, Fisher)
 # ============================================================================
 
+.ch5_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
+                     stringsAsFactors = FALSE)
+
+# ============================================================================
+# SERVER
+# ============================================================================
+
+# Pomocniki rozwiązań ćwiczeń CASchools (dawniej wewnątrz serwera).
+.cas_chisq <- function(tab) {
+  ct <- chisq.test(tab, correct = FALSE)
+  n  <- sum(tab)
+  k  <- min(nrow(tab), ncol(tab))
+  v  <- sqrt(ct$statistic / (n * (k - 1)))
+  list(chi2 = unname(ct$statistic), df = unname(ct$parameter),
+       p = ct$p.value, tab = tab, v = unname(v), n = n)
+}
+
+# Liczba z przecinkiem dziesiętnym (polski zapis).
+.cas_num <- function(x, digits = 3) {
+  formatC(x, format = "f", digits = digits)
+}
+
+.cas_result_lines <- function(r) {
+  tagList(
+    tags$li(paste0("χ²(", r$df, ") = ", .cas_num(r$chi2), ", ", format_p(r$p))),
+    tags$li(paste0("Cramér's V = ", .cas_num(r$v)))
+  )
+}
+
+.cas_verdict <- function(r) {
+  lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
+             type = if (r$p < 0.05) "danger" else "ok")
+}
+
+# Treść stała (dawniej output$cas_ch5_sol8 na serwerze): składana przy budowaniu strony.
+cas_ch5_sol8_ui <- function() {
+  r <- local({
+    high_eng <- .ch5_cas$english > 20
+    .cas_chisq(table(grades = .ch5_cas$grades, high_english = high_eng))
+  })
+  tab <- r$tab
+  pct_high <- 100 * tab[, "TRUE"] / rowSums(tab)
+  tagList(
+    p(tags$b("H₀:"), " typ szkoły i high_english są niezależne · ",
+      tags$b("Hₐ:"), " zmienne są zależne"),
+    lc_crosstab(tab, row_name = "grades", col_name = "high_english", lead = FALSE),
+    tags$ul(
+      .cas_result_lines(r),
+      lapply(rownames(tab), function(g) {
+        tags$li(paste0("Odsetek high_english w ", g, ": ",
+                       .cas_num(pct_high[[g]], 1), "%"))
+      })
+    ),
+    .cas_verdict(r),
+    p(tags$b("Interpretacja:"),
+      " Test χ² rozstrzyga tylko, czy dane przemawiają przeciw niezależności.
+      Kierunek pokazuje porównanie odsetków high_english w obu typach szkół,
+      a siłę związku — Cramér's V.",
+      if (r$p >= 0.05) " Brak podstaw do odrzucenia H₀ nie dowodzi, że typ
+      szkoły i odsetek uczniów ELL są niezależne: różnica w odsetkach mogła
+      powstać przez przypadek, ale mogła też być zbyt mała, by test ją wykrył.")
+  )
+}
+
+# Treść stała (dawniej output$cas_ch5_sol9 na serwerze): składana przy budowaniu strony.
+cas_ch5_sol9_ui <- function() {
+  r <- local({
+    high_str   <- .ch5_cas$student_teacher_ratio > 20
+    high_lunch <- .ch5_cas$lunch > 50
+    .cas_chisq(table(high_str = high_str, high_lunch = high_lunch))
+  })
+  tab <- r$tab
+  p_hi_str_poor <- tab["TRUE",  "TRUE"] / sum(tab["TRUE", ])
+  p_lo_str_poor <- tab["FALSE", "TRUE"] / sum(tab["FALSE", ])
+  r_cont <- cor.test(.ch5_cas$student_teacher_ratio, .ch5_cas$lunch)
+  tagList(
+    p(tags$b("H₀:"), " high_str i high_lunch są niezależne · ",
+      tags$b("Hₐ:"), " zmienne są zależne"),
+    lc_crosstab(tab, row_name = "high_str", col_name = "high_lunch", lead = FALSE),
+    tags$ul(
+      .cas_result_lines(r),
+      tags$li(paste0("Odsetek high_lunch wśród STR > 20: ",
+                     .cas_num(100 * p_hi_str_poor, 1), "%")),
+      tags$li(paste0("Odsetek high_lunch wśród STR ≤ 20: ",
+                     .cas_num(100 * p_lo_str_poor, 1), "%")),
+      tags$li(paste0("Dla porównania korelacja Pearsona ciągłych STR i lunch: r = ",
+                     .cas_num(unname(r_cont$estimate)), ", ",
+                     format_p(r_cont$p.value)))
+    ),
+    .cas_verdict(r),
+    p(tags$b("Wniosek:"),
+      if (r$p < 0.05) " Okręgi z przeładowanymi klasami mają istotnie wyższy
+      odsetek ubogich uczniów."
+      else " Okręgi z przeładowanymi klasami mają nieco wyższy odsetek ubogich
+      uczniów, ale po podziale obu zmiennych na dwie klasy test nie daje podstaw
+      do odrzucenia H₀. Korelacja ciągłych zmiennych jest natomiast
+      istotna, choć słaba: podział na dwie klasy wyrzucił część informacji.",
+      " Słaby związek STR z ubóstwem oznacza, że ubóstwo może tłumaczyć
+      korelację STR–read z zadania 5 tylko częściowo. Żeby to sprawdzić,
+      potrzebny jest model uwzględniający obie zmienne naraz (regresja wieloraka,
+      wykład 07).")
+  )
+}
+
+# Scenariusze testu χ² (Ryc. 7.2 i 7.3): kategorie, prawdopodobieństwa w wierszach, teksty hipotez.
+ch5_scenario_params <- list(
+  packaging = list(
+    lab1 = "Opakowanie", lab2 = "Pleśń",
+    cats1 = c("Szkło", "Plastik", "Karton"),
+    cats2 = c("Tak", "Nie"),
+    probs = matrix(c(0.05, 0.95, 0.12, 0.88, 0.20, 0.80), nrow = 3, byrow = TRUE),
+    question = "Czy typ opakowania wpływa na występowanie pleśni?",
+    h0_text = "\\(H_0:\\) typ opakowania i występowanie pleśni są niezależne",
+    h1_text = "\\(H_a:\\) typ opakowania i występowanie pleśni są powiązane"),
+  atmosphere = list(
+    lab1 = "Atmosfera pakowania", lab2 = "Ocena świeżości po 7 dniach",
+    cats1 = c("Powietrze", "MAP (modyfikowana)", "Próżnia"),
+    cats2 = c("Świeże", "Średniej jakości", "Zepsute"),
+    probs = matrix(c(0.15, 0.40, 0.45,
+                      0.55, 0.35, 0.10,
+                      0.70, 0.25, 0.05), nrow = 3, byrow = TRUE),
+    question = "Czy atmosfera pakowania wpływa na świeżość mięsa po 7 dniach?",
+    h0_text = "\\(H_0:\\) atmosfera pakowania i ocena świeżości są niezależne",
+    h1_text = "\\(H_a:\\) atmosfera pakowania i ocena świeżości są powiązane"),
+  soil = list(
+    lab1 = "Typ gleby", lab2 = "Plon",
+    cats1 = c("Piaszczysta", "Gliniasta", "Czarnoziemna"),
+    cats2 = c("Niski", "Wysoki"),
+    probs = matrix(c(0.65, 0.35, 0.45, 0.55, 0.25, 0.75), nrow = 3, byrow = TRUE),
+    question = "Czy typ gleby wpływa na kategorię plonu?",
+    h0_text = "\\(H_0:\\) typ gleby i kategoria plonu są niezależne",
+    h1_text = "\\(H_a:\\) typ gleby i kategoria plonu są powiązane"),
+  pasteurization = list(
+    lab1 = "Metoda pasteryzacji", lab2 = "Liczba bakterii po 7 dniach",
+    cats1 = c("Niska (63°C, 30 min)", "Wysoka (72°C, 15 s)", "UHT (135°C, 2 s)"),
+    cats2 = c("Niska (< norma)", "Średnia", "Wysoka (> norma)"),
+    probs = matrix(c(0.35, 0.40, 0.25,
+                      0.60, 0.30, 0.10,
+                      0.90, 0.08, 0.02), nrow = 3, byrow = TRUE),
+    question = "Czy metoda pasteryzacji mleka wpływa na liczebność bakterii po 7 dniach?",
+    h0_text = "\\(H_0:\\) metoda pasteryzacji i liczebność bakterii są niezależne",
+    h1_text = "\\(H_a:\\) metoda pasteryzacji i liczebność bakterii są powiązane"),
+  ppe_accident = list(
+    lab1 = "Środki ochrony (SOI)", lab2 = "Ciężkość wypadku",
+    cats1 = c("Niepełne", "Pełne"),
+    cats2 = c("Brak urazu", "Uraz lekki", "Uraz ciężki"),
+    probs = matrix(c(0.45, 0.35, 0.20,
+                      0.80, 0.17, 0.03), nrow = 2, byrow = TRUE),
+    question = "Czy stosowanie pełnych środków ochrony indywidualnej wpływa na ciężkość wypadku przy pracy?",
+    h0_text = "\\(H_0:\\) stosowanie SOI i ciężkość wypadku są niezależne",
+    h1_text = "\\(H_a:\\) stosowanie SOI i ciężkość wypadku są powiązane")
+)
+
+# Dane dla rycin s05_x2 i s05_x2cmp (modules/figures.js); probs jako lista wierszy.
+ch5_x2_config <- list(scenarios = lapply(ch5_scenario_params, function(par) {
+  list(lab1 = par$lab1, lab2 = par$lab2, cats1 = par$cats1, cats2 = par$cats2,
+       probs = lapply(seq_len(nrow(par$probs)), function(i) par$probs[i, ]))
+}))
+
+# Narracja niezależności (Ryc. 7.1): stałe dane o mandatach, tabele i opisy trzech kroków.
+ch5_narr_tab <- matrix(c(30, 70, 50, 50), nrow = 2, byrow = TRUE,
+  dimnames = list(c("Kobiety", "Mężczyźni"), c("Mandat", "Brak mandatu")))
+ch5_narr_exp <- matrix(c(40, 60, 40, 60), nrow = 2, byrow = TRUE, dimnames = dimnames(ch5_narr_tab))
+ch5_narr_views <- function() {
+  obs <- function() tags$div(
+    tags$p(class = "lc-tbl-lead", tags$b("Obserwowane")),
+    lc_crosstab(ch5_narr_tab, measure = "n", lead = FALSE, label = "Dane z 200 kontroli")
+  )
+  list(
+    obs(),
+    tags$div(class = "lc-tbl-row",
+      obs(),
+      tags$div(
+        tags$p(class = "lc-tbl-lead", tags$b("Oczekiwane przy H₀")),
+        lc_crosstab(ch5_narr_exp, measure = "n", lead = FALSE, label = "Tabela oczekiwana")
+      )
+    ),
+    lc_table(
+      data.frame(group = rownames(ch5_narr_tab), obs = ch5_narr_tab[, "Mandat"],
+                 exp = ch5_narr_exp[, "Mandat"],
+                 diff = ch5_narr_tab[, "Mandat"] - ch5_narr_exp[, "Mandat"]),
+      cols = list(
+        lc_col("group", "", "row"),
+        lc_col("obs", "Mandat (obs.)"),
+        lc_col("exp", "Mandat (oczek.)"),
+        lc_col("diff", "Różnica")
+      )
+    )
+  )
+}
+ch5_narr_texts <- list(
+  tagList("Mandat: ", step_num("30"), " ze 100 kobiet i ", step_num("50"),
+    " ze 100 mężczyzn; łącznie 80 z 200, czyli 40%."),
+  tagList("Przy niezależności 40% dotyczy obu płci: oczekujemy po ",
+    step_num("40"), " mandatów i po ", step_num("60"),
+    " kontroli bez mandatu w każdej grupie."),
+  tagList("Każda komórka odbiega o 10: χ² = 10²/40 + 10²/60 + 10²/40 + 10²/60 = ",
+    step_num("8.33"), " (df = 1).")
+)
+
 ch5_ui <- list(
   id = "ch-dwie-jakosciowe", num = "07", title = "Test χ² niezależności",
   content = tagList(
@@ -115,7 +315,8 @@ ch5_ui <- list(
 
       lc_step_widget("ch5_narr",
         steps = c("Pokaż dane", "Załóżmy niezależność", "Porównaj"),
-        body = uiOutput("ch5_narr_body")
+        body = lc_step_views(ch5_narr_views()),
+        texts = ch5_narr_texts
       )
     ),
 
@@ -189,26 +390,30 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 7.2",
       title = "Test χ² niezależności — krok po kroku",
-      uiOutput("ch5_hypothesis_panel"),
-      lc_step_widget("ch5_test",
-        steps = c("Tabela obserwowana", "Procenty w wierszach",
-                  "Oczekiwane i χ²", "p-wartość i decyzja"),
-        toolbar = lc_toolbar(
-          selectInput("ch5_scenario", "Scenariusz",
-            choices = c(
-              "Opakowanie a pleśń (TŻ)" = "packaging",
-              "Typ gleby a kategoria plonu (R)" = "soil",
-              "Środki ochrony a uraz (IB)" = "ppe_accident"
-            ),
-            selected = "packaging"
+      # Losowanie, wykresy, tabele kroków i opisy liczy przeglądarka (modules/figures.js, rycina s05_x2).
+      lc_sf_figure("s05_x2", bare = TRUE, config = ch5_x2_config, body = tagList(
+        s05_hypothesis_panel(ch5_scenario_params, "ch5_scenario", heading = "Hipoteza formalna:"),
+        lc_step_widget("ch5_test",
+          steps = c("Tabela obserwowana", "Procenty w wierszach",
+                    "Oczekiwane i χ²", "p-wartość i decyzja"),
+          toolbar = lc_toolbar(
+            lc_sf_ctl(selectInput("ch5_scenario", "Scenariusz", selectize = FALSE,
+              choices = c(
+                "Opakowanie a pleśń (TŻ)" = "packaging",
+                "Typ gleby a kategoria plonu (R)" = "soil",
+                "Środki ochrony a uraz (IB)" = "ppe_accident"
+              ),
+              selected = "packaging"
+            )),
+            lc_sf_slider("ch5_n", "Wielkość próby (n)", 50, 300, 120, 10),
+            lc_sf_action("new", "ch5_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid"),
+            lc_chart_zoom_button()
           ),
-          lc_slider("ch5_n", "Wielkość próby (n)", 50, 300, 120, 10),
-          lc_action("ch5_new_sample", "Losuj próbę", icon = "shuffle", variant = "solid")
-        ),
-        # Tabela kroku nad wykresem; kolory kategorii w nagłówkach zastępują legendę.
-        above = uiOutput("ch5_test_table"),
-        plot_id = "ch5_step_plot"
-      )
+          # Tabela kroku nad wykresem; kolory kategorii w nagłówkach zastępują legendę.
+          above = tags$div(`data-role` = "table"),
+          body = lc_sf_chart(0, "2.5/1", "380px")
+        )
+      ))
     ),
 
     lc_p("We wszystkich scenariuszach populacja jest ustawiona tak, że zmienne
@@ -265,8 +470,31 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 7.3",
       title = "Porównanie: χ² vs Fisher",
-      lc_toolbar(lc_action("ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)", variant = "solid")),
-      uiOutput("ch5_compare_result")
+      # Oba testy liczy przeglądarka na tabeli z Ryc. 7.2 (rycina s05_x2cmp, bez wykresu).
+      tags$div(class = "lc-sf", `data-fig` = "s05_x2cmp", `data-lc-nochart` = NA,
+        lc_toolbar(lc_sf_action("cmp", "ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)", variant = "solid")),
+        tags$div(`data-when` = "nodata", hidden = NA, lc_caption("Najpierw wylosuj próbę w widgecie powyżej.")),
+        lapply(c("low", "fine"), function(key) tags$div(`data-when` = key, hidden = NA,
+          lc_sf_fill_table(lc_table(
+            data.frame(
+              row = c("p-wartość", "Decyzja"),
+              chi = c("@@x2_chi_p@@", "@@x2_chi_dec@@"),
+              fisher = c("@@x2_fisher_p@@", "@@x2_fisher_dec@@")
+            ),
+            cols = list(
+              lc_col("row", "", "row"),
+              lc_col("chi", "Test χ²", "text"),
+              lc_col("fisher", "Test Fishera", "text")
+            )
+          )),
+          lc_status(
+            p(lc_verdict(tags$b("Liczebności oczekiwane poniżej 5:"), type = if (key == "low") "danger" else "ok"),
+              if (key == "low") tagList(" tak (komórki: ", lc_sf_value("x2_low"), ") — przybliżenie χ² może być
+                niedokładne, bezpieczniejszy jest wynik testu Fishera.")
+              else " nie — przybliżenie χ² powinno być wystarczające.")
+          )
+        ))
+      )
     ),
 
     lc_p("W domyślnym scenariuszu przy n = 120 na każdy rodzaj opakowania
@@ -339,7 +567,7 @@ ch5_ui <- list(
         " i wykonaj test χ² niezależności.
         Zapisz: χ², df, p. Co wynika? Czy typ szkoły jest niezależny
         od odsetka uczniów uczących się angielskiego?"),
-      lc_more("Rozwiązanie", uiOutput("cas_ch5_sol8"))
+      lc_more("Rozwiązanie", cas_ch5_sol8_ui())
     ),
 
     figure_panel(label = "Ćwiczenie",
@@ -349,7 +577,7 @@ ch5_ui <- list(
         " i ", tags$code("high_lunch = (lunch > 50)"),
         ". Wykonaj test χ² niezależności. Czy STR i ubóstwo są ze sobą powiązane?
         Co sugeruje wynik dla interpretacji zadania 5 z korelacji?"),
-      lc_more("Rozwiązanie", uiOutput("cas_ch5_sol9"))
+      lc_more("Rozwiązanie", cas_ch5_sol9_ui())
     ),
 
     lc_p("Porównując rozwiązania, zwróć uwagę na cenę podziału ", gloss("zmienna ilościowa", "zmiennej ilościowej"), "
@@ -366,431 +594,3 @@ ch5_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# DANE — CASchools (wczytane raz przy ladowaniu modulu)
-# ============================================================================
-
-.ch5_cas <- read.csv(file.path(app_dir, "dane", "caschools.csv"),
-                     stringsAsFactors = FALSE)
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch5_server <- function(input, output, session) {
-
-  # --- Parametry scenariuszy ---
-  scenario_params <- list(
-    packaging = list(
-      lab1 = "Opakowanie", lab2 = "Pleśń",
-      cats1 = c("Szkło", "Plastik", "Karton"),
-      cats2 = c("Tak", "Nie"),
-      probs = matrix(c(0.05, 0.95, 0.12, 0.88, 0.20, 0.80), nrow = 3, byrow = TRUE),
-      question = "Czy typ opakowania wpływa na występowanie pleśni?",
-      h0_text = "\\(H_0:\\) typ opakowania i występowanie pleśni są niezależne",
-      h1_text = "\\(H_a:\\) typ opakowania i występowanie pleśni są powiązane"),
-    atmosphere = list(
-      lab1 = "Atmosfera pakowania", lab2 = "Ocena świeżości po 7 dniach",
-      cats1 = c("Powietrze", "MAP (modyfikowana)", "Próżnia"),
-      cats2 = c("Świeże", "Średniej jakości", "Zepsute"),
-      probs = matrix(c(0.15, 0.40, 0.45,
-                        0.55, 0.35, 0.10,
-                        0.70, 0.25, 0.05), nrow = 3, byrow = TRUE),
-      question = "Czy atmosfera pakowania wpływa na świeżość mięsa po 7 dniach?",
-      h0_text = "\\(H_0:\\) atmosfera pakowania i ocena świeżości są niezależne",
-      h1_text = "\\(H_a:\\) atmosfera pakowania i ocena świeżości są powiązane"),
-    soil = list(
-      lab1 = "Typ gleby", lab2 = "Plon",
-      cats1 = c("Piaszczysta", "Gliniasta", "Czarnoziemna"),
-      cats2 = c("Niski", "Wysoki"),
-      probs = matrix(c(0.65, 0.35, 0.45, 0.55, 0.25, 0.75), nrow = 3, byrow = TRUE),
-      question = "Czy typ gleby wpływa na kategorię plonu?",
-      h0_text = "\\(H_0:\\) typ gleby i kategoria plonu są niezależne",
-      h1_text = "\\(H_a:\\) typ gleby i kategoria plonu są powiązane"),
-    pasteurization = list(
-      lab1 = "Metoda pasteryzacji", lab2 = "Liczba bakterii po 7 dniach",
-      cats1 = c("Niska (63°C, 30 min)", "Wysoka (72°C, 15 s)", "UHT (135°C, 2 s)"),
-      cats2 = c("Niska (< norma)", "Średnia", "Wysoka (> norma)"),
-      probs = matrix(c(0.35, 0.40, 0.25,
-                        0.60, 0.30, 0.10,
-                        0.90, 0.08, 0.02), nrow = 3, byrow = TRUE),
-      question = "Czy metoda pasteryzacji mleka wpływa na liczebność bakterii po 7 dniach?",
-      h0_text = "\\(H_0:\\) metoda pasteryzacji i liczebność bakterii są niezależne",
-      h1_text = "\\(H_a:\\) metoda pasteryzacji i liczebność bakterii są powiązane"),
-    ppe_accident = list(
-      lab1 = "Środki ochrony (SOI)", lab2 = "Ciężkość wypadku",
-      cats1 = c("Niepełne", "Pełne"),
-      cats2 = c("Brak urazu", "Uraz lekki", "Uraz ciężki"),
-      probs = matrix(c(0.45, 0.35, 0.20,
-                        0.80, 0.17, 0.03), nrow = 2, byrow = TRUE),
-      question = "Czy stosowanie pełnych środków ochrony indywidualnej wpływa na ciężkość wypadku przy pracy?",
-      h0_text = "\\(H_0:\\) stosowanie SOI i ciężkość wypadku są niezależne",
-      h1_text = "\\(H_a:\\) stosowanie SOI i ciężkość wypadku są powiązane")
-  )
-
-  # --- Wspoldzielone dane ---
-  # Tabela jest losowana dla konkretnego scenariusza i n. Po zmianie tych
-  # inputow wymaga ponownego losowania, zamiast udawac aktualne dane.
-  ch5_tab_state <- reactiveVal(NULL)
-  ch5_tab <- reactive({
-    state <- ch5_tab_state()
-    if (is.null(state)) return(NULL)
-    req(input$ch5_scenario, input$ch5_n)
-
-    if (!identical(state$scenario, input$ch5_scenario) ||
-        !isTRUE(state$n == input$ch5_n)) {
-      return(NULL)
-    }
-
-    state$tab
-  })
-
-  # Krok widgetu (1..4) żyje w przeglądarce; nowa próba ani zmiana
-  # scenariusza nie cofa kroku.
-  ch5_step <- lc_step_server("ch5_test", input)$step
-
-  observeEvent(input$ch5_new_sample, {
-    req(input$ch5_scenario, input$ch5_n)
-    par <- scenario_params[[input$ch5_scenario]]
-    req(!is.null(par))
-    n <- input$ch5_n
-    n_per_cat1 <- rmultinom(1, n, rep(1, length(par$cats1)))
-
-    rows <- list()
-    for (i in seq_along(par$cats1)) {
-      cats2_draws <- sample(par$cats2, n_per_cat1[i], replace = TRUE, prob = par$probs[i, ])
-      rows[[i]] <- data.frame(var1 = par$cats1[i], var2 = cats2_draws)
-    }
-    df <- do.call(rbind, rows)
-    df$var1 <- factor(df$var1, levels = par$cats1)
-    df$var2 <- factor(df$var2, levels = par$cats2)
-
-    ch5_tab_state(list(
-      scenario = input$ch5_scenario,
-      n = n,
-      tab = table(df$var1, df$var2)
-    ))
-  }, ignoreInit = TRUE)
-
-  # --- Widget 0: Narracja niezaleznosci (mandaty) ---
-  # Stale dane do narracji (nie losowane)
-  narr_tab <- matrix(c(30, 70, 50, 50), nrow = 2, byrow = TRUE,
-    dimnames = list(c("Kobiety", "Mężczyźni"),
-                    c("Mandat", "Brak mandatu")))
-  narr_exp <- matrix(c(40, 60, 40, 60), nrow = 2, byrow = TRUE,
-    dimnames = dimnames(narr_tab))
-  ch5_narr_step <- lc_step_server("ch5_narr", input)$step
-
-  # Tabele kroku: 1 obserwowana, 2 obserwowana | oczekiwana, 3 różnice.
-  output$ch5_narr_body <- renderUI({
-    obs <- tags$div(
-      tags$p(class = "lc-tbl-lead", tags$b("Obserwowane")),
-      lc_crosstab(narr_tab, measure = "n", lead = FALSE, label = "Dane z 200 kontroli")
-    )
-    switch(as.character(ch5_narr_step()),
-      "1" = obs,
-      "2" = tags$div(class = "lc-tbl-row",
-        obs,
-        tags$div(
-          tags$p(class = "lc-tbl-lead", tags$b("Oczekiwane przy H₀")),
-          lc_crosstab(narr_exp, measure = "n", lead = FALSE, label = "Tabela oczekiwana")
-        )
-      ),
-      "3" = lc_table(
-        data.frame(group = rownames(narr_tab), obs = narr_tab[, "Mandat"],
-                   exp = narr_exp[, "Mandat"],
-                   diff = narr_tab[, "Mandat"] - narr_exp[, "Mandat"]),
-        cols = list(
-          lc_col("group", "", "row"),
-          lc_col("obs", "Mandat (obs.)"),
-          lc_col("exp", "Mandat (oczek.)"),
-          lc_col("diff", "Różnica")
-        )
-      )
-    )
-  })
-
-  output$ch5_narr_text <- renderUI({
-    switch(as.character(ch5_narr_step()),
-      "1" = tagList("Mandat: ", step_num("30"), " ze 100 kobiet i ", step_num("50"),
-        " ze 100 mężczyzn; łącznie 80 z 200, czyli 40%."),
-      "2" = tagList("Przy niezależności 40% dotyczy obu płci: oczekujemy po ",
-        step_num("40"), " mandatów i po ", step_num("60"),
-        " kontroli bez mandatu w każdej grupie."),
-      "3" = tagList("Każda komórka odbiega o 10: χ² = 10²/40 + 10²/60 + 10²/40 + 10²/60 = ",
-        step_num("8.33"), " (df = 1).")
-    )
-  })
-
-  # --- Panel hipotezy ---
-  output$ch5_hypothesis_panel <- renderUI({
-    par <- scenario_params[[input$ch5_scenario]]
-    tab <- ch5_tab()
-    tagList(
-      lc_status(
-        p(tags$b("Pytanie potoczne:")),
-        p(tags$em(paste0("„", par$question, "”")))
-      ),
-      lc_formula_box(
-        p(tags$b("Hipoteza formalna:")),
-        p(withMathJax(par$h0_text)),
-        p(withMathJax(par$h1_text))
-      ),
-      if (is.null(tab)) {
-        lc_empty("Kliknij „Losuj próbę”")
-      }
-    )
-  })
-
-  # Kolory kategorii zmiennej w kolumnach (kroki 1–2): dane, grupa, trzecia.
-  ch5_cat_colours <- function(n_cat) {
-    c(STEP_ROLES$data$colour, STEP_ROLES$group$colour,
-      unname(upwr_cat["szalwia"]))[seq_len(n_cat)]
-  }
-
-  # --- Krokowy wykres ---
-  zoom_plot_server("ch5_step_plot", reactive({
-    tab <- ch5_tab()
-    step <- ch5_step()
-    par <- scenario_params[[input$ch5_scenario]]
-
-    if (is.null(tab)) return(NULL)
-
-    if (step <= 2) {
-      df <- as.data.frame(tab)
-      names(df) <- c("Var1", "Var2", "Freq")
-      df <- df %>%
-        group_by(Var1) %>%
-        mutate(pct = round(Freq / sum(Freq) * 100, 1)) %>%
-        ungroup()
-      # Krok 1: liczności; krok 2: procenty w obrębie wiersza.
-      df$value <- if (step == 1) df$Freq else df$pct
-      df$label <- if (step == 1) df$Freq else paste0(df$pct, "%")
-      y_top <- if (step == 1) max(df$Freq) * 1.15 else 110
-
-      # Wypełnienie z kategorii (aes), więc krawędź wyniku podana wprost:
-      # step_result() ustawia stałe wypełnienie.
-      ggplot(df, aes(x = Var1, y = value, fill = Var2)) +
-        geom_col(position = position_dodge(width = 0.9), width = 0.85,
-                 alpha = STEP_ROLES$data$alpha, colour = STEP_EDGE$colour,
-                 linewidth = STEP_EDGE$linewidth) +
-        geom_text(aes(label = label), position = position_dodge(width = 0.9),
-                  vjust = -0.3, size = 4, family = lc_mono_family,
-                  colour = STEP_ROLES$known$colour) +
-        scale_fill_manual(values = ch5_cat_colours(ncol(tab))) +
-        labs(x = par$lab1, y = if (step == 1) "Liczebność" else "Procent") +
-        step_frame(xlim = c(0.4, nrow(tab) + 0.6), ylim = c(0, y_top))
-    } else {
-      # Krok 3: statystyka χ²; krok 4: obszar odrzucenia i decyzja
-      test <- chisq.test(tab)
-      step_null_plot(as.numeric(test$statistic), df = as.numeric(test$parameter),
-                     type = "chisq", phase = if (step == 3) "stat" else "decision")
-    }
-  }))
-
-  # --- Opis kroku ---
-  output$ch5_test_text <- renderUI({
-    tab <- ch5_tab()
-    step <- ch5_step()
-
-    if (is.null(tab)) return(NULL)
-
-    test <- chisq.test(tab)
-    chi_stat <- as.numeric(test$statistic)
-    df_val <- as.numeric(test$parameter)
-
-    switch(as.character(step),
-      "1" = "To liczebności obserwowane. Grupy mogą mieć różne rozmiary,
-        więc same liczby trudno porównać.",
-      "2" = tagList(
-        "Przy niezależności procenty w populacji byłyby takie same w każdym wierszu;
-        w próbie różnią się także przez przypadek."
-      ),
-      "3" = tagList(
-        "χ² = ", step_num(lc_fmt(chi_stat, 3)), paste0(" (df = ", df_val, ") — "),
-        "łączna rozbieżność między tabelą obserwowaną a oczekiwaną.",
-        if (any(test$expected < 5)) tagList(" ",
-          lc_verdict("Uwaga: niektóre liczebności oczekiwane są mniejsze od 5", type = "danger"))
-      ),
-      "4" = tagList(
-        paste0("Wynik testu χ² niezależności: χ²(", df_val, ") = "),
-        step_num(lc_fmt(chi_stat, 3)), ". ", step_verdict(test$p.value)
-      )
-    )
-  })
-
-  # --- Tabele kroków pod wykresem ---
-  output$ch5_test_table <- renderUI({
-    tab <- ch5_tab()
-    step <- ch5_step()
-    par <- scenario_params[[input$ch5_scenario]]
-
-    if (is.null(tab) || step == 4) return(NULL)
-
-    tab <- as.matrix(unclass(tab))
-    switch(as.character(step),
-      "1" = lc_crosstab(tab, measure = "n", row_name = par$lab1, lead = FALSE,
-                        col_name = par$lab2, col_colours = ch5_cat_colours(ncol(tab)),
-                        label = paste0("Tabela krzyżowa: ", par$lab1, " × ", par$lab2)),
-      "2" = lc_crosstab(tab, measure = "row", row_name = par$lab1,
-                        col_name = par$lab2, col_colours = ch5_cat_colours(ncol(tab)),
-                        label = "Procenty w każdej grupie (wierszu)"),
-      "3" = {
-        expected <- chisq.test(tab)$expected
-        keys <- paste0("c", seq_len(ncol(expected)))
-        df <- data.frame(group = rownames(expected), check.names = FALSE)
-        for (j in seq_along(keys)) df[[keys[j]]] <- expected[, j]
-        lc_table(df,
-          cols = c(list(lc_col("group", par$lab1, "row")),
-                   Map(function(k, lab) lc_col(k, lab, digits = 1),
-                       keys, colnames(expected))),
-          lead = "Liczebności oczekiwane (gdyby H₀ była prawdziwa):")
-      }
-    )
-  })
-
-  # --- Widget 2: Porownanie chi-kwadrat vs Fisher ---
-  output$ch5_compare_result <- renderUI({
-    req(input$ch5_compare)
-    tab <- ch5_tab()
-
-    if (is.null(tab)) {
-      return(lc_caption(
-               "Najpierw wylosuj próbę w widgecie powyżej."
-             ))
-    }
-
-    test_chi <- chisq.test(tab)
-    test_fisher <- tryCatch(
-      fisher.test(tab),
-      error = function(e) fisher.test(tab, simulate.p.value = TRUE, B = 2000)
-    )
-
-    low_exp <- any(test_chi$expected < 5)
-    n_low <- sum(test_chi$expected < 5)
-
-    div(
-      lc_table(
-        data.frame(
-          row = c("p-wartość", "Decyzja"),
-          chi = c(format_p_value(test_chi$p.value),
-                  format_test_result(test_chi$p.value)$decision),
-          fisher = c(format_p_value(test_fisher$p.value),
-                     format_test_result(test_fisher$p.value)$decision)
-        ),
-        cols = list(
-          lc_col("row", "", "row"),
-          lc_col("chi", "Test χ²", "text"),
-          lc_col("fisher", "Test Fishera", "text")
-        ),
-        cell_class = list(
-          chi = c(NA, if (test_chi$p.value < 0.05) "is-base" else NA),
-          fisher = c(NA, if (test_fisher$p.value < 0.05) "is-base" else NA)
-        )
-      ),
-      lc_status(
-        p(lc_verdict(tags$b("Liczebności oczekiwane poniżej 5:"), type = if (low_exp) "danger" else "ok"),
-          if (low_exp) paste0(" tak (komórki: ", n_low, ") — przybliżenie χ² może być
-            niedokładne, bezpieczniejszy jest wynik testu Fishera.")
-          else " nie — przybliżenie χ² powinno być wystarczające.")
-      )
-    )
-  })
-
-  # --- Ćwiczenia CASchools ---
-
-  .cas_chisq <- function(tab) {
-    ct <- chisq.test(tab, correct = FALSE)
-    n  <- sum(tab)
-    k  <- min(nrow(tab), ncol(tab))
-    v  <- sqrt(ct$statistic / (n * (k - 1)))
-    list(chi2 = unname(ct$statistic), df = unname(ct$parameter),
-         p = ct$p.value, tab = tab, v = unname(v), n = n)
-  }
-
-  # Liczba z przecinkiem dziesiętnym (polski zapis).
-  .cas_num <- function(x, digits = 3) {
-    formatC(x, format = "f", digits = digits)
-  }
-
-  .cas_result_lines <- function(r) {
-    tagList(
-      tags$li(paste0("χ²(", r$df, ") = ", .cas_num(r$chi2), ", ", format_p(r$p))),
-      tags$li(paste0("Cramér's V = ", .cas_num(r$v)))
-    )
-  }
-
-  .cas_verdict <- function(r) {
-    lc_verdict(tags$strong(if (r$p < 0.05) "Odrzucamy H₀" else "Brak podstaw do odrzucenia H₀"),
-               type = if (r$p < 0.05) "danger" else "ok")
-  }
-
-  output$cas_ch5_sol8 <- renderUI({
-    r <- local({
-      high_eng <- .ch5_cas$english > 20
-      .cas_chisq(table(grades = .ch5_cas$grades, high_english = high_eng))
-    })
-    tab <- r$tab
-    pct_high <- 100 * tab[, "TRUE"] / rowSums(tab)
-    tagList(
-      p(tags$b("H₀:"), " typ szkoły i high_english są niezależne · ",
-        tags$b("Hₐ:"), " zmienne są zależne"),
-      lc_crosstab(tab, row_name = "grades", col_name = "high_english", lead = FALSE),
-      tags$ul(
-        .cas_result_lines(r),
-        lapply(rownames(tab), function(g) {
-          tags$li(paste0("Odsetek high_english w ", g, ": ",
-                         .cas_num(pct_high[[g]], 1), "%"))
-        })
-      ),
-      .cas_verdict(r),
-      p(tags$b("Interpretacja:"),
-        " Test χ² rozstrzyga tylko, czy dane przemawiają przeciw niezależności.
-        Kierunek pokazuje porównanie odsetków high_english w obu typach szkół,
-        a siłę związku — Cramér's V.",
-        if (r$p >= 0.05) " Brak podstaw do odrzucenia H₀ nie dowodzi, że typ
-        szkoły i odsetek uczniów ELL są niezależne: różnica w odsetkach mogła
-        powstać przez przypadek, ale mogła też być zbyt mała, by test ją wykrył.")
-    )
-  })
-
-  output$cas_ch5_sol9 <- renderUI({
-    r <- local({
-      high_str   <- .ch5_cas$student_teacher_ratio > 20
-      high_lunch <- .ch5_cas$lunch > 50
-      .cas_chisq(table(high_str = high_str, high_lunch = high_lunch))
-    })
-    tab <- r$tab
-    p_hi_str_poor <- tab["TRUE",  "TRUE"] / sum(tab["TRUE", ])
-    p_lo_str_poor <- tab["FALSE", "TRUE"] / sum(tab["FALSE", ])
-    r_cont <- cor.test(.ch5_cas$student_teacher_ratio, .ch5_cas$lunch)
-    tagList(
-      p(tags$b("H₀:"), " high_str i high_lunch są niezależne · ",
-        tags$b("Hₐ:"), " zmienne są zależne"),
-      lc_crosstab(tab, row_name = "high_str", col_name = "high_lunch", lead = FALSE),
-      tags$ul(
-        .cas_result_lines(r),
-        tags$li(paste0("Odsetek high_lunch wśród STR > 20: ",
-                       .cas_num(100 * p_hi_str_poor, 1), "%")),
-        tags$li(paste0("Odsetek high_lunch wśród STR ≤ 20: ",
-                       .cas_num(100 * p_lo_str_poor, 1), "%")),
-        tags$li(paste0("Dla porównania korelacja Pearsona ciągłych STR i lunch: r = ",
-                       .cas_num(unname(r_cont$estimate)), ", ",
-                       format_p(r_cont$p.value)))
-      ),
-      .cas_verdict(r),
-      p(tags$b("Wniosek:"),
-        if (r$p < 0.05) " Okręgi z przeładowanymi klasami mają istotnie wyższy
-        odsetek ubogich uczniów."
-        else " Okręgi z przeładowanymi klasami mają nieco wyższy odsetek ubogich
-        uczniów, ale po podziale obu zmiennych na dwie klasy test nie daje podstaw
-        do odrzucenia H₀. Korelacja ciągłych zmiennych jest natomiast
-        istotna, choć słaba: podział na dwie klasy wyrzucił część informacji.",
-        " Słaby związek STR z ubóstwem oznacza, że ubóstwo może tłumaczyć
-        korelację STR–read z zadania 5 tylko częściowo. Żeby to sprawdzić,
-        potrzebny jest model uwzględniający obie zmienne naraz (regresja wieloraka,
-        wykład 07).")
-    )
-  })
-}

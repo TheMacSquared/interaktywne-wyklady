@@ -143,15 +143,8 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.1", title = "Reszty na danych CASchools",
       full_width = TRUE,
-      lc_toolbar(
-        selectInput("ch2_resid_case", "Model",
-            choices = .ch2_resid_choices,
-            selected = "read_income"
-          ),
-        lc_readouts(uiOutput("ch2_resid_stats"))
-      ),
-      lc_plot("ch2_resid_plot", max_height = "340px"),
-      uiOutput("ch2_resid_verdict"),
+      # Opisy wykresów liczy R przy budowaniu (modules/figures.R).
+      ch2_resid_fig(),
       lc_caption("Te same 420 okręgów szkolnych, cztery różne pary zmiennych.")
     ),
 
@@ -257,15 +250,7 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.2", title = "Kiedy jeden punkt przestawia prostą",
       full_width = TRUE,
-      lc_toolbar(
-        lc_segmented("ch2_infl_case", "Dodatkowy student",
-          choices = c("Brak" = "none",
-                      "Odstaje w środku" = "mid",
-                      "Daleko, zgodnie z trendem" = "lev",
-                      "Daleko, wbrew trendowi" = "infl")),
-        lc_readouts(uiOutput("ch2_infl_reads"))
-      ),
-      lc_plot("ch2_infl_plot", ratio = "1.6/1", max_height = "340px")
+      ch2_infl_fig()
     ),
 
     lc_p("Student, który uczył się przeciętnie długo, a dostał 92 punkty, leży
@@ -339,7 +324,7 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.3", title = "To samo X i Y, różna siła wyjaśniania",
       full_width = TRUE,
-      lc_plot("ch2_r2_compare_plot", ratio = "1.7/1", max_height = "360px")
+      ch2_r2_compare_fig()
     ),
 
     lc_p("Przy dużym szumie \\(R^2 = 0.18\\), przy średnim 0.54, przy małym
@@ -367,12 +352,7 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.4", title = "Ta sama prosta, to samo R², cztery różne historie",
       full_width = TRUE,
-      lc_toolbar(
-        lc_segmented("ch2_ansc_set", "Zestaw",
-          choices = c("1" = "1", "2" = "2", "3" = "3", "4" = "4")),
-        lc_readouts(uiOutput("ch2_ansc_reads"))
-      ),
-      lc_plot("ch2_ansc_plot", ratio = "2/1", max_height = "340px")
+      ch2_ansc_fig()
     ),
 
     lc_p("Tylko w zestawie 1 prosta jest dobrym opisem: reszty tworzą
@@ -424,8 +404,7 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.5", title = "Przeuczenie: dopasowanie kontra generalizacja",
       full_width = TRUE,
-      lc_plot("ch2_overfit_plot", ratio = "1.6/1", max_height = "380px"),
-      uiOutput("ch2_overfit_stats")
+      ch2_overfit_fig()
     ),
 
     lc_p("Prosta (stopień 1) jest zbyt sztywna: myli się podobnie na obu
@@ -506,15 +485,7 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.6", title = "RMSE i zakres Y na danych CASchools",
       full_width = TRUE,
-      lc_toolbar(
-        selectInput("ch2_rmse_case", "Model",
-            choices = .ch2_rmse_choices,
-            selected = "read_lunch"
-          ),
-        lc_readouts(uiOutput("ch2_rmse_stats"))
-      ),
-      lc_plot("ch2_rmse_plot", max_height = "320px"),
-      uiOutput("ch2_rmse_interpretation"),
+      ch2_rmse_fig(),
       lc_caption("Te same 420 okręgów szkolnych, cztery modele.")
     ),
 
@@ -550,12 +521,12 @@ ch2_ui <- list(
     figure_panel(
       label = "Ryc. 2.7", title = "Ekstrapolacja poza zakres danych",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch2_extrap_x", "Dochód okręgu (tys. USD)", 1, 80, 20, 1)
-      ),
-      lc_plot("ch2_extrap_plot", max_height = "320px"),
-      uiOutput("ch2_extrap_stats"),
-      uiOutput("ch2_extrap_verdict"),
+      # Prognozę dla suwaka liczy przeglądarka (modules/figures.js, rycina s07_extrap).
+      lc_sf_figure("s07_extrap", config = ch2_extrap_config,
+        control = lc_sf_slider("ch2_extrap_x", "Dochód okręgu (tys. USD)", 1, 80, 20, 1),
+        toolbar = lc_readouts(tags$div(`data-role` = "stats", style = "display: contents")),
+        ratio = "2/1", max_height = "320px",
+        after = tags$div(`data-role` = "verdict")),
       lc_caption("Szary pas na wykresie to zakres dochodów w danych.")
     ),
 
@@ -596,484 +567,3 @@ ch2_ui <- list(
     )
   )
 )
-
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch2_server <- function(input, output, session) {
-
-  # --- Widget: kwartet Anscombe'a (datasets::anscombe) ---
-  ch2_ansc_fit <- reactive({
-    i <- input$ch2_ansc_set %||% "1"
-    df <- data.frame(x = anscombe[[paste0("x", i)]], y = anscombe[[paste0("y", i)]])
-    m <- lm(y ~ x, df)
-    df$fit <- fitted(m)
-    df$res <- resid(m)
-    list(df = df, m = m)
-  })
-
-  output$ch2_ansc_reads <- renderUI({
-    m <- ch2_ansc_fit()$m
-    tagList(
-      lc_readout("b₀", formatC(coef(m)[[1]], format = "f", digits = 2)),
-      lc_readout("b₁", formatC(coef(m)[[2]], format = "f", digits = 2)),
-      lc_readout("R²", formatC(summary(m)$r.squared, format = "f", digits = 2))
-    )
-  })
-
-  zoom_plot_server("ch2_ansc_plot", reactive({
-    f <- ch2_ansc_fit()
-    xs <- data.frame(x = c(2, 20))
-    xs$y <- predict(f$m, xs)
-    p_data <- ggplot(f$df, aes(x, y)) +
-      geom_line(data = xs, colour = upwr_accent, linewidth = 1.1) +
-      geom_point(colour = upwr_secondary, size = 2.8) +
-      coord_cartesian(xlim = c(2, 20), ylim = c(2, 14)) +
-      labs(x = "x", y = "y")
-    p_res <- ggplot(f$df, aes(fit, res)) +
-      geom_hline(yintercept = 0, colour = upwr_reference, linetype = "dashed") +
-      geom_point(colour = upwr_secondary, size = 2.8) +
-      coord_cartesian(xlim = c(4, 13), ylim = c(-3.5, 3.5)) +
-      labs(x = "Wartość przewidywana", y = "Reszta")
-    patchwork::wrap_plots(p_data, p_res, ncol = 2)
-  }), alt = "Wybrany zestaw kwartetu Anscombe'a z prostą regresji i wykres jego reszt.")
-
-  # --- Widget: obserwacja wpływowa (ustawione przykłady) ---
-  ch2_infl_base <- data.frame(
-    x = c(1, 2, 3, 4, 5, 5.5, 6, 7, 8, 8.5, 9, 10, 11, 12),
-    e = c(3, -4, 2, 5, -3, 1, -5, 4, -2, 3, -4, 2, -1, -2)
-  )
-  ch2_infl_base$y <- 35 + 2.5 * ch2_infl_base$x + ch2_infl_base$e
-  ch2_infl_extra <- list(mid = c(6.5, 92), lev = c(24, 96), infl = c(24, 40))
-
-  ch2_infl_fits <- reactive({
-    case <- input$ch2_infl_case %||% "none"
-    base <- ch2_infl_base[, c("x", "y")]
-    extra <- if (case == "none") NULL else
-      data.frame(x = ch2_infl_extra[[case]][1], y = ch2_infl_extra[[case]][2])
-    list(base = base, extra = extra,
-         m0 = lm(y ~ x, base),
-         m1 = lm(y ~ x, rbind(base, extra)))
-  })
-
-  output$ch2_infl_reads <- renderUI({
-    f <- ch2_infl_fits()
-    tagList(
-      lc_readout("Nachylenie bez niego",
-                 formatC(coef(f$m0)[[2]], format = "f", digits = 2),
-                 color = upwr_reference, swatch = TRUE),
-      lc_readout("Nachylenie z nim",
-                 if (is.null(f$extra)) "—" else
-                   formatC(coef(f$m1)[[2]], format = "f", digits = 2),
-                 color = upwr_accent, swatch = TRUE)
-    )
-  })
-
-  zoom_plot_server("ch2_infl_plot", reactive({
-    f <- ch2_infl_fits()
-    xs <- data.frame(x = c(0, 26))
-    p <- ggplot(f$base, aes(x, y)) +
-      geom_line(data = transform(xs, y = predict(f$m0, xs)),
-                colour = upwr_reference, linetype = "dashed", linewidth = 0.9) +
-      geom_point(colour = upwr_secondary, size = 2.8, alpha = 0.8)
-    if (!is.null(f$extra)) {
-      p <- p +
-        geom_line(data = transform(xs, y = predict(f$m1, xs)),
-                  colour = upwr_accent, linewidth = 1.2) +
-        geom_point(data = f$extra, shape = 21, size = 4.5, stroke = 1.4,
-                   fill = upwr_accent, colour = "white")
-    }
-    p +
-      coord_cartesian(xlim = c(0, 26), ylim = c(25, 105)) +
-      labs(x = "Godziny nauki w tygodniu", y = "Wynik egzaminu (pkt)")
-  }), alt = "Wykres punktowy godzin nauki i wyniku z prostą bez dodatkowego punktu i z nim.")
-
-  # --- Widget: Reszty vs fitted na CASchools ---
-  ch2_resid_spec <- reactive({
-    case <- input$ch2_resid_case
-    if (is.null(case)) case <- "read_income"
-    .ch2_resid_specs[[case]]
-  })
-
-  ch2_resid_model <- reactive({
-    spec <- ch2_resid_spec()
-    form <- as.formula(paste(spec$y, "~", spec$x))
-    lm(form, data = .cas_data)
-  })
-
-  zoom_plot_server("ch2_resid_plot", reactive({
-    spec <- ch2_resid_spec()
-    model <- ch2_resid_model()
-
-    df_scatter <- data.frame(
-      x = .cas_data[[spec$x]],
-      y = .cas_data[[spec$y]]
-    )
-    df_resid <- data.frame(
-      fitted = fitted(model),
-      resid  = residuals(model)
-    )
-
-    p_left <- ggplot(df_scatter, aes(x = x, y = y)) +
-      geom_point(color = upwr_secondary, alpha = 0.4, size = 1.7) +
-      geom_smooth(method = "lm", se = FALSE,
-                  color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      labs(x = unname(.cas_labels[spec$x]), y = unname(.cas_labels[spec$y])) +
-      theme_upwr()
-
-    p_right <- ggplot(df_resid, aes(x = fitted, y = resid)) +
-      geom_point(color = upwr_secondary, alpha = 0.4, size = 1.7) +
-      geom_hline(yintercept = 0, color = upwr_reference,
-                 linetype = "dashed", linewidth = 0.8) +
-      geom_smooth(method = "loess", se = FALSE,
-                  color = unname(upwr_cat["terakota"]), linewidth = 1.2) +
-      labs(x = expression(hat(Y)), y = expression(e[i] == y[i] - hat(y)[i])) +
-      theme_upwr()
-
-    p_qq <- ggplot(df_resid, aes(sample = resid)) +
-      stat_qq(color = upwr_secondary, alpha = 0.4, size = 1.7) +
-      stat_qq_line(color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbki") +
-      theme_upwr()
-
-    if (requireNamespace("patchwork", quietly = TRUE)) {
-      patchwork::wrap_plots(p_left, p_right, p_qq, ncol = 3)
-    } else if (requireNamespace("gridExtra", quietly = TRUE)) {
-      gridExtra::arrangeGrob(p_left, p_right, p_qq, ncol = 3)
-    } else {
-      df_combined <- rbind(
-        data.frame(panel = "Dane + linia regresji",
-                   x = df_scatter$x, y = df_scatter$y),
-        data.frame(panel = "Reszty względem wartości przewidywanych",
-                   x = df_resid$fitted, y = df_resid$resid)
-      )
-      ggplot(df_combined, aes(x = x, y = y)) +
-        geom_point(color = upwr_secondary, alpha = 0.4, size = 1.7) +
-        facet_wrap(~ panel, scales = "free", ncol = 2) +
-        theme_upwr()
-    }
-  }))
-
-  output$ch2_resid_verdict <- renderUI({
-    spec <- ch2_resid_spec()
-    lc_status(
-      lc_verdict(tags$strong(spec$title), type = spec$verdict),
-      p(spec$comment)
-    )
-  })
-
-  output$ch2_resid_stats <- renderUI({
-    spec <- ch2_resid_spec()
-    model <- ch2_resid_model()
-    g <- broom::glance(model)
-
-    tagList(
-      lc_readout("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
-      lc_readout("RMSE", round(sqrt(mean(residuals(model)^2)), 2), color = unname(upwr_cat["bursztyn"])),
-      lc_readout("n", nrow(.cas_data), color = upwr_secondary)
-    )
-  })
-
-  # --- Widget: R² compare (przeniesiony z ch4) ---
-  zoom_plot_server("ch2_r2_compare_plot", reactive({
-    set.seed(103)
-    make_panel <- function(label, sigma) {
-      x <- seq(-3, 3, length.out = 70)
-      y <- 10 + 2.2 * x + rnorm(length(x), 0, sigma)
-      data.frame(wariant = label, x = x, y = y)
-    }
-    df <- rbind(
-      make_panel("Niskie R²", 12.0),
-      make_panel("Średnie R²", 4.0),
-      make_panel("Wysokie R²", 0.9)
-    )
-
-    r2_levels <- c("Niskie R²", "Średnie R²", "Wysokie R²")
-    stats <- df %>%
-      group_by(wariant) %>%
-      summarise(r2 = summary(lm(y ~ x))$r.squared, .groups = "drop")
-    df$wariant <- factor(df$wariant, levels = r2_levels)
-    stats$wariant <- factor(stats$wariant, levels = r2_levels)
-
-    ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = upwr_secondary, alpha = 0.5, size = 1.9) +
-      geom_smooth(method = "lm", se = FALSE,
-                  color = unname(upwr_cat["niebo"]), linewidth = 1.1) +
-      geom_text(
-        data = stats,
-        aes(x = -2.8, y = Inf, label = paste0("R² = ", round(r2, 2))),
-        inherit.aes = FALSE, hjust = 0, vjust = 1.6,
-        color = upwr_secondary, fontface = "bold"
-      ) +
-      facet_wrap(~ wariant, nrow = 1) +
-      labs(x = "X", y = "Y") +
-      theme_upwr()
-  }))
-
-  # --- Widget: intuicja przeuczenia ---
-  ch2_overfit_sets <- local({
-    set.seed(26)
-    f <- function(x) 4.8 * sin(x)
-    train_x <- sort(runif(30, 0, 10))
-    test_x <- sort(runif(180, 0, 10))
-    list(
-      train = data.frame(
-        set = "Trening",
-        x = train_x,
-        y = f(train_x) + rnorm(length(train_x), 0, 0.9)
-      ),
-      test = data.frame(
-        set = "Test",
-        x = test_x,
-        y = f(test_x) + rnorm(length(test_x), 0, 0.9)
-      )
-    )
-  })
-
-  ch2_overfit_metrics <- reactive({
-    train <- ch2_overfit_sets$train
-    test <- ch2_overfit_sets$test
-    degrees <- c(1, 4, 12)
-    do.call(rbind, lapply(degrees, function(degree) {
-      model <- lm(y ~ poly(x, degree), data = train)
-      data.frame(
-        degree = degree,
-        train_rmse = sqrt(mean((train$y - predict(model, train))^2)),
-        test_rmse = sqrt(mean((test$y - predict(model, test))^2))
-      )
-    }))
-  })
-
-  zoom_plot_server("ch2_overfit_plot", reactive({
-    train <- ch2_overfit_sets$train
-    test <- ch2_overfit_sets$test
-    degrees <- c(1, 4, 12)
-    labels <- c(
-      "1" = "Zbyt prosty",
-      "4" = "Rozsądnie elastyczny",
-      "12" = "Przeuczony"
-    )
-
-    grid <- do.call(rbind, lapply(degrees, function(degree) {
-      model <- lm(y ~ poly(x, degree), data = train)
-      x_grid <- seq(0, 10, length.out = 260)
-      data.frame(
-        degree = factor(degree, levels = degrees, labels = labels[as.character(degrees)]),
-        x = x_grid,
-        y = predict(model, newdata = data.frame(x = x_grid))
-      )
-    }))
-
-    train_plot <- train
-    test_plot <- test
-    train_plot$set <- "Trening"
-    test_plot$set <- "Test"
-    points <- do.call(rbind, lapply(labels[as.character(degrees)], function(lab) {
-      tmp <- rbind(train_plot, test_plot)
-      tmp$degree <- factor(lab, levels = labels[as.character(degrees)])
-      tmp
-    }))
-
-    ggplot() +
-      geom_point(data = points[points$set == "Test", ],
-                 aes(x = x, y = y), color = unname(upwr_cat["bursztyn"]),
-                 alpha = 0.22, size = 1.6) +
-      geom_point(data = points[points$set == "Trening", ],
-                 aes(x = x, y = y), color = upwr_secondary,
-                 alpha = 0.72, size = 2.1) +
-      geom_line(data = grid, aes(x = x, y = y),
-                color = unname(upwr_cat["niebo"]), linewidth = 1.05) +
-      facet_wrap(~ degree, nrow = 1) +
-      labs(x = "X", y = "Y", caption = "Ciemne punkty = trening; jasne bursztynowe = nowe dane testowe") +
-      coord_cartesian(ylim = c(-8, 8)) +
-      theme_upwr()
-  }))
-
-  output$ch2_overfit_stats <- renderUI({
-    metrics <- ch2_overfit_metrics()
-    labels <- c(
-      "1" = "Zbyt prosty",
-      "4" = "Rozsądnie elastyczny",
-      "12" = "Przeuczony"
-    )
-    metrics$model <- unname(labels[as.character(metrics$degree)])
-
-    lc_table(as.data.frame(metrics),
-      cols = list(
-        lc_col("model", "Model", "row"),
-        lc_col("degree", "Stopień"),
-        lc_col("train_rmse", "RMSE trening", digits = 2),
-        lc_col("test_rmse", "RMSE test", digits = 2)
-      )
-    )
-  })
-
-  # --- Widget: RMSE i zakres Y na CASchools ---
-  ch2_rmse_spec <- reactive({
-    case <- input$ch2_rmse_case
-    if (is.null(case)) case <- "read_lunch"
-    .ch2_rmse_specs[[case]]
-  })
-
-  ch2_rmse_model <- reactive({
-    spec <- ch2_rmse_spec()
-    form <- as.formula(paste(spec$y, "~", spec$x))
-    lm(form, data = .cas_data)
-  })
-
-  zoom_plot_server("ch2_rmse_plot", reactive({
-    spec <- ch2_rmse_spec()
-    model <- ch2_rmse_model()
-    rmse <- sqrt(mean(residuals(model)^2))
-    y_vals <- .cas_data[[spec$y]]
-    y_mean <- mean(y_vals)
-
-    df <- data.frame(
-      x = .cas_data[[spec$x]],
-      y = y_vals,
-      fitted = fitted(model)
-    )
-
-    ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = upwr_secondary, alpha = 0.42, size = 1.8) +
-      geom_smooth(method = "lm", se = FALSE,
-                  color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-      geom_ribbon(
-        data = local({
-          ord <- order(df$x)
-          data.frame(x = df$x[ord], ymin = df$fitted[ord] - rmse, ymax = df$fitted[ord] + rmse)
-        }),
-        aes(x = x, ymin = ymin, ymax = ymax),
-        inherit.aes = FALSE,
-        fill = unname(upwr_cat["bursztyn"]), alpha = 0.18
-      ) +
-      annotate("label", x = min(df$x), y = max(df$y),
-               hjust = 0, vjust = 1,
-               label = paste0("Pasmo ±RMSE = ±", round(rmse, 1)),
-               color = unname(upwr_cat["bursztyn"]),
-               fill = "white", linewidth = 0) +
-      labs(
-        x = unname(.cas_labels[spec$x]),
-        y = unname(.cas_labels[spec$y])
-      ) +
-      theme_upwr()
-  }))
-
-  output$ch2_rmse_stats <- renderUI({
-    spec <- ch2_rmse_spec()
-    model <- ch2_rmse_model()
-    g <- broom::glance(model)
-    rmse <- sqrt(mean(residuals(model)^2))
-    y_vals <- .cas_data[[spec$y]]
-    y_range <- diff(range(y_vals))
-    rmse_ratio <- rmse / y_range
-
-    tagList(
-      lc_readout("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
-      lc_readout("RMSE", round(rmse, 2), color = unname(upwr_cat["bursztyn"])),
-      lc_readout("Zakres Y (max − min)", round(y_range, 1), color = upwr_secondary),
-      lc_readout("RMSE / zakres", paste0(round(rmse_ratio * 100, 1), "%"), color = unname(upwr_cat["terakota"]))
-    )
-  })
-
-  # --- Widget: Ekstrapolacja ---
-  .ch2_extrap_model <- lm(read ~ income, data = .cas_data)
-  .ch2_extrap_x_range <- range(.cas_data$income)
-
-  zoom_plot_server("ch2_extrap_plot", reactive({
-    x_val <- input$ch2_extrap_x
-    if (is.null(x_val)) x_val <- 20
-    x_obs <- .cas_data$income
-    y_obs <- .cas_data$read
-    x_range <- .ch2_extrap_x_range
-    x_grid <- seq(min(1, x_val - 2), max(80, x_val + 2), length.out = 300)
-    df_line <- data.frame(
-      income = x_grid,
-      read   = predict(.ch2_extrap_model, newdata = data.frame(income = x_grid)),
-      outside = x_grid < x_range[1] | x_grid > x_range[2]
-    )
-    y_pred <- predict(.ch2_extrap_model, newdata = data.frame(income = x_val))
-    in_range <- x_val >= x_range[1] & x_val <= x_range[2]
-    point_color <- if (in_range) unname(upwr_cat["niebo"]) else unname(upwr_cat["terakota"])
-
-    ggplot() +
-      annotate("rect",
-        xmin = x_range[1], xmax = x_range[2],
-        ymin = -Inf, ymax = Inf,
-        fill = upwr_secondary, alpha = 0.08) +
-      geom_point(data = data.frame(x = x_obs, y = y_obs),
-                 aes(x = x, y = y),
-                 color = upwr_secondary, alpha = 0.35, size = 1.6) +
-      geom_line(data = df_line[!df_line$outside, ],
-                aes(x = income, y = read),
-                color = unname(upwr_cat["niebo"]), linewidth = 1.1) +
-      geom_line(data = df_line[df_line$outside, ],
-                aes(x = income, y = read),
-                color = unname(upwr_cat["niebo"]), linewidth = 1.1,
-                linetype = "dashed") +
-      geom_vline(xintercept = x_val, color = point_color,
-                 linetype = "dotted", linewidth = 0.9) +
-      geom_point(data = data.frame(x = x_val, y = y_pred),
-                 aes(x = x, y = y),
-                 color = point_color, size = 4, shape = 18) +
-      labs(
-        x = "Dochód okręgu (tys. USD)",
-        y = "Wynik testu czytania",
-        caption = "Szary pas = zakres danych treningowych"
-      ) +
-      theme_upwr()
-  }))
-
-  output$ch2_extrap_verdict <- renderUI({
-    x_val <- input$ch2_extrap_x
-    if (is.null(x_val)) x_val <- 20
-    x_range <- .ch2_extrap_x_range
-    y_pred <- predict(.ch2_extrap_model, newdata = data.frame(income = x_val))
-    in_range <- x_val >= x_range[1] & x_val <= x_range[2]
-    dist_pct <- min(abs(x_val - x_range[1]), abs(x_val - x_range[2])) /
-                diff(x_range) * 100
-
-    if (in_range) {
-      lc_status(
-        lc_verdict(tags$strong("W zakresie danych"), type = "ok"),
-        p(sprintf("Predykcja: %.1f pkt. Jesteśmy wewnątrz zakresu danych — predykcja ma sens.", y_pred))
-      )
-    } else {
-      lc_status(
-        lc_verdict(tags$strong("Ekstrapolacja"), type = "warning"),
-        p(sprintf("Predykcja: %.1f pkt. Jesteśmy %.0f%% zakresu danych poza granicą — brak gwarancji.", y_pred, dist_pct))
-      )
-    }
-  })
-
-  output$ch2_extrap_stats <- renderUI({
-    x_val <- input$ch2_extrap_x
-    if (is.null(x_val)) x_val <- 20
-    x_range <- .ch2_extrap_x_range
-    y_pred <- predict(.ch2_extrap_model, newdata = data.frame(income = x_val))
-
-    tagList(
-      lc_readout("X podany", paste(x_val, "tys. USD"), color = unname(upwr_cat["niebo"])),
-      lc_readout("Predykcja", paste(round(y_pred, 1), "pkt"), color = unname(upwr_cat["bursztyn"])),
-      lc_readout("Zakres X danych", paste0(round(x_range[1], 0), "–", round(x_range[2], 0), " tys. USD"), color = upwr_secondary)
-    )
-  })
-
-  output$ch2_rmse_interpretation <- renderUI({
-    spec <- ch2_rmse_spec()
-    model <- ch2_rmse_model()
-    rmse <- sqrt(mean(residuals(model)^2))
-    y_vals <- .cas_data[[spec$y]]
-    y_range <- diff(range(y_vals))
-    y_label <- unname(.cas_labels[spec$y])
-    y_sd <- sd(y_vals)
-
-    lc_caption(
-      sprintf("Typowa pomyłka modelu to ±%.1f w skali „%s” (zakres %.0f, SD %.1f).",
-                rmse, y_label, y_range, y_sd),
-      tone = "info"
-    )
-  })
-}

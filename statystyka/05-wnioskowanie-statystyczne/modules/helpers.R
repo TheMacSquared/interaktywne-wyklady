@@ -93,10 +93,6 @@ hypothesis_practice <- function(prefix, questions) {
 
 # Rozwiązanie ćwiczenia w lc_more("Rozwiązanie", uiOutput(output_id)):
 # Shiny renderuje je dopiero po rozwinięciu.
-exercise_solution_server <- function(output, output_id, sol_fn) {
-  output[[output_id]] <- renderUI(sol_fn())
-}
-
 
 # Generowanie danych studenckich (n=200)
 # equal_sex = TRUE: po n/2 kobiet i mężczyzn (porównanie dwóch grup).
@@ -430,10 +426,12 @@ generate_phone_data <- function(n_per_group = 40) {
     `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA))
 }
 
-scene_widget <- function(id, title, steps, config, options = NULL) {
+scene_widget <- function(id, title, steps, config, options = NULL,
+                         texts = NULL) {
   lc_step_widget(id,
     title = title,
     steps = steps,
+    texts = texts,
     toolbar = if (length(options)) lc_toolbar(.scene_options(options)),
     body = .scene_body(config)
   )
@@ -446,7 +444,3 @@ scene_static <- function(config, options = NULL) {
   )
 }
 
-scene_texts <- function(input, output, id, texts) {
-  step <- lc_step_server(id, input)$step
-  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
-}

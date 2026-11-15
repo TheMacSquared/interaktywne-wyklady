@@ -6,7 +6,7 @@ const { environment, Element, root } = require("./harness");
 
 function load() {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   env.load("04-przedzialy-ufnosci/modules/ci_construction.js");
   env.load("04-przedzialy-ufnosci/modules/sf_steps.js");
   const F = env.window.lcSF.figures, P = env.window.lcCharts.palette();
@@ -133,12 +133,11 @@ test("Ryc. 3.2: widget losuje nową próbę i pisze tekst kroku bez serwera", ()
   const bank = [{ x: [170, 172, 168], y: null, mean: 170, se: 1.1547, df: 2, t: 4.3027, lower: 165.03, upper: 174.97 }];
   const holder = new Element("div", { class: "ci-construction", "data-kind": "mean", "data-config": JSON.stringify(bank) },
                              [new Element("div", { class: "lc-ec" })]);
-  const out = new Element("span", { id: "ch3_step_text", class: "shiny-html-output" });
+  const out = new Element("span", { id: "ch3_step_text" });
   const btn = new Element("button", { id: "ch3_step_new_sample" });
   const host = root("lc-stepper", [btn, holder, out], { id: "ch3_step", "data-lc-step": "1" });
   host.id = "ch3_step";  // atrapa DOM nie ma własności id
   env.mount(host);
-  assert.equal(out.classList.contains("shiny-html-output"), false, "tekst kroku nie jest wyjściem Shiny");
   assert.match(out.innerHTML, /^3 pomiarów wzrostu/);
   host.setAttribute("data-lc-step", "4");
   env.observers.filter(o => o.options.attributes).forEach(o => o.fn([{ target: host }]));

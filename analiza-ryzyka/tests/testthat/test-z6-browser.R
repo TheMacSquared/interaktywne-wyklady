@@ -36,7 +36,9 @@ testthat::test_that("wykład 06: prototypy punktów stop są wpięte i działaj�
   }
   testthat::expect_setequal(res$figs, c("z6_hist_a", "z6_hist_b", "z6_pole", "z6_linijka", "z6_musigma",
     "z6_prog", "z6_interwencje", "z6_interwencje_b", "z6_prog_ponizej", "z6_nakladanie",
-    "z6_modele", "z6_modele_b"))
+    "z6_modele", "z6_modele_b",
+    # Sześć głównych wykresów wykładu (dawniej ggplot na serwerze): modules/wykresy.js.
+    "z6_hist", "z6_normal", "z6_tail", "z6_action", "z6_ls", "z6_shapes"))
   # Rycina interwencji stoi dwa razy (P9A i P10B) z różnymi kontrolkami.
   testthat::expect_equal(sum(res$figs == "z6_interwencje"), 2L)
   testthat::expect_equal(anyDuplicated(res$ids), 0L)

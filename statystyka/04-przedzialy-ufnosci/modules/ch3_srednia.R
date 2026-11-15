@@ -854,16 +854,3 @@ ch3_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch3_server <- function(input, output, session) {
-
-  # Ryc. 3.1 (s04-tnorm, sf_steps.js), Ryc. 3.2–3.3 (ci_construction.js: próby,
-  # przedziały i tekst kroku) oraz Przykłady A–C (s04-comp) liczy i rysuje przeglądarka.
-
-  # Przykłady A1–C2 (case studies) liczy i rysuje przeglądarka: rycina lcSF
-  # „s4-case” (sf_examples.js); dane i werdykty — ch3_case_ui() na górze pliku.
-}

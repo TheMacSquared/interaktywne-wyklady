@@ -2,7 +2,7 @@
 // wykresy ggplot rysowane na serwerze. Dane: ankieta (window.lc01Survey)
 // albo losowanie z ziarnem; rachunki: window.lc01 (chart_utils.js).
 //
-// Kontener i rysunek: wspólny silnik window.lcSF (statystyka/R/lc_stat_figures.js,
+// Kontener i rysunek: wspólny silnik window.lcSF (shared/lc_stat_figures.js,
 // R: lc_sf_figure()). Tu tylko ryciny wykładu 01, rejestrowane w lcSF.
 (function () {
   "use strict";
@@ -20,11 +20,14 @@
       return { l: roundTo(b.l, width), r: roundTo(b.r, width), n: b.n };
     });
   }
-  // Reguła ggplot dla bins = k (szerokość = rozstęp / (k − 1), przedziały domknięte
-  // z prawej). Tylko tam, gdzie niezgranie przedziałów z danymi jest treścią ryciny.
+  // Reguła ggplot 4.x dla bins = k (szerokość = rozstęp / (k − 1), pierwszy przedział
+  // wyśrodkowany na minimum, przedziały domknięte z prawej). Tylko tam, gdzie niezgranie
+  // przedziałów z danymi jest treścią ryciny.
   function binsGgplot(values, k) {
     var lo = Math.min.apply(null, values), hi = Math.max.apply(null, values);
-    var w = (hi - lo) / (k - 1), boundary = w / 2;
+    var w = (hi - lo) / (k - 1), boundary = lo - w / 2;
+    function rmod(a, m) { return a - Math.floor(a / m) * m; }
+    if (rmod(lo, w) === rmod(boundary, w) || rmod(hi, w) === rmod(boundary, w)) w = (hi - lo) / k;
     var origin = boundary + Math.floor((lo - boundary) / w) * w, edges = [];
     for (var e = origin; e <= hi + (1 - 1e-8) * w; e += w) edges.push(e);
     var out = [];

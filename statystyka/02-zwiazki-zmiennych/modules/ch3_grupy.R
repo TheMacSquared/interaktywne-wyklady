@@ -39,7 +39,18 @@ ch3_ui <- list(
                       b = as.integer(pay_data$branza) - 1L, x = pay_data$pensja,
                       xmin = 3, xmax = 17,
                       stats = lapply(seq_len(nrow(pay_stats)), function(k) as.list(pay_stats[k, ])),
-                      aria = "Pensje 90 absolwentów rozdzielają się na trzy branże; przy każdej pojawia się mediana i wykres pudełkowy"))
+                      aria = "Pensje 90 absolwentów rozdzielają się na trzy branże; przy każdej pojawia się mediana i wykres pudełkowy"),
+        texts = list(
+          tagList("Rok po studiach 90 absolwentów podaje swoją pensję brutto. Każda kropka
+            to jedna osoba; połowa zarabia mniej niż 7.3 tys. zł."),
+          tagList("Ci sami absolwenci pracują w trzech branżach: rolniczej,
+            biotechnologicznej i kosmicznej. Kropki przesuwają się do swoich rzędów,
+            a każda zostaje przy swojej pensji."),
+          tagList("W każdej branży zaznaczamy medianę: pensję, którą połowa absolwentów
+            przekracza, a połowa nie."),
+          tagList("Pudełka obejmują środkową połowę pensji w każdej branży. Rozkłady
+            różnią się położeniem i szerokością, ale wyraźnie na siebie zachodzą.")
+        ))
     ),
 
     lc_p("W kadrze 2 pensje rozdzieliły się na trzy ", gloss("rozkład warunkowy",
@@ -114,21 +125,3 @@ ch3_ui <- list(
     )
   )
 )
-
-ch3_server <- function(input, output, session) {
-
-  scene_texts(input, output, "ch3_pay", list(
-    tagList("Rok po studiach 90 absolwentów podaje swoją pensję brutto. Każda kropka
-      to jedna osoba; połowa zarabia mniej niż 7.3 tys. zł."),
-    tagList("Ci sami absolwenci pracują w trzech branżach: rolniczej,
-      biotechnologicznej i kosmicznej. Kropki przesuwają się do swoich rzędów,
-      a każda zostaje przy swojej pensji."),
-    tagList("W każdej branży zaznaczamy medianę: pensję, którą połowa absolwentów
-      przekracza, a połowa nie."),
-    tagList("Pudełka obejmują środkową połowę pensji w każdej branży. Rozkłady
-      różnią się położeniem i szerokością, ale wyraźnie na siebie zachodzą.")
-  ))
-
-  # Pudełka w grupach z ankiety (Ryc. 3.2) liczą się w przeglądarce:
-  # survey_charts.js, rycina „d02-box”.
-}

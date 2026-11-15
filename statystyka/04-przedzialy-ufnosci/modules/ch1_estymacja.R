@@ -228,11 +228,3 @@ ch1_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch1_server <- function(input, output, session) {
-  # Scena i ryciny rozdziału działają po stronie przeglądarki albo w fig_ch1_server().
-}

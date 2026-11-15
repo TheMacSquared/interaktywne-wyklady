@@ -6,7 +6,7 @@ const { environment, Element, root, ecbox } = require("./harness");
 
 function load() {
   const env = environment();
-  env.load("R/lc_dist.js"); env.load("R/lc_stat_figures.js");
+  env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
   env.load("04-przedzialy-ufnosci/modules/sf_ch12.js");
   const F = env.window.lcSF.figures, P = env.window.lcCharts.palette(), X = env.window.lc04Ch12;
   const run = (name, config) => {

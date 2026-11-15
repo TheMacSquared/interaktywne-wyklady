@@ -15,24 +15,15 @@ ch1_sw_power_data <- data.frame(
            9, 20, 39, 74, 100, 100)
 )
 
-ch1_sw_power_fn <- function() {
-  cols <- c("Normalny" = upwr_reference, "Prawoskośny" = col_fail,
-            "Ciężkie ogony" = unname(upwr_cat["indygo"]), "Jednostajny" = unname(upwr_cat["bursztyn"]))
-  ends <- ch1_sw_power_data[ch1_sw_power_data$n == 200, ]
-  ends$y <- c(6, 108, 92, 100)                 # rozsunięcie etykiet na prawym końcu
-  ggplot(ch1_sw_power_data, aes(n, rej, colour = dist)) +
-    geom_hline(yintercept = 5, linetype = "dashed", colour = upwr_reference) +
-    geom_line(linewidth = 1.1) +
-    geom_point(size = 2.2) +
-    geom_text(data = ends, aes(y = y, label = dist), hjust = 0, nudge_x = 0.05, size = 4.4,
-              family = if (lc_mono_family == "IBM Plex Mono") "IBM Plex Sans" else "") +
-    scale_x_log10(breaks = c(10, 20, 30, 50, 100, 200), expand = expansion(mult = c(0.03, 0.32))) +
-    scale_y_continuous(limits = c(0, 110), breaks = seq(0, 100, 25),
-                       labels = function(v) paste0(v, "%")) +
-    scale_colour_manual(values = cols, guide = "none") +
-    labs(x = "Liczebność próby (n)", y = "Odrzucenia H₀") +
-    theme_upwr()
-}
+# Rycina s06_power (modules/figures.js): serie w kolejności rozkładów, label_y to
+# rozsunięcie etykiet na prawym końcu.
+ch1_sw_power_config <- list(
+  n = unique(ch1_sw_power_data$n),
+  series = lapply(seq_along(unique(ch1_sw_power_data$dist)), function(i) {
+    name <- unique(ch1_sw_power_data$dist)[i]
+    list(name = name, rej = ch1_sw_power_data$rej[ch1_sw_power_data$dist == name], label_y = c(6, 108, 92, 100)[i])
+  })
+)
 
 ch1_ui <- lecture_chapter(
   id = "ch-normalnosc",
@@ -112,7 +103,6 @@ ch1_ui <- lecture_chapter(
       tylko „czy ich kształt jest na tyle daleki od normalnego, że zagraża
       wnioskom przy tej liczebności”. Odpowiedź zaczyna się od wykresu."),
 
-
     # ========================================================================
     # WIDGET 1: Wizualne sprawdzanie normalności
     # ========================================================================
@@ -137,7 +127,18 @@ ch1_ui <- lecture_chapter(
         steps = c("Kolejka", "Według wzrostu", "Idealna kolejka", "Wykres Q-Q"),
         labels = rep("Nowa grupa", 4),
         more = NULL,
-        config = p6_qq_config())
+        config = p6_qq_config(),
+        texts = list(
+        tagList("Dwadzieścia osób stoi w przypadkowej kolejności. Najniższa i najwyższa
+        są wyróżnione."),
+        tagList("Ustawiamy je od najniższej do najwyższej. Każda osoba ma teraz swoje
+        miejsce w kolejce."),
+        tagList("Kontury to idealna kolejka: wzrost, jaki miałaby osoba na tym miejscu,
+        gdyby wzrost miał rozkład normalny o tej samej średniej i odchyleniu."),
+        tagList("Każda osoba staje się punktem: w poziomie miejsce w idealnej kolejce,
+        w pionie prawdziwy wzrost. Gdy kolejki się zgadzają, punkty leżą na prostej.")
+        )
+      )
     ),
 
     lc_p("Jeśli rozkład jest normalny, punkty układają się wzdłuż prostej. Prosta
@@ -168,8 +169,10 @@ ch1_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 1.1",
       title = "Histogram + Q-Q plot",
-      lc_toolbar(
-        selectInput("ch1_dist", "Rozkład danych",
+      # Losowanie i oba wykresy liczy przeglądarka (modules/figures.js, rycina s06_normality).
+      lc_sf_figure("s06_normality",
+        control = list(
+          selectInput("ch1_dist", "Rozkład danych", selectize = FALSE,
             choices = c(
               "Normalny" = "normal",
               "Prawoskośny" = "skewed",
@@ -179,10 +182,11 @@ ch1_ui <- lecture_chapter(
             ),
             selected = "normal"
           ),
-        lc_slider("ch1_n", "Wielkość próby (n)", 10, 200, 50, 10),
-        lc_action("ch1_gen", "Generuj dane", variant = "solid")
-      ),
-      lc_plot("ch1_normality_plots", max_height = "350px")
+          lc_sf_slider("ch1_n", "Wielkość próby (n)", 10, 200, 50, 10)
+        ),
+        toolbar = lc_sf_action("gen", "ch1_gen", "Generuj dane", variant = "solid"),
+        charts = 2, pair = TRUE, ratio = "1.25/1", max_height = "350px",
+        after = s06_empty("Kliknij „Generuj dane”"))
     ),
 
     lc_p("Nawet dane wylosowane z rozkładu normalnego nie leżą idealnie na prostej.
@@ -211,10 +215,21 @@ ch1_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 1.2",
       title = "Shapiro–Wilk — wynik obok Q-Q plotu",
-      lc_toolbar(
-        lc_action("ch1_test_norm", "Policz test Shapiro–Wilka", variant = "solid")
+      # Wynik liczy przeglądarka dla próby z Ryc. 1.1 (rycina s06_sw).
+      s06_result_figure("s06_sw",
+        lc_toolbar(
+          lc_sf_action("test", "ch1_test_norm", "Policz test Shapiro–Wilka", variant = "solid")
+        ),
+        s06_when("nodata", lc_caption("Najpierw wygeneruj dane.")),
+        lapply(c("ok", "bad"), function(key) s06_when(key, lc_status(
+          p(tags$strong("Shapiro–Wilk:"), " W = ", lc_sf_value("sw_w"), ", p = ", lc_sf_value("sw_p")),
+          p(if (key == "ok") {
+            lc_verdict("Test nie wykrył odstępstwa. To nie dowodzi, że rozkład jest normalny.", type = "ok")
+          } else {
+            lc_verdict("Test wykrył odstępstwo. Jego rodzaj i wagę oceń na wykresie Q-Q.", type = "danger")
+          })
+        )))
       ),
-      uiOutput("ch1_norm_results"),
       lc_caption("Używa danych z widgetu powyżej.")
     ),
 
@@ -234,7 +249,7 @@ ch1_ui <- lecture_chapter(
       label = "Ryc. 1.3",
       title = "Jak często Shapiro-Wilk odrzuca normalność",
       width_mode = "text",
-      lc_plot("ch1_sw_power", ratio = "16/10")
+      lc_sf_figure("s06_power", ratio = "16/10", max_height = "460px", config = ch1_sw_power_config)
     ),
 
     # PROTOTYP 6C (2026-11-09): ten sam rozkład, n = 20 i n = 2000
@@ -245,7 +260,14 @@ ch1_ui <- lecture_chapter(
         more = NULL,
         config = list(kind = "sw", pool = p6_sw_pool(), ymin = 120, ymax = 300,
                       alpha = 0.05, height = 420,
-                      aria = "Dwa wykresy kwantyl-kwantyl masy jabłek z tego samego lekko skośnego rozkładu: przy 20 sztukach test Shapiro-Wilka zwykle nie odrzuca normalności, przy 2000 odrzuca ją zawsze"))
+                      aria = "Dwa wykresy kwantyl-kwantyl masy jabłek z tego samego lekko skośnego rozkładu: przy 20 sztukach test Shapiro-Wilka zwykle nie odrzuca normalności, przy 2000 odrzuca ją zawsze"),
+        texts = list(
+        tagList("Dwadzieścia jabłek z sadu. Punkty lekko odginają się od prostej,
+        ale test Shapiro-Wilka zwykle nie widzi powodu, by odrzucić normalność."),
+        tagList("Dwa tysiące jabłek z tego samego sadu: wykres wygina się tak samo,
+        a test odrzuca normalność za każdym razem. Zmienił się tylko rozmiar próby.")
+        )
+      )
     ),
 
     lc_p("Test normalności ma więc tę samą słabość co każdy test istotności: jego
@@ -289,14 +311,11 @@ ch1_ui <- lecture_chapter(
     figure_panel(
       label = "Ryc. 1.4",
       title = "Efekt transformacji logarytmicznej",
-      lc_toolbar(
-        lc_slider("ch1_trans_n", "n", 30, 200, 80, 10),
-        lc_action("ch1_transform", "Generuj i transformuj", variant = "solid")
-      ),
-      lc_plots(
-        tags$div(tags$h4("Dane surowe"), lc_plot("ch1_transform_raw", max_height = "300px")),
-        tags$div(tags$h4("Po logarytmowaniu"), lc_plot("ch1_transform_log", max_height = "300px"))
-      ),
+      lc_sf_figure("s06_transform",
+        control = lc_sf_slider("ch1_trans_n", "n", 30, 200, 80, 10),
+        toolbar = lc_sf_action("gen", "ch1_transform", "Generuj i transformuj", variant = "solid"),
+        charts = 2, headings = c("Dane surowe", "Po logarytmowaniu"), ratio = "1.25/1", max_height = "300px",
+        after = s06_empty("Kliknij „Generuj i transformuj”")),
       lc_caption("Generujemy dane prawoskośne i je logarytmujemy.")
     ),
 
@@ -341,128 +360,3 @@ ch1_ui <- lecture_chapter(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch1_server <- function(input, output, session) {
-
-  # PROTOTYPY 6B–6C: teksty kroków (6A odrzucony 2026-11-09)
-  scene_texts(input, output, "ch1_p6b", list(
-    tagList("Dwadzieścia osób stoi w przypadkowej kolejności. Najniższa i najwyższa
-      są wyróżnione."),
-    tagList("Ustawiamy je od najniższej do najwyższej. Każda osoba ma teraz swoje
-      miejsce w kolejce."),
-    tagList("Kontury to idealna kolejka: wzrost, jaki miałaby osoba na tym miejscu,
-      gdyby wzrost miał rozkład normalny o tej samej średniej i odchyleniu."),
-    tagList("Każda osoba staje się punktem: w poziomie miejsce w idealnej kolejce,
-      w pionie prawdziwy wzrost. Gdy kolejki się zgadzają, punkty leżą na prostej.")
-  ))
-
-  scene_texts(input, output, "ch1_p6c", list(
-    tagList("Dwadzieścia jabłek z sadu. Punkty lekko odginają się od prostej,
-      ale test Shapiro-Wilka zwykle nie widzi powodu, by odrzucić normalność."),
-    tagList("Dwa tysiące jabłek z tego samego sadu: wykres wygina się tak samo,
-      a test odrzuca normalność za każdym razem. Zmienił się tylko rozmiar próby.")
-  ))
-
-  zoom_plot_server("ch1_sw_power", reactive(ch1_sw_power_fn()),
-    alt = "Odsetek odrzuceń normalności w teście Shapiro-Wilka w zależności od liczebności próby dla czterech rozkładów")
-
-  ch1_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch1_gen, {
-    # Rozkład zapisany przy danych: od niego zależy szerokość słupków.
-    ch1_data(structure(generate_test_data(input$ch1_n, input$ch1_dist),
-                       dist = input$ch1_dist))
-  })
-
-  zoom_plot_server("ch1_normality_plots", reactive({
-    x <- ch1_data()
-    if (is.null(x)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj dane”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      df <- data.frame(x = x)
-
-      p1 <- ggplot(df, aes(x = x)) +
-        # Liczba przedziałów rośnie wolno z n (reguła Sturgesa): szerokie słupki
-        # także przy dużej próbie. Dla dwumodalnego dwa razy więcej, żeby
-        # dolina między szczytami nie znikła w jednym słupku.
-        geom_histogram(aes(y = after_stat(density)),
-                       bins = nclass.Sturges(x) *
-                         if (identical(attr(x, "dist"), "bimodal")) 2 else 1,
-                       fill = col_test, alpha = 0.6, color = "white") +
-        stat_function(fun = dnorm, args = list(mean = mean(x), sd = sd(x)),
-                      color = col_ok, linewidth = 1.2, linetype = "dashed") +
-        labs(
-             x = "Wartość", y = "Gęstość") +
-        theme_upwr()
-
-      p2 <- ggplot(df, aes(sample = x)) +
-        stat_qq(color = col_test, alpha = 0.6) +
-        stat_qq_line(color = col_ok, linewidth = 1) +
-        labs(
-             x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
-        theme_upwr()
-
-      gridExtra::arrangeGrob(p1, p2, ncol = 2)
-    }
-  }))
-
-  # --- Widget 2: Testy normalności ---
-  output$ch1_norm_results <- renderUI({
-    req(input$ch1_test_norm)
-    x <- ch1_data()
-    if (is.null(x)) return(lc_caption("Najpierw wygeneruj dane."))
-
-    sw <- shapiro_test(data.frame(value = x), value)
-    w_txt <- formatC(sw$statistic, format = "f", digits = 3)
-
-    lc_status(
-      p(tags$strong("Shapiro–Wilk:"), " W = ", w_txt,
-        ", p = ", format_p_value(sw$p)),
-      p(lc_verdict(
-        if (sw$p >= 0.05) {
-          "Test nie wykrył odstępstwa. To nie dowodzi, że rozkład jest normalny."
-        } else {
-          "Test wykrył odstępstwo. Jego rodzaj i wagę oceń na wykresie Q-Q."
-        }, type = if (sw$p >= 0.05) "ok" else "danger"))
-    )
-  })
-
-  # --- Widget 3: Transformacja ---
-  ch1_trans_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch1_transform, {
-    x <- rgamma(input$ch1_trans_n, shape = 2, scale = 5) + 1
-    ch1_trans_data(x)
-  })
-
-  ch1_qq <- function(x, colour) {
-    ggplot(data.frame(x = x), aes(sample = x)) +
-      stat_qq(color = colour, alpha = 0.5) +
-      stat_qq_line(color = colour) +
-      labs(x = "Kwantyle teoretyczne", y = "Kwantyle próbkowe") +
-      theme_upwr()
-  }
-  ch1_qq_empty <- function() {
-    ggplot() +
-      annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj i transformuj”",
-               size = 5, color = upwr_reference) +
-      theme_void()
-  }
-
-  zoom_plot_server("ch1_transform_raw", reactive({
-    x <- ch1_trans_data()
-    if (is.null(x)) ch1_qq_empty() else ch1_qq(x, col_fail)
-  }))
-
-  zoom_plot_server("ch1_transform_log", reactive({
-    x <- ch1_trans_data()
-    if (is.null(x)) ch1_qq_empty() else ch1_qq(log(x), col_ok)
-  }))
-}

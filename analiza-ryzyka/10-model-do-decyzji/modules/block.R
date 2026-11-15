@@ -86,13 +86,18 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           # PROTOTYP P1 (wariant B): scena przed głosowaniem
           i10p_variant("scena P1 przed głosowaniem (wariant B). Ta sama scena stoi też po głosowaniu (wariant A)."),
           i10p_get("i10p_1_ui"),
-          risk_vote_panel("i10_vote", "i10_vote_feedback", "Od czego zacząć analizę przypadku?", c("Od definicji i audytu danych" = "audit", "Od wzoru" = "model", "Od najtańszego działania" = "cost"), correct = "audit"),
+          risk_vote_panel("i10_vote", "i10_vote_feedback", "Od czego zacząć analizę przypadku?", c("Od definicji i audytu danych" = "audit", "Od wzoru" = "model", "Od najtańszego działania" = "cost"), correct = "audit",
+            feedback = list(".other" = lc_caption("Najpierw definicje, czas, warunki i źródła danych."))),
           # PROTOTYP P1 (wariant A): scena po głosowaniu
           i10p_variant("scena P1 po głosowaniu (wariant A)."),
           i10p_get("i10p_1_ui"),
           "Wybór „od wzoru” wydaje się efektywny, ale wzór zakłada już odpowiedź na pytanie, co jest zdarzeniem i w jakim czasie je liczymy. Wybór „od najtańszego działania” odwraca kolejność całkiem: decyzję podejmuje się przed oceną, którą barierę warto wzmacniać. W obu przypadkach błąd definicji przechodzi niezauważony przez wszystkie kolejne kroki i wraca dopiero w pytaniu recenzenta.",
           risk_try("zaznacz w audycie te elementy teczki Bananpolu, które uważasz za kompletne na podstawie opisu powyżej i ramki z danymi. Dla każdego pola spróbuj powiedzieć jednym zdaniem, gdzie w tekście jest jego uzasadnienie."),
-          figure_panel(label = "Audyt", title = "Co sprawdzono?", checkboxGroupInput("i10_fields", "Elementy teczki", c("Definicje zdarzeń" = "event", "Czas i stan początkowy" = "time", "Źródła i warunki pomiaru" = "source", "Niepewność i braki" = "missing")), uiOutput("i10_dossier"), full_width = TRUE),
+          figure_panel(label = "Audyt", title = "Co sprawdzono?", checkboxGroupInput("i10_fields", "Elementy teczki", c("Definicje zdarzeń" = "event", "Czas i stan początkowy" = "time", "Źródła i warunki pomiaru" = "source", "Niepewność i braki" = "missing")),
+            # Licznik zaznaczonych pól: wariant na każdą liczbę, widoczny wybiera przeglądarka.
+            lapply(0:4, function(n) conditionalPanel(sprintf("input.i10_fields.length == %d", n),
+              lc_caption(paste(n, "z 4 pól oznaczono jako sprawdzone. Samo zaznaczenie nie zastępuje uzasadnienia."), tone = "info"))),
+            full_width = TRUE),
           c(
             "Licznik pokazuje tylko, ile pól zaznaczono — i celowo nic więcej. W teczce Bananpolu czas i stan początkowy są opisane dobrze: misja 1000 h, elementy nowe, bez napraw. Definicje zdarzeń uporządkujemy w następnej sekcji. Najsłabiej wypadają źródła: dane są fikcyjne, a skuteczność działań (50%) jest w ramce opisana jako hipoteza wymagająca pilotażu. Uczciwa teczka mówi to wprost.",
             "Zaznaczenie pola nie jest dowodem. Dowodem jest zdanie, które da się wskazać recenzentowi: „czułość 0.95 zmierzono na 200 historycznych zapotrzebowaniach w tej samej komorze”. Tam, gdzie takiego zdania nie ma, pole powinno zostać puste, a brak — trafić na listę niepewności, którą wykorzystamy w rozdziale o odporności rekomendacji."
@@ -172,7 +177,9 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
             "Trzy rodzaje niepewności z akapitu wyżej odpowiadają trzem różnym narzędziom. Losowość przy znanym p opisuje rozkład, na przykład dwumianowy. Niewiedzę o p opisuje granica ufności, na przykład przy zerze zdarzeń. Niepewność co do logiki barier nie ma wzoru — ujawniają ją dopiero scenariusze i recenzja drzewa."
           ),
           risk_try("wybieraj kolejno pytania z listy i przy każdym przypomnij sobie wykład, w którym ten model się pojawił, oraz jedno założenie, bez którego przestaje działać."),
-          figure_panel(label = "Nawigacja", title = "Wybierz pytanie", selectInput("i10_question", "Pytanie", c("Warunek zmienia ocenę" = "conditional", "Co oznacza alarm" = "bayes", "Ile zdarzeń w n próbach" = "binomial", "Ile prób do pierwszego zdarzenia" = "geometric", "Ile prób do r zdarzeń" = "negative", "Jak często przekraczamy próg" = "threshold", "Czy element dotrwa do czasu t" = "survival", "Czy system spełni funkcję" = "system")), uiOutput("i10_model"), full_width = TRUE),
+          figure_panel(label = "Nawigacja", title = "Wybierz pytanie", selectInput("i10_question", "Pytanie", selectize = FALSE, c("Warunek zmienia ocenę" = "conditional", "Co oznacza alarm" = "bayes", "Ile zdarzeń w n próbach" = "binomial", "Ile prób do pierwszego zdarzenia" = "geometric", "Ile prób do r zdarzeń" = "negative", "Jak często przekraczamy próg" = "threshold", "Czy element dotrwa do czasu t" = "survival", "Czy system spełni funkcję" = "system")),
+            lc_variants("i10_question", lapply(i10_question_models, function(m) lc_caption(m, tone = "info"))),
+            full_width = TRUE),
           # PROTOTYP P4: mapa kursu — pytanie, model, wykład
           i10p_get("i10p_4_ui"),
           "Mapa podaje tylko nazwę modelu, bo reszta należy do analityka. Warunek zmieniający ocenę to wykład 02, alarm — 03, liczba zdarzeń w n próbach — 04, próby do pierwszego lub r-tego zdarzenia — 05, przekroczenie progu — 06, dotrwanie do czasu t — 07, a funkcja systemu — 08 i 09. W studium Bananpolu do końcowego drzewa trafią wyniki tylko trzech z nich: Bayesa w postaci 1 - czułość, czasu życia i struktury systemu.",
@@ -238,12 +245,12 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           i10p_variant("P5A — kadry przy przykładzie 10.3. Może zostać razem z P5B."),
           i10p_get("i10p_5a_ui"),
           risk_try("zmień FPR z 0.05 na 0.02, a potem na 0.20, obserwując obie liczby w panelu. Następnie przywróć FPR = 0.05 i zmień czułość na 0.90."),
-          figure_panel(label = "Karta 1", title = "Detektor potrzeby chłodzenia", lc_toolbar(
-              lc_slider("i10_init", "P(I): zapotrzebowanie na początku misji", .001, .03, bananpol$integration$initiation, .001),
-              lc_slider("i10_sens", "Czułość P(alarm | I)", .5, 1, bananpol$integration$sensitivity, .01),
-              lc_slider("i10_fpr", "FPR P(alarm | brak I)", 0, .2, bananpol$integration$false_positive_rate, .005),
-              lc_readouts(uiOutput("i10_alarm_result"))
-            ), full_width = TRUE),
+          figure_panel(label = "Karta 1", title = "Detektor potrzeby chłodzenia", i10_reads_figure("i10m_alarm", lc_toolbar(
+              lc_sf_slider("i10_init", "P(I): zapotrzebowanie na początku misji", .001, .03, bananpol$integration$initiation, .001),
+              lc_sf_slider("i10_sens", "Czułość P(alarm | I)", .5, 1, bananpol$integration$sensitivity, .01),
+              lc_sf_slider("i10_fpr", "FPR P(alarm | brak I)", 0, .2, bananpol$integration$false_positive_rate, .005),
+              lc_readouts(risk_sf_read("alarm_post", "P(I | alarm)"), risk_sf_read("alarm_miss", "P(D | I) — wejście do FTA"))
+            )), full_width = TRUE),
           # PROTOTYP P5B: piaskownica detektora w przeglądarce
           i10p_variant("P5B — piaskownica zamiast panelu „Karta 1”."),
           i10p_get("i10p_5b_ui"),
@@ -286,11 +293,12 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
             answer = "Po 100 kontrolach bez wady możemy twierdzić tylko, że p nie przekracza około 0.03. Dziesięciokrotnie niższa granica wymaga dziesięciokrotnie większej próby."
           ),
           risk_try("ustaw n = 100 i p = 0.02, odczytaj trzy liczby, a potem przesuń n do 1000. Zwróć uwagę, które liczby zależą od suwaka p, a które nie."),
-          figure_panel(label = "Karta 2", title = "Partia zaworów i niepewność p", lc_toolbar(
-              lc_slider("i10_n", "Liczba niezależnych kontroli n", 10, 1000, 100, 10),
-              lc_slider("i10_p", "Zadane p do prognozy liczby wad", .001, .1, .02, .001),
-              lc_readouts(uiOutput("i10_inspection_result"))
-            ), full_width = TRUE),
+          figure_panel(label = "Karta 2", title = "Partia zaworów i niepewność p", i10_reads_figure("i10m_inspection", lc_toolbar(
+              lc_sf_slider("i10_n", "Liczba niezależnych kontroli n", 10, 1000, 100, 10),
+              lc_sf_slider("i10_p", "Zadane p do prognozy liczby wad", .001, .1, .02, .001),
+              lc_readouts(risk_sf_read("insp_mean", "E(X) przy zadanym p"), risk_sf_read("insp_any", "P(co najmniej jednej wady)"),
+                          risk_sf_read("insp_upper", "Granica 95% dla p przy zerze awarii"))
+            )), full_width = TRUE),
           "Przy n = 100 i p = 0.02 panel pokazuje średnio 2 wady i prawdopodobieństwo co najmniej jednej wady około 0.867. Granica przy zerze zdarzeń wynosi 0.030 i nie reaguje na suwak p — bo odpowiada na inne pytanie: nie „co zobaczymy przy znanym p”, lecz „jakie p jest zgodne z tym, co zobaczyliśmy”. Po przesunięciu n do 1000 granica spada do około 0.003, co potwierdza Przykład 10.4."
         ),
         pitfall = "Granica ufności opisuje procedurę wnioskowania przy ustalonym n. Nie jest stwierdzeniem, że po obejrzeniu próby stały parametr ma 95% szans leżeć w przedziale."
@@ -313,7 +321,11 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
             answer = "Przed około 1927 h wentylator zużywający się jest bardziej niezawodny niż wykładniczy, a później mniej. Przy misji 1000 h model Weibulla daje R ≈ 0.707 zamiast 0.513, choć średnie czasy życia różnią się o 7 godzin."
           ),
           risk_try("porównaj oba modele przy czasie misji 1000 h, potem przesuń czas do 2000 h i 3000 h. Obserwuj liczbę przekazywaną do systemu."),
-          risk_widget_panel("Karta 3", "Niezawodność wentylatora", tagList(selectInput("i10_life_model", "Model", c("Wykładniczy" = "exp", "Weibull — zużycie" = "weibull")), lc_slider("i10_time", "Czas misji (h)", 100, 3000, 1000, 50)), "i10_life_plot", "i10_life_stats"),
+          risk_sf_panel("Karta 3", "Niezawodność wentylatora", "i10m_life",
+            controls = list(selectInput("i10_life_model", "Model", selectize = FALSE, c("Wykładniczy" = "exp", "Weibull — zużycie" = "weibull")),
+                            lc_sf_slider("i10_time", "Czas misji (h)", 100, 3000, 1000, 50)),
+            reads = list(risk_sf_read("life_r", "R(t) przekazane do systemu"),
+                         lc_readout(tagList("Drugi model (", lc_sf_value("life_other_name"), ", linia przerywana)"), lc_sf_value("life_other")))),
           # PROTOTYP P7: dwa modele na jednej osi w przeglądarce
           i10p_get("i10p_7_ui"),
           c(
@@ -400,11 +412,13 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           # PROTOTYP P9: redukcja schematu krok po kroku
           i10p_get("i10p_9_ui"),
           risk_try("przy czasie misji 1000 h zmniejsz R sterownika do 0.85 i obserwuj R systemu. Wróć do 0.95 i zmień czas misji na karcie 3 na 2000 h — patrz, jak zmieniają się wszystkie cztery składniki naraz."),
-          figure_panel(label = "Redukcja", title = "Elementy w tej samej misji", lc_toolbar(
-              lc_slider("i10_power", "R zasilania na 1000 h", .7, 1, bananpol$integration$power_r1000, .01),
-              lc_slider("i10_controller", "R sterownika na 1000 h", .7, 1, bananpol$integration$controller_r1000, .01),
-              lc_readouts(uiOutput("i10_system_result"))
-            ), full_width = TRUE),
+          figure_panel(label = "Redukcja", title = "Elementy w tej samej misji", i10_reads_figure("i10m_system", lc_toolbar(
+              lc_sf_slider("i10_power", "R zasilania na 1000 h", .7, 1, bananpol$integration$power_r1000, .01),
+              lc_sf_slider("i10_controller", "R sterownika na 1000 h", .7, 1, bananpol$integration$controller_r1000, .01),
+              lc_readouts(risk_sf_read("sys_model", "Model wentylatora (karta 3)"), risk_sf_read("sys_time", "Czas misji"),
+                          risk_sf_read("sys_power", "R zasilania w misji"), risk_sf_read("sys_controller", "R sterownika w misji"),
+                          risk_sf_read("sys_parallel", "R gałęzi równoległych"), risk_sf_read("sys_system", "R systemu | I"))
+            )), full_width = TRUE),
           # PROTOTYP P10: schemat z suwakiem czasu misji
           i10p_get("i10p_10_ui"),
           c(
@@ -445,7 +459,10 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           i10p_variant("P11B — kadry przy przykładzie 10.8. Może zostać razem z P11A."),
           i10p_get("i10p_11b_ui"),
           risk_try("najpierw odczytaj wysokości czterech słupków dla ustawień bazowych. Potem wróć do karty 3 i przełącz model na Weibulla, a na karcie 1 ustaw czułość 1.00. Sprawdź, który słupek reaguje."),
-          risk_widget_panel("Integracja", "Utrata ochrony termicznej w misji", tags$p("Parametry zmieniasz na kartach detekcji, czasu życia i systemu."), "i10_fta_plot", "i10_fta_stats"),
+          risk_sf_panel("Integracja", "Utrata ochrony termicznej w misji", "i10m_fta",
+            controls = tags$p("Parametry zmieniasz na kartach detekcji, czasu życia i systemu."),
+            reads = list(risk_sf_read("fta_top", "P(TOP) na misję"), risk_sf_read("fta_freq", "Na 10 000 misji"),
+                         risk_sf_read("fta_settings", "Ustawienia z kart"))),
           # PROTOTYP P11A: drzewo z liczbami zamiast słupków
           i10p_variant("P11A — drzewo z liczbami zamiast wykresu słupkowego."),
           i10p_get("i10p_11a_ui"),
@@ -533,7 +550,11 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
             answer = "Najwięcej daje ograniczenie źródła ciepła, które jest też najtańsze. Czujnik i zasilanie poprawiają elementy, które i tak są mocne (P(D | I) = 0.05, R_P = 0.98), więc mają małą dźwignię."
           ),
           risk_try("przejrzyj kolejno cztery interwencje przy budżecie 2, a potem zwiększ budżet do 4. Porównaj długości słupków z wynikami Przykładu 10.10 i zwróć uwagę, które opcje zmieniają kolor."),
-          risk_widget_panel("Opcje", "Ryzyko po działaniu", tagList(selectInput("i10_intervention", "Interwencja", setNames(bananpol$interventions$id, bananpol$interventions$label)), lc_slider("i10_budget", "Budżet w jednostkach demonstracyjnych", 1, 4, 2, 1)), "i10_interventions_plot", "i10_intervention_stats"),
+          risk_sf_panel("Opcje", "Ryzyko po działaniu", "i10m_interventions", legend = TRUE, config = i10_config,
+            controls = list(selectInput("i10_intervention", "Interwencja", selectize = FALSE, setNames(bananpol$interventions$id, bananpol$interventions$label)),
+                            lc_sf_slider("i10_budget", "Budżet w jednostkach demonstracyjnych", 1, 4, 2, 1)),
+            reads = list(risk_sf_read("int_top", "P(TOP) po zmianie"), risk_sf_read("int_cost", "Koszt umowny"),
+                         risk_sf_read("int_feasibility", "Wykonalność"))),
           # PROTOTYPY P13A i P13B: cztery interwencje
           i10p_variant("P13A — interwencje na stałej osi P(TOP)."),
           i10p_get("i10p_13a_ui"),
@@ -580,7 +601,9 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           # PROTOTYP P15: ranking, który się odwraca (przykład 10.11 b)
           i10p_get("i10p_15_ui"),
           risk_try("przy ustawieniach bazowych przesuń u od 0 do 0.5 i śledź tekst pod wykresem. Potem przełącz model na Weibulla na karcie 3, ustaw budżet 3 i powtórz."),
-          risk_widget_panel("Niepewność", "Opcje w trzech scenariuszach", lc_slider("i10_uncertainty", "Zakres u", 0, .5, .2, .05), "i10_scenarios", "i10_scenarios_stats"),
+          risk_sf_panel("Niepewność", "Opcje w trzech scenariuszach", "i10m_scenarios", legend = TRUE, config = i10_config,
+            controls = lc_sf_slider("i10_uncertainty", "Zakres u", 0, .5, .2, .05),
+            reads = list(lc_status(lc_sf_value("scen_text")))),
           # PROTOTYP P14: wynik jako przedział w trzech scenariuszach
           i10p_get("i10p_14_ui"),
           c(
@@ -617,7 +640,17 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
           # PROTOTYP P16: ranking to nie kryterium
           i10p_get("i10p_16_ui"),
           risk_try("zostaw domyślne działanie „Lepszy czujnik” i limit 0.002, przeczytaj notatkę, a potem wybierz „Ograniczenie źródła ciepła”. Na koniec obniż limit do 0.001 i sprawdź, co zmieni się w punkcie trzecim."),
-          figure_panel(label = "Notatka", title = "Wynik, działanie, kryterium i kontrola", selectInput("i10_recommend", "Rozważane działanie", setNames(bananpol$interventions$id, bananpol$interventions$label)), lc_slider("i10_target", "Demonstracyjny limit P(TOP) na misję", .0001, .01, .002, .0001), uiOutput("i10_memo"), full_width = TRUE),
+          figure_panel(label = "Notatka", title = "Wynik, działanie, kryterium i kontrola",
+            # Tekst notatki składa rycina i10m_memo (modules/wykresy.js) z ustawień wszystkich kart.
+            i10_reads_figure("i10m_memo", config = i10_config,
+              selectInput("i10_recommend", "Rozważane działanie", selectize = FALSE, setNames(bananpol$interventions$id, bananpol$interventions$label)),
+              lc_sf_slider("i10_target", "Demonstracyjny limit P(TOP) na misję", .0001, .01, .002, .0001),
+              tags$ol(
+                tags$li(lc_sf_value("memo_1")), tags$li(lc_sf_value("memo_2")), tags$li(lc_sf_value("memo_3")),
+                tags$li("Właściciel proponowanej kontroli: kierownik utrzymania; weryfikacja detekcji, awarii i skuteczności działania po pierwszej misji oraz po każdej zmianie instalacji. Oddzielnie oceniamy skutki utraty ochrony i scenariusze pominięte w modelu.")
+              ),
+              lc_caption(lc_sf_value("memo_settings"), tone = "info")),
+            full_width = TRUE),
           c(
             "Przy ustawieniach bazowych (model wykładniczy, 1000 h, budżet 2, u = 0.2) lepszy czujnik jest w budżecie, ale w najgorszym scenariuszu daje 0.00230 i przekracza limit 0.002. Ograniczenie źródła ciepła daje w najgorszym scenariuszu 0.00144 i limit spełnia. Niezależne zasilanie notatka oznacza jako będące poza budżetem.",
             "Po obniżeniu limitu do 0.001 ograniczenie źródła ciepła nadal jest najlepsze i bazowo spełnia limit (0.00081), ale w scenariuszu ostrożnym już nie (0.00144). Notatka pisze wtedy „nie jest spełniony” — i to jest poprawny wynik, a nie usterka. Zgodnie z decyzją poniżej wracamy do zakresu misji, budżetu lub projektu barier, zamiast łagodzić kryterium."
@@ -673,188 +706,3 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
   )
 ))
 integracja_chapters <- risk_block_chapters(integracja_block)
-
-integracja_server <- function(input, output, session) {
-  vote <- reactiveVal(FALSE)
-  observeEvent(input$i10_vote_check, vote(TRUE))
-  output$i10_vote_feedback <- renderUI({
-    req(vote())
-    lc_caption(
-      "Najpierw definicje, czas, warunki i źródła danych."
-    )
-  })
-  output$i10_dossier <- renderUI(lc_caption(
-                                   paste(length(input$i10_fields), "z 4 pól oznaczono jako sprawdzone. Samo zaznaczenie nie zastępuje uzasadnienia."),
-                                   tone = "info"
-                                 ))
-  output$i10_model <- renderUI({
-    models <- c(conditional = "Warunkowe i całkowite", bayes = "Bayes", binomial = "Dwumianowy", geometric = "Geometryczny", negative = "Ujemny dwumianowy", threshold = "Rozkład ciągły i ogon", survival = "Funkcje czasu życia", system = "Funkcja struktury i FTA")
-    lc_caption(
-      models[[input$i10_question]],
-      tone = "info"
-    )
-  })
-  output$i10_alarm_result <- renderUI({
-    p <- risk_bayes(input$i10_init, input$i10_sens, input$i10_fpr)
-    tagList(
-      lc_readout("P(I | alarm)", risk_fmt_p(p)),
-      lc_readout("P(D | I) — wejście do FTA", risk_fmt_p(1 - input$i10_sens))
-    )
-  })
-  output$i10_inspection_result <- renderUI(tagList(
-    lc_readout("E(X) przy zadanym p", round(input$i10_n * input$i10_p, 2)),
-    lc_readout("P(co najmniej jednej wady)", risk_fmt_p(risk_at_least_one(input$i10_n, input$i10_p))),
-    lc_readout("Granica 95% dla p przy zerze awarii", risk_fmt_p(risk_zero_failure_upper(input$i10_n)))
-  ))
-  evaluate <- function(id = "none", stress = 1) risk_mission_analysis(
-    input$i10_time, input$i10_life_model, input$i10_power,
-    input$i10_controller, input$i10_init, input$i10_sens, id, stress
-  )
-  base <- reactive(evaluate())
-  life_r <- reactive(base()$fan_r)
-  sys_r <- reactive(base()$system_r)
-  top_p <- reactive(base()$top)
-  # Oba modele na stałych osiach (0–3000 h, 0–1): wybrany linią ciągłą, drugi
-  # przerywaną, żeby było widać przecięcie krzywych z przykładu 10.5.
-  life_models <- c(exp = "Wykładniczy", weibull = "Weibull")
-  life_curve <- function(model, t) if (model == "exp") exp(-t / 1500) else exp(-(t / 1700)^2)
-  life_plot <- reactive({
-    t <- seq(0, 3000, length.out = 400)
-    chosen <- input$i10_life_model
-    other <- setdiff(names(life_models), chosen)
-    ggplot() +
-      geom_line(aes(t, life_curve(other, t)), colour = upwr_reference, linewidth = .8, linetype = 2) +
-      geom_line(aes(t, life_curve(chosen, t)), colour = upwr_accent, linewidth = 1) +
-      geom_vline(xintercept = input$i10_time, linetype = 2) +
-      annotate("point", x = input$i10_time, y = life_curve(chosen, input$i10_time), colour = upwr_accent, size = 3) +
-      scale_x_continuous(limits = c(0, 3000), breaks = seq(0, 3000, 500)) +
-      scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .25)) +
-      labs(x = "Czas (h)", y = "R(t)") + theme_upwr()
-  })
-  zoom_plot_server("i10_life_plot", life_plot, alt = "Krzywe obu modeli czasu życia wentylatora; wybrany model linią ciągłą, z zaznaczonym czasem misji.")
-  output$i10_life_stats <- renderUI({
-    other <- setdiff(names(life_models), input$i10_life_model)
-    tagList(
-      lc_readout("R(t) przekazane do systemu", risk_fmt_p(life_r())),
-      lc_readout(paste0("Drugi model (", life_models[[other]], ", linia przerywana)"), risk_fmt_p(life_curve(other, input$i10_time)))
-    )
-  })
-  # Ustawienia z innych kart, od których zależą panele dalszych rozdziałów.
-  settings_label <- function() paste0(
-    if (input$i10_life_model == "exp") "wykładniczy" else "Weibull", " · ", input$i10_time, " h · P(I) ",
-    risk_fmt_p(input$i10_init), " · czułość ", risk_fmt_p(input$i10_sens))
-  output$i10_system_result <- renderUI({
-    b <- base()
-    tagList(
-      lc_readout("Model wentylatora (karta 3)", life_models[[input$i10_life_model]]),
-      lc_readout("Czas misji", paste(input$i10_time, "h")),
-      lc_readout("R zasilania w misji", risk_fmt_p(b$power_r)),
-      lc_readout("R sterownika w misji", risk_fmt_p(b$controller_r)),
-      lc_readout("R gałęzi równoległych", risk_fmt_p(b$parallel_r)),
-      lc_readout("R systemu | I", risk_fmt_p(sys_r()))
-    )
-  })
-  fta_plot <- reactive({
-    b <- base()
-    # Kolejność jak w drzewie (nie alfabetyczna), stała oś 0–1 i wartości nad słupkami.
-    nodes <- c("P(I)", "P(D | I)", "P(S | I)", "P(TOP)")
-    d <- data.frame(node = factor(nodes, levels = nodes), p = c(b$initiation, b$miss, b$cooling_failure, b$top))
-    d$label <- vapply(d$p, risk_fmt_p, character(1))
-    ggplot(d, aes(node, p, fill = node)) + geom_col() +
-      geom_text(aes(label = label), vjust = -.5, size = 4.5) +
-      scale_fill_manual(values = upwr_cat_n(4), guide = "none") +
-      scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .25)) +
-      labs(x = NULL, y = "Prawdopodobieństwo") + theme_upwr()
-  })
-  zoom_plot_server("i10_fta_plot", fta_plot, alt = "Prawdopodobieństwo inicjacji, warunkowe prawdopodobieństwa niepowodzeń oraz wynik na jedną misję.")
-  output$i10_fta_stats <- renderUI(tagList(
-    lc_readout("P(TOP) na misję", risk_fmt_p(top_p())),
-    lc_readout("Na 10 000 misji", risk_natural_frequency(top_p(), 10000)),
-    lc_readout("Ustawienia z kart", settings_label())
-  ))
-  intervention_top <- function(id, stress = 1) evaluate(id, stress)$top
-  interventions_plot <- reactive({
-    d <- bananpol$interventions
-    d$result <- vapply(d$id, intervention_top, numeric(1))
-    # Stałe przypisanie kolorów (kolor nie zmienia znaczenia, gdy wszystko mieści się
-    # w budżecie), kreska stanu bazowego i obrys wybranej interwencji.
-    levels_budget <- c("W budżecie", "Poza budżetem")
-    d$budget <- factor(ifelse(d$cost_index <= input$i10_budget, levels_budget[1], levels_budget[2]), levels = levels_budget)
-    d$chosen <- d$id == input$i10_intervention
-    ggplot(d, aes(reorder(label, result), result, fill = budget)) +
-      geom_col(aes(colour = chosen), linewidth = 1.2) +
-      geom_hline(yintercept = top_p(), linetype = 2) +
-      scale_x_discrete(labels = scales::label_wrap(14)) + coord_flip() +
-      scale_colour_manual(values = c(`TRUE` = upwr_ink, `FALSE` = "transparent"), guide = "none") +
-      scale_fill_manual(values = setNames(c(upwr_cat_n(2)[2], upwr_cat_n(2)[1]), levels_budget), drop = FALSE) +
-      scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, .08))) +
-      labs(x = NULL, y = "P(TOP) na misję (linia przerywana: bez działania)", fill = NULL) + theme_upwr()
-  })
-  zoom_plot_server("i10_interventions_plot", interventions_plot, alt = "Porównanie ryzyka po czterech działaniach z oznaczeniem dostępności w budżecie.")
-  output$i10_intervention_stats <- renderUI({
-    d <- bananpol$interventions[bananpol$interventions$id == input$i10_intervention, ]
-    tagList(
-      lc_readout("P(TOP) po zmianie", risk_fmt_p(intervention_top(d$id))),
-      lc_readout("Koszt umowny", d$cost_index),
-      lc_readout("Wykonalność", d$feasibility)
-    )
-  })
-  scenario_results <- reactive({
-    scenarios <- c("Optymistyczny", "Bazowy", "Ostrożny")
-    multipliers <- c(1 - input$i10_uncertainty, 1, 1 + input$i10_uncertainty)
-    do.call(rbind, lapply(seq_along(scenarios), function(i) {
-      d <- bananpol$interventions
-      d$scenario <- scenarios[i]
-      d$result <- vapply(d$id, intervention_top, numeric(1), stress = multipliers[i])
-      d
-    }))
-  })
-  # Stała oś: największy wynik przy u = 0.5 dla bieżących ustawień kart, więc
-  # suwak u zmienia długość słupków, a nie skalę.
-  scenario_axis_max <- reactive(max(vapply(bananpol$interventions$id, intervention_top, numeric(1), stress = 1.5)))
-  scenarios_plot <- reactive({
-    d <- scenario_results()
-    scenario_levels <- c("Optymistyczny", "Bazowy", "Ostrożny")
-    # Po coord_flip pierwszy poziom jest na dole: odwracamy scenariusze (optymistyczny
-    # u góry grupy) i opcje (kolejność jak w tabeli interwencji).
-    d$scenario <- factor(d$scenario, levels = rev(scenario_levels))
-    d$label <- factor(d$label, levels = rev(bananpol$interventions$label))
-    d$affordable <- d$cost_index <= input$i10_budget
-    ggplot(d, aes(label, result, fill = scenario, alpha = affordable)) + geom_col(position = "dodge") +
-      scale_x_discrete(labels = scales::label_wrap(14)) + coord_flip() +
-      scale_fill_manual(values = setNames(upwr_cat_n(3), scenario_levels), breaks = scenario_levels) +
-      scale_alpha_manual(values = c(`TRUE` = 1, `FALSE` = .35), guide = "none") +
-      scale_y_continuous(limits = c(0, scenario_axis_max()), expand = expansion(mult = c(0, .04))) +
-      labs(x = NULL, y = "P(TOP) po działaniu", fill = "Scenariusz") + theme_upwr()
-  })
-  zoom_plot_server("i10_scenarios", scenarios_plot, alt = "Trzy scenariusze ryzyka po każdej interwencji.")
-  output$i10_scenarios_stats <- renderUI({
-    d <- scenario_results()
-    d <- d[d$cost_index <= input$i10_budget, ]
-    winners <- lapply(split(d, factor(d$scenario, levels = c("Optymistyczny", "Bazowy", "Ostrożny"))), function(x) {
-      best <- x$label[abs(x$result - min(x$result)) < 1e-12]
-      paste(best, collapse = " / ")
-    })
-    lc_status(
-      paste0(paste(paste(names(winners), unlist(winners), sep = ": "), collapse = "; "),
-        ". Ranking minimalnego P(TOP) w budżecie ", input$i10_budget,
-        " (opcje poza budżetem są wyblakłe); równe wyniki pokazano razem. To nie jest przedział ufności. Ustawienia z kart: ",
-        settings_label(), ".")
-    )
-  })
-  output$i10_memo <- renderUI({
-    d <- bananpol$interventions[bananpol$interventions$id == input$i10_recommend, ]
-    results <- scenario_results()
-    worst <- max(results$result[results$id == d$id])
-    affordable <- d$cost_index <= input$i10_budget
-    meets <- worst <= input$i10_target
-    tags$ol(
-      tags$li(paste0("Przy misji ", input$i10_time, " h bazowe P utraty ochrony wynosi ", risk_format_probability(top_p()), "; to ", risk_natural_frequency(top_p(), 10000), " porównywalnych misji.")),
-      tags$li(paste0("Rozważamy: ", d$label, "; koszt ", d$cost_index, ", ", if (affordable) "w budżecie" else "poza budżetem", "; P(TOP) po działaniu bazowo ", risk_format_probability(intervention_top(d$id)), ", w najgorszym rozpatrzonym scenariuszu ", risk_format_probability(worst), ".")),
-      tags$li(paste0("Demonstracyjny limit ", risk_format_probability(input$i10_target), if (meets) " jest spełniony w badanych scenariuszach" else " nie jest spełniony", "; ", if (affordable && meets) "wariant można przekazać do oceny skutków i wdrożenia" else "potrzebna jest inna opcja, projekt lub budżet", ". Założenia: brak napraw, niezależność detekcji od chłodzenia i skuteczność działań zgodna ze scenariuszem.")),
-      tags$li("Właściciel proponowanej kontroli: kierownik utrzymania; weryfikacja detekcji, awarii i skuteczności działania po pierwszej misji oraz po każdej zmianie instalacji. Oddzielnie oceniamy skutki utraty ochrony i scenariusze pominięte w modelu.")
-    ) |> tagList(lc_caption(paste0("Ustawienia z poprzednich rozdziałów: ", settings_label(),
-      " · budżet ", input$i10_budget, " · zakres u ", input$i10_uncertainty, "."), tone = "info"))
-  })
-  risk_assessment_server("i10", integracja_quiz, input, output)
-}

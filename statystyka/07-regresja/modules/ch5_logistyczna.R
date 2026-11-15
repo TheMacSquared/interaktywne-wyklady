@@ -61,16 +61,16 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.1", title = "Od wyniku punktowego do prawdopodobieństwa zdania",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch5_cas_y_cut", "Próg zaliczenia: zdał od", 630, 680, 656, 1),
-        lc_readouts(uiOutput("ch5_cas_model_metrics"))
-      ),
-      tags$h4("Krok 1: wynik ciągły i próg zaliczenia"),
-      lc_plot("ch5_cas_continuous_plot", max_height = "280px"),
-      tags$h4("Krok 2: model logistyczny daje prawdopodobieństwo klasy 1"),
-      lc_plot("ch5_cas_logit_plot", max_height = "310px"),
-      uiOutput("ch5_cas_model_table"),
-      uiOutput("ch5_cas_threshold_note")
+      # Model logistyczny dla progu liczy przeglądarka (modules/figures.js, rycina s07_caslogit).
+      lc_sf_figure("s07_caslogit", config = ch5_cas_config, legend = TRUE,
+        control = lc_sf_slider("ch5_cas_y_cut", "Próg zaliczenia: zdał od", 630, 680, 656, 1),
+        toolbar = lc_readouts(tags$div(`data-role` = "stats", style = "display: contents")),
+        body = tagList(
+          tags$h4("Krok 1: wynik ciągły i próg zaliczenia"),
+          lc_sf_chart(0, "2.2/1", "280px"),
+          tags$h4("Krok 2: model logistyczny daje prawdopodobieństwo klasy 1"),
+          lc_sf_chart(1, "2/1", "310px")),
+        after = tagList(tags$div(`data-role` = "table"), tags$div(`data-role` = "note")))
     ),
 
     lc_p("Domyślny próg 656 pkt leży niemal dokładnie w ", gloss("mediana", "medianie"), " wyników
@@ -102,11 +102,11 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.2", title = "Liniowy vs logistyczny na danych binarnych",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch5_lin_log_x", "Godziny nauki", 0, 40, 2, 1),
-        lc_readouts(uiOutput("ch5_lin_log_stats"))
-      ),
-      lc_plot("ch5_lin_log_plot", max_height = "320px"),
+      # Krzywe z R przy budowaniu, odczyt dla suwaka w przeglądarce (rycina s07_linlog).
+      lc_sf_figure("s07_linlog", config = ch5_linlog_config,
+        control = lc_sf_slider("ch5_lin_log_x", "Godziny nauki", 0, 40, 2, 1),
+        toolbar = lc_readouts(tags$div(`data-role` = "stats", style = "display: contents")),
+        ratio = "2.2/1", max_height = "320px"),
       lc_caption("Stały przykład: zdanie egzaminu (0/1) a liczba godzin nauki.")
     ),
 
@@ -166,16 +166,12 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.3", title = "Sigmoida w akcji",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch5_b0", "β₀ (wyraz wolny)", -10, 10, -4, 0.5),
-        lc_slider("ch5_b1", "β₁ (nachylenie)", -3, 3, 0.2, 0.05),
-        lc_group("Ustawienia",
-          lc_action("ch5_preset_steep", "Stromy", variant = "outline"),
-          lc_action("ch5_preset_flat", "Płaski", variant = "outline"),
-          lc_action("ch5_preset_neg", "Odwrotny", variant = "outline")
-        )
-      ),
-      lc_plot("ch5_sigmoid_plot", max_height = "350px")
+      # Krzywą i gotowe ustawienia obsługuje przeglądarka (rycina s07_sigmoid).
+      lc_sf_figure("s07_sigmoid",
+        control = list(lc_sf_slider("ch5_b0", "β₀ (wyraz wolny)", -10, 10, -4, 0.5),
+                       lc_sf_slider("ch5_b1", "β₁ (nachylenie)", -3, 3, 0.2, 0.05)),
+        toolbar = lc_sf_action_group("Ustawienia", steep = "Stromy", flat = "Płaski", neg = "Odwrotny"),
+        ratio = "2.2/1", max_height = "350px")
     ),
 
     lc_p("Przy ustawieniu startowym, β₀ = -4 i β₁ = 0.2, krzywa przechodzi
@@ -217,31 +213,20 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.4", title = "Predykcja zdania egzaminu",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch5_n", "n", 50, 300, 150, 25),
-        lc_group(NULL, grow = TRUE,
-          selectInput("ch5_predictor", "Prezentowany predyktor",
-            choices = c(
-              "Godziny nauki" = "godziny_nauki",
-              "Średnia ocen"  = "srednia_ocen"
-            ),
-            selected = "godziny_nauki"
-          )
-        ),
-        lc_action("ch5_fit", "Dopasuj model", variant = "solid"),
-        lc_readouts(uiOutput("ch5_model_summary"))
-      ),
-      lc_plot("ch5_logit_plot", max_height = "350px"),
-      tags$h4("Predykcja dla nowego studenta"),
-      lc_toolbar(
-        lc_group(NULL, grow = TRUE,
-          numericInput("ch5_pred_hours", "Godziny nauki", value = 20, min = 0, max = 40)
-        ),
-        lc_group(NULL, grow = TRUE,
-          numericInput("ch5_pred_gpa", "Średnia ocen", value = 3.5, min = 2, max = 5, step = 0.1)
-        ),
-        lc_readouts(uiOutput("ch5_prediction"))
-      )
+      # Losowanie i model logistyczny (IRLS) liczy przeglądarka (rycina s07_logit).
+      lc_sf_figure("s07_logit",
+        control = list(lc_sf_slider("ch5_n", "n", 50, 300, 150, 25),
+          selectInput("ch5_predictor", "Prezentowany predyktor", selectize = FALSE,
+            choices = c("Godziny nauki" = "godziny_nauki", "Średnia ocen" = "srednia_ocen"), selected = "godziny_nauki")),
+        toolbar = tagList(lc_sf_action("fit", "ch5_fit", "Dopasuj model", variant = "solid"),
+                          lc_readouts(tags$div(`data-role` = "stats", style = "display: contents"))),
+        ratio = "2.2/1", max_height = "350px",
+        after = tagList(
+          tags$h4("Predykcja dla nowego studenta"),
+          lc_toolbar(
+            lc_group(NULL, grow = TRUE, lc_sf_ctl(numericInput("ch5_pred_hours", "Godziny nauki", value = 20, min = 0, max = 40))),
+            lc_group(NULL, grow = TRUE, lc_sf_ctl(numericInput("ch5_pred_gpa", "Średnia ocen", value = 3.5, min = 2, max = 5, step = 0.1))),
+            lc_readouts(tags$div(`data-role` = "pred", style = "display: contents")))))
     ),
 
     lc_p("Dla studenta, który uczył się 20 godzin i ma średnią 3.5, prawdziwy
@@ -299,7 +284,8 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.5", title = "Ilorazy szans",
       full_width = TRUE,
-      uiOutput("ch5_odds_ratios"),
+      # Tabela z modelu z Ryc. 5.4 (modules/figures.js, rycina s07_or).
+      s07_reads_figure("s07_or", tags$div(`data-role` = "table")),
       lc_caption("Używa modelu dopasowanego w Ryc. 5.4.")
     ),
 
@@ -337,11 +323,11 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.6", title = "Próg klasyfikacji i macierz pomyłek",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch5_threshold", "Próg decyzji", 0.1, 0.9, 0.5, 0.05),
-        lc_readouts(uiOutput("ch5_threshold_info"))
-      ),
-      lc_plot("ch5_threshold_plot", max_height = "280px"),
+      # Macierz pomyłek dla progu (modules/figures.js, rycina s07_threshold).
+      lc_sf_figure("s07_threshold",
+        control = lc_sf_slider("ch5_threshold", "Próg decyzji", 0.1, 0.9, 0.5, 0.05),
+        toolbar = lc_readouts(tags$div(`data-role` = "stats", style = "display: contents")),
+        ratio = "2.4/1", max_height = "280px"),
       lc_caption("Używa modelu dopasowanego w Ryc. 5.4.")
     ),
 
@@ -456,396 +442,3 @@ ch5_ui <- list(
     )
   )
 )
-
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch5_server <- function(input, output, session) {
-
-  ch5_fmt <- function(x, digits = 3) {
-    ifelse(is.na(x), "", formatC(x, digits = digits, format = "f"))
-  }
-
-  ch5_p <- function(x) {
-    ifelse(is.na(x), "", ifelse(x < 0.001, "< 0.001", ch5_fmt(x, 3)))
-  }
-
-  ch5_cas_data <- reactive({
-    df <- .cas_data
-    y_cut <- input$ch5_cas_y_cut
-    if (is.null(y_cut)) y_cut <- median(df$read, na.rm = TRUE)
-    df$zdal_read <- as.integer(df$read >= y_cut)
-    df
-  })
-
-  ch5_cas_model <- reactive({
-    glm(zdal_read ~ income + lunch + english,
-        data = ch5_cas_data(), family = binomial)
-  })
-
-  output$ch5_cas_threshold_note <- renderUI({
-    df <- ch5_cas_data()
-    lc_caption(
-      "Y = 1 („zdał”) oznacza wynik czytania od ",
-      ch5_fmt(input$ch5_cas_y_cut, 0),
-      " pkt: ",
-      sum(df$zdal_read),
-      " z ",
-      nrow(df),
-      " okręgów.",
-      tone = "ok"
-    )
-  })
-
-  zoom_plot_server("ch5_cas_continuous_plot", reactive({
-    df <- ch5_cas_data()
-
-    ggplot(df, aes(income, read, color = factor(zdal_read))) +
-      geom_point(alpha = 0.62, size = 2) +
-      geom_hline(yintercept = input$ch5_cas_y_cut,
-                 color = upwr_accent, linewidth = 1.05, linetype = "dashed") +
-      annotate(
-        "label",
-        x = min(df$income, na.rm = TRUE),
-        y = input$ch5_cas_y_cut,
-        hjust = 0,
-        vjust = -0.45,
-        label = paste0("próg zaliczenia: ", input$ch5_cas_y_cut, " pkt"),
-        color = upwr_accent,
-        fill = "white",
-        linewidth = 0
-      ) +
-      scale_color_manual(
-        values = c("0" = unname(upwr_cat["grafit"]), "1" = unname(upwr_cat["szalwia"])),
-        labels = c("0" = "nie zdał", "1" = "zdał"),
-        name = "Klasa"
-      ) +
-      labs(
-        x = "Dochód okręgu (tys. USD)",
-        y = "Wynik z czytania"
-      ) +
-      theme_upwr()
-  }))
-
-  zoom_plot_server("ch5_cas_logit_plot", reactive({
-    df <- ch5_cas_data()
-    mod <- ch5_cas_model()
-    df$prob <- fitted(mod)
-
-    ggplot(df, aes(income, prob, color = factor(zdal_read))) +
-      geom_point(alpha = 0.7) +
-      scale_color_manual(
-        values = c("0" = unname(upwr_cat["grafit"]), "1" = unname(upwr_cat["szalwia"])),
-        labels = c("0" = "nie zdał", "1" = "zdał"),
-        name = "Klasa"
-      ) +
-      labs(x = "Dochód okręgu (tys. USD)", y = "Prawdopodobieństwo zdania") +
-      theme_upwr()
-  }))
-
-  output$ch5_cas_model_table <- renderUI({
-    tb <- broom::tidy(ch5_cas_model(), exponentiate = TRUE, conf.int = TRUE)
-    labels <- c(
-      "(Intercept)" = "Stała (szanse wyjściowe, nie OR)",
-      "income" = "Dochód okręgu (tys. USD)",
-      "lunch" = "Uczniowie z dotacją do obiadu (%)",
-      "english" = "Angielski jako drugi język (%)"
-    )
-    df <- data.frame(
-      term = ifelse(!is.na(labels[tb$term]), unname(labels[tb$term]), tb$term),
-      estimate = tb$estimate,
-      se = tb$std.error,
-      p = lc_pval(tb$p.value),
-      sig = ifelse(tb$p.value < 0.05, "tak", "nie")
-    )
-
-    lc_table_split(df,
-      cols = list(
-        lc_col("term", "Zmienna", "row"),
-        lc_col("estimate", "Iloraz szans (OR)", digits = 3),
-        lc_col("se", "Błąd stand.", digits = 3),
-        lc_col("p", "p"),
-        lc_col("sig", "p < 0.05?", "text")
-      ),
-      groups = list(c("estimate", "se"), c("p", "sig")),
-      label = "Model logistyczny: ilorazy szans"
-    )
-  })
-
-  output$ch5_cas_model_metrics <- renderUI({
-    model <- ch5_cas_model()
-    p_hat <- fitted(model)
-    y <- model$y
-    rmse <- sqrt(mean((y - p_hat)^2))
-
-    tagList(
-      lc_readout("AIC", ch5_fmt(AIC(model), 1), color = unname(upwr_cat["wrzos"])),
-      lc_readout("BIC", ch5_fmt(BIC(model), 1), color = upwr_secondary),
-      lc_readout("RMSE prawdop.", ch5_fmt(rmse, 3), color = unname(upwr_cat["bursztyn"]))
-    )
-  })
-
-  # --- Widget: Liniowy vs logistyczny (przeniesiony z ch4) ---
-  ch5_lin_log_data <- reactive({
-    x <- seq(0, 40, length.out = 180)
-    p <- 1 / (1 + exp(-(-7 + 0.35 * x)))
-    u <- ((seq_along(x) * 37) %% 100) / 100
-    y <- as.integer(u < p)
-    y_jitter <- ifelse(y == 1, 1, 0) + sin(seq_along(x) * 1.7) * 0.025
-
-    data.frame(
-      godziny_nauki = x,
-      zdal_num = y,
-      zdal_plot = y_jitter,
-      zdal = factor(y, levels = c(0, 1), labels = c("Nie", "Tak"))
-    )
-  })
-
-  ch5_lin_log_fits <- reactive({
-    df <- ch5_lin_log_data()
-    list(lin = lm(zdal_num ~ godziny_nauki, data = df),
-         log = glm(zdal_num ~ godziny_nauki, data = df, family = binomial))
-  })
-
-  zoom_plot_server("ch5_lin_log_plot", reactive({
-    df <- ch5_lin_log_data()
-    f <- ch5_lin_log_fits()
-    x0 <- input$ch5_lin_log_x
-    req(!is.null(x0))
-    grid <- data.frame(godziny_nauki = seq(0, 40, length.out = 300))
-    grid$lin <- predict(f$lin, grid)
-    grid$log <- predict(f$log, grid, type = "response")
-    nd <- data.frame(godziny_nauki = x0)
-
-    ggplot(df, aes(godziny_nauki)) +
-      geom_hline(yintercept = c(0, 1), linetype = "dotted", colour = upwr_rule) +
-      geom_point(aes(y = zdal_plot), alpha = 0.34, colour = upwr_secondary, size = 1.6) +
-      geom_line(data = grid, aes(y = lin), colour = unname(upwr_cat["niebo"]),
-                linewidth = 1, linetype = "dashed") +
-      geom_line(data = grid, aes(y = log), colour = unname(upwr_cat["wrzos"]),
-                linewidth = 1.2) +
-      geom_vline(xintercept = x0, colour = upwr_reference) +
-      annotate("point", x = x0, y = predict(f$lin, nd), size = 3.6, shape = 21,
-               stroke = 1.2, fill = unname(upwr_cat["niebo"]), colour = "white") +
-      annotate("point", x = x0, y = predict(f$log, nd, type = "response"),
-               size = 3.6, shape = 21, stroke = 1.2,
-               fill = unname(upwr_cat["wrzos"]), colour = "white") +
-      labs(x = "Godziny nauki", y = "P(zdanie)") +
-      coord_cartesian(ylim = c(-0.25, 1.25))
-  }))
-
-  # Odczyty z kwadracikami koloru pełnią rolę legendy linii.
-  output$ch5_lin_log_stats <- renderUI({
-    f <- ch5_lin_log_fits()
-    x0 <- input$ch5_lin_log_x
-    req(!is.null(x0))
-    nd <- data.frame(godziny_nauki = x0)
-    outside <- mean(fitted(f$lin) < 0 | fitted(f$lin) > 1)
-    tagList(
-      lc_readout("Prosta", formatC(predict(f$lin, nd), format = "f", digits = 2),
-                 color = unname(upwr_cat["niebo"]), swatch = TRUE),
-      lc_readout("Krzywa logistyczna",
-                 formatC(predict(f$log, nd, type = "response"), format = "f", digits = 2),
-                 color = unname(upwr_cat["wrzos"]), swatch = TRUE),
-      lc_readout("Prosta poza [0, 1]",
-                 paste0(formatC(outside * 100, format = "f", digits = 1), "%"),
-                 color = unname(upwr_cat["terakota"]))
-    )
-  })
-
-  # --- Widget 1: Sigmoida ---
-  observeEvent(input$ch5_preset_steep, {
-    updateSliderInput(session, "ch5_b0", value = -5)
-    updateSliderInput(session, "ch5_b1", value = 0.5)
-  })
-  observeEvent(input$ch5_preset_flat, {
-    updateSliderInput(session, "ch5_b0", value = -1)
-    updateSliderInput(session, "ch5_b1", value = 0.05)
-  })
-  observeEvent(input$ch5_preset_neg, {
-    updateSliderInput(session, "ch5_b0", value = 5)
-    updateSliderInput(session, "ch5_b1", value = -0.3)
-  })
-
-  zoom_plot_server("ch5_sigmoid_plot", reactive({
-    b0 <- input$ch5_b0
-    b1 <- input$ch5_b1
-    x <- seq(-5, 45, length.out = 500)
-    p <- 1 / (1 + exp(-(b0 + b1 * x)))
-
-    ggplot(data.frame(x = x, p = p), aes(x = x, y = p)) +
-      geom_line(color = unname(upwr_cat["wrzos"]), linewidth = 1.5) +
-      geom_hline(yintercept = 0.5, linetype = "dashed", color = upwr_secondary, alpha = 0.5) +
-      labs(
-           x = "X", y = "P(Y = 1)") +
-      ylim(0, 1) +
-      theme_upwr()
-  }))
-
-  # --- Widget 2: Model logistyczny ---
-  ch5_data <- reactiveVal(NULL)
-  ch5_model <- reactiveVal(NULL)
-
-  observeEvent(input$ch5_fit, {
-    df <- generate_logistic_data(input$ch5_n)
-    ch5_data(df)
-    model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
-                 data = df, family = binomial)
-    ch5_model(model)
-  })
-
-  zoom_plot_server("ch5_logit_plot", reactive({
-    df <- ch5_data()
-    model <- ch5_model()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Dopasuj model”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      pred_var <- input$ch5_predictor
-      pred_label <- if (pred_var == "godziny_nauki") "Godziny nauki" else "Średnia ocen"
-
-      # Predykcja dla wykresu (trzymając drugi predyktor na średniej)
-      other_var <- setdiff(c("godziny_nauki", "srednia_ocen"), pred_var)
-      other_mean <- mean(df[[other_var]])
-
-      x_seq <- seq(min(df[[pred_var]]), max(df[[pred_var]]), length.out = 200)
-      newdata <- data.frame(x_seq, other_mean)
-      names(newdata) <- c(pred_var, other_var)
-      newdata$pred_prob <- predict(model, newdata, type = "response")
-
-      ggplot() +
-        geom_jitter(data = df, aes(x = .data[[pred_var]], y = .data[["zdal_num"]]),
-                    height = 0.03, alpha = 0.3, color = upwr_secondary) +
-        geom_line(data = newdata, aes(x = .data[[pred_var]], y = .data[["pred_prob"]]),
-                  color = unname(upwr_cat["wrzos"]), linewidth = 1.5) +
-        geom_hline(yintercept = 0.5, linetype = "dashed", color = unname(upwr_cat["bursztyn"])) +
-        labs(
-             x = pred_label, y = "P(zdanie egzaminu)") +
-        ylim(-0.05, 1.05) +
-        theme_upwr()
-    }
-  }))
-
-  output$ch5_model_summary <- renderUI({
-    model <- ch5_model()
-    if (is.null(model)) return(NULL)
-
-    g <- broom::glance(model)
-    df <- ch5_data()
-    pred_class <- ifelse(predict(model, type = "response") >= 0.5, 1, 0)
-    accuracy <- mean(pred_class == df$zdal_num) * 100
-
-    tagList(
-      lc_readout("AIC", round(g$AIC, 1), color = unname(upwr_cat["wrzos"])),
-      lc_readout("BIC", round(g$BIC, 1), color = upwr_secondary),
-      lc_readout("Dokładność", paste0(round(accuracy, 1), "%"), color = unname(upwr_cat["szalwia"]))
-    )
-  })
-
-  output$ch5_prediction <- renderUI({
-    model <- ch5_model()
-    if (is.null(model)) return(NULL)
-
-    newdata <- data.frame(
-      godziny_nauki = input$ch5_pred_hours,
-      srednia_ocen = input$ch5_pred_gpa
-    )
-    prob <- predict(model, newdata, type = "response")
-
-    color <- if (prob >= 0.5) unname(upwr_cat["szalwia"]) else unname(upwr_cat["terakota"])
-    decision <- if (prob >= 0.5) "Prawdopodobnie zda" else "Raczej nie zda"
-
-    tagList(
-      lc_readout("P(zdanie)", round(prob, 3), color = color),
-      lc_readout("Prognoza", decision, color = color)
-    )
-  })
-
-  # --- Widget 3: Odds ratios ---
-  output$ch5_odds_ratios <- renderUI({
-    model <- ch5_model()
-    if (is.null(model)) {
-      return(lc_caption(
-               "Najpierw dopasuj model."
-             ))
-    }
-
-    coefs <- broom::tidy(model, conf.int = TRUE)
-    coefs$or <- exp(coefs$estimate)
-    coefs$or_low <- exp(coefs$conf.low)
-    coefs$or_high <- exp(coefs$conf.high)
-
-    labels_pl <- c(
-      "(Intercept)" = "Wyraz wolny",
-      "godziny_nauki" = "Godziny nauki (+1h)",
-      "srednia_ocen" = "Średnia ocen (+1 pkt)"
-    )
-
-    coefs$term_pl <- ifelse(coefs$term %in% names(labels_pl),
-                             labels_pl[coefs$term], coefs$term)
-
-
-    tab <- as.data.frame(coefs)[-1, ]  # bez wyrazu wolnego
-    tab$ci <- paste0("[", round(tab$or_low, 3), " ; ", round(tab$or_high, 3), "]")
-    tab$p_txt <- lc_pval(tab$p.value)
-    lc_table(tab,
-      cols = list(
-        lc_col("term_pl", "Zmienna", "row"),
-        lc_col("estimate", "β", digits = 3),
-        lc_col("or", "OR", digits = 3),
-        lc_col("ci", "95% CI (OR)", "text"),
-        lc_col("p_txt", "p")
-      )
-    )
-  })
-
-  # --- Widget: próg klasyfikacji ---
-  zoom_plot_server("ch5_threshold_plot", reactive({
-    model <- ch5_model()
-    df <- ch5_data()
-    if (is.null(model) || is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Najpierw dopasuj model w Ryc. 5.4",
-                 size = 5.5, color = upwr_reference) +
-        theme_void()
-    } else {
-      probs <- predict(model, type = "response")
-      pred <- ifelse(probs >= input$ch5_threshold, 1, 0)
-      cm <- as.data.frame(table(
-        Rzeczywiste = factor(df$zdal_num, levels = c(0, 1), labels = c("Nie", "Tak")),
-        Predykcja = factor(pred, levels = c(0, 1), labels = c("Nie", "Tak"))
-      ))
-      ggplot(cm, aes(x = Predykcja, y = Rzeczywiste, fill = Freq)) +
-        geom_tile(color = "white", linewidth = 1) +
-        geom_text(aes(label = Freq), size = 7, fontface = "bold", color = "white") +
-        scale_fill_gradient(low = unname(upwr_cat["niebo"]), high = upwr_secondary) +
-        labs(x = "Predykcja modelu", y = "Rzeczywistość") +
-        theme_upwr() +
-        theme(legend.position = "none")
-    }
-  }))
-
-  output$ch5_threshold_info <- renderUI({
-    model <- ch5_model()
-    df <- ch5_data()
-    if (is.null(model) || is.null(df)) return(NULL)
-    probs <- predict(model, type = "response")
-    pred <- ifelse(probs >= input$ch5_threshold, 1, 0)
-    tp <- sum(pred == 1 & df$zdal_num == 1)
-    tn <- sum(pred == 0 & df$zdal_num == 0)
-    fp <- sum(pred == 1 & df$zdal_num == 0)
-    fn <- sum(pred == 0 & df$zdal_num == 1)
-    accuracy <- (tp + tn) / length(pred)
-    sensitivity <- ifelse(tp + fn == 0, NA, tp / (tp + fn))
-    specificity <- ifelse(tn + fp == 0, NA, tn / (tn + fp))
-    tagList(
-      lc_readout("Dokładność", paste0(round(accuracy * 100, 1), "%"), color = unname(upwr_cat["szalwia"])),
-      lc_readout("Czułość (wykrywa Tak)", paste0(round(sensitivity * 100, 1), "%"), color = unname(upwr_cat["niebo"])),
-      lc_readout("Swoistość (wykrywa Nie)", paste0(round(specificity * 100, 1), "%"), color = unname(upwr_cat["bursztyn"]))
-    )
-  })
-}

@@ -32,7 +32,18 @@ ch2_ui <- list(
         steps = c("Zatrzymani", "Mandat czy pouczenie", "Do tabeli", "Na sto osób"),
         config = list(kind = "stop", sex = as.character(stop_data$plec),
                       fine = stop_data$mandat,
-                      aria = "Kierowcy zatrzymani przez patrol trafiają do tabeli płeć × wynik kontroli, a potem każdy wiersz staje się paskiem 100%"))
+                      aria = "Kierowcy zatrzymani przez patrol trafiają do tabeli płeć × wynik kontroli, a potem każdy wiersz staje się paskiem 100%"),
+        texts = list(
+          tagList("Patrol drogówki przez jeden dzień zatrzymuje kierowców do kontroli.
+            Zatrzymano 22 kobiety i 48 mężczyzn."),
+          tagList("Każda kontrola kończy się mandatem albo pouczeniem. Mandat dostało
+            19 osób, pouczenie 51."),
+          tagList("Kierowcy trafiają do czterech przegródek: płeć w wierszach, wynik
+            kontroli w kolumnach. Mężczyźni mają prawie cztery razy więcej mandatów
+            niż kobiety. Ale też ponad dwa razy więcej ich zatrzymano."),
+          tagList("Każdy wiersz staje się paskiem długości 100%. Mandat dostało 18% kobiet
+            i 31% mężczyzn: różnica jest, ale dużo mniejsza, niż sugerowały liczby.")
+        ))
     ),
 
     lc_p("Tabela z kadru 3 to ", gloss("tabela kontyngencji", "tabela krzyżowa"),
@@ -147,26 +158,3 @@ ch2_ui <- list(
     )
   )
 )
-
-
-# --------------------------------------------------------------------------
-# Chapter 2 Server
-# --------------------------------------------------------------------------
-
-ch2_server <- function(input, output, session) {
-
-  scene_texts(input, output, "ch2_stop", list(
-    tagList("Patrol drogówki przez jeden dzień zatrzymuje kierowców do kontroli.
-      Zatrzymano 22 kobiety i 48 mężczyzn."),
-    tagList("Każda kontrola kończy się mandatem albo pouczeniem. Mandat dostało
-      19 osób, pouczenie 51."),
-    tagList("Kierowcy trafiają do czterech przegródek: płeć w wierszach, wynik
-      kontroli w kolumnach. Mężczyźni mają prawie cztery razy więcej mandatów
-      niż kobiety. Ale też ponad dwa razy więcej ich zatrzymano."),
-    tagList("Każdy wiersz staje się paskiem długości 100%. Mandat dostało 18% kobiet
-      i 31% mężczyzn: różnica jest, ale dużo mniejsza, niż sugerowały liczby.")
-  ))
-
-  # Tabela krzyżowa z ankiety (Ryc. 2.2) liczy się w przeglądarce:
-  # survey_charts.js, rycina „d02-xt”.
-}

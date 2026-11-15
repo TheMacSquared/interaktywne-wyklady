@@ -1,5 +1,74 @@
 # Tab 11: Kawiarnia — sprzedaż dzienna, braki danych + szereg czasowy
 
+# Pary (dzień t, dzień t + lag) w kolejności kalendarza; pomija pary z brakiem.
+# Usunięcie braków przed przesunięciem łączyłoby dni, które nie sąsiadują.
+cafe_lag_pairs <- function(x, lag = 1) {
+  n  <- length(x)
+  df <- data.frame(x = x[seq_len(n - lag)], y = x[(lag + 1):n])
+  df[stats::complete.cases(df), ]
+}
+
+# Wykresy i komentarze dawnego serwera, składane przy budowaniu strony.
+tab10_table_html <- function(view = NULL) {
+  dd_data_table(round_df(cafe_data), page_size = 10)
+}
+
+tab10_missing_gg <- function(view = NULL) {
+  miss_pct <- sapply(cafe_data[, c("kawy", "temperatura")], function(x) mean(is.na(x)) * 100)
+  df_miss  <- data.frame(variable = names(miss_pct), pct = miss_pct)
+  df_miss  <- df_miss[df_miss$pct > 0, ]
+
+  ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct)) +
+    geom_col(fill = data_primary) +
+    geom_text(aes(label = paste0(round(pct, 1), "%")),
+              vjust = -0.4, size = 5, fontface = "bold") +
+    scale_y_continuous(limits = c(0, 30)) +
+    labs(
+         x = NULL, y = "% braków") +
+    theme_upwr(base_size = 14)
+}
+
+tab10_lineplot_gg <- function(view = NULL) {
+  # Braki zostają w danych: linia przerywa się w dniu bez pomiaru, zamiast
+  # łączyć dni niesąsiadujące.
+  ggplot(cafe_data[order(cafe_data$dzien), ], aes(x = dzien, y = kawy)) +
+    geom_line(color = data_primary, alpha = 0.6, na.rm = TRUE) +
+    geom_point(color = data_primary, size = 1.2, alpha = 0.4, na.rm = TRUE) +
+    labs(x = "Numer dnia (= kolejność w roku akademickim)", y = "Liczba sprzedanych kaw") +
+    theme_upwr(base_size = 14)
+}
+
+tab10_lag_gg <- function(view = NULL) {
+  lag_df <- cafe_lag_pairs(cafe_data$kawy)
+
+  ggplot(lag_df, aes(x = x, y = y)) +
+    geom_point(alpha = 0.4, color = data_reference) +
+    geom_smooth(method = "lm", color = data_bad, se = TRUE) +
+    labs(
+         
+         x = "Kawy(t)", y = "Kawy(t+1)") +
+    theme_upwr(base_size = 14)
+}
+
+tab10_missing_info_html <- function(view = NULL) {
+  kawy_na <- sum(is.na(cafe_data$kawy))
+  temp_na <- sum(is.na(cafe_data$temperatura))
+  n_comp  <- sum(complete.cases(cafe_data[, c("kawy", "temperatura")]))
+  lc_status(
+    paste0("Brakujące wartości: kawy ", kawy_na, " (",
+           round(kawy_na / nrow(cafe_data) * 100, 1), "%), temperatura ", temp_na, " (",
+           round(temp_na / nrow(cafe_data) * 100, 1), "%). ",
+           "Kompletne dni: ", n_comp, " z ", nrow(cafe_data), ".")
+  )
+}
+
+tab10_autocorr_info_html <- function(view = NULL) {
+  lag_df <- cafe_lag_pairs(cafe_data$kawy)
+  r      <- cor(lag_df$x, lag_df$y)
+  lc_caption(paste0("Autokorelacja przy przesunięciu o jeden dzień: r = ", round(r, 3),
+                    " (", nrow(lag_df), " par sąsiednich dni z obiema wartościami)."))
+}
+
 ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content = tagList(
 
   lc_chapter_hero(
@@ -10,7 +79,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
               strukturę szeregu czasowego i naruszenie niezależności obserwacji."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch11-sec-01", "Opis"),
 
   lc_p("Kawiarnia na terenie kampusu zapisywała dzienną sprzedaż przez cały
     rok akademicki: 245 kolejnych dni od 1 października do 1 czerwca. Dla
@@ -33,7 +102,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch11-sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę na puste komórki i na to, czym jest
     jeden wiersz."),
@@ -41,7 +110,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
   figure_panel(
     label = "Ryc. 11.2",
     title = "Sprzedaż kawy dzień po dniu",
-    uiOutput("tab10_table")
+    tab10_table_html()
   ),
 
   lc_p("Każdy wiersz to jeden dzień. W tabeli 245 dni wygląda tak samo jak
@@ -49,15 +118,15 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     pomiarów. W kolumnie kaw co jakiś czas pojawia się kreska oznaczająca
     ", gloss("braki danych", "brak danych"), "."),
 
-  lc_h2("sec-03", "Braki danych"),
+  lc_h2("ch11-sec-03", "Braki danych"),
 
   lc_p("Wykres pokazuje odsetek brakujących wartości w obu zmiennych."),
 
   figure_panel(
     label = "Ryc. 11.3",
     title = "Odsetek braków w zmiennych",
-    lc_plot("tab10_missing", max_height = "300px"),
-    uiOutput("tab10_missing_info")
+    lc_sf_ggplot(tab10_missing_gg(), aria = "Odsetek braków w zmiennych kawy i temperatura.", ratio = "2.2/1", max_height = "300px"),
+    tab10_missing_info_html()
   ),
 
   lc_p("Liczba kaw nie jest znana dla 32 dni (13.1%), temperatura dla 7 dni
@@ -69,7 +138,7 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     zamknięcia ruch zwykle jest nietypowy. To problem braków danych z katalogu
     z rozdziału 1, i to taki, którego nie wolno z góry uznać za przypadkowy."),
 
-  lc_h2("sec-04", "Dane w kolejności dni"),
+  lc_h2("ch11-sec-04", "Dane w kolejności dni"),
 
   lc_p("Tabela nie pokazuje, że wiersze mają ustaloną kolejność. Wykres
     sprzedaży dzień po dniu ujawnia, czy kolejne obserwacje są do siebie
@@ -79,8 +148,8 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     label = "Ryc. 11.4",
     title = "Sprzedaż w kolejnych dniach roku akademickiego",
     lc_action("tab10_reveal", "Pokaż dane w kolejności", variant = "solid"),
-    conditionalPanel("input.tab10_reveal > 0",
-      lc_plot("tab10_lineplot", ratio = "1.8/1", max_height = "350px"),
+    lc_reveal("tab10_reveal",
+      lc_sf_ggplot(tab10_lineplot_gg(), aria = "Sprzedaż kaw w kolejnych dniach roku akademickiego.", ratio = "1.8/1", max_height = "350px"),
       lc_caption("Sprzedaż powtarza tygodniowy rytm: wysoka w dni robocze,
                   niska w weekendy.")
     )
@@ -109,12 +178,12 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     colors = c("accent", "niebo", "indygo")
   ),
 
-  conditionalPanel("input.tab10_reveal > 0",
+  lc_reveal("tab10_reveal",
     figure_panel(
       label = "Ryc. 11.5",
       title = "Sprzedaż danego dnia i dnia następnego",
-      lc_plot("tab10_lag", max_height = "300px"),
-      uiOutput("tab10_autocorr_info")
+      lc_sf_ggplot(suppressMessages(tab10_lag_gg()), aria = "Sprzedaż danego dnia a sprzedaż dnia następnego z prostą regresji.", ratio = "2.2/1", max_height = "300px"),
+      tab10_autocorr_info_html()
     )
   ),
 
@@ -145,10 +214,22 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
                     kawy_sd   = round(sd(cafe_data$kawy, na.rm = TRUE)),
                     temp_mean = round(mean(cafe_data$temperatura, na.rm = TRUE), 1),
                     temp_sd   = round(sd(cafe_data$temperatura, na.rm = TRUE), 1),
-                    aria = "Barista przez 60 dni notuje sprzedaż kaw i temperaturę; wykres rozrzutu z korelacją i wartością p; histogram korelacji z wielu sezonów i odsetek fałszywych alarmów obok poziomu 5%"))
+                    aria = "Barista przez 60 dni notuje sprzedaż kaw i temperaturę; wykres rozrzutu z korelacją i wartością p; histogram korelacji z wielu sezonów i odsetek fałszywych alarmów obok poziomu 5%"),
+      texts = list(
+      tagList("Barista przez 60 dni notuje sprzedaż kaw i temperaturę. Zbierz sezon:
+      obie linie pływają, kilka chłodnych dni z rzędu, potem kilka cieplejszych."),
+      tagList("Czy temperatura wiąże się ze sprzedażą? Lampka zapala się, gdy test
+      korelacji daje p < 0.05. Zbierz kilka sezonów i licz zapalenia."),
+      tagList("Każde r trafia do histogramu, sezony z zapaloną lampką mają jej kolor.
+      Dołóż 100 i 1000 sezonów. Bez związku test obiecuje 5 istotnych na 100."),
+      tagList("Kawy i temperatura były losowane osobno, więc prawdziwe r = 0. Przy silnym
+      podobieństwie dni istotny jest mniej więcej co drugi sezon. Przełącz je na „brak”:
+      odsetek wraca do około 5%. 60 kolejnych dni to nie 60 niezależnych pomiarów.")
+      )
+    )
   ),
 
-  lc_h2("sec-05", "Werdykt"),
+  lc_h2("ch11-sec-05", "Werdykt"),
 
   lc_p("Zbiór ma dwa problemy. Braki danych dałoby się opanować, gdybyśmy
     wiedzieli, które dni były zamknięciami, a które awariami. Drugi problem
@@ -199,87 +280,3 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     i czy jednostki są od siebie niezależne, a dopiero potem cokolwiek
     liczyć.")
 ))
-
-# Pary (dzień t, dzień t + lag) w kolejności kalendarza; pomija pary z brakiem.
-# Usunięcie braków przed przesunięciem łączyłoby dni, które nie sąsiadują.
-cafe_lag_pairs <- function(x, lag = 1) {
-  n  <- length(x)
-  df <- data.frame(x = x[seq_len(n - lag)], y = x[(lag + 1):n])
-  df[stats::complete.cases(df), ]
-}
-
-ch11_server <- function(input, output, session) {
-
-  scene_texts(input, output, "ch11_sezon", list(
-    tagList("Barista przez 60 dni notuje sprzedaż kaw i temperaturę. Zbierz sezon:
-      obie linie pływają, kilka chłodnych dni z rzędu, potem kilka cieplejszych."),
-    tagList("Czy temperatura wiąże się ze sprzedażą? Lampka zapala się, gdy test
-      korelacji daje p < 0.05. Zbierz kilka sezonów i licz zapalenia."),
-    tagList("Każde r trafia do histogramu, sezony z zapaloną lampką mają jej kolor.
-      Dołóż 100 i 1000 sezonów. Bez związku test obiecuje 5 istotnych na 100."),
-    tagList("Kawy i temperatura były losowane osobno, więc prawdziwe r = 0. Przy silnym
-      podobieństwie dni istotny jest mniej więcej co drugi sezon. Przełącz je na „brak”:
-      odsetek wraca do około 5%. 60 kolejnych dni to nie 60 niezależnych pomiarów.")
-  ))
-
-  output$tab10_table <- renderUI({
-    dd_data_table(round_df(cafe_data), page_size = 10, page = input$tab10_table_page, page_input = "tab10_table_page")
-  })
-
-  zoom_plot_server("tab10_missing", reactive({
-    miss_pct <- sapply(cafe_data[, c("kawy", "temperatura")], function(x) mean(is.na(x)) * 100)
-    df_miss  <- data.frame(variable = names(miss_pct), pct = miss_pct)
-    df_miss  <- df_miss[df_miss$pct > 0, ]
-
-    ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct)) +
-      geom_col(fill = data_primary) +
-      geom_text(aes(label = paste0(round(pct, 1), "%")),
-                vjust = -0.4, size = 5, fontface = "bold") +
-      scale_y_continuous(limits = c(0, 30)) +
-      labs(
-           x = NULL, y = "% braków") +
-      theme_upwr(base_size = 14)
-  }))
-
-  output$tab10_missing_info <- renderUI({
-    kawy_na <- sum(is.na(cafe_data$kawy))
-    temp_na <- sum(is.na(cafe_data$temperatura))
-    n_comp  <- sum(complete.cases(cafe_data[, c("kawy", "temperatura")]))
-    lc_status(
-      paste0("Brakujące wartości: kawy ", kawy_na, " (",
-             round(kawy_na / nrow(cafe_data) * 100, 1), "%), temperatura ", temp_na, " (",
-             round(temp_na / nrow(cafe_data) * 100, 1), "%). ",
-             "Kompletne dni: ", n_comp, " z ", nrow(cafe_data), ".")
-    )
-  })
-
-  zoom_plot_server("tab10_lineplot", reactive({
-    # Braki zostają w danych: linia przerywa się w dniu bez pomiaru, zamiast
-    # łączyć dni niesąsiadujące.
-    ggplot(cafe_data[order(cafe_data$dzien), ], aes(x = dzien, y = kawy)) +
-      geom_line(color = data_primary, alpha = 0.6, na.rm = TRUE) +
-      geom_point(color = data_primary, size = 1.2, alpha = 0.4, na.rm = TRUE) +
-      labs(x = "Numer dnia (= kolejność w roku akademickim)", y = "Liczba sprzedanych kaw") +
-      theme_upwr(base_size = 14)
-  }))
-
-  zoom_plot_server("tab10_lag", reactive({
-    lag_df <- cafe_lag_pairs(cafe_data$kawy)
-
-    ggplot(lag_df, aes(x = x, y = y)) +
-      geom_point(alpha = 0.4, color = data_reference) +
-      geom_smooth(method = "lm", color = data_bad, se = TRUE) +
-      labs(
-           
-           x = "Kawy(t)", y = "Kawy(t+1)") +
-      theme_upwr(base_size = 14)
-  }))
-
-  output$tab10_autocorr_info <- renderUI({
-    lag_df <- cafe_lag_pairs(cafe_data$kawy)
-    r      <- cor(lag_df$x, lag_df$y)
-    lc_caption(paste0("Autokorelacja przy przesunięciu o jeden dzień: r = ", round(r, 3),
-                      " (", nrow(lag_df), " par sąsiednich dni z obiema wartościami)."))
-  })
-
-}

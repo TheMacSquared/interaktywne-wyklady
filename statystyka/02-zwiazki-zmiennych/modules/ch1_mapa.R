@@ -84,5 +84,3 @@ ch1_ui <- list(
     )
   )
 )
-
-ch1_server <- function(input, output, session) {}

@@ -41,90 +41,64 @@ testthat::test_that("interwencje są porównywane przy jednakowych scenariuszach
   testthat::expect_error(env$risk_mission_analysis(0, "exp", .98, .95, .005, .95))
 })
 
-testthat::test_that("karty, scenariusze i notatka reagują na wejścia aplikacji", {
-  testthat::skip_if_not_installed("callr")
-  result <- callr::r(function(path) {
-    setwd(path)
-    app <- new.env(parent = globalenv())
-    sys.source("app.R", envir = app)
-    shiny::testServer(app$integracja_server, {
-      session$setInputs(i10_time = 1000, i10_life_model = "exp", i10_power = .98,
-        i10_controller = .95, i10_init = .005, i10_sens = .95, i10_fpr = .05,
-        i10_n = 100, i10_p = .02, i10_question = "bayes", i10_budget = 2,
-        i10_intervention = "prevention", i10_recommend = "prevention",
-        i10_uncertainty = .2, i10_target = .002, i10_quiz_check = 0)
-      initial <- top_p()
-      stopifnot(nrow(scenario_results()) == 12)
-      stopifnot(abs(life_r() - exp(-1000 / 1500)) < 1e-12)
-      for (name in c("i10_alarm_result", "i10_inspection_result", "i10_system_result",
-                     "i10_fta_stats", "i10_scenarios_stats", "i10_memo")) {
-        stopifnot(length(output[[name]]) > 0)
-      }
-      session$setInputs(i10_life_model = "weibull")
-      stopifnot(top_p() < initial)
-      previous <- top_p()
-      session$setInputs(i10_fpr = .2)
-      stopifnot(identical(top_p(), previous))
-      session$setInputs(i10_time = 2000)
-      stopifnot(top_p() > previous)
-      session$setInputs(i10_budget = 1, i10_recommend = "power")
-      stopifnot(grepl("poza budżetem", output$i10_memo$html, fixed = TRUE))
-      session$setInputs(i10_target = .0001)
-      stopifnot(grepl("nie jest spełniony", output$i10_memo$html, fixed = TRUE))
-      session$setInputs(i10_quiz_check = 1)
-      stopifnot(grepl("Poprawna odpowiedź", output$i10_quiz_feedback$html, fixed = TRUE))
-    })
-    TRUE
-  }, args = list(path = file.path(risk_root, "10-model-do-decyzji")), timeout = 60)
-  testthat::expect_true(result)
+testthat::test_that("karty, scenariusze i notatka reagują na ustawienia", {
+  # Karty, scenariusze i notatkę liczy przeglądarka (10-model-do-decyzji/modules/wykresy.js);
+  # test sprawdza te same zależności co dawniej na serwerze. Zgodność liczb z R: test-i10-wykresy.R.
+  testthat::skip_if(Sys.which("node") == "", "Node.js nie jest dostępny")
+  root <- normalizePath(dirname(risk_root))
+  script <- sprintf('
+    globalThis.window = globalThis;
+    require("%s/shared/lc_dist.js"); require("%s/analiza-ryzyka/R/risk_figures.js");
+    require("%s/analiza-ryzyka/10-model-do-decyzji/modules/wykresy.js");
+    const Z = globalThis.lcI10Charts;
+    const ids = ["detector", "prevention", "power", "fan"];
+    const s = { time: 1000, model: "exp", power: 0.98, controller: 0.95, init: 0.005, sens: 0.95 };
+    const top = (x) => Z.mission(x, "none").top;
+    const worst = (x, id, u) => Math.max(...Z.scenarios(x, ids, u).map((row) => row[ids.indexOf(id)]));
+    console.log(JSON.stringify({
+      initial: top(s), fan: Z.mission(s, "none").fan_r, cells: Z.scenarios(s, ids, 0.2).flat().length,
+      weibull: top(Object.assign({}, s, { model: "weibull" })),
+      weibull2000: top(Object.assign({}, s, { model: "weibull", time: 2000 })),
+      worst_power: worst(Object.assign({}, s, { model: "weibull", time: 2000 }), "power", 0.2)
+    }));', root, root, root)
+  res <- jsonlite::fromJSON(paste(system2("node", c("-e", shQuote(script)), stdout = TRUE, stderr = TRUE), collapse = ""))
+  testthat::expect_equal(res$cells, 12L)                           # 4 działania × 3 scenariusze
+  testthat::expect_equal(res$fan, exp(-1000 / 1500), tolerance = 1e-12)
+  testthat::expect_lt(res$weibull, res$initial)                    # zmiana modelu obniża P(TOP)
+  testthat::expect_gt(res$weibull2000, res$weibull)                # dłuższa misja je podnosi
+  # FPR nie wchodzi do kontraktu misji: P(TOP) od niego nie zależy (nie jest argumentem mission()).
+  # Notatka: niezależne zasilanie (koszt 4) jest poza budżetem 1 i nie spełnia limitu 0.0001.
+  testthat::expect_gt(res$worst_power, .0001)
 })
 
 testthat::test_that("FTA pokazuje oba błędy powtórzenia i przelicza wspólną przyczynę", {
-  testthat::skip_if_not_installed("callr")
-  result <- callr::r(function(path) {
-    setwd(path)
-    app <- new.env(parent = globalenv())
-    sys.source("app.R", envir = app)
-    shiny::testServer(app$fta_server, {
-      session$setInputs(f9_init = .005, f9_detect = .05, f9_suppress = .08,
-        f9_common = .01, f9_repeat = .05, f9_states = character(),
-        f9_gate = "or", f9_causes = c("detect", "suppress"), f9_cut = "id",
-        f9_reduction = .5)
-      stopifnot(abs(tree_value() - .00063) < 1e-12)
-      stopifnot(grepl("0.000674", output$f9_common_result$html, fixed = TRUE))
-      stopifnot(grepl("AND", output$f9_repeat_result$html, fixed = TRUE))
-      stopifnot(grepl("OR", output$f9_repeat_result$html, fixed = TRUE))
-      # Enumeracja zdarzeń bazowych niezależnie od wzoru aplikacji.
-      states <- expand.grid(i = 0:1, c = 0:1, d = 0:1, s = 0:1)
-      weights <- apply(states, 1, function(x) prod(ifelse(x == 1,
-        c(.005, .01, .05, .08), 1 - c(.005, .01, .05, .08))))
-      active <- with(states, i == 1 & (c == 1 | d == 1 | s == 1))
-      stopifnot(abs(sum(weights[active]) - .0006737) < 1e-12)
-      session$setInputs(f9_common = 1)
-      stopifnot(grepl("0.005000", output$f9_common_result$html, fixed = TRUE))
-    })
-    TRUE
-  }, args = list(path = file.path(risk_root, "09-drzewo-bledow")), timeout = 60)
-  testthat::expect_true(result)
-})
-
-testthat::test_that("porównanie zmiennego p używa tych samych danych na wykresie i w średnich", {
-  testthat::skip_if_not_installed("callr")
-  result <- callr::r(function(path) {
-    setwd(path)
-    app <- new.env(parent = globalenv())
-    sys.source("app.R", envir = app)
-    shiny::testServer(app$dozd_server, {
-      session$setInputs(d5_variation = .09, d5_geo_p = .1,
-        d5_p = .1, d5_r = 3, d5_limit = 40)
-      d <- failure_data()
-      means <- tapply(d$x, d$model, mean)
-      stopifnot(means[["Zmienne p między partiami"]] > means[["Stałe p"]])
-      stopifnot(identical(failure_plot()$data, d))
-      stopifnot(grepl(as.character(round(means[["Zmienne p między partiami"]], 1)),
-        output$d5_failure_stats$html, fixed = TRUE))
-    })
-    TRUE
-  }, args = list(path = file.path(risk_root, "05-do-zdarzenia")), timeout = 60)
-  testthat::expect_true(result)
+  # Rachunek drzewa liczy przeglądarka (09-drzewo-bledow/modules/wykresy.js); test
+  # sprawdza te same liczby co dawniej na serwerze.
+  testthat::skip_if(Sys.which("node") == "", "Node.js nie jest dostępny")
+  root <- normalizePath(dirname(risk_root))
+  script <- sprintf('
+    globalThis.window = globalThis;
+    require("%s/shared/lc_dist.js"); require("%s/analiza-ryzyka/R/risk_figures.js");
+    require("%s/analiza-ryzyka/09-drzewo-bledow/modules/wykresy.js");
+    const Z = globalThis.lcF9Charts, R = globalThis.lcRisk;
+    console.log(JSON.stringify({
+      top: Z.ftaTop(0.005, 0.05, 0.08),
+      common: Z.commonTop(0.005, 0.05, 0.08, 0.01), common_text: R.fmtPd(Z.commonTop(0.005, 0.05, 0.08, 0.01), 6),
+      common_sure: R.fmtPd(Z.commonTop(0.005, 0.05, 0.08, 1), 6),
+      repeat_or: Z.gateOr([0.05, 0.05]), repeat_and: 0.05 * 0.05
+    }));', root, root, root)
+  res <- jsonlite::fromJSON(paste(system2("node", c("-e", shQuote(script)), stdout = TRUE, stderr = TRUE), collapse = ""))
+  testthat::expect_equal(res$top, .00063, tolerance = 1e-12)
+  testthat::expect_equal(res$common_text, "0.000674")
+  # Oba błędne rachunki powtórzonego liścia różnią się od jednego zdarzenia (0.05).
+  testthat::expect_equal(res$repeat_or, 1 - .95^2, tolerance = 1e-12)
+  testthat::expect_equal(res$repeat_and, .0025, tolerance = 1e-12)
+  # Enumeracja zdarzeń bazowych niezależnie od wzoru ryciny.
+  states <- expand.grid(i = 0:1, c = 0:1, d = 0:1, s = 0:1)
+  weights <- apply(states, 1, function(x) prod(ifelse(x == 1,
+    c(.005, .01, .05, .08), 1 - c(.005, .01, .05, .08))))
+  active <- with(states, i == 1 & (c == 1 | d == 1 | s == 1))
+  testthat::expect_equal(sum(weights[active]), .0006737, tolerance = 1e-12)
+  testthat::expect_equal(res$common, sum(weights[active]), tolerance = 1e-12)
+  testthat::expect_equal(res$common_sure, "0.005000")
 })

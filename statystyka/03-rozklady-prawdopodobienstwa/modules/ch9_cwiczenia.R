@@ -7,43 +7,6 @@
 # UI
 # ============================================================================
 
-ch9_ui <- list(
-  id = "ch-cwiczenia", num = "08", title = "Ćwiczenia",
-  content = tagList(
-
-    lc_chapter_hero(
-      kicker = "Rozdział 08 · Rozkłady prawdopodobieństwa",
-      num    = "08",
-      title  = "Ćwiczenia.",
-      lead   = "Trzy bloki zadań — od obliczeń przez rozpoznawanie rozkładów
-                po analizę prawdziwych danych. Narzędzie: Jamovi (90 min)."
-    ),
-
-    lc_h2("ch9-cwiczenia", "Ćwiczenia: Rozkłady prawdopodobieństwa"),
-
-    tagList(
-      p(tags$b("Czas:"), " 90 minut | ", tags$b("Narzędzie:"), " Jamovi"),
-      p("Każde zadanie ma ", tags$b("ukryte rozwiązanie"),
-        " — kliknij przycisk, aby je zobaczyć.")
-    ),
-
-    figure_panel(label = "Ćwiczenie",
-      selectInput("ch9_kierunek", tags$b("Wybierz wariant dla kierunku:"),
-        choices = list(
-          "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
-          "Rolnictwo"                       = "rol",
-          "Technologia żywności"            = "zyw",
-          "Inżynieria danych satelitarnych i kosmicznych" = "sat"
-        ),
-        selected = "bhp",
-        width = "100%"
-      )
-    ),
-
-    uiOutput("ch9_content")
-  )
-)
-
 # ============================================================================
 # TRESC ZADAN — funkcje zwracajace tagList per kierunek
 # ============================================================================
@@ -910,31 +873,66 @@ source(file.path(app_dir, "modules", "ch9_sat.R"), local = TRUE)
 .ch9_solutions$sat <- .ch9_sat_solutions
 
 # ============================================================================
-# SERVER
+# WARIANTY W DOKUMENCIE (bez serwera)
 # ============================================================================
 
-ch9_server <- function(input, output, session) {
+.ch9_directions <- c("bhp", "rol", "zyw", "sat")
 
-  sol_ids <- c("sol1", "sol2", "sol3", "sol4", "sol5", "sol6", "sol7", "sol8", "sol9", "sol10", "sol_summary")
-
-  # Treść wariantu po zmianie kierunku.
-  observeEvent(input$ch9_kierunek, {
-    k <- input$ch9_kierunek
-    output$ch9_content <- renderUI({
-      switch(k,
+# Treść wariantu z rozwiązaniami wstawionymi w zwijane bloki (dawniej renderował
+# je serwer). Nagłówki sekcji dostają przyrostek kierunku, bo w dokumencie są
+# wszystkie warianty naraz.
+.ch9_static_content <- function(k) {
+  content <- switch(k,
         bhp = .ch9_content_bhp(),
         rol = .ch9_content_rol(),
         zyw = .ch9_content_zyw(),
         sat = .ch9_content_sat()
-      )
-    })
-  }, ignoreNULL = FALSE)
-
-  # Rozwiązania siedzą w lc_more(): Shiny renderuje je dopiero po rozwinięciu.
-  lapply(sol_ids, function(sid) {
-    output[[paste0("ch9_", sid)]] <- renderUI({
-      req(input$ch9_kierunek)
-      .ch9_solutions[[input$ch9_kierunek]][[sid]]
-    })
-  })
+  )
+  solutions <- .ch9_solutions[[k]]
+  lc_static_fill(content, heading_suffix = k,
+    fills = stats::setNames(solutions, paste0("ch9_", names(solutions))))
 }
+
+# ============================================================================
+# UI
+# ============================================================================
+
+ch9_ui <- list(
+  id = "ch-cwiczenia", num = "08", title = "Ćwiczenia",
+  content = tagList(
+
+    lc_chapter_hero(
+      kicker = "Rozdział 08 · Rozkłady prawdopodobieństwa",
+      num    = "08",
+      title  = "Ćwiczenia.",
+      lead   = "Trzy bloki zadań — od obliczeń przez rozpoznawanie rozkładów
+                po analizę prawdziwych danych. Narzędzie: Jamovi (90 min)."
+    ),
+
+    lc_h2("ch9-cwiczenia", "Ćwiczenia: Rozkłady prawdopodobieństwa"),
+
+    tagList(
+      p(tags$b("Czas:"), " 90 minut | ", tags$b("Narzędzie:"), " Jamovi"),
+      p("Każde zadanie ma ", tags$b("ukryte rozwiązanie"),
+        " — kliknij przycisk, aby je zobaczyć.")
+    ),
+
+    figure_panel(label = "Ćwiczenie",
+      selectInput("ch9_kierunek", tags$b("Wybierz wariant dla kierunku:"),
+        choices = list(
+          "Inżynieria Bezpieczeństwa (BHP)" = "bhp",
+          "Rolnictwo"                       = "rol",
+          "Technologia żywności"            = "zyw",
+          "Inżynieria danych satelitarnych i kosmicznych" = "sat"
+        ),
+        selected = "bhp",
+        width = "100%",
+          selectize = FALSE   # zwykła lista: działa bez skryptów Shiny
+        )
+    ),
+
+    # Wszystkie warianty są w dokumencie; widoczny jest wariant wybranego kierunku.
+    lc_variants("ch9_kierunek", selected = "bhp",
+      stats::setNames(lapply(.ch9_directions, .ch9_static_content), .ch9_directions))
+  )
+)

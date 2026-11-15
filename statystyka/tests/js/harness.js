@@ -173,7 +173,7 @@ function environment(shiny = true) {
   }
   function frame(ts) { const pending = [...frames.values()]; frames.clear(); pending.forEach(fn => fn(ts)); }
   if (shiny) connect();
-  load("R/lc_charts.js");
+  load("../shared/lc_charts.js");
   return { load, mount, unmount, mutations, theme, frame, connect, document, window, charts, live,
     errors, frames, timers, handlers, observers, get registrations() { return registrations; } };
 }

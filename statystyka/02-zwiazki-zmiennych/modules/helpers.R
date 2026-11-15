@@ -66,20 +66,17 @@ branch_colors <- c(
 # animuje przejście między kadrami. Bez przycisków powtórzeń.
 # ============================================================================
 
-frames_widget <- function(id, title, steps, config) {
+# texts: opisy kadrów, po jednym na krok (w dokumencie, bez serwera).
+frames_widget <- function(id, title, steps, config, texts) {
   lc_step_widget(id,
     title = title,
     steps = steps,
+    texts = texts,
     body = tags$div(class = "lc-sc",
       `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA))
   )
 }
 
-# Teksty kroków: lista fragmentów HTML, po jednym na krok.
-scene_texts <- function(input, output, id, texts) {
-  step <- lc_step_server(id, input)$step
-  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
-}
 
 # ============================================================================
 # Wykresy rozrzutu w ECharts (scatter_charts.js): dane bazowe z R

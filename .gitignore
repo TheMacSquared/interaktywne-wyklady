@@ -4,3 +4,4 @@ statystyka/05-wnioskowanie-statystyczne/exports/
 design-mock/
 _quarto_figs/
 .DS_Store
+dist/

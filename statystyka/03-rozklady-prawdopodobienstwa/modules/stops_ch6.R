@@ -97,11 +97,3 @@ s3p_d2_ui <- s3p_panel("Ryc. 6.7", "Drzewo rodu rozkładów",
   s3p_d2_svg,
   lc_caption("Górne dwa wiersze to te same pytania zadane w dwóch sytuacjach: ile sukcesów i ile czekać — w policzalnych próbach albo w czasie lub przestrzeni, gdzie sukcesów może być dowolnie wiele. Strzałka prowadzi od rozkładu do tego, który z niego powstaje. Liczby sukcesów przy dużym n lub λ zbiegają się w rozkładzie normalnym (CTG), a z niego wyrastają rozkłady potrzebne do wnioskowania.")
 )
-
-# ============================================================================
-# SERWER
-# ============================================================================
-
-s3p_ch6_server <- function(input, output, session) {
-  # Ryc. 6.6 liczy się w przeglądarce (stops56_charts.js); app.R wywołuje tę funkcję.
-}

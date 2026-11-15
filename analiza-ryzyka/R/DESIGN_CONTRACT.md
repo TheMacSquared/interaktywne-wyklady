@@ -1,8 +1,12 @@
 # Kontrakt Designu
 
 Ten dokument opisuje docelowy system dla interaktywnych wykładów z analizy
-ryzyka. Jest adaptacją kontraktu ze `statystyka/R/`; nowy kod ma trzymać się
-tych reguł bez warstw kompatybilności.
+ryzyka. Jest adaptacją wspólnego kontraktu `shared/DESIGN_CONTRACT.md` sprzed
+scalenia rdzenia (listopad 2026) i nie został jeszcze z nim uzgodniony punkt po
+punkcie: reguły wspólnych komponentów `lc_*` obowiązują w brzmieniu z
+`shared/DESIGN_CONTRACT.md`, a ten plik jest źródłem dla reguł własnych kursu
+(komponenty `risk_*`, nagłówki rozdziałów). Nowy kod ma trzymać się tych reguł
+bez warstw kompatybilności.
 
 ## Zakres
 
@@ -12,7 +16,7 @@ jako listę konfiguracyjną renderowaną przez `risk_block_chapters()` z `R/risk
 
 ## Shell Aplikacji
 
-Każdy wykład używa `lecture_page()` z `R/lecture_layout.R`. Rozdziały są listami tworzonymi przez `lecture_chapter()` albo jawne listy z polami `id`, `num`, `title`, `content`.
+Każdy wykład używa `lecture_page()` z `shared/lecture_layout.R`. Rozdziały są listami tworzonymi przez `lecture_chapter()` albo jawne listy z polami `id`, `num`, `title`, `content`.
 
 Kanoniczny `app.R`:
 
@@ -35,11 +39,6 @@ ui <- lecture_page(
   module_label  = "Moduł I",
   chapters      = .chapters
 )
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  nazwa_server(input, output, session)
-}
 ```
 
 Nie używamy `bslib` do budowy strony. Jeżeli aplikacja potrzebuje zasobów w `<head>`, przekazuje je przez `header_extras`.
@@ -59,7 +58,7 @@ Kanoniczne komponenty:
 | Wzór | `lc_formula_box()` |
 | Wzór z adnotacjami | `risk_annotated_formula()` |
 | Metryki i statystyki | `lc_stat_grid()` + `lc_stat_box()` |
-| Dynamiczny feedback | `lc_status()` / `lc_caption()` w `renderUI()` |
+| Dynamiczny feedback | `lc_status()` / `lc_caption()` wybrane przez `lc_variants()` albo wpisane przez rycinę lcSF |
 | Notka marginalna | `margin_callout()` albo `margin_note()` |
 | Notka z kodem | `margin_code_note()` |
 | Przejście do następnego rozdziału | `lc_chapter_next()` |
@@ -128,7 +127,7 @@ W nowym kodzie nie dodajemy:
 - `theme_educational()` i `theme_minimal()` jako lokalnego standardu wizualizacji
 - lokalnego `includeCSS()` dla wspólnego layoutu
 
-Jeżeli dynamiczny `renderUI()` potrzebuje komunikatu statusu, najpierw dodaj mały komponent w `R/lecture_layout.R`, zamiast przywracać klasę z poprzedniego systemu.
+Jeżeli treść wybierana kontrolką potrzebuje komunikatu statusu, najpierw dodaj mały komponent w `shared/lecture_layout.R`, zamiast przywracać klasę z poprzedniego systemu.
 
 Migracja dawnych fragmentów powinna iść wprost:
 
@@ -160,14 +159,14 @@ Dwa kroje z rodziny IBM Plex (licencja OFL), te same na stronie i na wykresach:
   zostają w Plex Sans.
 
 Strona ładuje kroje z Google Fonts (`lecture_page()` i `shared_styles.css`).
-Wykresy rysuje ragg z plików w `R/fonts/`, rejestrowanych w
+Wykresy rysuje ragg z plików w `shared/fonts/`, rejestrowanych w
 `lc_apply_ggplot_defaults()`; cyfry w etykietach wykresu:
 `geom_text(family = lc_mono_family)`. `--upwr-serif` to alias `--upwr-sans`;
 nie dodajemy innych krojów.
 
 ## Kolory i Wykresy
 
-Źródłem prawdy dla kolorów jest `R/palette.R`.
+Źródłem prawdy dla kolorów jest `shared/palette.R`.
 
 Stosuj:
 
@@ -182,7 +181,7 @@ Semantyczne kolory domenowe są dopuszczalne, jeśli realnie poprawiają czyteln
 
 ## CSS
 
-`R/shared_styles.css` jest CSS-em nowego systemu. Nie dodajemy do niego fallbacków dla starych klas.
+`shared/shared_styles.css` jest CSS-em nowego systemu. Nie dodajemy do niego fallbacków dla starych klas.
 
 Style specyficzne dla jednego wykładu mogą trafić do `header_extras`, ale powinny:
 
@@ -232,8 +231,8 @@ sterowania w kolumnach, które automatycznie przechodzą do jednego rzędu piono
 ## Widgety v2 i tabele v2
 
 Nowe i przebudowywane widgety oraz tabele korzystają z komponentów v2
-(sekcja „WIDGETY V2 I TABELE V2” w `R/lecture_layout.R`, style w
-`R/shared_styles.css`, logika klienta w `R/lc_widgets.js`). Sekcja jest
+(sekcja „WIDGETY V2 I TABELE V2” w `shared/lecture_layout.R`, style w
+`shared/shared_styles.css`, logika klienta w `shared/lc_widgets.js`). Sekcja jest
 identyczna we wszystkich kursach; zmiany wprowadzamy równolegle.
 
 Style v2 obejmują każdy `figure_panel()`; nie ma osobnej flagi. Elementy
@@ -256,7 +255,7 @@ z odczytami, wykres i podpis.
 | Suwak z wartością w etykiecie | `lc_slider()` |
 | Liczba w pasku zamiast pudełka | `lc_readouts()` + `lc_readout()` |
 | Jedno zdanie pod wykresem | `lc_caption(tone = "ok" / "info")` |
-| Wykres z wysokością z proporcji | `lc_plot()`, dwa obok siebie: `lc_plots()` |
+| Wykres z wysokością z proporcji | `lc_sf_chart(k, ratio, max_height)` w rycinie lcSF, dwa obok siebie: `lc_plots()` |
 | Pusty stan | `lc_empty()` |
 | Porównanie bez wykresu | `lc_compare_rows()` |
 | Demonstracja krokowa | `lc_step_nav()` + `lc_step_text()` |
@@ -288,8 +287,7 @@ Zasady:
 6. Suwak bez podziałki i dymka; wartość w etykiecie, min i max pod torem.
 7. Feedback pod wykresem to jedno zdanie `lc_caption()`, dłuższy wynik lub
    odpowiedź quizu `lc_status()`. `lc_feedback()` jest przestarzały.
-8. Wykres ma wysokość z proporcji (`lc_plot()`), nie `height = "250px"`.
-   Serwer bez zmian: `zoom_plot_server()` rysuje w rozmiarze kontenera.
+8. Wykres ma wysokość z proporcji (`lc_sf_chart()`), nie `height = "250px"`.
 9. Rozmiary w `em`, progi z szerokości panelu (container queries), więc tryb
    rzutnika skaluje cały widget.
 10. Przyciski v2 mają klasy `lc-action`, nie `lc-btn-*` ani Bootstrapa.
@@ -299,14 +297,14 @@ Zasady:
 Wszystkie nowe tabele powstają przez `lc_table()` i deklaracje kolumn
 `lc_col()`. Ręczne `tags$table(class = "lc-table …")`, `renderTable()`
 i `DT::datatable()` wycofujemy: `renderTable()` zastępuje
-`renderUI(lc_table(...))`. Inline `font-size` usuwamy.
+`lc_table(...)` złożone przy budowaniu (albo `lcSF.table()` w rycinie). Inline `font-size` usuwamy.
 
 | Potrzeba | Komponent |
 |---|---|
 | Tabela z deklaracją kolumn | `lc_table(df, cols)` + `lc_col()` |
 | Jedna tabela szeroko, dwie wąsko | `lc_table_split()` |
 | Podgląd surowych danych | `lc_table_preview()` |
-| Stronicowanie | `lc_table(page_size = )`; duże zbiory z `page_input` |
+| Stronicowanie | `lc_table(page_size = )` (strony przełącza przeglądarka) |
 | Tabela krzyżowa z sumami | `lc_crosstab()` |
 | Pusta tabela | `lc_table_empty()` |
 | Liczba w komórce / tekście | `lc_num()` / `lc_fmt()` |
@@ -333,9 +331,7 @@ Zasady:
    dla tabel tekstowych (`narrow = "cards" / "stack-last"`), przewijanie tylko
    dla danych surowych (`scroll = TRUE`). Tekstu nie zmniejszamy.
 8. Stronicowanie: `lc_table(page_size = 10)` przełącza strony w przeglądarce
-   (w HTML są wszystkie wiersze; tylko małe tabele). Duże zbiory renderują
-   jedną stronę na serwerze: `lc_table(..., page = input$x_page,
-   page_input = "x_page")`.
+   (w HTML są wszystkie wiersze).
 9. Stany komórek i kolumn: `is-new` (dodane w bieżącym kroku), `is-best`,
    `is-dim` (bez interpretacji), `is-target`, `is-base`.
 10. Do 3 liczb o jednym obiekcie: `lc_readout()` w pasku. Co najmniej
@@ -367,7 +363,7 @@ nie ma; treść stoi w jednej kolumnie.
 | Podsekcja z numerem | `lc_h3(title, num = "1")` |
 | Śledzona zmienna | `lc_tracker(label, stats)` |
 | Spis przykładów | `lc_index(items)` |
-| Status widgetu (opis kroku, wynik testu) | `lc_status()` + `lc_verdict()` w `renderUI()` wewnątrz panelu |
+| Status widgetu (opis kroku, wynik testu) | `lc_status()` + `lc_verdict()` wewnątrz panelu (z R przy budowaniu albo z ryciny lcSF) |
 | Przełączniki drugorzędne (np. hipotezy) | `lc_chips()` |
 | Pogrubienie / kursywa przed interpunkcją | `b_()` / `em_()` |
 
@@ -375,7 +371,7 @@ Zasady:
 
 1. Notki się nie zwijają. Zwijamy tylko rozwiązania, odpowiedzi i opcjonalne
    rozwinięcia (`lc_more()`). Rozwiązanie ćwiczenia to
-   `lc_more("Rozwiązanie", uiOutput(...))`, bez przycisku „Pokaż rozwiązanie”;
+   `lc_more("Rozwiązanie", …)` z treścią złożoną przy budowaniu, bez przycisku „Pokaż rozwiązanie”;
    przycisk zostaje tylko wtedy, gdy odsłania coś w samym widgecie (np.
    odpowiedzi w tabeli).
 2. Etykieta stoi w wiszącej kolumnie notki, nie w ramce. Pogrubione wstępy typu
@@ -425,8 +421,8 @@ Dwa wzorce, wybierane per widget:
 - `lc_step_widget()` — pasek kroków z numerami i nazwami (≤ 3 słowa),
   wykres o stałej proporcji, opis kroku i nawigacja „‹ Wstecz” / „Dalej ›”,
   strzałki ← →. Gdy nazwy kroków niosą narrację (np. budowa histogramu).
-  Serwer: `s <- lc_step_server(id, input); s$step()`; opis w
-  `output$<id>_text` jako tekst inline; kontrolka aktywna od kroku k w
+  Rysunek i opis kroku: rycina lcSF (`fig.text`, pole `<id>_text`) albo `texts = `;
+  kontrolka aktywna od kroku k w
   `lc_step_from(k, ...)` (wcześniej wyszarzona).
 - `lc_step_nav()` + `lc_step_text()` — kropki i „Dalej”, gdy liczy się
   miejsce (np. krótka sekwencja tabeli).
@@ -435,7 +431,7 @@ Zasady wspólne: kroki od 1 (bez pustego kroku startowego, chyba że widget
 celowo zaczyna od pustego stanu), zmiana kontrolki nie zmienia kroku, reset
 wraca do kroku 1, bez osobnego licznika „Krok X z N” na szerokim ekranie.
 
-Gramatyka wykresu krokowego (`R/theme_upwr.R`): każdy element ma w danym
+Gramatyka wykresu krokowego (`shared/theme_upwr.R`): każdy element ma w danym
 kroku jedną rolę — `data` (niebo), `group` (bursztyn, druga kategoria),
 `new` (burgund, tylko w kroku wprowadzenia), `known` (grafit, z wcześniejszych
 kroków), `background` (niebo, mocno przezroczyste). Kontury słupków i pudełek

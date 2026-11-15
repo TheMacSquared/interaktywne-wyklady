@@ -1,5 +1,44 @@
 # Tab 5: Tarantino — dane eventowe, zła struktura
 
+# Wykres i tabele dawnego serwera, składane przy budowaniu strony.
+tab4_table_html <- function(view = NULL) {
+  dd_data_table(round_df(tarantino), page_size = 10)
+}
+
+tab4_explore_plot_gg <- function(view = NULL) {
+  if (identical(view, "bar")) {
+    tarantino %>%
+      count(movie, type) %>%
+      ggplot(aes(y = reorder(movie, n), x = n, fill = type)) +
+      geom_col(position = "dodge", alpha = 0.8) +
+      scale_fill_manual(values = c("death" = data_bad, "word" = data_mixed),
+                        labels = c("death" = "śmierć", "word" = "przekleństwo")) +
+      labs(y = NULL, x = "Liczba zdarzeń", fill = "Typ") +
+      theme_upwr(base_size = 14)
+  } else {
+    ggplot(tarantino, aes(x = minutes_in)) +
+      geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
+      labs( x = "Minuta filmu", y = "Liczba zdarzeń") +
+      theme_upwr(base_size = 14)
+  }
+}
+
+tab4_agg_result_html <- function(view = NULL) {
+      agg <- tarantino %>%
+    group_by(movie) %>%
+    summarise(
+      n_profanity = sum(type == "word", na.rm = TRUE),
+      n_deaths = sum(type == "death", na.rm = TRUE),
+      .groups = "drop"
+    )
+
+  tagList(
+    dd_data_table(round_df(agg), n = 10, label = "Dane po agregacji"),
+    lc_caption(paste0("Po agregacji: n = ", nrow(agg), " filmów zamiast ",
+                      nrow(tarantino), " wierszy."))
+  )
+}
+
 ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = tagList(
 
   lc_chapter_hero(
@@ -11,7 +50,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
               opisuje zdarzenie, a nie jednostkę, którą chcemy porównywać."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch5-sec-01", "Opis"),
 
   lc_p("Ten zbiór pochodzi z serwisu FiveThirtyEight, który policzył każde
     przekleństwo i każdą śmierć na ekranie w siedmiu filmach Quentina
@@ -44,7 +83,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch5-sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę przede wszystkim na to, co opisuje
     jeden wiersz, czyli co jest tu ",
@@ -53,7 +92,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
   figure_panel(
     label = "Tab. 5.1",
     title = "Filmy Tarantino: 1894 zdarzenia",
-    uiOutput("tab4_table")
+    tab4_table_html()
   ),
 
   lc_p("Kolejne wiersze to kolejne zdarzenia z tego samego filmu. Film nie
@@ -63,7 +102,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     opisu przebiegu filmu, ale nie przypominają tabeli „jeden wiersz — jedna
     osoba”, z którą pracowaliśmy w poprzednich wykładach."),
 
-  lc_h2("sec-03", "Eksploracja"),
+  lc_h2("ch5-sec-03", "Eksploracja"),
 
   lc_p("Przy eksploracji zwróć uwagę, czy wykresy porównują jednostki, czy
     tylko liczą zdarzenia."),
@@ -71,11 +110,10 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
   figure_panel(
     label = "Ryc. 5.2",
     title = "Kiedy w filmach pojawiają się zdarzenia",
-    lc_toolbar(
-      lc_segmented("tab4_view", NULL,
-        choices = c("Histogram: minutes_in" = "hist", "Porównanie filmów" = "bar"))
-    ),
-    lc_plot("tab4_explore_plot", ratio = "1.8/1", max_height = "350px")
+    lc_sf_ggplot(list(hist = tab4_explore_plot_gg("hist"), bar = tab4_explore_plot_gg("bar")),
+      aria = "Zdarzenia w filmach Tarantino: minuta filmu albo liczba zdarzeń w każdym filmie.",
+      control = lc_segmented("tab4_view", NULL, choices = c("Histogram: minutes_in" = "hist", "Porównanie filmów" = "bar")),
+      ratio = "1.8/1", max_height = "350px")
   ),
 
   lc_p("", gloss("histogram", "Histogram"), " minuty zdarzenia wrzuca do jednego worka siedem filmów
@@ -93,7 +131,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     dzielą scenariusz, reżyserię i postacie, więc dochodzi drugi problem
     z katalogu, brak niezależności obserwacji."),
 
-  lc_h2("sec-04", "Próba analiz"),
+  lc_h2("ch5-sec-04", "Próba analiz"),
 
   lc_p("Przed przejściem dalej zastanów się, którą z poznanych analiz dałoby
     się tu zastosować do tabeli w obecnej postaci."),
@@ -101,8 +139,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
   figure_panel(
     label = "Ryc. 5.3",
     title = "Jaka analiza tu pasuje?",
-    uiOutput("tab4_quiz_options"),
-    uiOutput("tab4_quiz_result")
+    s08_tab4_quiz()
   ),
 
   lc_p("", gloss("test t", "Test t"), ", ", gloss("korelacja", "korelacja"), " i regresja zakładają, że każdy wiersz to niezależna
@@ -117,7 +154,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     label = "Ryc. 5.4",
     title = "Agregacja do poziomu filmów",
     lc_action("tab4_aggregate", "Zagreguj dane", variant = "solid"),
-    uiOutput("tab4_agg_result")
+    lc_reveal("tab4_aggregate", tab4_agg_result_html())
   ),
 
   lc_p("Po agregacji struktura jest poprawna, ale z 1894 wierszy zostaje
@@ -131,7 +168,7 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     przeoczyć. To ten sam mechanizm, który w wykładach 04 i 05 widzieliśmy
     przy małych próbach."),
 
-  lc_h2("sec-05", "Werdykt"),
+  lc_h2("ch5-sec-05", "Werdykt"),
 
   lc_p("Zbiór dyskwalifikują dwie rzeczy naraz. W surowej postaci ma złą
     strukturę: wiersz to zdarzenie, a zdarzenia z jednego filmu są od siebie
@@ -158,105 +195,3 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     target_id = "ch6"
   )
 ))
-
-ch5_server <- function(input, output, session) {
-
-  output$tab4_table <- renderUI({
-    dd_data_table(round_df(tarantino), page_size = 10, page = input$tab4_table_page, page_input = "tab4_table_page")
-  })
-
-  zoom_plot_server("tab4_explore_plot", reactive({
-    if (identical(input$tab4_view, "bar")) {
-      tarantino %>%
-        count(movie, type) %>%
-        ggplot(aes(x = reorder(movie, n), y = n, fill = type)) +
-        geom_col(position = "dodge", alpha = 0.8) +
-        scale_fill_manual(values = c("death" = data_bad, "word" = data_mixed),
-                          labels = c("death" = "śmierć", "word" = "przekleństwo")) +
-        coord_flip() +
-        labs(x = NULL, y = "Liczba zdarzeń", fill = "Typ") +
-        theme_upwr(base_size = 14)
-    } else {
-      ggplot(tarantino, aes(x = minutes_in)) +
-        geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
-        labs( x = "Minuta filmu", y = "Liczba zdarzeń") +
-        theme_upwr(base_size = 14)
-    }
-  }))
-
-  tab4_quiz_answered <- reactiveVal(FALSE)
-  tab4_quiz_selected <- reactiveVal(NULL)
-
-  tab4_quiz_choices <- list(
-    list(letter = "A", value = "Test t", text = "Test t"),
-    list(letter = "B", value = "Korelacja", text = "Korelacja"),
-    list(letter = "C", value = "Regresja", text = "Regresja"),
-    list(letter = "D", value = "Zadna z klasycznych", text = "Żadna z klasycznych")
-  )
-
-  output$tab4_quiz_options <- renderUI({
-    if (tab4_quiz_answered()) return(NULL)
-    div(class = "quiz-tiles quiz-cols-4",
-      lapply(tab4_quiz_choices, function(opt) {
-        actionButton(paste0("tab4_tile_", gsub(" ", "_", opt$value)),
-          tagList(
-            div(class = "tile-letter", opt$letter),
-            div(class = "tile-text", opt$text)
-          ),
-          class = "quiz-tile"
-        )
-      })
-    )
-  })
-
-  observe({
-    for (opt in tab4_quiz_choices) {
-      local({
-        val <- opt$value
-        btn_id <- paste0("tab4_tile_", gsub(" ", "_", val))
-        observeEvent(input[[btn_id]], {
-          if (tab4_quiz_answered()) return()
-          tab4_quiz_selected(val)
-          tab4_quiz_answered(TRUE)
-        }, ignoreInit = TRUE)
-      })
-    }
-  })
-
-  output$tab4_quiz_result <- renderUI({
-    req(tab4_quiz_answered())
-    answer <- tab4_quiz_selected()
-    if (answer == "Zadna z klasycznych") {
-      lc_status(
-        lc_verdict(tags$strong("Dokładnie."), type = "ok"),
-        " Wiersz to zdarzenie, a nie niezależna obserwacja, więc żaden
-        z klasycznych testów nie pasuje do tabeli w tej postaci."
-      )
-    } else {
-      lc_status(
-        lc_verdict(tags$strong("Nie do końca."), type = "danger"),
-        paste0(" ", answer, " wymaga niezależnych obserwacji i zmiennych
-        mierzonych na tej samej jednostce. Tu wiersz to jedno przekleństwo
-        albo jedna śmierć. Poprawna odpowiedź: „Żadna z klasycznych”.")
-      )
-    }
-  })
-
-  output$tab4_agg_result <- renderUI({
-    req(input$tab4_aggregate > 0)
-    agg <- tarantino %>%
-      group_by(movie) %>%
-      summarise(
-        n_profanity = sum(type == "word", na.rm = TRUE),
-        n_deaths = sum(type == "death", na.rm = TRUE),
-        .groups = "drop"
-      )
-
-    tagList(
-      dd_data_table(round_df(agg), n = 10, label = "Dane po agregacji"),
-      lc_caption(paste0("Po agregacji: n = ", nrow(agg), " filmów zamiast ",
-                        nrow(tarantino), " wierszy."))
-    )
-  })
-
-}
