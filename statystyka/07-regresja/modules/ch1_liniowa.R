@@ -37,50 +37,6 @@
 # Prosta Y = β₀ + β₁X, trójkąt nachylenia i błąd ε
 # jednego punktu. Kolory jak w znacznikach wzorów: β₀ terakota, β₁ indygo,
 # ε bursztyn, obserwacje niebo.
-ch1_anatomy_plot <- function() {
-  b0 <- 1.5; b1 <- 0.8
-  pts <- data.frame(
-    x = c(0.7, 1.4, 2.2, 2.9, 3.6, 4.4, 5.1, 5.7),
-    e = c(0.5, -0.6, 0.3, 1.3, -0.4, -0.7, 0.6, 0.2)
-  )
-  pts$y <- b0 + b1 * pts$x + pts$e
-  hi <- pts[4, ]
-  col_b0 <- upwr_col("terakota"); col_b1 <- upwr_col("indygo")
-  col_e <- upwr_col("bursztyn"); col_pt <- upwr_col("niebo")
-  tx <- 4.5  # początek trójkąta nachylenia
-  ggplot() +
-    geom_vline(xintercept = 0, colour = upwr_reference, linewidth = 0.4) +
-    geom_abline(intercept = b0, slope = b1, colour = upwr_secondary, linewidth = 1) +
-    geom_point(data = pts[-4, ], aes(x, y), colour = col_pt, size = 2.6, alpha = 0.8) +
-    # ε: pionowy odcinek od prostej do punktu
-    annotate("segment", x = hi$x, xend = hi$x, y = b0 + b1 * hi$x, yend = hi$y,
-             colour = col_e, linewidth = 1.1) +
-    geom_point(data = hi, aes(x, y), colour = col_e, size = 3.2) +
-    annotate("text", x = hi$x - 0.12, y = b0 + b1 * hi$x + hi$e / 2, label = "ε",
-             colour = col_e, size = 6, hjust = 1) +
-    # β₁: krok o 1 w poziomie i β₁ w pionie
-    annotate("segment", x = tx, xend = tx + 1, y = b0 + b1 * tx, yend = b0 + b1 * tx,
-             colour = col_b1, linewidth = 0.9) +
-    annotate("segment", x = tx + 1, xend = tx + 1, y = b0 + b1 * tx,
-             yend = b0 + b1 * (tx + 1), colour = col_b1, linewidth = 1.1) +
-    annotate("text", x = tx + 0.5, y = b0 + b1 * tx - 0.25, label = "1",
-             colour = col_b1, size = 5, family = lc_mono_family) +
-    annotate("text", x = tx + 1.12, y = b0 + b1 * (tx + 0.5), label = "β₁",
-             colour = col_b1, size = 6, hjust = 0) +
-    # β₀: wysokość prostej przy X = 0
-    annotate("segment", x = 0, xend = 0, y = 0, yend = b0, colour = col_b0,
-             linewidth = 1.3) +
-    annotate("point", x = 0, y = b0, colour = col_b0, size = 3.4) +
-    annotate("text", x = 0.15, y = b0 / 2, label = "β₀", colour = col_b0,
-             size = 6, hjust = 0) +
-    scale_x_continuous(breaks = 0, limits = c(-0.3, 6.2), expand = c(0, 0)) +
-    scale_y_continuous(breaks = NULL, limits = c(0, 7.2), expand = c(0, 0)) +
-    labs(x = "X", y = "Y") +
-    theme_upwr() +
-    theme(panel.grid = element_blank(),
-          axis.line = element_line(colour = upwr_reference, linewidth = 0.4))
-}
-
 ch1_ui <- list(
   id    = "ch-liniowa",
   num   = "01",
@@ -135,7 +91,7 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.1", title = "Z czego składa się prosta regresji",
       width_mode = "text",
-      lc_plot("ch1_anatomy_plot", ratio = "1.6/1", max_height = "340px")
+      ch1_anatomy_fig()
     ),
 
     lc_p("\\(\\beta_0\\) to ", gloss("wyraz wolny"), ", czyli wysokość prostej
@@ -155,13 +111,15 @@ ch1_ui <- list(
     figure_panel(
       label = "Ryc. 1.2", title = "Co robią β₀, β₁ i szum?",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch1_beta_b0", "β₀ (punkt startu)", -10, 20, 5, 1),
-        lc_slider("ch1_beta_b1", "β₁ (nachylenie)", -3, 3, 1, 0.25),
-        lc_slider("ch1_beta_sigma", "Szum ε", 0, 8, 2, 0.5)
-      ),
-      lc_plot("ch1_beta_plot", max_height = "320px"),
-      uiOutput("ch1_beta_info")
+      # Wykres i opis liczy przeglądarka (modules/figures.js, rycina s07_beta).
+      lc_sf_figure("s07_beta", config = ch1_beta_config,
+        control = list(
+          lc_sf_slider("ch1_beta_b0", "β₀ (punkt startu)", -10, 20, 5, 1),
+          lc_sf_slider("ch1_beta_b1", "β₁ (nachylenie)", -3, 3, 1, 0.25),
+          lc_sf_slider("ch1_beta_sigma", "Szum ε", 0, 8, 2, 0.5)
+        ),
+        ratio = "2.6/1", max_height = "320px",
+        after = tags$div(`data-role` = "info"))
     ),
 
     lc_p("\\(\\beta_0\\) przesuwa całą prostą w górę i w dół, nie zmieniając jej
@@ -255,7 +213,18 @@ ch1_ui <- list(
                values = c("10 najlepszych" = "top", "10 najsłabszych" = "bottom"), selected = "top")
         ),
         config = list(kind = "rtm", n = 100L, k = 10L, mu = 60, sd_skill = 9, luck = 7, grp = "top",
-                      aria = "Wyniki stu studentów z dwóch kolokwiów, strzałki od pierwszego do drugiego wyniku dziesięciu wybranych i histogram zmian ich średniej"))
+                      aria = "Wyniki stu studentów z dwóch kolokwiów, strzałki od pierwszego do drugiego wyniku dziesięciu wybranych i histogram zmian ich średniej"),
+        texts = list(
+        tagList("Każda kropka to student: wynik to ukryta umiejętność plus los dnia. Napisz kolokwium
+        kilka razy."),
+        tagList("Trójkąt to średnia 10 najlepszych. Za chwilę ci sami napiszą kolokwium jeszcze raz."),
+        tagList("Drugie kolokwium, ta sama trudność, nowy los dnia. Zmiana średniej wybranych spada
+        do histogramu. Dokładaj grupy, potem zmień udział losu albo wybierz 10 najsłabszych."),
+        tagList("Puste kółka to prawdziwa umiejętność wybranych, linia przerywana to jej średnia.
+        Najlepszym dopisało szczęście, najsłabszym go zabrakło, więc w drugim podejściu wracają
+        do swojej umiejętności. Bez losu nie ma powrotu.")
+        )
+      )
     ),
 
     lc_p("Panel pokazuje 100 studentów i ich wyniki z dwóch kolokwiów o tej
@@ -500,7 +469,17 @@ ch1_ui <- list(
         config = list(kind = "slope", beta0 = 35, beta1 = 2.5, sigma = 8, xmin = 1, xmax = 12,
                       n = 14L, world = "yes",
                       crit = list(`14` = round(qt(0.975, 12), 4), `70` = round(qt(0.975, 68), 4)),
-                      aria = "Wykres rozrzutu godzin nauki i wyniku egzaminu dla losowej grupy studentów z prostą MNK i histogram nachyleń z kolejnych grup"))
+                      aria = "Wykres rozrzutu godzin nauki i wyniku egzaminu dla losowej grupy studentów z prostą MNK i histogram nachyleń z kolejnych grup"),
+        texts = list(
+        tagList("Każdy punkt to jeden student, prosta to MNK dla tej grupy. Zbierz kilka grup i
+        porównaj ", tags$code("b₁", .noWS = "outside"), "."),
+        tagList("Każde ", tags$code("b₁", .noWS = "outside"), " spada do histogramu. Dokładaj grupy,
+        potem przełącz n z 14 na 70 i porównaj rozrzut."),
+        tagList("Linia przerywana to prawdziwe ", tags$code("β₁", .noWS = "outside"), ". Żetony w kolorze
+        akcentu to grupy z p < 0.05. Przełącz świat na „nie pomaga”: około 5% grup i tak pokazuje
+        istotne nachylenie.")
+        )
+      )
     ),
 
     lc_p("Panel pokazuje cztery symulowane scenariusze o znanym prawdziwym
@@ -642,7 +621,22 @@ ch1_ui <- list(
           selected = character(0)
         )
       ),
-      uiOutput("ch1_b1_meaning_feedback")
+      lc_variants("ch1_b1_meaning", selected = ".none", list(
+        per_1000 = lc_status(
+          lc_verdict(tags$strong("Tak."), type = "ok"),
+          " b₁ podaje zmianę Y w jego jednostkach na jednostkę X: punkty testu
+          na 1 tys. USD dochodu, bo w tysiącach dolarów zapisano dochód."
+        ),
+        per_dollar = lc_status(lc_verdict(tags$strong("Nie."), type = "danger"),
+          " Dochód jest zapisany w tysiącach dolarów, więc jednostką X
+          jest 1 tys. USD, a nie 1 dolar. Na 1 dolar przypadałoby 0.002 pkt."),
+        percent = lc_status(lc_verdict(tags$strong("Nie."), type = "danger"),
+          " Obie zmienne są w swoich jednostkach (tys. USD i punkty), a nie
+          w procentach. Nachylenie mówi o punktach na 1 tys. USD."),
+        times_1000 = lc_status(lc_verdict(tags$strong("Nie."), type = "danger"),
+          " Tysiące dotyczą tylko dochodu (X). Wynik testu jest
+          w punktach, więc b₁ = 1.94 to 1.94 pkt na 1 tys. USD, a nie 1940 pkt.")
+      ))
     ),
 
     lc_p("Poprawne jest drugie zdanie: okręg zamożniejszy o 1 tys. USD ma
@@ -770,67 +764,8 @@ ch1_ui <- list(
 
 ch1_server <- function(input, output, session) {
 
-  # Statyczna rycina prostej z β₀, β₁ i ε
-  zoom_plot_server("ch1_anatomy_plot", reactive(ch1_anatomy_plot()),
-    alt = "Prosta regresji z zaznaczonym wyrazem wolnym przy X równym zero, trójkątem nachylenia o podstawie 1 i pionowym odcinkiem błędu jednego punktu")
-
   # PROTOTYP SCENY (2026-10-08): teksty kroków scen ch1_sc_rtm i ch1_sc_slope
-  scene_texts(input, output, "ch1_sc_rtm", list(
-    tagList("Każda kropka to student: wynik to ukryta umiejętność plus los dnia. Napisz kolokwium
-      kilka razy."),
-    tagList("Trójkąt to średnia 10 najlepszych. Za chwilę ci sami napiszą kolokwium jeszcze raz."),
-    tagList("Drugie kolokwium, ta sama trudność, nowy los dnia. Zmiana średniej wybranych spada
-      do histogramu. Dokładaj grupy, potem zmień udział losu albo wybierz 10 najsłabszych."),
-    tagList("Puste kółka to prawdziwa umiejętność wybranych, linia przerywana to jej średnia.
-      Najlepszym dopisało szczęście, najsłabszym go zabrakło, więc w drugim podejściu wracają
-      do swojej umiejętności. Bez losu nie ma powrotu.")
-  ))
 
-  scene_texts(input, output, "ch1_sc_slope", list(
-    tagList("Każdy punkt to jeden student, prosta to MNK dla tej grupy. Zbierz kilka grup i
-      porównaj ", tags$code("b₁", .noWS = "outside"), "."),
-    tagList("Każde ", tags$code("b₁", .noWS = "outside"), " spada do histogramu. Dokładaj grupy,
-      potem przełącz n z 14 na 70 i porównaj rozrzut."),
-    tagList("Linia przerywana to prawdziwe ", tags$code("β₁", .noWS = "outside"), ". Żetony w kolorze
-      akcentu to grupy z p < 0.05. Przełącz świat na „nie pomaga”: około 5% grup i tak pokazuje
-      istotne nachylenie.")
-  ))
-
-  zoom_plot_server("ch1_beta_plot", reactive({
-    set.seed(101)
-    x <- seq(0, 10, length.out = 80)
-    y_true <- input$ch1_beta_b0 + input$ch1_beta_b1 * x
-    y <- y_true + rnorm(length(x), 0, input$ch1_beta_sigma)
-    df <- data.frame(x = x, y = y, y_true = y_true)
-
-    ggplot(df, aes(x = x, y = y)) +
-      geom_point(color = upwr_secondary, alpha = 0.45) +
-      geom_line(aes(y = y_true), color = unname(upwr_cat["niebo"]), linewidth = 1.3) +
-      annotate("segment", x = 0, xend = 0, y = 0, yend = input$ch1_beta_b0,
-               color = unname(upwr_cat["bursztyn"]), linewidth = 1.1) +
-      annotate("text", x = 0.6, y = input$ch1_beta_b0,
-               label = paste0("β₀ = ", input$ch1_beta_b0),
-               hjust = 0, color = unname(upwr_cat["bursztyn"]), fontface = "bold") +
-      labs(x = "X", y = "Y") +
-      theme_upwr()
-  }))
-
-  output$ch1_beta_info <- renderUI({
-    b1 <- input$ch1_beta_b1
-    change <- if (b1 > 0) {
-      paste0("rośnie o ", abs(b1))
-    } else if (b1 < 0) {
-      paste0("maleje o ", abs(b1))
-    } else {
-      "nie zmienia się"
-    }
-    lc_status(
-      p(tags$strong("Interpretacja:"),
-        paste0(" gdy X wzrasta o 1, oczekiwane Y ", change,
-               ". Szum ε = ", input$ch1_beta_sigma,
-               " rozprasza punkty wokół linii."))
-    )
-  })
 
   # --- Widget: regresja z korelacji ---
   # Krok widgetu (1..5) żyje w przeglądarce; nowa próba nie zmienia kroku.
@@ -1541,27 +1476,6 @@ ch1_server <- function(input, output, session) {
       coord_equal(xlim = c(30, 90), ylim = c(30, 90)) +
       labs(x = "1. kolokwium (pkt)", y = "2. kolokwium (pkt)")
   }), alt = "Wyniki 100 studentów z dwóch kolokwiów z przekątną i prostą regresji.")
-
-  output$ch1_b1_meaning_feedback <- renderUI({
-    choice <- input$ch1_b1_meaning
-    if (is.null(choice) || identical(choice, character(0))) return(NULL)
-    if (identical(choice, "per_1000")) {
-      return(lc_status(
-        lc_verdict(tags$strong("Tak."), type = "ok"),
-        " b₁ podaje zmianę Y w jego jednostkach na jednostkę X: punkty testu
-        na 1 tys. USD dochodu, bo w tysiącach dolarów zapisano dochód."
-      ))
-    }
-    why <- switch(choice,
-      per_dollar = " Dochód jest zapisany w tysiącach dolarów, więc jednostką X
-        jest 1 tys. USD, a nie 1 dolar. Na 1 dolar przypadałoby 0.002 pkt.",
-      percent = " Obie zmienne są w swoich jednostkach (tys. USD i punkty), a nie
-        w procentach. Nachylenie mówi o punktach na 1 tys. USD.",
-      times_1000 = " Tysiące dotyczą tylko dochodu (X). Wynik testu jest
-        w punktach, więc b₁ = 1.94 to 1.94 pkt na 1 tys. USD, a nie 1940 pkt."
-    )
-    lc_status(lc_verdict(tags$strong("Nie."), type = "danger"), why)
-  })
 
   output$ch1_cas_answer <- renderUI({
     req(input$ch1_cas_x, input$ch1_cas_y)
