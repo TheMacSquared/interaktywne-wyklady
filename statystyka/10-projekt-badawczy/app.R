@@ -382,7 +382,6 @@ header_extras <- tagList(
     (function() {
       var spinCount = 0;
       var running = false;
-      var sadAudioUrl = 'projekt_badawczy_assets/sad.mp3';
 
       function playSadTromboneFallback() {
         var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -433,8 +432,22 @@ header_extras <- tagList(
         }, 1900);
       }
 
+      // Chrome odrzuca dźwięk z adresu data: (strona statyczna ma mp3 wbudowane
+      // jako data:), więc zamieniamy go na adres blob:.
+      function useBlobSource(audio) {
+        var src = audio.getAttribute('src') || '';
+        var m = src.match(/^data:([^;,]+);base64,(.*)$/);
+        if (!m || !window.Blob || !window.URL) return;
+        var bin = atob(m[2]);
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        audio.src = URL.createObjectURL(new Blob([bytes], { type: m[1] }));
+      }
+
       function playSadTrombone() {
-        var audio = new Audio(sadAudioUrl);
+        var audio = document.getElementById('child_sad_audio');
+        if (!audio) { playSadTromboneFallback(); return; }
+        useBlobSource(audio);
         audio.volume = 0.85;
         audio.currentTime = 0;
 

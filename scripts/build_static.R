@@ -191,11 +191,12 @@ build_one <- function(app_dir) {
 
   body <- rendered$html
 
-  # Obrazki z katalogów zarejestrowanych przez addResourcePath() (np. assets/)
-  # wbudowujemy w plik jako dane.
+  # Obrazki i dźwięki z katalogów zarejestrowanych przez addResourcePath()
+  # (np. assets/) wbudowujemy w plik jako dane.
   resource_dirs <- shiny::resourcePaths()
   mime <- c(png = "image/png", jpg = "image/jpeg", jpeg = "image/jpeg", gif = "image/gif",
-            svg = "image/svg+xml", webp = "image/webp")
+            svg = "image/svg+xml", webp = "image/webp",
+            mp3 = "audio/mpeg", wav = "audio/wav", ogg = "audio/ogg")
   refs <- unique(regmatches(body, gregexpr("src=\"[^\"/:]+/[^\"]+\"", body))[[1]])
   for (ref in refs) {
     path <- sub("^src=\"(.*)\"$", "\\1", ref)
@@ -203,7 +204,7 @@ build_one <- function(app_dir) {
     ext <- tolower(tools::file_ext(path))
     if (!prefix %in% names(resource_dirs) || !ext %in% names(mime)) next
     file <- file.path(resource_dirs[[prefix]], sub("^[^/]+/", "", path))
-    if (!file.exists(file)) stop("Brak pliku obrazka: ", path, call. = FALSE)
+    if (!file.exists(file)) stop("Brak pliku zasobu: ", path, call. = FALSE)
     body <- gsub(ref, sprintf("src=\"data:%s;base64,%s\"", mime[[ext]], base64_file(file)), body, fixed = TRUE)
   }
   # withMathJax() dokłada po treści skrypt ponownego składu; strona statyczna go nie potrzebuje.

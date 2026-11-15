@@ -45,7 +45,9 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Dzień Dobroci dla Stu
         role = "status",
         `aria-live` = "polite",
         "Koło czeka na pierwszy eksperyment."
-      )
+      ),
+      tags$audio(id = "child_sad_audio", src = "projekt_badawczy_assets/sad.mp3",
+                 preload = "auto", hidden = NA)
     )
   ),
 
