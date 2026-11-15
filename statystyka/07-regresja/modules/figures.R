@@ -774,3 +774,24 @@ ch3b_interaction_fig <- function() {
     ratio = "2/1", max_height = "400px",
     after = tags$div(`data-role` = "table"))
 }
+
+# ---------------------------------------------------------------------------
+# Rozdział 5
+# ---------------------------------------------------------------------------
+
+# Ryc. 5.1: dane CASchools do modelu logistycznego liczonego w przeglądarce (rycina s07_caslogit).
+ch5_cas_config <- local({
+  d <- .cas_data
+  list(income = round(d$income, 4), read = round(d$read, 2), lunch = round(d$lunch, 4), english = round(d$english, 4))
+})
+
+# Ryc. 5.2: stały przykład 0/1; prosta i krzywa logistyczna dopasowane w R (rycina s07_linlog).
+ch5_linlog_config <- local({
+  x <- seq(0, 40, length.out = 180)
+  p <- 1 / (1 + exp(-(-7 + 0.35 * x)))
+  u <- ((seq_along(x) * 37) %% 100) / 100
+  y <- as.integer(u < p)
+  lin <- lm(y ~ x); lg <- glm(y ~ x, family = binomial)
+  list(x = round(x, 4), y = round(y + sin(seq_along(x) * 1.7) * 0.025, 4),
+       lin = unname(coef(lin)), log = unname(coef(lg)), outside = mean(fitted(lin) < 0 | fitted(lin) > 1))
+})

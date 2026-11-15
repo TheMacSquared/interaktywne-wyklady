@@ -45,3 +45,18 @@ test("generatory danych: zakresy i zaokrąglenia jak w helpers.R", () => {
   assert.ok(tt.train.x.every((v, i, a) => i === 0 || a[i - 1] <= v));   // posortowane
   close(Z.rmseOn(Z.polyFit(tt.test.x, tt.test.y, 6), tt.test.x, tt.test.y), 1, 0.15, "RMSE ≈ σ szumu");
 });
+
+test("regresja logistyczna jak glm(binomial) i confint()", () => {
+  const L = R.logit, X = [L.z.map(() => 1), L.g, L.s];
+  const f = Z.logitFit(X, L.z);
+  L.est.forEach((b, j) => close(f.coef[j].estimate, b, 1e-7, `β${j}`));
+  L.se.forEach((se, j) => close(f.coef[j].se, se, 1e-6, `SE${j}`));
+  L.p.forEach((p, j) => close(f.coef[j].p, p, 1e-6, `p${j}`));
+  close(f.aic, L.aic, 1e-6, "AIC"); close(f.bic, L.bic, 1e-6, "BIC");
+  L.fitted.forEach((v, i) => close(f.fitted[i], v, 1e-8, `p̂${i}`));
+  // confint() interpoluje profil splajnem: zgodność do ~1e-3.
+  [1, 2].forEach((j) => {
+    const ci = Z.logitProfileCI(X, L.z, f, j);
+    close(ci[0], L.lo[j], 2e-3, `CI dół ${j}`); close(ci[1], L.hi[j], 2e-3, `CI góra ${j}`);
+  });
+});

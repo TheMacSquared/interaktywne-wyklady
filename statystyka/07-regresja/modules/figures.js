@@ -79,7 +79,91 @@
              test: { x: sx, y: sx.map(function (v) { return 3 * Math.sin(v) + r.norm(0, 1); }) } };
   }
 
-  root.lcS07 = { multiData: multiData, lmMetrics: lmMetrics, polyFit: polyFit, rmseOn: rmseOn, trainTest: trainTest, simpleFit: simpleFit };
+  // Regresja logistyczna jak glm(family = binomial): IRLS. X: kolumny macierzy planu (z kolumną
+  // jedynek, jeśli model ma wyraz wolny), offset: opcjonalny składnik stały predyktora liniowego.
+  // Zwraca współczynniki, SE i test Walda (z, p), dopasowane p, logLik, AIC i BIC.
+  function invert(A) {
+    var n = A.length, M = A.map(function (r, i) { return r.concat(A.map(function (_, j) { return i === j ? 1 : 0; })); }), i, j, k;
+    for (k = 0; k < n; k++) {
+      var piv = k;
+      for (i = k + 1; i < n; i++) if (Math.abs(M[i][k]) > Math.abs(M[piv][k])) piv = i;
+      var tmp = M[k]; M[k] = M[piv]; M[piv] = tmp;
+      var d = M[k][k];
+      if (!(Math.abs(d) > 1e-300)) return null;
+      for (j = 0; j < 2 * n; j++) M[k][j] /= d;
+      for (i = 0; i < n; i++) if (i !== k) { var f = M[i][k]; if (f) for (j = 0; j < 2 * n; j++) M[i][j] -= f * M[k][j]; }
+    }
+    return M.map(function (r) { return r.slice(n); });
+  }
+  function logitFit(X, y, offset) {
+    var n = y.length, p = X.length, beta = null, eta = new Array(n), mu = new Array(n), it, i, j, k, info, rhs, dev = Infinity;
+    function off(i) { return offset ? offset[i] : 0; }
+    function devOf(m) { var s = 0; for (var r = 0; r < n; r++) s -= 2 * Math.log(Math.max(y[r] ? m[r] : 1 - m[r], 1e-300)); return s; }
+    function setBeta(b) {
+      for (var r = 0; r < n; r++) { var e = off(r); for (var c = 0; c < p; c++) e += X[c][r] * b[c]; eta[r] = e; mu[r] = 1 / (1 + Math.exp(-e)); }
+    }
+    // Start jak glm.fit: μ = (y + 0.5) / 2, η = logit(μ).
+    for (i = 0; i < n; i++) { mu[i] = (y[i] + 0.5) / 2; eta[i] = Math.log(mu[i] / (1 - mu[i])); }
+    for (it = 0; it < 100; it++) {
+      // X'WX i X'Wz, z = η − offset + (y − μ)/w
+      info = []; rhs = new Array(p).fill(0);
+      for (j = 0; j < p; j++) info.push(new Array(p).fill(0));
+      for (i = 0; i < n; i++) {
+        var w = Math.max(mu[i] * (1 - mu[i]), 1e-12), z = eta[i] - off(i) + (y[i] - mu[i]) / w;
+        for (j = 0; j < p; j++) { rhs[j] += X[j][i] * w * z; for (k = 0; k <= j; k++) info[j][k] += X[j][i] * w * X[k][i]; }
+      }
+      for (j = 0; j < p; j++) for (k = j + 1; k < p; k++) info[j][k] = info[k][j];
+      if (!p) { dev = devOf(mu); break; }
+      var inv = invert(info);
+      if (!inv) return null;
+      var next = inv.map(function (row) { return row.reduce(function (s, v, jj) { return s + v * rhs[jj]; }, 0); });
+      setBeta(next);
+      var newDev = devOf(mu), half = 0;
+      // Połowienie kroku, gdy dewiancja rośnie (jak glm.fit).
+      while (beta && !(newDev <= dev + 1e-10) && half++ < 30) {
+        next = next.map(function (b, jj) { return (b + beta[jj]) / 2; });
+        setBeta(next); newDev = devOf(mu);
+      }
+      beta = next;
+      var done = Math.abs(newDev - dev) / (Math.abs(newDev) + 0.1) < 1e-10;
+      dev = newDev;
+      if (done) break;
+    }
+    // Macierz informacji w punkcie końcowym.
+    info = [];
+    for (j = 0; j < p; j++) info.push(new Array(p).fill(0));
+    for (i = 0; i < n; i++) { var ww = Math.max(mu[i] * (1 - mu[i]), 1e-12); for (j = 0; j < p; j++) for (k = 0; k < p; k++) info[j][k] += X[j][i] * ww * X[k][i]; }
+    var cov = p ? invert(info) : [], ll = -dev / 2;
+    var coef = (beta || []).map(function (b, jj) { var se = Math.sqrt(cov[jj][jj]), z = b / se; return { estimate: b, se: se, z: z, p: 2 * D.pnorm(-Math.abs(z)) }; });
+    return { coef: coef, fitted: mu.slice(), deviance: dev, logLik: ll, aic: dev + 2 * p, bic: dev + Math.log(n) * p, n: n };
+  }
+  // Przedział profilowy 95% dla współczynnika j (jak confint() dla glm): β, przy którym
+  // dewiancja rośnie o qchisq(0.95, 1).
+  function logitProfileCI(X, y, fit, j) {
+    var target = fit.deviance + D.qchisq(0.95, 1), est = fit.coef[j].estimate, se = fit.coef[j].se;
+    var rest = X.filter(function (_, k) { return k !== j; });
+    function dev(c) { var f = logitFit(rest, y, X[j].map(function (v) { return c * v; })); return f ? f.deviance : Infinity; }
+    function side(sign) {
+      var a = est, b = est + sign * 2 * se, guard = 0;
+      while (dev(b) < target && guard++ < 30) { a = b; b = est + (b - est) * 2; }
+      for (var it = 0; it < 60; it++) { var m = (a + b) / 2; if (dev(m) < target) a = m; else b = m; }
+      return (a + b) / 2;
+    }
+    return [side(-1), side(1)];
+  }
+  // Dane jak generate_logistic_data() w helpers.R.
+  function logisticData(n, rg) {
+    var r = rg || rng, d = { zdal_num: [], godziny_nauki: [], srednia_ocen: [] };
+    for (var i = 0; i < n; i++) {
+      var g = r.unif(0, 40), s = Math.min(Math.max(r.norm(3.5, 0.6), 2), 5), pr = 1 / (1 + Math.exp(-(-4 + 0.08 * g + 1.2 * s)));
+      d.zdal_num.push(r.unif(0, 1) < pr ? 1 : 0);
+      d.godziny_nauki.push(Math.round(g * 10) / 10); d.srednia_ocen.push(Math.round(s * 100) / 100);
+    }
+    return d;
+  }
+  function ones(n) { return new Array(n).fill(1); }
+
+  root.lcS07 = { logitFit: logitFit, logitProfileCI: logitProfileCI, logisticData: logisticData, invert: invert, multiData: multiData, lmMetrics: lmMetrics, polyFit: polyFit, rmseOn: rmseOn, trainTest: trainTest, simpleFit: simpleFit };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -680,6 +764,198 @@
       setRole(root, "stats", readout("RMSE uczący", fmt(st.cur.train, 2), P.niebo) + readout("RMSE testowy", fmt(st.cur.test, 2), P.bursztyn) +
         readout("Najlepszy na teście", "stopień " + st.best.degree + " · RMSE " + fmt(st.best.test, 2), P.szalwia));
       setRole(root, "note", caption(st.cur.test > st.best.test * 1.25 ? "Błąd testowy wyraźnie wyższy niż przy najlepszym stopniu." : "Błąd testowy bliski najmniejszego."));
+    }
+  };
+
+  // ---- Rozdział 5: regresja logistyczna --------------------------------------------
+  function grafit() { return C.token("--upwr-cat-grafit", "#4a4f55"); }
+  function wrzos() { return C.token("--upwr-cat-wrzos", "#7d5a8c"); }
+  function pct(v) { return fmt(v * 100, 1) + "%"; }
+
+  // Ryc. 5.1: próg zaliczenia dzieli wynik czytania na 0/1; model logistyczny z trzema predyktorami.
+  var CAS_TERMS = [["(Intercept)", "Stała (szanse wyjściowe, nie OR)"], ["income", "Dochód okręgu (tys. USD)"],
+                   ["lunch", "Uczniowie z dotacją do obiadu (%)"], ["english", "Angielski jako drugi język (%)"]];
+  function casLogit(c, cut) {
+    var y = c.read.map(function (v) { return v >= cut ? 1 : 0; });
+    return { y: y, fit: logitFit([ones(y.length), c.income, c.lunch, c.english], y) };
+  }
+  figures.s07_caslogit = {
+    prepare: function (state, v, vals) {
+      var cut = Number(vals.ch5_cas_y_cut);
+      if (state.cut !== cut) { state.cut = cut; state.m = casLogit(state.config, cut); }
+    },
+    draw: function (v, P, k, state) {
+      var c = state.config, m = state.m, cols = [grafit(), P.szalwia];
+      var legend = [{ text: "nie zdał", color: cols[0], box: true }, { text: "zdał", color: cols[1], box: true }];
+      if (k === 0) {
+        return { x: pad(range(c.income)), y: pad(range(c.read)), legend: legend, xName: "Dochód okręgu (tys. USD)", yName: "Wynik z czytania",
+          layers: [{ type: "points", data: pairs(c.income, c.read), colors: m.y.map(function (q) { return cols[q]; }), alpha: 0.62, size: 7 },
+            { type: "line", data: [[-1e3, state.cut], [1e3, state.cut]], color: P.accent, width: 2, dash: DASH },
+            { type: "text", x: Math.min.apply(null, c.income), y: state.cut, text: "próg zaliczenia: " + state.cut + " pkt", color: P.accent, align: "left", valign: "bottom", halo: true }],
+          aria: "Wynik z czytania a dochód okręgu z progiem zaliczenia." };
+      }
+      return { x: pad(range(c.income)), y: pad(range(m.fit.fitted)), xName: "Dochód okręgu (tys. USD)", yName: "Prawdopodobieństwo zdania",
+        layers: [{ type: "points", data: pairs(c.income, m.fit.fitted), colors: m.y.map(function (q) { return cols[q]; }), alpha: 0.7, size: 7 }],
+        aria: "Prawdopodobieństwo zdania z modelu logistycznego a dochód okręgu." };
+    },
+    update: function (root, state) {
+      var m = state.m, fit = m.fit, P = C.palette(), n = m.y.length, rmse = 0;
+      m.y.forEach(function (q, i) { rmse += (q - fit.fitted[i]) * (q - fit.fitted[i]); });
+      setRole(root, "stats", readout("AIC", C.fmt(fit.aic, 1), wrzos()) + readout("BIC", C.fmt(fit.bic, 1), P.secondary) +
+        readout("RMSE prawdop.", C.fmt(Math.sqrt(rmse / n), 3), P.bursztyn));
+      var rows = fit.coef.map(function (cf, i) { return [CAS_TERMS[i][1], Math.exp(cf.estimate), cf.se, pText(cf.p), cf.p < 0.05 ? "tak" : "nie"]; });
+      setRole(root, "table", tableSplit([{ label: "Zmienna", row: true }, { label: "Iloraz szans (OR)", digits: 3 }, { label: "Błąd stand.", digits: 3 },
+        { label: "p" }, { label: "p < 0.05?" }], rows, [[1, 2], [3, 4]], "Model logistyczny: ilorazy szans"));
+      var pass = m.y.reduce(function (s, q) { return s + q; }, 0);
+      setRole(root, "note", caption("Y = 1 („zdał”) oznacza wynik czytania od " + state.cut + " pkt: " + pass + " z " + n + " okręgów.", "ok"));
+    }
+  };
+  // p jak lc_pval(): trzy miejsca, poniżej 0.001 „< 0.001”.
+  function pText(p) { return p < 0.001 ? "< 0.001" : fmt(p, 3); }
+
+  // Ryc. 5.2: prosta i krzywa logistyczna na stałych danych 0/1 (współczynniki z R w config).
+  figures.s07_linlog = {
+    draw: function (v, P, k, state, vals) {
+      var c = state.config, x0 = Number(vals.ch5_lin_log_x), lin = [], lg = [];
+      function pl(x) { return 1 / (1 + Math.exp(-(c.log[0] + c.log[1] * x))); }
+      for (var i = 0; i < 300; i++) { var x = 40 * i / 299; lin.push([x, c.lin[0] + c.lin[1] * x]); lg.push([x, pl(x)]); }
+      return { x: [-2, 42], y: [-0.25, 1.25], yNegative: true, xName: "Godziny nauki", yName: "P(zdanie)",
+        layers: [{ type: "line", data: [[-2, 0], [42, 0]], color: P.rule, width: 1.2, dash: [2, 3] },
+          { type: "line", data: [[-2, 1], [42, 1]], color: P.rule, width: 1.2, dash: [2, 3] },
+          { type: "points", data: pairs(c.x, c.y), color: P.secondary, alpha: 0.34, size: 5 },
+          { type: "line", data: lin, color: P.niebo, width: 2, dash: DASH },
+          { type: "line", data: lg, color: wrzos(), width: 2.4 },
+          { type: "vline", x: x0, color: P.ref, width: 1.4 },
+          { type: "points", data: [[x0, c.lin[0] + c.lin[1] * x0]], color: P.niebo, size: 12, z: 7 },
+          { type: "points", data: [[x0, pl(x0)]], color: wrzos(), size: 12, z: 7 }],
+        aria: "Dane zdał/nie zdał a godziny nauki z prostą i krzywą logistyczną." };
+    },
+    update: function (root, state) {
+      var c = state.config, x0 = num(root, "ch5_lin_log_x"), P = C.palette();
+      setRole(root, "stats", readoutSw("Prosta", C.fmt(c.lin[0] + c.lin[1] * x0, 2), P.niebo) +
+        readoutSw("Krzywa logistyczna", C.fmt(1 / (1 + Math.exp(-(c.log[0] + c.log[1] * x0))), 2), wrzos()) +
+        readout("Prosta poza [0, 1]", C.fmt(c.outside * 100, 1) + "%", P.terakota));
+    }
+  };
+  // Odczyt z kwadracikiem koloru (lc_readout(swatch = TRUE)): pełni rolę legendy linii.
+  function readoutSw(label, value, color) {
+    return '<div class="lc-read" style="--lc-read-color:' + color + ';"><span class="lc-read-label"><i class="lc-read-swatch" aria-hidden="true"></i>' +
+      S.esc(label) + '</span><span class="lc-read-value">' + S.esc(String(value)) + "</span></div>";
+  }
+
+  // Ryc. 5.3: sigmoida dla β₀ i β₁ z suwaków; przyciski ustawiają gotowe pary.
+  var SIGMOID_PRESETS = { steep: [-5, 0.5], flat: [-1, 0.05], neg: [5, -0.3] };
+  function setSlider(root, id, value) {
+    var el = root.querySelector("#" + id);
+    if (!el) return;
+    el.value = value;
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  figures.s07_sigmoid = {
+    act: function (state, action, root) {
+      var p = SIGMOID_PRESETS[action];
+      if (p) { setSlider(root, "ch5_b0", p[0]); setSlider(root, "ch5_b1", p[1]); }
+    },
+    draw: function (v, P, k, state, vals) {
+      var b0 = Number(vals.ch5_b0), b1 = Number(vals.ch5_b1), pts = [];
+      for (var i = 0; i < 500; i++) { var x = -5 + 50 * i / 499; pts.push([x, 1 / (1 + Math.exp(-(b0 + b1 * x)))]); }
+      return { x: [-7.5, 47.5], y: [0, 1], xName: "X", yName: "P(Y = 1)", yNegative: true,
+        layers: [{ type: "line", data: [[-7.5, 0.5], [47.5, 0.5]], color: C.alpha(P.secondary, 0.5), width: 1.4, dash: DASH },
+                 { type: "line", data: pts, color: wrzos(), width: 3 }],
+        aria: "Krzywa logistyczna dla wybranych współczynników." };
+    }
+  };
+
+  // Ryc. 5.4–5.6: jeden model dopasowany w Ryc. 5.4; ryciny 5.5 i 5.6 przerysowują się po dopasowaniu.
+  var logitStore = { d: null, fit: null, X: null, jitter: null };
+  function redrawOthers(names) {
+    names.forEach(function (n) { document.querySelectorAll('.lc-sf[data-fig="' + n + '"]').forEach(function (el) { el.dispatchEvent(new CustomEvent("lc:sf-redraw")); }); });
+  }
+  function logitPredict(fit, hours, gpa) {
+    var b = fit.coef.map(function (c) { return c.estimate; });
+    return 1 / (1 + Math.exp(-(b[0] + b[1] * hours + b[2] * gpa)));
+  }
+  figures.s07_logit = {
+    act: function (state, action, root) {
+      var d = logisticData(num(root, "ch5_n")), X = [ones(d.zdal_num.length), d.godziny_nauki, d.srednia_ocen];
+      logitStore.d = d; logitStore.X = X; logitStore.fit = logitFit(X, d.zdal_num); logitStore.ci = null;
+      logitStore.jitter = d.zdal_num.map(function () { return rng.unif(-0.03, 0.03); });
+      redrawOthers(["s07_or", "s07_threshold"]);
+    },
+    draw: function (v, P, k, state, vals) {
+      var s = logitStore;
+      if (!s.fit) return emptySpec(P, "Kliknij „Dopasuj model”");
+      var pv = vals.ch5_predictor === "srednia_ocen" ? "srednia_ocen" : "godziny_nauki", other = pv === "srednia_ocen" ? "godziny_nauki" : "srednia_ocen";
+      var xs = s.d[pv], om = T.mean(s.d[other]), r = range(xs), curve = [];
+      for (var i = 0; i < 200; i++) {
+        var x = r[0] + (r[1] - r[0]) * i / 199;
+        curve.push([x, pv === "godziny_nauki" ? logitPredict(s.fit, x, om) : logitPredict(s.fit, om, x)]);
+      }
+      return { x: pad(r), y: [-0.05, 1.05], yNegative: true, xName: pv === "godziny_nauki" ? "Godziny nauki" : "Średnia ocen", yName: "P(zdanie egzaminu)",
+        layers: [{ type: "points", data: xs.map(function (x, i) { return [x, s.d.zdal_num[i] + s.jitter[i]]; }), color: P.secondary, alpha: 0.3, size: 6 },
+                 { type: "line", data: curve, color: wrzos(), width: 3 },
+                 { type: "line", data: [[r[0] - 100, 0.5], [r[1] + 100, 0.5]], color: P.bursztyn, width: 1.6, dash: DASH }],
+        aria: "Dane 0/1 i krzywa modelu logistycznego dla wybranego predyktora (drugi na średniej)." };
+    },
+    update: function (root, state) {
+      var s = logitStore, P = C.palette();
+      if (!s.fit) { setRole(root, "stats", ""); setRole(root, "pred", ""); return; }
+      var ok = 0;
+      s.fit.fitted.forEach(function (p, i) { if ((p >= 0.5 ? 1 : 0) === s.d.zdal_num[i]) ok++; });
+      setRole(root, "stats", readout("AIC", fmt(s.fit.aic, 1), wrzos()) + readout("BIC", fmt(s.fit.bic, 1), P.secondary) +
+        readout("Dokładność", fmt(ok / s.fit.n * 100, 1) + "%", P.szalwia));
+      var prob = logitPredict(s.fit, num(root, "ch5_pred_hours"), num(root, "ch5_pred_gpa")), col = prob >= 0.5 ? P.szalwia : P.terakota;
+      setRole(root, "pred", readout("P(zdanie)", fmt(prob, 3), col) + readout("Prognoza", prob >= 0.5 ? "Prawdopodobnie zda" : "Raczej nie zda", col));
+    }
+  };
+  // Ryc. 5.5: ilorazy szans z modelu z Ryc. 5.4 (przedziały profilowe jak confint()).
+  var OR_LABELS = ["Wyraz wolny", "Godziny nauki (+1h)", "Średnia ocen (+1 pkt)"];
+  figures.s07_or = {
+    update: function (root) {
+      var s = logitStore;
+      if (!s.fit) { setRole(root, "table", caption("Najpierw dopasuj model.")); return; }
+      if (!s.ci) s.ci = [1, 2].map(function (j) { return logitProfileCI(s.X, s.d.zdal_num, s.fit, j); });
+      var rows = [1, 2].map(function (j, i) {
+        var c = s.fit.coef[j];
+        return [OR_LABELS[j], c.estimate, Math.exp(c.estimate), "[" + fmt(Math.exp(s.ci[i][0]), 3) + " ; " + fmt(Math.exp(s.ci[i][1]), 3) + "]", pText(c.p)];
+      });
+      setRole(root, "table", S.table([{ label: "Zmienna", row: true }, { label: "β", digits: 3 }, { label: "OR", digits: 3 }, { label: "95% CI (OR)" }, { label: "p" }], rows));
+    }
+  };
+  // Ryc. 5.6: macierz pomyłek dla progu decyzji (kolor komórki: liczba obserwacji).
+  function mix(a, b, t) {
+    function rgb(h) { h = h.replace("#", ""); return [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
+    var x = rgb(a), y = rgb(b);
+    return "rgb(" + x.map(function (v, i) { return Math.round(v + (y[i] - v) * t); }).join(",") + ")";
+  }
+  function confusion(threshold) {
+    var s = logitStore, m = { tp: 0, tn: 0, fp: 0, fn: 0 };
+    s.fit.fitted.forEach(function (p, i) {
+      var pred = p >= threshold ? 1 : 0, y = s.d.zdal_num[i];
+      if (pred && y) m.tp++; else if (!pred && !y) m.tn++; else if (pred) m.fp++; else m.fn++;
+    });
+    return m;
+  }
+  figures.s07_threshold = {
+    draw: function (v, P, k, state, vals) {
+      if (!logitStore.fit) return emptySpec(P, "Najpierw dopasuj model w Ryc. 5.4");
+      var m = confusion(Number(vals.ch5_threshold));
+      // Kolumny: predykcja Nie/Tak; wiersze: rzeczywistość Nie/Tak (Tak u góry).
+      var cells = [[1, 1, m.tn], [2, 1, m.fp], [1, 2, m.fn], [2, 2, m.tp]], vals4 = cells.map(function (c) { return c[2]; });
+      var lo = Math.min.apply(null, vals4), hi = Math.max.apply(null, vals4), span = hi - lo || 1;
+      var layers = [{ type: "cells", items: cells.map(function (c) { return { r: [c[0] - 0.5, c[0] + 0.5, c[1] - 0.5, c[1] + 0.5], color: mix(P.niebo, P.secondary, (c[2] - lo) / span) }; }) },
+        { type: "segs", items: [{ from: [1.5, 0.5], to: [1.5, 2.5] }, { from: [0.5, 1.5], to: [2.5, 1.5] }], color: P.surface, width: 2, z: 4 }];
+      cells.forEach(function (c) { layers.push({ type: "text", x: c[0], y: c[1], text: String(c[2]), color: "#ffffff", bold: true, size: 1.8, valign: "middle" }); });
+      return { x: [0.5, 2.5], y: [0.5, 2.5], xLabels: { 1: "Nie", 2: "Tak" }, yLabels: { 1: "Nie", 2: "Tak" }, noXGrid: true, noYGrid: true,
+        xName: "Predykcja modelu", yName: "Rzeczywistość", layers: layers, aria: "Macierz pomyłek modelu dla wybranego progu." };
+    },
+    update: function (root) {
+      var P = C.palette();
+      if (!logitStore.fit) { setRole(root, "stats", ""); return; }
+      var m = confusion(num(root, "ch5_threshold")), n = m.tp + m.tn + m.fp + m.fn;
+      var sens = m.tp + m.fn ? m.tp / (m.tp + m.fn) : NaN, spec = m.tn + m.fp ? m.tn / (m.tn + m.fp) : NaN;
+      setRole(root, "stats", readout("Dokładność", pct((m.tp + m.tn) / n), P.szalwia) + readout("Czułość (wykrywa Tak)", isNaN(sens) ? "NA%" : pct(sens), P.niebo) +
+        readout("Swoistość (wykrywa Nie)", isNaN(spec) ? "NA%" : pct(spec), P.bursztyn));
     }
   };
 
