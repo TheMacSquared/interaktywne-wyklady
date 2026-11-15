@@ -9,8 +9,7 @@ interaktywne-wyklady/
 ├── shared/         # wspólny rdzeń: layout, paleta, style, silnik rycin (JS)
 ├── statystyka/     # podstawowy kurs statystyki (11 wykładów)
 ├── analiza-ryzyka/ # wykłady z analizy ryzyka (10 wykładów)
-├── scripts/        # budowanie i kontrola stron statycznych
-└── audyty/         # ustalenia audytu i stan poprawek
+└── scripts/        # budowanie i kontrola stron statycznych
 ```
 
 | Folder | Wykłady | Dokumentacja |
