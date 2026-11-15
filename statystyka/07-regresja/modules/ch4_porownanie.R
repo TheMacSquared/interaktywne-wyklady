@@ -62,11 +62,11 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.1", title = "Krok po kroku",
       full_width = TRUE,
-      lc_toolbar(
-        lc_action("ch4_stepwise", "Buduj modele krok po kroku", variant = "solid")
-      ),
-      lc_plot("ch4_step_plot", max_height = "300px"),
-      uiOutput("ch4_step_table"),
+      # Losowanie, modele i tabelę liczy przeglądarka (modules/figures.js, rycina s07_build).
+      lc_sf_figure("s07_build", legend = TRUE,
+        toolbar = lc_sf_action("build", "ch4_stepwise", "Buduj modele krok po kroku", variant = "solid"),
+        ratio = "2.2/1", max_height = "300px",
+        after = tags$div(`data-role` = "table")),
       lc_caption("Modele z 1–4 predyktorami i model z dodanym szumem.")
     ),
 
@@ -158,12 +158,19 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.2", title = "Porównanie modeli regresji",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch4_n", "n", 50, 300, 150, 25),
-        lc_action("ch4_compare", "Buduj i porównaj modele", variant = "solid")
-      ),
-      lc_plot("ch4_metrics_plot", max_height = "350px"),
-      uiOutput("ch4_metrics_table"),
+      # Losowanie, modele i tabelę liczy przeglądarka (modules/figures.js, rycina s07_arena).
+      lc_sf_figure("s07_arena", legend = TRUE,
+        control = lc_sf_slider("ch4_n", "n", 50, 300, 150, 25),
+        toolbar = lc_sf_action("compare", "ch4_compare", "Buduj i porównaj modele", variant = "solid"),
+        body = tagList(
+          tags$style(HTML(".s07-quad{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4em 1em}
+            @container lc-fig (min-width:620px){.s07-quad{grid-template-columns:repeat(4,minmax(0,1fr))}}
+            .s07-quad h4{margin:.2em 0;font-size:.9em}.s07-quad h4[hidden]{display:none}")),
+          tags$div(class = "s07-quad", lapply(seq_along(c("R² skorygowany", "AIC", "BIC", "RMSE")), function(k) {
+            tags$div(tags$h4(`data-arena-head` = NA, hidden = NA, c("R² skorygowany", "AIC", "BIC", "RMSE")[k]),
+                     lc_sf_chart(k - 1, "0.9/1", "260px"))
+          }))),
+        after = tags$div(`data-role` = "table")),
       lc_caption("Generujemy dane i budujemy 4 modele z różną
                     liczbą predyktorów.")
     ),
@@ -211,13 +218,13 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.3", title = "Wielomian: dopasowanie a uogólnianie",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch4_poly_degree", "Stopień wielomianu", 1, 15, 1, 1),
-        lc_slider("ch4_poly_n", "n (punktów)", 15, 100, 30, 5),
-        lc_action("ch4_poly_gen", "Generuj", variant = "solid"),
-        lc_readouts(uiOutput("ch4_poly_stats"))
-      ),
-      lc_plot("ch4_poly_plot", max_height = "300px")
+      # Losowanie i dopasowanie liczy przeglądarka (modules/figures.js, rycina s07_poly).
+      lc_sf_figure("s07_poly",
+        control = list(lc_sf_slider("ch4_poly_degree", "Stopień wielomianu", 1, 15, 1, 1),
+                       lc_sf_slider("ch4_poly_n", "n (punktów)", 15, 100, 30, 5)),
+        toolbar = tagList(lc_sf_action("gen", "ch4_poly_gen", "Generuj", variant = "solid"),
+                          lc_readouts(tags$div(`data-role` = "stats", style = "display: contents"))),
+        ratio = "2.2/1", max_height = "300px")
     ),
 
     lc_p("Przy 30 punktach prosta (stopień 1) nie łapie fali, a R² jest bliski
@@ -256,13 +263,13 @@ ch4_ui <- list(
     figure_panel(
       label = "Ryc. 4.4", title = "Zbiór uczący i testowy: kiedy model przestaje uogólniać",
       full_width = TRUE,
-      lc_toolbar(
-        lc_slider("ch4_tt_degree", "Stopień wielomianu", 1, 15, 1, 1),
-        lc_action("ch4_tt_new", "Nowy podział danych", variant = "solid"),
-        lc_readouts(uiOutput("ch4_tt_info"))
-      ),
-      lc_plot("ch4_tt_plot", max_height = "330px"),
-      uiOutput("ch4_tt_note")
+      # Losowanie i dopasowania liczy przeglądarka (modules/figures.js, rycina s07_tt).
+      lc_sf_figure("s07_tt",
+        control = lc_sf_slider("ch4_tt_degree", "Stopień wielomianu", 1, 15, 1, 1),
+        toolbar = tagList(lc_sf_action("new", "ch4_tt_new", "Nowy podział danych", variant = "solid"),
+                          lc_readouts(tags$div(`data-role` = "stats", style = "display: contents"))),
+        ratio = "2.2/1", max_height = "330px",
+        after = tags$div(`data-role` = "note"))
     ),
 
     lc_p("Błąd na zbiorze uczącym maleje z każdym stopniem: typowo od około 2.2
@@ -318,282 +325,5 @@ ch4_ui <- list(
 # SERVER
 # ============================================================================
 
-ch4_server <- function(input, output, session) {
-
-  # --- Widget: Efekt dodawania zmiennych (przeniesiony z ch3 wielorakiej) ---
-  ch4_step_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch4_stepwise, {
-    df <- generate_multi_data(150)
-    df$szum <- rnorm(nrow(df))  # zmienna bez związku z oceną
-
-    pred_sets <- list(
-      c("godziny_nauki"),
-      c("godziny_nauki", "frekwencja"),
-      c("godziny_nauki", "frekwencja", "stres"),
-      c("godziny_nauki", "frekwencja", "stres", "sen_h"),
-      c("godziny_nauki", "frekwencja", "stres", "sen_h", "szum")
-    )
-
-    results <- lapply(seq_along(pred_sets), function(i) {
-      formula <- as.formula(paste("ocena ~", paste(pred_sets[[i]], collapse = " + ")))
-      model <- lm(formula, data = df)
-      metrics <- compute_model_metrics(model)
-      data.frame(
-        k = i,
-        predictors = paste(pred_sets[[i]], collapse = " + "),
-        r_squared = metrics$r_squared,
-        adj_r_squared = metrics$adj_r_squared,
-        aic = metrics$aic,
-        bic = metrics$bic,
-        rmse = metrics$rmse
-      )
-    })
-
-    ch4_step_data(do.call(rbind, results))
-  })
-
-  zoom_plot_server("ch4_step_plot", reactive({
-    df <- ch4_step_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Buduj modele krok po kroku”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      long <- df %>%
-        select(k, r_squared, adj_r_squared) %>%
-        tidyr::pivot_longer(cols = c(r_squared, adj_r_squared),
-                            names_to = "metric", values_to = "value") %>%
-        mutate(metric = ifelse(metric == "r_squared", "R²", "R² skorygowany"))
-
-      ggplot(long, aes(x = k, y = value, color = metric)) +
-        geom_line(linewidth = 1.2) +
-        geom_point(size = 3) +
-        scale_x_continuous(breaks = 1:5,
-                           labels = c(paste0(1:4, " pred."), "+ szum")) +
-        scale_color_manual(values = c(unname(upwr_cat["niebo"]), unname(upwr_cat["szalwia"])), name = NULL) +
-        labs(
-             x = "Liczba predyktorów", y = "Wartość") +
-        theme_upwr() +
-        theme(legend.position = "top")
-    }
-  }))
-
-  output$ch4_step_table <- renderUI({
-    df <- ch4_step_data()
-    if (is.null(df)) return(NULL)
-
-
-    lc_table(df,
-      cols = list(
-        lc_col("predictors", "Predyktory", "row"),
-        lc_col("r_squared", "R²", digits = 3),
-        lc_col("adj_r_squared", "R² skor.", digits = 3),
-        lc_col("aic", "AIC", digits = 1),
-        lc_col("bic", "BIC", digits = 1),
-        lc_col("rmse", "RMSE", digits = 3)
-      )
-    )
-  })
-
-  # --- Widget: Arena modeli liniowych ---
-  ch4_models <- reactiveVal(NULL)
-
-  observeEvent(input$ch4_compare, {
-    df <- generate_multi_data(input$ch4_n)
-
-    models <- list(
-      "1: nauka" = lm(ocena ~ godziny_nauki, data = df),
-      "2: nauka + frekw." = lm(ocena ~ godziny_nauki + frekwencja, data = df),
-      "3: nauka + frekw. + stres" = lm(ocena ~ godziny_nauki + frekwencja + stres, data = df),
-      "4: wszystkie" = lm(ocena ~ godziny_nauki + frekwencja + stres + sen_h, data = df)
-    )
-
-    results <- lapply(names(models), function(name) {
-      m <- compute_model_metrics(models[[name]])
-      data.frame(
-        model = name,
-        r_squared = m$r_squared,
-        adj_r_squared = m$adj_r_squared,
-        aic = m$aic,
-        bic = m$bic,
-        rmse = m$rmse,
-        n_params = m$n_params
-      )
-    })
-
-    ch4_models(do.call(rbind, results))
-  })
-
-  zoom_plot_server("ch4_metrics_plot", reactive({
-    df <- ch4_models()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Buduj i porównaj modele”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      long <- df %>%
-        select(model, adj_r_squared, aic, bic, rmse) %>%
-        tidyr::pivot_longer(-model, names_to = "metric", values_to = "value") %>%
-        mutate(metric = factor(metric,
-          levels = c("adj_r_squared", "aic", "bic", "rmse"),
-          labels = c("R² skorygowany", "AIC", "BIC", "RMSE")))
-
-      ggplot(long, aes(x = model, y = value, fill = model)) +
-        geom_col(alpha = 0.8) +
-        facet_wrap(~metric, scales = "free_y", ncol = 4) +
-        scale_fill_manual(values = c(unname(upwr_cat["niebo"]), unname(upwr_cat["szalwia"]), unname(upwr_cat["bursztyn"]), unname(upwr_cat["wrzos"]))) +
-        labs(x = NULL, y = "Wartość") +
-        theme_upwr() +
-        theme(legend.position = "none",
-              axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
-    }
-  }))
-
-  output$ch4_metrics_table <- renderUI({
-    df <- ch4_models()
-    if (is.null(df)) return(NULL)
-
-    best_adj_r2 <- which.max(df$adj_r_squared)
-    best_aic <- which.min(df$aic)
-    best_bic <- which.min(df$bic)
-
-
-    best <- function(i) ifelse(seq_len(nrow(df)) == i, "is-best", NA)
-    lc_table(df,
-      cols = list(
-        lc_col("model", "Model", "row"),
-        lc_col("r_squared", "R²", digits = 3),
-        lc_col("adj_r_squared", "R² skor.", digits = 3),
-        lc_col("aic", "AIC", digits = 1),
-        lc_col("bic", "BIC", digits = 1),
-        lc_col("rmse", "RMSE", digits = 3)
-      ),
-      # RMSE na danych uczących zawsze wskazuje największy model — bez wyróżnienia.
-      cell_class = list(adj_r_squared = best(best_adj_r2), aic = best(best_aic),
-                        bic = best(best_bic))
-    )
-  })
-
-  # --- Widget: Przeuczenie (wielomian) ---
-  ch4_poly_data <- reactiveVal(NULL)
-
-  observeEvent(input$ch4_poly_gen, {
-    n <- input$ch4_poly_n
-    x <- sort(runif(n, 0, 10))
-    y <- sin(x) * 3 + rnorm(n, 0, 1)
-    ch4_poly_data(data.frame(x = x, y = y))
-  })
-
-  zoom_plot_server("ch4_poly_plot", reactive({
-    df <- ch4_poly_data()
-    if (is.null(df)) {
-      ggplot() +
-        annotate("text", x = 0.5, y = 0.5, label = "Kliknij „Generuj”",
-                 size = 6, color = upwr_reference) +
-        theme_void()
-    } else {
-      degree <- input$ch4_poly_degree
-      model <- lm(y ~ poly(x, degree), data = df)
-
-      x_pred <- seq(min(df$x), max(df$x), length.out = 200)
-      y_pred <- predict(model, newdata = data.frame(x = x_pred))
-
-      pred_df <- data.frame(x = x_pred, y = y_pred)
-
-      ggplot() +
-        geom_point(data = df, aes(x = x, y = y), color = upwr_secondary, alpha = 0.5) +
-        geom_line(data = pred_df, aes(x = x, y = y), color = unname(upwr_cat["niebo"]), linewidth = 1.2) +
-        labs(
-             x = "X", y = "Y") +
-        theme_upwr()
-    }
-  }))
-
-  output$ch4_poly_stats <- renderUI({
-    df <- ch4_poly_data()
-    if (is.null(df)) return(NULL)
-    degree <- input$ch4_poly_degree
-    model <- lm(y ~ poly(x, degree), data = df)
-    metrics <- compute_model_metrics(model)
-
-    tagList(
-      lc_readout("R²", round(metrics$r_squared, 3), color = unname(upwr_cat["niebo"])),
-      lc_readout("R² skor.", round(metrics$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
-      lc_readout("AIC", round(metrics$aic, 1), color = unname(upwr_cat["bursztyn"])),
-      lc_readout("BIC", round(metrics$bic, 1), color = upwr_secondary)
-    )
-  })
-
-  # --- Widget: zbiór uczący / testowy ---
-  ch4_tt_data <- reactiveVal(generate_train_test_poly())
-
-  observeEvent(input$ch4_tt_new, {
-    ch4_tt_data(generate_train_test_poly())
-  })
-
-  zoom_plot_server("ch4_tt_plot", reactive({
-    sets <- ch4_tt_data()
-    train <- sets$train
-    test <- sets$test
-    degree <- input$ch4_tt_degree
-    model <- lm(y ~ poly(x, degree), data = train)
-    grid <- data.frame(x = seq(0, 10, length.out = 300))
-    grid$y <- predict(model, newdata = grid)
-
-    ggplot() +
-      geom_point(data = test, aes(x = x, y = y), color = unname(upwr_cat["bursztyn"]),
-                 alpha = 0.25, size = 1.8) +
-      geom_point(data = train, aes(x = x, y = y), color = upwr_secondary,
-                 alpha = 0.75, size = 2.2) +
-      geom_line(data = grid, aes(x = x, y = y), color = unname(upwr_cat["niebo"]),
-                linewidth = 1.2) +
-      labs(x = "X", y = "Y") +
-      theme_upwr()
-  }))
-
-  ch4_tt_state <- reactive({
-    sets <- ch4_tt_data()
-    train <- sets$train
-    test <- sets$test
-    degree <- input$ch4_tt_degree
-
-    degrees <- 1:15
-    metrics <- lapply(degrees, function(d) {
-      model <- lm(y ~ poly(x, d), data = train)
-      train_rmse <- sqrt(mean((train$y - predict(model, train))^2))
-      test_rmse <- sqrt(mean((test$y - predict(model, test))^2))
-      data.frame(degree = d, train_rmse = train_rmse, test_rmse = test_rmse)
-    })
-    metrics <- do.call(rbind, metrics)
-    current <- metrics[metrics$degree == degree, ]
-    best <- metrics[which.min(metrics$test_rmse), ]
-
-    list(current = current, best = best)
-  })
-
-  output$ch4_tt_info <- renderUI({
-    st <- ch4_tt_state()
-    current <- st$current
-    best <- st$best
-    tagList(
-      lc_readout("RMSE uczący", round(current$train_rmse, 2), color = unname(upwr_cat["niebo"])),
-      lc_readout("RMSE testowy", round(current$test_rmse, 2), color = unname(upwr_cat["bursztyn"])),
-      lc_readout("Najlepszy na teście", paste0("stopień ", best$degree, " · RMSE ", round(best$test_rmse, 2)), color = unname(upwr_cat["szalwia"]))
-    )
-  })
-
-  output$ch4_tt_note <- renderUI({
-    st <- ch4_tt_state()
-    current <- st$current
-    best <- st$best
-    lc_caption(
-        if (current$test_rmse > best$test_rmse * 1.25)
-            "Błąd testowy wyraźnie wyższy niż przy najlepszym stopniu."
-          else
-            "Błąd testowy bliski najmniejszego."
-      )
-  })
-}
+# Wszystkie ryciny rozdziału liczy przeglądarka.
+ch4_server <- function(input, output, session) {}

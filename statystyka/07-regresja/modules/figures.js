@@ -21,7 +21,65 @@
     return { n: n, b0: b0, b1: b1, r: sxy / Math.sqrt(sxx * syy), r2: 1 - sse / syy, sse: sse, sst: syy, sigma: sigma,
              se0: se0, se1: se1, t1: t1, p1: 2 * D.pt(-Math.abs(t1), n - 2), mx: mx, my: my, sx: Math.sqrt(sxx / (n - 1)), sy: Math.sqrt(syy / (n - 1)), sxx: sxx };
   }
-  root.lcS07 = { simpleFit: simpleFit };
+  // Dane jak generate_multi_data() w helpers.R.
+  function multiData(n, rg) {
+    var r = rg || rng, d = { ocena: [], godziny_nauki: [], frekwencja: [], stres: [], sen_h: [] };
+    for (var i = 0; i < n; i++) {
+      var g = r.unif(0, 40), f = r.unif(30, 100), s = r.unif(1, 10), h = r.norm(7, 1.5);
+      var o = 1.5 + 0.04 * g + 0.015 * f - 0.08 * s + 0.1 * h + r.norm(0, 0.4);
+      d.ocena.push(Math.min(Math.max(Math.round(o * 100) / 100, 2), 5));
+      d.godziny_nauki.push(Math.round(g * 10) / 10); d.frekwencja.push(Math.round(f * 10) / 10);
+      d.stres.push(Math.round(s * 10) / 10); d.sen_h.push(Math.round(h * 10) / 10);
+    }
+    return d;
+  }
+  // Miary jak compute_model_metrics(): R², R² skorygowany, AIC, BIC (logLik z σ), RMSE = √(SSE/n).
+  function lmMetrics(columns, y) {
+    var m = T.lm(columns, y);
+    if (!m) return null;
+    var p = columns.length + 1, n = y.length, sse = m.sigma * m.sigma * m.df;
+    return { r2: m.r2, adjR2: m.adjR2, aic: m.aic, bic: m.aic + (Math.log(n) - 2) * (p + 1), rmse: Math.sqrt(sse / n), nParams: p };
+  }
+  // Wielomian ortogonalny jak poly(x, stopień) w R: trójczłonowa rekurencja na punktach uczących
+  // (współczynniki alpha, norm2), dopasowanie MNK w tej bazie i przewidywanie dla nowych x.
+  function polyFit(x, y, degree) {
+    var n = x.length, alpha = [], norm2 = [1, n], basis = [x.map(function () { return 1; })], k, i;
+    var xbar = T.mean(x);
+    for (k = 0; k < degree; k++) {
+      var pk = basis[k], sx = 0;
+      for (i = 0; i < n; i++) sx += (x[i] - xbar) * pk[i] * pk[i];
+      alpha.push(sx / norm2[k + 1]);
+      var next = [];
+      for (i = 0; i < n; i++) next.push((x[i] - xbar - alpha[k]) * pk[i] - (k > 0 ? norm2[k + 1] / norm2[k] * basis[k - 1][i] : 0));
+      var s2 = 0;
+      for (i = 0; i < n; i++) s2 += next[i] * next[i];
+      if (!(s2 > 1e-12 * n)) return null;   // stopień ≥ liczba różnych punktów
+      basis.push(next); norm2.push(s2);
+    }
+    var coef = basis.map(function (b, kk) { var s = 0; for (i = 0; i < n; i++) s += y[i] * b[i]; return s / norm2[kk + 1]; });
+    function at(v) {
+      var prev = 0, cur = 1, s = coef[0];
+      for (var kk = 0; kk < degree; kk++) {
+        var nx = (v - xbar - alpha[kk]) * cur - (kk > 0 ? norm2[kk + 1] / norm2[kk] * prev : 0);
+        prev = cur; cur = nx; s += coef[kk + 1] * cur;
+      }
+      return s;
+    }
+    var sse = 0, my = T.mean(y), sst = 0;
+    for (i = 0; i < n; i++) { var e = y[i] - at(x[i]); sse += e * e; sst += (y[i] - my) * (y[i] - my); }
+    var p = degree + 1, r2 = 1 - sse / sst, aic = n * (Math.log(2 * Math.PI) + Math.log(sse / n) + 1) + 2 * (p + 1);
+    return { predict: at, sse: sse, r2: r2, adjR2: 1 - (1 - r2) * (n - 1) / (n - p), aic: aic, bic: aic + (Math.log(n) - 2) * (p + 1) };
+  }
+  function rmseOn(fit, x, y) { var s = 0; for (var i = 0; i < x.length; i++) { var e = y[i] - fit.predict(x[i]); s += e * e; } return Math.sqrt(s / x.length); }
+  // Dane jak generate_train_test_poly(): 35 uczących i 180 testowych z 3·sin(x) + N(0, 1).
+  function sortNum(a) { return a.sort(function (p, q) { return p - q; }); }
+  function trainTest(rg) {
+    var r = rg || rng, tx = sortNum(r.many(35, function () { return r.unif(0, 10); })), sx = sortNum(r.many(180, function () { return r.unif(0, 10); }));
+    return { train: { x: tx, y: tx.map(function (v) { return 3 * Math.sin(v) + r.norm(0, 1); }) },
+             test: { x: sx, y: sx.map(function (v) { return 3 * Math.sin(v) + r.norm(0, 1); }) } };
+  }
+
+  root.lcS07 = { multiData: multiData, lmMetrics: lmMetrics, polyFit: polyFit, rmseOn: rmseOn, trainTest: trainTest, simpleFit: simpleFit };
 
   var C = root.lcCharts, S = root.lcSF;
   if (!C || !S) return;
@@ -492,6 +550,136 @@
       var cv = m.extra[0];
       S.legendItems(legend, c.bins3[cv].levels.map(function (lev, a) { return { text: lev, color: P[GROUP_COLORS[a]] }; }));
       legend.insertAdjacentHTML("afterbegin", '<span class="lc-sf-legend-item"><b>' + S.esc(c.labels[cv]) + ":</b></span>");
+    }
+  };
+
+  // ---- Rozdział 4: porównanie modeli ---------------------------------------------
+  // Wykres-zachęta przed pierwszym kliknięciem (dawniej theme_void z napisem).
+  function emptySpec(P, text) {
+    return { x: [0, 1], y: [0, 1], hideY: true, xTicks: [], noXGrid: true, noYGrid: true, aria: text,
+             layers: [{ type: "text", x: 0.5, y: 0.5, text: text, color: P.ref, size: 1.3, valign: "middle" }] };
+  }
+  function setRole(root, role, html) { var n = root.querySelector('[data-role="' + role + '"]'); if (n) n.innerHTML = html; }
+  // Wyróżnienie najlepszych komórek tabeli (jak cell_class = "is-best" w lc_table()).
+  function markBest(root, role, cells) {
+    var rows = root.querySelectorAll('[data-role="' + role + '"] tbody tr');
+    cells.forEach(function (c) { var tr = rows[c[0]]; if (tr) tr.children[c[1]].classList.add("is-best"); });
+  }
+  var STEP_SETS = [["godziny_nauki"], ["godziny_nauki", "frekwencja"], ["godziny_nauki", "frekwencja", "stres"],
+                   ["godziny_nauki", "frekwencja", "stres", "sen_h"], ["godziny_nauki", "frekwencja", "stres", "sen_h", "szum"]];
+  var METRIC_COLS = [{ label: "R²", digits: 3 }, { label: "R² skor.", digits: 3 }, { label: "AIC", digits: 1 }, { label: "BIC", digits: 1 }, { label: "RMSE", digits: 3 }];
+  function metricRow(name, m) { return [name, m.r2, m.adjR2, m.aic, m.bic, m.rmse]; }
+
+  // Ryc. 4.1: kolejne predyktory i szum — R² zawsze rośnie, R² skorygowany nie.
+  figures.s07_build = {
+    init: function (state) { state.rows = null; },
+    act: function (state) {
+      var d = multiData(150);
+      d.szum = d.ocena.map(function () { return rng.norm(0, 1); });
+      state.rows = STEP_SETS.map(function (set) { return { name: set.join(" + "), m: lmMetrics(set.map(function (v) { return d[v]; }), d.ocena) }; });
+    },
+    draw: function (v, P, k, state) {
+      if (!state.rows) return emptySpec(P, "Kliknij „Buduj modele krok po kroku”");
+      var r2 = state.rows.map(function (r, i) { return [i + 1, r.m.r2]; }), adj = state.rows.map(function (r, i) { return [i + 1, r.m.adjR2]; });
+      var all = r2.concat(adj).map(function (p) { return p[1]; });
+      return { x: [0.8, 5.2], y: pad(range(all)), xName: "Liczba predyktorów", yName: "Wartość", yNegative: true,
+        xLabels: { 1: "1 pred.", 2: "2 pred.", 3: "3 pred.", 4: "4 pred.", 5: "+ szum" },
+        legend: [{ text: "R²", color: P.niebo }, { text: "R² skorygowany", color: P.szalwia }],
+        layers: [{ type: "line", data: r2, color: P.niebo, width: 2.4 }, { type: "points", data: r2, color: P.niebo, size: 10 },
+                 { type: "line", data: adj, color: P.szalwia, width: 2.4 }, { type: "points", data: adj, color: P.szalwia, size: 10 }],
+        aria: "R² i R² skorygowany dla modeli z rosnącą liczbą predyktorów." };
+    },
+    update: function (root, state) {
+      setRole(root, "table", state.rows ? S.table([{ label: "Predyktory", row: true }].concat(METRIC_COLS),
+        state.rows.map(function (r) { return metricRow(r.name, r.m); })) : "");
+    }
+  };
+
+  // Ryc. 4.2: arena czterech modeli; panele miar z własną skalą Y (facet_wrap, scales = "free_y").
+  var ARENA = [["1: nauka", ["godziny_nauki"]], ["2: nauka + frekw.", ["godziny_nauki", "frekwencja"]],
+               ["3: nauka + frekw. + stres", ["godziny_nauki", "frekwencja", "stres"]],
+               ["4: wszystkie", ["godziny_nauki", "frekwencja", "stres", "sen_h"]]];
+  var ARENA_METRICS = [["adjR2", "R² skorygowany"], ["aic", "AIC"], ["bic", "BIC"], ["rmse", "RMSE"]];
+  figures.s07_arena = {
+    init: function (state) { state.rows = null; },
+    act: function (state, action, root) {
+      var d = multiData(num(root, "ch4_n"));
+      state.rows = ARENA.map(function (a) { return { name: a[0], m: lmMetrics(a[1].map(function (v) { return d[v]; }), d.ocena) }; });
+    },
+    draw: function (v, P, k, state) {
+      if (!state.rows) return k === 0 ? emptySpec(P, "Kliknij „Buduj i porównaj modele”") : null;
+      var key = ARENA_METRICS[k][0], vals = state.rows.map(function (r) { return r.m[key]; }), cols = [P.niebo, P.szalwia, P.bursztyn, C.token("--upwr-cat-wrzos", "#7d5a8c")];
+      var lo = Math.min(0, Math.min.apply(null, vals)), hi = Math.max(0, Math.max.apply(null, vals)), span = (hi - lo) || 1;
+      return { x: [0.4, 4.6], y: [lo - (lo < 0 ? 0.05 * span : 0), hi + (hi > 0 ? 0.05 * span : 0)], yNegative: true,
+        xLabels: { 1: "1", 2: "2", 3: "3", 4: "4" },
+        legend: k === 0 ? ARENA.map(function (a, i) { return { text: a[0], color: cols[i], box: true }; }) : undefined,
+        layers: [{ type: "bins", data: vals.map(function (val, i) { return [i + 0.55, i + 1.45, val]; }), colors: cols, alpha: 0.8 }],
+        xName: "", yName: k === 0 ? "Wartość" : "", aria: ARENA_METRICS[k][1] + " czterech modeli." };
+    },
+    update: function (root, state) {
+      root.querySelectorAll("[data-arena-head]").forEach(function (h) { h.hidden = !state.rows; });
+      if (!state.rows) { setRole(root, "table", ""); return; }
+      setRole(root, "table", S.table([{ label: "Model", row: true }].concat(METRIC_COLS), state.rows.map(function (r) { return metricRow(r.name, r.m); })));
+      function arg(key, best) { var b = 0; state.rows.forEach(function (r, i) { if (best(r.m[key], state.rows[b].m[key])) b = i; }); return b; }
+      // RMSE na danych uczących zawsze wskazuje największy model — bez wyróżnienia.
+      markBest(root, "table", [[arg("adjR2", function (a, c) { return a > c; }), 2], [arg("aic", function (a, c) { return a < c; }), 3],
+                               [arg("bic", function (a, c) { return a < c; }), 4]]);
+    }
+  };
+
+  // Ryc. 4.3: wielomian wybranego stopnia na wylosowanych punktach.
+  figures.s07_poly = {
+    init: function (state) { state.d = null; },
+    act: function (state, action, root) {
+      var n = num(root, "ch4_poly_n"), x = sortNum(rng.many(n, function () { return rng.unif(0, 10); }));
+      state.d = { x: x, y: x.map(function (v) { return 3 * Math.sin(v) + rng.norm(0, 1); }) };
+    },
+    draw: function (v, P, k, state, vals) {
+      if (!state.d) return emptySpec(P, "Kliknij „Generuj”");
+      var d = state.d, fit = polyFit(d.x, d.y, Number(vals.ch4_poly_degree)), r = range(d.x), curve = [], i, ys = d.y.slice();
+      if (fit) for (i = 0; i < 200; i++) { var xv = r[0] + (r[1] - r[0]) * i / 199, yv = fit.predict(xv); curve.push([xv, yv]); ys.push(yv); }
+      var layers = [{ type: "points", data: pairs(d.x, d.y), color: P.secondary, alpha: 0.5, size: 7 }];
+      if (fit) layers.push({ type: "line", data: curve, color: P.niebo, width: 2.4 });
+      else layers.push({ type: "text", x: (r[0] + r[1]) / 2, y: "top", text: "Stopień musi być mniejszy niż liczba punktów", color: P.terakota, valign: "top" });
+      return { x: pad(r), y: pad(range(ys)), yNegative: true, layers: layers, xName: "X", yName: "Y",
+               aria: "Punkty z dopasowanym wielomianem wybranego stopnia." };
+    },
+    update: function (root, state) {
+      var st = root.querySelector('[data-role="stats"]'), P = C.palette();
+      if (!st) return;
+      var fit = state.d && polyFit(state.d.x, state.d.y, num(root, "ch4_poly_degree"));
+      st.innerHTML = fit ? readout("R²", fmt(fit.r2, 3), P.niebo) + readout("R² skor.", fmt(fit.adjR2, 3), P.szalwia) +
+        readout("AIC", fmt(fit.aic, 1), P.bursztyn) + readout("BIC", fmt(fit.bic, 1), P.secondary) : "";
+    }
+  };
+
+  // Ryc. 4.4: zbiór uczący i testowy; błąd testowy dla stopni 1–15.
+  function ttState(state, degree) {
+    var t = state.d.train, s = state.d.test, all = [];
+    for (var g = 1; g <= 15; g++) {
+      var f = polyFit(t.x, t.y, g);
+      all.push({ degree: g, fit: f, train: rmseOn(f, t.x, t.y), test: rmseOn(f, s.x, s.y) });
+    }
+    var best = all.reduce(function (b, r) { return r.test < b.test ? r : b; });
+    return { cur: all[degree - 1], best: best };
+  }
+  figures.s07_tt = {
+    init: function (state) { state.d = trainTest(); },
+    act: function (state) { state.d = trainTest(); },
+    draw: function (v, P, k, state, vals) {
+      var d = state.d, st = ttState(state, Number(vals.ch4_tt_degree)), curve = [], ys = d.train.y.concat(d.test.y);
+      for (var i = 0; i < 300; i++) { var xv = 10 * i / 299, yv = st.cur.fit.predict(xv); curve.push([xv, yv]); ys.push(yv); }
+      return { x: [-0.5, 10.5], y: pad(range(ys)), yNegative: true, xName: "X", yName: "Y",
+        layers: [{ type: "points", data: pairs(d.test.x, d.test.y), color: P.bursztyn, alpha: 0.25, size: 6 },
+                 { type: "points", data: pairs(d.train.x, d.train.y), color: P.secondary, alpha: 0.75, size: 7 },
+                 { type: "line", data: curve, color: P.niebo, width: 2.4 }],
+        aria: "Zbiór uczący i testowy z wielomianem dopasowanym do zbioru uczącego." };
+    },
+    update: function (root, state) {
+      var st = ttState(state, num(root, "ch4_tt_degree")), P = C.palette();
+      setRole(root, "stats", readout("RMSE uczący", fmt(st.cur.train, 2), P.niebo) + readout("RMSE testowy", fmt(st.cur.test, 2), P.bursztyn) +
+        readout("Najlepszy na teście", "stopień " + st.best.degree + " · RMSE " + fmt(st.best.test, 2), P.szalwia));
+      setRole(root, "note", caption(st.cur.test > st.best.test * 1.25 ? "Błąd testowy wyraźnie wyższy niż przy najlepszym stopniu." : "Błąd testowy bliski najmniejszego."));
     }
   };
 

@@ -677,3 +677,100 @@ ch3_case_fig <- function() {
     body = lc_plots(lc_sf_chart(0, "1.3/1", "340px"), tags$div(`data-role` = "table")),
     after = tags$div(`data-role` = "caption"))
 }
+
+# ---------------------------------------------------------------------------
+# Rozdział 3B
+# ---------------------------------------------------------------------------
+
+# Punkty gatunków: kolor i kształt jak w ggplot (koło, trójkąt, kwadrat).
+ch3b_species_points <- function(d, x, y, alpha) {
+  sp <- levels(d$species)
+  cols <- c(Adelie = "@szalwia", Chinstrap = "@bursztyn", Gentoo = "@terakota")
+  shapes <- c(Adelie = "circle", Chinstrap = "triangle", Gentoo = "rect")
+  lapply(sp, function(s) {
+    k <- d$species == s
+    sf_points(d[[x]][k], d[[y]][k], color = cols[[s]], alpha = alpha, size = 7, symbol = shapes[[s]])
+  })
+}
+ch3b_species_legend <- function() sf_legend(c("Adelie", "Chinstrap", "Gentoo"), list("@szalwia", "@bursztyn", "@terakota"))
+
+# Ryc. 3B.1: paradoks Simpsona w trzech krokach (rycina s07_steps).
+ch3b_simpson_fig <- function() {
+  d <- .penguins_data
+  simple <- lm(bill_depth_mm ~ bill_length_mm, data = d)
+  ctrl <- lm(bill_depth_mm ~ bill_length_mm + species, data = d)
+  xr <- range(d$bill_length_mm); yr <- range(d$bill_depth_mm)
+  sx <- xr; sy <- predict(simple, data.frame(bill_length_mm = sx))
+  sp <- levels(d$species)
+  cols <- c(Adelie = "@szalwia", Chinstrap = "@bursztyn", Gentoo = "@terakota")
+  own <- lapply(sp, function(s) {
+    k <- d$species == s
+    sf_smooth_lm(d$bill_length_mm[k], d$bill_depth_mm[k], color = cols[[s]], width = 2.2, se = FALSE)[[1]]
+  })
+  par <- lapply(sp, function(s) {
+    r <- range(d$bill_length_mm[d$species == s])
+    sf_line(r, predict(ctrl, data.frame(bill_length_mm = r, species = factor(s, levels = sp))), color = cols[[s]], width = 2.8)
+  })
+  spec <- function(layers, legend = NULL) sf_spec(sf_range(xr), sf_range(yr), layers,
+    "Długość dzioba (mm)", "Wysokość dzioba (mm)", legend = legend,
+    aria = "Punkty długości i wysokości dzioba pingwinów z prostymi regresji.")
+  steps <- list(
+    `1` = spec(list(sf_points(d$bill_length_mm, d$bill_depth_mm, color = "@secondary", alpha = 0.55, size = 7),
+                    sf_line(sx, sy, color = "@accent", width = 2.6))),
+    `2` = spec(c(ch3b_species_points(d, "bill_length_mm", "bill_depth_mm", 0.62), own), ch3b_species_legend()),
+    `3` = spec(c(ch3b_species_points(d, "bill_length_mm", "bill_depth_mm", 0.35),
+                 list(sf_line(sx, sy, color = "@secondary", width = 1.8, dash = c(3, 3))), par), ch3b_species_legend()))
+  texts <- list(
+    `1` = "Jedna prosta dla 333 pingwinów. Model nie wie, że punkty pochodzą z trzech gatunków.",
+    `2` = "Kolor ujawnia trzy skupiska. W każdym gatunku prosta rośnie.",
+    `3` = "Model z gatunkiem: trzy równoległe proste o wspólnym nachyleniu. Przerywana prosta bez gatunku opada.")
+  lc_sf_figure("s07_steps", bare = TRUE,
+    config = list(variants = steps, texts = texts),
+    body = lc_step_widget("ch3b_simpson",
+      title = "Paradoks Simpsona krok po kroku",
+      steps = c("Jedna linia dla wszystkich", "Pokaż gatunki", "Kontroluj gatunek"),
+      toolbar = lc_toolbar(lc_readouts(
+        lc_readout("Nachylenie bez gatunku", sprintf("%.2f", coef(simple)[["bill_length_mm"]])),
+        lc_readout("Nachylenie po kontroli gatunku", sprintf("%.2f", coef(ctrl)[["bill_length_mm"]]), color = upwr_accent)),
+        lc_chart_zoom_button()),
+      # Legenda gatunków nad wykresem, pod paskiem kroków.
+      body = tagList(tags$div(class = "lc-sf-legend", hidden = NA), lc_sf_chart(0, "2/1", "440px"))))
+}
+
+# Ryc. 3B.4: model addytywny i model z interakcją (warianty z R).
+ch3b_interaction_fig <- function() {
+  d <- .penguins_data
+  sp <- levels(d$species)
+  cols <- c(Adelie = "@szalwia", Chinstrap = "@bursztyn", Gentoo = "@terakota")
+  fr <- range(d$flipper_length_mm)
+  parts <- lapply(c(add = "add", interaction = "interaction"), function(kind) {
+    model <- if (kind == "interaction") lm(body_mass_g ~ flipper_length_mm * species, data = d) else
+      lm(body_mass_g ~ flipper_length_mm + species, data = d)
+    lines <- lapply(sp, function(s) sf_line(fr, predict(model, data.frame(flipper_length_mm = fr, species = factor(s, levels = sp))),
+                                            color = cols[[s]], width = 2.4))
+    table <- broom::tidy(model)
+    table$label <- vapply(table$term, function(term) if (term %in% names(.ch3b_term_labels)) unname(.ch3b_term_labels[[term]]) else term, character(1))
+    rmse <- sqrt(mean(residuals(model)^2))
+    list(
+      spec = sf_spec(sf_range(fr), sf_range(d$body_mass_g), c(ch3b_species_points(d, "flipper_length_mm", "body_mass_g", 0.42), lines),
+        "Długość płetwy (mm)", "Masa ciała (g)", legend = ch3b_species_legend(),
+        aria = "Masa ciała względem długości płetwy dla trzech gatunków pingwinów z liniami modelu."),
+      html = list(
+        stats = s07_html(
+          lc_readout("AIC", round(AIC(model), 1), color = unname(upwr_cat["wrzos"])),
+          lc_readout("RMSE", round(rmse, 1), color = upwr_secondary),
+          lc_readout("Parametry", length(coef(model)), color = unname(upwr_cat["bursztyn"]))),
+        table = s07_html(lc_table(
+          data.frame(label = table$label, estimate = table$estimate, se = table$std.error, p = lc_pval(table$p.value)),
+          cols = list(lc_col("label", "Składnik", "row"),
+                      lc_col("estimate", "Współczynnik", digits = 3, short = "b", desc = "współczynnik"),
+                      lc_col("se", "Błąd stand.", digits = 3, short = "SE", desc = "błąd standardowy"),
+                      lc_col("p", "p"))))))
+  })
+  lc_sf_spec(variants = lapply(parts, `[[`, "spec"), html = lapply(parts, `[[`, "html"), legend = TRUE,
+    control = lc_segmented("ch3b_interaction_model", "Model",
+      choices = c("Addytywny: płetwa + gatunek" = "add", "Z interakcją: płetwa × gatunek" = "interaction"), selected = "add"),
+    toolbar = lc_readouts(tags$div(`data-role` = "stats", style = "display: contents")),
+    ratio = "2/1", max_height = "400px",
+    after = tags$div(`data-role` = "table"))
+}
