@@ -23,7 +23,8 @@
 //   segment, arrow(s), point(s), rect(s), segs, polygon, box, rug, cells
 //   text {x, y, text, color, align, valign, bold, mono, size, halo}  (y = "top": przy górnej krawędzi)
 // Inne klucze opisu: xBig, xTicks, xLabels, yLabels, xLabelEvery, xInt, noXGrid, noYGrid, hideY, alignLeft,
-// yNegative (podpisy ujemnych wartości osi Y), xRotate, xInterval / yInterval (stały odstęp siatki).
+// yNegative (podpisy ujemnych wartości osi Y), xRotate, xInterval / yInterval (stały odstęp siatki),
+// yBig (podpisy osi Y z odstępem tysięcy).
 (function () {
   "use strict";
   var C = window.lcCharts;
@@ -122,7 +123,11 @@
     var lo = Infinity, hi = -Infinity, i;
     for (i = 0; i < values.length; i++) { if (values[i] < lo) lo = values[i]; if (values[i] > hi) hi = values[i]; }
     if (!(hi > lo)) return [{ l: lo - 0.5, r: lo + 0.5, n: values.length }];
-    var w = (hi - lo) / (k - 1), boundary = w / 2;
+    // Jak bin_breaks_bins() w ggplot2 4.x: pierwszy przedział wyśrodkowany na minimum
+    // (granica = min − w/2); gdy krańce danych trafiają w siatkę granic, szerokość = zakres / k.
+    var w = (hi - lo) / (k - 1), boundary = lo - w / 2;
+    function rmod(a, m) { return a - Math.floor(a / m) * m; }
+    if (rmod(lo, w) === rmod(boundary, w) || rmod(hi, w) === rmod(boundary, w)) w = (hi - lo) / k;
     var origin = boundary + Math.floor((lo - boundary) / w) * w, out = [];
     for (var e = origin; e <= hi + (1 - 1e-8) * w; e += w) out.push({ l: e, r: e + w, n: 0 });
     out.pop();
@@ -309,7 +314,12 @@
       nameGap: Math.round(fs * (spec.alignLeft ? 3.8 : 2.8)) });
     if (spec.alignLeft) ya.nameMoveOverlap = false;
     // Podpisy ujemne tylko na życzenie (yNegative): większość rycin ma oś od zera z marginesem w dół.
-    ya.axisLabel.formatter = function (v) { return v < 0 && !spec.yNegative ? "" : lcFmt(v, 6); };
+    ya.axisLabel.formatter = function (v) { return v < 0 && !spec.yNegative ? "" : spec.yBig ? C.fmt(v, 0, true) : lcFmt(v, 6); };
+    // Długie podpisy (duże liczby): nazwa osi odsunięta dalej, żeby ECharts nie chował podpisów pod nią.
+    if (!spec.alignLeft && spec.yName) {
+      var longest = Math.max(String(ya.axisLabel.formatter(ymax)).length, String(ya.axisLabel.formatter(ymin)).length);
+      ya.nameGap = Math.max(ya.nameGap, Math.round(fs * (0.62 * longest + 1.2)));
+    }
     ya.axisLabel.showMaxLabel = false;
     ya.axisLabel.showMinLabel = ymin === 0;  // dół osi bez nieokrągłej wartości (np. 147.94)
     ya.axisLine.onZero = false;

@@ -8,6 +8,33 @@
   body_mass_g       = "Masa ciała, g (body_mass_g)"
 )
 
+# Wykresy i tabela dawnego serwera, składane przy budowaniu strony.
+tab3_table_html <- function(view = NULL) {
+  dd_data_table(round_df(penguins), page_size = 8)
+}
+
+tab3_missing_gg <- function(view = NULL) {
+  miss_pct <- sapply(penguins, function(x) mean(is.na(x)) * 100)
+  df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
+
+  ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct)) +
+    geom_col(fill = data_primary) +
+    labs( x = NULL, y = "% braków") +
+    theme_upwr(base_size = 14) +
+    theme(axis.text.x = element_text(angle = 30, hjust = 1))
+}
+
+tab3_boxplot_gg <- function(view = NULL) {
+  req(view)
+  ggplot(penguins %>% filter(!is.na(.data[[view]])),
+         aes(x = species, y = .data[[view]], fill = species)) +
+    geom_boxplot(alpha = 0.7) +
+    scale_fill_manual(values = c(data_primary, data_mixed, data_good)) +
+    labs(x = "Gatunek", y = .ch4_var_labels[[view]]) +
+    theme_upwr(base_size = 14) +
+    theme(legend.position = "none")
+}
+
 ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = tagList(
 
   lc_chapter_hero(
@@ -18,7 +45,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
               były jawne, małe i możliwe do uzasadnienia."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch4-sec-01", "Opis"),
 
   lc_p("Pingwiny poznaliśmy w wykładzie 07, gdzie na ich przykładzie
     widzieliśmy, co gatunek robi z linią regresji. Zbiór opisuje 344
@@ -52,7 +79,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch4-sec-02", "Podgląd danych"),
 
   lc_p("W podglądzie zwróć uwagę na komórki z wartością NA i na to, czy
     każdy wiersz opisuje jednego pingwina."),
@@ -60,7 +87,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
   figure_panel(
     label = "Tab. 4.1",
     title = "Pingwiny: 344 osobniki",
-    uiOutput("tab3_table")
+    tab3_table_html()
   ),
 
   lc_p("Każdy wiersz to jeden osobnik, a zmienne mają jasne nazwy z jednostką
@@ -68,7 +95,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     z ", gloss("zmienna ilościowa", "ilościowymi"), " pomiarami, więc nadaje się zarówno do porównań grup, jak
     i do korelacji. Już w pierwszych wierszach widać jednak puste komórki."),
 
-  lc_h2("sec-03", "Czy są braki danych?"),
+  lc_h2("ch4-sec-03", "Czy są braki danych?"),
 
   lc_p("Przy ocenie ", gloss("braki danych", "braków danych"), " liczy się
     nie tylko ich odsetek w każdej zmiennej, ale też to, czy skupiają się
@@ -77,7 +104,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
   figure_panel(
     label = "Ryc. 4.2",
     title = "Odsetek braków w każdej zmiennej",
-    lc_plot("tab3_missing", ratio = "2.5/1", max_height = "250px")
+    lc_sf_ggplot(tab3_missing_gg(), aria = "Odsetek braków w każdej zmiennej zbioru pingwinów.", ratio = "2.5/1", max_height = "250px")
   ),
 
   lc_p("Braki są nieliczne i skupione. Cztery pomiary ciała mają po 2 braki
@@ -87,7 +114,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     z rozdziału 1, ale w łagodnej postaci: dotyczy 11 wierszy i żadna
     zmienna nie traci istotnej części informacji."),
 
-  lc_h2("sec-04", "Eksploracja"),
+  lc_h2("ch4-sec-04", "Eksploracja"),
 
   lc_p("Przy porównaniu gatunków patrzymy, czy grupy różnią się położeniem
     i rozrzutem oraz czy w którejś nie ma podejrzanych wartości."),
@@ -95,11 +122,10 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
   figure_panel(
     label = "Ryc. 4.3",
     title = "Pomiary ciała według gatunku",
-    lc_toolbar(
-      selectInput("tab3_var", "Zmienna",
-        choices = stats::setNames(names(.ch4_var_labels), .ch4_var_labels))
-    ),
-    lc_plot("tab3_boxplot", max_height = "300px")
+    lc_sf_ggplot(lapply(stats::setNames(names(.ch4_var_labels), names(.ch4_var_labels)), tab3_boxplot_gg),
+      aria = "Wykresy pudełkowe wybranego pomiaru dla trzech gatunków pingwinów.",
+      control = selectInput("tab3_var", "Zmienna", choices = stats::setNames(names(.ch4_var_labels), .ch4_var_labels), selectize = FALSE),
+      ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("Gatunki wyraźnie się różnią. ", gloss("mediana", "Mediana"), " długości dzioba wynosi 38.8 mm
@@ -113,7 +139,7 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
     na Biscoe, a na Torgersen występuje wyłącznie Adelie. Porównanie wysp
     jest więc w dużej mierze porównaniem gatunków."),
 
-  lc_h2("sec-05", "Werdykt"),
+  lc_h2("ch4-sec-05", "Werdykt"),
 
   lc_p("Braki można tu usunąć razem z całymi wierszami. Dotyczą 3.2% obserwacji,
     a po ich usunięciu zostaje 333 pingwinów: 146 Adelie, 68 Chinstrap
@@ -143,32 +169,5 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Pingwiny", content = t
   )
 ))
 
-ch4_server <- function(input, output, session) {
-
-  output$tab3_table <- renderUI({
-    dd_data_table(round_df(penguins), page_size = 8, page = input$tab3_table_page, page_input = "tab3_table_page")
-  })
-
-  zoom_plot_server("tab3_missing", reactive({
-    miss_pct <- sapply(penguins, function(x) mean(is.na(x)) * 100)
-    df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
-
-    ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct)) +
-      geom_col(fill = data_primary) +
-      labs( x = NULL, y = "% braków") +
-      theme_upwr(base_size = 14) +
-      theme(axis.text.x = element_text(angle = 30, hjust = 1))
-  }))
-
-  zoom_plot_server("tab3_boxplot", reactive({
-    req(input$tab3_var)
-    ggplot(penguins %>% filter(!is.na(.data[[input$tab3_var]])),
-           aes(x = species, y = .data[[input$tab3_var]], fill = species)) +
-      geom_boxplot(alpha = 0.7) +
-      scale_fill_manual(values = c(data_primary, data_mixed, data_good)) +
-      labs(x = "Gatunek", y = .ch4_var_labels[[input$tab3_var]]) +
-      theme_upwr(base_size = 14) +
-      theme(legend.position = "none")
-  }))
-
-}
+# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R).
+ch4_server <- function(input, output, session) {}

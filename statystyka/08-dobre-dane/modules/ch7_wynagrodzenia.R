@@ -1,5 +1,34 @@
 # Tab 7: Wynagrodzenia — Wage (ISLR), dobry zbiór
 
+# Wykres i tabela dawnego serwera, składane przy budowaniu strony.
+wage_labels <- c(
+  wage = "Wynagrodzenie (tys. USD rocznie)", age = "Wiek (lata)",
+  education = "Wykształcenie", jobclass = "Rodzaj pracy",
+  health = "Samoocena zdrowia", maritl = "Stan cywilny", race = "Rasa"
+)
+
+tab6_table_html <- function(view = NULL) {
+  dd_data_table(round_df(Wage[, c("year", "age", "maritl", "race", "education", "jobclass", "health", "wage")]),
+                page_size = 8)
+}
+
+tab6_hist_gg <- function(view = NULL) {
+  req(view)
+  var <- view
+  if (var %in% c("wage", "age")) {
+    ggplot(Wage, aes(x = .data[[var]])) +
+      geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
+      labs( x = wage_labels[[var]], y = "Liczebność") +
+      theme_upwr(base_size = 14)
+  } else {
+    ggplot(Wage, aes(x = .data[[var]])) +
+      geom_bar(fill = data_primary, alpha = 0.8) +
+      labs( x = wage_labels[[var]], y = "Liczebność") +
+      theme_upwr(base_size = 14) +
+      theme(axis.text.x = element_text(angle = 30, hjust = 1))
+  }
+}
+
 ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", content = tagList(
 
   lc_chapter_hero(
@@ -11,7 +40,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
               niemal każdą analizę z tego kursu."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch7-sec-01", "Opis"),
 
   lc_p("Dane pochodzą z amerykańskiego badania Current Population Survey
     i są dołączone do podręcznika „An Introduction to Statistical Learning”.
@@ -51,7 +80,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch7-sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę na typy zmiennych i na to, czy
     w kolumnach pojawiają się braki."),
@@ -59,7 +88,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
   figure_panel(
     label = "Tab. 7.1",
     title = "Wage: 3000 mężczyzn",
-    uiOutput("tab6_table")
+    tab6_table_html()
   ),
 
   lc_p("Jeden wiersz to jeden mężczyzna, więc ", gloss("jednostka obserwacji", "jednostka obserwacji"), " jest
@@ -71,7 +100,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     ". Kategorie są zapisane po angielsku i ponumerowane, ale ich
     znaczenie jest jednoznaczne."),
 
-  lc_h2("sec-03", "Eksploracja"),
+  lc_h2("ch7-sec-03", "Eksploracja"),
 
   lc_p("Przy eksploracji zwróć uwagę, czy zmienne mają rozrzut i czy
     kategorie mają dość obserwacji do porównań."),
@@ -79,16 +108,16 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
   figure_panel(
     label = "Ryc. 7.2",
     title = "Rozkład wybranej zmiennej",
-    lc_toolbar(
-      selectInput("tab6_var", "Zmienna",
+    lc_sf_ggplot(lapply(stats::setNames(names(wage_labels), names(wage_labels)), tab6_hist_gg),
+      aria = "Rozkład wybranej zmiennej zbioru Wage.",
+      control = selectInput("tab6_var", "Zmienna", selectize = FALSE,
         choices = c("wage — wynagrodzenie" = "wage", "age — wiek" = "age",
                     "education — wykształcenie" = "education",
                     "jobclass — rodzaj pracy" = "jobclass",
                     "health — zdrowie" = "health",
                     "maritl — stan cywilny" = "maritl",
-                    "race — rasa" = "race"))
-                    ),
-                    lc_plot("tab6_hist", max_height = "300px")
+                    "race — rasa" = "race")),
+      ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("Wynagrodzenia mają duży rozrzut: od około 20 do 318 tys. dolarów,
@@ -107,7 +136,7 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     w podglądzie: wszyscy badani pochodzą z tego samego regionu. Nie
     szkodzi to analizie, ale wyznacza granicę wniosków."),
 
-  lc_h2("sec-04", "Werdykt"),
+  lc_h2("ch7-sec-04", "Werdykt"),
 
   lc_p("Zbiór ma wszystko, czego szukaliśmy w poprzednich przykładach:
     dużo obserwacji, kompletne dane, rozrzut w zmiennych ilościowych
@@ -143,34 +172,5 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
   )
 ))
 
-ch7_server <- function(input, output, session) {
-
-  wage_labels <- c(
-    wage = "Wynagrodzenie (tys. USD rocznie)", age = "Wiek (lata)",
-    education = "Wykształcenie", jobclass = "Rodzaj pracy",
-    health = "Samoocena zdrowia", maritl = "Stan cywilny", race = "Rasa"
-  )
-
-  output$tab6_table <- renderUI({
-    dd_data_table(round_df(Wage[, c("year", "age", "maritl", "race", "education", "jobclass", "health", "wage")]),
-                  page_size = 8, page = input$tab6_table_page, page_input = "tab6_table_page")
-  })
-
-  zoom_plot_server("tab6_hist", reactive({
-    req(input$tab6_var)
-    var <- input$tab6_var
-    if (var %in% c("wage", "age")) {
-      ggplot(Wage, aes(x = .data[[var]])) +
-        geom_histogram(bins = 30, fill = data_primary, color = "white", alpha = 0.8) +
-        labs( x = wage_labels[[var]], y = "Liczebność") +
-        theme_upwr(base_size = 14)
-    } else {
-      ggplot(Wage, aes(x = .data[[var]])) +
-        geom_bar(fill = data_primary, alpha = 0.8) +
-        labs( x = wage_labels[[var]], y = "Liczebność") +
-        theme_upwr(base_size = 14) +
-        theme(axis.text.x = element_text(angle = 30, hjust = 1))
-    }
-  }))
-
-}
+# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R).
+ch7_server <- function(input, output, session) {}

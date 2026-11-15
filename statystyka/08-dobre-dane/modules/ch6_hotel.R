@@ -1,5 +1,100 @@
 # Tab 6: Hotel — oceny hotelu boutique, brak zmienności
 
+# Wykresy i tabela dawnego serwera, składane przy budowaniu strony.
+tab5_table_html <- function(view = NULL) {
+  dd_data_table(round_df(hotel_data), page_size = 10)
+}
+
+tab5_plot_zadowolenie_gg <- function(view = NULL) {
+  ggplot(hotel_data, aes(x = factor(ocena_ogolna))) +
+    geom_bar(fill = data_bad, alpha = 0.85) +
+    scale_x_discrete(limits = c("1","2","3","4","5")) +
+    labs(
+      x = "Ocena ogólna", y = "Liczba gości"
+    ) +
+    theme_upwr(base_size = 14)
+}
+
+tab5_plot_departament_gg <- function(view = NULL) {
+  typ_counts <- hotel_data %>%
+    count(typ_pokoju) %>%
+    mutate(pct = round(100 * n / sum(n)),
+           typ_pokoju = reorder(typ_pokoju, -n))
+  ggplot(typ_counts, aes(x = typ_pokoju, y = n)) +
+    geom_col(fill = data_bad, alpha = 0.85) +
+    geom_text(aes(label = paste0(pct, "%")), vjust = -0.4, size = 4.5) +
+    labs(
+         x = "Typ pokoju", y = "Liczba gości") +
+    theme_upwr(base_size = 14)
+}
+
+tab5_plot_wynagrodzenie_gg <- function(view = NULL) {
+  med_cena <- median(hotel_data$cena_za_noc)
+  ggplot(hotel_data, aes(x = cena_za_noc)) +
+    geom_histogram(bins = 15, fill = data_primary, color = "white", alpha = 0.85) +
+    geom_vline(xintercept = med_cena, color = data_reference, linetype = "dashed", linewidth = 1) +
+    annotate("text", x = med_cena, y = Inf, label = paste0("mediana = ", med_cena, " zł"),
+             vjust = 2, hjust = -0.1, size = 4, color = data_reference) +
+    labs(
+      x = "Cena za noc (zł)", y = "Liczba gości"
+    ) +
+    theme_upwr(base_size = 14)
+}
+
+tab5_plot_plec_gg <- function(view = NULL) {
+  kraj_counts <- hotel_data %>%
+    count(kraj_goscia) %>%
+    mutate(pct = round(100 * n / sum(n)))
+  ggplot(kraj_counts, aes(x = reorder(kraj_goscia, -n), y = n)) +
+    geom_col(fill = data_bad, alpha = 0.85) +
+    geom_text(aes(label = paste0(pct, "%  (n=", n, ")")), vjust = -0.4, size = 4.5) +
+    labs(
+         x = "Kraj gościa", y = "Liczba gości") +
+    theme_upwr(base_size = 14)
+}
+
+tab5_scatter_gg <- function(view = NULL) {
+  ggplot(hotel_data, aes(x = dlugosc_pobytu, y = cena_za_noc)) +
+    geom_point(alpha = 0.5, size = 3, color = data_reference) +
+    geom_smooth(method = "lm", color = data_bad, se = TRUE) +
+    scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2)) +
+    labs(
+         x = "Długość pobytu (noce)", y = "Cena za noc (zł)") +
+    theme_upwr(base_size = 14)
+}
+
+tab5_plot_staz_gg <- function(view = NULL) {
+  med_pobytu <- median(hotel_data$dlugosc_pobytu)
+  p <- ggplot(hotel_data, aes(x = dlugosc_pobytu)) +
+    geom_bar(fill = data_mixed, alpha = 0.85, width = 0.6) +
+    geom_vline(xintercept = med_pobytu, color = data_reference, linetype = "dashed", linewidth = 1) +
+    annotate("text", x = med_pobytu, y = Inf, label = paste0("mediana = ", med_pobytu, " noc"),
+             vjust = 2, hjust = -0.1, size = 4, color = data_reference) +
+    scale_x_continuous(breaks = 1:14) +
+    labs(
+      x = "Długość pobytu (noce)", y = "Liczba gości"
+    ) +
+    theme_upwr(base_size = 14)
+  if (view == "wide") p <- p + scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2))
+  p
+}
+
+tab5_scatter_sim_gg <- function(view = NULL) {
+  mult <- view
+  set.seed(42)
+  spread <- (mult - 1) * 3
+  sim_pobytu <- pmax(1, hotel_data$dlugosc_pobytu + runif(hotel_n, -spread, spread))
+  sim_cena   <- hotel_data$cena_za_noc - (sim_pobytu - mean(sim_pobytu)) * 25 +
+                  rnorm(hotel_n, 0, 40)
+
+  ggplot(data.frame(x = sim_pobytu, y = sim_cena), aes(x, y)) +
+    geom_point(alpha = 0.5, size = 3, color = data_reference) +
+    geom_smooth(method = "lm", color = data_primary, se = TRUE) +
+    labs(
+         x = "Długość pobytu (symulowane noce)", y = "Cena za noc (zł)") +
+    theme_upwr(base_size = 14)
+}
+
 ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagList(
 
   lc_chapter_hero(
@@ -11,7 +106,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
               nie ma czego wyjaśniać ani porównywać."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch6-sec-01", "Opis"),
 
   lc_p("Portal rezerwacyjny zebrał opinie gości ekskluzywnego hotelu boutique
     po ostatnim sezonie. Zbiór ma 80 recenzji i pięć zmiennych. Właściciel
@@ -41,7 +136,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch6-sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę, jak często w kolejnych wierszach
     powtarzają się te same wartości."),
@@ -49,7 +144,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Tab. 6.1",
     title = "Hotel: 80 recenzji",
-    uiOutput("tab5_table")
+    tab5_table_html()
   ),
 
   lc_p("Na pierwszy rzut oka tabela wygląda porządnie: nie ma braków, typy
@@ -59,7 +154,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     tylko w tym, że zmienne prawie się nie zmieniają. Przejdziemy więc
     przez nie po kolei."),
 
-  lc_h2("sec-03", "Zmienna 1: Ocena ogólna"),
+  lc_h2("ch6-sec-03", "Zmienna 1: Ocena ogólna"),
 
   lc_p("Ocena ogólna jest zmienną, którą chcemy wyjaśnić, więc najpierw
     sprawdźmy, czy jej wartości w ogóle się różnią."),
@@ -67,7 +162,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Ryc. 6.2",
     title = "Rozkład oceny ogólnej",
-    lc_plot("tab5_plot_zadowolenie", max_height = "300px")
+    lc_sf_ggplot(suppressMessages(tab5_plot_zadowolenie_gg()), aria = "Rozkład ocen ogólnych hotelu.", ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("73 z 80 gości, czyli 91%, wystawiło ocenę 4 albo 5. Ocenę 3 dało
@@ -77,7 +172,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     zmienna nie mówi, co różnicuje pobyty, a żaden ", gloss("predyktor", "predyktor"), " nie ma czego
     wyjaśniać."),
 
-  lc_h2("sec-04", "Zmienna 2: Typ pokoju"),
+  lc_h2("ch6-sec-04", "Zmienna 2: Typ pokoju"),
 
   lc_p("Przy ", gloss("zmienna jakościowa", "zmiennej jakościowej"), ", którą chcemy dzielić gości na grupy,
     patrzymy, czy każda grupa ma dość obserwacji do porównania."),
@@ -85,7 +180,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Ryc. 6.3",
     title = "Liczebność typów pokoju",
-    lc_plot("tab5_plot_departament", max_height = "300px")
+    lc_sf_ggplot(suppressMessages(tab5_plot_departament_gg()), aria = "Liczba gości według typu pokoju.", ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("59 gości (74%) nocowało w Apartamencie Premium, 17 (21%) w pokoju
@@ -96,7 +191,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     Dodatkowo w każdej grupie oceny są skupione przy 4 i 5, więc nawet
     przy lepszym balansie nie byłoby czego porównywać."),
 
-  lc_h2("sec-05", "Zmienna 3: Długość pobytu"),
+  lc_h2("ch6-sec-05", "Zmienna 3: Długość pobytu"),
 
   lc_p("Przy ", gloss("zmienna ilościowa", "zmiennej ilościowej"), " patrzymy na rozpiętość wartości: czy
     obejmuje zakres, w którym może pojawić się jakaś zależność. Panel
@@ -106,11 +201,10 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Ryc. 6.4",
     title = "Rozkład długości pobytu",
-    lc_toolbar(
-      lc_segmented("tab5_staz_view", NULL,
-        choices = c("Dane" = "normal", "Pełna skala (1–14 nocy)" = "wide"))
-    ),
-    lc_plot("tab5_plot_staz", max_height = "300px")
+    lc_sf_ggplot(suppressMessages(list(normal = tab5_plot_staz_gg("normal"), wide = tab5_plot_staz_gg("wide"))),
+      aria = "Rozkład długości pobytu z medianą.",
+      control = lc_segmented("tab5_staz_view", NULL, choices = c("Dane" = "normal", "Pełna skala (1–14 nocy)" = "wide")),
+      ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("Wszyscy goście zostali na 1–3 noce: 49 osób na jedną, 21 na dwie,
@@ -120,7 +214,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     zmienności: gdy predyktor przyjmuje tylko trzy bliskie sobie wartości,
     wykrycie jego związku z czymkolwiek staje się bardzo trudne."),
 
-  lc_h2("sec-06", "Zmienna 4: Cena za noc"),
+  lc_h2("ch6-sec-06", "Zmienna 4: Cena za noc"),
 
   lc_p("Cena za noc to druga zmienna ilościowa; sprawdźmy, czy ona ma
     rozrzut."),
@@ -128,7 +222,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Ryc. 6.5",
     title = "Rozkład ceny za noc",
-    lc_plot("tab5_plot_wynagrodzenie", max_height = "300px")
+    lc_sf_ggplot(suppressMessages(tab5_plot_wynagrodzenie_gg()), aria = "Histogram ceny za noc z medianą.", ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("Tu obraz jest inny. Ceny wahają się od 208 do 641 zł, mediana
@@ -137,7 +231,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     z niej wynikało, musimy powiązać ją z inną zmienną, która też się
     zmienia."),
 
-  lc_h2("sec-07", "Zmienna 5: Kraj gościa"),
+  lc_h2("ch6-sec-07", "Zmienna 5: Kraj gościa"),
 
   lc_p("Ostatnia zmienna jest jakościowa, więc znów patrzymy na liczebność
     grup."),
@@ -145,7 +239,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Ryc. 6.6",
     title = "Liczebność gości według kraju",
-    lc_plot("tab5_plot_plec", max_height = "300px")
+    lc_sf_ggplot(suppressMessages(tab5_plot_plec_gg()), aria = "Liczba gości według kraju.", ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("69 gości (86%) to turyści z Polski. Z Wielkiej Brytanii przyjechały
@@ -154,7 +248,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     opierałoby się na garstce osób. W praktyce kraj gościa jest niemal
     stałą, czyli znów brakiem zmienności."),
 
-  lc_h2("sec-08", "Próba szukania zależności"),
+  lc_h2("ch6-sec-08", "Próba szukania zależności"),
 
   lc_p("Cena za noc jest jedyną zmienną z rozrzutem, a jedynym ilościowym
     kandydatem do jej wyjaśnienia jest długość pobytu. Na wykresie
@@ -163,7 +257,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Ryc. 6.7",
     title = "Cena za noc a długość pobytu",
-    lc_plot("tab5_scatter", max_height = "300px")
+    lc_sf_ggplot(suppressMessages(tab5_scatter_gg()), aria = "Cena za noc a długość pobytu z prostą regresji.", ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("Punkty układają się w trzy pionowe kolumny nad wartościami 1, 2 i 3.
@@ -173,7 +267,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     danych, a reszta osi pozostaje pusta. Z tego wykresu nie wynika ani to,
     że zależność istnieje, ani to, że jej nie ma."),
 
-  lc_h2("sec-09", "Gdyby dane miały większą zmienność"),
+  lc_h2("ch6-sec-09", "Gdyby dane miały większą zmienność"),
 
   lc_p("Brak związku w danych nie musi oznaczać braku związku w świecie.
     Panel poniżej symuluje hotel, w którym każda dodatkowa noc obniża cenę
@@ -184,8 +278,11 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   figure_panel(
     label = "Ryc. 6.8",
     title = "Ta sama zależność przy większym rozrzucie pobytów",
-    lc_slider("tab5_sd_mult", "Mnożnik rozrzutu danych", 1, 5, 1, 0.5),
-    lc_plot("tab5_scatter_sim", max_height = "300px")
+    # Każde ustawienie suwaka opisuje R (te same losowania co dawniej: set.seed(42) w każdej wersji).
+    lc_sf_ggplot(suppressMessages(lapply(stats::setNames(seq(1, 5, 0.5), as.character(seq(1, 5, 0.5))), tab5_scatter_sim_gg)),
+      aria = "Cena za noc a symulowana długość pobytu z prostą regresji.",
+      control = lc_sf_slider("tab5_sd_mult", "Mnożnik rozrzutu danych", 1, 5, 1, 0.5),
+      ratio = "2.2/1", max_height = "300px")
   ),
 
   lc_p("Przy mnożniku 1 długość pobytu zostaje taka jak w danych i mimo
@@ -197,7 +294,7 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     przy regresji: im węższy zakres zmiennej objaśniającej, tym słabiej
     dane pozwalają oszacować nachylenie."),
 
-  lc_h2("sec-10", "Werdykt"),
+  lc_h2("ch6-sec-10", "Werdykt"),
 
   lc_p("W tym zbiorze nie ma błędów ani braków, a mimo to nie nadaje się
     on do szukania zależności. Zmienna, którą chcemy wyjaśnić, czyli
@@ -226,105 +323,5 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
   )
 ))
 
-ch6_server <- function(input, output, session) {
-
-  output$tab5_table <- renderUI({
-    dd_data_table(round_df(hotel_data), page_size = 10, page = input$tab5_table_page, page_input = "tab5_table_page")
-  })
-
-  zoom_plot_server("tab5_plot_zadowolenie", reactive({
-    ggplot(hotel_data, aes(x = factor(ocena_ogolna))) +
-      geom_bar(fill = data_bad, alpha = 0.85) +
-      scale_x_discrete(limits = c("1","2","3","4","5")) +
-      labs(
-        x = "Ocena ogólna", y = "Liczba gości"
-      ) +
-      theme_upwr(base_size = 14)
-  }))
-
-  zoom_plot_server("tab5_plot_departament", reactive({
-    typ_counts <- hotel_data %>%
-      count(typ_pokoju) %>%
-      mutate(pct = round(100 * n / sum(n)),
-             typ_pokoju = reorder(typ_pokoju, -n))
-    ggplot(typ_counts, aes(x = typ_pokoju, y = n)) +
-      geom_col(fill = data_bad, alpha = 0.85) +
-      geom_text(aes(label = paste0(pct, "%")), vjust = -0.4, size = 4.5) +
-      labs(
-           x = "Typ pokoju", y = "Liczba gości") +
-      theme_upwr(base_size = 14)
-  }))
-
-  tab5_staz_view <- reactive({
-    v <- input$tab5_staz_view
-    if (is.null(v)) "normal" else v
-  })
-
-  zoom_plot_server("tab5_plot_staz", reactive({
-    med_pobytu <- median(hotel_data$dlugosc_pobytu)
-    p <- ggplot(hotel_data, aes(x = dlugosc_pobytu)) +
-      geom_bar(fill = data_mixed, alpha = 0.85, width = 0.6) +
-      geom_vline(xintercept = med_pobytu, color = data_reference, linetype = "dashed", linewidth = 1) +
-      annotate("text", x = med_pobytu, y = Inf, label = paste0("mediana = ", med_pobytu, " noc"),
-               vjust = 2, hjust = -0.1, size = 4, color = data_reference) +
-      scale_x_continuous(breaks = 1:14) +
-      labs(
-        x = "Długość pobytu (noce)", y = "Liczba gości"
-      ) +
-      theme_upwr(base_size = 14)
-    if (tab5_staz_view() == "wide") p <- p + scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2))
-    p
-  }))
-
-  zoom_plot_server("tab5_plot_wynagrodzenie", reactive({
-    med_cena <- median(hotel_data$cena_za_noc)
-    ggplot(hotel_data, aes(x = cena_za_noc)) +
-      geom_histogram(bins = 15, fill = data_primary, color = "white", alpha = 0.85) +
-      geom_vline(xintercept = med_cena, color = data_reference, linetype = "dashed", linewidth = 1) +
-      annotate("text", x = med_cena, y = Inf, label = paste0("mediana = ", med_cena, " zł"),
-               vjust = 2, hjust = -0.1, size = 4, color = data_reference) +
-      labs(
-        x = "Cena za noc (zł)", y = "Liczba gości"
-      ) +
-      theme_upwr(base_size = 14)
-  }))
-
-  zoom_plot_server("tab5_plot_plec", reactive({
-    kraj_counts <- hotel_data %>%
-      count(kraj_goscia) %>%
-      mutate(pct = round(100 * n / sum(n)))
-    ggplot(kraj_counts, aes(x = reorder(kraj_goscia, -n), y = n)) +
-      geom_col(fill = data_bad, alpha = 0.85) +
-      geom_text(aes(label = paste0(pct, "%  (n=", n, ")")), vjust = -0.4, size = 4.5) +
-      labs(
-           x = "Kraj gościa", y = "Liczba gości") +
-      theme_upwr(base_size = 14)
-  }))
-
-  zoom_plot_server("tab5_scatter", reactive({
-    ggplot(hotel_data, aes(x = dlugosc_pobytu, y = cena_za_noc)) +
-      geom_point(alpha = 0.5, size = 3, color = data_reference) +
-      geom_smooth(method = "lm", color = data_bad, se = TRUE) +
-      scale_x_continuous(limits = c(1, 14), breaks = seq(1, 14, 2)) +
-      labs(
-           x = "Długość pobytu (noce)", y = "Cena za noc (zł)") +
-      theme_upwr(base_size = 14)
-  }))
-
-  zoom_plot_server("tab5_scatter_sim", reactive({
-    mult <- input$tab5_sd_mult
-    set.seed(42)
-    spread <- (mult - 1) * 3
-    sim_pobytu <- pmax(1, hotel_data$dlugosc_pobytu + runif(hotel_n, -spread, spread))
-    sim_cena   <- hotel_data$cena_za_noc - (sim_pobytu - mean(sim_pobytu)) * 25 +
-                    rnorm(hotel_n, 0, 40)
-
-    ggplot(data.frame(x = sim_pobytu, y = sim_cena), aes(x, y)) +
-      geom_point(alpha = 0.5, size = 3, color = data_reference) +
-      geom_smooth(method = "lm", color = data_primary, se = TRUE) +
-      labs(
-           x = "Długość pobytu (symulowane noce)", y = "Cena za noc (zł)") +
-      theme_upwr(base_size = 14)
-  }))
-
-}
+# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R).
+ch6_server <- function(input, output, session) {}

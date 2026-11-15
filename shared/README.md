@@ -180,3 +180,17 @@ panele `facet_wrap()`). Opis osi przyjmuje też `xInterval` / `yInterval`
 (stały odstęp siatki, np. co 1 w ćwiczeniu z odczytem współrzędnych).
 Ryciny krokowe opisane w całości w R (rysunek, opis i tabela każdego kroku)
 pokazuje wzorzec `s07_steps` w `statystyka/07-regresja/modules/figures.js`.
+
+## Wykres ggplot jako rycina (`lc_sf_ggplot.R`)
+
+Wykres na stałych danych, który był rysowany na serwerze, można przenieść bez
+przepisywania: `lc_sf_ggplot(p, aria = "…", ratio = "2/1")` buduje obiekt ggplot
+(`ggplot_build()`), odczytuje warstwy, zakresy, osie kategorii, legendę i panele
+i składa opis ryciny `lc_spec`. Lista nazwanych wykresów to warianty dla
+kontrolki: `lc_sf_ggplot(list(raw = p1, clean = p2), control = lc_segmented(…))`.
+Barwy palety stają się tokenami motywu (tryb ciemny działa). Obsługiwane:
+punkty, linie (braki przerywają linię), smooth z pasem, słupki i histogramy,
+prostokąty, kafelki, teksty i etykiety, hline/vline/abline, odcinki i strzałki,
+pudełka, słupki błędów, wstęgi, gęstość, `facet_wrap()`/`facet_grid()`.
+Nieobsługiwana geometria daje ostrzeżenie przy budowaniu; `coord_flip()` zastąp
+odwróconym mapowaniem (`aes(y = kategoria, x = wartość)`). Wzorzec: wykład 08.

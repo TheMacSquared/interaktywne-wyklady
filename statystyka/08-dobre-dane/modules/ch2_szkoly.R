@@ -14,6 +14,31 @@
 )
 .ch2_choices <- function(vars) stats::setNames(vars, .ch2_var_labels[vars])
 
+# Wykresy i tabela dawnego serwera, składane przy budowaniu strony.
+tab1_table_html <- function(view = NULL) {
+  dd_data_table(round_df(CASchools[, c("district", "school", "students", "teachers", "expenditure",
+                              "income", "english", "lunch", "calworks", "read", "math")]),
+                page_size = 8)
+}
+
+tab1_hist_gg <- function(view = NULL) {
+  req(view)
+  ggplot(CASchools, aes(x = .data[[view]])) +
+    geom_histogram(bins = 25, fill = data_primary, color = "white", alpha = 0.8) +
+    labs(x = .ch2_var_labels[[view]], y = "Liczebność") +
+    theme_upwr(base_size = 14)
+}
+
+tab1_scatter_plot_gg <- function(view = NULL) {
+  req(view[1], view[2])
+  ggplot(CASchools, aes(x = .data[[view[1]]], y = .data[[view[2]]])) +
+    geom_point(alpha = 0.5, color = data_reference) +
+    geom_smooth(method = "lm", color = data_primary, se = TRUE) +
+    labs(
+         x = .ch2_var_labels[[view[1]]], y = .ch2_var_labels[[view[2]]]) +
+    theme_upwr(base_size = 14)
+}
+
 ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = tagList(
 
   lc_chapter_hero(
@@ -24,7 +49,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
               i realne pytania badawcze."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch2-sec-01", "Opis"),
 
   lc_p("Pierwsze studium przypadku to zbiór, który znamy już z wykładów 05
     i 07. CASchools opisuje 420 okręgów szkolnych w Kalifornii w roku
@@ -79,7 +104,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch2-sec-02", "Podgląd danych"),
 
   lc_p("W podglądzie zwróć uwagę, co jest ",
     gloss("jednostka obserwacji", "jednostką obserwacji"), " i czy wartości
@@ -88,7 +113,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
   figure_panel(
     label = "Tab. 2.1",
     title = "CASchools: 420 okręgów szkolnych",
-    uiOutput("tab1_table")
+    tab1_table_html()
   ),
 
   lc_p("Każda kolumna ma jasną definicję i jednostkę, a w całym zbiorze nie
@@ -97,7 +122,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     więc dane nadają się zarówno do korelacji i regresji, jak i do porównań
     grup."),
 
-  lc_h2("sec-03", "Eksploracja zmiennych"),
+  lc_h2("ch2-sec-03", "Eksploracja zmiennych"),
 
   lc_p("Przy ocenie pojedynczej zmiennej patrzymy na kształt rozkładu,
     zakres i wartości, które nie mieszczą się w sensownych granicach."),
@@ -105,13 +130,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
   figure_panel(
     label = "Ryc. 2.2",
     title = "Rozkład wybranej zmiennej",
-    lc_toolbar(
-      selectInput("tab1_var", "Zmienna",
-        choices = .ch2_choices(c("read", "math", "expenditure", "income", "english",
-                                 "lunch", "students", "teachers", "calworks")))
-    ),
-    lc_plot("tab1_hist", max_height = "300px"),
-    verbatimTextOutput("tab1_summary")
+    s08_tab1_hist_figure()
   ),
 
   lc_p("Wyniki testów mają rozkład zbliżony do symetrycznego: wynik
@@ -126,7 +145,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     takie jak błędy i literówki w danych albo braki danych, tu nie
     występują."),
 
-  lc_h2("sec-04", "Zależności między zmiennymi"),
+  lc_h2("ch2-sec-04", "Zależności między zmiennymi"),
 
   lc_p("Przy ocenie związków patrzymy, czy chmura punktów ma wyraźny kształt
     i czy prosta dobrze go opisuje."),
@@ -134,15 +153,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
   figure_panel(
     label = "Ryc. 2.3",
     title = "Wynik testu a cechy okręgu",
-    lc_toolbar(
-      selectInput("tab1_x", "Zmienna X",
-        choices = .ch2_choices(c("expenditure", "income", "english", "lunch",
-                                 "calworks", "students")),
-        selected = "income"),
-      selectInput("tab1_y", "Zmienna Y",
-        choices = .ch2_choices(c("read", "math")), selected = "read")
-    ),
-    lc_plot("tab1_scatter_plot", max_height = "350px")
+    s08_tab1_scatter_figure()
   ),
 
   lc_p("Dochód okręgu i wynik z czytania są wyraźnie powiązane:
@@ -163,7 +174,7 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     wyniki, a jedynie, że okręgi wydające więcej mają je przeciętnie
     trochę wyższe."),
 
-  lc_h2("sec-05", "Werdykt"),
+  lc_h2("ch2-sec-05", "Werdykt"),
 
   lc_p("Zbiór przechodzi przez katalog bez zastrzeżeń. 420 obserwacji
     wystarcza nawet wtedy, gdy podzielimy okręgi na kilka grup. Zmienne
@@ -194,35 +205,5 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
   )
 ))
 
-ch2_server <- function(input, output, session) {
-
-  output$tab1_table <- renderUI({
-    dd_data_table(round_df(CASchools[, c("district", "school", "students", "teachers", "expenditure",
-                                "income", "english", "lunch", "calworks", "read", "math")]),
-                  page_size = 8, page = input$tab1_table_page, page_input = "tab1_table_page")
-  })
-
-  zoom_plot_server("tab1_hist", reactive({
-    req(input$tab1_var)
-    ggplot(CASchools, aes(x = .data[[input$tab1_var]])) +
-      geom_histogram(bins = 25, fill = data_primary, color = "white", alpha = 0.8) +
-      labs(x = .ch2_var_labels[[input$tab1_var]], y = "Liczebność") +
-      theme_upwr(base_size = 14)
-  }))
-
-  output$tab1_summary <- renderPrint({
-    req(input$tab1_var)
-    summary(CASchools[[input$tab1_var]])
-  })
-
-  zoom_plot_server("tab1_scatter_plot", reactive({
-    req(input$tab1_x, input$tab1_y)
-    ggplot(CASchools, aes(x = .data[[input$tab1_x]], y = .data[[input$tab1_y]])) +
-      geom_point(alpha = 0.5, color = data_reference) +
-      geom_smooth(method = "lm", color = data_primary, se = TRUE) +
-      labs(
-           x = .ch2_var_labels[[input$tab1_x]], y = .ch2_var_labels[[input$tab1_y]]) +
-      theme_upwr(base_size = 14)
-  }))
-
-}
+# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R).
+ch2_server <- function(input, output, session) {}

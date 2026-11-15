@@ -1,5 +1,96 @@
 # Tab 8: Formularz rejestracyjny — mix dobrych i złych zmiennych
 
+# Tabele i komunikaty dawnego serwera, składane przy budowaniu strony.
+# Reguły przekodowania (wspólne dla tabeli i opisu zmian)
+dosw_map  <- c("3" = 3, "5 lat" = 5, "ponad rok" = 1, "nie mam" = 0, "brak" = 0)
+ocena_map <- c("7" = 7, "6" = 6, "4" = 4, "9" = 9, "7.5" = 7.5,
+               "dobry" = 7, "bardzo dobry" = 9, "średni" = 5, "B+" = 7, "8/10" = 8)
+
+tab7_table_html <- function(view = NULL) {
+  dd_data_table(round_df(reg_data), page_size = 10)
+}
+
+tab7_mean_result_html <- function(view = NULL) {
+      local({
+    var  <- view
+    vals <- reg_data[[var]]
+
+    if (var == "wiek") {
+      lc_status(
+        lc_verdict(type = "ok", "Średnia wieku (lata):"),
+        paste0(" ", round(mean(vals, na.rm = TRUE), 1), ". Wszystkie wartości są liczbami.")
+      )
+    } else if (var == "wyksztalcenie") {
+      lc_status(
+        lc_verdict(type = "info", "Średniej nie da się policzyć:"),
+        " to zmienna jakościowa z czterema spójnymi kategoriami."
+      )
+    } else {
+      nums  <- safe_numeric(vals)
+      n_na  <- sum(is.na(nums))
+      pct_na <- round(n_na / length(nums) * 100, 1)
+
+      if (n_na == 0) {
+        lc_status(paste0("Średnia: ", round(mean(nums, na.rm = TRUE), 2)))
+      } else {
+        lc_status(
+          lc_verdict(type = "danger",
+            paste0(n_na, " z ", length(nums), " wartości (", pct_na, "%) nie da się odczytać jako liczby.")),
+          tags$br(),
+          "Przykłady: ",
+          paste(head(vals[is.na(nums)], 5), collapse = ", ")
+        )
+      }
+    }
+  })
+}
+
+tab7_clean_table_html <- function(view = NULL) {
+  if (view == "Surowe") {
+    dd_data_table(round_df(reg_data), page_size = 8)
+  } else {
+    clean <- data.frame(
+      wiek             = reg_data$wiek,
+      wyksztalcenie    = reg_data$wyksztalcenie,
+      doswiadczenie_lat = as.numeric(dosw_map[reg_data$doswiadczenie]),
+      ocena_1_10       = as.numeric(ocena_map[reg_data$ocena_umiejetnosci]),
+      stringsAsFactors = FALSE
+    )
+    dd_data_table(round_df(clean), page_size = 8)
+  }
+}
+
+tab7_clean_info_html <- function(view = NULL) {
+  if (view == "Oczyszczone") {
+    n       <- nrow(reg_data)
+    dosw_ok <- sum(!is.na(dosw_map[reg_data$doswiadczenie]))
+    oc_num  <- sum(!is.na(safe_numeric(reg_data$ocena_umiejetnosci)))
+    oc_frac <- sum(reg_data$ocena_umiejetnosci == "8/10")
+    oc_word <- n - oc_num - oc_frac
+    lc_status(
+      tags$strong("Zmiany:"),
+      tags$br(), "wiek, wyksztalcenie: bez zmian",
+      tags$br(), paste0("doswiadczenie_lat: ", dosw_ok, " z ", n,
+                        " wpisów przekodowanych, braki: ", n - dosw_ok),
+      tags$br(), paste0("ocena_1_10: ", oc_num, " liczb bez zmian, ", oc_frac,
+                        " × „8/10” → 8, ", oc_word,
+                        " ocen słownych przypisanych umownie („dobry” → 7, „B+” → 7)"),
+      tags$br(), "dostepnosc: usunięta, nie da się zakodować"
+    )
+  }
+}
+
+tab7b_table_html <- function(view = NULL) {
+  if (view == "raw") {
+    dd_data_table(fixable_data, n = 12)
+  } else {
+    # Wiersze bez kategorii (NA) podświetlone jak w tekście pod tabelą.
+    dd_data_table(fixable_data_cat, n = 12,
+      cell_class = list(nauka_kat = ifelse(is.na(fixable_data_cat$nauka_kat),
+                                           "is-target", NA)))
+  }
+}
+
 ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = tagList(
 
   lc_chapter_hero(
@@ -10,7 +101,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
               po prostu naprawić jednym kliknięciem w analizie."
   ),
 
-  lc_h2("sec-01", "Opis"),
+  lc_h2("ch8-sec-01", "Opis"),
 
   lc_p("Organizatorzy wakacyjnego kursu zbierali zapisy przez formularz online
     i otrzymali 90 zgłoszeń. Formularz miał pięć pól: wiek, wykształcenie,
@@ -34,7 +125,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     ))
   ),
 
-  lc_h2("sec-02", "Podgląd danych"),
+  lc_h2("ch8-sec-02", "Podgląd danych"),
 
   lc_p("Przeglądając tabelę, zwróć uwagę, które kolumny zawierają liczby albo
     powtarzające się kategorie, a które swobodny tekst."),
@@ -42,7 +133,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
   figure_panel(
     label = "Ryc. 8.2",
     title = "Zgłoszenia na kurs (90 osób)",
-    uiOutput("tab7_table")
+    tab7_table_html()
   ),
 
   lc_p("Już pierwsze wiersze pokazują dwa rodzaje kolumn. Wiek to liczba
@@ -52,7 +143,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     opisy w rodzaju „nie w piątki” czy „kiedy trzeba”, a samoocena miesza
     liczby z ocenami słownymi i szkolnymi („dobry”, „B+”, „8/10”)."),
 
-  lc_h2("sec-03", "Próba policzenia średniej"),
+  lc_h2("ch8-sec-03", "Próba policzenia średniej"),
 
   lc_p("Najprostszy sprawdzian, czy kolumna nadaje się do analizy ilościowej,
     to próba policzenia jej średniej. Panel liczy średnią wybranej zmiennej
@@ -61,10 +152,11 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
   figure_panel(
     label = "Ryc. 8.3",
     title = "Średnia wybranej zmiennej",
-    selectInput("tab7_var", "Wybierz zmienną:",
+    selectInput("tab7_var", "Wybierz zmienną:", selectize = FALSE,
       choices = c("wiek", "wyksztalcenie", "doswiadczenie", "dostepnosc", "ocena_umiejetnosci")),
     lc_action("tab7_mean", "Policz średnią", variant = "solid"),
-    uiOutput("tab7_mean_result")
+    lc_variants("tab7_var", reveal = "tab7_mean",
+      lapply(stats::setNames(nm = c("wiek", "wyksztalcenie", "doswiadczenie", "dostepnosc", "ocena_umiejetnosci")), tab7_mean_result_html))
   ),
 
   lc_p("Średni wiek uczestników wynosi 27.4 roku i nie wymaga żadnej obróbki.
@@ -81,7 +173,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     cecha jest zapisana na kilkanaście sposobów, a program statystyczny nie
     ma jak przeliczyć „trochę” albo „elastycznie” na liczbę."),
 
-  lc_h2("sec-04", "Czyszczenie danych"),
+  lc_h2("ch8-sec-04", "Czyszczenie danych"),
 
   lc_p("Część wpisów da się przetłumaczyć na liczby, jeśli przyjmiemy reguły
     przekodowania, na przykład „ponad rok” = 1 rok doświadczenia, „brak” = 0,
@@ -92,8 +184,9 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     label = "Ryc. 8.4",
     title = "Dane surowe i po przekodowaniu",
     lc_segmented("tab7_toggle", "Widok danych", choices = c("Surowe", "Oczyszczone")),
-    uiOutput("tab7_clean_table"),
-    uiOutput("tab7_clean_info")
+    lc_variants("tab7_toggle", list(
+      Surowe = tab7_clean_table_html("Surowe"),
+      Oczyszczone = tagList(tab7_clean_table_html("Oczyszczone"), tab7_clean_info_html("Oczyszczone"))))
   ),
 
   lc_p("Po przekodowaniu wiek i wykształcenie zostają bez zmian. W kolumnie
@@ -119,7 +212,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
      albo liczba z podaną jednostką."
   ),
 
-  lc_h2("sec-05", "Werdykt"),
+  lc_h2("ch8-sec-05", "Werdykt"),
 
   lc_p("Formularz daje dwie zmienne gotowe do analizy: wiek i wykształcenie.
     Wystarczą do opisu uczestników, a nawet do porównania średniego wieku
@@ -140,7 +233,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
      i nie da się ich naprawić bez arbitralnych decyzji."
   ),
 
-  lc_h2("sec-06", "Drugi przykład: dane do uratowania"),
+  lc_h2("ch8-sec-06", "Drugi przykład: dane do uratowania"),
 
   lc_p("Nie każdy formularz z polami tekstowymi jest stracony. W innym
     formularzu tego samego kursu respondenci też wpisywali odpowiedzi po
@@ -155,7 +248,7 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
       lc_segmented("tab7b_view", NULL,
         choices = c("Surowe" = "raw", "Po standaryzacji" = "cat"))
     ),
-    uiOutput("tab7b_table")
+    lc_variants("tab7b_view", list(raw = tab7b_table_html("raw"), cat = tab7b_table_html("cat")))
   ),
 
   lc_p("Standaryzacja sprowadza różne zapisy tej samej odpowiedzi do jednej
@@ -182,103 +275,5 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
   )
 ))
 
-ch8_server <- function(input, output, session) {
-
-  # Reguły przekodowania (wspólne dla tabeli i opisu zmian)
-  dosw_map  <- c("3" = 3, "5 lat" = 5, "ponad rok" = 1, "nie mam" = 0, "brak" = 0)
-  ocena_map <- c("7" = 7, "6" = 6, "4" = 4, "9" = 9, "7.5" = 7.5,
-                 "dobry" = 7, "bardzo dobry" = 9, "średni" = 5, "B+" = 7, "8/10" = 8)
-
-  output$tab7_table <- renderUI({
-    dd_data_table(round_df(reg_data), page_size = 10, page = input$tab7_table_page, page_input = "tab7_table_page")
-  })
-
-  output$tab7_mean_result <- renderUI({
-    req(input$tab7_mean > 0)
-    isolate({
-      var  <- input$tab7_var
-      vals <- reg_data[[var]]
-
-      if (var == "wiek") {
-        lc_status(
-          lc_verdict(type = "ok", "Średnia wieku (lata):"),
-          paste0(" ", round(mean(vals, na.rm = TRUE), 1), ". Wszystkie wartości są liczbami.")
-        )
-      } else if (var == "wyksztalcenie") {
-        lc_status(
-          lc_verdict(type = "info", "Średniej nie da się policzyć:"),
-          " to zmienna jakościowa z czterema spójnymi kategoriami."
-        )
-      } else {
-        nums  <- safe_numeric(vals)
-        n_na  <- sum(is.na(nums))
-        pct_na <- round(n_na / length(nums) * 100, 1)
-
-        if (n_na == 0) {
-          lc_status(paste0("Średnia: ", round(mean(nums, na.rm = TRUE), 2)))
-        } else {
-          lc_status(
-            lc_verdict(type = "danger",
-              paste0(n_na, " z ", length(nums), " wartości (", pct_na, "%) nie da się odczytać jako liczby.")),
-            tags$br(),
-            "Przykłady: ",
-            paste(head(vals[is.na(nums)], 5), collapse = ", ")
-          )
-        }
-      }
-    })
-  })
-
-  output$tab7_clean_table <- renderUI({
-    if (input$tab7_toggle == "Surowe") {
-      dd_data_table(round_df(reg_data), page_size = 8, page = input$tab7_clean_table_page, page_input = "tab7_clean_table_page")
-    } else {
-      clean <- data.frame(
-        wiek             = reg_data$wiek,
-        wyksztalcenie    = reg_data$wyksztalcenie,
-        doswiadczenie_lat = as.numeric(dosw_map[reg_data$doswiadczenie]),
-        ocena_1_10       = as.numeric(ocena_map[reg_data$ocena_umiejetnosci]),
-        stringsAsFactors = FALSE
-      )
-      dd_data_table(round_df(clean), page_size = 8, page = input$tab7_clean_table_page, page_input = "tab7_clean_table_page")
-    }
-  })
-
-  output$tab7_clean_info <- renderUI({
-    if (input$tab7_toggle == "Oczyszczone") {
-      n       <- nrow(reg_data)
-      dosw_ok <- sum(!is.na(dosw_map[reg_data$doswiadczenie]))
-      oc_num  <- sum(!is.na(safe_numeric(reg_data$ocena_umiejetnosci)))
-      oc_frac <- sum(reg_data$ocena_umiejetnosci == "8/10")
-      oc_word <- n - oc_num - oc_frac
-      lc_status(
-        tags$strong("Zmiany:"),
-        tags$br(), "wiek, wyksztalcenie: bez zmian",
-        tags$br(), paste0("doswiadczenie_lat: ", dosw_ok, " z ", n,
-                          " wpisów przekodowanych, braki: ", n - dosw_ok),
-        tags$br(), paste0("ocena_1_10: ", oc_num, " liczb bez zmian, ", oc_frac,
-                          " × „8/10” → 8, ", oc_word,
-                          " ocen słownych przypisanych umownie („dobry” → 7, „B+” → 7)"),
-        tags$br(), "dostepnosc: usunięta, nie da się zakodować"
-      )
-    }
-  })
-
-
-
-  tab7b_view <- reactive({
-    v <- input$tab7b_view
-    if (is.null(v)) "raw" else v
-  })
-
-  output$tab7b_table <- renderUI({
-    if (tab7b_view() == "raw") {
-      dd_data_table(fixable_data, n = 12)
-    } else {
-      # Wiersze bez kategorii (NA) podświetlone jak w tekście pod tabelą.
-      dd_data_table(fixable_data_cat, n = 12,
-        cell_class = list(nauka_kat = ifelse(is.na(fixable_data_cat$nauka_kat),
-                                             "is-target", NA)))
-    }
-  })
-}
+# Treść wybieraną kontrolkami składa R przy budowaniu; wybór pokazuje lc_variants().
+ch8_server <- function(input, output, session) {}

@@ -880,6 +880,11 @@ test("symulacje (03): losowanie lcDist, histogram ggplot i ryciny Ryc. 1.3–6.4
   const b = S.binsGgplot([0, 1, 2, 3, 9], 5);
   assert.equal(b.length, 5);
   assert.equal(b.reduce((s, r) => s + r.n, 0), 5);
+  // ggplot2 4.x: pierwszy przedział wyśrodkowany na minimum. R (ggplot2 4.0.3):
+  // ggplot_build(ggplot(data.frame(v), aes(v)) + geom_histogram(bins = 5))$data[[1]][, c("xmin", "count")]
+  const g4 = S.binsGgplot([5.011, 3.762, 4.583, 5.172, 2.967, 3.633, 3.720, 4.182], 5);
+  assert.ok(Math.abs(g4[0].l - 2.691375) < 1e-9, `xmin ${g4[0].l}`);
+  assert.equal(JSON.stringify(g4.map((r) => r.n)), "[1,3,1,1,2]");   // tablica z innego kontekstu vm: porównanie tekstowe
 
   const P = env.window.lcCharts.palette();
   const run = (name, vals, step) => {

@@ -188,7 +188,7 @@ testthat::test_that("wykład 01 nie ma logiki serwera poza powłoką", {
 # Wykłady gotowe do budowania statycznego (scripts/check_static_ready.R): wspólne warunki.
 static_ready_lectures <- c("00-dane-i-populacja", "01-typy-danych", "02-zwiazki-zmiennych",
                            "03-rozklady-prawdopodobienstwa", "04-przedzialy-ufnosci",
-                           "05-wnioskowanie-statystyczne", "06-zalozenia-testow", "07-regresja", "09-case-studies",
+                           "05-wnioskowanie-statystyczne", "06-zalozenia-testow", "07-regresja", "08-dobre-dane", "09-case-studies",
                            "10-projekt-badawczy")
 
 for (lecture in static_ready_lectures) local({

@@ -128,7 +128,7 @@ sf_xy <- function(x, y, digits = 4) {
 }
 # Podpisy osi kategorii: pozycje 1, 2, … → napisy.
 sf_labels <- function(labels, at = seq_along(labels)) {
-  stats::setNames(as.list(as.character(labels)), at)
+  stats::setNames(as.list(as.character(labels)), format(at, scientific = FALSE, trim = TRUE))
 }
 sf_points <- function(x, y, color = "@accent", size = 6, alpha = NULL, symbol = NULL) {
   Filter(Negate(is.null), list(type = "points", data = sf_xy(x, y), color = color, size = size, alpha = alpha, symbol = symbol))

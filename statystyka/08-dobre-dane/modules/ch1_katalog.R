@@ -1,5 +1,203 @@
 # Tab 1: Katalog — 7 typowych problemów w danych z wizualizacjami
 
+# Wykresy i tabele dawnego serwera, składane przy budowaniu strony.
+cat1_plot_gg <- function(view = NULL) {
+  ggplot(cat_small, aes(x = oceny)) +
+    geom_histogram(bins = 4, fill = data_bad, color = "white", alpha = 0.8) +
+    geom_vline(xintercept = mean(cat_small$oceny), linetype = "dashed", color = data_reference, linewidth = 1) +
+    annotate("text", x = mean(cat_small$oceny) + 0.15, y = 2.2,
+             label = paste0("M = ", round(mean(cat_small$oceny), 2)), hjust = 0, size = 4.5) +
+    scale_y_continuous(breaks = 0:3) +
+    labs(x = "Średnia ocen", y = "Liczebność") +
+    theme_upwr(base_size = 14)
+}
+
+cat2_plot_zadowolenie_gg <- function(view = NULL) {
+  ggplot(cat_novar, aes(x = factor(zadowolenie))) +
+    geom_bar(fill = data_bad, alpha = 0.85) +
+    scale_x_discrete(limits = c("1","2","3","4","5")) +
+    labs(x = "Ocena (1–5)", y = "Liczba") +
+    theme_upwr(base_size = 13)
+}
+
+cat2_plot_gg <- function(view = NULL) {
+  ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
+    geom_point(size = 3, alpha = 0.6, color = data_bad) +
+    scale_x_continuous(limits = c(1, 10)) +
+    labs(x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
+    theme_upwr(base_size = 13)
+}
+
+cat3_plot_gg <- function(view = NULL) {
+  if (view == "raw") {
+    d <- cat_errors
+    col <- data_bad
+  } else {
+    d <- cat_errors_clean
+    col <- data_good
+  }
+  ggplot(d, aes(x = powierzchnia, y = cena)) +
+    geom_point(size = 3, alpha = 0.7, color = data_reference) +
+    geom_smooth(method = "lm", color = col, se = TRUE) +
+    scale_y_continuous(labels = scales::label_number(big.mark = " ")) +
+    labs(x = "Powierzchnia (m²)", y = "Cena (PLN)") +
+    theme_upwr(base_size = 14)
+}
+
+cat4_plot_gg <- function(view = NULL) {
+  if (view == "raw") {
+    nums <- suppressWarnings(as.numeric(cat_messy$czas_nauki))
+    n_ok <- sum(!is.na(nums))
+    n_fail <- sum(is.na(nums))
+    df <- data.frame(
+      status = c("Rozpoznane\njako liczba", "Nie da się\nprzeczytać"),
+      n = c(n_ok, n_fail)
+    )
+    ggplot(df, aes(x = status, y = n, fill = status)) +
+      geom_col(width = 0.6) +
+      scale_fill_manual(values = c(data_good, data_bad)) +
+      geom_text(aes(label = n), vjust = -0.5, size = 6, fontface = "bold") +
+      labs(x = NULL, y = "Liczba odpowiedzi") +
+      theme_upwr(base_size = 14) +
+      theme(legend.position = "none") +
+      ylim(0, max(df$n) + 1)
+  } else {
+    d <- cat_messy_clean[!is.na(cat_messy_clean$czas_nauki_h), ]
+    ggplot(d, aes(x = czas_nauki_h)) +
+      geom_histogram(bins = 5, fill = data_good, color = "white", alpha = 0.8) +
+      labs(
+           
+           x = "Godziny nauki/tydzień", y = "Liczebność") +
+      theme_upwr(base_size = 14)
+  }
+}
+
+cat5_plot_gg <- function(view = NULL) {
+  miss_pct <- sapply(cat_missing[, -1], function(x) mean(is.na(x)) * 100)
+  df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
+
+  ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct)) +
+    geom_col(width = 0.6, fill = data_bad) +
+    geom_text(aes(label = paste0(round(pct), "%")), vjust = -0.5, size = 5, fontface = "bold") +
+    labs(x = NULL, y = "% braków (NA)") +
+    theme_upwr(base_size = 14) +
+    ylim(0, 35)
+}
+
+cat5_matrix_gg <- function(view = NULL) dd_missing_matrix_plot(cat_missing)
+
+cat6_plot_gg <- function(view = NULL) {
+  if (view == "daily") {
+    ggplot(cat_timeseries, aes(x = data, y = temperatura)) +
+      geom_line(color = data_bad, linewidth = 0.8) +
+      geom_point(color = data_bad, size = 1.2, alpha = 0.6) +
+      labs(
+           
+           x = "Data", y = "Temperatura (°C)") +
+      theme_upwr(base_size = 14)
+  } else {
+    df_m <- cat_timeseries_monthly
+    df_m$idx <- seq_len(nrow(df_m))
+    ggplot(df_m, aes(x = idx, y = srednia_temp)) +
+      geom_line(color = data_bad, linewidth = 1) +
+      geom_point(color = data_bad, size = 4) +
+      geom_text(aes(label = paste0(srednia_temp, "°C")),
+                vjust = -1.2, size = 4.5, fontface = "bold") +
+      scale_x_continuous(breaks = df_m$idx, labels = df_m$miesiac) +
+      labs(
+           
+           x = NULL, y = "Średnia temperatura (°C)") +
+      theme_upwr(base_size = 14) +
+      theme(axis.text.x = element_text(angle = 30, hjust = 1))
+  }
+}
+
+cat7_plot_gg <- function(view = NULL) {
+  if (view == "events") {
+    df <- data.frame(label = "Wiersze\nw tabeli", n = nrow(cat_patients_visits))
+    ggplot(df, aes(x = label, y = n)) +
+      geom_col(fill = data_mixed, width = 0.4) +
+      geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold") +
+      labs(x = NULL, y = NULL) +
+      ylim(0, ceiling(nrow(cat_patients_visits) * 1.15)) +
+      theme_upwr(base_size = 14) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+  } else {
+    df <- data.frame(label = "Pacjenci\n(obserwacje)", n = nrow(cat_patients_agg))
+    ggplot(df, aes(x = label, y = n)) +
+      geom_col(fill = data_bad, width = 0.4) +
+      geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
+                color = data_bad) +
+      labs(x = NULL, y = NULL) +
+      ylim(0, 40) +
+      theme_upwr(base_size = 14) +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+  }
+}
+
+cat1_table_html <- function(view = NULL) {
+  dd_data_table(cat_small,
+    types = c("id", "nominalna", "ciągła", "porządkowa", "ciągła"))
+}
+
+cat2_table_html <- function(view = NULL) {
+  dd_data_table(cat_novar,
+    types = c("id", "porządkowa", "ciągła", "ciągła", "nominalna"))
+}
+
+cat3_table_html <- function(view = NULL) {
+  raw <- view == "raw"
+  d <- if (raw) cat_errors else cat_errors_clean
+  # Podświetlenie podejrzanych wartości tylko w surowych danych.
+  errors <- if (raw) list(
+    cena = ifelse(d$cena <= 0 | d$cena > 1000000, "is-target", NA),
+    powierzchnia = ifelse(d$powierzchnia > 500, "is-target", NA),
+    pokoje = ifelse(d$pokoje > 10, "is-target", NA)
+  )
+  dd_data_table(d,
+    types = c("id", "ciągła", "ciągła", "dyskretna", "nominalna"),
+    cell_class = errors)
+}
+
+cat4_table_html <- function(view = NULL) {
+  if (view == "raw") {
+    dd_data_table(cat_messy,
+      types = c("id", "tekst?!", "tekst?!", "tekst?!"))
+  } else {
+    dd_data_table(cat_messy_clean,
+      types = c("id", "ciągła", "ciągła", "ciągła"))
+  }
+}
+
+cat5_table_html <- function(view = NULL) {
+  dd_data_table(cat_missing,
+    types = c("id", "ciągła", "porządkowa", "ciągła", "nominalna"))
+}
+
+cat6_table_html <- function(view = NULL) {
+  if (view == "daily") {
+    df_show <- cat_timeseries
+    df_show$data <- format(df_show$data, "%Y-%m-%d")
+    dd_data_table(df_show, page_size = 10,
+      types = c("data", "nominalna", "ciągła"))
+  } else {
+    dd_data_table(cat_timeseries_monthly,
+      types = c("nominalna", "ciągła", "dyskretna"))
+  }
+}
+
+cat7_table_html <- function(view = NULL) {
+  if (view == "events") {
+    df_show <- cat_patients_visits
+    df_show$data_wizyty <- format(df_show$data_wizyty, "%Y-%m-%d")
+    dd_data_table(df_show, page_size = 10,
+      types = c("id", "nominalna", "data", "ciągła"))
+  } else {
+    dd_data_table(cat_patients_agg, page_size = 10,
+      types = c("id", "nominalna", "ciągła", "dyskretna"))
+  }
+}
+
 ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = tagList(
 
   lc_chapter_hero(
@@ -11,7 +209,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
               braki, brak niezależności i zła struktura."
   ),
 
-  lc_h2("sec-01", "Katalog problemów w danych"),
+  lc_h2("ch1-sec-01", "Katalog problemów w danych"),
 
   lc_p("Metody z wykładów 01–07 zakładały milcząco, że dane są w porządku:
     obserwacji jest dość, zmienne mają ustalone znaczenie, wartości są
@@ -42,7 +240,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   ),
 
   # --- Problem 1: Za mało danych ---
-  lc_h2("sec-p1", "1", "Za mało danych"),
+  lc_h2("ch1-sec-p1", "1", "Za mało danych"),
 
   lc_p("Każda statystyka policzona z próby jest tylko oszacowaniem wartości
     w populacji. Jak bardzo to oszacowanie może się mylić, mówi ",
@@ -68,10 +266,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   figure_panel(
     label = "Ryc. 1.2",
     title = "Sześć ankiet",
-    lc_plots(
-      uiOutput("cat1_table"),
-      lc_plot("cat1_plot", max_height = "280px")
-    )
+    s08_static_figure(cat1_plot_gg(), cat1_table_html(), "Histogram średnich ocen sześciu ankietowanych.")
   ),
 
   lc_p("Histogram z sześciu wartości ma cztery słupki o wysokości jednej
@@ -97,7 +292,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     Liczy się liczebność w każdej porównywanej grupie, nie w całym zbiorze."),
 
   # --- Problem 2: Brak zmienności ---
-  lc_h2("sec-p2", "2", "Brak zmienności"),
+  lc_h2("ch1-sec-p2", "2", "Brak zmienności"),
 
   lc_p("Statystyka zajmuje się zmiennością. Korelacja i regresja pytają,
     czy różnice w jednej zmiennej idą w parze z różnicami w drugiej, a testy
@@ -114,13 +309,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   figure_panel(
     label = "Ryc. 1.3",
     title = "Ankieta zadowolenia w dziale IT",
-    lc_plots(
-      uiOutput("cat2_table"),
-      tags$div(
-        lc_plot("cat2_plot_zadowolenie", max_height = "200px"),
-        lc_plot("cat2_plot", max_height = "200px")
-      )
-    )
+    s08_cat2_figure()
   ),
 
   lc_p("Wszystkie 12 ocen zadowolenia to 4 albo 5 (trzy czwórki i dziewięć
@@ -146,7 +335,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     liczebności kategorii każdej zmiennej jakościowej."),
 
   # --- Problem 3: Błędy i literówki ---
-  lc_h2("sec-p3", "3", "Błędy i literówki w danych"),
+  lc_h2("ch1-sec-p3", "3", "Błędy i literówki w danych"),
 
   lc_p("Jeśli zakres zmiennej jest szeroki, warto zapytać, czy wszystkie
     wartości są prawdziwe. Błędy i literówki w danych to wartości
@@ -164,14 +353,11 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   figure_panel(
     label = "Ryc. 1.4",
     title = "Ogłoszenia mieszkań",
-    lc_toolbar(
-      lc_segmented("cat3_view", NULL,
-        choices = c("Surowe" = "raw", "Oczyszczone" = "clean"))
-    ),
-    lc_plots(
-      uiOutput("cat3_table"),
-      lc_plot("cat3_plot", max_height = "280px")
-    )
+    s08_view_figure(lc_segmented("cat3_view", NULL,
+        choices = c("Surowe" = "raw", "Oczyszczone" = "clean")),
+      plots = list(raw = cat3_plot_gg("raw"), clean = cat3_plot_gg("clean")),
+      tables = list(raw = cat3_table_html("raw"), clean = cat3_table_html("clean")),
+      aria = "Cena mieszkania a powierzchnia z prostą regresji.")
   ),
 
   lc_p("W czterech wierszach jest pięć błędów: cena 45 PLN zamiast 450 000
@@ -201,7 +387,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   ),
 
   # --- Problem 4: Źle zdefiniowane zmienne ---
-  lc_h2("sec-p4", "4", "Źle zdefiniowane zmienne"),
+  lc_h2("ch1-sec-p4", "4", "Źle zdefiniowane zmienne"),
 
   lc_p("Żeby sprawdzić zakres zmiennej, trzeba najpierw wiedzieć, co ona
     mierzy i w jakich jednostkach. W wykładzie 01 każda zmienna miała
@@ -219,14 +405,11 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   figure_panel(
     label = "Ryc. 1.5",
     title = "Ankieta z pytaniami otwartymi",
-    lc_toolbar(
-      lc_segmented("cat4_view", NULL,
-        choices = c("Surowe" = "raw", "Oczyszczone" = "clean"))
-    ),
-    lc_plots(
-      uiOutput("cat4_table"),
-      lc_plot("cat4_plot", max_height = "280px")
-    )
+    s08_view_figure(lc_segmented("cat4_view", NULL,
+        choices = c("Surowe" = "raw", "Oczyszczone" = "clean")),
+      plots = list(raw = cat4_plot_gg("raw"), clean = cat4_plot_gg("clean")),
+      tables = list(raw = cat4_table_html("raw"), clean = cat4_table_html("clean")),
+      aria = "Odpowiedzi o czasie nauki przed i po uporządkowaniu.")
   ),
 
   lc_p("Z dziesięciu odpowiedzi o czas nauki tylko dwie („5” i „3”) są
@@ -254,7 +437,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   ),
 
   # --- Problem 5: Braki danych ---
-  lc_h2("sec-p5", "5", "Braki danych (NA)"),
+  lc_h2("ch1-sec-p5", "5", "Braki danych (NA)"),
 
   lc_p("Czyszczenie z poprzedniego przykładu zostawiło puste komórki.
     W prawdziwych danych pojawiają się one także dlatego, że ktoś pominął
@@ -270,10 +453,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   figure_panel(
     label = "Ryc. 1.6",
     title = "Ankieta z pominiętymi pytaniami",
-    lc_plots(
-      uiOutput("cat5_table"),
-      lc_plot("cat5_plot", max_height = "280px")
-    )
+    s08_static_figure(cat5_plot_gg(), cat5_table_html(), "Odsetek braków w każdej zmiennej.")
   ),
 
   lc_p("W wieku i kierunku brakuje po 3 z 12 wartości (25%), w stresie
@@ -287,7 +467,8 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     label = "Ryc. 1.7",
     title = "Gdzie leżą braki",
     width_mode = "text",
-    lc_plot("cat5_matrix", ratio = "1.3/1", max_height = "380px")
+    lc_sf_ggplot(cat5_matrix_gg(), aria = "Mapa braków: osoby w wierszach, zmienne w kolumnach, ostatnia kolumna to komplet odpowiedzi.",
+      ratio = "1.3/1", max_height = "380px")
   ),
 
   lc_p("Braki zmniejszają liczebność próby, a więc i moc testu (wykład 05).
@@ -306,7 +487,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     w rozdziale 9."),
 
   # --- Problem 6: Brak niezależności ---
-  lc_h2("sec-p6", "6", "Brak niezależności obserwacji"),
+  lc_h2("ch1-sec-p6", "6", "Brak niezależności obserwacji"),
 
   lc_p("Dotąd zakładaliśmy, że każdy wiersz to nowa, osobna informacja.
     Testy z wykładów 05 i 06, korelacja i regresja wymagają ",
@@ -324,14 +505,11 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   figure_panel(
     label = "Ryc. 1.8",
     title = "Dzienna temperatura przez pół roku",
-    lc_toolbar(
-      lc_segmented("cat6_view", NULL,
-        choices = c("Dzienne (surowe)" = "daily", "Miesięczne (agregat)" = "monthly"))
-    ),
-    lc_plots(
-      uiOutput("cat6_table"),
-      lc_plot("cat6_plot", max_height = "280px")
-    )
+    s08_view_figure(lc_segmented("cat6_view", NULL,
+        choices = c("Dzienne (surowe)" = "daily", "Miesięczne (agregat)" = "monthly")),
+      plots = list(daily = cat6_plot_gg("daily"), monthly = cat6_plot_gg("monthly")),
+      tables = list(daily = cat6_table_html("daily"), monthly = cat6_table_html("monthly")),
+      aria = "Temperatura dzienna albo średnie miesięczne.")
   ),
 
   lc_p("W tabeli są 183 wiersze, ale wykres liniowy zdradza wyraźną ",
@@ -362,7 +540,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   ),
 
   # --- Problem 7: Zła struktura ---
-  lc_h2("sec-p7", "7", "Zła struktura danych"),
+  lc_h2("ch1-sec-p7", "7", "Zła struktura danych"),
 
   lc_p("Szczególnie częsty przypadek zależności powstaje wtedy, gdy wiersz
     tabeli nie odpowiada temu, o co pyta analiza. ",
@@ -380,14 +558,11 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   figure_panel(
     label = "Ryc. 1.9",
     title = "Wizyty pacjentów",
-    lc_toolbar(
-      lc_segmented("cat7_view", NULL,
-        choices = c("Wizyty (surowe)" = "events", "Pacjenci (agregat)" = "agg"))
-    ),
-    lc_plots(
-      uiOutput("cat7_table"),
-      lc_plot("cat7_plot", max_height = "280px")
-    )
+    s08_view_figure(lc_segmented("cat7_view", NULL,
+        choices = c("Wizyty (surowe)" = "events", "Pacjenci (agregat)" = "agg")),
+      plots = list(events = cat7_plot_gg("events"), agg = cat7_plot_gg("agg")),
+      tables = list(events = cat7_table_html("events"), agg = cat7_table_html("agg")),
+      aria = "Liczba wierszy tabeli wizyt i liczba pacjentów.")
   ),
 
   lc_p("Tabela ma ", nrow(cat_patients_visits), " wierszy, ale opisują one
@@ -413,7 +588,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   ),
 
   # --- Podsumowanie: lista kontrolna ---
-  lc_h2("sec-02", "Podsumowanie: lista kontrolna jakości danych"),
+  lc_h2("ch1-sec-02", "Podsumowanie: lista kontrolna jakości danych"),
 
   lc_p("Siedem problemów z katalogu da się zamienić w listę pytań, które
     warto zadać każdemu zbiorowi, zanim zacznie się analizę. Lista ma dwie
@@ -430,6 +605,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   figure_panel(
     label = "Lista kontrolna",
     title = "Lista kontrolna jakości danych",
+    s08_checklist(
     tags$p(lc_verdict(tags$strong("Krytyczne:"), type = "danger"),
       " jeśli zbiór ich nie spełnia, poszukaj innego"),
     checkboxGroupInput("intro_critical", NULL,
@@ -451,7 +627,7 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
         "Brak błędów i podejrzanych wartości" = "errors"
       )
     ),
-    uiOutput("intro_thermometer")
+    tags$div(`data-role` = "thermo"))
   ),
 
   lc_p("Kryteria naprawialne nie rekompensują krytycznych. Zbiór bez
@@ -468,230 +644,6 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
   )
 ))
 
-ch1_server <- function(input, output, session) {
-
-  # --- Problem 1: Za mało danych ---
-  output$cat1_table <- renderUI({
-    dd_data_table(cat_small,
-      types = c("id", "nominalna", "ciągła", "porządkowa", "ciągła"))
-  })
-
-  zoom_plot_server("cat1_plot", reactive({
-    ggplot(cat_small, aes(x = oceny)) +
-      geom_histogram(bins = 4, fill = data_bad, color = "white", alpha = 0.8) +
-      geom_vline(xintercept = mean(cat_small$oceny), linetype = "dashed", color = data_reference, linewidth = 1) +
-      annotate("text", x = mean(cat_small$oceny) + 0.15, y = 2.2,
-               label = paste0("M = ", round(mean(cat_small$oceny), 2)), hjust = 0, size = 4.5) +
-      scale_y_continuous(breaks = 0:3) +
-      labs(x = "Średnia ocen", y = "Liczebność") +
-      theme_upwr(base_size = 14)
-  }))
-
-  # --- Problem 2: Brak zmienności ---
-  output$cat2_table <- renderUI({
-    dd_data_table(cat_novar,
-      types = c("id", "porządkowa", "ciągła", "ciągła", "nominalna"))
-  })
-
-  zoom_plot_server("cat2_plot_zadowolenie", reactive({
-    ggplot(cat_novar, aes(x = factor(zadowolenie))) +
-      geom_bar(fill = data_bad, alpha = 0.85) +
-      scale_x_discrete(limits = c("1","2","3","4","5")) +
-      labs(x = "Ocena (1–5)", y = "Liczba") +
-      theme_upwr(base_size = 13)
-  }))
-
-  zoom_plot_server("cat2_plot", reactive({
-    ggplot(cat_novar, aes(x = staz, y = wynagrodzenie)) +
-      geom_point(size = 3, alpha = 0.6, color = data_bad) +
-      scale_x_continuous(limits = c(1, 10)) +
-      labs(x = "Staż pracy (lata)", y = "Wynagrodzenie (PLN)") +
-      theme_upwr(base_size = 13)
-  }))
-
-  # --- Problem 3: Błędy i literówki (przełącznik) ---
-  cat3_view <- reactive({
-    v <- input$cat3_view
-    if (is.null(v)) "raw" else v
-  })
-
-  output$cat3_table <- renderUI({
-    raw <- cat3_view() == "raw"
-    d <- if (raw) cat_errors else cat_errors_clean
-    # Podświetlenie podejrzanych wartości tylko w surowych danych.
-    errors <- if (raw) list(
-      cena = ifelse(d$cena <= 0 | d$cena > 1000000, "is-target", NA),
-      powierzchnia = ifelse(d$powierzchnia > 500, "is-target", NA),
-      pokoje = ifelse(d$pokoje > 10, "is-target", NA)
-    )
-    dd_data_table(d,
-      types = c("id", "ciągła", "ciągła", "dyskretna", "nominalna"),
-      cell_class = errors)
-  })
-
-  zoom_plot_server("cat3_plot", reactive({
-    if (cat3_view() == "raw") {
-      d <- cat_errors
-      col <- data_bad
-    } else {
-      d <- cat_errors_clean
-      col <- data_good
-    }
-    ggplot(d, aes(x = powierzchnia, y = cena)) +
-      geom_point(size = 3, alpha = 0.7, color = data_reference) +
-      geom_smooth(method = "lm", color = col, se = TRUE) +
-      scale_y_continuous(labels = scales::label_number(big.mark = " ")) +
-      labs(x = "Powierzchnia (m²)", y = "Cena (PLN)") +
-      theme_upwr(base_size = 14)
-  }))
-
-  # --- Problem 4: Źle zdefiniowane zmienne (przełącznik) ---
-  cat4_view <- reactive({
-    v <- input$cat4_view
-    if (is.null(v)) "raw" else v
-  })
-
-  output$cat4_table <- renderUI({
-    if (cat4_view() == "raw") {
-      dd_data_table(cat_messy,
-        types = c("id", "tekst?!", "tekst?!", "tekst?!"))
-    } else {
-      dd_data_table(cat_messy_clean,
-        types = c("id", "ciągła", "ciągła", "ciągła"))
-    }
-  })
-
-  zoom_plot_server("cat4_plot", reactive({
-    if (cat4_view() == "raw") {
-      nums <- suppressWarnings(as.numeric(cat_messy$czas_nauki))
-      n_ok <- sum(!is.na(nums))
-      n_fail <- sum(is.na(nums))
-      df <- data.frame(
-        status = c("Rozpoznane\njako liczba", "Nie da się\nprzeczytać"),
-        n = c(n_ok, n_fail)
-      )
-      ggplot(df, aes(x = status, y = n, fill = status)) +
-        geom_col(width = 0.6) +
-        scale_fill_manual(values = c(data_good, data_bad)) +
-        geom_text(aes(label = n), vjust = -0.5, size = 6, fontface = "bold") +
-        labs(x = NULL, y = "Liczba odpowiedzi") +
-        theme_upwr(base_size = 14) +
-        theme(legend.position = "none") +
-        ylim(0, max(df$n) + 1)
-    } else {
-      d <- cat_messy_clean[!is.na(cat_messy_clean$czas_nauki_h), ]
-      ggplot(d, aes(x = czas_nauki_h)) +
-        geom_histogram(bins = 5, fill = data_good, color = "white", alpha = 0.8) +
-        labs(
-             
-             x = "Godziny nauki/tydzień", y = "Liczebność") +
-        theme_upwr(base_size = 14)
-    }
-  }))
-
-  # --- Problem 5: Braki danych ---
-  output$cat5_table <- renderUI({
-    dd_data_table(cat_missing,
-      types = c("id", "ciągła", "porządkowa", "ciągła", "nominalna"))
-  })
-
-  zoom_plot_server("cat5_plot", reactive({
-    miss_pct <- sapply(cat_missing[, -1], function(x) mean(is.na(x)) * 100)
-    df_miss <- data.frame(variable = names(miss_pct), pct = miss_pct)
-
-    ggplot(df_miss, aes(x = reorder(variable, -pct), y = pct)) +
-      geom_col(width = 0.6, fill = data_bad) +
-      geom_text(aes(label = paste0(round(pct), "%")), vjust = -0.5, size = 5, fontface = "bold") +
-      labs(x = NULL, y = "% braków (NA)") +
-      theme_upwr(base_size = 14) +
-      ylim(0, 35)
-  }))
-
-  # Mapa braków
-  zoom_plot_server("cat5_matrix", reactive(dd_missing_matrix_plot(cat_missing)))
-
-  # --- Problem 6: Brak niezależności (przełącznik) ---
-  cat6_view <- reactive({
-    v <- input$cat6_view
-    if (is.null(v)) "daily" else v
-  })
-
-  output$cat6_table <- renderUI({
-    if (cat6_view() == "daily") {
-      df_show <- cat_timeseries
-      df_show$data <- format(df_show$data, "%Y-%m-%d")
-      dd_data_table(df_show, page_size = 10, page = input$cat6_table_page, page_input = "cat6_table_page",
-        types = c("data", "nominalna", "ciągła"))
-    } else {
-      dd_data_table(cat_timeseries_monthly,
-        types = c("nominalna", "ciągła", "dyskretna"))
-    }
-  })
-
-  zoom_plot_server("cat6_plot", reactive({
-    if (cat6_view() == "daily") {
-      ggplot(cat_timeseries, aes(x = data, y = temperatura)) +
-        geom_line(color = data_bad, linewidth = 0.8) +
-        geom_point(color = data_bad, size = 1.2, alpha = 0.6) +
-        labs(
-             
-             x = "Data", y = "Temperatura (°C)") +
-        theme_upwr(base_size = 14)
-    } else {
-      df_m <- cat_timeseries_monthly
-      df_m$idx <- seq_len(nrow(df_m))
-      ggplot(df_m, aes(x = idx, y = srednia_temp)) +
-        geom_line(color = data_bad, linewidth = 1) +
-        geom_point(color = data_bad, size = 4) +
-        geom_text(aes(label = paste0(srednia_temp, "°C")),
-                  vjust = -1.2, size = 4.5, fontface = "bold") +
-        scale_x_continuous(breaks = df_m$idx, labels = df_m$miesiac) +
-        labs(
-             
-             x = NULL, y = "Średnia temperatura (°C)") +
-        theme_upwr(base_size = 14) +
-        theme(axis.text.x = element_text(angle = 30, hjust = 1))
-    }
-  }))
-
-  # --- Problem 7: Zła struktura (przełącznik) ---
-  cat7_view <- reactive({
-    v <- input$cat7_view
-    if (is.null(v)) "events" else v
-  })
-
-  output$cat7_table <- renderUI({
-    if (cat7_view() == "events") {
-      df_show <- cat_patients_visits
-      df_show$data_wizyty <- format(df_show$data_wizyty, "%Y-%m-%d")
-      dd_data_table(df_show, page_size = 10, page = input$cat7_table_page, page_input = "cat7_table_page",
-        types = c("id", "nominalna", "data", "ciągła"))
-    } else {
-      dd_data_table(cat_patients_agg, page_size = 10, page = input$cat7_table_page, page_input = "cat7_table_page",
-        types = c("id", "nominalna", "ciągła", "dyskretna"))
-    }
-  })
-
-  zoom_plot_server("cat7_plot", reactive({
-    if (cat7_view() == "events") {
-      df <- data.frame(label = "Wiersze\nw tabeli", n = nrow(cat_patients_visits))
-      ggplot(df, aes(x = label, y = n)) +
-        geom_col(fill = data_mixed, width = 0.4) +
-        geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold") +
-        labs(x = NULL, y = NULL) +
-        ylim(0, ceiling(nrow(cat_patients_visits) * 1.15)) +
-        theme_upwr(base_size = 14) +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
-    } else {
-      df <- data.frame(label = "Pacjenci\n(obserwacje)", n = nrow(cat_patients_agg))
-      ggplot(df, aes(x = label, y = n)) +
-        geom_col(fill = data_bad, width = 0.4) +
-        geom_text(aes(label = paste0("n = ", n)), vjust = -0.5, size = 7, fontface = "bold",
-                  color = data_bad) +
-        labs(x = NULL, y = NULL) +
-        ylim(0, 40) +
-        theme_upwr(base_size = 14) +
-        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
-    }
-  }))
-}
+# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R);
+# pasek oceny listy kontrolnej liczy przeglądarka (modules/figures.js, rycina s08_checklist).
+ch1_server <- function(input, output, session) {}

@@ -8,8 +8,9 @@
 # options: lista list(name, label, values, selected, from = 1), przełączniki opcji.
 # more_from: od którego kroku aktywne są przyciski +10, +100, +1000.
 scene_widget <- function(id, title, steps, config, labels, options = NULL,
-                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000")) {
-  lc_step_widget(id,
+                         more_from = 3, more = c("+10" = "m10", "+100" = "m100", "+1000" = "m1000"),
+                         texts = NULL) {
+  lc_step_widget(id, texts = texts,
     title = title,
     steps = steps,
     toolbar = lc_toolbar(
@@ -39,10 +40,4 @@ scene_widget <- function(id, title, steps, config, labels, options = NULL,
     body = tags$div(class = "lc-sc",
       `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA))
   )
-}
-
-# Teksty kroków: lista fragmentów HTML, po jednym na krok.
-scene_texts <- function(input, output, id, texts) {
-  step <- lc_step_server(id, input)$step
-  output[[paste0(id, "_text")]] <- renderUI(texts[[step()]])
 }

@@ -50,6 +50,8 @@ source(file.path(shared_root, "palette.R"),        local = TRUE)
 source(file.path(shared_root, "theme_upwr.R"),     local = TRUE)
 source(file.path(shared_root, "shared.R"),         local = TRUE)
 source(file.path(shared_root, "lecture_layout.R"), local = TRUE)
+source(file.path(shared_root, "lc_stat_figures.R"), local = TRUE)
+source(file.path(shared_root, "lc_sf_ggplot.R"),    local = TRUE)
 
 lc_apply_ggplot_defaults()
 
@@ -57,6 +59,7 @@ source(file.path(app_dir, "modules", "helpers.R"),            local = TRUE)
 source(file.path(app_dir, "modules", "scene_helpers.R"),      local = TRUE)
 # Diagramy schemat / katalog / mapa / braki
 source(file.path(app_dir, "modules", "diagramy.R"),           local = TRUE)
+source(file.path(app_dir, "modules", "figures.R"),            local = TRUE)
 source(file.path(app_dir, "modules", "ch0_wprowadzenie.R"),   local = TRUE)
 source(file.path(app_dir, "modules", "ch1_katalog.R"),        local = TRUE)
 source(file.path(app_dir, "modules", "ch2_szkoly.R"),         local = TRUE)
@@ -85,6 +88,14 @@ ui <- lecture_page(
   chapters      = .chapters,
   # PROTOTYP SCENY (2026-10-08): sceny SVG (rozdz. 11, „Zbierz sezon”)
   header_extras = tagList(
+    # Ryciny liczone w przeglądarce: silnik lcSF na ECharts i ryciny wykładu.
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
+    includeScript(file.path(shared_root, "lc_charts.js")),
+    includeScript(file.path(shared_root, "lc_dist.js")),
+    includeScript(file.path(shared_root, "lc_stats.js")),
+    includeScript(file.path(shared_root, "lc_stat_figures.js")),
+    includeScript(file.path(app_dir, "modules", "figures.js")),
+    lc_sf_styles(),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "scenes.js")),
     tags$style(HTML("
