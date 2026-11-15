@@ -274,7 +274,7 @@
       if (sr.type === "scatter") sr.progressive = 0;
     });
     var xa = C.ecAxis(P, fs, { type: "value", min: spec.x[0], max: spec.x[1],
-      name: spec.xName ? C.ecName(spec.xName, Math.max(250, W - 40), fs) : "", nameGap: Math.round(fs * 2.2) });
+      name: spec.xName ? C.ecName(spec.xName, Math.max(120, W - 40), fs) : "", nameGap: Math.round(fs * 2.2) });
     xa.axisLabel.formatter = function (v) { return lcFmt(v, 6); };
     // xBig: liczby z odstępem tysięcy (np. 12 000 zł).
     if (spec.xBig) xa.axisLabel.formatter = function (v) { return C.fmt(v, 0, true); };

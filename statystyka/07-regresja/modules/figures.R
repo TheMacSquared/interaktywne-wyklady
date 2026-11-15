@@ -295,3 +295,204 @@ ch1_pred_fig <- function() {
       tags$div(`data-role` = "question"),
       tags$div(`data-role` = "answer")))
 }
+
+# ---------------------------------------------------------------------------
+# Rozdział 2
+# ---------------------------------------------------------------------------
+
+# Ryc. 2.1: dane z prostą, reszty względem przewidywanych (z linią loess jak
+# geom_smooth) i wykres Q-Q reszt dla czterech modeli CASchools.
+ch2_resid_fig <- function() {
+  parts <- lapply(.ch2_resid_specs, function(s) {
+    d <- .cas_data
+    x <- d[[s$x]]; y <- d[[s$y]]
+    model <- lm(y ~ x)
+    fit <- fitted(model); res <- residuals(model)
+    grid <- seq(min(fit), max(fit), length.out = 80)
+    smooth <- predict(loess(res ~ fit, span = 0.75), data.frame(fit = grid))
+    charts <- list(
+      sf_spec(sf_range(x), sf_range(y), list(
+          sf_points(x, y, color = "@secondary", alpha = 0.4, size = 5),
+          sf_smooth_lm(x, y, color = "@niebo", se = FALSE)[[1]]),
+        unname(.cas_labels[s$x]), unname(.cas_labels[s$y]), aria = "Dane z prostą regresji."),
+      sf_spec(sf_range(fit), sf_range(c(res, smooth)), list(
+          sf_points(fit, res, color = "@secondary", alpha = 0.4, size = 5),
+          sf_hline(0, sf_range(fit), color = "@ref", width = 1.4),
+          sf_line(grid, smooth, color = "@terakota", width = 2.4)),
+        "Ŷ", "eᵢ = yᵢ − ŷᵢ", aria = "Reszty względem wartości przewidywanych z linią trendu reszt."),
+      local({
+        q <- stats::qnorm(stats::ppoints(length(res)))
+        sf_spec(sf_range(q), sf_range(res), sf_qq(res, color = "@secondary", line_color = "@niebo", size = 5, alpha = 0.4),
+          "Kwantyle teoretyczne", "Kwantyle próbki", aria = "Wykres kwantyl-kwantyl reszt.")
+      }))
+    g <- broom::glance(model)
+    list(spec = list(charts = charts),
+         html = list(
+           stats = s07_html(
+             lc_readout("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
+             lc_readout("RMSE", round(sqrt(mean(res^2)), 2), color = unname(upwr_cat["bursztyn"])),
+             lc_readout("n", nrow(d), color = upwr_secondary)),
+           verdict = s07_html(lc_status(lc_verdict(tags$strong(s$title), type = s$verdict), p(s$comment)))))
+  })
+  lc_sf_spec(variants = lapply(parts, `[[`, "spec"), html = lapply(parts, `[[`, "html"), charts = 3, triple = TRUE,
+    control = selectInput("ch2_resid_case", "Model", choices = .ch2_resid_choices, selected = "read_income", selectize = FALSE),
+    toolbar = lc_readouts(tags$div(`data-role` = "stats", style = "display: contents")),
+    ratio = "0.85/1", max_height = "300px",
+    after = tags$div(`data-role` = "verdict"))
+}
+
+# Ryc. 2.2: ustawione przykłady obserwacji wpływowej.
+ch2_infl_fig <- function() {
+  base <- data.frame(x = c(1, 2, 3, 4, 5, 5.5, 6, 7, 8, 8.5, 9, 10, 11, 12),
+                     e = c(3, -4, 2, 5, -3, 1, -5, 4, -2, 3, -4, 2, -1, -2))
+  base$y <- 35 + 2.5 * base$x + base$e
+  extra <- list(none = NULL, mid = c(6.5, 92), lev = c(24, 96), infl = c(24, 40))
+  m0 <- lm(y ~ x, base)
+  xs <- c(0, 26)
+  fmt <- function(v) formatC(v, format = "f", digits = 2)
+  parts <- lapply(extra, function(e) {
+    m1 <- if (is.null(e)) NULL else lm(y ~ x, rbind(base[, c("x", "y")], data.frame(x = e[1], y = e[2])))
+    spec <- sf_spec(xs, c(25, 105), list(
+        sf_line(xs, predict(m0, data.frame(x = xs)), color = "@ref", width = 1.8, dash = sf_dash),
+        sf_points(base$x, base$y, color = "@secondary", size = 9, alpha = 0.8),
+        if (!is.null(m1)) sf_line(xs, predict(m1, data.frame(x = xs)), color = "@accent", width = 2.6),
+        if (!is.null(e)) sf_points(e[1], e[2], color = "@surface", size = 15),
+        if (!is.null(e)) sf_points(e[1], e[2], color = "@accent", size = 12)),
+      "Godziny nauki w tygodniu", "Wynik egzaminu (pkt)",
+      aria = "Wykres punktowy godzin nauki i wyniku z prostą bez dodatkowego punktu i z nim.")
+    list(spec = spec, reads = list(infl_m0 = fmt(coef(m0)[[2]]), infl_m1 = if (is.null(m1)) "—" else fmt(coef(m1)[[2]])))
+  })
+  lc_sf_spec(variants = lapply(parts, `[[`, "spec"), reads = lapply(parts, `[[`, "reads"),
+    control = lc_segmented("ch2_infl_case", "Dodatkowy student",
+      choices = c("Brak" = "none", "Odstaje w środku" = "mid",
+                  "Daleko, zgodnie z trendem" = "lev", "Daleko, wbrew trendowi" = "infl")),
+    toolbar = lc_readouts(
+      lc_readout("Nachylenie bez niego", lc_sf_value("infl_m0"), color = upwr_reference, swatch = TRUE),
+      lc_readout("Nachylenie z nim", lc_sf_value("infl_m1"), color = upwr_accent, swatch = TRUE)),
+    ratio = "1.6/1", max_height = "340px")
+}
+
+# Ryc. 2.3: ta sama prosta, trzy poziomy szumu (set.seed(103) jak dawniej).
+ch2_r2_compare_fig <- function() {
+  set.seed(103)
+  sigmas <- c("Niskie R²" = 12.0, "Średnie R²" = 4.0, "Wysokie R²" = 0.9)
+  x <- seq(-3, 3, length.out = 70)
+  ys <- lapply(sigmas, function(s) 10 + 2.2 * x + rnorm(length(x), 0, s))
+  yr <- sf_range(unlist(ys))
+  charts <- lapply(ys, function(y) {
+    r2 <- summary(lm(y ~ x))$r.squared
+    sf_spec(sf_range(x), yr, list(
+        sf_points(x, y, color = "@secondary", alpha = 0.5, size = 6),
+        sf_smooth_lm(x, y, color = "@niebo", width = 2.2, se = FALSE)[[1]],
+        sf_text(-2.8, "top", paste0("R² = ", round(r2, 2)), color = "@secondary", align = "left", bold = TRUE)),
+      "X", "Y", aria = "Wykres rozrzutu z prostą regresji.")
+  })
+  lc_sf_spec(list(charts = unname(charts)), charts = 3, triple = TRUE, headings = names(sigmas),
+    ratio = "0.85/1", max_height = "320px")
+}
+
+# Ryc. 2.4: kwartet Anscombe'a — zestaw z prostą i wykres jego reszt.
+ch2_ansc_fig <- function() {
+  sets <- c("1", "2", "3", "4")
+  fmt <- function(v) formatC(v, format = "f", digits = 2)
+  parts <- lapply(sets, function(i) {
+    x <- anscombe[[paste0("x", i)]]; y <- anscombe[[paste0("y", i)]]
+    m <- lm(y ~ x)
+    xs <- c(2, 20)
+    charts <- list(
+      sf_spec(c(2, 20), c(2, 14), list(
+          sf_line(xs, predict(m, data.frame(x = xs)), color = "@accent", width = 2.4),
+          sf_points(x, y, color = "@secondary", size = 10)),
+        "x", "y", aria = paste("Zestaw", i, "kwartetu Anscombe'a z prostą regresji.")),
+      sf_spec(c(4, 13), c(-3.5, 3.5), list(
+          sf_hline(0, c(4, 13), color = "@ref", width = 1.4),
+          sf_points(fitted(m), resid(m), color = "@secondary", size = 10)),
+        "Wartość przewidywana", "Reszta", aria = paste("Reszty zestawu", i, "względem wartości przewidywanych.")))
+    list(spec = list(charts = charts),
+         reads = list(ansc_b0 = fmt(coef(m)[[1]]), ansc_b1 = fmt(coef(m)[[2]]), ansc_r2 = fmt(summary(m)$r.squared)))
+  })
+  names(parts) <- sets
+  lc_sf_spec(variants = lapply(parts, `[[`, "spec"), reads = lapply(parts, `[[`, "reads"), charts = 2, pair = TRUE,
+    control = lc_segmented("ch2_ansc_set", "Zestaw", choices = c("1" = "1", "2" = "2", "3" = "3", "4" = "4")),
+    toolbar = lc_readouts(
+      lc_readout("b₀", lc_sf_value("ansc_b0")),
+      lc_readout("b₁", lc_sf_value("ansc_b1")),
+      lc_readout("R²", lc_sf_value("ansc_r2"))),
+    ratio = "1.3/1", max_height = "340px")
+}
+
+# Ryc. 2.5: przeuczenie — wielomiany stopnia 1, 4 i 12 na tych samych danych (set.seed(26)).
+ch2_overfit_fig <- function() {
+  set.seed(26)
+  f <- function(x) 4.8 * sin(x)
+  train_x <- sort(runif(30, 0, 10))
+  test_x <- sort(runif(180, 0, 10))
+  train <- data.frame(x = train_x, y = f(train_x) + rnorm(length(train_x), 0, 0.9))
+  test <- data.frame(x = test_x, y = f(test_x) + rnorm(length(test_x), 0, 0.9))
+  degrees <- c(1, 4, 12)
+  labels <- c("1" = "Zbyt prosty", "4" = "Rozsądnie elastyczny", "12" = "Przeuczony")
+  x_grid <- seq(0, 10, length.out = 260)
+  models <- lapply(degrees, function(k) lm(y ~ poly(x, k), data = train))
+  charts <- lapply(models, function(model) {
+    yg <- predict(model, newdata = data.frame(x = x_grid))
+    sf_spec(c(-0.5, 10.5), c(-8, 8), list(
+        sf_points(test$x, test$y, color = "@bursztyn", alpha = 0.22, size = 5),
+        sf_points(train$x, train$y, color = "@secondary", alpha = 0.72, size = 7),
+        sf_line(x_grid, yg, color = "@niebo", width = 2.2)),
+      "X", "Y", aria = "Dane treningowe i testowe z dopasowanym wielomianem.")
+  })
+  metrics <- data.frame(
+    model = unname(labels[as.character(degrees)]), degree = degrees,
+    train_rmse = vapply(models, function(m) sqrt(mean((train$y - predict(m, train))^2)), 0),
+    test_rmse = vapply(models, function(m) sqrt(mean((test$y - predict(m, test))^2)), 0))
+  lc_sf_spec(list(charts = charts), charts = 3, triple = TRUE, headings = unname(labels),
+    ratio = "0.8/1", max_height = "340px",
+    after = tagList(
+      lc_caption("Ciemne punkty = trening; jasne bursztynowe = nowe dane testowe"),
+      lc_table(metrics, cols = list(
+        lc_col("model", "Model", "row"), lc_col("degree", "Stopień"),
+        lc_col("train_rmse", "RMSE trening", digits = 2), lc_col("test_rmse", "RMSE test", digits = 2)))))
+}
+
+# Ryc. 2.6: pasmo ±RMSE wokół prostej dla czterech modeli CASchools.
+ch2_rmse_fig <- function() {
+  parts <- lapply(.ch2_rmse_specs, function(s) {
+    d <- .cas_data
+    x <- d[[s$x]]; y <- d[[s$y]]
+    model <- lm(y ~ x)
+    rmse <- sqrt(mean(residuals(model)^2))
+    ord <- order(x)
+    fit <- fitted(model)[ord]
+    g <- broom::glance(model)
+    y_range <- diff(range(y))
+    y_label <- unname(.cas_labels[s$y])
+    spec <- sf_spec(sf_range(x), sf_range(c(y, fit - rmse, fit + rmse)), list(
+        sf_points(x, y, color = "@secondary", alpha = 0.42, size = 6),
+        sf_smooth_lm(x, y, color = "@niebo", se = FALSE)[[1]],
+        sf_ribbon(range(x), predict(model, data.frame(x = range(x))) - rmse,
+                  predict(model, data.frame(x = range(x))) + rmse, "@bursztyn/0.18"),
+        sf_text(min(x), max(y), paste0("Pasmo ±RMSE = ±", round(rmse, 1)), color = "@bursztyn",
+                align = "left", valign = "top", halo = TRUE)),
+      unname(.cas_labels[s$x]), y_label, aria = "Wykres rozrzutu z prostą regresji i pasmem ±RMSE.")
+    list(spec = spec, html = list(
+      stats = s07_html(
+        lc_readout("R²", round(g$r.squared, 3), color = unname(upwr_cat["niebo"])),
+        lc_readout("RMSE", round(rmse, 2), color = unname(upwr_cat["bursztyn"])),
+        lc_readout("Zakres Y (max − min)", round(y_range, 1), color = upwr_secondary),
+        lc_readout("RMSE / zakres", paste0(round(rmse / y_range * 100, 1), "%"), color = unname(upwr_cat["terakota"]))),
+      interp = s07_html(lc_caption(sprintf("Typowa pomyłka modelu to ±%.1f w skali „%s” (zakres %.0f, SD %.1f).",
+                                           rmse, y_label, y_range, sd(y)), tone = "info"))))
+  })
+  lc_sf_spec(variants = lapply(parts, `[[`, "spec"), html = lapply(parts, `[[`, "html"),
+    control = selectInput("ch2_rmse_case", "Model", choices = .ch2_rmse_choices, selected = "read_lunch", selectize = FALSE),
+    toolbar = lc_readouts(tags$div(`data-role` = "stats", style = "display: contents")),
+    ratio = "2/1", max_height = "320px",
+    after = tags$div(`data-role` = "interp"))
+}
+
+# Ryc. 2.7: ekstrapolacja — punkty i model z R, prognozę dla suwaka liczy przeglądarka (s07_extrap).
+ch2_extrap_config <- local({
+  m <- lm(read ~ income, data = .cas_data)
+  list(x = round(.cas_data$income, 3), y = round(.cas_data$read, 2),
+       b0 = unname(coef(m)[1]), b1 = unname(coef(m)[2]), range = range(.cas_data$income))
+})

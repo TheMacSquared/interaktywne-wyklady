@@ -347,5 +347,38 @@
     }
   };
 
+  // Ryc. 2.7: ekstrapolacja modelu czytanie ~ dochód poza zakres danych (suwak dochodu).
+  function verdict(type, title, body) {
+    return S.status('<span class="lc-status-' + type + '"><strong>' + title + "</strong></span><p>" + body + "</p>");
+  }
+  figures.s07_extrap = {
+    draw: function (v, P, k, state, vals) {
+      var c = state.config, xv = Number(vals.ch2_extrap_x), lo = c.range[0], hi = c.range[1];
+      var g0 = Math.min(1, xv - 2), g1 = Math.max(80, xv + 2), at = function (x) { return c.b0 + c.b1 * x; };
+      var col = xv >= lo && xv <= hi ? P.niebo : P.terakota;
+      var xr = pad([g0, g1]), yr = pad(range(c.y.concat([at(g0), at(g1)])));
+      return { x: xr, y: yr, layers: [
+        { type: "rect", x0: lo, x1: hi, y0: yr[0], y1: yr[1], fill: P.secondary, alpha: 0.08, z: 1 },
+        { type: "points", data: pairs(c.x, c.y), color: P.secondary, alpha: 0.35, size: 5 },
+        { type: "line", data: [[lo, at(lo)], [hi, at(hi)]], color: P.niebo, width: 2.2 },
+        { type: "line", data: [[g0, at(g0)], [lo, at(lo)]], color: P.niebo, width: 2.2, dash: DASH },
+        { type: "line", data: [[hi, at(hi)], [g1, at(g1)]], color: P.niebo, width: 2.2, dash: DASH },
+        { type: "vline", x: xv, color: col, width: 1.8, dash: [2, 4] },
+        { type: "points", data: [[xv, at(xv)]], color: col, size: 14, symbol: "diamond", z: 7 }],
+        xName: "Dochód okręgu (tys. USD)", yName: "Wynik testu czytania",
+        aria: "Dane CASchools z prostą regresji przedłużoną poza zakres dochodów i prognozą dla wybranego dochodu." };
+    },
+    update: function (root, state) {
+      var c = state.config, xv = num(root, "ch2_extrap_x"), lo = c.range[0], hi = c.range[1], y = c.b0 + c.b1 * xv, P = C.palette();
+      var inside = xv >= lo && xv <= hi, dist = Math.min(Math.abs(xv - lo), Math.abs(xv - hi)) / (hi - lo) * 100;
+      var st = root.querySelector('[data-role="stats"]'), vd = root.querySelector('[data-role="verdict"]');
+      if (st) st.innerHTML = readout("X podany", xv + " tys. USD", P.niebo) + readout("Predykcja", fmt(y, 1) + " pkt", P.bursztyn) +
+        readout("Zakres X danych", C.fmt(lo, 0) + "–" + C.fmt(hi, 0) + " tys. USD", P.secondary);
+      if (vd) vd.innerHTML = inside
+        ? verdict("ok", "W zakresie danych", "Predykcja: " + f(y, 1) + " pkt. Jesteśmy wewnątrz zakresu danych — predykcja ma sens.")
+        : verdict("warning", "Ekstrapolacja", "Predykcja: " + f(y, 1) + " pkt. Jesteśmy " + f(dist, 0) + "% zakresu danych poza granicą — brak gwarancji.");
+    }
+  };
+
   S.register(figures);
 })();

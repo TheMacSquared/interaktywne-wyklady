@@ -1240,8 +1240,8 @@ lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL, max_height = NUL
 
 # Dwa wykresy obok siebie od 760 px kontenera, pod sobą na węższym.
 # pair = TRUE: obok siebie już od 560 px (para do bezpośredniego porównania).
-lc_plots <- function(..., pair = FALSE) {
-  tags$div(class = paste(c("lc-plots", if (isTRUE(pair)) "is-pair"), collapse = " "), ...)
+lc_plots <- function(..., pair = FALSE, triple = FALSE) {
+  tags$div(class = paste(c("lc-plots", if (isTRUE(pair)) "is-pair", if (isTRUE(triple)) "is-triple"), collapse = " "), ...)
 }
 
 # Ćwiczenie „przypisz karty do pól" — przeciąganie myszą i obsługa klawiatury.
