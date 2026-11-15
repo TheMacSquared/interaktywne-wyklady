@@ -42,6 +42,34 @@ def match_paren(t, i):
     raise ValueError("brak nawiasu zamykającego")
 
 
+def top_level_offsets(t):
+    """Pozycje znaków poza napisami, komentarzami i nawiasami (poziom najwyższy pliku R)."""
+    out, depth, quote, k = set(), 0, None, 0
+    while k < len(t):
+        c = t[k]
+        if quote:
+            if c == "\\":
+                k += 1
+            elif c == quote:
+                quote = None
+        else:
+            if depth == 0:
+                out.add(k)
+            if c in "\"'`":
+                quote = c
+            elif c == "#":
+                k = t.find("\n", k)
+                if k < 0:
+                    break
+                continue
+            elif c in "([{":
+                depth += 1
+            elif c in ")]}":
+                depth -= 1
+        k += 1
+    return out
+
+
 def dedent(text, n):
     return "\n".join(line[n:] if line[:n].strip() == "" else line for line in text.split("\n"))
 
@@ -84,7 +112,9 @@ def main():
         s = files[target]
         at = s.index(call)
         # Początek instrukcji najwyższego poziomu zawierającej wywołanie.
-        starts = [x.start() for x in re.finditer(r"^[A-Za-z_.][A-Za-z0-9_.]* <- ", s[:at], re.M)]
+        # Tylko początki poza napisami i nawiasami (wiersz kodu w wielowierszowym napisie się nie liczy).
+        top_level = top_level_offsets(s[:at])
+        starts = [x.start() for x in re.finditer(r"^[A-Za-z_.][A-Za-z0-9_.]* <- ", s[:at], re.M) if x.start() in top_level]
         top = starts[-1]
         # Komentarze bezpośrednio nad instrukcją zostają przy niej.
         lines = s[:top].split("\n")

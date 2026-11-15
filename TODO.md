@@ -45,12 +45,11 @@ uruchamianych tylko przy budowaniu; jeden plik HTML na wykład; wzory składane
 przy budowaniu; całość na gałęzi `statyczny-js`, przełączenie na końcu. Zasada:
 R liczy przy budowaniu, JS liczy tylko to, co zmienia student.
 
-Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 14 listopada
-2026: gotowe 19 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–06, 09 i 10, zbudowane i sprawdzone
+Stan: `Rscript scripts/check_static_ready.R` (licznik na wykład). 15 listopada
+2026: gotowe 20 z 21 wykładów (analiza ryzyka 01–10, statystyka 00–07, 09 i 10, zbudowane i sprawdzone
 przez `scripts/build_static.R` i `scripts/check_static_page.R`; panele zgodne
-z wersją Shiny co do liczby wykresów, kontrolek i tekstu); zostało 66 wykresów
-R (wykłady 07 i 08). Zostały tylko
-wykłady statystyki 07 i 08; cała analiza ryzyka działa bez serwera. Wykresy analizy
+z wersją Shiny co do liczby wykresów, kontrolek i tekstu). Został tylko
+wykład statystyki 08; cała analiza ryzyka działa bez serwera. Wykresy analizy
 ryzyka rysuje silnik `lcSF` przez `risk_sf_panel()` (dane ze stałym ziarnem
 z R w `config`, funkcje kursu w `analiza-ryzyka/R/risk_figures.js`); wzorzec: 06. Quiz analizy ryzyka
 (wszystkie 10 wykładów) ocenia już przeglądarka; głosowanie „Najpierw zdecyduj”
@@ -122,7 +121,21 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   (6 wykresów; dane losowane na jednej rycinie testują panele obok — wspólny
   magazyn w `modules/figures.js` i zdarzenie `lc:sf-redraw`; stan przed
   losowaniem i warianty wyniku w elementach `[data-when]`).
-- [ ] Faza 6: statystyka 07–08 (66 wykresów R).
+- [ ] Faza 6: statystyka 07–08 (66 wykresów R). Gotowe: 07 (15 listopada 2026;
+  `modules/figures.R` + `modules/figures.js`, test `tests/js/stat07.test.js` ze
+  wzorcami z R w `fixtures/make_stat07.R`). Ryciny na stałych danych (CASchools,
+  pingwiny, Anscombe, scenariusze ze stałym ziarnem) opisuje R jako warianty
+  `lc_sf_spec()`; kroki z R obsługuje rycina `s07_steps`. Przeglądarka liczy
+  losowanie, MNK, wielomian ortogonalny jak `poly()` (rekurencja trójczłonowa),
+  regresję logistyczną IRLS jak `glm(binomial)` z przedziałami profilowymi jak
+  `confint()` (zgodność z R do ~1e-3, bo R interpoluje profil splajnem) oraz
+  ćwiczenie z klikaniem w wykres (ECharts `convertFromPixel`). Ryc. 3.1 (128
+  modeli): tabele i miary z R jako liczby, tabelę jak `lc_table_split()` i panele
+  składa JS. Nowe w rdzeniu: `lc_plots(triple = TRUE)` / `lc_sf_figure(triple = TRUE)`,
+  opis `xInterval` / `yInterval`, nazwa osi X zawijana także w wąskich wykresach.
+  Świadome odstępstwa: Ryc. 4.2 ma na osi X numery modeli z legendą zamiast
+  obróconych nazw; ryciny 3.1 (panele) i 4.2 mają własne, krótkie style siatki
+  w `figures.R`. Zostało: 08.
 - [x] Faza 7 (15 listopada 2026): statystyka 09–10 (20 wykresów R; modele na stałych zbiorach
   liczone przy budowaniu). Gotowe: 10 (5 wykresów; treści stałe przeniesione
   z serwera do dokumentu narzędziem `scripts/migracja/inline_static_outputs.py`,
@@ -200,8 +213,8 @@ układ kolumn / pudełka statystyk / wykres o stałej wysokości / `lc_feedback`
 | statystyka-2 03-kierunkowe | 14 | 0 | 14 | 11 | 14 | 3 |
 | statystyka-2 04-szeregi-czasowe | 41 | 4 | 37 | 4 | 35 | 21 |
 
-W statystyce i analizie ryzyka został tylko jeden wykres z kliknięciem
-na `zoom_plot_ui` (statystyka 07, ćwiczenie z prostą).
+W statystyce i analizie ryzyka nie ma już wykresu z kliknięciem na `zoom_plot_ui`
+(ćwiczenie z prostą w statystyce 07 liczy przeglądarka).
 
 Zostało:
 

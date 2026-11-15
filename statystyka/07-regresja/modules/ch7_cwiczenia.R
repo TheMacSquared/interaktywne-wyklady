@@ -4,6 +4,246 @@
 
 source(file.path(app_dir, "modules", "ch7_sat.R"), local = TRUE)
 
+# Tabele rozwiązań (dawniej w serwerze; rozwiązania składa R przy budowaniu strony).
+ch7_metric_row <- function(model, name) {
+  g <- broom::glance(model)
+  data.frame(
+    model = name,
+    r2 = g$r.squared,
+    adj_r2 = g$adj.r.squared,
+    aic = AIC(model),
+    bic = BIC(model),
+    rmse = sqrt(mean(residuals(model)^2)),
+    check.names = FALSE
+  )
+}
+
+ch7_table <- function(df) {
+  # Kolumny liczbowe: tyle miejsc po przecinku, ile mają wartości (max 4).
+  decimals <- function(x) {
+    d <- nchar(sub("^[^.]*\\.?", "", vapply(x, function(v)
+      format(v, scientific = FALSE, drop0trailing = TRUE), character(1))))
+    min(max(d, 0), 4)
+  }
+  cols <- lapply(seq_along(df), function(j) {
+    key <- names(df)[j]
+    if (j == 1) return(lc_col(key, key, "row"))
+    if (key == "p.value") return(lc_col(key, "p"))
+    if (!is.numeric(df[[j]])) return(lc_col(key, key, "text"))
+    lc_col(key, key, digits = decimals(df[[j]]))
+  })
+  if ("p.value" %in% names(df)) df$p.value <- lc_pval(df$p.value)
+  lc_table(df, cols = cols)
+}
+
+# Treść stała (dawniej output$ch7_sol1 na serwerze): składana przy budowaniu strony.
+ch7_sol1_ui <- function() {
+  model <- lm(read ~ lunch, data = .cas_data)
+  coefs <- coef(model)
+  g <- broom::glance(model)
+
+  tagList(
+    p("Równanie: ",
+      tags$code(sprintf("read = %.2f %+ .2f * lunch", coefs[1], coefs[2]))),
+    p("Interpretacja: wzrost odsetka uczniów z dotacją do obiadu o 1 punkt
+      procentowy wiąże się przeciętnie ze zmianą wyniku czytania o ",
+      tags$b(sprintf("%.2f", coefs[2])), " punktu."),
+    p("R² = ", tags$b(sprintf("%.3f", g$r.squared)),
+      ", więc model wyjaśnia około ",
+      tags$b(sprintf("%.1f%%", 100 * g$r.squared)),
+      " zmienności wyników czytania.")
+  )
+}
+
+# Treść stała (dawniej output$ch7_sol2 na serwerze): składana przy budowaniu strony.
+ch7_sol2_ui <- function() {
+  model <- lm(read ~ lunch, data = .cas_data)
+  pred <- predict(model, newdata = data.frame(lunch = c(40, 110)))
+  rng <- range(.cas_data$lunch, na.rm = TRUE)
+
+  tagList(
+    p("Dla ", tags$code("lunch = 40"), " predykcja wynosi ",
+      tags$b(sprintf("%.1f", pred[1])), " punktu."),
+    p("Dla ", tags$code("lunch = 110"), " mechaniczna predykcja wynosi ",
+      tags$b(sprintf("%.1f", pred[2])), " punktu, ale to ekstrapolacja."),
+    p("W danych ", tags$code("lunch"), " mieści się w zakresie ",
+      tags$b(sprintf("%.1f-%.1f", rng[1], rng[2])),
+      ". Model nie został nauczony na wartościach powyżej tego zakresu.")
+  )
+}
+
+# Treść stała (dawniej output$ch7_sol3 na serwerze): składana przy budowaniu strony.
+ch7_sol3_ui <- function() {
+  m1 <- lm(read ~ lunch, data = .cas_data)
+  m2 <- lm(read ~ lunch + income, data = .cas_data)
+  m3 <- lm(read ~ lunch + income + english + student_teacher_ratio, data = .cas_data)
+
+  metrics <- rbind(
+    ch7_metric_row(m1, "lunch"),
+    ch7_metric_row(m2, "lunch + income"),
+    ch7_metric_row(m3, "lunch + income + english + STR")
+  )
+  metrics[, -1] <- lapply(metrics[, -1], function(x) round(x, 3))
+
+  best_aic <- metrics$model[which.min(metrics$aic)]
+  best_bic <- metrics$model[which.min(metrics$bic)]
+
+  tagList(
+    ch7_table(metrics),
+    tagList(
+      p("Najniższy AIC: ", tags$b(best_aic), ". Najniższy BIC: ",
+        tags$b(best_bic), "."),
+      p("Jeśli AIC i BIC wybierają ten sam model, decyzja jest prosta.
+        Jeśli się rozchodzą, AIC częściej premiuje predykcję, BIC mocniej
+        chroni prostotę interpretacji.")
+    )
+  )
+}
+
+# Treść stała (dawniej output$ch7_sol4 na serwerze): składana przy budowaniu strony.
+ch7_sol4_ui <- function() {
+  model <- lm(read ~ income, data = .cas_data)
+  g <- broom::glance(model)
+
+  tagList(
+    p("W R zacznij od:"),
+    tags$pre(class = "lc-code-block",
+      tags$code(
+"model <- lm(read ~ income, data = caschools)
+plot(model, which = 1)  # reszty vs dopasowane
+plot(model, which = 2)  # Q-Q plot")
+    ),
+    p("W tym modelu R² = ", tags$b(sprintf("%.3f", g$r.squared)),
+      ", ale sama liczba nie wystarczy. Jeśli na wykresie reszt widać łuk,
+      rozważ transformację dochodu, składnik nieliniowy albo porównanie
+      z modelem wielorakim.")
+  )
+}
+
+# Treść stała (dawniej output$ch7_sol5 na serwerze): składana przy budowaniu strony.
+ch7_sol5_ui <- function() {
+  simple <- lm(math ~ income, data = .cas_data)
+  multi <- lm(math ~ lunch + income + english + student_teacher_ratio, data = .cas_data)
+  simple_income <- coef(simple)[["income"]]
+  multi_income <- coef(multi)[["income"]]
+  coefs <- broom::tidy(multi)
+  coefs$estimate <- round(coefs$estimate, 3)
+  coefs$std.error <- round(coefs$std.error, 3)
+  coefs$statistic <- round(coefs$statistic, 2)
+  coefs$p.value <- signif(coefs$p.value, 3)
+
+  tagList(
+    ch7_table(coefs[, c("term", "estimate", "std.error", "statistic", "p.value")]),
+    tagList(
+      p("W modelu prostym wzrost dochodu o 1 tys. USD wiąże się ze zmianą
+        wyniku matematyki o ", tags$b(sprintf("%.2f", simple_income)),
+        " punktu."),
+      p("W modelu wielorakim, przy stałych wartościach lunch, english i STR,
+        analogiczny współczynnik wynosi ",
+        tags$b(sprintf("%.2f", multi_income)), "."),
+      p("Różnica między tymi liczbami to właśnie sens kontroli zmiennych:
+        część związku dochodu z wynikiem była współdzielona z innymi predyktorami.")
+    )
+  )
+}
+
+# Treść stała (dawniej output$ch7_sol5a na serwerze): składana przy budowaniu strony.
+ch7_sol5a_ui <- function() {
+  simple <- lm(bill_depth_mm ~ bill_length_mm, data = .penguins_data)
+  controlled <- lm(
+    bill_depth_mm ~ bill_length_mm + species,
+    data = .penguins_data
+  )
+  b_simple <- coef(simple)[["bill_length_mm"]]
+  b_controlled <- coef(controlled)[["bill_length_mm"]]
+
+  tagList(
+    p(
+      "Bez gatunku nachylenie wynosi ",
+      tags$strong(sprintf("%.3f", b_simple)),
+      ", a po kontroli gatunku ",
+      tags$strong(sprintf("%.3f", b_controlled)), "."
+    ),
+    p(
+      "Znak zmienia się, ponieważ model prosty miesza różnice między",
+      " gatunkami z relacją długości i wysokości dzioba wewnątrz gatunków."
+    )
+  )
+}
+
+# Treść stała (dawniej output$ch7_sol5b na serwerze): składana przy budowaniu strony.
+ch7_sol5b_ui <- function() {
+  additive <- lm(
+    body_mass_g ~ flipper_length_mm + species,
+    data = .penguins_data
+  )
+  interaction <- lm(
+    body_mass_g ~ flipper_length_mm * species,
+    data = .penguins_data
+  )
+  interaction_terms <- broom::tidy(interaction)
+  interaction_terms <- interaction_terms[grepl(":", interaction_terms$term), ]
+
+  comparison <- data.frame(
+    model = c("addytywny", "z interakcją"),
+    AIC = round(c(AIC(additive), AIC(interaction)), 1),
+    RMSE = round(c(
+      sqrt(mean(residuals(additive)^2)),
+      sqrt(mean(residuals(interaction)^2))
+    ), 1),
+    parametry = c(length(coef(additive)), length(coef(interaction))),
+    check.names = FALSE
+  )
+
+  tagList(
+    ch7_table(comparison),
+    ch7_table(data.frame(
+      składnik = interaction_terms$term,
+      współczynnik = round(interaction_terms$estimate, 3),
+      p_value = signif(interaction_terms$p.value, 3),
+      check.names = FALSE
+    )),
+    tagList(
+      "Model z interakcją pozwala na różne nachylenia, ale płaci za to",
+      " dodatkowymi parametrami. Decyzję uzasadnij wykresem, pytaniem",
+      " merytorycznym i zmianą jakości dopasowania."
+    )
+  )
+}
+
+# Treść stała (dawniej output$ch7_sol6 na serwerze): składana przy budowaniu strony.
+ch7_sol6_ui <- function() {
+  set.seed(42)
+  df <- generate_logistic_data(220)
+  model <- glm(zdal_num ~ godziny_nauki + srednia_ocen, data = df, family = binomial)
+  ors <- exp(coef(model))
+  prob <- predict(model,
+    newdata = data.frame(godziny_nauki = 22, srednia_ocen = 3.8),
+    type = "response"
+  )
+  decision_05 <- if (prob >= 0.5) "Tak" else "Nie"
+  decision_07 <- if (prob >= 0.7) "Tak" else "Nie"
+
+  or_df <- data.frame(
+    parametr = names(ors),
+    OR = round(as.numeric(ors), 3),
+    check.names = FALSE
+  )
+
+  tagList(
+    ch7_table(or_df),
+    tagList(
+      p("Przewidywane prawdopodobieństwo zdania dla 22 godzin nauki i
+        średniej 3.8 wynosi ", tags$b(sprintf("%.1f%%", 100 * prob)), "."),
+      p("Decyzja przy progu 0.5: ", tags$b(decision_05),
+        ". Decyzja przy progu 0.7: ", tags$b(decision_07), "."),
+      p("Wyższy próg zmniejsza liczbę fałszywych alarmów pozytywnych,
+        ale może zwiększyć liczbę przypadków, w których nie rozpoznamy osoby,
+        która faktycznie zda.")
+    )
+  )
+}
+
 ch7_ui <- list(
   id    = "ch-cwiczenia",
   num   = "06",
@@ -46,7 +286,7 @@ ch7_ui <- list(
           tags$li("Sprawdź R² i oceń, czy model wyjaśnia dużo zmienności.")
         )
       ),
-      lc_more("Rozwiązanie", uiOutput("ch7_sol1"))
+      lc_more("Rozwiązanie", ch7_sol1_ui())
     ),
 
     figure_panel(label = "Ćw. 2", title = "Predykcja i ekstrapolacja",
@@ -56,7 +296,7 @@ ch7_ui <- list(
         p("Następnie policz predykcję dla ", tags$code("lunch = 110"),
           ". Czy druga predykcja ma sens? Uzasadnij.")
       ),
-      lc_more("Rozwiązanie", uiOutput("ch7_sol2"))
+      lc_more("Rozwiązanie", ch7_sol2_ui())
     ),
 
     lc_h2("ch7-jakosc", "Blok 2: jakość i porównanie modeli"),
@@ -72,7 +312,7 @@ ch7_ui <- list(
         p("Porównaj R², adjusted R², AIC, BIC i RMSE. Który model wybrać
           do wyjaśniania, a który do predykcji?")
       ),
-      lc_more("Rozwiązanie", uiOutput("ch7_sol3"))
+      lc_more("Rozwiązanie", ch7_sol3_ui())
     ),
 
     figure_panel(label = "Ćw. 4", title = "Reszty mówią, czy model kłamie",
@@ -82,7 +322,7 @@ ch7_ui <- list(
         p("Czy widać sygnał nieliniowości, obserwacji odstających albo
           problemu z normalnością reszt? Co zrobić dalej?")
       ),
-      lc_more("Wskazówka", uiOutput("ch7_sol4"))
+      lc_more("Wskazówka", ch7_sol4_ui())
     ),
 
     lc_h2("ch7-wieloraka", "Blok 3: regresja wieloraka"),
@@ -95,7 +335,7 @@ ch7_ui <- list(
           " i porównaj go ze współczynnikiem w modelu prostym ",
           tags$code("math ~ income"), ".")
       ),
-      lc_more("Rozwiązanie", uiOutput("ch7_sol5"))
+      lc_more("Rozwiązanie", ch7_sol5_ui())
     ),
 
     lc_h2("ch7-kontekst", "Blok 3B: kontekst i interakcje na pingwinach"),
@@ -111,7 +351,7 @@ ch7_ui <- list(
         ),
         p("Porównaj znak współczynnika długości dzioba i wyjaśnij, dlaczego się zmienił.")
       ),
-      lc_more("Rozwiązanie", uiOutput("ch7_sol5a"))
+      lc_more("Rozwiązanie", ch7_sol5a_ui())
     ),
 
     figure_panel(
@@ -125,7 +365,7 @@ ch7_ui <- list(
         ),
         p("Narysuj przewidywane linie, sprawdź składniki interakcji i porównaj AIC.")
       ),
-      lc_more("Rozwiązanie", uiOutput("ch7_sol5b"))
+      lc_more("Rozwiązanie", ch7_sol5b_ui())
     ),
 
     lc_h2("ch7-logistyczna", "Blok 4: regresja logistyczna"),
@@ -137,6 +377,7 @@ ch7_ui <- list(
           tags$code(
 "set.seed(42)
 df <- generate_logistic_data(220)
+
 model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
              data = df, family = binomial)")
         ),
@@ -144,7 +385,7 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
           z 22 godzinami nauki i średnią 3.8, a potem porównaj decyzję
           przy progach 0.5 i 0.7.")
       ),
-      lc_more("Rozwiązanie", uiOutput("ch7_sol6"))
+      lc_more("Rozwiązanie", ch7_sol6_ui())
     ),
 
     ch7_sat_ui(),
@@ -164,234 +405,4 @@ ch7_server <- function(input, output, session) {
 
   ch7_sat_server(input, output, session)
 
-  ch7_metric_row <- function(model, name) {
-    g <- broom::glance(model)
-    data.frame(
-      model = name,
-      r2 = g$r.squared,
-      adj_r2 = g$adj.r.squared,
-      aic = AIC(model),
-      bic = BIC(model),
-      rmse = sqrt(mean(residuals(model)^2)),
-      check.names = FALSE
-    )
-  }
-
-  ch7_table <- function(df) {
-    # Kolumny liczbowe: tyle miejsc po przecinku, ile mają wartości (max 4).
-    decimals <- function(x) {
-      d <- nchar(sub("^[^.]*\\.?", "", vapply(x, function(v)
-        format(v, scientific = FALSE, drop0trailing = TRUE), character(1))))
-      min(max(d, 0), 4)
-    }
-    cols <- lapply(seq_along(df), function(j) {
-      key <- names(df)[j]
-      if (j == 1) return(lc_col(key, key, "row"))
-      if (key == "p.value") return(lc_col(key, "p"))
-      if (!is.numeric(df[[j]])) return(lc_col(key, key, "text"))
-      lc_col(key, key, digits = decimals(df[[j]]))
-    })
-    if ("p.value" %in% names(df)) df$p.value <- lc_pval(df$p.value)
-    lc_table(df, cols = cols)
-  }
-
-  output$ch7_sol1 <- renderUI({
-    model <- lm(read ~ lunch, data = .cas_data)
-    coefs <- coef(model)
-    g <- broom::glance(model)
-
-    tagList(
-      p("Równanie: ",
-        tags$code(sprintf("read = %.2f %+ .2f * lunch", coefs[1], coefs[2]))),
-      p("Interpretacja: wzrost odsetka uczniów z dotacją do obiadu o 1 punkt
-        procentowy wiąże się przeciętnie ze zmianą wyniku czytania o ",
-        tags$b(sprintf("%.2f", coefs[2])), " punktu."),
-      p("R² = ", tags$b(sprintf("%.3f", g$r.squared)),
-        ", więc model wyjaśnia około ",
-        tags$b(sprintf("%.1f%%", 100 * g$r.squared)),
-        " zmienności wyników czytania.")
-    )
-  })
-
-  output$ch7_sol2 <- renderUI({
-    model <- lm(read ~ lunch, data = .cas_data)
-    pred <- predict(model, newdata = data.frame(lunch = c(40, 110)))
-    rng <- range(.cas_data$lunch, na.rm = TRUE)
-
-    tagList(
-      p("Dla ", tags$code("lunch = 40"), " predykcja wynosi ",
-        tags$b(sprintf("%.1f", pred[1])), " punktu."),
-      p("Dla ", tags$code("lunch = 110"), " mechaniczna predykcja wynosi ",
-        tags$b(sprintf("%.1f", pred[2])), " punktu, ale to ekstrapolacja."),
-      p("W danych ", tags$code("lunch"), " mieści się w zakresie ",
-        tags$b(sprintf("%.1f-%.1f", rng[1], rng[2])),
-        ". Model nie został nauczony na wartościach powyżej tego zakresu.")
-    )
-  })
-
-  output$ch7_sol3 <- renderUI({
-    m1 <- lm(read ~ lunch, data = .cas_data)
-    m2 <- lm(read ~ lunch + income, data = .cas_data)
-    m3 <- lm(read ~ lunch + income + english + student_teacher_ratio, data = .cas_data)
-
-    metrics <- rbind(
-      ch7_metric_row(m1, "lunch"),
-      ch7_metric_row(m2, "lunch + income"),
-      ch7_metric_row(m3, "lunch + income + english + STR")
-    )
-    metrics[, -1] <- lapply(metrics[, -1], function(x) round(x, 3))
-
-    best_aic <- metrics$model[which.min(metrics$aic)]
-    best_bic <- metrics$model[which.min(metrics$bic)]
-
-    tagList(
-      ch7_table(metrics),
-      tagList(
-        p("Najniższy AIC: ", tags$b(best_aic), ". Najniższy BIC: ",
-          tags$b(best_bic), "."),
-        p("Jeśli AIC i BIC wybierają ten sam model, decyzja jest prosta.
-          Jeśli się rozchodzą, AIC częściej premiuje predykcję, BIC mocniej
-          chroni prostotę interpretacji.")
-      )
-    )
-  })
-
-  output$ch7_sol4 <- renderUI({
-    model <- lm(read ~ income, data = .cas_data)
-    g <- broom::glance(model)
-
-    tagList(
-      p("W R zacznij od:"),
-      tags$pre(class = "lc-code-block",
-        tags$code(
-"model <- lm(read ~ income, data = caschools)
-plot(model, which = 1)  # reszty vs dopasowane
-plot(model, which = 2)  # Q-Q plot")
-      ),
-      p("W tym modelu R² = ", tags$b(sprintf("%.3f", g$r.squared)),
-        ", ale sama liczba nie wystarczy. Jeśli na wykresie reszt widać łuk,
-        rozważ transformację dochodu, składnik nieliniowy albo porównanie
-        z modelem wielorakim.")
-    )
-  })
-
-  output$ch7_sol5 <- renderUI({
-    simple <- lm(math ~ income, data = .cas_data)
-    multi <- lm(math ~ lunch + income + english + student_teacher_ratio, data = .cas_data)
-    simple_income <- coef(simple)[["income"]]
-    multi_income <- coef(multi)[["income"]]
-    coefs <- broom::tidy(multi)
-    coefs$estimate <- round(coefs$estimate, 3)
-    coefs$std.error <- round(coefs$std.error, 3)
-    coefs$statistic <- round(coefs$statistic, 2)
-    coefs$p.value <- signif(coefs$p.value, 3)
-
-    tagList(
-      ch7_table(coefs[, c("term", "estimate", "std.error", "statistic", "p.value")]),
-      tagList(
-        p("W modelu prostym wzrost dochodu o 1 tys. USD wiąże się ze zmianą
-          wyniku matematyki o ", tags$b(sprintf("%.2f", simple_income)),
-          " punktu."),
-        p("W modelu wielorakim, przy stałych wartościach lunch, english i STR,
-          analogiczny współczynnik wynosi ",
-          tags$b(sprintf("%.2f", multi_income)), "."),
-        p("Różnica między tymi liczbami to właśnie sens kontroli zmiennych:
-          część związku dochodu z wynikiem była współdzielona z innymi predyktorami.")
-      )
-    )
-  })
-
-  output$ch7_sol5a <- renderUI({
-    simple <- lm(bill_depth_mm ~ bill_length_mm, data = .penguins_data)
-    controlled <- lm(
-      bill_depth_mm ~ bill_length_mm + species,
-      data = .penguins_data
-    )
-    b_simple <- coef(simple)[["bill_length_mm"]]
-    b_controlled <- coef(controlled)[["bill_length_mm"]]
-
-    tagList(
-      p(
-        "Bez gatunku nachylenie wynosi ",
-        tags$strong(sprintf("%.3f", b_simple)),
-        ", a po kontroli gatunku ",
-        tags$strong(sprintf("%.3f", b_controlled)), "."
-      ),
-      p(
-        "Znak zmienia się, ponieważ model prosty miesza różnice między",
-        " gatunkami z relacją długości i wysokości dzioba wewnątrz gatunków."
-      )
-    )
-  })
-
-  output$ch7_sol5b <- renderUI({
-    additive <- lm(
-      body_mass_g ~ flipper_length_mm + species,
-      data = .penguins_data
-    )
-    interaction <- lm(
-      body_mass_g ~ flipper_length_mm * species,
-      data = .penguins_data
-    )
-    interaction_terms <- broom::tidy(interaction)
-    interaction_terms <- interaction_terms[grepl(":", interaction_terms$term), ]
-
-    comparison <- data.frame(
-      model = c("addytywny", "z interakcją"),
-      AIC = round(c(AIC(additive), AIC(interaction)), 1),
-      RMSE = round(c(
-        sqrt(mean(residuals(additive)^2)),
-        sqrt(mean(residuals(interaction)^2))
-      ), 1),
-      parametry = c(length(coef(additive)), length(coef(interaction))),
-      check.names = FALSE
-    )
-
-    tagList(
-      ch7_table(comparison),
-      ch7_table(data.frame(
-        składnik = interaction_terms$term,
-        współczynnik = round(interaction_terms$estimate, 3),
-        p_value = signif(interaction_terms$p.value, 3),
-        check.names = FALSE
-      )),
-      tagList(
-        "Model z interakcją pozwala na różne nachylenia, ale płaci za to",
-        " dodatkowymi parametrami. Decyzję uzasadnij wykresem, pytaniem",
-        " merytorycznym i zmianą jakości dopasowania."
-      )
-    )
-  })
-
-  output$ch7_sol6 <- renderUI({
-    set.seed(42)
-    df <- generate_logistic_data(220)
-    model <- glm(zdal_num ~ godziny_nauki + srednia_ocen, data = df, family = binomial)
-    ors <- exp(coef(model))
-    prob <- predict(model,
-      newdata = data.frame(godziny_nauki = 22, srednia_ocen = 3.8),
-      type = "response"
-    )
-    decision_05 <- if (prob >= 0.5) "Tak" else "Nie"
-    decision_07 <- if (prob >= 0.7) "Tak" else "Nie"
-
-    or_df <- data.frame(
-      parametr = names(ors),
-      OR = round(as.numeric(ors), 3),
-      check.names = FALSE
-    )
-
-    tagList(
-      ch7_table(or_df),
-      tagList(
-        p("Przewidywane prawdopodobieństwo zdania dla 22 godzin nauki i
-          średniej 3.8 wynosi ", tags$b(sprintf("%.1f%%", 100 * prob)), "."),
-        p("Decyzja przy progu 0.5: ", tags$b(decision_05),
-          ". Decyzja przy progu 0.7: ", tags$b(decision_07), "."),
-        p("Wyższy próg zmniejsza liczbę fałszywych alarmów pozytywnych,
-          ale może zwiększyć liczbę przypadków, w których nie rozpoznamy osoby,
-          która faktycznie zda.")
-      )
-    )
-  })
 }

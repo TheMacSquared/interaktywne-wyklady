@@ -173,3 +173,10 @@ Klucz grupy pól wyboru to zaznaczone wartości złączone „+”, a pustej —
 Gdy wariant zależy od kilku kontrolek, `key = c("id1", "id2")` składa klucz
 z ich wartości (`"TZ|0.5"`).
 Wzorzec: `statystyka/09-case-studies/modules/figures.R`.
+
+Kilka wykresów w rycinie: `lc_sf_figure(charts = 2, pair = TRUE)` stawia dwa
+obok siebie już w kolumnie tekstu, `triple = TRUE` trzy w jednym rzędzie (jak
+panele `facet_wrap()`). Opis osi przyjmuje też `xInterval` / `yInterval`
+(stały odstęp siatki, np. co 1 w ćwiczeniu z odczytem współrzędnych).
+Ryciny krokowe opisane w całości w R (rysunek, opis i tabela każdego kroku)
+pokazuje wzorzec `s07_steps` w `statystyka/07-regresja/modules/figures.js`.
