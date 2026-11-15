@@ -496,3 +496,184 @@ ch2_extrap_config <- local({
   list(x = round(.cas_data$income, 3), y = round(.cas_data$read, 2),
        b0 = unname(coef(m)[1]), b1 = unname(coef(m)[2]), range = range(.cas_data$income))
 })
+
+# ---------------------------------------------------------------------------
+# Rozdział 3
+# ---------------------------------------------------------------------------
+
+ch3_labels_pl <- c(
+  "read" = "Wynik: czytanie", "math" = "Wynik: matematyka",
+  "lunch" = "Dotacje do obiadów (%)", "income" = "Dochód okręgu (tys. USD)",
+  "english" = "Angielski jako drugi język (%)", "student_teacher_ratio" = "Uczniowie / nauczyciel",
+  "expenditure" = "Wydatki na ucznia", "computer" = "Komputery", "calworks" = "CalWORKs (%)")
+ch3_extra_choices <- c(
+  "Dotacje do obiadów (%)" = "lunch", "Angielski jako drugi język (%)" = "english",
+  "Uczniowie / nauczyciel" = "student_teacher_ratio", "Wydatki na ucznia" = "expenditure",
+  "Komputery" = "computer", "CalWORKs (%)" = "calworks")
+
+# Grupy kwantylowe jak dawniej na serwerze (cut() przy kwantylach, mediana grupy).
+ch3_bins <- function(x, labels) {
+  probs <- seq(0, 1, length.out = length(labels) + 1)
+  breaks <- unique(as.numeric(quantile(x, probs = probs, na.rm = TRUE)))
+  g <- if (length(breaks) <= 2) {
+    cut(x, breaks = 2, include.lowest = TRUE, labels = labels[seq_len(2)])
+  } else {
+    cut(x, breaks = breaks, include.lowest = TRUE, labels = labels[seq_len(length(breaks) - 1)])
+  }
+  list(g = as.integer(g) - 1L, levels = levels(g), med = unname(tapply(x, g, median, na.rm = TRUE)))
+}
+
+# Ryc. 3.1: tabela i miary każdego modelu (Y × zestaw predyktorów) liczy R przy budowaniu;
+# wykresy (grupy, panele, linie) rysuje przeglądarka ze współczynników (rycina s07_multi).
+ch3_multi_fig <- function() {
+  d <- .cas_data
+  vars <- unname(ch3_extra_choices)
+  subsets <- unlist(lapply(0:length(vars), function(k) combn(vars, k, simplify = FALSE)), recursive = FALSE)
+  labels_pl <- c("(Intercept)" = "Wyraz wolny", ch3_labels_pl)
+  variants <- list(); html <- list()
+  for (outcome in c("read", "math")) for (s in subsets) {
+    preds <- c("income", s)
+    key <- paste0(outcome, "|", if (length(s)) paste(s, collapse = "+") else "none")
+    model <- lm(as.formula(paste(outcome, "~", paste(preds, collapse = " + "))), data = d)
+    co <- broom::tidy(model)
+    met <- compute_model_metrics(model)
+    tab <- data.frame(term = unname(ifelse(co$term %in% names(labels_pl), labels_pl[co$term], co$term)),
+      estimate = co$estimate, se = co$std.error, t = co$statistic,
+      p = paste0(lc_pval(co$p.value), ifelse(co$p.value < 0.05, " *", "")))
+    # Wiersze tabeli jako liczby (tabelę jak lc_table_split() składa przeglądarka).
+    variants[[key]] <- list(coef = as.list(setNames(round(co$estimate, 10), co$term)),
+      rows = lapply(seq_len(nrow(tab)), function(i) list(tab$term[i], signif(tab$estimate[i], 9), signif(tab$se[i], 9),
+                                                          signif(tab$t[i], 9), gsub("&lt;", "<", tab$p[i], fixed = TRUE))))
+    html[[key]] <- list(
+      stats = s07_html(
+        lc_readout("R²", round(met$r_squared, 3), color = unname(upwr_cat["niebo"])),
+        lc_readout("adj.R²", round(met$adj_r_squared, 3), color = unname(upwr_cat["szalwia"])),
+        lc_readout("AIC", round(met$aic, 1), color = unname(upwr_cat["bursztyn"])),
+        lc_readout("RMSE", round(met$rmse, 3), color = unname(upwr_cat["terakota"]))))
+  }
+  simple <- lapply(c(read = "read", math = "math"), function(y) as.list(coef(lm(d[[y]] ~ d$income))))
+  config <- list(
+    key = list("ch3_outcome", "ch3_predictors"), variants = variants, html = html,
+    labels = as.list(ch3_labels_pl),
+    data = lapply(c(list(income = d$income, read = d$read, math = d$math), setNames(lapply(vars, function(v) d[[v]]), vars)), function(v) round(v, 4)),
+    means = lapply(setNames(vars, vars), function(v) mean(d[[v]])),
+    bins3 = lapply(setNames(vars, vars), function(v) ch3_bins(d[[v]], c("niskie", "średnie", "wysokie"))),
+    bins2 = lapply(setNames(vars, vars), function(v) ch3_bins(d[[v]], c("niższe", "wyższe"))),
+    simple = lapply(simple, function(cf) unname(unlist(cf))))
+  facet <- function(k) tags$div(class = "s07-facet", tags$h4(`data-role` = paste0("facet", k)), lc_sf_chart(k, "1.5/1", "300px"))
+  lc_sf_figure("s07_multi", config = config, legend = TRUE,
+    control = list(
+      selectInput("ch3_outcome", "Zmienna zależna Y", choices = c("Wynik: czytanie" = "read", "Wynik: matematyka" = "math"),
+                  selected = "read", selectize = FALSE),
+      checkboxGroupInput("ch3_predictors", "Predyktory dodane do dochodu okręgu", choices = ch3_extra_choices,
+                         selected = "lunch", inline = TRUE)),
+    toolbar = lc_readouts(tags$div(`data-role` = "stats", style = "display: contents")),
+    body = tagList(
+      tags$style(HTML(".s07-facets{display:grid;grid-template-columns:minmax(0,1fr);gap:.6em 1em}
+        .s07-facets[data-n='3']{grid-template-columns:repeat(3,minmax(0,1fr))}
+        .s07-facets[data-n='4']{grid-template-columns:repeat(2,minmax(0,1fr))}
+        .s07-facet[hidden]{display:none!important}.s07-facet h4{margin:.2em 0;font-size:.9em}.s07-facet h4:empty{display:none}")),
+      tags$div(class = "s07-facets", facet(0), facet(1), facet(2), facet(3)),
+      tags$div(class = "lc-sf-legend", `data-role` = "cmp-legend", hidden = NA),
+      lc_sf_chart(4, "2.6/1", "230px")),
+    after = tags$div(`data-role` = "coefs"))
+}
+
+# Ryc. 3.2: trzy kroki na stałych danych — opisy rysunku, teksty i tabela z R (rycina s07_steps).
+ch3_control_fig <- function() {
+  d <- .cas_data
+  step_scatter <- function(x, xl) sf_spec(sf_range(x), sf_range(d$read), list(
+      sf_points(x, d$read, color = "@niebo", alpha = 0.7, size = 6),
+      sf_smooth_lm(x, d$read, color = "@accent", se = FALSE)[[1]]),
+    xl, "Wynik: czytanie", aria = paste("Wynik z czytania a", tolower(xl), "z prostą regresji."))
+  ti <- broom::tidy(lm(read ~ income, data = d))
+  tl <- broom::tidy(lm(read ~ lunch, data = d))
+  tm <- broom::tidy(lm(read ~ income + lunch + english, data = d))
+  co <- tm[-1, ]
+  labels <- c(income = "Dochód okręgu", lunch = "Dotacje do obiadów", english = "Angielski jako drugi język")
+  lo <- co$estimate - 1.96 * co$std.error; hi <- co$estimate + 1.96 * co$std.error
+  # Kolejność od dołu jak oś kategorii ggplot: etykiety alfabetycznie.
+  lab <- unname(labels[co$term])
+  at <- match(lab, sort(lab))
+  step3 <- sf_spec(sf_range(c(0, lo, hi)), c(0.5, nrow(co) + 0.5), list(
+      sf_vline(0, color = "@secondary", width = 1.2, dash = c(3, 3)),
+      sf_errorbars_h(lo, hi, at, cap = 0.2, color = "@accent", width = 1.6),
+      sf_points(co$estimate, at, color = "@accent", size = 10)),
+    "β w modelu wielorakim", "", yLabels = sf_labels(sort(lab)),
+    aria = "Współczynniki modelu z kontrolą z przedziałami 95%.")
+  b <- function(v) as.character(tags$b(v))
+  texts <- list(
+    `1` = paste0("β dochód = ", b(round(ti$estimate[2], 3)), ", p = ", b(HTML(lc_pval(ti$p.value[2]))), ". ",
+                 "W modelu prostym bogatsze okręgi mają wyższe wyniki czytania."),
+    `2` = paste0("β lunch = ", b(round(tl$estimate[2], 3)), ", p = ", b(HTML(lc_pval(tl$p.value[2]))), ". ",
+                 "Odsetek uczniów z dotacją do obiadu jest silnie ujemnie powiązany z wynikiem czytania."),
+    `3` = paste0("β dochód: ", b(round(ti$estimate[2], 3)), " w modelu prostym, ",
+                 b(round(tm$estimate[tm$term == "income"], 3)),
+                 " po kontroli dotacji do obiadów i angielskiego jako drugiego języka."))
+  table <- s07_html(lc_table(data.frame(term = unname(ch3_labels_pl[co$term]), estimate = co$estimate,
+      se = co$std.error, p = lc_pval(co$p.value)),
+    cols = list(lc_col("term", "Zmienna", "row"), lc_col("estimate", "β", digits = 4),
+                lc_col("se", "SE", digits = 4), lc_col("p", "p"))))
+  lc_sf_figure("s07_steps", bare = TRUE,
+    config = list(variants = list(`1` = step_scatter(d$income, "Dochód okręgu (tys. USD)"),
+                                  `2` = step_scatter(d$lunch, "Dotacje do obiadów (%)"), `3` = step3),
+                  texts = texts, html = list(`1` = list(info = ""), `2` = list(info = ""), `3` = list(info = table))),
+    body = lc_step_widget("ch3_control",
+      title = "Efekt pozorny i kontrola zmiennych",
+      steps = c("Czytanie ~ dochód", "Czytanie ~ lunch", "Model z kontrolą"),
+      toolbar = lc_toolbar(lc_chart_zoom_button()),
+      body = lc_sf_chart(0, "2/1", "440px"),
+      extra = tags$div(`data-role` = "info")))
+}
+
+# Ryc. 3.3: współliniowość na ustawionych przykładach (collinearity_case()).
+ch3_case_fig <- function() {
+  cases <- c(weak = "weak", cancel = "cancel", flip = "flip")
+  captions <- list(
+    weak = "Predyktory są słabo powiązane: w modelu z oboma każdy zachowuje
+        swój kierunek i istotność, współczynniki tylko trochę maleją.",
+    cancel = "Osobno każdy predyktor jest wyraźnie istotny. Razem żaden nie
+        jest, choć model z oboma przewiduje wynik tak samo dobrze jak każdy
+        z nich osobno (R² 0.49 wobec 0.47 i 0.48) — nie potrafi tylko
+        rozdzielić wpływu między godziny a zadania.",
+    flip = "Osobno więcej zadań to wyższy wynik. W modelu z godzinami
+        współczynnik zadań staje się ujemny, a współczynnik godzin rośnie
+        prawie dwukrotnie — model przerzucił wspólny wpływ na jedną zmienną.")
+  parts <- lapply(cases, function(cs) {
+    d <- collinearity_case(cs)
+    pick <- function(m, term) {
+      s <- summary(m)$coefficients
+      if (term %in% rownames(s)) s[term, c(1, 4)] else c(NA, NA)
+    }
+    m_hz <- lm(wynik ~ godziny + zadania, d)
+    rows <- list(lm(wynik ~ godziny, d), lm(wynik ~ zadania, d), m_hz)
+    tab <- data.frame(model = c("Tylko godziny", "Tylko zadania", "Godziny + zadania"),
+      b_h = sapply(rows, function(m) pick(m, "godziny")[1]), p_h = sapply(rows, function(m) pick(m, "godziny")[2]),
+      b_z = sapply(rows, function(m) pick(m, "zadania")[1]), p_z = sapply(rows, function(m) pick(m, "zadania")[2]))
+    fs <- summary(m_hz)$fstatistic
+    p_model <- pf(fs[1], fs[2], fs[3], lower.tail = FALSE)
+    cell <- function(b, p) lapply(seq_along(b), function(k) {
+      if (is.na(b[k])) return(HTML("–"))
+      tagList(formatC(b[k], format = "f", digits = 2),
+              tags$small(style = "display:block;color:var(--upwr-ink-subtle);",
+                         HTML(paste0("p ", if (p[k] < 0.001) "" else "= ", lc_pval(p[k])))))
+    })
+    tab$h <- I(cell(tab$b_h, tab$p_h)); tab$z <- I(cell(tab$b_z, tab$p_z))
+    list(
+      spec = sf_spec(c(2, 22), c(5, 55), list(sf_points(d$godziny, d$zadania, color = "@secondary", alpha = 0.7, size = 9)),
+        "Godziny nauki", "Rozwiązane zadania", aria = "Wykres punktowy godzin nauki i liczby rozwiązanych zadań."),
+      reads = list(case_r = formatC(cor(d$godziny, d$zadania), format = "f", digits = 2),
+                   case_r2 = formatC(summary(m_hz)$r.squared, format = "f", digits = 2),
+                   case_p = gsub("&lt;", "<", lc_pval(p_model), fixed = TRUE)),
+      html = list(table = s07_html(lc_table(tab, cols = list(lc_col("model", "Model", "row"),
+                    lc_col("h", "Godziny", sub = "pkt na godz."), lc_col("z", "Zadania", sub = "pkt na zadanie")))),
+                  caption = s07_html(lc_caption(captions[[cs]]))))
+  })
+  lc_sf_spec(variants = lapply(parts, `[[`, "spec"), reads = lapply(parts, `[[`, "reads"), html = lapply(parts, `[[`, "html"),
+    control = lc_segmented("ch3_case", "Przykład",
+      choices = c("Słabo powiązane" = "weak", "Wyniki się znoszą" = "cancel", "Odwrócony znak" = "flip")),
+    toolbar = lc_readouts(lc_readout("r", lc_sf_value("case_r")), lc_readout("R² modelu", lc_sf_value("case_r2")),
+                          lc_readout("p modelu", lc_sf_value("case_p"))),
+    body = lc_plots(lc_sf_chart(0, "1.3/1", "340px"), tags$div(`data-role` = "table")),
+    after = tags$div(`data-role` = "caption"))
+}

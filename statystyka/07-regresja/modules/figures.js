@@ -380,5 +380,120 @@
     }
   };
 
+  // Rycina krokowa opisana w R: config.variants[krok] (opis rysunku), config.texts[krok]
+  // (opis kroku), config.html[krok] (fragmenty do [data-role]).
+  figures.s07_steps = {
+    prepare: function (state, v, vals, root) { state.key = String(stepOf(root)); },
+    draw: function (v, P, k, state) { return SPEC.draw(v, P, k, state); },
+    text: function (state) { return state.config.texts[state.key] || ""; },
+    update: function (root, state) { SPEC.update(root, state); }
+  };
+
+  // Ryc. 3.1: model wieloraki CASchools. Tabela i miary każdego modelu są z R (config.html),
+  // współczynniki w config.variants[klucz].coef; grupy kwantylowe i ich mediany też z R.
+  // Pierwszy dodany predyktor koloruje grupy, kolejne dzielą wykres na panele.
+  var GROUP_COLORS = ["szalwia", "bursztyn", "terakota"];
+  function multiSetup(state, vals) {
+    var c = state.config, preds = [].concat(vals.ch3_predictors || []), y = vals.ch3_outcome || "read";
+    return { c: c, y: y, extra: preds, n: preds.length + 1, coef: (c.variants[state.key] || {}).coef || {} };
+  }
+  function multiPred(m, x, fixed) {
+    var s = m.coef["(Intercept)"] + m.coef.income * x;
+    m.extra.forEach(function (v) { s += m.coef[v] * (fixed[v] != null ? fixed[v] : m.c.means[v]); });
+    return s;
+  }
+  function multiFacets(m) {
+    // Panele: [{title, rows: indeksy obserwacji, fixed: {zmienna: mediana grupy}}]
+    var n = m.c.data.income.length, all = [], i;
+    for (i = 0; i < n; i++) all.push(i);
+    if (m.n <= 2) return [{ title: "", rows: all, fixed: {} }];
+    var f1 = m.extra[1], b1 = m.n === 3 ? m.c.bins3[f1] : m.c.bins2[f1], out = [];
+    if (m.n === 3) {
+      b1.levels.forEach(function (lev, a) {
+        var fx = {}; fx[f1] = b1.med[a];
+        out.push({ title: m.c.labels[f1] + " " + lev, rows: all.filter(function (j) { return b1.g[j] === a; }), fixed: fx });
+      });
+      return out;
+    }
+    var f2 = m.extra[2], b2 = m.c.bins2[f2];
+    b1.levels.forEach(function (l1, a) {
+      b2.levels.forEach(function (l2, bb) {
+        var fx = {}; fx[f1] = b1.med[a]; fx[f2] = b2.med[bb];
+        out.push({ title: m.c.labels[f1] + " " + l1 + " · " + m.c.labels[f2] + " " + l2,
+                   rows: all.filter(function (j) { return b1.g[j] === a && b2.g[j] === bb; }), fixed: fx });
+      });
+    });
+    return out;
+  }
+  function m0(state) { return state.config.variants[state.key] || {}; }
+  // Tabela jak lc_table_split() w R: pełna na szerokim ekranie, na wąskim podzielona na grupy kolumn.
+  function bareTable(cols, rows) { return S.table(cols, rows).replace(/^<div class="lc-tbl-block">/, "").replace(/<\/div>$/, ""); }
+  function tableSplit(cols, rows, groups, label) {
+    var narrow = groups.map(function (g) {
+      var idx = [0].concat(g);
+      return bareTable(idx.map(function (j) { return cols[j]; }), rows.map(function (r) { return idx.map(function (j) { return r[j]; }); }));
+    }).join("");
+    return '<div class="lc-tbl-block"><div class="lc-tbl-v-wide"><div class="lc-tbl-scroll" tabindex="0" role="region" aria-label="' +
+      S.esc(label) + '">' + bareTable(cols, rows) + '</div></div><div class="lc-tbl-v-narrow">' + narrow + "</div></div>";
+  }
+  figures.s07_multi = {
+    prepare: function (state, v, vals) { SPEC.prepare(state, v, vals); state.m = multiSetup(state, vals); },
+    draw: function (v, P, k, state) {
+      var m = state.m, c = m.c, X = c.data.income, Y = c.data[m.y];
+      if (m.n > 4) return null;
+      var xr = pad(range(X)), yr = pad(range(Y)), x0 = Math.min.apply(null, X), x1 = Math.max.apply(null, X);
+      var common = { x: xr, y: yr, xName: c.labels.income, yName: c.labels[m.y] };
+      if (k === 4) {
+        if (m.n === 1) return null;
+        var sb = c.simple[m.y];
+        return Object.assign(common, { aria: "Linia regresji prostej i linia aktualnego modelu wielorakiego przy średnich wartościach pozostałych predyktorów.",
+          layers: [{ type: "points", data: pairs(X, Y), color: P.secondary, alpha: 0.28, size: 5 },
+            { type: "line", data: [[x0, sb[0] + sb[1] * x0], [x1, sb[0] + sb[1] * x1]], color: P.terakota, width: 2.2, dash: DASH },
+            { type: "line", data: [[x0, multiPred(m, x0, {})], [x1, multiPred(m, x1, {})]], color: P.niebo, width: 2.2 }] });
+      }
+      var facets = multiFacets(m), fc = facets[k];
+      if (!fc) return null;
+      var layers = [];
+      if (m.n === 1) {
+        layers.push({ type: "points", data: pairs(X, Y), color: P.secondary, alpha: 0.45, size: 6 },
+          { type: "line", data: [[x0, multiPred(m, x0, {})], [x1, multiPred(m, x1, {})]], color: P.niebo, width: 2.2 });
+      } else {
+        var cv = m.extra[0], b3 = c.bins3[cv], cols = GROUP_COLORS.map(function (n) { return P[n]; });
+        layers.push({ type: "points", data: fc.rows.map(function (j) { return [X[j], Y[j]]; }), size: 6, alpha: 0.68,
+                      colors: fc.rows.map(function (j) { return cols[b3.g[j]]; }) });
+        b3.levels.forEach(function (lev, a) {
+          var fx = Object.assign({}, fc.fixed); fx[cv] = b3.med[a];
+          layers.push({ type: "line", data: [[x0, multiPred(m, x0, fx)], [x1, multiPred(m, x1, fx)]], color: cols[a], width: 2.2 });
+        });
+      }
+      return Object.assign(common, { layers: layers, aria: "Wynik a dochód okręgu z liniami modelu dla grup pozostałych predyktorów." });
+    },
+    update: function (root, state) {
+      SPEC.update(root, state);
+      var coefs = root.querySelector('[data-role="coefs"]'), rows = (m0(state).rows) || [];
+      if (coefs) coefs.innerHTML = tableSplit([{ label: "Zmienna", row: true }, { label: "Estymata", digits: 4 }, { label: "SE", digits: 4 },
+        { label: "t", digits: 3 }, { label: "p" }], rows, [[1, 2], [3, 4]], "Współczynniki modelu");
+      var m = state.m, c = m.c, facets = m.n > 4 ? [] : multiFacets(m), box = root.querySelector(".s07-facets");
+      if (box) box.setAttribute("data-n", String(facets.length));
+      for (var k = 0; k < 4; k++) {
+        var h = root.querySelector('[data-role="facet' + k + '"]');
+        if (!h) continue;
+        h.textContent = facets[k] ? facets[k].title : "";
+        h.parentNode.hidden = !facets[k];
+      }
+      var P = C.palette(), cmp = root.querySelector('[data-role="cmp-legend"]');
+      if (cmp) {
+        if (m.n >= 2 && m.n <= 4) S.legendItems(cmp, [{ text: "Regresja prosta", color: P.terakota, dash: true }, { text: "Aktualny model", color: P.niebo }]);
+        else { cmp.textContent = ""; cmp.hidden = true; }
+      }
+      var legend = root.querySelector(".lc-sf-legend");
+      if (!legend) return;
+      if (m.n < 2 || m.n > 4) { legend.textContent = ""; legend.hidden = true; return; }
+      var cv = m.extra[0];
+      S.legendItems(legend, c.bins3[cv].levels.map(function (lev, a) { return { text: lev, color: P[GROUP_COLORS[a]] }; }));
+      legend.insertAdjacentHTML("afterbegin", '<span class="lc-sf-legend-item"><b>' + S.esc(c.labels[cv]) + ":</b></span>");
+    }
+  };
+
   S.register(figures);
 })();
