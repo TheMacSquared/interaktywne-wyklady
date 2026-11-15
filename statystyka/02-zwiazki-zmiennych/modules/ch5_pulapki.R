@@ -211,8 +211,3 @@ ch5_ui <- list(
     )
   )
 )
-
-# Ryc. 5.3 i 5.4 liczą się w przeglądarce (scatter_charts.js); serwer bez wyjść.
-ch5_server <- function(input, output, session) {
-  invisible(NULL)
-}

@@ -936,12 +936,3 @@ ch9_ui <- list(
       stats::setNames(lapply(.ch9_directions, .ch9_static_content), .ch9_directions))
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch9_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: warianty i rozwiązania są w dokumencie
-  # (lc_variants(), lc_static_fill()).
-}

@@ -269,11 +269,3 @@ ch3_ui <- list(
     )
   )
 )
-
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Wszystkie ryciny rozdziału liczy przeglądarka albo R przy budowaniu strony.
-ch3_server <- function(input, output, session) {}

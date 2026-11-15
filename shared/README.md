@@ -11,8 +11,8 @@ nie korzysta.
 |---|---|
 | `palette.R` | paleta UPWr (role, kolory kategoryczne, skale) |
 | `theme_upwr.R` | motyw ggplot2 |
-| `shared.R` | kroje wykresów, generatory danych, `zoom_plot_ui()` / `zoom_plot_server()` |
-| `lecture_layout.R` | `lecture_page()`, `lecture_server()` i komponenty `lc_*` |
+| `shared.R` | kroje wykresów, generatory danych |
+| `lecture_layout.R` | `lecture_page()` i komponenty `lc_*` |
 | `lc_stat_figures.R`, `lc_stat_figures.js` | ryciny liczone w przeglądarce (`window.lcSF`) |
 | `lc_charts.js` | wspólna obsługa wykresów ECharts (`window.lcCharts`) |
 | `lc_dist.js` | rozkłady i losowanie (`window.lcDist`) |
@@ -60,18 +60,16 @@ osobną kopią pliku:
 | Pole | Statystyka | Analiza ryzyka | Znaczenie |
 |---|---|---|---|
 | `chapter_mode` | `"single"` | `"all"` | rozdział wstawiany do strony przy wejściu albo wszystkie rozdziały zamontowane od razu (nieaktywne ukryte) |
-| `plot_scaling` | `FALSE` | `TRUE` | wykresy R: baza 14 pt bez skalowania albo baza 11 pt i skalowanie czcionek w `zoom_plot_server()` |
+| `plot_scaling` | `FALSE` | `TRUE` | baza tekstu `theme_upwr()`: 14 pt albo 11 pt |
 | `styles` | brak | `course_styles.css` | arkusze kursu ładowane po rdzeniu |
 
-Przełączniki `chapter_mode` i `plot_scaling` dotyczą kodu, który znika razem
-z serwerem Shiny (wykresy ggplot, `renderUI` rozdziału).
+`chapter_mode` nie ma już znaczenia dla stron statycznych (wszystkie rozdziały są
+w dokumencie); zostaje w `course.R` dla zgodności.
 
 ## Strony statyczne
 
-`lecture_page()` ma dwa tryby. Z serwerem Shiny (domyślnie) rozdział wstawia
-`renderUI`. W trybie statycznym (`options(lc.static = TRUE)`, ustawia go
-`scripts/build_static.R`) wszystkie rozdziały są w dokumencie, a przełącza je
-`shared_toc.js`; strona nie ładuje Shiny.
+`lecture_page()` składa stronę statyczną: wszystkie rozdziały są w dokumencie,
+a przełącza je `shared_toc.js`; strona nie ładuje Shiny. Wykłady nie mają serwera.
 
 | Skrypt | Rola |
 |---|---|

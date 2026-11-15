@@ -1671,12 +1671,3 @@ jezyk_block <- list(
 )
 
 jezyk_chapters <- risk_block_chapters(jezyk_block)
-
-# Łańcuch, ćwiczenia 1.1 i 1.2, częstość, działania na zdarzeniach i siatka zdarzeń
-# działają w przeglądarce (modules/jezyk.js, modules/rysunki.R); serwer obsługuje
-# tylko sprawdzenie decyzji, ćwiczenia z rozdziału „Ćwiczenia” i quiz.
-
-jezyk_server <- function(input, output, session) {
-  # Wykład nie ma logiki serwera: decyzję (rozdz. 5), ćwiczenia i quiz ocenia
-  # przeglądarka (shared/lc_widgets.js i modules/jezyk.js).
-}

@@ -845,7 +845,3 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
   )
 ))
 zycie_chapters <- risk_block_chapters(zycie_block)
-
-# Wykład nie ma logiki serwera: głosowanie ocenia przeglądarka (risk_vote_panel(feedback = )),
-# a wykresy i odczyty liczy modules/wykresy.js (dane z modules/wykresy.R).
-zycie_server <- function(input, output, session) {}

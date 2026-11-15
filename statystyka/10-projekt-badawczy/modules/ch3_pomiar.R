@@ -122,6 +122,3 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Pomiar", content = tag
     "ch4")
   )
 )
-
-# Rozdział nie ma logiki serwera: treść stałą składa R przy budowaniu.
-ch3_server <- function(input, output, session) {}

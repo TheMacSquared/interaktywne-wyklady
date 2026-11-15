@@ -274,6 +274,3 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Formularz", content = 
     target_id = "ch9"
   )
 ))
-
-# Treść wybieraną kontrolkami składa R przy budowaniu; wybór pokazuje lc_variants().
-ch8_server <- function(input, output, session) {}

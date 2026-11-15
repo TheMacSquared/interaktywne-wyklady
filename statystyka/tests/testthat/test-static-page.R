@@ -113,7 +113,7 @@ testthat::test_that("tryb statyczny: wykład 01 ma wszystkie widoki w dokumencie
     ids <- xml2::xml_attr(xml2::xml_find_all(doc, "//*[@id]"), "id")
     list(
       outputs = xml2::xml_attr(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-html-output') or contains(@class, 'shiny-plot-output') or contains(@class, 'shiny-text-output')]"), "id"),
-      selectize = length(xml2::xml_find_all(doc, "//script[@data-for]")),
+      selectize = sum(xml2::xml_attr(xml2::xml_find_all(doc, "//script[@data-for]"), "data-for") %in% xml2::xml_attr(xml2::xml_find_all(doc, "//select"), "id")),
       duplicate_ids = unique(ids[duplicated(ids)]),
       tracker_boxes = length(boxes("tracked_var")),
       tracker_ok = all(vapply(boxes("tracked_var"), function(b) setequal(values(b), options_of("tracked_var")), logical(1))),
@@ -146,9 +146,8 @@ testthat::test_that("tryb statyczny: wykład 01 ma wszystkie widoki w dokumencie
     )
   }, args = list(path = file.path(stat_root, "01-typy-danych")), timeout = 120)
 
-  # Jedyne elementy z klasą wyjścia Shiny to opisy kroków rycin lcSF: wypełnia je
-  # przeglądarka (shared/lc_stat_figures.js), serwer nic do nich nie wysyła.
-  testthat::expect_setequal(res$outputs, c("ch3_hist_text", "ch4_sd_text", "ch4_bp_text", "ch5_sk_text"))
+  # Bez wyjść Shiny: opisy kroków rycin lcSF to zwykłe pola, które wypełnia przeglądarka.
+  testthat::expect_length(res$outputs, 0L)
   testthat::expect_equal(res$selectize, 0L)
   testthat::expect_length(res$duplicate_ids, 0L)
   # Śledzona zmienna: po jednym zestawie odczytów w rozdziałach 3, 4 i 5.
@@ -207,7 +206,7 @@ for (lecture in static_ready_lectures) local({
         sections = xml2::xml_attr(xml2::xml_find_all(doc, "//section[@data-lc-static-chapter]"), "id"),
         chapters = vapply(app$.chapters, function(ch) ch$id, character(1)),
         outputs = xml2::xml_attr(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-html-output') or contains(@class, 'shiny-plot-output') or contains(@class, 'shiny-text-output')]"), "id"),
-        selectize = length(xml2::xml_find_all(doc, "//script[@data-for]")),
+        selectize = sum(xml2::xml_attr(xml2::xml_find_all(doc, "//script[@data-for]"), "data-for") %in% xml2::xml_attr(xml2::xml_find_all(doc, "//select"), "id")),
         duplicate_ids = unique(ids[duplicated(ids)])
       )
     }, args = list(path = file.path(stat_root, lecture)), timeout = 180)

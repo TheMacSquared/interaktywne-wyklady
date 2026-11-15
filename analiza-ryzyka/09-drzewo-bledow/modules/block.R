@@ -681,7 +681,3 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
   )
 ))
 fta_chapters <- risk_block_chapters(fta_block)
-
-# Wykład nie ma logiki serwera: głosowanie, opisy struktury, stan drzewa i przekroje wybiera
-# przeglądarka, rysunek drzewa składa R przy budowaniu, a odczyty i ranking liczy modules/wykresy.js.
-fta_server <- function(input, output, session) {}

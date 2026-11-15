@@ -9,12 +9,12 @@
 # Sans z shared/fonts/, rysowany przez ragg); cyfry w etykietach: lc_mono_family.
 #
 # Rozmiary: kurs z .LC_COURSE$plot_scaling = TRUE dostaje mniejszą bazę (11 pt)
-# i mniejsze osie/legendę, bo zoom_plot_server() skaluje tam cały tekst wykresu.
+# i mniejsze osie/legendę (dawniej serwer skalował tam cały tekst wykresu).
 #
 # ==============================================================================
 
 
-# Czy kurs skaluje tekst wykresów w zoom_plot_server() (patrz <kurs>/R/course.R).
+# Czy kurs ma mniejszą bazę tekstu wykresów (patrz <kurs>/R/course.R).
 .upwr_plot_scaling <- function() {
   exists(".LC_COURSE") && isTRUE(.LC_COURSE$plot_scaling)
 }

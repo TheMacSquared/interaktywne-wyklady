@@ -635,12 +635,3 @@ ch3_ui <- list(
 
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 3 Server
-# --------------------------------------------------------------------------
-
-ch3_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: Ryc. 3.1 rysuje stat_charts.js, a szóstą
-  # obserwację (Ryc. 3.5) liczy modules/six_obs.js.
-}

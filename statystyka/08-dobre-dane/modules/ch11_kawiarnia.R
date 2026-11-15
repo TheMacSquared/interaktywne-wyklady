@@ -280,7 +280,3 @@ ch11_ui <- lecture_chapter(id = "ch11", num = "11", title = "Kawiarnia", content
     i czy jednostki są od siebie niezależne, a dopiero potem cokolwiek
     liczyć.")
 ))
-
-
-# Ryciny i komentarze składa R przy budowaniu; odsłonięcie danych w kolejności: lc_reveal().
-ch11_server <- function(input, output, session) {}

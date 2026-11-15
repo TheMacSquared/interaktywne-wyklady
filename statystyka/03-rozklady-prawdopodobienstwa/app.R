@@ -247,37 +247,3 @@ ui <- lecture_page(
     "))
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-server <- function(input, output, session) {
-
-  lc <- lecture_server(.chapters, input, output, session)
-
-  # ==========================================================================
-  # CHAPTER SERVERS
-  # ==========================================================================
-
-  ch1_server(input, output, session)
-  ch2_ev_var_server(input, output, session)
-  ch3_server(input, output, session)
-  ch4_server(input, output, session)
-  ch5_server(input, output, session)
-  ch6_server(input, output, session)
-  ch8_server(input, output, session)
-  ch9_server(input, output, session)
-
-  # Punkty stop (stops_*.R)
-  s3p_ch1_server(input, output, session)
-  s3p_ch2_server(input, output, session)
-  s3p_ch2_var_server(input, output, session)
-  s3p_ch3_server(input, output, session)
-  s3p_ch4_server(input, output, session)
-  s3p_ch5_server(input, output, session)
-  s3p_ch6_server(input, output, session)
-
-}
-
-shinyApp(ui = ui, server = server)

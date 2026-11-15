@@ -563,11 +563,3 @@ ch6_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# DANE — CASchools (wczytane raz przy ładowaniu modułu)
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: próby, wykresy i testy liczy przeglądarka (modules/figures.js);
-# ryc. 8.3 i rozwiązania ćwiczeń składa R przy budowaniu (modules/figures.R).
-ch6_server <- function(input, output, session) {}

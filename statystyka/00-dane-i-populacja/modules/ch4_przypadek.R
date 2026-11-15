@@ -97,11 +97,3 @@ ch4_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch4_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: opisy kroków scen są w dokumencie (lc_step_widget(texts = )).
-}

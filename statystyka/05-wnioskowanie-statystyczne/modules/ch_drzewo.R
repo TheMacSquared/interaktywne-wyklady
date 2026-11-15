@@ -57,7 +57,8 @@ ch_drzewo_ui <- list(
             )
           )
         ),
-        visNetwork::visNetworkOutput("drzewo_visnet", height = "1000px", width = "100%")
+        # Widget z danymi wstawiony wprost do dokumentu (bez renderVisNetwork na serwerze).
+        local({ w <- build_drzewo_visnet(); w$elementId <- "drzewo_visnet"; w$height <- "1000px"; w$width <- "100%"; w })
       )
     ),
 
@@ -81,13 +82,3 @@ ch_drzewo_ui <- list(
     )
   )
 )
-
-# ----------------------------------------------------------------------------
-# SERVER
-# ----------------------------------------------------------------------------
-ch_drzewo_server <- function(input, output, session) {
-
-  output$drzewo_visnet <- visNetwork::renderVisNetwork({
-    build_drzewo_visnet()
-  })
-}

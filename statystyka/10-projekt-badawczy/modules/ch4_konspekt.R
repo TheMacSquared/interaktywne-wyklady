@@ -218,7 +218,3 @@ ch4_ui <- lecture_chapter(id = "ch4", num = "4", title = "Konspekt pracy badawcz
     "ch5")
   )
 )
-
-# Rozdział nie ma logiki serwera: konspekt wzorcowy składa R przy budowaniu, podgląd
-# własnego konspektu przeglądarka.
-ch4_server <- function(input, output, session) {}

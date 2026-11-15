@@ -263,10 +263,3 @@ ch3_ui <- lecture_chapter(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: symulację liczy przeglądarka (modules/figures.js).
-ch3_server <- function(input, output, session) {}

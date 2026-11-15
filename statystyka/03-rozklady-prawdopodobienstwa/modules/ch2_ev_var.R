@@ -223,14 +223,3 @@ ch2_ev_var_ui <- list(
     )
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 2 Server
-# --------------------------------------------------------------------------
-
-ch2_ev_var_server <- function(input, output, session) {
-
-  # --- Scena: Zdrap los ---
-  tk <- scene_tickets$main
-
-}

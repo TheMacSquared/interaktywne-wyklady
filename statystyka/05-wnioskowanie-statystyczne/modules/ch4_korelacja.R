@@ -468,11 +468,3 @@ ch4_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# DANE — CASchools (wczytane raz przy ładowaniu modułu)
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: próbę, wykresy kroków i opisy liczy przeglądarka
-# (modules/figures.js), rozwiązania ćwiczeń CASchools składa R przy budowaniu.
-ch4_server <- function(input, output, session) {}

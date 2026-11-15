@@ -111,6 +111,3 @@ ch9_s_sol6_ui <- function() {
   r <- .ch9_anova_f(d$sat_temp_c, d$typ_pokrycia)
   .ch9_sol_anova(r, "temperatura (°C)")
 }
-
-# Ćwiczenia nie mają logiki serwera.
-ch9_sat_server <- function(input, output, session) {}

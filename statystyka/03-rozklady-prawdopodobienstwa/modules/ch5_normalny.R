@@ -79,7 +79,6 @@ ch5_lnorm_stat <- function(s) {
   paste0(s$label, ":  E(X) = ", round(ev, 1), ",  Me = ", round(exp(s$mu), 1), ",  SD = ", round(sd_val, 1))
 }
 
-
 ch5_ui <- list(
   id = "ch-normalny", num = "05", title = "Rozkład normalny",
   content = tagList(
@@ -606,20 +605,3 @@ ch5_ui <- list(
     )
   )
 )
-
-
-# --------------------------------------------------------------------------
-# Chapter 5 Server
-# --------------------------------------------------------------------------
-
-ch5_server <- function(input, output, session) {
-
-  # --- Ryc. 5.1: ważenie osób → rozkład normalny (experiment.js) ---
-
-  # --- Ryc. 5.10: dron z GPS → rozkład χ² (experiment.js, kind = "drone") ---
-
-  # Ryc. 5.2 i 5.6 (z presetami i odczytami) rysuje dist_charts.js w przeglądarce.
-
-  # Ryc. 5.11, 5.12 i 5.14 rysuje dist_charts.js w przeglądarce.
-
-}

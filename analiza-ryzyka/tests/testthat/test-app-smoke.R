@@ -8,7 +8,8 @@ testthat::test_that("wszystkie wykłady ładują UI i kompletną listę rozdzia�
         env <- new.env(parent = globalenv())
         sys.source("app.R", envir = env)
         stopifnot(exists("ui", envir = env, inherits = FALSE))
-        stopifnot(is.function(env$server))
+        # Wykład jest stroną statyczną: app.R opisuje treść, nie ma serwera Shiny.
+        stopifnot(!exists("server", envir = env, inherits = FALSE))
         stopifnot(length(env$.chapters) == expected_count)
         ids <- vapply(env$.chapters, function(chapter) chapter$id, character(1))
         stopifnot(all(nzchar(ids)), !anyDuplicated(ids))
@@ -35,7 +36,9 @@ testthat::test_that("wszystkie wykłady ładują UI i kompletną listę rozdzia�
           h2 <- regmatches(chapter_html, gregexpr('<h2[^>]*id="[^"]+"', chapter_html))[[1]]
           h2_ids <- c(h2_ids, sub('.*id="([^"]+)"', "\\1", h2))
         }
-        stopifnot(!anyDuplicated(c(ui_ids, all_chapter_ids)))
+        # Rozdziały są częścią ui (strona statyczna: wszystkie w dokumencie), więc
+        # unikalność sprawdzamy na całym dokumencie i osobno między rozdziałami.
+        stopifnot(!anyDuplicated(ui_ids), !anyDuplicated(all_chapter_ids))
         if (anyDuplicated(h2_ids)) {
           stop(sprintf("Powtórzone id sekcji w wykładzie: %s",
             paste(unique(h2_ids[duplicated(h2_ids)]), collapse = ", ")))

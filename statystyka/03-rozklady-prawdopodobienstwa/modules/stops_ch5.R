@@ -87,11 +87,3 @@ s3p_5d_ui <- s3p_panel("Ryc. 5.9", "Normalny czy nie?",
     config = list(vars = lapply(s3p_5d_vars, function(it) list(lab = it$lab, x = I(it$x[!is.na(it$x)])))),
     notes = lapply(s3p_5d_vars, function(it) lc_caption(it$note)))
 )
-
-# ============================================================================
-# SERWER
-# ============================================================================
-
-s3p_ch5_server <- function(input, output, session) {
-  # Ryc. 5.9 liczy się w przeglądarce (stops56_charts.js); app.R wywołuje tę funkcję.
-}

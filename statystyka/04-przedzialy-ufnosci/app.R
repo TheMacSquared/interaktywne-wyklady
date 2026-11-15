@@ -115,27 +115,3 @@ ui <- lecture_page(
     "))
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-server <- function(input, output, session) {
-
-  lc <- lecture_server(.chapters, input, output, session)
-
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-  ch3_server(input, output, session)
-  ch4_server(input, output, session)
-  ch5_server(input, output, session)
-  ch7_server(input, output, session)
-
-  # Serwery rycin wstawianych w tekst (figures_ch*.R)
-  for (.f in paste0("ch", 1:5)) {
-    .fn <- get0(paste0("fig_", .f, "_server"))
-    if (is.function(.fn)) .fn(input, output, session)
-  }
-}
-
-shinyApp(ui = ui, server = server)

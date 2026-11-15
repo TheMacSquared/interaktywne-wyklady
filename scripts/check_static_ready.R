@@ -134,7 +134,10 @@ for (course in courses) {
                            recursive = TRUE, full.names = TRUE)
     acc <- scan_r(r_files)
     # lecture_server() to powłoka: znika razem z przejściem na stronę statyczną.
-    counts <- table(factor(call_group[acc$calls], levels = names(groups)))
+    # Inne render* (np. visNetwork::renderVisNetwork, renderLeaflet): wyjścia htmlwidgets z serwera.
+    grp <- call_group[acc$calls]
+    grp[is.na(grp) & grepl("^render[A-Z]", acc$calls)] <- "wykresy"
+    counts <- table(factor(grp, levels = names(groups)))
     inputs <- unique(acc$inputs)
     rows[[length(rows) + 1]] <- data.frame(
       kurs = course, wyklad = basename(dir),

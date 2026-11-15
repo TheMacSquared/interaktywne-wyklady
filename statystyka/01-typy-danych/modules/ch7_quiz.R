@@ -95,11 +95,3 @@ ch7_ui <- list(
     br(), br()
   )
 ) # end ch7_ui
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch7_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: quiz działa w przeglądarce.
-}

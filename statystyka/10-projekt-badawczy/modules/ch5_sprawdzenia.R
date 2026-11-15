@@ -140,7 +140,3 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Pierwsze sprawdzenia",
     "ch6")
   )
 )
-
-# Rozdział nie ma logiki serwera: karty tropów składa R przy budowaniu, wykresy rysuje
-# przeglądarka z danych policzonych w R (modules/figures.R, rycina s10_plot).
-ch5_server <- function(input, output, session) {}

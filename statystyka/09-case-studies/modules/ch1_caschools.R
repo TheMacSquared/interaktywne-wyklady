@@ -616,14 +616,5 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "CASchools", content = 
     pytanie: jak duża różnica w wynikach zostaje po uwzględnieniu tego, co
     udało się zmierzyć.")
 
-
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: dane są stałe, więc tabele, odczyty i opisy rycin liczy R
-# przy budowaniu strony (modules/figures.R), a przeglądarka rysuje wybrany wariant.
-ch1_server <- function(input, output, session) {}

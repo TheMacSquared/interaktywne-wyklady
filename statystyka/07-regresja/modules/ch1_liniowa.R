@@ -708,10 +708,3 @@ ch1_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Wszystkie ryciny rozdziału liczy przeglądarka albo R przy budowaniu strony.
-ch1_server <- function(input, output, session) {}

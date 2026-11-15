@@ -154,12 +154,3 @@ fig_1d_ui <- fig_panel("1d", "Ryc. 1.4", "Dwie pizzerie, obie 4.4 ★",
   ),
   width_mode = "wide"
 )
-
-# ============================================================================
-# SERWER
-# ============================================================================
-
-# Ryciny 1.1–1.4 liczy i rysuje przeglądarka (sf_ch12.js); serwer nie ma tu nic do zrobienia.
-fig_ch1_server <- function(input, output, session) {
-  invisible(NULL)
-}

@@ -540,10 +540,3 @@ ch4_ui <- lecture_chapter(
       i wykresem reszt względem wartości przewidywanych.")
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: opisy metod i kroków sceny są w dokumencie.
-ch4_server <- function(input, output, session) {}

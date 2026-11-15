@@ -97,5 +97,3 @@ ch7_sat_sol3_ui <- function() {
                z systematycznym przesunięciem pomiarów.", bias))
   )
 }
-
-ch7_sat_server <- function(input, output, session) {}

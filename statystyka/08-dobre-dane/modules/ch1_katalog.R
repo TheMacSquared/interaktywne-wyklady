@@ -643,7 +643,3 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Katalog", content = ta
     target_id = "ch2"
   )
 ))
-
-# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R);
-# pasek oceny listy kontrolnej liczy przeglądarka (modules/figures.js, rycina s08_checklist).
-ch1_server <- function(input, output, session) {}

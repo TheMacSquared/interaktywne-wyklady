@@ -171,6 +171,3 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Wynagrodzenia", conten
     target_id = "ch8"
   )
 ))
-
-# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R).
-ch7_server <- function(input, output, session) {}

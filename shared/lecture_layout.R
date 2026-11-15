@@ -36,9 +36,9 @@
 
 .LC_MODULES <- .LC_COURSE$modules
 
-# Tryb statyczny (scripts/build_static.R ustawia options(lc.static = TRUE)):
-# strona bez serwera Shiny, wszystkie rozdziały w dokumencie, nawigacja w JS.
-.lc_static <- function() isTRUE(getOption("lc.static", FALSE))
+# Strona statyczna (bez serwera Shiny): wszystkie rozdziały w dokumencie, nawigacja w JS.
+# Zakładki innych wykładów prowadzą do plików zbudowanych przez scripts/build_static.R.
+.lc_static <- function() TRUE
 
 # Plik strony statycznej wykładu o danym lecture_id (np. "02-warunki.html");
 # NULL, gdy wykład nie jest zbudowany (lista w options(lc.static.lectures)).
@@ -492,105 +492,24 @@ document.addEventListener('DOMContentLoaded', lcInitTabsScroll);
           theme_control
         ),
 
-        # Główna treść. Z serwerem Shiny: jeden rozdział na raz (renderUI).
-        # W trybie statycznym: wszystkie rozdziały w dokumencie, widoczny pierwszy;
+        # Główna treść: wszystkie rozdziały w dokumencie, widoczny pierwszy;
         # przełącza je shared/shared_toc.js.
         tags$main(
           id    = "lc-main",
           class = "lc-main",
-          if (.lc_static()) {
-            lapply(seq_along(chapters), function(i) {
-              ch <- chapters[[i]]
-              tags$section(
-                id = ch$id, class = "lc-chapter lc-content-wrap",
-                `data-lc-static-chapter` = "true",
-                `data-lc-chapter-content` = if (i == 1L) "true",
-                hidden = if (i > 1L) NA,
-                ch$content
-              )
-            })
-          } else {
-            uiOutput("lc__chapter_content")
-          }
+          lapply(seq_along(chapters), function(i) {
+            ch <- chapters[[i]]
+            tags$section(
+              id = ch$id, class = "lc-chapter lc-content-wrap",
+              `data-lc-static-chapter` = "true",
+              `data-lc-chapter-content` = if (i == 1L) "true",
+              hidden = if (i > 1L) NA,
+              ch$content
+            )
+          })
         )
       )
     )
-  )
-}
-
-# ============================================================================
-# lecture_server() — zarządza przełączaniem rozdziałów po stronie serwera
-#
-# Wywołaj w server(): lc <- lecture_server(chapters, input, output, session)
-# Nawigacja z poziomu app.R:  lc$switch_to("ch-id")
-# Nawigacja z modułów ch*:    session$sendCustomMessage("switchToChapter", "ch-id")
-# ============================================================================
-
-lecture_server <- function(chapters, input, output, session) {
-
-  chs <- chapters
-
-  lc_idx <- reactiveVal(1)
-
-  # Kliknięcia przycisków sidebara
-  lapply(seq_along(chs), function(i) {
-    observeEvent(input[[paste0("lc__nav_", i)]], {
-      lc_idx(i)
-    }, ignoreInit = TRUE)
-  })
-
-  # switchToChapter z JS (session$sendCustomMessage z modułów rozdziałów)
-  observeEvent(input$lc__switch_chapter, {
-    chapter_id <- input$lc__switch_chapter
-    idx <- which(vapply(chs, function(ch) ch$id == chapter_id, logical(1)))
-    if (length(idx) > 0) lc_idx(idx[[1]])
-  }, ignoreInit = TRUE)
-
-  if (identical(.LC_COURSE$chapter_mode, "all")) {
-    # Montujemy kontrolki raz: ukrycie rozdziału zachowuje wartości wejść.
-    # Wszystkie rozdziały inicjalizują parametry także przy wejściu przez skrót.
-    output$lc__active_index <- renderText(lc_idx())
-    outputOptions(output, "lc__active_index", suspendWhenHidden = FALSE)
-    output$lc__chapter_content <- renderUI({
-      tagList(lapply(seq_along(chs), function(i) {
-        ch <- chs[[i]]
-        conditionalPanel(
-          condition = sprintf("output.lc__active_index == '%d'", i),
-          tags$section(
-            id = ch$id, class = "lc-chapter lc-content-wrap",
-            `data-lc-chapter-content` = "true", ch$content
-          )
-        )
-      }))
-    })
-  } else {
-    # Renderuj aktywny rozdział
-    output$lc__chapter_content <- renderUI({
-      idx <- lc_idx()
-      ch  <- chs[[idx]]
-      # withMathJax(): wzory w rozdziale wstawianym przez renderUI trzeba złożyć po wstawieniu.
-      withMathJax(tags$section(
-        id    = ch$id,
-        class = "lc-chapter lc-content-wrap",
-        `data-lc-chapter-content` = "true",
-        ch$content
-      ))
-    })
-  }
-
-  # Powiadamiaj JS o zmianie aktywnego rozdziału (setActiveChapter → sidebar + TOC)
-  observe({
-    idx <- lc_idx()
-    ch  <- chs[[idx]]
-    session$sendCustomMessage("setActiveChapter", ch$id)
-  })
-
-  # Zwracany kontroler — do użycia w app.R
-  list(
-    switch_to = function(chapter_id) {
-      idx <- which(vapply(chs, function(ch) ch$id == chapter_id, logical(1)))
-      if (length(idx) > 0) lc_idx(idx[[1]])
-    }
   )
 }
 
@@ -724,24 +643,6 @@ lc_chart_zoom_button <- function() {
       '<circle cx="10" cy="10" r="6.5"></circle><path d="M15 15l5 5M7 10h6"></path>',
       '<path class="lc-chart-zoom-plus" d="M10 7v6"></path></svg>'
     )))
-}
-
-# Wykres z natywnym trybem pełnoekranowym.
-# UI-only wrapper wokół plotOutput(); server używa zwykłego output$... <- renderPlot().
-lc_plot_fullscreen <- function(outputId, height = "300px", width = "100%",
-                               label = "Pełny ekran", ...) {
-  tags$div(
-    class = "lc-plot-fullscreen-wrap",
-    shiny::plotOutput(outputId, height = height, width = width, ...),
-    tags$button(
-      class = "lc-plot-fullscreen-btn",
-      type = "button",
-      title = label,
-      `aria-label` = label,
-      `data-lc-fullscreen-toggle` = "true",
-      HTML("&#x26F6;")
-    )
-  )
 }
 
 # Blok wzoru lub krótkiego zapisu matematycznego.
@@ -1223,21 +1124,6 @@ lc_caption <- function(..., tone = NULL) {
   tags$div(class = "lc-caption", `data-tone` = tone, tags$div(...))
 }
 
-# Wykres z wysokością z proporcji kontenera zamiast stałej wysokości w px.
-# Serwer bez zmian: zoom_plot_server() rysuje w rozmiarze kontenera.
-# max_height (np. "560px") tylko dla wykresów, które potrzebują więcej niż 440 px.
-lc_plot <- function(plot_id, ratio = NULL, ratio_narrow = NULL, max_height = NULL,
-                    click = NULL) {
-  style <- paste0(c(
-    if (!is.null(ratio)) paste0("--lc-plot-ratio:", ratio, ";"),
-    if (!is.null(ratio_narrow)) paste0("--lc-plot-ratio-narrow:", ratio_narrow, ";"),
-    if (!is.null(max_height)) paste0("--lc-plot-max:", max_height, ";")
-  ), collapse = "")
-  tags$div(class = "lc-plot", style = if (nzchar(style)) style,
-    zoom_plot_ui(plot_id, height = "100%", click = click)
-  )
-}
-
 # Dwa wykresy obok siebie od 760 px kontenera, pod sobą na węższym.
 # pair = TRUE: obok siebie już od 560 px (para do bezpośredniego porównania).
 lc_plots <- function(..., pair = FALSE, triple = FALSE) {
@@ -1340,7 +1226,7 @@ lc_compare_rows <- function(rows) {
 
 # Nawigacja kroków demonstracji. Wartość input$<id>: numer kroku (0 = start).
 # Nie da się cofnąć poniżej kroku `start` (start = 1: bez pustego stanu).
-# Stan trzyma klient (shared/lc_widgets.js); lc_update_step() ustawia go z serwera.
+# Stan trzyma klient (shared/lc_widgets.js).
 lc_step_nav <- function(input_id, steps, start = 0L,
                         start_label = "Zacznij", next_label = "Dalej") {
   tags$div(
@@ -1362,10 +1248,6 @@ lc_step_nav <- function(input_id, steps, start = 0L,
       `data-lc-step` = "next",
       tags$span(if (start == 0) start_label else next_label), lc_icon("next"))
   )
-}
-
-lc_update_step <- function(session, input_id, step) {
-  session$sendInputMessage(input_id, list(step = as.integer(step)))
 }
 
 # Opis bieżącego kroku: znacznik, opcjonalny tytuł i treść.
@@ -2097,17 +1979,14 @@ em_ <- function(...) tags$em(..., .noWS = "outside")
 # Źródło: handoff „Widget krokowy v2”. Drugi wzorzec obok lc_step_nav()
 # (kropki): pasek z numerami i nazwami kroków, gdy nazwy niosą narrację.
 # Układ: tytuł + sterowanie, pasek kroków, wykres o stałej proporcji, opis
-# kroku i nawigacja. Kroki od 1. Serwer czyta input$<id>_step (lc_step_server),
-# opis kroku renderuje output$<id>_text jako tekst inline. Logika: shared/lc_widgets.js.
-# Z `texts` (lista opisów, po jednym na krok) opisy są w dokumencie i serwer nie jest potrzebny.
-# Widget bez wykresu (np. tabela budowana krok po kroku): body zamiast plot_id.
+# kroku i nawigacja. Kroki od 1. Logika: shared/lc_widgets.js.
+# body: treść widgetu (np. rycina lcSF: lc_sf_chart()). Opis kroku: `texts` (lista
+# opisów, po jednym na krok) albo pole <id>_text, które wypełnia rycina lcSF (fig.text).
 # above: treść między paskiem kroków a wykresem (np. tabela i odczyty w rzędzie).
-lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NULL,
-                           extra = NULL, ratio = "2.5/1", body = NULL, above = NULL,
-                           texts = NULL) {
+lc_step_widget <- function(id, steps, body, toolbar = NULL, title = NULL,
+                           extra = NULL, above = NULL, texts = NULL) {
   n <- length(steps)
-  stopifnot(n >= 2, !is.null(plot_id) || !is.null(body),
-            is.null(texts) || length(texts) == n)
+  stopifnot(n >= 2, is.null(texts) || length(texts) == n)
   tags$div(
     class = "lc-stepper", id = id, `data-lc-step` = 1L,
     tags$div(class = "lc-stepper-head",
@@ -2124,19 +2003,12 @@ lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NU
       ))
     ),
     if (!is.null(above)) tags$div(class = "lc-step-above", above),
-    if (!is.null(plot_id)) {
-      tags$div(class = "lc-plot lc-step-plot",
-        style = sprintf("--lc-plot-ratio:%s;", ratio),
-        zoom_plot_ui(plot_id, height = "100%")
-      )
-    } else {
-      tags$div(class = "lc-step-body", body)
-    },
+    tags$div(class = "lc-step-body", body),
     tags$div(class = "lc-stepper-foot",
       tags$div(class = "lc-stepper-text", `aria-live` = "polite",
         tags$span(class = "lc-stepper-kicker", sprintf("Krok 1 z %d · %s", n, steps[[1]])),
         if (is.null(texts)) {
-          uiOutput(paste0(id, "_text"), inline = TRUE)
+          tags$span(id = paste0(id, "_text"))
         } else {
           # Opisy wszystkich kroków są w dokumencie; widoczny jest opis bieżącego
           # kroku (shared/lc_widgets.js). Bez serwera.
@@ -2163,18 +2035,4 @@ lc_step_widget <- function(id, steps, plot_id = NULL, toolbar = NULL, title = NU
 # Kontrolka aktywna od kroku `from`; wcześniej widoczna i wyszarzona.
 lc_step_from <- function(from, ...) {
   tags$div(class = "lc-step-ctl", `data-lc-from` = from, ...)
-}
-
-# Serwer widgetu krokowego: reaktywny numer kroku (1..n) i ustawianie kroku.
-lc_step_server <- function(id, input, session = shiny::getDefaultReactiveDomain()) {
-  key <- paste0(id, "_step")
-  list(
-    step = reactive({
-      s <- input[[key]]
-      if (is.null(s)) 1L else as.integer(s)
-    }),
-    set = function(k) {
-      session$sendCustomMessage("lc-step-set", list(id = id, step = as.integer(k)))
-    }
-  )
 }

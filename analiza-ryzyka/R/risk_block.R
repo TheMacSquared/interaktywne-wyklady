@@ -35,19 +35,7 @@ risk_natural_frequency <- function(p, population = 1000L) {
   )
 }
 
-# Panel eksperymentu: pasek sterowania z odczytami nad wykresem, wysokość
-# wykresu z proporcji, notka jako podpis. stats_id renderuje lc_readout().
-risk_widget_panel <- function(label = "Eksperyment", title, controls,
-                              plot_id = NULL, stats_id = NULL, note = NULL,
-                              width_mode = "wide", ratio = NULL, max_height = NULL) {
-  figure_panel(label = label, title = title, width_mode = width_mode,
-    lc_toolbar(controls, if (!is.null(stats_id)) lc_readouts(uiOutput(stats_id))),
-    if (!is.null(plot_id)) lc_plot(plot_id, ratio = ratio, max_height = max_height),
-    if (!is.null(note)) lc_caption(note)
-  )
-}
-
-# Panel z ryciną liczoną w przeglądarce (silnik lcSF) — następca risk_widget_panel()
+# Panel z ryciną liczoną w przeglądarce (silnik lcSF)
 # dla wykresów, które dawniej rysował serwer.
 #   fig       nazwa ryciny zarejestrowanej w JS (lcSF.register)
 #   controls  kontrolka albo lista kontrolek: lc_sf_slider(), lc_segmented(),

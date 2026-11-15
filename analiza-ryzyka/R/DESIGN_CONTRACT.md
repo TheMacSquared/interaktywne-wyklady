@@ -39,11 +39,6 @@ ui <- lecture_page(
   module_label  = "Moduł I",
   chapters      = .chapters
 )
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  nazwa_server(input, output, session)
-}
 ```
 
 Nie używamy `bslib` do budowy strony. Jeżeli aplikacja potrzebuje zasobów w `<head>`, przekazuje je przez `header_extras`.
@@ -63,7 +58,7 @@ Kanoniczne komponenty:
 | Wzór | `lc_formula_box()` |
 | Wzór z adnotacjami | `risk_annotated_formula()` |
 | Metryki i statystyki | `lc_stat_grid()` + `lc_stat_box()` |
-| Dynamiczny feedback | `lc_status()` / `lc_caption()` w `renderUI()` |
+| Dynamiczny feedback | `lc_status()` / `lc_caption()` wybrane przez `lc_variants()` albo wpisane przez rycinę lcSF |
 | Notka marginalna | `margin_callout()` albo `margin_note()` |
 | Notka z kodem | `margin_code_note()` |
 | Przejście do następnego rozdziału | `lc_chapter_next()` |
@@ -132,7 +127,7 @@ W nowym kodzie nie dodajemy:
 - `theme_educational()` i `theme_minimal()` jako lokalnego standardu wizualizacji
 - lokalnego `includeCSS()` dla wspólnego layoutu
 
-Jeżeli dynamiczny `renderUI()` potrzebuje komunikatu statusu, najpierw dodaj mały komponent w `shared/lecture_layout.R`, zamiast przywracać klasę z poprzedniego systemu.
+Jeżeli treść wybierana kontrolką potrzebuje komunikatu statusu, najpierw dodaj mały komponent w `shared/lecture_layout.R`, zamiast przywracać klasę z poprzedniego systemu.
 
 Migracja dawnych fragmentów powinna iść wprost:
 
@@ -260,7 +255,7 @@ z odczytami, wykres i podpis.
 | Suwak z wartością w etykiecie | `lc_slider()` |
 | Liczba w pasku zamiast pudełka | `lc_readouts()` + `lc_readout()` |
 | Jedno zdanie pod wykresem | `lc_caption(tone = "ok" / "info")` |
-| Wykres z wysokością z proporcji | `lc_plot()`, dwa obok siebie: `lc_plots()` |
+| Wykres z wysokością z proporcji | `lc_sf_chart(k, ratio, max_height)` w rycinie lcSF, dwa obok siebie: `lc_plots()` |
 | Pusty stan | `lc_empty()` |
 | Porównanie bez wykresu | `lc_compare_rows()` |
 | Demonstracja krokowa | `lc_step_nav()` + `lc_step_text()` |
@@ -292,8 +287,7 @@ Zasady:
 6. Suwak bez podziałki i dymka; wartość w etykiecie, min i max pod torem.
 7. Feedback pod wykresem to jedno zdanie `lc_caption()`, dłuższy wynik lub
    odpowiedź quizu `lc_status()`. `lc_feedback()` jest przestarzały.
-8. Wykres ma wysokość z proporcji (`lc_plot()`), nie `height = "250px"`.
-   Serwer bez zmian: `zoom_plot_server()` rysuje w rozmiarze kontenera.
+8. Wykres ma wysokość z proporcji (`lc_sf_chart()`), nie `height = "250px"`.
 9. Rozmiary w `em`, progi z szerokości panelu (container queries), więc tryb
    rzutnika skaluje cały widget.
 10. Przyciski v2 mają klasy `lc-action`, nie `lc-btn-*` ani Bootstrapa.
@@ -303,7 +297,7 @@ Zasady:
 Wszystkie nowe tabele powstają przez `lc_table()` i deklaracje kolumn
 `lc_col()`. Ręczne `tags$table(class = "lc-table …")`, `renderTable()`
 i `DT::datatable()` wycofujemy: `renderTable()` zastępuje
-`renderUI(lc_table(...))`. Inline `font-size` usuwamy.
+`lc_table(...)` złożone przy budowaniu (albo `lcSF.table()` w rycinie). Inline `font-size` usuwamy.
 
 | Potrzeba | Komponent |
 |---|---|
@@ -371,7 +365,7 @@ nie ma; treść stoi w jednej kolumnie.
 | Podsekcja z numerem | `lc_h3(title, num = "1")` |
 | Śledzona zmienna | `lc_tracker(label, stats)` |
 | Spis przykładów | `lc_index(items)` |
-| Status widgetu (opis kroku, wynik testu) | `lc_status()` + `lc_verdict()` w `renderUI()` wewnątrz panelu |
+| Status widgetu (opis kroku, wynik testu) | `lc_status()` + `lc_verdict()` wewnątrz panelu (z R przy budowaniu albo z ryciny lcSF) |
 | Przełączniki drugorzędne (np. hipotezy) | `lc_chips()` |
 | Pogrubienie / kursywa przed interpunkcją | `b_()` / `em_()` |
 
@@ -379,7 +373,7 @@ Zasady:
 
 1. Notki się nie zwijają. Zwijamy tylko rozwiązania, odpowiedzi i opcjonalne
    rozwinięcia (`lc_more()`). Rozwiązanie ćwiczenia to
-   `lc_more("Rozwiązanie", uiOutput(...))`, bez przycisku „Pokaż rozwiązanie”;
+   `lc_more("Rozwiązanie", …)` z treścią złożoną przy budowaniu, bez przycisku „Pokaż rozwiązanie”;
    przycisk zostaje tylko wtedy, gdy odsłania coś w samym widgecie (np.
    odpowiedzi w tabeli).
 2. Etykieta stoi w wiszącej kolumnie notki, nie w ramce. Pogrubione wstępy typu
@@ -429,8 +423,8 @@ Dwa wzorce, wybierane per widget:
 - `lc_step_widget()` — pasek kroków z numerami i nazwami (≤ 3 słowa),
   wykres o stałej proporcji, opis kroku i nawigacja „‹ Wstecz” / „Dalej ›”,
   strzałki ← →. Gdy nazwy kroków niosą narrację (np. budowa histogramu).
-  Serwer: `s <- lc_step_server(id, input); s$step()`; opis w
-  `output$<id>_text` jako tekst inline; kontrolka aktywna od kroku k w
+  Rysunek i opis kroku: rycina lcSF (`fig.text`, pole `<id>_text`) albo `texts = `;
+  kontrolka aktywna od kroku k w
   `lc_step_from(k, ...)` (wcześniej wyszarzona).
 - `lc_step_nav()` + `lc_step_text()` — kropki i „Dalej”, gdy liczy się
   miejsce (np. krótka sekwencja tabeli).

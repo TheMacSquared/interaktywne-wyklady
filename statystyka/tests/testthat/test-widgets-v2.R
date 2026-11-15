@@ -5,9 +5,6 @@ load_v2_env <- function() {
   env <- new.env(parent = asNamespace("shiny"))
   sys.source(file.path(dirname(course_root), "shared", "palette.R"), env)
   sys.source(file.path(dirname(course_root), "shared", "lecture_layout.R"), env)
-  env$zoom_plot_ui <- function(id, height = "300px", click = NULL) {
-    shiny::plotOutput(id, height = height, click = click)
-  }
   env
 }
 html <- function(x) htmltools::renderTags(x)$html
@@ -91,8 +88,6 @@ testthat::test_that("kontrolki v2 generują wejścia Shiny", {
   testthat::expect_error(env$lc_action("x", variant = "ghost"), "aria_label")
   testthat::expect_match(html(env$lc_action_group(a = "+1", b = "+10", label = "Rzuć")),
                          'id="a" type="button" class="action-button"', fixed = TRUE)
-  testthat::expect_match(html(env$lc_plot("pl", ratio = "2/1")), "--lc-plot-ratio:2/1;", fixed = TRUE)
-  testthat::expect_false(grepl("--lc-plot-ratio", html(env$lc_plot("pl")), fixed = TRUE))
 })
 
 testthat::test_that("lc_table stronicuje po stronie przeglądarki i serwera", {
@@ -189,10 +184,10 @@ testthat::test_that("lc_step_widget(texts = ) trzyma opisy kroków w dokumencie"
   testthat::expect_false(grepl("shiny-html-output", out, fixed = TRUE))
   # Liczba opisów musi równać się liczbie kroków.
   testthat::expect_error(env$lc_step_widget("sw", steps = c("A", "B"), body = "x", texts = list("jeden")))
-  # Bez texts opis kroku nadal pisze serwer albo skrypt wykładu.
+  # Bez texts opis kroku pisze rycina lcSF (fig.text) w polu <id>_text; bez wyjścia Shiny.
   legacy <- html(env$lc_step_widget("sw", steps = c("A", "B"), body = "x"))
   testthat::expect_match(legacy, 'id="sw_text"', fixed = TRUE)
-  testthat::expect_match(legacy, "shiny-html-output", fixed = TRUE)
+  testthat::expect_false(grepl("shiny-html-output", legacy, fixed = TRUE))
 })
 
 testthat::test_that("lc_tile_quiz przekazuje pytania przeglądarce i nie tworzy wyjść serwera", {

@@ -587,11 +587,3 @@ ch10_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: Ryc. 10.1 liczy przeglądarka (modules/figures.js), a przykłady
-# w surowych liczbach (Ryc. 10.2–10.5) R opisuje wariantami przy budowaniu (modules/figures.R).
-ch10_server <- function(input, output, session) {}

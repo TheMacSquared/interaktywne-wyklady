@@ -322,6 +322,3 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Hotel", content = tagL
     target_id = "ch7"
   )
 ))
-
-# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R).
-ch6_server <- function(input, output, session) {}

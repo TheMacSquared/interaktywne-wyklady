@@ -413,12 +413,3 @@ ch5_ui <- list(
     br(), br()
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 5 Server
-# --------------------------------------------------------------------------
-
-ch5_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: Ryc. 5.1–5.3 rysuje stat_charts.js, a tabele
-  # i podsumowanie pełnego obrazu (Ryc. 5.4) są w dokumencie dla każdej zmiennej.
-}

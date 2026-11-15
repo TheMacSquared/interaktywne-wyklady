@@ -88,12 +88,3 @@ s3p_4f_ui <- s3p_panel("Ryc. 5.13", "Losowe podwyżki",
       raw = lc_caption("Procent od dużej pensji to więcej złotówek niż procent od małej, więc bogaci odjeżdżają: pojawia się długi prawy ogon, a średnia ucieka od mediany. Przełącz oś na ln(pensji)."),
       log = lc_caption("Po zlogarytmowaniu ogon znika i zostaje symetryczny dzwon: logarytm zamienia mnożenie w dodawanie, a suma wielu wpływów daje rozkład normalny.")))
 )
-
-# ============================================================================
-# SERWER
-# ============================================================================
-
-# Ryc. 4.10 i 5.13 liczy przeglądarka (stops34_charts.js); serwer zostaje, bo woła go app.R.
-s3p_ch4_server <- function(input, output, session) {
-  # Ryc. 4.10 i 5.13 liczy przeglądarka (stops34_charts.js); app.R wywołuje tę funkcję.
-}

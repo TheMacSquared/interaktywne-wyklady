@@ -127,16 +127,3 @@ ui <- lecture_page(
     lc_sf_styles()
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-  ch3_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)

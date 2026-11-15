@@ -528,9 +528,3 @@ dozd_block <- list(id = "dozd", title = "Ile prób do zdarzenia", chapters = lis
 ))
 
 dozd_chapters <- risk_block_chapters(dozd_block)
-
-dozd_server <- function(input, output, session) {
-  # Wykład nie ma logiki serwera: głosowanie i quiz ocenia przeglądarka.
-  # Rozkład geometryczny rysuje przeglądarka (modules/wykresy.js).
-  # Punkty stop (PUNKTY-STOP-PROPOZYCJA.md) działają w przeglądarce: modules/sceny.js.
-}

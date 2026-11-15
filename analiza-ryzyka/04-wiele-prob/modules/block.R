@@ -726,9 +726,3 @@ proby_block <- list(id = "proby", title = "Wiele prób", chapters = list(
 ))
 
 proby_chapters <- risk_block_chapters(proby_block)
-
-proby_server <- function(input, output, session) {
-  # Wykład nie ma logiki serwera. Głosowanie, quiz, scenariusze i przykłady
-  # przełącza shared/lc_widgets.js, serię kontroli losuje modules/seria.js,
-  # a Rozkład, Powtórzenia i Krzywą rysuje modules/wykresy.js.
-}

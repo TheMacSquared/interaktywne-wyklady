@@ -280,14 +280,3 @@ ch2_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch2_server <- function(input, output, session) {
-
-  # --- Scena: Zarzuć siatkę ---
-
-  # Ryc. 2.3 (quiz) obsługuje przeglądarka: ch2_quiz_ui() i sf_ch12.js.
-}

@@ -294,6 +294,3 @@ ch3b_ui <- list(
     )
   )
 )
-
-# Wszystkie ryciny rozdziału opisuje R przy budowaniu strony.
-ch3b_server <- function(input, output, session) {}

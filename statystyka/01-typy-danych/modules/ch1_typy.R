@@ -297,12 +297,3 @@ ch1_ui <- list(
 
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 1 Server
-# --------------------------------------------------------------------------
-
-ch1_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: opisy typów pokazuje lc_variants(pick = TRUE),
-  # podgląd danych jest w dokumencie, a Ryc. 1.1 i 1.3 rysuje stat_charts.js.
-}

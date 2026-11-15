@@ -204,6 +204,3 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Szkoły", content = ta
     target_id = "ch3"
   )
 ))
-
-# Wszystkie ryciny rozdziału opisuje R przy budowaniu (modules/figures.R).
-ch2_server <- function(input, output, session) {}

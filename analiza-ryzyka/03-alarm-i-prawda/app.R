@@ -233,10 +233,3 @@ ui <- lecture_page(
     "))
   )
 )
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  alarm_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)

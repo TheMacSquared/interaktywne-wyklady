@@ -751,7 +751,3 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
   )
 ))
 system_chapters <- risk_block_chapters(system_block)
-
-# Wykład nie ma logiki serwera: głosowanie, stany układów i kroki redukcji ocenia przeglądarka,
-# schematy rysuje R przy budowaniu, a wykresy i odczyty liczy modules/wykresy.js.
-system_server <- function(input, output, session) {}

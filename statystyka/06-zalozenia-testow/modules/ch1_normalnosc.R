@@ -103,7 +103,6 @@ ch1_ui <- lecture_chapter(
       tylko „czy ich kształt jest na tyle daleki od normalnego, że zagraża
       wnioskom przy tej liczebności”. Odpowiedź zaczyna się od wykresu."),
 
-
     # ========================================================================
     # WIDGET 1: Wizualne sprawdzanie normalności
     # ========================================================================
@@ -361,11 +360,3 @@ ch1_ui <- lecture_chapter(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: losowanie, wykresy i test Shapiro–Wilka liczy
-# przeglądarka (modules/figures.js), opisy kroków scen są w dokumencie.
-ch1_server <- function(input, output, session) {}

@@ -163,12 +163,3 @@ ch1_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch1_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: układy tabeli przełącza lc_variants(),
-  # opisy kroków sceny są w dokumencie (lc_step_widget(texts = )).
-}

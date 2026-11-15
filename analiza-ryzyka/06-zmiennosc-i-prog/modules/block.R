@@ -662,8 +662,3 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
   )
 ))
 prog_chapters <- risk_block_chapters(prog_block)
-
-prog_server <- function(input, output, session) {
-  # Wykład nie ma logiki serwera: głosowanie i quiz ocenia przeglądarka, a sześć
-  # wykresów (dawniej ggplot) rysuje modules/wykresy.js na danych z modules/wykresy.R.
-}

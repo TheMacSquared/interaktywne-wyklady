@@ -170,7 +170,21 @@ też zależeć od kliknięcia (`lc_variants(pick = TRUE)`), przycisku tam i z po
   wykrywa to `scripts/migracja/gdzie_wisi.R`. Dodać taki test do kontroli strony.
 - [ ] Faza 8: usunąć `app.R` i kod serwera, statyczny spis wykładów zamiast
   huba, wycofać `przedmioty/*/skrypt/build`, zaktualizować `AGENTS.md`,
-  kontrakt i testy.
+  kontrakt i testy. Zrobione (15 listopada 2026, wariant „zostaw `app.R`, usuń
+  serwer”): `app.R` opisuje treść (`ui`), bez `server` i `shinyApp()`; puste
+  funkcje `*_server` usunięte z modułów (`scripts/migracja/usun_serwer.R`);
+  z rdzenia zniknęły `lecture_server()`, `lc_step_server()`, `lc_update_step()`,
+  `zoom_plot_ui()`/`zoom_plot_server()`, `lc_plot()`, `lc_plot_fullscreen()`
+  i tryb Shiny w `lecture_page()` (zawsze strona statyczna); `lc_step_widget()`
+  przyjmuje tylko `body`. Drzewo decyzyjne w statystyce 05 (visNetwork) było
+  wypełniane przez serwer i na stronie statycznej było puste — widget jest teraz
+  wstawiony do dokumentu. Testy `testServer()` zastąpione sprawdzeniem dokumentu,
+  test nieistniejącego widgetu „zmienne p” (05 analizy ryzyka) usunięty;
+  AGENTS.md, kontrakty i opis rdzenia zaktualizowane. Zostało: kod huba
+  (`hub/`, linki `LC_HUB_URL` w `lecture_layout.R`, `.LC_HUB_TABS_JS`) — hub
+  obsługuje też statystykę 2; stronicowanie tabel z serwera (`lc_table(page_input =)`)
+  i gałęzie Shiny w skryptach JS rdzenia (nieszkodliwe); wycofanie
+  `przedmioty/*/skrypt/build` (zewnętrzne repozytorium).
 - [x] Strona statyczna: spis wykładów (`Rscript scripts/build_index.R` → `dist/index.html`
   i `dist/<kurs>/index.html`); wykłady jeszcze niezbudowane są na liście bez odnośnika.
   Zakładki górnego paska prowadzą tylko do wykładów już zbudowanych w `dist/<kurs>/`.

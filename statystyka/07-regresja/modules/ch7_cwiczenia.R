@@ -400,9 +400,3 @@ model <- glm(zdal_num ~ godziny_nauki + srednia_ocen,
     )
   )
 )
-
-ch7_server <- function(input, output, session) {
-
-  ch7_sat_server(input, output, session)
-
-}

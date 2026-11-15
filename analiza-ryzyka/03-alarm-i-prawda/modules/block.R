@@ -963,8 +963,3 @@ alarm_block <- list(
 )
 
 alarm_chapters <- risk_block_chapters(alarm_block)
-
-alarm_server <- function(input, output, session) {
-  # Wykład nie ma logiki serwera: głosowanie i quiz ocenia przeglądarka.
-  # Tablica 2×2, drzewo, dwa alarmy, próg reakcji i Serpuchów: modules/detektor.js.
-}

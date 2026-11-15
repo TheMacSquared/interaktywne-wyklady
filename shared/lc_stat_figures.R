@@ -86,7 +86,7 @@ lc_sf_figure <- function(fig, control = NULL, ratio = "2/1", max_height = "340px
 # ---- Rycina „opis z R” --------------------------------------------------------
 # Wykres na stałych danych: R składa opis rysunku (zakresy, warstwy, osie) przy
 # budowaniu strony, przeglądarka go rysuje (rycina lc_spec w lc_stat_figures.js).
-# Odpowiada dawnemu ggplot + zoom_plot_server() bez wejść.
+# Odpowiada dawnemu wykresowi ggplot rysowanemu na serwerze bez wejść.
 #   spec      sf_spec(…) albo lista wykresów list(charts = list(sf_spec(…), …))
 #   variants  nazwana lista opisów wybieranych kontrolką `control` (nazwa = wartość)
 #   reads     odczyty lc_sf_value(): nazwana lista tekstów (dla wariantów: lista list)

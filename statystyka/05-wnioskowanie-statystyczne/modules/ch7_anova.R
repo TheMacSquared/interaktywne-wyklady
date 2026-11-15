@@ -519,11 +519,3 @@ ch7_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# DANE — CASchools (wczytane raz przy ładowaniu modułu)
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: dane, ANOVA i porównania Gamesa-Howella liczy przeglądarka
-# (modules/figures.js, shared/lc_stats.js); rysunki Ryc. 9.1 i rozwiązanie ćwiczenia składa R.
-ch7_server <- function(input, output, session) {}

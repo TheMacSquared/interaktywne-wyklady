@@ -249,12 +249,3 @@ ch1_ui <- list(
     )
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 1 Server
-# --------------------------------------------------------------------------
-
-ch1_server <- function(input, output, session) {
-
-  # Ryc. 1.3 i 1.4 losuje i rysuje sim_charts.js w przeglądarce.
-}

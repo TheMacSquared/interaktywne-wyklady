@@ -105,6 +105,3 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Hipotezy jako tropy", 
     "ch3")
   )
 )
-
-# Rozdział nie ma logiki serwera: treść stałą składa R przy budowaniu.
-ch2_server <- function(input, output, session) {}

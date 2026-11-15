@@ -47,19 +47,9 @@ ui <- lecture_page(
 
 Mapowanie `lecture_id → moduł` jest w polu `lecture_module` w `<kurs>/R/course.R` — dopisz nową apkę jeśli potrzeba.
 
-### d) Server
+### d) Bez serwera
 
-Nawigacja między rozdziałami obsługiwana jest przez `lc_chapter_next()` w modułach. W `server()`:
-
-```r
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-  # ...
-}
-```
+Wykład statystyki i analizy ryzyka jest stroną statyczną: `app.R` kończy się na `ui <- lecture_page(...)`, bez `server` i `shinyApp()`. Nawigację między rozdziałami prowadzi przeglądarka (`lc_chapter_next()` w modułach, `shared/shared_toc.js`).
 
 ### e) Zasoby w `<head>`
 
@@ -285,9 +275,6 @@ lc_drop_match(
   zones    = c(hazard = "Zagrożenie", event = "Zdarzenie"),
   colors   = c(upwr_cat[["terakota"]], upwr_accent)
 )
-
-# server
-answers <- assignment_to_answers(input$ch1_assign)
 ```
 
 Kolejność `items` jest kolejnością kart w puli — podawaj ją celowo pomieszaną,

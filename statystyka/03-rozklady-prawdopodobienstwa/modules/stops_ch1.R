@@ -106,13 +106,3 @@ s3p_15b_ui <- s3p_panel("Ryc. 1.5", "Rozkład czy nie?",
   lc_variants("s3p_15b_show", selected = "hide",
     list(hide = s3p_15b_grid(FALSE), show = s3p_15b_grid(TRUE)))
 )
-
-# ============================================================================
-# SERWER
-# ============================================================================
-
-s3p_ch1_server <- function(input, output, session) {
-  # Punkty stop rozdziału 1 nie mają logiki serwera: Ryc. 1.1 liczy
-  # stops12_charts.js, lejek (Ryc. 1.2) losuje i rysuje lejek_chart.js,
-  # a karty Ryc. 1.5 przełącza lc_variants().
-}

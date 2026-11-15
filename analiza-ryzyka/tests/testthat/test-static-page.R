@@ -44,20 +44,6 @@ testthat::test_that("tryb statyczny: wykład 02 ma wszystkie rozdziały w dokume
   testthat::expect_false(any(grepl("01-jezyk-ryzyka", res$tabs, fixed = TRUE)))
 })
 
-testthat::test_that("z serwerem Shiny lecture_page() zostawia miejsce na rozdział z renderUI", {
-  testthat::skip_if_not_installed("callr")
-  res <- callr::r(function(path) {
-    setwd(path)
-    app <- new.env(parent = globalenv())
-    sys.source("app.R", envir = app)
-    html <- htmltools::renderTags(app$ui)$html
-    c(static = grepl("data-lc-static-chapter", html, fixed = TRUE),
-      output = grepl("id=\"lc__chapter_content\"", html, fixed = TRUE))
-  }, args = list(path = file.path(risk_root, "02-warunki")), timeout = 60)
-  testthat::expect_false(res[["static"]])
-  testthat::expect_true(res[["output"]])
-})
-
 testthat::test_that("głosowanie z komentarzami działa bez serwera (wykłady 03, 04 i 05)", {
   env <- new.env(parent = asNamespace("shiny"))
   env$shared_root <- file.path(dirname(risk_root), "shared")
@@ -145,7 +131,7 @@ testthat::test_that("wykład 01: decyzja i ćwiczenia mają dane dla przeglądar
     ids <- function(xpath) xml2::xml_attr(xml2::xml_find_all(doc, xpath), "id")
     list(
       outputs = length(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-html-output')]")),
-      selectize = length(xml2::xml_find_all(doc, "//script[@data-for]")),
+      selectize = sum(xml2::xml_attr(xml2::xml_find_all(doc, "//script[@data-for]"), "data-for") %in% xml2::xml_attr(xml2::xml_find_all(doc, "//select"), "id")),
       report = cfg("//div[@data-j1-report]"),
       report_fields = xml2::xml_attr(xml2::xml_find_all(doc, "//input[@name='ch8_fields']"), "value"),
       report_conclusions = xml2::xml_attr(xml2::xml_find_all(doc, "//input[@name='ch8_conclusion']"), "value"),
@@ -214,7 +200,7 @@ for (lecture in static_ready_lectures) local({
         sections = xml2::xml_attr(xml2::xml_find_all(doc, "//section[@data-lc-static-chapter]"), "id"),
         chapters = vapply(app$.chapters, function(ch) ch$id, character(1)),
         outputs = xml2::xml_attr(xml2::xml_find_all(doc, "//*[contains(@class, 'shiny-html-output') or contains(@class, 'shiny-plot-output') or contains(@class, 'shiny-text-output')]"), "id"),
-        selectize = length(xml2::xml_find_all(doc, "//script[@data-for]")),
+        selectize = sum(xml2::xml_attr(xml2::xml_find_all(doc, "//script[@data-for]"), "data-for") %in% xml2::xml_attr(xml2::xml_find_all(doc, "//select"), "id")),
         duplicate_ids = unique(ids[duplicated(ids)])
       )
     }, args = list(path = file.path(risk_root, lecture)), timeout = 180)

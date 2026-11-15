@@ -160,11 +160,3 @@ ch8_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch8_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: quiz działa w przeglądarce.
-}

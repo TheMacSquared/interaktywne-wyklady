@@ -189,7 +189,3 @@ ch4_ui <- list(
     )
   )
 )
-
-ch4_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: opisy kadrów są w dokumencie (lc_step_widget(texts = )).
-}

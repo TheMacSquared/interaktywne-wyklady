@@ -35,7 +35,7 @@ Statystyka 2 (`statystyka-2/`) zawiera symulacje, Bayesa, materiały kierunkowe 
 
 Statystyka i analiza ryzyka korzystają z jednego wspólnego rdzenia w `shared/` (layout, paleta, motyw wykresów, style, biblioteki JS). Zmianę rdzenia robi się raz, dla obu kursów. Katalog `<kurs>/R/` zawiera tylko to, co własne dla kursu: `course.R` (nazwa, logo, mapa wykładów, tryb rozdziałów), ewentualny `course_styles.css` (elementy kursu i świadome odstępstwa od rdzenia) oraz pliki przedmiotowe. Opis w `shared/README.md`. Narzędzia pomocnicze statystyki są w `statystyka/scripts/`.
 
-Na gałęzi `statyczny-js` statystyka i analiza ryzyka działają jako strony statyczne (bez serwera R): wszystkie 21 wykładów budują się do `dist/<kurs>/<wykład>.html` (`Rscript scripts/build_static.R <kurs>/<wykład>`, spis: `Rscript scripts/build_index.R`). Plan i stan są w `TODO.md` („Przejście na strony statyczne”), narzędzia w `scripts/` (`check_static_ready.R`, `build_static.R`, `check_static_page.R`), opis w `shared/README.md`. Nowy kod widgetów nie dodaje wyjść ani wejść serwera (`render*`, `observe*`, `input$…`): to, co zależy od ruchu studenta, liczy JS (silnik ryciny `lcSF`, `shared/lc_stat_figures.js`), resztę R przy budowaniu (`lc_sf_spec()`, wykres ggplot na stałych danych: `lc_sf_ggplot()`, treść wybierana kontrolką: `lc_variants()`, odsłaniana przyciskiem: `lc_reveal()`). Funkcje `chN_server` wykładów są puste do czasu decyzji o usunięciu `app.R` (faza 8 w `TODO.md`).
+Na gałęzi `statyczny-js` statystyka i analiza ryzyka działają jako strony statyczne (bez serwera R): wszystkie 21 wykładów budują się do `dist/<kurs>/<wykład>.html` (`Rscript scripts/build_static.R <kurs>/<wykład>`, spis: `Rscript scripts/build_index.R`). Plan i stan są w `TODO.md` („Przejście na strony statyczne”), narzędzia w `scripts/` (`check_static_ready.R`, `build_static.R`, `check_static_page.R`), opis w `shared/README.md`. Nowy kod widgetów nie dodaje wyjść ani wejść serwera (`render*`, `observe*`, `input$…`): to, co zależy od ruchu studenta, liczy JS (silnik ryciny `lcSF`, `shared/lc_stat_figures.js`), resztę R przy budowaniu (`lc_sf_spec()`, wykres ggplot na stałych danych: `lc_sf_ggplot()`, treść wybierana kontrolką: `lc_variants()`, odsłaniana przyciskiem: `lc_reveal()`). Kodu serwera (`server`, `chN_server`, `lecture_server()`, `zoom_plot_server()`) już nie ma: `app.R` opisuje tylko treść.
 
 Ekonometria jest archiwalna i znajduje się w `deprecated/ekonometria/`. Nie należy traktować jej jako aktywnego przedmiotu ani włączać do huba lub kontroli aktywnych wykładów. Materiały pozostają dostępne jako referencja.
 
@@ -43,9 +43,9 @@ Ekonometria jest archiwalna i znajduje się w `deprecated/ekonometria/`. Nie nal
 
 Kanoniczne reguły designu są w `shared/DESIGN_CONTRACT.md`. Przy pracy nad wykładami traktuj ten dokument jako nadrzędny kontrakt; reguły własne analizy ryzyka uzupełnia `analiza-ryzyka/R/DESIGN_CONTRACT.md`.
 
-### Struktura aplikacji Shiny
+### Struktura wykładu
 
-Każda aplikacja wykładowa statystyki i analizy ryzyka ma używać systemu layoutu z `shared/lecture_layout.R` (statystyka 2: z własnego `statystyka-2/R/`). Nie twórz nowych aplikacji na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
+Każdy wykład statystyki i analizy ryzyka używa systemu layoutu z `shared/lecture_layout.R` (statystyka 2: z własnego `statystyka-2/R/`, nadal jako aplikacja Shiny). `app.R` wykładu statystyki i analizy ryzyka opisuje treść (`ui`); nie ma funkcji `server` ani `shinyApp()`, bo strona jest statyczna (`Rscript scripts/build_static.R <kurs>/<wykład>`). Nie twórz nowych wykładów na `fluidPage()`, `navbarPage()`, `sidebarLayout()` ani `bslib::page_*()`.
 
 ```r
 # Tytuł aplikacji
@@ -88,15 +88,6 @@ ui <- lecture_page(
   module_label  = "Moduł I",
   chapters      = .chapters
 )
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)
 ```
 
 `project_root` to katalog kursu (`dirname(app_dir)`), a `shared_root` to `shared/` obok katalogów kursów. `.find_app_dir()` rozpoznaje katalog kursu po pliku `R/course.R`.

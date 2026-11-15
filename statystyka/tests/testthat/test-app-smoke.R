@@ -15,8 +15,8 @@ testthat::test_that("każda aplikacja ładuje UI i kompletną listę rozdziałó
           sys.source("app.R", envir = env)
 
           stopifnot(exists("ui", envir = env, inherits = FALSE))
-          stopifnot(exists("server", envir = env, inherits = FALSE))
-          stopifnot(is.function(env$server))
+          # Wykład jest stroną statyczną: app.R opisuje treść, nie ma serwera Shiny.
+          stopifnot(!exists("server", envir = env, inherits = FALSE))
           stopifnot(exists(".chapters", envir = env, inherits = FALSE))
 
           chapters <- env$.chapters

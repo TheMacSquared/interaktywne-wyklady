@@ -249,6 +249,3 @@ ch9_ui <- lecture_chapter(id = "ch9", num = "9", title = "Laboratorium", content
     target_id = "ch10"
   )
 ))
-
-# Ryciny z R przy budowaniu; wynik ćwiczenia liczy przeglądarka (modules/figures.js, rycina s08_quiz5).
-ch9_server <- function(input, output, session) {}

@@ -594,11 +594,3 @@ ch5_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# DANE — CASchools (wczytane raz przy ladowaniu modulu)
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: tabelę, wykresy kroków, opisy i porównanie testów liczy
-# przeglądarka (modules/figures.js); narrację o mandatach i rozwiązania ćwiczeń składa R.
-ch5_server <- function(input, output, session) {}

@@ -594,18 +594,3 @@ ch4_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch4_server <- function(input, output, session) {
-
-  # Ryc. 4.1 i 4.3 (budowa przedziału dla proporcji i różnicy proporcji: losowanie,
-  # wykresy i tekst kroku) liczy przeglądarka: ryciny lcSF „s04-pstep” i „s04-pdstep”
-  # (sf_steps.js).
-
-  # Przykłady A1–C1 (case studies) liczy i rysuje przeglądarka: rycina lcSF
-  # „s4-case” (sf_examples.js); dane i werdykty — ch4_case_ui() na górze pliku.
-
-}

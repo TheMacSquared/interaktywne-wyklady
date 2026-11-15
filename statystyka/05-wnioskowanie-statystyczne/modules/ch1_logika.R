@@ -538,13 +538,3 @@ ch1d_ui <- list(
     )
   )
 )
-
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: eksperyment, symulację, moc testu i quiz liczy
-# przeglądarka (modules/figures.js), ryc. 3.5 opisuje R (modules/figures.R), a wykres
-# p-wartości (Ryc. 3.3) rysuje ws_charts.js z atrybutów data-*.
-ch1_server <- function(input, output, session) {}

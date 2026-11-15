@@ -706,8 +706,3 @@ integracja_block <- list(id = "integracja", title = "Od modelu do decyzji", chap
   )
 ))
 integracja_chapters <- risk_block_chapters(integracja_block)
-
-# Wykład nie ma logiki serwera: głosowanie, licznik teczki i mapę pytań obsługuje przeglądarka,
-# a karty, wykresy, scenariusze i notatkę liczy modules/wykresy.js na jednym kontrakcie misji
-# (odpowiednik risk_mission_analysis() z R/risk_math.R).
-integracja_server <- function(input, output, session) {}

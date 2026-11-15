@@ -371,20 +371,3 @@ ch6_ui <- list(
     )
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 6 Server
-# --------------------------------------------------------------------------
-
-ch6_server <- function(input, output, session) {
-
-  # --- Ryc. 6.3: suma n kostek → rozkład normalny (experiment.js) ---
-
-  # --- Ryc. 6.1: scena „Winda” (suma rozkładów normalnych) ---
-
-  # --- Scena: Zapytaj grupkę ---
-
-  # Ryc. 6.4 (symulacja CTG) losuje i rysuje sim_charts.js w przeglądarce.
-  # Ryc. 6.5 (mapa zbieżności) rysuje ec_charts.js z danych w data-config.
-
-}

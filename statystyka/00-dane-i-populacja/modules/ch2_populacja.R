@@ -108,11 +108,3 @@ ch2_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch2_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: opisy kroków scen są w dokumencie (lc_step_widget(texts = )).
-}

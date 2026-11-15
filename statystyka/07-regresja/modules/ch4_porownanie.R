@@ -320,10 +320,3 @@ ch4_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Wszystkie ryciny rozdziału liczy przeglądarka.
-ch4_server <- function(input, output, session) {}

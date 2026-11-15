@@ -125,9 +125,3 @@ ch3_ui <- list(
     )
   )
 )
-
-ch3_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: opisy kadrów są w dokumencie (lc_step_widget(texts = )).
-  # Pudełka w grupach z ankiety (Ryc. 3.2) liczą się w przeglądarce:
-  # survey_charts.js, rycina „d02-box”.
-}

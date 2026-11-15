@@ -224,7 +224,6 @@
   lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
 )
 
-
 # --------------------------------------------------------------------------
 # ROLNICTWO
 # --------------------------------------------------------------------------
@@ -352,7 +351,6 @@
   ),
   lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
 )
-
 
 # --------------------------------------------------------------------------
 # TECHNOLOGIA ZYWNOSCI
@@ -482,7 +480,6 @@
   ),
   lc_more("Odpowiedzi", uiOutput("ch8_sol_summary"))
 )
-
 
 # ============================================================================
 # ROZWIAZANIA
@@ -709,12 +706,3 @@ ch8_ui <- list(
     br(), br(), br()
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch8_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: warianty, tabela zadania 1 i rozwiązania
-  # są w dokumencie (lc_variants(), lc_toggle_content()).
-}

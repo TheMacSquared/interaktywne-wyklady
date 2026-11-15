@@ -381,10 +381,3 @@ ch2h_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: Ryc. 2.4 rysuje ws_charts.js z kontrolek strony.
-ch2h_server <- function(input, output, session) {}

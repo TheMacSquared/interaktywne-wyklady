@@ -114,23 +114,3 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "scenes.js"))
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-server <- function(input, output, session) {
-
-  lc <- lecture_server(.chapters, input, output, session)
-
-  ch0_map_server(input, output, session)
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-  ch3_server(input, output, session)
-  ch3b_server(input, output, session)
-  ch4_server(input, output, session)
-  ch5_server(input, output, session)
-  ch7_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)

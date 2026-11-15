@@ -86,10 +86,3 @@ ui <- lecture_page(
     :is(p, li):has(> .MathJax) { text-align: left; }
   ")))
 )
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  proby_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)

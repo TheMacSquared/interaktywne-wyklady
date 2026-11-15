@@ -282,11 +282,3 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Titanic", content = ta
      różnią się składem. Porównuje się grupy podobne pod względem tego, co
      wpływa na wynik.")
 ))
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: dane są stałe, więc tabele, odczyty i opisy rycin liczy R
-# przy budowaniu strony (modules/figures.R), a przeglądarka rysuje wybrany wariant.
-ch3_server <- function(input, output, session) {}

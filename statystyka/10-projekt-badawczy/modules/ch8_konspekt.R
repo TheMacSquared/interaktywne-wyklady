@@ -140,6 +140,3 @@ ch8_ui <- lecture_chapter(id = "ch8", num = "8", title = "Od konspektu do wniosk
     przejść na własnych danych.")
   )
 )
-
-ch8_server <- function(input, output, session) {
-}

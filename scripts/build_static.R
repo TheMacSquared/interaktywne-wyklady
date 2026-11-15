@@ -1,9 +1,8 @@
 #!/usr/bin/env Rscript
 
 # Buduje statyczne strony wykładów: jeden plik HTML na wykład, bez serwera R.
-# Treść i układ pochodzą z tego samego app.R co wersja Shiny (lecture_page()
-# w trybie statycznym), style i skrypty są wbudowane w plik, wzory złożone
-# przy budowaniu jako SVG.
+# Treść i układ pochodzą z app.R wykładu (ui <- lecture_page(...); wykłady nie mają
+# serwera), style i skrypty są wbudowane w plik, wzory złożone przy budowaniu jako SVG.
 #
 # Użycie (z katalogu repozytorium):
 #   Rscript scripts/build_static.R analiza-ryzyka/02-warunki

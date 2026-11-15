@@ -100,7 +100,6 @@ s3p_2b_routes <- list(
 s3p_2b_shape <- function(r) (r$mean / r$sd)^2
 s3p_2b_scale <- function(r) r$sd^2 / r$mean
 
-
 # Gęstości, pola spóźnienia i odczyty liczy przeglądarka (stops12_charts.js, d03-routes).
 s3p_2b_ui <- s3p_panel("Ryc. 2.4", "Dwie trasy na egzamin",
   lc_sf_figure("d03-routes", ratio = "2.2/1", max_height = "440px", legend = TRUE,
@@ -140,12 +139,3 @@ s3p_2c_ui <- local({
         lc_readout("Z polisą: E / SD", tagList(lc_sf_value("withp", "-250"), " / 0 zł"), color = upwr_accent)),
       after = lc_caption(lc_sf_value("cap", ""))))
 })
-
-# ============================================================================
-# SERWER
-# ============================================================================
-
-# Ryc. 2.2, 2.3 i 2.4 liczy przeglądarka (stops12_charts.js); funkcję wywołuje app.R.
-s3p_ch2_server <- function(input, output, session) {
-  # Ryc. 2.2–2.4 liczy przeglądarka (stops12_charts.js); app.R wywołuje tę funkcję.
-}

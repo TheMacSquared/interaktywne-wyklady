@@ -1093,12 +1093,3 @@ ch7_ui <- list(
       stats::setNames(lapply(.ch7_directions, .ch7_static_content), .ch7_directions))
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch7_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: warianty i rozwiązania są w dokumencie
-  # (lc_variants(), lc_static_fill()).
-}

@@ -102,24 +102,3 @@ testthat::test_that("FTA pokazuje oba błędy powtórzenia i przelicza wspólną
   testthat::expect_equal(res$common, sum(weights[active]), tolerance = 1e-12)
   testthat::expect_equal(res$common_sure, "0.005000")
 })
-
-testthat::test_that("porównanie zmiennego p używa tych samych danych na wykresie i w średnich", {
-  testthat::skip_if_not_installed("callr")
-  result <- callr::r(function(path) {
-    setwd(path)
-    app <- new.env(parent = globalenv())
-    sys.source("app.R", envir = app)
-    shiny::testServer(app$dozd_server, {
-      session$setInputs(d5_variation = .09, d5_geo_p = .1,
-        d5_p = .1, d5_r = 3, d5_limit = 40)
-      d <- failure_data()
-      means <- tapply(d$x, d$model, mean)
-      stopifnot(means[["Zmienne p między partiami"]] > means[["Stałe p"]])
-      stopifnot(identical(failure_plot()$data, d))
-      stopifnot(grepl(as.character(round(means[["Zmienne p między partiami"]], 1)),
-        output$d5_failure_stats$html, fixed = TRUE))
-    })
-    TRUE
-  }, args = list(path = file.path(risk_root, "05-do-zdarzenia")), timeout = 60)
-  testthat::expect_true(result)
-})

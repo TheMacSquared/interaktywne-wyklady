@@ -923,8 +923,3 @@ warunki_block <- list(
 )
 
 warunki_chapters <- risk_block_chapters(warunki_block)
-
-warunki_server <- function(input, output, session) {
-  # Monty Hall (modules/monty.js), trzy widoki (stałe liczby), pozostałe widgety
-  # i quiz działają w przeglądarce; wykład nie ma logiki serwera.
-}

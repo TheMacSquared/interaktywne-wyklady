@@ -57,7 +57,6 @@ ch4_exp_defs <- list(
   exp_4 = list(label = "Połączenia: λ = 5/min", lambda = 5)
 )
 
-
 # Podpisy pod rycinami scenariuszy (E(X) i SD).
 ch4_unif_stat <- function(s) {
   paste0(s$label, ":  E(X) = ", round((s$a + s$b) / 2, 1), ",  SD = ", round(sqrt((s$b - s$a)^2 / 12), 2))
@@ -453,16 +452,3 @@ ch4_ui <- list(
 # --------------------------------------------------------------------------
 # Definicje scenariuszy
 # --------------------------------------------------------------------------
-
-
-# --------------------------------------------------------------------------
-# Chapter 4 Server
-# --------------------------------------------------------------------------
-
-ch4_server <- function(input, output, session) {
-
-  # --- Ryc. 4.7: czas oczekiwania → rozkład wykładniczy (experiment.js) ---
-
-  # Ryc. 4.1 losuje i rysuje sim_charts.js, Ryc. 4.6 i 4.8 — dist_charts.js.
-
-}

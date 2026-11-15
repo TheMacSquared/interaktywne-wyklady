@@ -130,6 +130,3 @@ ch3_ui <- lecture_chapter(id = "ch3", num = "3", title = "Grupa", content = tagL
     target_id = "ch4"
   )
 ))
-
-# Tabela z R przy budowaniu; wykresy suwaka liczy przeglądarka (modules/figures.js, rycina s08_n).
-ch3_server <- function(input, output, session) {}

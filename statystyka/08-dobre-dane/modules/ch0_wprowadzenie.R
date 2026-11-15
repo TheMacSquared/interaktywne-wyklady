@@ -66,6 +66,3 @@ ch0_ui <- lecture_chapter(id = "ch0", num = "0", title = "Wprowadzenie", content
     target_id = "ch1"
   )
 ))
-
-# Pasek oceny listy kontrolnej liczy przeglądarka (modules/figures.js, rycina s08_checklist).
-ch0_server <- function(input, output, session) {}

@@ -330,11 +330,3 @@ ch2_ui <- lecture_chapter(
     )
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: losowanie, wykres i testy liczy przeglądarka
-# (modules/figures.js, shared/lc_stats.js), opisy kroków sceny są w dokumencie.
-ch2_server <- function(input, output, session) {}

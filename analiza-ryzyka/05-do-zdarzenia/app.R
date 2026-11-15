@@ -97,10 +97,3 @@ ui <- lecture_page(
     includeScript(file.path(app_dir, "modules", "mix_chart.js"))
   )
 )
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  dozd_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)

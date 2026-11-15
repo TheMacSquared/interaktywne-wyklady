@@ -267,7 +267,3 @@ ch6_ui <- lecture_chapter(id = "ch6", num = "6", title = "Wynik nie kończy bada
     "ch7")
   )
 )
-
-# Rozdział nie ma logiki serwera: treści stałe składa R przy budowaniu, wykresy rysuje
-# przeglądarka z danych policzonych w R (modules/figures.R).
-ch6_server <- function(input, output, session) {}

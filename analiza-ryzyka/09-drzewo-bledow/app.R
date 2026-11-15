@@ -83,10 +83,3 @@ ui <- lecture_page(
       function(f) includeScript(file.path(app_dir, "modules", paste0("proto_", f, ".js"))))
   )
 )
-
-server <- function(input, output, session) {
-  lc <- lecture_server(.chapters, input, output, session)
-  fta_server(input, output, session)
-}
-
-shinyApp(ui = ui, server = server)

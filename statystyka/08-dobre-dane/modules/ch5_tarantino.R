@@ -195,6 +195,3 @@ ch5_ui <- lecture_chapter(id = "ch5", num = "5", title = "Tarantino", content = 
     target_id = "ch6"
   )
 ))
-
-# Ryciny i tabele z R przy budowaniu; quiz i odsłonięcie agregacji obsługuje przeglądarka.
-ch5_server <- function(input, output, session) {}

@@ -234,7 +234,3 @@ ch1_ui <- lecture_chapter(id = "ch1", num = "1", title = "Od ciekawości do celu
     "ch2")
   )
 )
-
-# Rozdział nie ma logiki serwera: treści stałe składa R przy budowaniu, podgląd danych
-# obsługuje przeglądarka (modules/figures.js).
-ch1_server <- function(input, output, session) {}

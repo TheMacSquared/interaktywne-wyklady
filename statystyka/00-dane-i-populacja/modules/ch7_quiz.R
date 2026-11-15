@@ -42,11 +42,3 @@ ch7_ui <- list(
       i liczby, którymi streszczamy próbę.")
   )
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-ch7_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: quiz działa w przeglądarce.
-}

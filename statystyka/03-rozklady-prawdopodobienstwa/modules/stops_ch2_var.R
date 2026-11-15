@@ -32,12 +32,3 @@ s3p_24b_ui <- s3p_panel("Ryc. 2.5", "Pasy wypłat",
         lc_readout("Średnie A / B / C", lc_sf_value("means"), color = upwr_accent))),
     after = lc_caption(lc_sf_value("cap", "Każde kliknięcie to jedna gra w każdą z trzech loterii. Kropka to wypłata.")))
 )
-
-# ============================================================================
-# SERWER
-# ============================================================================
-
-# Ryc. 2.5 liczy przeglądarka (stops12_charts.js); funkcję wywołuje app.R.
-s3p_ch2_var_server <- function(input, output, session) {
-  # Ryc. 2.5 liczy przeglądarka (stops12_charts.js); app.R wywołuje tę funkcję.
-}

@@ -860,6 +860,3 @@ ch9_ui <- list(
     br(), br(), br()
   )
 )
-
-# Rozdział nie ma logiki serwera: rozwiązania ćwiczeń składa R przy budowaniu strony.
-ch9_server <- function(input, output, session) {}

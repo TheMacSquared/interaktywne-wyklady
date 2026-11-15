@@ -522,15 +522,3 @@ ch2_ui <- list(
     )
   )
 )
-
-# ============================================================================
-# DANE — CASchools (wczytane raz przy ładowaniu modułu)
-# ============================================================================
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: próbę, wykresy kroków i opisy liczy przeglądarka
-# (modules/figures.js), rozwiązania ćwiczeń CASchools składa R przy budowaniu.
-ch2_server <- function(input, output, session) {}

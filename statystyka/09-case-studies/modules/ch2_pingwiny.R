@@ -320,11 +320,3 @@ ch2_ui <- lecture_chapter(id = "ch2", num = "2", title = "Pingwiny", content = t
      Po teście warto sprawdzić, czy wniosek dla całości zgadza się z wnioskiem
      w podgrupach.")
 ))
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-# Rozdział nie ma logiki serwera: dane są stałe, więc tabele, odczyty i opisy rycin liczy R
-# przy budowaniu strony (modules/figures.R), a przeglądarka rysuje wybrany wariant.
-ch2_server <- function(input, output, session) {}

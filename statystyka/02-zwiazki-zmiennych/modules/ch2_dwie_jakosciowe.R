@@ -158,14 +158,3 @@ ch2_ui <- list(
     )
   )
 )
-
-
-# --------------------------------------------------------------------------
-# Chapter 2 Server
-# --------------------------------------------------------------------------
-
-ch2_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera: opisy kadrów są w dokumencie (lc_step_widget(texts = )).
-  # Tabela krzyżowa z ankiety (Ryc. 2.2) liczy się w przeglądarce:
-  # survey_charts.js, rycina „d02-xt”.
-}

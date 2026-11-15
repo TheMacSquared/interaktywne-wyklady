@@ -144,35 +144,3 @@ ui <- lecture_page(
   chapters      = .chapters,
   header_extras = header_extras
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-server <- function(input, output, session) {
-
-  lc <- lecture_server(.chapters, input, output, session)
-
-  # Nawigacja między rozdziałami idzie przez lc_chapter_next() w modułach
-  # (sendCustomMessage("switchToChapter", ...) → lc__switch_chapter).
-
-  # ==========================================================================
-  # CHAPTER SERVERS
-  # ==========================================================================
-
-  ch1_server(input, output, session)
-  ch2h_server(input, output, session)
-  ch2_server(input, output, session)
-  ch3_server(input, output, session)
-  ch4_server(input, output, session)
-  ch5_server(input, output, session)
-  ch6_server(input, output, session)
-  ch7_server(input, output, session)
-  ch10_server(input, output, session)
-  ch_drzewo_server(input, output, session)
-  ch9_server(input, output, session)
-  p5_server(input, output, session)
-
-}
-
-shinyApp(ui = ui, server = server)

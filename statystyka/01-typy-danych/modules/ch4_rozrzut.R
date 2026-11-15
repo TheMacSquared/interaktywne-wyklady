@@ -497,35 +497,3 @@ ch4_ui <- list(
 
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 4 Server
-# --------------------------------------------------------------------------
-
-ch4_server <- function(input, output, session) {
-
-  # --- Widget 1: Bus scene ---
-
-  # Scena: opisy kroków są w dokumencie (scene_widget(texts = )).
-
-  # Ryc. 4.2 (SD krok po kroku) i 4.3 (reguła 68–95–99.7) rysuje stat_charts.js.
-
-  # --- Widget 2b: Empirical rule (68-95-99.7) ---
-
-  # Ryc. 4.4 rysuje stat_charts.js; opisy w UI (ch4_emp_notes).
-
-  # Ryc. 4.5 (pudełko krok po kroku) rysuje stat_charts.js.
-
-  # --- Widget 3b: Group comparison ---
-
-  # Ryc. 4.6 rysuje stat_charts.js; tabele dla każdej pary w UI (ch4_grp_notes).
-
-
-  # --- Widget 4: Spread measures comparison ---
-
-  # Ryc. 4.7 i 4.8 rysuje stat_charts.js; tabele w UI.
-
-  # --- Widget 5: Coefficient of Variation ---
-
-
-}

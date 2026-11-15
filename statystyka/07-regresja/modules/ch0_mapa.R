@@ -123,8 +123,3 @@ ch0_map_ui <- list(
     )
   )
 )
-
-ch0_map_server <- function(input, output, session) {
-  # Rozdział jest statyczną mapą — nie ma elementów reaktywnych.
-  invisible(NULL)
-}

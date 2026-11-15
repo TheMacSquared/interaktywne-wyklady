@@ -492,15 +492,3 @@ ch2_ui <- list(
 
   )
 )
-
-
-# --------------------------------------------------------------------------
-# Chapter 2 Server
-# --------------------------------------------------------------------------
-
-ch2_server <- function(input, output, session) {
-  # Rozdział nie ma logiki serwera:
-  #   Ryc. 2.1 (tabela częstości krok po kroku) — widoki w dokumencie, .ch2_freq_views();
-  #   Ryc. 2.2, 2.4 i 2.5 — stat_charts.js;
-  #   Ryc. 2.3 (koło a słupki) — modules/scenario_chart.js.
-}

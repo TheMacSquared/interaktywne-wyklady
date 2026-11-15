@@ -118,7 +118,6 @@ ch3_geom_defs <- list(
   geom_4 = list(label = "Moneta: p = 0.5", p = 0.5)
 )
 
-
 # Podpisy pod rycinami scenariuszy (E(X) i SD), liczone raz dla każdego scenariusza.
 ch3_binom_stat <- function(s) {
   paste0(s$label, ":  E(X) = ", round(s$n * s$p, 1), ",  SD = ", round(sqrt(s$n * s$p * (1 - s$p)), 2))
@@ -551,18 +550,3 @@ ch3_ui <- list(
     )
   )
 )
-
-# --------------------------------------------------------------------------
-# Chapter 3 Server
-# --------------------------------------------------------------------------
-
-ch3_server <- function(input, output, session) {
-
-  # --- Ryc. 3.2, 3.7, 3.10: eksperyment → zmienna losowa → rozkład (experiment.js) ---
-
-
-
-
-  # Ryc. 3.1 losuje i rysuje sim_charts.js, Ryc. 3.4, 3.8, 3.11, 3.12 — dist_charts.js.
-
-}

@@ -109,6 +109,3 @@ ch10_ui <- lecture_chapter(id = "ch10", num = "10", title = "Studenci", content 
     target_id = "ch11"
   )
 ))
-
-# Tabela składana przy budowaniu strony.
-ch10_server <- function(input, output, session) {}

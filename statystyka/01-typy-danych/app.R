@@ -300,36 +300,3 @@ ui <- lecture_page(
   chapters      = .chapters,
   header_extras = app_extras
 )
-
-# ============================================================================
-# SERVER
-# ============================================================================
-
-server <- function(input, output, session) {
-
-  # ==========================================================================
-  # NAWIGACJA MIEDZY ROZDZIALAMI
-  # ==========================================================================
-
-  lc <- lecture_server(.chapters, input, output, session)
-
-  # Nawigacja między rozdziałami idzie przez lc_chapter_next() w modułach.
-
-  # Śledzona zmienna: odczyty dla wszystkich zmiennych są w dokumencie
-  # (tracker_variants() w modules/helpers.R), przełącza je lista tracked_var.
-
-  # ==========================================================================
-  # CHAPTER SERVERS
-  # ==========================================================================
-
-  ch1_server(input, output, session)
-  ch2_server(input, output, session)
-  ch3_server(input, output, session)
-  ch4_server(input, output, session)
-  ch5_server(input, output, session)
-  ch7_server(input, output, session)
-  ch8_server(input, output, session)
-
-} # end server
-
-shinyApp(ui = ui, server = server)

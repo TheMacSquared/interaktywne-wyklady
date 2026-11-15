@@ -146,7 +146,3 @@ p5_5E_ui <- p5_panel("5E", "scena", "Mandaty: jak by było, gdyby płeć nie mia
     Suma czterech wkładów to statystyka χ².")
     )
   ))
-
-# --- teksty kroków ------------------------------------------------------------
-p5_server <- function(input, output, session) {
-}

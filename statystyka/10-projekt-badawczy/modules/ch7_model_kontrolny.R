@@ -176,7 +176,3 @@ ch7_ui <- lecture_chapter(id = "ch7", num = "7", title = "Model kontrolny", cont
     "ch8")
   )
 )
-
-# Rozdział nie ma logiki serwera: serię modeli liczy R przy budowaniu (modules/figures.R),
-# model własny przeglądarka (shared/lc_stats.js).
-ch7_server <- function(input, output, session) {}
