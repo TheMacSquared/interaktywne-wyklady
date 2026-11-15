@@ -2260,7 +2260,7 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 
 /* Ramka wzoru z samym tekstem (np. hipotezy H₀/H₁): do lewej, zwykły rozmiar */
 /* .MathJax_SVG: wzory złożone przy budowaniu strony statycznej (scripts/build_static.R). */
-.lc-formula-box:not(:has(.MathJax,.MathJax_Display,.MathJax_SVG,.MathJax_SVG_Display,mjx-container,.lc-formula-row)){text-align:left;font-size:.94em}
+.lc-formula-box:not(:has(.MathJax,.MathJax_Display,.MathJax_SVG,.MathJax_SVG_Display,mjx-container,.lc-formula-row,.lc-hmath)){text-align:left;font-size:.94em}
 .lc-formula-box>p{margin:.2em 0}
 
 /* Pułapka — jedyny wypełniony blok tekstowy, max 1 na sekcję */

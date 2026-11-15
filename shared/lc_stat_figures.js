@@ -23,7 +23,7 @@
 //   segment, arrow(s), point(s), rect(s), segs, polygon, box, rug, cells
 //   text {x, y, text, color, align, valign, bold, mono, size, halo}  (y = "top": przy górnej krawędzi)
 // Inne klucze opisu: xBig, xTicks, xLabels, yLabels, xLabelEvery, xInt, noXGrid, noYGrid, hideY, alignLeft,
-// yNegative (podpisy ujemnych wartości osi Y), xRotate.
+// yNegative (podpisy ujemnych wartości osi Y), xRotate, xInterval / yInterval (stały odstęp siatki).
 (function () {
   "use strict";
   var C = window.lcCharts;
@@ -321,6 +321,9 @@
       ya.axisLabel.hideOverlap = false; ya.axisLabel.fontFamily = sans;
       ya.axisLabel.formatter = function (v) { return spec.yLabels[Math.round(v)] || ""; };
     }
+    // Stały odstęp podziałek i linii siatki (np. co 1 w ćwiczeniu z odczytem współrzędnych).
+    if (spec.xInterval) xa.interval = spec.xInterval;
+    if (spec.yInterval) ya.interval = spec.yInterval;
     if (spec.noYGrid) ya.splitLine = { show: false };
     if (spec.hideY) { ya.axisLabel.show = false; ya.axisTick.show = false; ya.axisLine.show = false; }
     // Wykresy porównywane ze sobą (alignLeft) mają stałe marginesy bez dopasowania do
