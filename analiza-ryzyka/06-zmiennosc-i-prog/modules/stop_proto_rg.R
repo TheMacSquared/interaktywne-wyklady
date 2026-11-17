@@ -3,7 +3,7 @@
 #   z6p_16a_ui — Domknięcie „Raport, wersja poprawiona” (P16A): raport z kadru 1 sceny P1
 #                wraca poprawiony. Karta „przed” (przygaszona), karta komunikatu progowego
 #                (trzy punkty ze źródłem) i rysunek N(82, 3) z progiem 85°C, policzony w R.
-#   z6p_16b_ui — Domknięcie „Od pytania do działania” (P16B): pięć kroków ściągi w rzędzie,
+#   z6p_16b_ui — Domknięcie „Od pytania do działania” (P16B): pięć kroków ściągi jako lista,
 #                każdy z wynikiem dla łożyska Bananpolu i znacznikiem rozdziału.
 # Statyczne: HTML/CSS i SVG składa R, bez JS i bez serwera (działa offline).
 # Wymaga: stop_proto_common.R (z6p_panel, z6p_css, z6p_svg, z6p_axis, z6p_norm_path,
@@ -72,7 +72,7 @@ z6p16a_svg <- function() {
   )
 }
 
-z6p_16a_ui <- z6p_panel("P16A", "domknięcie", "Raport, wersja poprawiona", z6p_css, z6p16a_css,
+z6p_16a_ui <- z6p_panel("P16A", "domknięcie", "Raport, wersja poprawiona", proto = FALSE, z6p_css, z6p16a_css,
   tags$div(class = "z6p16a",
     tags$div(class = "z6p16a-card z6p16a-before",
       tags$div(class = "z6p16a-head", "RAPORT MIESIĘCZNY · temperatura łożysk"),
@@ -101,24 +101,27 @@ z6p_16a_ui <- z6p_panel("P16A", "domknięcie", "Raport, wersja poprawiona", z6p_
 # P16B — DOMKNIĘCIE „OD PYTANIA DO DZIAŁANIA”
 # ============================================================================
 
+# Układ (17.11.2026): pionowa lista kroków, każdy krok w jednym wierszu (nazwa, wynik,
+# źródło), jak komunikat w P16A. Dawny rząd pięciu kolumn łamał tekst co 1–2 słowa.
 z6p16b_css <- tags$style(HTML("
   .z6p16b { margin: .4em 0; }
-  .z6p16b-flow { display: flex; align-items: stretch; gap: .35em; }
-  .z6p16b-step { flex: 1 1 0; min-width: 0; background: var(--upwr-surface); border: 1px solid var(--upwr-rule);
-    border-top: 4px solid var(--upwr-ink); border-radius: 6px; padding: .7em .75em .8em; display: flex; flex-direction: column; gap: .35em; }
-  .z6p16b-step.is-result { border-top-color: var(--upwr-accent); }
-  .z6p16b-step.is-action { border-top-color: var(--upwr-sage); }
+  .z6p16b-flow { display: grid; gap: .45em; }
+  .z6p16b-step { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) auto; align-items: baseline; gap: .2em 1em;
+    background: var(--upwr-surface); border: 1px solid var(--upwr-rule); border-left: 4px solid var(--upwr-ink);
+    border-radius: 6px; padding: .6em .9em; }
+  .z6p16b-step.is-result { border-left-color: var(--upwr-accent); }
+  .z6p16b-step.is-action { border-left-color: var(--upwr-sage); }
+  .z6p16b-head { display: flex; flex-direction: column; gap: .1em; }
   .z6p16b-n { font-family: var(--upwr-mono); font-size: .72em; letter-spacing: .06em; text-transform: uppercase; color: var(--upwr-ink-subtle); }
   .z6p16b-name { font-size: 1.02em; }
-  .z6p16b-val { margin: 0; font-size: .9em; line-height: 1.45; flex: 1 1 auto; }
-  .z6p16b-hot { font-family: var(--upwr-mono); font-weight: 700; font-size: 1.2em; color: var(--upwr-accent); }
+  .z6p16b-val { margin: 0; line-height: 1.45; }
+  .z6p16b-hot { font-family: var(--upwr-mono); font-weight: 700; font-size: 1.15em; color: var(--upwr-accent); }
   .z6p16b-ok { font-family: var(--upwr-mono); font-weight: 700; color: var(--upwr-sage); }
-  .z6p16b-ref { font-family: var(--upwr-mono); font-size: .72em; color: var(--upwr-ink-subtle);
-    border-top: 1px solid var(--upwr-rule); padding-top: .35em; margin-top: .2em; }
-  .z6p16b-arrow { flex: 0 0 auto; align-self: center; font-size: 1.3em; line-height: 1; color: var(--upwr-ink-subtle); }
-  @media (max-width: 760px) {
-    .z6p16b-flow { flex-direction: column; }
-    .z6p16b-arrow { transform: rotate(90deg); padding: .1em 0; }
+  .z6p16b-ref { font-family: var(--upwr-mono); font-size: .72em; color: var(--upwr-ink-subtle); white-space: nowrap;
+    border: 1px solid var(--upwr-rule); border-radius: 999px; padding: .1em .6em; }
+  @media (max-width: 640px) {
+    .z6p16b-step { grid-template-columns: minmax(0, 1fr); }
+    .z6p16b-ref { justify-self: start; }
   }
 "))
 
@@ -133,32 +136,28 @@ z6p16b_steps <- list(
     val = "pomiar to nie zmiana; kształt ogona sprawdza wykres Q–Q",
     ref = "rozdz. 3 i 6"),
   list(name = "Wynik", cls = "is-result",
-    val = tagList("P(T > 85) = ", tags$span(class = "z6p16b-hot", "0.159"),
+    val = tagList("P(T > 85) = ", tags$span(class = "z6p16b-hot", "0.159", .noWS = "outside"),
       ": 159 na 1000 pomiarów, alarm w około 75% zmian"),
     ref = "wzory (6.5), (6.7)"),
   list(name = "Działanie", cls = "is-action",
-    val = tagList("chłodzenie i stabilizacja: ", tags$span(class = "z6p16b-ok", "około 6 na 1000"),
+    val = tagList("chłodzenie i stabilizacja: ", tags$span(class = "z6p16b-ok", "około 6 na 1000", .noWS = "outside"),
       "; próg zostaje"),
     ref = "rozdz. 4")
 )
 
 z6p16b_tile <- function(i, s) {
-  tags$div(class = paste("z6p16b-step", s$cls),
-    tags$span(class = "z6p16b-n", paste("Krok", i)),
-    tags$strong(class = "z6p16b-name", s$name),
+  tags$li(class = paste("z6p16b-step", s$cls),
+    tags$div(class = "z6p16b-head",
+      tags$span(class = "z6p16b-n", paste("Krok", i)),
+      tags$strong(class = "z6p16b-name", s$name)),
     tags$p(class = "z6p16b-val", s$val),
     tags$span(class = "z6p16b-ref", s$ref)
   )
 }
 
-z6p16b_items <- unlist(lapply(seq_along(z6p16b_steps), function(i) {
-  if (i < length(z6p16b_steps)) list(z6p16b_tile(i, z6p16b_steps[[i]]),
-    tags$span(class = "z6p16b-arrow", `aria-hidden` = "true", "→"))
-  else list(z6p16b_tile(i, z6p16b_steps[[i]]))
-}), recursive = FALSE)
-
-z6p_16b_ui <- z6p_panel("P16B", "domknięcie", "Od pytania do działania", z6p_css, z6p16b_css,
+z6p_16b_ui <- z6p_panel("P16B", "domknięcie", "Od pytania do działania", proto = FALSE, z6p_css, z6p16b_css,
   tags$div(class = "z6p16b",
-    do.call(tags$div, c(list(class = "z6p16b-flow"), z6p16b_items))
+    tags$ol(class = "z6p16b-flow", style = "list-style: none; padding: 0; margin: 0;",
+      lapply(seq_along(z6p16b_steps), function(i) z6p16b_tile(i, z6p16b_steps[[i]])))
   )
 )

@@ -1,9 +1,8 @@
-// Prototypy punktów stop wykładu 06, grupa rf (P14A, P14B). Ryciny lcSF liczone
+// Prototypy punktów stop wykładu 06, grupa rf (P14A). Ryciny lcSF liczone
 // w przeglądarce; kontenery w R: lc_sf_figure() w stop_proto_rf.R.
 //
 //   z6_modele   — galeria „Ten sam środek, inny ogon” (P14A): trzy gęstości na jednej
 //                 osi, widok „Cały rozkład” / „Ogon powyżej 88°C”, tabela pod wykresem.
-//   z6_modele_b — galeria „Trzy modele obok siebie” (P14B): wykres k-ty = model k.
 //
 // Rozkłady: window.lcDist (dnorm, pnorm, dgamma, pgamma, dt). Dystrybuanty t₃ brak
 // w lcDist, więc liczy ją t3cdf (wzór zamknięty dla ν = 3).
@@ -91,28 +90,6 @@
           return [s.name, pct85(s.p85), pct91(s.p91), per1000(s.p91), s.ratio.toFixed(1) + "×"];
         });
         return S.table(cols, rows);
-      }
-    },
-
-    // P14B: jeden wykres na model; k to numer wykresu (0 normalny, 1 skośny, 2 ciężki ogon).
-    z6_modele_b: {
-      draw: function (v, P, k) {
-        var m = MODELS[k];
-        return {
-          x: [68, 100], y: [0, 0.26], xLabelEvery: 4, alignLeft: true,
-          xName: "Temperatura łożyska (°C)",
-          layers: [
-            { type: "line", data: curve(m.pdf, C1, C3), color: P.accent, width: 0, fill: P.accent, fillAlpha: 0.2 },
-            { type: "line", data: curve(m.pdf, C3, 100), color: P.accent, width: 0, fill: P.accent, fillAlpha: 0.7 },
-            { type: "line", data: curve(m.pdf, 68, 100), color: P[m.key], width: 2.4 },
-            { type: "vline", x: C1, color: P.ink, width: 1.4, dash: "dashed" },
-            { type: "vline", x: C3, color: P.ink, width: 1.4, dash: "dashed" },
-            // Napisy po lewej stronie linii 85°C, żeby żadna pionowa kreska ich nie przecinała.
-            { type: "text", x: C1 - 0.5, y: "top", align: "right", mono: true, size: 0.85, color: P.ink,
-              text: "P(T > 85) = " + pct85(m.tail(C1)) + "\nP(T > 91) = " + pct91(m.tail(C3)) }
-          ],
-          aria: "Rozkład " + m.name + " z zaznaczonym polem powyżej 85 i 91 stopni."
-        };
       }
     }
   });

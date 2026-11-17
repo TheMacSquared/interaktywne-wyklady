@@ -24,7 +24,7 @@ testthat::test_that("wykład 06: prototypy punktów stop są wpięte i działaj�
 
   # Każdy prototyp stoi raz; P1 jest przyjęta (po głosowaniu, bez plakietki prototypu).
   expected <- c("P18", "P17", "P1", "P2B", "P3", "P4", "P5", "P6", "P7", "P8", "P8b", "P9A",
-    "P10A", "P11", "P12", "P13", "P14A", "P14B", "P15A", "P15B", "P16A", "P16B")
+    "P10A", "P11", "P12", "P13", "P14A", "P15A", "P16A", "P16B")
   testthat::expect_equal(sort(res$protos), sort(expected))
   testthat::expect_false(res$pending)
 
@@ -36,7 +36,7 @@ testthat::test_that("wykład 06: prototypy punktów stop są wpięte i działaj�
   }
   testthat::expect_setequal(res$figs, c("z6_hist_b", "z6_pole", "z6_linijka", "z6_musigma",
     "z6_prog", "z6_interwencje", "z6_prog_ponizej", "z6_nakladanie",
-    "z6_modele", "z6_modele_b",
+    "z6_modele",
     # Główne wykresy wykładu (dawniej ggplot na serwerze): modules/wykresy.js.
     "z6_shapes"))
   # Rycina interwencji stoi raz (P9A).

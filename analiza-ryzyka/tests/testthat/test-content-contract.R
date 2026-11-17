@@ -15,7 +15,11 @@ testthat::test_that("bloki 01–10 realizują stały rytm dydaktyczny", {
     text <- module_text[[app]]
     if (!app %in% no_vote) testthat::expect_true(grepl("risk_vote_panel", text, fixed = TRUE))
     # Kontrolki Shiny albo przyciski widgetów działających w przeglądarce (klasa lc-action).
-    testthat::expect_gte(lengths(regmatches(text, gregexpr("sliderInput|selectInput|checkboxGroupInput|actionButton|lc_slider|lc_sf_slider|lc_segmented|lc_action|lc-action", text, perl = TRUE))), 2)
+    # Liczone we wszystkich plikach modules/*.R: przyjęte punkty stop mają kontrolki
+    # we własnych plikach (stop_proto_*.R), nie w block.R.
+    controls <- paste(unlist(lapply(Sys.glob(file.path(risk_root, app, "modules", "*.R")),
+      readLines, warn = FALSE, encoding = "UTF-8")), collapse = "\n")
+    testthat::expect_gte(lengths(regmatches(controls, gregexpr("sliderInput|selectInput|checkboxGroupInput|actionButton|lc_slider|lc_sf_slider|lc_segmented|lc_action|lc-action|lc_sf_action|_seg\\(|_button\\(", controls, perl = TRUE))), 2, label = app)
     if (!app %in% no_decision) testthat::expect_true(grepl("decision", text, fixed = TRUE))
     testthat::expect_true(grepl("Ściąga", text, fixed = TRUE))
     testthat::expect_true(grepl("risk_assessment_ui", text, fixed = TRUE))

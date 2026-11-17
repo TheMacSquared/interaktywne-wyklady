@@ -465,7 +465,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Wzór (6.10) tłumaczy, dlaczego normy mówią o rozrzutach, a nie tylko o średnich. Tradycyjny współczynnik bezpieczeństwa μ_S/μ_L nie zawiera σ, więc dwie konstrukcje o tym samym współczynniku mogą mieć zupełnie różne ryzyko awarii.",
             "Tu też wraca pułapka z nakładaniem krzywych. Kusi, by za ryzyko uznać pole wspólne dwóch gęstości narysowanych na jednym wykresie. Dla L ~ N(85, 8) i S ~ N(95, 7) to pole wynosi około 0.50, podczas gdy P(L > S) ≈ 0.173. Pole nakładania mierzy podobieństwo kształtów, a nie częstość par, w których obciążenie wygrywa."
           ),
-          # PROTOTYP P13: pole nakładania to nie ryzyko
+          # Przypadek brzegowy P13 (przyjęty 17.11.2026): pole nakładania to nie ryzyko
           z6p_get("z6p_13_ui"),
           risk_check("z6_chk_wariancja",
             "L ~ N(85, 8) i S ~ N(95, 7) są niezależne. Jakie jest odchylenie standardowe marginesu D = S - L?",
@@ -517,7 +517,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         body = list(
           c(
             "Wszystkie rachunki z rozdziałów 2–5 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.",
-            "Widget porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3). Skośny to przesunięty rozkład gamma: ma twardą dolną granicę około 76.8°C (łożysko nie ostygnie poniżej temperatury otoczenia) i dłuższy prawy ogon. Model z ciężkim ogonem to przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
+            "Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3). Skośny to przesunięty rozkład gamma: ma twardą dolną granicę około 76.8°C (łożysko nie ostygnie poniżej temperatury otoczenia) i dłuższy prawy ogon. Model z ciężkim ogonem to przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
           ),
           risk_example("6.10", "Trzy modele, trzy ryzyka",
             problem = "Dla trzech modeli temperatury o średniej 82°C i σ = 3°C (normalny, skośny gamma, ciężki ogon t₃) porównaj P(T > 85) oraz P(T > 91), czyli przekroczenie progu leżącego 1σ i 3σ nad średnią.",
@@ -529,20 +529,12 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             ),
             answer = "Przy progu 1σ nad średnią modele różnią się umiarkowanie, a model z ciężkim ogonem daje nawet mniej przekroczeń niż normalny. Przy progu 3σ oba modele nienormalne dają od 5 do 9 razy więcej przekroczeń. Założenie normalności najbardziej szkodzi tam, gdzie progi są najważniejsze — daleko w ogonie."
           ),
-          risk_try("porównaj histogramy trzech kształtów przy widoku „Histogram” i sprawdź, ile słupków leży na prawo od pionowej linii 85°C. Potem przełącz na „Wykres kwantylowy (Q–Q)” i przejrzyj te same trzy kształty, patrząc przede wszystkim na oba końce wykresu."),
-          # PROTOTYPY P14A i P14B: galeria trzech modeli
-          z6p_variant("P14A — trzy modele na jednej osi, z powiększeniem ogona."),
+          risk_try("w widoku „Cały rozkład” porównaj środki trzech krzywych. Potem przełącz na „Ogon powyżej 88°C” i sprawdź, która krzywa leży najwyżej za progiem 91°C. Liczby z tabeli pod wykresem porównaj z przykładem 6.10."),
+          # Galeria P14A (przyjęta 17.11.2026): zastępuje dawny histogram kształtów;
+          # wykres kwantylowy tych samych kształtów stoi w sekcji „Jak czytać wykres kwantylowy”
           z6p_get("z6p_14a_ui"),
-          z6p_variant("P14B — trzy modele obok siebie."),
-          z6p_get("z6p_14b_ui"),
-          risk_sf_panel("Rozszerzenie", "Trzy rozkłady o podobnym centrum", "z6_shapes",
-            controls = list(
-              selectInput("z6_shape", "Kształt", selectize = FALSE, c("Symetryczny" = "normal", "Skośny" = "skew", "Ciężki ogon" = "heavy")),
-              lc_segmented("z6_view", "Widok", choices = c("Histogram" = "hist", "Wykres kwantylowy (Q–Q)" = "qq"))),
-            reads = list(risk_sf_read("shapes_p85", "P(T > 85°C)", color = upwr_accent), risk_sf_read("shapes_p91", "P(T > 91°C)", color = upwr_accent)),
-            config = z6_shapes_config),
           c(
-            "Na histogramach różnice łatwo przeoczyć: wszystkie trzy mają garb w okolicy 82°C, a ogony to kilka niskich słupków. Rozkład skośny ma wyraźnie ucięty lewy bok i nieco dłuższy prawy; rozkład z ciężkim ogonem ma wyższy i węższy garb, a pojedyncze obserwacje sięgają daleko poza 95°C i poniżej 70°C. Na wykresie kwantylowym te same różnice są oczywiste — i to jest główny powód, dla którego używa się go do diagnozy."
+            "W całym rozkładzie różnice łatwo przeoczyć: wszystkie trzy krzywe mają garb w okolicy 82°C. Rozkład skośny ma wyraźnie ucięty lewy bok i nieco dłuższy prawy; rozkład z ciężkim ogonem ma wyższy i węższy garb, a jego ogony sięgają dalej niż u normalnego. Dopiero powiększenie ogona pokazuje, ile pola leży za wysokim progiem. Na danych, bez znanego modelu, te same różnice najlepiej widać na wykresie kwantylowym — i to jest główny powód, dla którego używa się go do diagnozy."
           )
         )
       ),
@@ -558,6 +550,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Logika jest ta sama co w standaryzacji (6.4), tylko odwrócona. Gdyby pomiary były dokładnie normalne, i-ty najmniejszy pomiar leżałby blisko μ + σ · Φ⁻¹((i - 0.5)/n) — to wzór (6.6) z α = (i - 0.5)/n. Odchylenie punktu od prostej mówi, o ile rzeczywisty kwantyl różni się od normalnego.",
             "Typowe wzory: punkty ułożone w łuk otwarty ku górze — oba końce powyżej prostej, środek nieco poniżej — oznaczają skośność prawostronną: prawy koniec ucieka w górę, bo prawy ogon jest dłuższy, a lewy koniec jest „podniesiony”, bo lewy ogon jest krótszy niż normalny. Punkty odchodzące od prostej na obu końcach w przeciwne strony, jak rozciągnięta litera S, oznaczają ogony cięższe niż normalne. Sam środek wykresu zwykle zgadza się dobrze i niewiele mówi."
           ),
+          risk_try("przełączaj kształty i porównuj oba końce wykresu z opisem powyżej: dla rozkładu skośnego szukaj łuku, dla ciężkiego ogona rozciągniętej litery S. Sprawdź też, że w środku wszystkie trzy wykresy leżą blisko prostej."),
+          # Dawny panel kształtów (17.11.2026): sam wykres kwantylowy; porównanie ogonów jest w P14A
+          risk_sf_panel("Rozszerzenie", "Trzy kształty na wykresie kwantylowym", "z6_shapes",
+            controls = lc_segmented("z6_shape", "Kształt", choices = c("Symetryczny" = "normal", "Skośny" = "skew", "Ciężki ogon" = "heavy")),
+            config = z6_shapes_config),
           risk_example("6.11", "Pięć pomiarów na wykresie Q–Q",
             problem = "Pięć uporządkowanych pomiarów temperatury łożyska: 79.4; 80.9; 82.3; 83.1; 88.6°C. Wyznacz współrzędne punktów Q–Q według (6.11) i porównaj pomiary z kwantylami modelu N(82, 3).",
             steps = c(
@@ -567,11 +564,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             ),
             answer = "Największy pomiar jest o 2.8°C wyższy, niż przewiduje model normalny — sygnał możliwego ciężkiego prawego ogona. Przy pięciu pomiarach to jednak tylko sygnał; do oceny ogona potrzeba znacznie więcej danych."
           ),
-          # PROTOTYPY P15A i P15B: jak powstaje punkt wykresu Q–Q
-          z6p_variant("P15A — kadry: pomiary obok kwantyli modelu."),
+          # Pojęcie P15A (przyjęte 17.11.2026): jak powstaje punkt wykresu Q–Q
           z6p_get("z6p_15a_ui"),
-          z6p_variant("P15B — jeden prosty rysunek."),
-          z6p_get("z6p_15b_ui"),
           risk_check("z6_chk_qq", extension = TRUE,
             "Na wykresie Q–Q punkty w środku leżą na prostej, a na prawym końcu wyraźnie zaginają się w górę. Co to oznacza dla oceny P(T > c) przy wysokim progu c?",
             c("Model normalny zaniża ryzyko" = "under", "Model normalny zawyża ryzyko" = "over", "Nic, bo środek jest zgodny" = "nothing"),
@@ -606,8 +600,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             answer = "„Około 16% pomiarów, a w praktyce większość zmian, przekracza próg 85°C. Przyczyną jest średnia zbyt blisko progu przy rozrzucie 3°C. Rekomendujemy poprawę chłodzenia i wyrównanie obciążenia, co może obniżyć częstość przekroczeń do kilku na tysiąc; progu nie podnosimy bez badania materiałowego.”"
           )
           ,
-          # PROTOTYP P16A: domknięcie — raport z rozdziału 1 poprawiony
-          z6p_variant("P16A — raport z rozdziału 1 wraca poprawiony."),
+          # Domknięcie P16A (przyjęte 17.11.2026): raport z rozdziału 1 poprawiony
           z6p_get("z6p_16a_ui")
         )
       )
@@ -627,9 +620,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           "Standaryzacja (6.4) przekłada każdy próg na wspólną linijkę z, a wzór (6.5) zamienia z na prawdopodobieństwo przekroczenia; kwantyl (6.6) odpowiada na pytanie odwrotne. Dla łożyska z = 1 i P(T > 85) ≈ 0.159, czyli około 159 pomiarów na tysiąc. Ryzyko w zmianie z wieloma pomiarami to inna zmienna — wzór (6.7). Chłodzenie, stabilizacja i zmiana progu działają przez to samo z, ale tylko dwa pierwsze zmieniają fizykę. Gdy próg sam jest losowy, jak wytrzymałość liny, ryzyko to P(D < 0) dla marginesu D = S - L (6.8), którego wariancja jest sumą wariancji (6.9), a prawdopodobieństwo awarii to Φ(-β) (6.10).",
           "Wszystkie te rachunki zależą od kształtu ogona. Wykres kwantylowy (6.11) pokazuje, czy model normalny opisuje ekstremalne pomiary; skośność i ciężkie ogony potrafią zwiększyć częstość przekroczeń odległych progów kilkakrotnie, przy tej samej średniej i tym samym σ."
         ),
-        # PROTOTYP P16B: domknięcie — mapa wykładu z wynikami dla łożyska
+        # Domknięcie P16B (przyjęte 17.11.2026): mapa wykładu z wynikami dla łożyska
         body = list(
-          z6p_variant("P16B — mapa wykładu z wynikiem każdego kroku."),
           z6p_get("z6p_16b_ui")
         )
       ),

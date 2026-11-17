@@ -32,26 +32,21 @@ w którym miałby zostać. Tam, gdzie są warianty, nad panelem jest notka
 | 5 | P11 „Lina dźwigu” | scena | re | **przyjęta 17.11** zamiast chmury par z suwakami (usunięta); tekst sekcji „Chmura par L i S” przepisany pod scenę, kN zamiast „jednostek” |
 | 5 | P18 „Obciążenie i wytrzymałość w praktyce” | przykłady | ri | **dodana i przyjęta 17.11**: 5 sytuacji L–S (smar, regał, wyłącznik, dach, wał) i zestawienie z liną; po scenie P11 |
 | 5 | P12 „Od chmury par do marginesu” | pojęcie (kadry) | re | **przyjęta 17.11**, przeniesiona za wzory (6.9)–(6.10) do sekcji „Różnica dwóch zmiennych normalnych” |
-| 5 | P13 „Pole nakładania to nie ryzyko” | przypadek brzegowy | rd | przyjąć / odrzucić |
-| 6 | P14A „Ten sam środek, inny ogon” | galeria | rf | P14A (jedna oś, powiększenie ogona) czy P14B (obok siebie) |
-| 6 | P14B „Trzy modele obok siebie” | galeria | rf | jak wyżej |
-| 6 | P15A „Pięć pomiarów obok modelu” | pojęcie (kadry) | rf | P15A, P15B albo żaden |
-| 6 | P15B „Wykres Q–Q z pięciu pomiarów” | pojęcie | rf | jak wyżej |
-| 7 | P16A „Raport, wersja poprawiona” | domknięcie | rg | P16A, P16B albo oba |
-| 8 | P16B „Od pytania do działania” | domknięcie | rg | jak wyżej |
+| 5 | P13 „Pole nakładania to nie ryzyko” | przypadek brzegowy | rd | **przyjęta 17.11** |
+| 6 | P14A „Ten sam środek, inny ogon” | galeria | rf | **przyjęta 17.11** zamiast histogramu kształtów; P14B odrzucona i usunięta; stary panel został jako sam wykres Q–Q w sekcji „Jak czytać wykres kwantylowy” |
+| 6 | P15A „Pięć pomiarów obok modelu” | pojęcie (kadry) | rf | **przyjęta 17.11**; P15B odrzucona i usunięta |
+| 7 | P16A „Raport, wersja poprawiona” | domknięcie | rg | **przyjęta 17.11** (obie) |
+| 8 | P16B „Od pytania do działania” | domknięcie | rg | **przyjęta 17.11**; układ zmieniony na pionową listę kroków |
 
 Pliki: `modules/stop_proto_<plik>.R` i `modules/proto_<plik>.js`; wspólne
 narzędzia w `modules/stop_proto_common.R` i `modules/sceny.js`.
 
 ## Znane słabości
 
-- P14B: pole powyżej 91°C jest z natury ledwo widoczne; różnicę niosą liczby
-  nad wykresami. P14A pokazuje ją w powiększeniu ogona.
 - P8, P11: pierwszy widok to jedna zmiana albo jedno podniesienie, więc
   licznik startuje od 100%.
 - P9A, P10A: w stanie bazowym przerywany kontur pokrywa się z krzywą i widać
   go dopiero po zmianie.
-- P16A, P16B: nie sprawdzone na wąskim ekranie.
 
 ## Po decyzjach
 

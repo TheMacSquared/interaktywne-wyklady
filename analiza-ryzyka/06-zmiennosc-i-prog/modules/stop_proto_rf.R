@@ -1,22 +1,18 @@
-# PROTOTYPY PUNKTÓW STOP (2026-11-14) — grupa rf: P14A, P14B, P15A, P15B ----------
+# PROTOTYPY PUNKTÓW STOP (2026-11-14) — grupa rf: P14A, P15A ----------------------
 #
 #   z6p_14a_ui — galeria „Ten sam środek, inny ogon” (P14A): trzy modele na jednej
 #                osi, widok „Cały rozkład” / „Ogon powyżej 88°C”; ryciny lcSF z6_modele
 #                (modules/proto_rf.js), tabela pod wykresem wypełniana przez JS.
-#   z6p_14b_ui — galeria „Trzy modele obok siebie” (P14B): ryciny lcSF z6_modele_b,
-#                po jednym wykresie na model.
 #   z6p_15a_ui — pojęcie „Pięć pomiarów obok modelu” (P15A): cztery kadry SVG
 #                policzone w R (pomiary → rosnąco → kwantyle modelu → wykres Q–Q).
-#   z6p_15b_ui — pojęcie „Wykres Q–Q z pięciu pomiarów” (P15B): jeden statyczny SVG
-#                z tabelą po lewej i wykresem Q–Q po prawej.
 # Wymaga: stop_proto_common.R (z6p_panel, z6p_css, z6p_svg, z6p_frames_ui),
 # R/lc_stat_figures.R (lc_sf_figure, lc_segmented) i modules/proto_rf.js.
 
 # ============================================================================
-# P14A i P14B — GALERIE TRZECH MODELI
+# P14A — GALERIA TRZECH MODELI (przyjęta 17.11.2026)
 # ============================================================================
 
-z6p_14a_ui <- z6p_panel("P14A", "galeria", "Ten sam środek, inny ogon",
+z6p_14a_ui <- z6p_panel("P14A", "galeria", "Ten sam środek, inny ogon", proto = FALSE,
   lc_sf_figure("z6_modele",
     control = lc_segmented("z6p14_view", "Widok",
       choices = c("Cały rozkład" = "all", "Ogon powyżej 88°C" = "tail")),
@@ -26,14 +22,8 @@ z6p_14a_ui <- z6p_panel("P14A", "galeria", "Ten sam środek, inny ogon",
       lc_caption("Przy progu 1σ (85°C) trzy modele dają podobne ryzyko, przy progu 3σ (91°C) różnią się 5–9 razy. Ten sam środek, a różni je tylko ogon.")
     )))
 
-z6p_14b_ui <- z6p_panel("P14B", "galeria", "Trzy modele obok siebie",
-  lc_sf_figure("z6_modele_b", charts = 3,
-    headings = c("Normalny", "Skośny (gamma)", "Ciężki ogon (t₃)"),
-    ratio = "1.5/1", max_height = "320px",
-    after = lc_caption("Przy progu 91°C pole nad krzywą jest u obu modeli nienormalnych wyraźnie większe niż u normalnego, mimo tego samego środka i rozrzutu.")))
-
 # ============================================================================
-# P15A i P15B — JAK POWSTAJE PUNKT WYKRESU Q–Q
+# P15A — JAK POWSTAJE PUNKT WYKRESU Q–Q (przyjęta 17.11.2026)
 # ============================================================================
 
 # Dane z przykładu 6.11: pomiary w kolejności zapisu, posortowane i kwantyle modelu.
@@ -176,26 +166,4 @@ z6rf_frames <- list(
       z6rf_fmt(max(z6rf_sorted)), z6rf_fmt(z6rf_q[5]), z6rf_sgn(z6rf_diff[5])))
 )
 
-z6p_15a_ui <- z6p_frames_ui("P15A", "pojęcie", "Pięć pomiarów obok modelu", z6rf_frames, z6rf_svg)
-
-# P15B: jeden statyczny rysunek — tabela po lewej, wykres Q–Q po prawej.
-z6rf_table_svg <- function() {
-  row_y <- 84 + (0:4) * 30
-  cls <- ifelse(seq_len(5) == 5, "z6p-mono z6p-bad", "z6p-mono")
-  paste0(
-    '<text class="z6p-subtle" x="40" y="40" font-size="12" font-weight="700">i</text>',
-    '<text class="z6p-subtle" x="90" y="40" font-size="12" font-weight="700">pomiar</text>',
-    '<text class="z6p-subtle" x="180" y="40" font-size="12" font-weight="700">kwantyl modelu</text>',
-    '<text class="z6p-subtle" x="320" y="40" font-size="12" font-weight="700">różnica</text>',
-    '<line class="z6p-axis" x1="36" x2="380" y1="52" y2="52"/>',
-    paste(sprintf('<text class="z6p-mono" x="40" y="%g" font-size="14">%d</text>', row_y, 1:5), collapse = ""),
-    paste(sprintf('<text class="z6p-mono" x="90" y="%g" font-size="14">%s</text>', row_y, z6rf_fmt(z6rf_sorted)), collapse = ""),
-    paste(sprintf('<text class="z6p-mono" x="180" y="%g" font-size="14">%s</text>', row_y, z6rf_fmt(z6rf_q)), collapse = ""),
-    paste(sprintf('<text class="%s" x="320" y="%g" font-size="14">%s</text>', cls, row_y, z6rf_sgn(z6rf_diff)), collapse = "")
-  )
-}
-
-z6p_15b_ui <- z6p_panel("P15B", "pojęcie", "Wykres Q–Q z pięciu pomiarów", z6p_css,
-  z6p_svg(800, 360, "Tabela pięciu pomiarów z kwantylami modelu i różnicami oraz wykres Q–Q: cztery punkty blisko prostej, ostatni odstaje o 2.8 stopnia.",
-    z6rf_table_svg(), z6rf_qq(460, 760, 300, 40, segments = "all")),
-  lc_caption("Cztery pierwsze punkty leżą blisko prostej, ostatni odstaje o prawie 1σ. Przy pięciu pomiarach to tylko sygnał, nie dowód o ogonie."))
+z6p_15a_ui <- z6p_frames_ui("P15A", "pojęcie", "Pięć pomiarów obok modelu", z6rf_frames, z6rf_svg, proto = FALSE)

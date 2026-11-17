@@ -58,7 +58,7 @@ z6p_10a_ui <- z6p_panel("P10A", "przypadek brzegowy", "Próg poniżej średniej"
 
 z6p13_cfg <- list(sdL = 8, sdS = 7)
 
-z6p_13_ui <- z6p_panel("P13", "przypadek brzegowy", "Pole nakładania to nie ryzyko",
+z6p_13_ui <- z6p_panel("P13", "przypadek brzegowy", "Pole nakładania to nie ryzyko", proto = FALSE,
   lc_sf_figure("z6_nakladanie",
     control = lc_segmented("z6p13_v", "Układ", c("L = 85, S = 95" = "a", "Zamienione: L = 95, S = 85" = "b")),
     toolbar = lc_readouts(z6p_read("ov", "Pole wspólne"), z6p_read("pl", "P(L > S)", upwr_accent),
