@@ -33,10 +33,16 @@ testthat::test_that("każdy blok ma pięć własnych pytań z poprawnymi kluczam
   files <- file.path(risk_root, names(expected_apps), "modules", "block.R")
   all_questions <- character()
   for (file in files) {
-    # Definicja quizu poprzedza komponenty Shiny; oceniamy sam zestaw treści.
+    # Oceniamy sam zestaw treści: przypisanie obiektu o nazwie *_quiz. Nie musi być
+    # pierwszym wyrażeniem pliku (w 05 przed quizem stoją obiekty karty planu).
     expressions <- parse(file)
-    eval(expressions[[1]], envir = env)
-    quiz <- get(as.character(expressions[[1]][[2]]), envir = env)
+    is_quiz <- vapply(expressions, function(e) {
+      is.call(e) && identical(e[[1]], as.name("<-")) && is.name(e[[2]]) && grepl("_quiz$", as.character(e[[2]]))
+    }, logical(1))
+    testthat::expect_true(any(is_quiz), info = file)
+    quiz_expr <- expressions[[which(is_quiz)[1]]]
+    eval(quiz_expr, envir = env)
+    quiz <- get(as.character(quiz_expr[[2]]), envir = env)
     questions <- env$risk_quiz_questions(quiz)
     testthat::expect_length(questions, 5)
     for (question in questions) {
