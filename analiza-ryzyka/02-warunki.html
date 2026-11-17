@@ -2384,6 +2384,8 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-action.is-ghost{border-color:transparent;background:none;color:var(--upwr-ink-subtle)}
 .lc-action.is-ghost:hover{background:var(--upwr-surface-sunken);color:var(--upwr-ink)}
 .lc-action.is-icon{width:2.6em;padding:0;justify-content:center}
+.lc-action.is-icon[aria-pressed="true"]{background:var(--upwr-accent);border-color:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-icon[aria-pressed="true"] .lc-icon-slash{display:none}
 .lc-action:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
 .lc-action:disabled{opacity:.35;pointer-events:none}
 
@@ -4262,7 +4264,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
         <details class="lc-more">
           <summary class="lc-more-l">Skąd to się bierze: dlaczego iloraz?</summary>
           <div class="lc-more-b">
-            <p>Wzór (2.1) jest wprost przepisaniem liczenia na przypadkach. Jeśli w n porównywalnych przypadkach warunek B zaszedł n_B razy, a oba zdarzenia naraz — n_AB razy, to udział A wśród przypadków z B wynosi n_AB / n_B.</p>
+            <p>Wzór (2.1) jest wprost przepisaniem liczenia na przypadkach. Jeśli w n porównywalnych przypadkach warunek B zaszedł n<sub>B</sub> razy, a oba zdarzenia naraz — n<sub>AB</sub> razy, to udział A wśród przypadków z B wynosi n<sub>AB</sub> / n<sub>B</sub>.</p>
             <p>Dzieląc licznik i mianownik przez n, nie zmieniamy ilorazu, a dostajemy częstości odniesione do całej populacji:</p>
             <figure class="lc-ratio">
               <svg class="lc-ratio-svg" viewBox="0 0 640 312" role="img" aria-label="Po lewej cały świat 1000 zmian ze zbiorami B (100 zmian z przegrzaniem) i A (17 incydentów), część wspólna 12 zmian. Po prawej zostaje tylko B, powiększone do całego kadru; część wspólna to 12 ze 100.">
@@ -4299,7 +4301,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
 </svg>
               <figcaption>Filtr B nie zmienia części wspólnej A ∩ B — zmienia tylko to, do czego ją porównujemy: do całego świata albo do samego B.</figcaption>
             </figure>
-            <pre class="lc-derivation-lines">n_AB / n_B = (n_AB / n) / (n_B / n)
+            <pre class="lc-derivation-lines">n<sub>AB</sub> / n<sub>B</sub> = (n<sub>AB</sub> / n) / (n<sub>B</sub> / n)
            ≈ P(A ∩ B) / P(B)
 
 Bananpol: 12 / 100 = (12/1000) / (100/1000) = 0.012 / 0.10 = 0.12</pre>
@@ -4854,12 +4856,12 @@ P(A ∩ B) = P(A) · P(B | A)</pre>
         </div>
         <p class="lc-p">O liczbie incydentów decyduje iloczyn dwóch rzeczy: jak często dany tryb występuje i jak ryzykowna jest w nim zmiana. Wąska hala jest groźniejsza na jedną zmianę, ale szeroka ma tych zmian dziewiętnaście razy więcej. Ten rachunek — ryzyko trybu razy jego udział, zsumowane po wszystkich trybach — dostanie za chwilę nazwę i wzór.</p>
         <h2 id="warunki-calkowite-partycja" class="lc-h2" data-lc-section="warunki-calkowite-partycja" data-lc-section-num="" data-lc-section-title="Kompletna partycja">Kompletna partycja</h2>
-        <p class="lc-p">Dzielimy przestrzeń na rozłączne tryby B_i, które razem obejmują wszystkie analizowane zmiany, i sumujemy wkład każdej drogi. Żadna zmiana nie może zniknąć ani należeć do dwóch trybów naraz.</p>
+        <p class="lc-p">Dzielimy przestrzeń na rozłączne tryby B<sub>i</sub>, które razem obejmują wszystkie analizowane zmiany, i sumujemy wkład każdej drogi. Żadna zmiana nie może zniknąć ani należeć do dwóch trybów naraz.</p>
         <div class="lc-note">
           <div class="lc-note-l">Definicja 2.2</div>
           <div class="lc-note-b">
             <div class="lc-note-t">Układ zupełny zdarzeń</div>
-            <p>Zdarzenia B₁, B₂, …, B_k tworzą układ zupełny (partycję), jeśli są parami rozłączne — żadne dwa nie mogą zajść jednocześnie — a ich suma obejmuje wszystkie możliwe przypadki, czyli dokładnie jedno z nich zawsze zachodzi. Zakładamy ponadto, że P(B_i) &gt; 0 dla każdego i.</p>
+            <p>Zdarzenia B₁, B₂, …, B<sub>k</sub> tworzą układ zupełny (partycję), jeśli są parami rozłączne — żadne dwa nie mogą zajść jednocześnie — a ich suma obejmuje wszystkie możliwe przypadki, czyli dokładnie jedno z nich zawsze zachodzi. Zakładamy ponadto, że P(B<sub>i</sub>) &gt; 0 dla każdego i.</p>
             <p>Najprostszym układem zupełnym jest para: zdarzenie B i jego dopełnienie Bᶜ (czytamy „nie B”).</p>
           </div>
         </div>
@@ -4888,15 +4890,15 @@ P(A ∩ B) = P(A) · P(B | A)</pre>
             .
           </div>
         </div>
-        <p class="lc-p">Wagi P(B_i) są udziałami trybów pracy i sumują się do jedności.</p>
+        <p class="lc-p">Wagi P(B<sub>i</sub>) są udziałami trybów pracy i sumują się do jedności.</p>
         <details class="lc-more">
           <summary class="lc-more-l">Skąd to się bierze: wzór na prawdopodobieństwo całkowite</summary>
           <div class="lc-more-b">
-            <p>Ponieważ tryby B_i pokrywają wszystkie przypadki, każde wystąpienie A leży dokładnie w jednym z nich. Zdarzenie A rozpada się więc na rozłączne kawałki A ∩ B₁, …, A ∩ B_k — jeden kawałek na każdą drogę drzewa.</p>
+            <p>Ponieważ tryby B<sub>i</sub> pokrywają wszystkie przypadki, każde wystąpienie A leży dokładnie w jednym z nich. Zdarzenie A rozpada się więc na rozłączne kawałki A ∩ B₁, …, A ∩ B<sub>k</sub> — jeden kawałek na każdą drogę drzewa.</p>
             <p>Prawdopodobieństwa rozłącznych zdarzeń się dodają, a każdy kawałek liczymy regułą iloczynu (2.2):</p>
-            <pre class="lc-derivation-lines">A = (A ∩ B₁) ∪ (A ∩ B₂) ∪ … ∪ (A ∩ B_k)     (kawałki rozłączne)
-P(A) = P(A ∩ B₁) + … + P(A ∩ B_k)
-     = P(B₁)·P(A | B₁) + … + P(B_k)·P(A | B_k)
+            <pre class="lc-derivation-lines">A = (A ∩ B₁) ∪ (A ∩ B₂) ∪ … ∪ (A ∩ B<sub>k</sub>)     (kawałki rozłączne)
+P(A) = P(A ∩ B₁) + … + P(A ∩ B<sub>k</sub>)
+     = P(B₁)·P(A | B₁) + … + P(B<sub>k</sub>)·P(A | B<sub>k</sub>)
 
 Bananpol: 0.10 · 0.12 + 0.90 · 5/900 = 0.012 + 0.005 = 0.017</pre>
           </div>
@@ -5272,7 +5274,7 @@ Bananpol: 0.10 · 0.12 + 0.90 · 5/900 = 0.012 + 0.005 = 0.017</pre>
               P(B | A) = P(A | B)
             </label>
             <label class="lc-check-option">
-              <input type="radio" name="lc_check_w2_chk_symetria" value="nothing" data-hint="Pomnóż nierówność P(A | B) &gt; P(A) przez P(B) i podziel przez P(A).">
+              <input type="radio" name="lc_check_w2_chk_symetria" value="nothing" data-hint="Pomnóż nierówność P(A | B) &amp;gt; P(A) przez P(B) i podziel przez P(A).">
                
               Nic — trzeba to osobno zmierzyć
             </label>
@@ -5651,7 +5653,8 @@ Bananpol: 0.10 · 0.12 + 0.90 · 5/900 = 0.012 + 0.005 = 0.017</pre>
 
     box.classList.toggle('is-correct', correct);
     box.classList.toggle('is-wrong', !correct);
-    feedback.textContent = correct
+    // data-hint to HTML przygotowany w R (risk_check: tekst escapowany, indeksy <sub>).
+    feedback.innerHTML = correct
       ? 'Dobrze.'
       : 'Jeszcze nie. ' + (hint || 'Wróć do poprzedniego akapitu i spróbuj ponownie.');
     explanation.hidden = !correct;

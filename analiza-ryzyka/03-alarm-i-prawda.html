@@ -2083,6 +2083,8 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-action.is-ghost{border-color:transparent;background:none;color:var(--upwr-ink-subtle)}
 .lc-action.is-ghost:hover{background:var(--upwr-surface-sunken);color:var(--upwr-ink)}
 .lc-action.is-icon{width:2.6em;padding:0;justify-content:center}
+.lc-action.is-icon[aria-pressed="true"]{background:var(--upwr-accent);border-color:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-icon[aria-pressed="true"] .lc-icon-slash{display:none}
 .lc-action:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
 .lc-action:disabled{opacity:.35;pointer-events:none}
 
@@ -5178,7 +5180,7 @@ P(A | 🚨) = 0.0095 / (0.0095 + 0.0495) = 0.0095 / 0.059 ≈ 0.161</pre>
               Czujnik przegrzania jest mało dokładny
             </label>
             <label class="lc-check-option">
-              <input type="radio" name="lc_check_d3_chk_przyczyny" value="always" data-hint="Wzór (3.6) może też obniżać prawdopodobieństwo — np. P(normalna praca | incydent) ≈ 0.21 &lt; 0.80.">
+              <input type="radio" name="lc_check_d3_chk_przyczyny" value="always" data-hint="Wzór (3.6) może też obniżać prawdopodobieństwo — np. P(normalna praca | incydent) ≈ 0.21 &amp;lt; 0.80.">
                
               Wzór Bayesa zawsze zwiększa prawdopodobieństwo
             </label>
@@ -6576,7 +6578,8 @@ P(H₂ | O) = (1/3 · 1/2) / (1/2) = 1/3</pre>
 
     box.classList.toggle('is-correct', correct);
     box.classList.toggle('is-wrong', !correct);
-    feedback.textContent = correct
+    // data-hint to HTML przygotowany w R (risk_check: tekst escapowany, indeksy <sub>).
+    feedback.innerHTML = correct
       ? 'Dobrze.'
       : 'Jeszcze nie. ' + (hint || 'Wróć do poprzedniego akapitu i spróbuj ponownie.');
     explanation.hidden = !correct;

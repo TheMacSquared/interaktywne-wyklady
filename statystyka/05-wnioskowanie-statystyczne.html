@@ -2391,6 +2391,8 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-action.is-ghost{border-color:transparent;background:none;color:var(--upwr-ink-subtle)}
 .lc-action.is-ghost:hover{background:var(--upwr-surface-sunken);color:var(--upwr-ink)}
 .lc-action.is-icon{width:2.6em;padding:0;justify-content:center}
+.lc-action.is-icon[aria-pressed="true"]{background:var(--upwr-accent);border-color:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-icon[aria-pressed="true"] .lc-icon-slash{display:none}
 .lc-action:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
 .lc-action:disabled{opacity:.35;pointer-events:none}
 
@@ -5903,9 +5905,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <div class="ch2-step-panel">
                 <p>
                   <b>H₀:</b>
-                   μ_read = 650 · 
+                   μ
+                  <sub>read</sub>
+                   = 650 · 
                   <b>Hₐ:</b>
-                   μ_read ≠ 650
+                   μ
+                  <sub>read</sub>
+                   ≠ 650
                 </p>
                 <ul>
                   <li>n = 420, x̄ = 654.97, s = 20.11</li>
@@ -5941,9 +5947,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <div class="ch2-step-panel">
                 <p>
                   <b>H₀:</b>
-                   μ_income ≤ 15 · 
+                   μ
+                  <sub>income</sub>
+                   ≤ 15 · 
                   <b>Hₐ:</b>
-                   μ_income &gt; 15
+                   μ
+                  <sub>income</sub>
+                   &gt; 15
                 </p>
                 <ul>
                   <li>n = 420, x̄ = 15.32, s = 7.23 (tys. USD)</li>
@@ -6921,9 +6931,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
             <div class="lc-more-b">
               <p>
                 <b>H₀:</b>
-                 p_KK06 = 0.5 · 
+                 p
+                <sub>KK06</sub>
+                 = 0.5 · 
                 <b>Hₐ:</b>
-                 p_KK06 ≠ 0.5
+                 p
+                <sub>KK06</sub>
+                 ≠ 0.5
               </p>
               <ul>
                 <li>k = 61, n = 420, p̂ = 0.145 (14.5%)</li>
@@ -6956,9 +6970,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
             <div class="lc-more-b">
               <p>
                 <b>H₀:</b>
-                 p_ubóstwo ≤ 0.30 · 
+                 p
+                <sub>ubóstwo</sub>
+                 ≤ 0.30 · 
                 <b>Hₐ:</b>
-                 p_ubóstwo &gt; 0.30
+                 p
+                <sub>ubóstwo</sub>
+                 &gt; 0.30
               </p>
               <ul>
                 <li>k = 178 okręgów z lunch &gt; 50, n = 420, p̂ = 0.424 (42.4%)</li>
@@ -9549,7 +9567,10 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
                       <th scope="col" role="columnheader">Miara</th>
                       <th scope="col" role="columnheader">n</th>
                       <th scope="col" role="columnheader" class="n">d̄</th>
-                      <th scope="col" role="columnheader" class="n">s_d</th>
+                      <th scope="col" role="columnheader" class="n">
+                        s
+                        <sub>d</sub>
+                      </th>
                     </tr>
                   </thead>
                   <tbody role="rowgroup">
@@ -9557,7 +9578,8 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
                       <th scope="row" role="rowheader">po − przed</th>
                       <td role="cell" data-label="n">15</td>
                       <td role="cell" class="n" data-label="d̄">-1</td>
-                      <td role="cell" class="n" data-label="s_d">4</td>
+                      <td role="cell" class="n" data-label="s
+d">4</td>
                     </tr>
                   </tbody>
                 </table>
@@ -10445,7 +10467,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
             <div class="lc-more-b">
               <p>
                 <b>H₀:</b>
-                 μ_niski = μ_średni = μ_wysoki · 
+                 μ
+                <sub>niski</sub>
+                 = μ
+                <sub>średni</sub>
+                 = μ
+                <sub>wysoki</sub>
+                 · 
                 <b>Hₐ:</b>
                  co najmniej jedna para się różni
               </p>
@@ -11429,10 +11457,14 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <div class="lc-more-b">
                 <p>
                   <b>H₀: </b>
-                  μ_plon = 5.0 t/ha
+                  μ
+                  <sub>plon</sub>
+                   = 5.0 t/ha
                    · 
                   <b>Hₐ: </b>
-                  μ_plon ≠ 5.0 t/ha
+                  μ
+                  <sub>plon</sub>
+                   ≠ 5.0 t/ha
                 </p>
                 <ul>
                   <li>n = 200, x̄ = 5.02 t/ha, s = 0.91</li>
@@ -11466,9 +11498,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <div class="lc-more-b">
                 <p>
                   <b>H₀: </b>
-                  p_nawadnianie ≥ 0.4 · 
+                  p
+                  <sub>nawadnianie</sub>
+                   ≥ 0.4 · 
                   <b>Hₐ: </b>
-                  p_nawadnianie &lt; 0.4
+                  p
+                  <sub>nawadnianie</sub>
+                   &lt; 0.4
                 </p>
                 <ul>
                   <li>k = 69, n = 200, p̂ = 0.345 (34.5%)</li>
@@ -11732,10 +11768,14 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <div class="lc-more-b">
                 <p>
                   <b>H₀: </b>
-                  μ_wypadki ≥ 10
+                  μ
+                  <sub>wypadki</sub>
+                   ≥ 10
                    · 
                   <b>Hₐ: </b>
-                  μ_wypadki &lt; 10
+                  μ
+                  <sub>wypadki</sub>
+                   &lt; 10
                 </p>
                 <ul>
                   <li>n = 200, x̄ = 8.90 wyp./1000, s = 2.89</li>
@@ -11768,9 +11808,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <div class="lc-more-b">
                 <p>
                   <b>H₀: </b>
-                  p_soi_ok ≤ 0.5 · 
+                  p
+                  <sub>soi_ok</sub>
+                   ≤ 0.5 · 
                   <b>Hₐ: </b>
-                  p_soi_ok &gt; 0.5
+                  p
+                  <sub>soi_ok</sub>
+                   &gt; 0.5
                 </p>
                 <ul>
                   <li>k = 81, n = 200, p̂ = 0.405 (40.5%)</li>
@@ -12033,10 +12077,14 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <div class="lc-more-b">
                 <p>
                   <b>H₀: </b>
-                  μ_białko = 12 g/100 g
+                  μ
+                  <sub>białko</sub>
+                   = 12 g/100 g
                    · 
                   <b>Hₐ: </b>
-                  μ_białko ≠ 12 g/100 g
+                  μ
+                  <sub>białko</sub>
+                   ≠ 12 g/100 g
                 </p>
                 <ul>
                   <li>n = 200, x̄ = 12.31 g/100 g, s = 2.10</li>
@@ -12069,9 +12117,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <div class="lc-more-b">
                 <p>
                   <b>H₀: </b>
-                  p_zanieczyszczenie ≤ 0.20 · 
+                  p
+                  <sub>zanieczyszczenie</sub>
+                   ≤ 0.20 · 
                   <b>Hₐ: </b>
-                  p_zanieczyszczenie &gt; 0.20
+                  p
+                  <sub>zanieczyszczenie</sub>
+                   &gt; 0.20
                 </p>
                 <ul>
                   <li>k = 38, n = 200, p̂ = 0.190 (19.0%)</li>
@@ -12592,7 +12644,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
                 <li>
                   <b>Fałsz.</b>
                    p &lt; 0.05 oznacza: „dane byłyby mało prawdopodobne, gdyby H₀ była
-        prawdziwa" — nie daje prawdopodobieństwa prawdziwości H_a.
+        prawdziwa" — nie daje prawdopodobieństwa prawdziwości Hₐ.
                 </li>
                 <li>
                   <b>Fałsz.</b>

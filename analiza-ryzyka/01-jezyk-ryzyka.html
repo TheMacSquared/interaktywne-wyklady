@@ -2083,6 +2083,8 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-action.is-ghost{border-color:transparent;background:none;color:var(--upwr-ink-subtle)}
 .lc-action.is-ghost:hover{background:var(--upwr-surface-sunken);color:var(--upwr-ink)}
 .lc-action.is-icon{width:2.6em;padding:0;justify-content:center}
+.lc-action.is-icon[aria-pressed="true"]{background:var(--upwr-accent);border-color:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-icon[aria-pressed="true"] .lc-icon-slash{display:none}
 .lc-action:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
 .lc-action:disabled{opacity:.35;pointer-events:none}
 
@@ -3923,8 +3925,8 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
           <div class="lc-note-b">
             <div class="lc-note-t">Częstość empiryczna</div>
             <p>Niech w n porównywalnych, niezależnie przeprowadzonych obserwacjach
-               zdarzenie A zaszło n_A razy. Częstością empiryczną (względną) zdarzenia A
-               nazywamy iloraz n_A / n, oznaczany p̂ₙ (czytaj: p z daszkiem).</p>
+               zdarzenie A zaszło n<sub>A</sub> razy. Częstością empiryczną (względną) zdarzenia A
+               nazywamy iloraz n<sub>A</sub> / n, oznaczany p̂ₙ (czytaj: p z daszkiem).</p>
             <p>Częstość jest wynikiem konkretnej serii obserwacji. Inna seria tej samej
                długości da zwykle inną wartość, dlatego piszemy p̂ — to
                oszacowanie, a nie sam parametr modelu.</p>
@@ -5308,7 +5310,7 @@ P(B)     = P(A ∩ B) + P(B \ A)            ⇒  P(A ∪ B) = P(A) + P(B) - P(A 
        (definicja 1.1). Rachunek prawdopodobieństwa dotyczy tylko jednej z nich —
        zdarzenia — i działa tylko wtedy, gdy zdarzenie jest obserwowalne i ma
        jednostkę. Pierwszym źródłem liczb jest rejestr: częstość empiryczna
-       n_A / n (wzór 1.1) opisuje konkretną serię obserwacji, zmienia się od
+       n<sub>A</sub> / n (wzór 1.1) opisuje konkretną serię obserwacji, zmienia się od
        serii do serii i stabilizuje dopiero przy dużej liczbie porównywalnych
        zmian.</p>
         <p class="lc-p">Drugim źródłem jest symetria. Gdy doświadczenie ma skończoną przestrzeń
@@ -5996,7 +5998,8 @@ P(B)     = P(A ∩ B) + P(B \ A)            ⇒  P(A ∪ B) = P(A) + P(B) - P(A 
 
     box.classList.toggle('is-correct', correct);
     box.classList.toggle('is-wrong', !correct);
-    feedback.textContent = correct
+    // data-hint to HTML przygotowany w R (risk_check: tekst escapowany, indeksy <sub>).
+    feedback.innerHTML = correct
       ? 'Dobrze.'
       : 'Jeszcze nie. ' + (hint || 'Wróć do poprzedniego akapitu i spróbuj ponownie.');
     explanation.hidden = !correct;

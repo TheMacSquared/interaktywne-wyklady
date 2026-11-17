@@ -2081,6 +2081,8 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-action.is-ghost{border-color:transparent;background:none;color:var(--upwr-ink-subtle)}
 .lc-action.is-ghost:hover{background:var(--upwr-surface-sunken);color:var(--upwr-ink)}
 .lc-action.is-icon{width:2.6em;padding:0;justify-content:center}
+.lc-action.is-icon[aria-pressed="true"]{background:var(--upwr-accent);border-color:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-icon[aria-pressed="true"] .lc-icon-slash{display:none}
 .lc-action:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
 .lc-action:disabled{opacity:.35;pointer-events:none}
 
@@ -7732,15 +7734,15 @@ model &lt;- glm(zdal_num ~ godziny_nauki + srednia_ocen,
                   <tbody>
                     <tr>
                       <th scope="row">(Intercept)</th>
-                      <td class="n" data-label="OR">0.004</td>
+                      <td class="n" data-label="OR">0.01<span class="lc-pad" aria-hidden="true">0</span></td>
                     </tr>
                     <tr>
                       <th scope="row">godziny_nauki</th>
-                      <td class="n" data-label="OR">1.095</td>
+                      <td class="n" data-label="OR">1.072</td>
                     </tr>
                     <tr>
                       <th scope="row">srednia_ocen</th>
-                      <td class="n" data-label="OR">4.801</td>
+                      <td class="n" data-label="OR">4.367</td>
                     </tr>
                   </tbody>
                 </table>
@@ -7748,7 +7750,7 @@ model &lt;- glm(zdal_num ~ godziny_nauki + srednia_ocen,
               <p>
                 Przewidywane prawdopodobieństwo zdania dla 22 godzin nauki i
         średniej 3.8 wynosi 
-                <b>92.1%</b>
+                <b>92.4%</b>
                 .
               </p>
               <p>
@@ -7818,7 +7820,11 @@ model &lt;- glm(zdal_num ~ godziny_nauki + srednia_ocen,
           <details class="lc-more">
             <summary class="lc-more-l">Rozwiązanie</summary>
             <div class="lc-more-b">
-              <p>β_NDVI: model prosty -7.49, model z kontrolą -4.56.</p>
+              <p>
+                β
+                <sub>NDVI</sub>
+                : model prosty -7.49, model z kontrolą -4.56.
+              </p>
               <p>Adjusted R²: 0.458 → 0.475.</p>
               <p>Kontrola zmiennych poprawia opis, ale dane obserwacyjne nadal nie
        gwarantują kompletności zmiennych zakłócających ani kierunku przyczynowego.</p>

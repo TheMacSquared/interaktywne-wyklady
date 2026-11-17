@@ -2083,6 +2083,8 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-action.is-ghost{border-color:transparent;background:none;color:var(--upwr-ink-subtle)}
 .lc-action.is-ghost:hover{background:var(--upwr-surface-sunken);color:var(--upwr-ink)}
 .lc-action.is-icon{width:2.6em;padding:0;justify-content:center}
+.lc-action.is-icon[aria-pressed="true"]{background:var(--upwr-accent);border-color:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-icon[aria-pressed="true"] .lc-icon-slash{display:none}
 .lc-action:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
 .lc-action:disabled{opacity:.35;pointer-events:none}
 
@@ -6913,7 +6915,7 @@ h(t) = H'(t) = h₁(t) + h₂(t) + h₃(t)</pre>
               Bo ma tylko dwa parametry, a wanna ma trzy odcinki
             </label>
             <label class="lc-check-option">
-              <input type="radio" name="lc_check_c7_chk_wanna" value="no_decrease" data-hint="Weibull z β &lt; 1 ma hazard malejący. Problem leży w czymś innym.">
+              <input type="radio" name="lc_check_c7_chk_wanna" value="no_decrease" data-hint="Weibull z β &amp;lt; 1 ma hazard malejący. Problem leży w czymś innym.">
                
               Bo Weibull nie dopuszcza hazardu malejącego
             </label>
@@ -7774,7 +7776,7 @@ h(t) = H'(t) = h₁(t) + h₂(t) + h₃(t)</pre>
           </ol>
         </div>
         <h2 id="zycie-sciaga-most" class="lc-h2" data-lc-section="zycie-sciaga-most" data-lc-section-num="" data-lc-section-title="Co dalej">Co dalej</h2>
-        <p class="lc-p">Dotąd badaliśmy pojedynczy element. W następnym wykładzie połączymy funkcje niezawodności R_i(t) kilku elementów w niezawodność całego systemu — i okaże się, że wynik zależy nie tylko od elementów, ale i od architektury.</p>
+        <p class="lc-p">Dotąd badaliśmy pojedynczy element. W następnym wykładzie połączymy funkcje niezawodności R<sub>i</sub>(t) kilku elementów w niezawodność całego systemu — i okaże się, że wynik zależy nie tylko od elementów, ale i od architektury.</p>
       </section>
     </template></main>
   </div>
@@ -7804,7 +7806,8 @@ h(t) = H'(t) = h₁(t) + h₂(t) + h₃(t)</pre>
 
     box.classList.toggle('is-correct', correct);
     box.classList.toggle('is-wrong', !correct);
-    feedback.textContent = correct
+    // data-hint to HTML przygotowany w R (risk_check: tekst escapowany, indeksy <sub>).
+    feedback.innerHTML = correct
       ? 'Dobrze.'
       : 'Jeszcze nie. ' + (hint || 'Wróć do poprzedniego akapitu i spróbuj ponownie.');
     explanation.hidden = !correct;
