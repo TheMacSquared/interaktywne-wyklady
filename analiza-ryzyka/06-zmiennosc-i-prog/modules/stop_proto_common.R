@@ -149,8 +149,8 @@ z6p_seg <- function(act, label, choices, selected = choices[[1]]) {
 }
 
 # Kontener sceny: ... to treść w kolejności (sloty z6p_out() i zwykłe tagi).
-z6p_scene_ui <- function(num, kind, title, scene, config, ..., width_mode = "wide") {
-  z6p_panel(num, kind, title, width_mode = width_mode, z6p_css,
+z6p_scene_ui <- function(num, kind, title, scene, config, ..., width_mode = "wide", proto = TRUE) {
+  z6p_panel(num, kind, title, width_mode = width_mode, proto = proto, z6p_css,
     tags$div(class = "z6p-scene", `data-scene` = scene,
       `data-config` = jsonlite::toJSON(config, auto_unbox = TRUE, digits = NA), ...))
 }
@@ -158,7 +158,7 @@ z6p_out <- function(name, ...) tags$div(`data-z6p-out` = name, ...)
 
 # Scena z kadrami policzonymi w R. frames: lista list(name, text, read); svg(i)
 # zwraca rysunek kadru i (z6p_svg).
-z6p_frames_ui <- function(num, kind, title, frames, svg, body = z6p_frame_body, width_mode = "wide") {
+z6p_frames_ui <- function(num, kind, title, frames, svg, body = z6p_frame_body, width_mode = "wide", proto = TRUE) {
   cfg <- list(frames = lapply(seq_along(frames), function(i) list(
     name = frames[[i]]$name,
     svg = as.character(svg(i)),
@@ -166,11 +166,12 @@ z6p_frames_ui <- function(num, kind, title, frames, svg, body = z6p_frame_body, 
   )))
   z6p_scene_ui(num, kind, title, "kadry", cfg,
     z6p_out("head"), z6p_out("stage"), z6p_out("body"),
-    tags$div(class = "z6p-nav", z6p_prev_next()), width_mode = width_mode)
+    tags$div(class = "z6p-nav", z6p_prev_next()), width_mode = width_mode, proto = proto)
 }
 
 # Treść kadru: opis i (gdy jest) odczyt.
 z6p_frame_body <- function(f) {
-  tagList(tags$p(class = "z6p-caption", f$text),
-    if (!is.null(f$read) && !(is.character(f$read) && !nzchar(f$read))) tags$p(class = "z6p-read", f$read))
+  # Indeksy dolne (σ_D → σ<sub>D</sub>): treść kadru trafia do config jako gotowy HTML.
+  tagList(tags$p(class = "z6p-caption", risk_subscripts(f$text)),
+    if (!is.null(f$read) && !(is.character(f$read) && !nzchar(f$read))) tags$p(class = "z6p-read", risk_subscripts(f$read)))
 }

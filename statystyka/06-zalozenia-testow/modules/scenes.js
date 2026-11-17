@@ -271,7 +271,10 @@
         svg("text", { x: SX0 + 26, y: y, class: "lc-sc-n" }, g, t);
         if (step >= 2) {
           svg("line", { x1: SX0 + 190, x2: SX0 + 210, y1: y - 4, y2: y - 4, class: "lc-sc-sdp" }, g);
-          svg("text", { x: SX0 + 216, y: y, class: "lc-sc-n" }, g, "wspólne s_p = " + fmt(d.sp, 1) + " min");
+          // „s_p” z indeksem dolnym: tekst w trzech częściach, środkowa obniżona.
+          var tp = svg("text", { x: SX0 + 216, y: y, class: "lc-sc-n" }, g, "wspólne s");
+          svg("tspan", { "baseline-shift": "sub", "font-size": "75%" }, tp, "p");
+          svg("tspan", {}, tp, " = " + fmt(d.sp, 1) + " min");
         }
       }
     }

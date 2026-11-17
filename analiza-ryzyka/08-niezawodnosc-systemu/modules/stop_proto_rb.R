@@ -150,7 +150,7 @@ s8p14_mini <- function(cx, y, up) {
 }
 
 s8p_14_ui <- s8p_panel("P14", "przypadek brzegowy", "Naprawa, która gasi system", s8p_css,
-  s8p_svg(800, 196, "Cztery stany elementów A i B dla funkcji fi równej x_A razy jeden minus x_B. Lampka świeci tylko w stanie A działa, B zawiódł; po naprawie B gaśnie.",
+  s8p_svg(800, 196, "Cztery stany elementów A i B dla funkcji fi równej x A razy jeden minus x B. Lampka świeci tylko w stanie A działa, B zawiódł; po naprawie B gaśnie.",
     s8pb_tiles(s8p14_st, s8p14_lit, s8p14_mini, th = 130),
     # strzałka „naprawa B” od kafla (1, 0) do kafla (1, 1)
     '<path d="M500,160 C540,186 660,186 700,160" fill="none" stroke="var(--upwr-accent)" stroke-width="2.2"/>',

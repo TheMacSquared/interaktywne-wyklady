@@ -25,7 +25,7 @@ cas_ch3_sol_a_ui <- function() {
          ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
   })
   tagList(
-    p(tags$b("H₀:"), " p_KK06 = 0.5 · ", tags$b("Hₐ:"), " p_KK06 ≠ 0.5"),
+    p(tags$b("H₀:"), " p", tags$sub("KK06"), " = 0.5 · ", tags$b("Hₐ:"), " p", tags$sub("KK06"), " ≠ 0.5"),
     tags$ul(
       tags$li(sprintf("k = %d, n = %d, p̂ = %s (%s%%)",
                       r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),
@@ -62,8 +62,8 @@ cas_ch3_sol_b_ui <- function() {
          ci_lo = bt$conf.int[1], ci_hi = bt$conf.int[2])
   })
   tagList(
-    p(tags$b("H₀:"), " p_ubóstwo ≤ 0.30 · ",
-      tags$b("Hₐ:"), " p_ubóstwo > 0.30"),
+    p(tags$b("H₀:"), " p", tags$sub("ubóstwo"), " ≤ 0.30 · ",
+      tags$b("Hₐ:"), " p", tags$sub("ubóstwo"), " > 0.30"),
     tags$ul(
       tags$li(sprintf("k = %d okręgów z lunch > 50, n = %d, p̂ = %s (%s%%)",
                       r$k, r$n, .ch3_dec(r$p_obs, 3), .ch3_dec(100 * r$p_obs, 1))),

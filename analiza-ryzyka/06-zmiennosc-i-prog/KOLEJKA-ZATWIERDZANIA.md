@@ -17,22 +17,21 @@ w którym miałby zostać. Tam, gdzie są warianty, nad panelem jest notka
 
 | Rozdz. | Prototyp | Rodzaj | Plik | Decyzja do podjęcia |
 |---|---|---|---|---|
-| 1 | P1 „Trzy wentylatory, jedna średnia” | scena | ra | miejsce: przed głosowaniem (B) czy po nim (A); stoi w obu |
-| 1 | P2A „Zmiana po zmianie” | symulacja | rb | P2A czy P2B (jedna puenta); zastępuje histogram z suwakiem |
-| 1 | P2B „Ogon dochodzi ostatni” | symulacja | rb | jak wyżej |
-| 2 | P3 „Pole między dwiema kreskami” | pojęcie | rb | przyjąć / odrzucić |
-| 2 | P5 „Linijka σ” | pojęcie | rb | przyjąć / odrzucić |
-| 2 | P4 „Przesuń i rozszerz krzywą” | piaskownica | ra | zastępuje widget ggplot „Model” |
-| 3 | P6 „Temperatura i ciśnienie na jednej linijce” | pojęcie (kadry) | rc | przyjąć / odrzucić |
-| 3 | P7 „Próg temperatury łożyska” | piaskownica | rc | zastępuje widget ggplot „Ogon” |
-| 3 | P8 „Dzienniki zmian” | scena | rc | 8b jako przełącznik w scenie czy osobny obraz P8b |
-| 3 | P8b „Te same pomiary, inne zmiany” | przypadek brzegowy | rc | jak wyżej |
-| 4 | P9A „Trzy interwencje” | galeria | rd | P9A (przełącznik) czy P9B (obok siebie); zastępuje listę wyboru |
-| 4 | P9B „Trzy interwencje obok siebie” | galeria | rd | jak wyżej |
-| 4 | P10A „Próg poniżej średniej” | przypadek brzegowy | rd | P10A (suwak σ) czy P10B (galeria) |
-| 4 | P10B „Stabilizacja przy progu 80°C” | przypadek brzegowy | rd | jak wyżej |
-| 5 | P11 „Zawiesie dźwigu” | scena | re | zastępuje chmurę ggplot; stoi na otwarciu rozdziału |
-| 5 | P12 „Od chmury par do marginesu” | pojęcie (kadry) | re | przyjąć / odrzucić |
+| 1 | P1 „Trzy wentylatory, jedna średnia” | scena | ra | **przyjęta 17.11**: po głosowaniu (A); w głosowaniu „Nie — potrzebujemy rozrzutu” → „Nie wiadomo” |
+| 1 | P2B „Ogon dochodzi ostatni” | symulacja | rb | **przyjęta 17.11** zamiast histogramu z suwakiem; P2A odrzucona i usunięta |
+| 2 | P3 „Pole między dwiema kreskami” | pojęcie | rb | **przyjęta 17.11** |
+| 2 | P5 „Linijka σ” | pojęcie | rb | **przyjęta 17.11** |
+| 2 | P4 „Przesuń i rozszerz krzywą” | piaskownica | ra | **przyjęta 17.11**, dawny panel „Model” usunięty |
+| 3 | P6 „Temperatura i ciśnienie na jednej linijce” | pojęcie (kadry) | rc | **przyjęta 17.11** |
+| 3 | P7 „Próg temperatury łożyska” | piaskownica | rc | **przyjęta 17.11**, dawny panel „Ogon” usunięty |
+| 3 | P8 „Dzienniki zmian” | scena | rc | **przyjęta 17.11**: przełącznik pytania (o pomiar / o zmianę / oba), tylko pomiary niezależne, oko = model, ramka „Dwa pytania” w tekście |
+| 3 | P8b „Te same pomiary, inne zmiany” | przypadek brzegowy | rc | **przyjęta 17.11** jako osobny obraz (jedyne miejsce pomiarów skorelowanych) |
+| 4 | P9A „Trzy interwencje” | galeria | rd | **przyjęta 17.11** zamiast listy wyboru; P9B odrzucona i usunięta |
+| 4 | P17 „Interwencje w praktyce” | przykłady | rh | **dodana i przyjęta 17.11**: 7 działań z zakładu na 6 slajdach (oba podniesienia progu na jednym) i zestawienie; sekcja „Kolejność działań” |
+| 4 | P10A „Próg poniżej średniej” | przypadek brzegowy | rd | **przyjęta 17.11**; P10B odrzucona i usunięta |
+| 5 | P11 „Lina dźwigu” | scena | re | **przyjęta 17.11** zamiast chmury par z suwakami (usunięta); tekst sekcji „Chmura par L i S” przepisany pod scenę, kN zamiast „jednostek” |
+| 5 | P18 „Obciążenie i wytrzymałość w praktyce” | przykłady | ri | **dodana i przyjęta 17.11**: 5 sytuacji L–S (smar, regał, wyłącznik, dach, wał) i zestawienie z liną; po scenie P11 |
+| 5 | P12 „Od chmury par do marginesu” | pojęcie (kadry) | re | **przyjęta 17.11**, przeniesiona za wzory (6.9)–(6.10) do sekcji „Różnica dwóch zmiennych normalnych” |
 | 5 | P13 „Pole nakładania to nie ryzyko” | przypadek brzegowy | rd | przyjąć / odrzucić |
 | 6 | P14A „Ten sam środek, inny ogon” | galeria | rf | P14A (jedna oś, powiększenie ogona) czy P14B (obok siebie) |
 | 6 | P14B „Trzy modele obok siebie” | galeria | rf | jak wyżej |
@@ -48,8 +47,6 @@ narzędzia w `modules/stop_proto_common.R` i `modules/sceny.js`.
 
 - P14B: pole powyżej 91°C jest z natury ledwo widoczne; różnicę niosą liczby
   nad wykresami. P14A pokazuje ją w powiększeniu ogona.
-- P2A, P2B: przy kilku–kilkunastu pomiarach najwyższy słupek wychodzi ponad
-  stałą oś (0.3) i jest ucięty.
 - P8, P11: pierwszy widok to jedna zmiana albo jedno podniesienie, więc
   licznik startuje od 100%.
 - P9A, P10A: w stanie bazowym przerywany kontur pokrywa się z krzywą i widać

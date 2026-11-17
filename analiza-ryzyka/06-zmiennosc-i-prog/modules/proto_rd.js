@@ -1,10 +1,8 @@
-// Prototypy punktów stop wykładu 06, grupa rd (P9A, P9B, P10A, P10B, P13). Ryciny lcSF
+// Prototypy punktów stop wykładu 06, grupa rd (P9A, P10A, P13). Ryciny lcSF
 // liczone w przeglądarce; kontenery w R: lc_sf_figure() w stop_proto_rd.R.
 //
-//   z6_interwencje   — galeria „Trzy interwencje” (P9A) i próg 80°C (P10B): warianty
+//   z6_interwencje   — galeria „Trzy interwencje” (P9A): warianty
 //                      z konfiguracji, wybór kluczem v (pierwsza kontrolka), odczyty.
-//   z6_interwencje_b — cztery małe wykresy obok siebie (P9B): wariant k z konfiguracji,
-//                      wynik zapisany nad każdym wykresem.
 //   z6_prog_ponizej  — przypadek brzegowy „Próg poniżej średniej” (P10A): próg z wyboru,
 //                      σ z suwaka, stała średnia 82.
 //   z6_nakladanie    — „Pole nakładania to nie ryzyko” (P13): gęstości L i S oraz
@@ -114,13 +112,6 @@
       },
       update: function (root, state, v) {
         interventionReadouts(root, pick(state.config, v));
-      }
-    },
-
-    z6_interwencje_b: {
-      draw: function (v, P, k, state) {
-        var w = state.config.variants[k];
-        return interventionSpec(state.config, w, P, true);
       }
     },
 

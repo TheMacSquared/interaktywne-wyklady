@@ -2030,6 +2030,8 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 .lc-action.is-ghost{border-color:transparent;background:none;color:var(--upwr-ink-subtle)}
 .lc-action.is-ghost:hover{background:var(--upwr-surface-sunken);color:var(--upwr-ink)}
 .lc-action.is-icon{width:2.6em;padding:0;justify-content:center}
+.lc-action.is-icon[aria-pressed="true"]{background:var(--upwr-accent);border-color:var(--upwr-accent);color:var(--upwr-surface)}
+.lc-action.is-icon[aria-pressed="true"] .lc-icon-slash{display:none}
 .lc-action:focus-visible{outline:2px solid var(--upwr-accent);outline-offset:2px}
 .lc-action:disabled{opacity:.35;pointer-events:none}
 

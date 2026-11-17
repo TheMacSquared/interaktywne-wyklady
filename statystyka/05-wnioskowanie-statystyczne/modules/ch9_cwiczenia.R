@@ -261,7 +261,7 @@ ch9_r_sol1_ui <- function() {
   rol <- .ch9_data$rol
   r <- .ch9_t1(rol$plon, mu = 5.0, alternative = "two.sided")
   tagList(
-    .ch9_sol_t1(r, "μ_plon = 5.0 t/ha", "μ_plon ≠ 5.0 t/ha",
+    .ch9_sol_t1(r, tagList("μ", tags$sub("plon"), " = 5.0 t/ha"), tagList("μ", tags$sub("plon"), " ≠ 5.0 t/ha"),
                 "plon", 5.0, "t/ha"),
     p(tags$b("Interpretacja: "),
       sprintf("Średni plon (%.2f t/ha) %s się od normy 5.0 t/ha (%s).
@@ -279,8 +279,8 @@ ch9_r_sol2_ui <- function() {
   n <- nrow(rol); p_obs <- k / n
   bt <- binom.test(k, n, p = 0.4, alternative = "less")
   tagList(
-    p(tags$b("H₀: "), "p_nawadnianie ≥ 0.4 · ",
-      tags$b("Hₐ: "), "p_nawadnianie < 0.4"),
+    p(tags$b("H₀: "), "p", tags$sub("nawadnianie"), " ≥ 0.4 · ",
+      tags$b("Hₐ: "), "p", tags$sub("nawadnianie"), " < 0.4"),
     tags$ul(
       tags$li(sprintf("k = %d, n = %d, p̂ = %.3f (%.1f%%)",
                       k, n, p_obs, 100 * p_obs)),
@@ -356,7 +356,7 @@ ch9_b_sol1_ui <- function() {
   bhp <- .ch9_data$bhp
   r <- .ch9_t1(bhp$wypadki, mu = 10, alternative = "less")
   tagList(
-    .ch9_sol_t1(r, "μ_wypadki ≥ 10", "μ_wypadki < 10",
+    .ch9_sol_t1(r, tagList("μ", tags$sub("wypadki"), " ≥ 10"), tagList("μ", tags$sub("wypadki"), " < 10"),
                 "wypadki", 10, "wyp./1000"),
     p(tags$b("Interpretacja: "),
       sprintf("Średnia wypadkowość (%.2f/1000) jest %s niższa od normy 10 (%s).
@@ -374,7 +374,7 @@ ch9_b_sol2_ui <- function() {
   k <- sum(soi_ok); n <- length(soi_ok); p_obs <- k / n
   bt <- binom.test(k, n, p = 0.5, alternative = "greater")
   tagList(
-    p(tags$b("H₀: "), "p_soi_ok ≤ 0.5 · ", tags$b("Hₐ: "), "p_soi_ok > 0.5"),
+    p(tags$b("H₀: "), "p", tags$sub("soi_ok"), " ≤ 0.5 · ", tags$b("Hₐ: "), "p", tags$sub("soi_ok"), " > 0.5"),
     tags$ul(
       tags$li(sprintf("k = %d, n = %d, p̂ = %.3f (%.1f%%)",
                       k, n, p_obs, 100 * p_obs)),
@@ -450,7 +450,7 @@ ch9_t_sol1_ui <- function() {
   tz <- .ch9_data$tz
   r <- .ch9_t1(tz$bialko, mu = 12, alternative = "two.sided")
   tagList(
-    .ch9_sol_t1(r, "μ_białko = 12 g/100 g", "μ_białko ≠ 12 g/100 g",
+    .ch9_sol_t1(r, tagList("μ", tags$sub("białko"), " = 12 g/100 g"), tagList("μ", tags$sub("białko"), " ≠ 12 g/100 g"),
                 "białko", 12, "g/100 g"),
     p(tags$b("Interpretacja: "),
       sprintf("Średnia zawartość białka (%.2f g/100 g) %s się od normy 12 g/100 g
@@ -468,8 +468,8 @@ ch9_t_sol2_ui <- function() {
   n <- nrow(tz); p_obs <- k / n
   bt <- binom.test(k, n, p = 0.20, alternative = "greater")
   tagList(
-    p(tags$b("H₀: "), "p_zanieczyszczenie ≤ 0.20 · ",
-      tags$b("Hₐ: "), "p_zanieczyszczenie > 0.20"),
+    p(tags$b("H₀: "), "p", tags$sub("zanieczyszczenie"), " ≤ 0.20 · ",
+      tags$b("Hₐ: "), "p", tags$sub("zanieczyszczenie"), " > 0.20"),
     tags$ul(
       tags$li(sprintf("k = %d, n = %d, p̂ = %.3f (%.1f%%)",
                       k, n, p_obs, 100 * p_obs)),
@@ -548,7 +548,7 @@ ch9_krit_sol_ui <- function() {
         eksperymentalne lub quasi-eksperymentalne z kontrolą zmiennych."),
       tags$li(tags$b("Fałsz."),
         ' p < 0.05 oznacza: „dane byłyby mało prawdopodobne, gdyby H₀ była
-        prawdziwa" — nie daje prawdopodobieństwa prawdziwości H_a.'),
+        prawdziwa" — nie daje prawdopodobieństwa prawdziwości Hₐ.'),
       tags$li(tags$b("Fałsz."),
         " Test χ² informuje tylko o tym, czy zmienne są zależne — nie mówi,
         jak silny jest związek ani w jakim kierunku. Do siły służy Cramér's V."),

@@ -147,7 +147,7 @@ i10p18a_res <- list(
   list(lines = c("P(D | I) =", i10p_p(1 - i10p_cfg$sens),
       sprintf("R(%s) =", i10p_num(i10p_cfg$time, 0)), i10p_p(i10p_fan_r(i10p_cfg$time, "exp"))),
     cls = c("", "", "", "")),
-  list(lines = sprintf("R_sys = %s", i10p_p(i10pf_base$system_r)), cls = ""),
+  list(lines = sprintf("R<tspan baseline-shift='sub' font-size='75%%'>sys</tspan> = %s", i10p_p(i10pf_base$system_r)), cls = ""),
   list(lines = c("P(TOP) =", i10p_p(i10pf_top)), cls = c("", "")),
   list(lines = c("po działaniu", paste0(i10p_p(min(i10pf_prev)), "–"), i10p_p(max(i10pf_prev))),
     cls = c("", "", "")),

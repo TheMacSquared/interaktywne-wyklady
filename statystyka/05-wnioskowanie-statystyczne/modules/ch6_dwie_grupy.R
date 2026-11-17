@@ -104,7 +104,7 @@ ch6_compare_paired_result_ui <- function() {
         lc_col("c1", "Miara", "row"),
         lc_col("c2", "n", "text"),
         lc_col("c3", "d̄", "num"),
-        lc_col("c4", "s_d", "num")
+        lc_col("c4", tagList("s", tags$sub("d")), "num")
       ),
       narrow = "cards"
     ),

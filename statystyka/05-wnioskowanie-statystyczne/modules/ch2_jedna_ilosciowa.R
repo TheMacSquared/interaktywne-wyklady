@@ -18,7 +18,7 @@ cas_ch2_sol1_ui <- function() {
   })
   div(class = "ch2-step-panel",
     tagList(
-      p(tags$b("H₀:"), " μ_read = 650 · ", tags$b("Hₐ:"), " μ_read ≠ 650"),
+      p(tags$b("H₀:"), " μ", tags$sub("read"), " = 650 · ", tags$b("Hₐ:"), " μ", tags$sub("read"), " ≠ 650"),
       tags$ul(
         tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f", r$n, r$m, r$s)),
         tags$li(sprintf("t(%s) = %.3f, p %s %s",
@@ -58,7 +58,7 @@ cas_ch2_sol2_ui <- function() {
   })
   div(class = "ch2-step-panel",
     tagList(
-      p(tags$b("H₀:"), " μ_income ≤ 15 · ", tags$b("Hₐ:"), " μ_income > 15"),
+      p(tags$b("H₀:"), " μ", tags$sub("income"), " ≤ 15 · ", tags$b("Hₐ:"), " μ", tags$sub("income"), " > 15"),
       tags$ul(
         tags$li(sprintf("n = %d, x̄ = %.2f, s = %.2f (tys. USD)", r$n, r$m, r$s)),
         tags$li(sprintf("t(%s) = %.3f, p %s %s (jednostronnie)",

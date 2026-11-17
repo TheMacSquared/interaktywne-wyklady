@@ -47,7 +47,7 @@
       path("M640," + yA + " H670 V" + yB + " H640 M670," + LINE_Y + " H700") + dot(704) +
       '<text x="716" y="' + (LINE_Y - 12) + '" font-size="12" class="i10p-subtle">gałąź A ∥ B</text>' +
       '<text x="716" y="' + (LINE_Y + 12) + '" font-size="18" font-weight="700" class="i10p-mono">' + U.fmtP(m.parallel_r) + "</text>" +
-      '<text x="40" y="' + (SYS_Y + 12) + '" font-size="14" class="i10p-mono">R_sys</text>' +
+      '<text x="40" y="' + (SYS_Y + 12) + '" font-size="14" class="i10p-mono">R<tspan baseline-shift="sub" font-size="75%">sys</tspan></text>' +
       '<rect class="i10p-fill-idle" x="' + SYS_X0 + '" y="' + SYS_Y + '" width="' + SYS_W + '" height="14" rx="4"/>' +
       '<rect class="i10p-fill-ok" x="' + SYS_X0 + '" y="' + SYS_Y + '" width="' + U.g(SYS_W * m.system_r) + '" height="14" rx="4"/>' +
       '<text class="i10p-mono" x="670" y="' + (SYS_Y + 13) + '" font-size="18" font-weight="700">' + U.fmtP(m.system_r) + "</text>" +
@@ -59,7 +59,7 @@
   }
 
   function readout(m, cfg, t) {
-    var line = '<p class="i10p-read">R_sys = ' + U.fmtP(m.power_r) + " · " + U.fmtP(m.controller_r) + " · " +
+    var line = '<p class="i10p-read">R<sub>sys</sub> = ' + U.fmtP(m.power_r) + " · " + U.fmtP(m.controller_r) + " · " +
       U.fmtP(m.parallel_r) + " = " + U.fmtP(m.system_r) + "</p>";
     var note = t === cfg.base_time
       ? "Przy " + cfg.base_time + " " + cfg.unit + " dane zasilania i sterownika nie wymagają przeliczenia."

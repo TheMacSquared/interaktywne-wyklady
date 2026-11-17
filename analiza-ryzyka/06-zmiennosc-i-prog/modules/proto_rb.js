@@ -1,10 +1,9 @@
 // Prototypy punktów stop wykładu 06, grupa rb: ryciny lcSF liczone w przeglądarce.
-// Kontenery w R: lc_sf_figure() w stop_proto_rb.R (z6p_2a_ui, z6p_2b_ui, z6p_3_ui, z6p_5_ui).
+// Kontenery w R: lc_sf_figure() w stop_proto_rb.R (z6p_2b_ui, z6p_3_ui, z6p_5_ui).
 //
-//   z6_hist_a  — Zmiana po zmianie (P2A): histogram stałych przedziałów co 1°C,
-//                dopisywanie pomiarów z N(82, 3), krzywa modelu na życzenie.
-//   z6_hist_b  — Ogon dochodzi ostatni (P2B): histogram z ogonem ponad 85°C oraz
-//                ścieżka odsetka ponad progiem w funkcji liczby pomiarów (log10).
+//   z6_hist_b  — Ogon dochodzi ostatni (P2B, przyjęta): histogram stałych przedziałów
+//                co 1°C z ogonem ponad 85°C oraz ścieżka odsetka ponad progiem
+//                w funkcji liczby pomiarów (log10).
 //   z6_pole    — Pole między dwiema kreskami (P3): P(a < T ≤ b) jako pole pod krzywą.
 //   z6_linijka — Linijka σ (P5): pole μ ± kσ i linijka odchyleń nad osią.
 (function () {
@@ -14,8 +13,10 @@
   var U = Z.util;
 
   // Wspólne osie temperatury: stałe, przy ruchu kontrolek zmienia się rysunek, nie skala.
+  // Wyjątek: oś gęstości histogramu P2B rośnie, gdy przy kilkunastu pomiarach słupek
+  // jest wyższy niż YMAX (inaczej byłby ucięty); od kilkudziesięciu pomiarów jest stała.
   var X = [68, 98], YMAX = 0.3, XT = [70, 75, 80, 85, 90, 95];
-  var LIMIT_A = 20000, LIMIT_B = 10000, START_A = 8, START_B = 10, PROG_HI = 91;
+  var LIMIT_B = 10000, START_B = 10, PROG_HI = 91;
 
   // Pomiary z N(mu, sd) losowane w przeglądarce.
   function sample(cfg, n) {
@@ -35,47 +36,6 @@
     for (j = 0; j < cnt.length; j++) out.push([X[0] + j, X[0] + j + 1, n ? cnt[j] / n : 0]);
     return out;
   }
-
-  // Średnia i odchylenie próby (n − 1); NaN, gdy danych za mało.
-  function stats(values) {
-    var n = values.length, m = n ? U.mean(values) : NaN, ss = 0;
-    if (n > 1) values.forEach(function (t) { ss += (t - m) * (t - m); });
-    return { n: n, mean: m, sd: n > 1 ? Math.sqrt(ss / (n - 1)) : NaN };
-  }
-
-  function show(x, digits) { return isFinite(x) ? U.fmt(x, digits) : "–"; }
-
-  // Krok P2A i P2B: dopisanie pomiarów z ograniczeniem liczby pomiarów.
-  function grow(state, add, limit) {
-    var room = limit - state.data.length, m = Math.min(add, room);
-    if (m > 0) state.data = state.data.concat(sample(state.config, m));
-  }
-
-  // ---- P2A: histogram i opcjonalna krzywa modelu --------------------------------
-  var figA = {
-    init: function (state) { state.data = sample(state.config, START_A); },
-    act: function (state, act) {
-      if (act === "reset") { state.data = sample(state.config, START_A); return; }
-      var add = { add8: 8, add100: 100, add1000: 1000 }[act];
-      if (add) grow(state, add, LIMIT_A);
-    },
-    draw: function (v, P, k, state) {
-      var cfg = state.config, n = state.data.length, layers;
-      layers = [{ type: "bins", data: bins(state.data, n), color: P.secondary, alpha: 0.75,
-                  stroke: P.surface, lineWidth: 0.6 }];
-      if (v === "on") layers.push({ type: "line", data: U.curve(cfg.mu, cfg.sd, X[0], X[1]), color: P.accent, width: 2.4 });
-      return { x: X, y: [0, YMAX], xTicks: XT, xName: "Temperatura łożyska (°C)", yName: "Gęstość",
-        layers: layers,
-        aria: "Histogram " + n + " pomiarów temperatury w przedziałach co 1 stopień" +
-          (v === "on" ? ", z krzywą modelu N(82, 3)." : ".") };
-    },
-    update: function (root, state) {
-      var s = stats(state.data);
-      S.setValue(root, "n", String(s.n));
-      S.setValue(root, "mean", show(s.mean, 2));
-      S.setValue(root, "sd", show(s.sd, 2));
-    }
-  };
 
   // ---- P2B: histogram z ogonem i ścieżka odsetka --------------------------------
   // Stan: data (pomiary), over (ponad 85°C), over91 (ponad 91°C), path (odsetek od n = 10).
@@ -110,7 +70,9 @@
         var all = bins(state.data, state.data.length);
         var below = all.filter(function (b) { return b[0] < cfg.c; });
         var above = all.filter(function (b) { return b[0] >= cfg.c; });
-        return { x: X, y: [0, YMAX], xTicks: XT, xName: "Temperatura łożyska (°C)", yName: "Gęstość",
+        var top = Math.max.apply(null, all.map(function (b) { return b[2]; }));
+        var ymax = top > YMAX ? Math.ceil(top * 10) / 10 : YMAX;
+        return { x: X, y: [0, ymax], xTicks: XT, xName: "Temperatura łożyska (°C)", yName: "Gęstość",
           layers: [
             { type: "bins", data: below, color: P.secondary, alpha: 0.75, stroke: P.surface, lineWidth: 0.6 },
             { type: "bins", data: above, color: P.accent, alpha: 0.85, stroke: P.surface, lineWidth: 0.6 },
@@ -225,7 +187,6 @@
   };
 
   S.register({
-    z6_hist_a: figA,
     z6_hist_b: figB,
     z6_pole: figPole,
     z6_linijka: figRuler

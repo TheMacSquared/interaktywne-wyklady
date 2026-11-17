@@ -104,10 +104,12 @@ risk_quiz_data <- function(prefix, questions) {
     question <- questions[[index]]
     list(
       name = paste0(prefix, "_quiz_", index),
-      question = question$question,
+      # Teksty idą do omówienia quizu przez innerHTML (shared/lc_widgets.js): indeksy
+      # dolne jako HTML.
+      question = as.character(risk_sub_text(question$question)),
       correct = question$correct,
-      correct_label = names(question$choices)[match(question$correct, unname(question$choices))],
-      explanation = question$explanation
+      correct_label = as.character(risk_sub_text(names(question$choices)[match(question$correct, unname(question$choices))])),
+      explanation = as.character(risk_sub_text(question$explanation))
     )
   })
   json <- jsonlite::toJSON(items, auto_unbox = TRUE)
@@ -252,6 +254,45 @@ risk_annotated_formula <- function(items, ops) {
     row_cells("value", "lc-annot-value"),
     note_cells
   )
+}
+
+# Indeksy dolne w tekście: zapis „σ_D”, „μ_S”, „n_A” (jedna litera, podkreślnik,
+# indeks z liter i cyfr) zamienia na σ<sub>D</sub>. Zwraca HTML (tekst jest
+# najpierw escapowany) albo napis bez zmian, gdy nie ma czego zamieniać.
+risk_sub_text <- function(s) {
+  if (!is.character(s) || length(s) != 1L || inherits(s, "html")) return(s)
+  e <- htmltools::htmlEscape(s)
+  # Podstawa: jedna litera („σ_D”, „x_A”) albo skrót z wielkich liter („MTTF_p”).
+  # Przed nią nie może stać litera łacińska, cyfra ani „\” (identyfikatory, TeX);
+  # grecka litera może („ρσ_S”). Indeks: litery łacińskie (także polskie), cyfry
+  # i znaki łączone („x_Z̄”, „p_górne”), bez liter greckich, więc „σ_Sσ_L” to dwa
+  # indeksy. Dwa przebiegi: drugi indeks stoi zaraz po pierwszym.
+  idx <- "((?:[A-Za-z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]\\p{M}*)+)"
+  pat <- paste0("(*UCP)(?<![A-Za-z0-9_\\\\])([^\\W\\d_]|[A-Z]{2,})_", idx)
+  out <- gsub(pat, "\\1<sub>\\2</sub>", gsub(pat, "\\1<sub>\\2</sub>", e, perl = TRUE), perl = TRUE)
+  if (identical(out, e)) s else HTML(out)
+}
+
+# To samo dla całego drzewa tagów: zmienia tylko zwykłe napisy w treści (nie
+# atrybuty, nie gotowy HTML). Pomija napisy z TeX-em („\\(…\\)”, „$$…$$”), bo te
+# składa silnik wzorów. Stosować do treści rozdziału, np. w block.R wykładu.
+risk_subscripts <- function(x) {
+  if (inherits(x, "shiny.tag")) {
+    if (x$name %in% c("script", "style", "code")) return(x)
+    x$children <- lapply(x$children, risk_subscripts)
+    return(x)
+  }
+  if (inherits(x, "html")) return(x)
+  if (is.character(x)) {
+    if (length(x) != 1L) return(do.call(tagList, lapply(x, risk_subscripts)))
+    if (grepl("\\\\|\\$\\$", x)) return(x)
+    return(risk_sub_text(x))
+  }
+  if (is.list(x)) {
+    x[] <- lapply(x, risk_subscripts)
+    return(x)
+  }
+  x
 }
 
 risk_body <- function(items) {
@@ -412,7 +453,11 @@ risk_check <- function(id, question, choices, correct, explanation, hints = NULL
           class = "lc-check-option",
           tags$input(
             type = "radio", name = paste0("lc_check_", id), value = value,
-            `data-hint` = if (!is.null(hints) && value %in% names(hints)) hints[[value]]
+            # HTML dla innerHTML w risk_script.js: tekst escapowany, indeksy jako <sub>.
+            `data-hint` = if (!is.null(hints) && value %in% names(hints)) {
+              h <- risk_sub_text(hints[[value]])
+              if (inherits(h, "html")) as.character(h) else htmltools::htmlEscape(hints[[value]])
+            }
           ),
           " ", names(choices)[i]
         )
@@ -527,6 +572,9 @@ risk_chapter_from_config <- function(block, chapter, index, next_chapter = NULL)
 risk_block_chapters <- function(block) {
   lapply(seq_along(block$chapters), function(index) {
     next_chapter <- if (index < length(block$chapters)) block$chapters[[index + 1L]] else NULL
-    risk_chapter_from_config(block, block$chapters[[index]], index, next_chapter)
+    ch <- risk_chapter_from_config(block, block$chapters[[index]], index, next_chapter)
+    # Indeksy dolne w tekście („R_sys” → R<sub>sys</sub>), poza wzorami TeX.
+    ch$content <- risk_subscripts(ch$content)
+    ch
   })
 }

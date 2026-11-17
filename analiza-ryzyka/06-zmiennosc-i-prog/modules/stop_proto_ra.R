@@ -115,13 +115,13 @@ z6p1_css <- tags$style(HTML("
 "))
 
 z6p_1_ui <- tagList(z6p1_css,
-  z6p_frames_ui("P1", "scena", "Trzy wentylatory, jedna średnia", z6p1_frames, z6p1_svg))
+  z6p_frames_ui("P1", "scena", "Trzy wentylatory, jedna średnia", z6p1_frames, z6p1_svg, proto = FALSE))
 
 # ============================================================================
 # P4 — PIASKOWNICA „PRZESUŃ I ROZSZERZ KRZYWĄ”
 # ============================================================================
 
-z6p_4_ui <- z6p_panel("P4", "piaskownica", "Przesuń i rozszerz krzywą",
+z6p_4_ui <- z6p_panel("P4", "piaskownica", "Przesuń i rozszerz krzywą", proto = FALSE,
   lc_sf_figure("z6_musigma",
     control = list(lc_sf_slider("z6p4_mu", "Średnia μ", 76, 88, z6p_mu, 0.5, suffix = "°C"),
       lc_sf_slider("z6p4_sd", "Odchylenie σ", 1.5, 6, z6p_sd, 0.25, suffix = "°C")),

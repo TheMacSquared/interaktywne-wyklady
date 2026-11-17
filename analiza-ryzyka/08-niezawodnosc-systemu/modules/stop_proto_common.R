@@ -357,8 +357,9 @@ s8p_frames_ui <- function(num, kind, title, frames, svg, body = s8p_frame_body, 
 
 # Treść kadru albo widoku: opis i (gdy jest) odczyt.
 s8p_frame_body <- function(f) {
-  tagList(tags$p(class = "s8p-caption", f$text),
-    if (!is.null(f$read) && !(is.character(f$read) && !nzchar(f$read))) tags$p(class = "s8p-read", f$read))
+  # Indeksy dolne (R_sys → R<sub>sys</sub>): treść kadru trafia do config jako gotowy HTML.
+  tagList(tags$p(class = "s8p-caption", risk_subscripts(f$text)),
+    if (!is.null(f$read) && !(is.character(f$read) && !nzchar(f$read))) tags$p(class = "s8p-read", risk_subscripts(f$read)))
 }
 
 # Widoki z przełącznikami: segs = lista s8p_seg(); views = nazwana lista

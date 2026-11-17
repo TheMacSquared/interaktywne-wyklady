@@ -22,25 +22,25 @@ testthat::test_that("wykład 06: prototypy punktów stop są wpięte i działaj�
     )
   }, args = list(path = file.path(risk_root, "06-zmiennosc-i-prog")), show = FALSE)
 
-  # P1 stoi dwa razy (przed głosowaniem i po nim), pozostałe po razie.
-  expected <- c("P1", "P1", "P2A", "P2B", "P3", "P4", "P5", "P6", "P7", "P8", "P8b", "P9A", "P9B",
-    "P10A", "P10B", "P11", "P12", "P13", "P14A", "P14B", "P15A", "P15B", "P16A", "P16B")
+  # Każdy prototyp stoi raz; P1 jest przyjęta (po głosowaniu, bez plakietki prototypu).
+  expected <- c("P18", "P17", "P1", "P2B", "P3", "P4", "P5", "P6", "P7", "P8", "P8b", "P9A",
+    "P10A", "P11", "P12", "P13", "P14A", "P14B", "P15A", "P15B", "P16A", "P16B")
   testthat::expect_equal(sort(res$protos), sort(expected))
   testthat::expect_false(res$pending)
 
-  # Sceny: kadry (P1 ×2, P6, P12, P15A) i dwie losowe.
-  testthat::expect_equal(sort(res$scenes), sort(c(rep("kadry", 5), "zmiany", "dzwig")))
+  # Sceny: kadry (P1, P6, P12, P15A, P17, P18) i dwie losowe.
+  testthat::expect_equal(sort(res$scenes), sort(c(rep("kadry", 6), "zmiany", "dzwig")))
   for (cfg in res$configs[res$scenes == "kadry"]) {
     testthat::expect_gte(length(cfg$frames), 3L)
     for (fr in cfg$frames) testthat::expect_true(grepl("^<svg", fr$svg))
   }
-  testthat::expect_setequal(res$figs, c("z6_hist_a", "z6_hist_b", "z6_pole", "z6_linijka", "z6_musigma",
-    "z6_prog", "z6_interwencje", "z6_interwencje_b", "z6_prog_ponizej", "z6_nakladanie",
+  testthat::expect_setequal(res$figs, c("z6_hist_b", "z6_pole", "z6_linijka", "z6_musigma",
+    "z6_prog", "z6_interwencje", "z6_prog_ponizej", "z6_nakladanie",
     "z6_modele", "z6_modele_b",
-    # Sześć głównych wykresów wykładu (dawniej ggplot na serwerze): modules/wykresy.js.
-    "z6_hist", "z6_normal", "z6_tail", "z6_action", "z6_ls", "z6_shapes"))
-  # Rycina interwencji stoi dwa razy (P9A i P10B) z różnymi kontrolkami.
-  testthat::expect_equal(sum(res$figs == "z6_interwencje"), 2L)
+    # Główne wykresy wykładu (dawniej ggplot na serwerze): modules/wykresy.js.
+    "z6_shapes"))
+  # Rycina interwencji stoi raz (P9A).
+  testthat::expect_equal(sum(res$figs == "z6_interwencje"), 1L)
   testthat::expect_equal(anyDuplicated(res$ids), 0L)
 
   # Scena P1 pokazuje te same liczby co przykład 6.1.

@@ -91,7 +91,7 @@ cas_ch7_sol10_ui <- function() {
          p = av$p, gh = gh)
   })
   tagList(
-    p(tags$b("H₀:"), " μ_niski = μ_średni = μ_wysoki · ",
+    p(tags$b("H₀:"), " μ", tags$sub("niski"), " = μ", tags$sub("średni"), " = μ", tags$sub("wysoki"), " · ",
       tags$b("Hₐ:"), " co najmniej jedna para się różni"),
     local({
       lv <- c("Niski", "Średni", "Wysoki")

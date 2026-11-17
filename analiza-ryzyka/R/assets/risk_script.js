@@ -15,7 +15,8 @@
 
     box.classList.toggle('is-correct', correct);
     box.classList.toggle('is-wrong', !correct);
-    feedback.textContent = correct
+    // data-hint to HTML przygotowany w R (risk_check: tekst escapowany, indeksy <sub>).
+    feedback.innerHTML = correct
       ? 'Dobrze.'
       : 'Jeszcze nie. ' + (hint || 'Wróć do poprzedniego akapitu i spróbuj ponownie.');
     explanation.hidden = !correct;

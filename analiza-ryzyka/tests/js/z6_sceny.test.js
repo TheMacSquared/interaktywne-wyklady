@@ -12,7 +12,7 @@ const near = (a, b, tol) => assert.ok(Math.abs(a - b) <= tol, `${a} ≉ ${b}`);
 test("pnorm i dnorm zgadzają się z R", () => {
   near(U.pnorm(85, 82, 3), 0.8413447, 1e-6);      // pnorm(85, 82, 3)
   near(1 - U.pnorm(91, 82, 3), 0.001349898, 1e-7);
-  near(U.pnorm(0, 10, Math.sqrt(113)), 0.1734, 1e-4);  // P(L > S) dla zawiesia
+  near(U.pnorm(0, 10, Math.sqrt(113)), 0.1734, 1e-4);  // P(L > S) dla liny
   near(U.pnorm(-1), 0.1586553, 1e-6);
   near(U.dnorm(82, 82, 3), 0.1329808, 1e-7);
 });

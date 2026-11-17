@@ -3,20 +3,6 @@
 # ggplot — policzone w R przy budowaniu strony i przekazane rycinom w `config`.
 # Wymaga: risk_math.R, risk_block.R (ładowany przed block.R).
 
-# z6_hist: 5000 temperatur N(82, 3) z ziarnem 606; rycina bierze pierwsze n.
-z6_hist_config <- local({
-  set.seed(606)
-  list(values = round(rnorm(5000, 82, 3), 3))
-})
-
-# z6_ls: 700 par (L, S). Standaryzowane odchylenia z ziarnem 607 — obciążenie
-# to load + 8 · zl, wytrzymałość to strength + 7 · zs, jak rnorm(n, mean, sd).
-z6_ls_config <- local({
-  set.seed(607)
-  n <- 700
-  list(zl = round(rnorm(n), 4), zs = round(rnorm(n), 4), sd_load = 8, sd_strength = 7)
-})
-
 # z6_shapes: trzy rozkłady o średniej 82 i SD 3 (ziarno 608, 5000 obserwacji).
 # Histogram: przedziały jak geom_histogram(bins = 60). Wykres kwantylowy: punkty
 # stat_qq() — w ogonach (|z| > 1.8) wszystkie, w środku co dwunasty — i prosta
@@ -55,8 +41,3 @@ z6_shapes_config <- local({
     )
   })
 })
-
-# Interwencje (z6_action): μ, σ i próg każdego wariantu.
-z6_action_config <- list(
-  base = c(82, 3, 85), mean = c(80, 3, 85), sd = c(82, 2, 85), threshold = c(82, 3, 87)
-)

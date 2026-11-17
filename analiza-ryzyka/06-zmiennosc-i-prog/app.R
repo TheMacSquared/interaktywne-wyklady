@@ -48,7 +48,7 @@ source(file.path(shared_root, "lc_stat_figures.R"), local = TRUE)
 # Prototypy punktów stop (PUNKTY-STOP-PROPOZYCJA.md): wspólne narzędzia, potem
 # pliki rozdziałów; block.R wpina obiekty przez z6p_get().
 source(file.path(app_dir, "modules", "stop_proto_common.R"), local = TRUE)
-for (.f in c("ra", "rb", "rc", "rd", "re", "rf", "rg")) {
+for (.f in c("ra", "rb", "rc", "rd", "re", "rf", "rg", "rh", "ri")) {
   source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
 }
 source(file.path(app_dir, "modules", "wykresy.R"), local = TRUE)

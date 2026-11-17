@@ -1,6 +1,6 @@
 # PROTOTYPY PUNKTÓW STOP (2026-11-14) — grupa re: rozdział 5 „Obciążenie–wytrzymałość” ----
 #
-#   z6p_11_ui — Scena „Zawiesie dźwigu” (P11): historia z powtórzeniem na otwarcie rozdziału,
+#   z6p_11_ui — Scena „Lina dźwigu” (P11): historia z powtórzeniem na otwarcie rozdziału,
 #               przed pojęciem. Cztery kadry, przyciski „Podnieś ładunek”, +10, +100, +1000,
 #               „Od nowa”. Losowanie i rysunek w modules/proto_re.js (window.lcZ6, scena „dzwig”).
 #   z6p_12_ui — Pojęcie „Od chmury par do marginesu” (P12): cztery kadry policzone w R
@@ -11,16 +11,16 @@
 # Model: L ~ N(85, 8), S ~ N(95, 7), niezależne; awaria, gdy L > S; D = S − L ~ N(10, √113).
 
 # ============================================================================
-# P11 — SCENA „ZAWIESIE DŹWIGU”
+# P11 — SCENA „LINA DŹWIGU”
 # ============================================================================
 
 z6p11_p_model <- pnorm(0, 10, sqrt(113))  # P(D < 0) = P(L > S) ≈ 0.173
 
 z6p11_frames <- list(
   list(name = "Jedno podniesienie",
-    text = "Dźwigowy podnosi ładunek. Zawiesie średnio wytrzymuje 95 kN, a ładunek średnio waży 85 kN. Każdy ładunek i każde zawiesie jest trochę inne."),
+    text = "Dźwigowy podnosi ładunek. Lina średnio wytrzymuje 95 kN, a ładunek średnio waży 85 kN. Każdy ładunek i każdy odcinek liny jest trochę inny."),
   list(name = "Para na płaszczyźnie",
-    text = "Jedno podniesienie to jeden punkt. Pod przekątną ładunek był cięższy, niż zawiesie mogło unieść."),
+    text = "Jedno podniesienie to jeden punkt. Pod przekątną ładunek był cięższy, niż lina mogła unieść."),
   list(name = "Powtarzamy",
     text = "Podnoś dalej i licz punkty pod przekątną."),
   list(name = "Model",
@@ -36,7 +36,7 @@ z6p11_config <- list(
   frames = lapply(z6p11_frames, function(f) list(name = f$name, text = f$text))
 )
 
-z6p_11_ui <- z6p_scene_ui("P11", "scena", "Zawiesie dźwigu", "dzwig", z6p11_config,
+z6p_11_ui <- z6p_scene_ui("P11", "scena", "Lina dźwigu", "dzwig", z6p11_config, proto = FALSE,
   z6p_out("head"), z6p_out("stage"), z6p_out("read"), z6p_out("body"),
   tags$div(class = "z6p-nav",
     z6p_prev_next(),
@@ -44,7 +44,7 @@ z6p_11_ui <- z6p_scene_ui("P11", "scena", "Zawiesie dźwigu", "dzwig", z6p11_con
     z6p_button("m10", "+10"),
     z6p_button("m100", "+100"),
     z6p_button("m1000", "+1000"),
-    z6p_button("reset", "Od nowa", variant = "ghost")))
+    z6p_button("reset", icon = "reset", variant = "ghost", aria_label = "Od nowa")))
 
 # ============================================================================
 # P12 — POJĘCIE „OD CHMURY PAR DO MARGINESU”
@@ -221,4 +221,4 @@ z6p12_svg <- function(i) {
     z6p12_dev_svg())
 }
 
-z6p_12_ui <- z6p_frames_ui("P12", "pojęcie", "Od chmury par do marginesu", z6p12_frames, z6p12_svg)
+z6p_12_ui <- z6p_frames_ui("P12", "pojęcie", "Od chmury par do marginesu", z6p12_frames, z6p12_svg, proto = FALSE)

@@ -885,10 +885,15 @@ html[data-lc-theme=\"dark\"] {
   reset   = '<path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path>',
   shuffle = '<path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path>',
   prev    = '<path d="M15 6l-6 6 6 6"></path>',
-  `next`  = '<path d="M9 6l6 6-6 6"></path>'
+  `next`  = '<path d="M9 6l6 6-6 6"></path>',
+  # Oko z przekreśleniem (.lc-icon-slash): przycisk przełączający ukrywa kreskę,
+  # gdy jest wciśnięty (aria-pressed="true"), np. „pokaż model”.
+  eye     = paste0('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path>',
+                   '<circle cx="12" cy="12" r="3"></circle>',
+                   '<path class="lc-icon-slash" d="M4 4l16 16"></path>')
 )
 
-lc_icon <- function(name = c("reset", "shuffle", "prev", "next")) {
+lc_icon <- function(name = c("reset", "shuffle", "prev", "next", "eye")) {
   name <- match.arg(name)
   HTML(paste0(
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ',
@@ -1347,8 +1352,10 @@ lc_col <- function(key, label, type = c("num", "text", "row"), digits = 0,
         if (identical(col$type, "row")) {
           tags$th(scope = "row", role = role("rowheader"), class = cls, content)
         } else {
+          # Etykieta może być tagiem (np. indeks dolny); w atrybucie sam tekst.
           tags$td(role = role("cell"), class = cls,
-                  `data-label` = col$label, content)
+                  `data-label` = if (is.character(col$label)) col$label
+                    else gsub("<[^>]+>", "", as.character(col$label)), content)
         }
       })
     )

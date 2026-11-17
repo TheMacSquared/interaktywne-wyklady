@@ -3,8 +3,8 @@
 //
 //   z6_prog — Piaskownica „Próg temperatury łożyska” (P7): krzywa N(82, 3) stała,
 //             suwak progu c, pole ponad c, pas „następnego pół stopnia”.
-//   zmiany  — Scena „Dzienniki zmian” (P8): zmiana = 8 pomiarów co godzinę,
-//             tryb niezależny albo AR(1) z ρ = 0.8, liczniki i paski na wspólnej osi.
+//   zmiany  — Scena „Dzienniki zmian” (P8): zmiana = 8 niezależnych pomiarów co
+//             godzinę; pytanie o pomiar, o zmianę albo oba; paski na wspólnej osi.
 // P8b jest statyczny (rysunek z R), tu nie ma jego kodu.
 (function () {
   "use strict";
@@ -61,8 +61,9 @@
 
     Z.register({
       zmiany: function (cfg, ui) {
-        var n = cfg.n, rho = cfg.rho, mu = cfg.mu, sd = cfg.sd, c = cfg.c;
-        var mode = "ind", model = "off";   // tryb pomiarów; pokazanie modelu
+        var n = cfg.n, mu = cfg.mu, sd = cfg.sd, c = cfg.c;
+        var model = false;                 // pokazanie wartości z modelu (przycisk oka)
+        var q = "meas";                    // pytanie: o pomiar (kratki), o zmianę (wiersze) albo oba
         var rnd, changes, red, alarm;      // zmiany: tablice flag (true = ponad progiem)
 
         function restart() {
@@ -71,13 +72,11 @@
           add(1);
         }
 
-        // Jedna zmiana: n pomiarów; tryb „cor” to AR(1) z tym samym rozkładem brzegowym N(0, 1).
+        // Jedna zmiana: n niezależnych pomiarów N(mu, sd). Pomiary skorelowane pokazuje P8b.
         function oneChange() {
-          var z = [], flags = [], j, e, hot, count = 0;
+          var flags = [], j, hot, count = 0;
           for (j = 0; j < n; j++) {
-            e = U.rnorm(rnd);
-            z[j] = (mode === "cor" && j > 0) ? rho * z[j - 1] + Math.sqrt(1 - rho * rho) * e : e;
-            hot = mu + sd * z[j] > c;
+            hot = mu + sd * U.rnorm(rnd) > c;
             flags.push(hot);
             if (hot) count++;
           }
@@ -108,15 +107,18 @@
               for (j = 0; j < n; j++) body += cell(x0 + 34 + j * 16, y, "z6p-cell-idle");
               continue;
             }
-            body += '<text class="z6p-mono z6p-subtle" x="' + U.g(x0) + '" y="' + U.g(y + 4) + '" font-size="12">' + (start + k + 1) + "</text>";
-            any = false;
-            for (j = 0; j < n; j++) {
-              body += cell(x0 + 34 + j * 16, y, flags[j] ? "z6p-cell-bad" : "z6p-cell-ok");
-              if (flags[j]) any = true;
+            any = flags.indexOf(true) >= 0;
+            // Pytanie o zmianę: cały wiersz z alarmem dostaje tło, kratki bledną.
+            if (q === "shift" && any) {
+              body += '<rect class="z6p8-band" x="' + U.g(x0 + 28) + '" y="' + U.g(y - 9.5) + '" width="164" height="19" rx="4"/>';
             }
-            body += any
-              ? '<circle class="z6p-bad" cx="' + U.g(x0 + 178) + '" cy="' + U.g(y) + '" r="6"/>'
-              : '<circle class="z6p8-empty" cx="' + U.g(x0 + 178) + '" cy="' + U.g(y) + '" r="6"/>';
+            body += '<text class="z6p-mono z6p-subtle" x="' + U.g(x0) + '" y="' + U.g(y + 4) + '" font-size="12">' + (start + k + 1) + "</text>";
+            for (j = 0; j < n; j++) {
+              body += cell(x0 + 34 + j * 16, y, (flags[j] ? "z6p-cell-bad" : "z6p-cell-ok") + (q === "shift" ? " z6p8-soft" : ""));
+            }
+            // Pytanie o pomiar: kółka alarmu zmiany bledną.
+            body += '<circle class="' + (any ? "z6p-bad" : "z6p8-empty") + (q === "meas" ? " z6p-cell-dim" : "") +
+              '" cx="' + U.g(x0 + 178) + '" cy="' + U.g(y) + '" r="6"/>';
           }
           return U.svgWrap(800, 240, "Ostatnie zmiany: kratki to pomiary, czerwone są ponad 85 stopni; kółko wypełnione oznacza alarm w zmianie.", body);
         }
@@ -125,23 +127,26 @@
         function barsSvg() {
           var N = changes.length, M = N * n, X0 = 230, W = 400, body = "";
           var rows = [
-            { label: "pomiary ponad progiem", p: red / M, m: cfg.p, y: 30 },
-            { label: "zmiany z alarmem", p: alarm / N, m: mode === "cor" ? cfg.p_shift_cor : cfg.p_shift_ind, y: 84 }
+            { label: "pomiary ponad progiem", p: red / M, m: cfg.p, y: 30, q: "meas" },
+            { label: "zmiany z alarmem", p: alarm / N, m: cfg.p_shift, y: 84, q: "shift" }
           ];
           rows.forEach(function (r) {
+            // Pasek drugiego pytania blednie, ale zostaje do porównania; przy „oba” oba są pełne.
+            body += '<g' + (q === "both" || r.q === q ? "" : ' class="z6p8-off"') + ">";
             body += '<text x="0" y="' + U.g(r.y + 5) + '" font-size="15" font-weight="600">' + r.label + "</text>";
             body += '<rect class="z6p8-track" x="' + X0 + '" y="' + U.g(r.y - 9) + '" width="' + W + '" height="18" rx="3"/>';
             body += '<rect class="z6p8-fill" x="' + X0 + '" y="' + U.g(r.y - 9) + '" width="' + U.g(W * r.p) + '" height="18" rx="3"/>';
-            if (model === "on") {
+            if (model) {
               body += '<line class="z6p-limit" x1="' + U.g(X0 + W * r.m) + '" x2="' + U.g(X0 + W * r.m) +
                 '" y1="' + U.g(r.y - 13) + '" y2="' + U.g(r.y + 13) + '"/>';
             }
             body += '<text class="z6p-mono" x="' + (X0 + W + 14) + '" y="' + U.g(r.y + 5) + '" font-size="16" font-weight="700">' +
               U.fmt(100 * r.p, 1) + "%</text>";
-            if (model === "on") {
+            if (model) {
               body += '<text class="z6p-mono z6p-subtle" x="' + (X0 + W + 14) + '" y="' + U.g(r.y + 22) + '" font-size="12">model ' +
                 U.fmt(100 * r.m, 1) + "%</text>";
             }
+            body += "</g>";
           });
           body += U.axis(function (v) { return X0 + v * W; }, 118, [0, 0.5, 1], null, ["0%", "50%", "100%"]);
           return U.svgWrap(800, 140, "Odsetek pomiarów ponad progiem i odsetek zmian z alarmem, na wspólnej osi od 0 do 100 procent.", body);
@@ -149,9 +154,22 @@
 
         function render() {
           var N = changes.length, M = N * n;
-          ui.set("read", '<p class="z6p-read">Zmian: ' + N + " · pomiarów ponad progiem: " + red + " z " + M +
-            " (" + U.fmt(100 * red / M, 1) + "%) · zmian z alarmem: " + alarm + " z " + N +
-            " (" + U.fmt(100 * alarm / N, 1) + "%)</p>");
+          var Q = {
+            meas: { tag: "Pytanie o pomiar", text: "Jak często pojedynczy pomiar przekracza 85°C?",
+                    how: "Licz czerwone kratki", k: red, of: M },
+            shift: { tag: "Pytanie o zmianę", text: "Jak często w zmianie pojawia się co najmniej jeden alarm?",
+                     how: "Licz wiersze z co najmniej jedną czerwoną kratką", k: alarm, of: N }
+          };
+          function block(h, big) {
+            return '<span class="z6p8-q-tag">' + h.tag + "</span>" +
+              '<p class="z6p8-q-text' + (big ? "" : " is-small") + '">' + h.text + "</p>" +
+              '<p class="z6p-read">' + h.how + ": " + h.k + " z " + h.of +
+              " (" + U.fmt(100 * h.k / h.of, 1) + "%)</p>";
+          }
+          // „Oba”: dwa pytania jedno pod drugim, mniejszą czcionką; siatka i paski bez wyróżnień.
+          ui.set("read", '<div class="z6p8-q">' +
+            (q === "both" ? block(Q.meas, false) + block(Q.shift, false) : block(Q[q], true)) +
+            '<p class="z6p-subtle z6p8-q-n">Zmian w dzienniku: ' + N + "</p></div>");
           ui.set("grid", gridSvg());
           ui.set("bars", barsSvg());
         }
@@ -163,11 +181,14 @@
             m40: function () { add(40); },
             m1000: function () { add(1000); },
             reset: function () { restart(); },
-            mode: function (btn) {
-              var v = U.press(btn);
-              if (v !== mode) { mode = v; restart(); }
+            // Przycisk oka: przełącza wartości z modelu na paskach.
+            model: function (btn) {
+              model = !model;
+              btn.setAttribute("aria-pressed", model ? "true" : "false");
+              btn.setAttribute("aria-label", model ? "Ukryj wartości z modelu" : "Pokaż wartości z modelu");
+              btn.setAttribute("title", btn.getAttribute("aria-label"));
             },
-            model: function (btn) { model = U.press(btn); }
+            question: function (btn) { q = U.press(btn); }
           },
           render: render
         };

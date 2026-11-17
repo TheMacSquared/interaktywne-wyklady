@@ -171,8 +171,9 @@ f9p_frames_ui <- function(num, kind, title, frames, svg, body = f9p_frame_body, 
 
 # Treść kadru: opis i (gdy jest) odczyt.
 f9p_frame_body <- function(f) {
-  tagList(tags$p(class = "f9p-caption", f$text),
-    if (!is.null(f$read) && !(is.character(f$read) && !nzchar(f$read))) tags$p(class = "f9p-read", f$read))
+  # Indeksy dolne (R_sys → R<sub>sys</sub>): treść kadru trafia do config jako gotowy HTML.
+  tagList(tags$p(class = "f9p-caption", risk_subscripts(f$text)),
+    if (!is.null(f$read) && !(is.character(f$read) && !nzchar(f$read))) tags$p(class = "f9p-read", risk_subscripts(f$read)))
 }
 
 # ============================================================================

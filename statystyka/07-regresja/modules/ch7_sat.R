@@ -75,7 +75,7 @@ ch7_sat_sol2_ui <- function() {
   b1 <- coef(m1)["ndvi"]; b2 <- coef(m2)["ndvi"]
   g1 <- broom::glance(m1); g2 <- broom::glance(m2)
   tagList(
-    p(sprintf("β_NDVI: model prosty %.2f, model z kontrolą %.2f.", b1, b2)),
+    p("β", tags$sub("NDVI"), sprintf(": model prosty %.2f, model z kontrolą %.2f.", b1, b2)),
     p(sprintf("Adjusted R²: %.3f → %.3f.", g1$adj.r.squared, g2$adj.r.squared)),
     p("Kontrola zmiennych poprawia opis, ale dane obserwacyjne nadal nie
        gwarantują kompletności zmiennych zakłócających ani kierunku przyczynowego.")

@@ -115,13 +115,13 @@ z6p6_frames <- list(
 )
 
 z6p_6_ui <- tagList(z6p6_css,
-  z6p_frames_ui("P6", "pojęcie", "Temperatura i ciśnienie na jednej linijce", z6p6_frames, z6p6_svg))
+  z6p_frames_ui("P6", "pojęcie", "Temperatura i ciśnienie na jednej linijce", z6p6_frames, z6p6_svg, proto = FALSE))
 
 # ============================================================================
 # P7 — PIASKOWNICA „PRÓG TEMPERATURY ŁOŻYSKA”
 # ============================================================================
 
-z6p_7_ui <- z6p_panel("P7", "piaskownica", "Próg temperatury łożyska",
+z6p_7_ui <- z6p_panel("P7", "piaskownica", "Próg temperatury łożyska", proto = FALSE,
   lc_sf_figure("z6_prog",
     control = list(lc_sf_slider("z6p7_c", "Próg c", 78, 95, 85, 0.5, suffix = "°C")),
     toolbar = lc_readouts(z6p_read("z", "z progu"), z6p_read("p", "P(T > c)", upwr_accent),
@@ -134,19 +134,14 @@ z6p_7_ui <- z6p_panel("P7", "piaskownica", "Próg temperatury łożyska",
 # P8 — SCENA „DZIENNIKI ZMIAN” (historia z powtórzeniem)
 # ============================================================================
 
-# Config sceny: liczby policzone w R. p_shift_cor symulowany dla 200 000 zmian AR(1)
-# ze stałym ziarnem; seed = 7 daje pierwszą zmianę z dokładnie jedną czerwoną kratką.
+# Config sceny: liczby policzone w R; pomiary w zmianie niezależne (pomiary
+# skorelowane pokazuje P8b). seed = 7 daje pierwszą zmianę z dokładnie jedną
+# czerwoną kratką.
 z6p8_config <- local({
-  n <- 8L; rho <- 0.8
+  n <- 8L
   p <- pnorm(z6p_c, z6p_mu, z6p_sd, lower.tail = FALSE)
-  set.seed(2026)
-  m <- 200000L
-  zz <- matrix(0, m, n)
-  zz[, 1] <- rnorm(m)
-  for (j in 2:n) zz[, j] <- rho * zz[, j - 1] + sqrt(1 - rho^2) * rnorm(m)
-  list(n = n, mu = z6p_mu, sd = z6p_sd, c = z6p_c, rho = rho, p = p,
-    p_shift_ind = 1 - (1 - p)^n,
-    p_shift_cor = mean(rowSums(zz > (z6p_c - z6p_mu) / z6p_sd) > 0),
+  list(n = n, mu = z6p_mu, sd = z6p_sd, c = z6p_c, p = p,
+    p_shift = 1 - (1 - p)^n,
     seed = 7L)
 })
 
@@ -155,10 +150,29 @@ z6p8_css <- tags$style(HTML("
   .z6p8-fill { fill: var(--upwr-accent); }
   .z6p8-empty { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: 1.4; }
   .z6p8-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1em; }
+  .z6p8-q { border-left: 4px solid var(--upwr-accent); padding: .35em 0 .1em .8em; margin: .3em 0 .6em; }
+  .z6p8-q-tag { font-size: .8em; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--upwr-accent); }
+  .z6p8-q-text { font-size: 1.2em; font-weight: 600; margin: .1em 0 .2em; }
+  .z6p8-q-text.is-small { font-size: 1em; }
+  .z6p8-q-n { font-size: .85em; margin: .2em 0 0; }
+  .z6p8-band { fill: color-mix(in srgb, var(--upwr-accent) 16%, transparent); }
+  .z6p8-soft { opacity: .55; }
+  .z6p8-off { opacity: .3; }
 "))
 
+# Przełącznik „Pytanie” (17.11.2026): to samo stoi na ekranie, zmienia się pytanie,
+# a z nim to, co liczymy — kratki (pomiary), wiersze (zmiany) albo oba naraz.
+# Przycisk oka pokazuje wartości z modelu na paskach.
+z6p8_eye <- local({
+  b <- z6p_button("model", icon = "eye", aria_label = "Pokaż wartości z modelu")
+  b$attribs[["aria-pressed"]] <- "false"
+  b
+})
+
 z6p_8_ui <- tagList(z6p8_css,
-  z6p_scene_ui("P8", "scena", "Dzienniki zmian", "zmiany", z6p8_config,
+  z6p_scene_ui("P8", "scena", "Dzienniki zmian", "zmiany", z6p8_config, proto = FALSE,
+    tags$div(class = "z6p-nav",
+      z6p_seg("question", "Pytanie", c("o pomiar" = "meas", "o zmianę" = "shift", "oba naraz" = "both"))),
     z6p_out("read"),
     z6p_out("grid"),
     z6p_out("bars"),
@@ -166,12 +180,10 @@ z6p_8_ui <- tagList(z6p8_css,
       z6p_button("one", "Następna zmiana", variant = "solid"),
       z6p_button("m40", "+40"),
       z6p_button("m1000", "+1000"),
-      z6p_button("reset", "Od nowa")),
-    tags$div(class = "z6p-nav",
-      z6p_seg("mode", "Pomiary w zmianie", c("niezależne" = "ind", "skorelowane" = "cor")),
-      z6p_seg("model", "Model", c("ukryty" = "off", "pokazany" = "on"))),
+      z6p_button("reset", icon = "reset", variant = "ghost", aria_label = "Od nowa"),
+      z6p8_eye),
     tags$p(class = "z6p-caption",
-      "Kratka to pomiar, wiersz to zmiana: czerwona kratka to pomiar ponad 85°C. Policz osobno czerwone kratki i wiersze z co najmniej jedną czerwoną.")))
+      "Kratka to pomiar, wiersz to zmiana: czerwona kratka to pomiar ponad 85°C. Przełącz pytanie: ten sam dziennik, ale liczymy co innego.")))
 
 # ============================================================================
 # P8b — PRZYPADEK BRZEGOWY „TE SAME POMIARY, INNE ZMIANY” (statyczny)
@@ -215,7 +227,7 @@ z6p8b_fc <- z6p8b_flags(z6p8b_seed_cor, TRUE)
 z6p8b_read <- function(f) sprintf("czerwonych kratek: %d z %d · zmian z alarmem: %d z %d",
   sum(f), length(f), sum(rowSums(f) > 0), nrow(f))
 
-z6p_8b_ui <- z6p_panel("P8b", "przypadek brzegowy", "Te same pomiary, inne zmiany",
+z6p_8b_ui <- z6p_panel("P8b", "przypadek brzegowy", "Te same pomiary, inne zmiany", proto = FALSE,
   z6p_css, z6p8_css,
   tags$div(class = "z6p8-pair",
     tags$div(z6p8b_svg(z6p8b_fi, "pomiary niezależne"), tags$p(class = "z6p-read", z6p8b_read(z6p8b_fi))),

@@ -210,7 +210,7 @@ i10p4_svg_2 <- function() {
     '<path class="i10p-link" d="M700,310 V350"/>',
     sprintf('<text class="i10p-mono i10p-subtle" x="392" y="176" font-size="12" text-anchor="end">1 − czułość = %s</text>', vals[["miss"]]),
     sprintf('<text class="i10p-mono i10p-subtle" x="492" y="334" font-size="12" text-anchor="end">R(t) = %s</text>', vals[["fan"]]),
-    sprintf('<text class="i10p-mono i10p-subtle" x="692" y="334" font-size="12" text-anchor="end">R_sys = %s</text>', vals[["sys"]]))
+    sprintf('<text class="i10p-mono i10p-subtle" x="692" y="334" font-size="12" text-anchor="end">R<tspan baseline-shift="sub" font-size="75%%">sys</tspan> = %s</text>', vals[["sys"]]))
   box <- paste0(
     sprintf('<rect class="i10p-box-hit" x="10" y="350" width="780" height="70" rx="8"/>'),
     '<text x="400" y="378" font-size="15" font-weight="700" text-anchor="middle">Drzewo ochrony termicznej Bananpolu</text>',

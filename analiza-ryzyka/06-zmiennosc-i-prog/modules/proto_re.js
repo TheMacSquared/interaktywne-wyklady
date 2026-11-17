@@ -1,7 +1,7 @@
 // Prototypy punktów stop wykładu 06 „Zmienność i próg”, grupa re (rozdział 5,
 // „Obciążenie–wytrzymałość”). Kontener w R: stop_proto_re.R.
 //
-//   dzwig — Scena „Zawiesie dźwigu” (P11): każde podniesienie losuje obciążenie
+//   dzwig — Scena „Lina dźwigu” (P11): każde podniesienie losuje obciążenie
 //           L ~ N(85, 8) i wytrzymałość S ~ N(95, 7) przez Math.random (U.rnorm).
 //           Kadry: pasy ostatniego podniesienia, płaszczyzna L–S z punktami,
 //           powtarzanie (+10, +100, +1000), linie średnich i odczyt z modelu.
@@ -56,7 +56,7 @@
         return '<text x="0" y="24" font-size="15" font-weight="700">Ostatnie podniesienie</text>' +
           '<text x="0" y="72" font-size="14">ładunek L = ' + U.fmt(l, 1) + ' kN</text>' +
           bar(l, 80, "var(--upwr-cat-bursztyn)") +
-          '<text x="0" y="150" font-size="14">zawiesie S = ' + U.fmt(s, 1) + ' kN</text>' +
+          '<text x="0" y="150" font-size="14">lina S = ' + U.fmt(s, 1) + ' kN</text>' +
           bar(s, 158, "var(--upwr-cat-niebo)") +
           (bad
             ? '<text class="z6p-bad" x="0" y="232" font-size="17" font-weight="700">awaria: L &gt; S</text>'
@@ -107,7 +107,7 @@
       }
 
       function aria() {
-        return "Ostatnie podniesienie: ładunek " + U.fmt(last.l, 1) + " kN, zawiesie " + U.fmt(last.s, 1) +
+        return "Ostatnie podniesienie: ładunek " + U.fmt(last.l, 1) + " kN, lina " + U.fmt(last.s, 1) +
           " kN. Podniesień " + count + ", awarii " + fails + ".";
       }
 
