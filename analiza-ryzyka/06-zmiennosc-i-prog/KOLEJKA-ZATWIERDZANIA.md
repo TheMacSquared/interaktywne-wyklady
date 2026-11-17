@@ -17,6 +17,7 @@ w którym miałby zostać. Tam, gdzie są warianty, nad panelem jest notka
 
 | Rozdz. | Prototyp | Rodzaj | Plik | Decyzja do podjęcia |
 |---|---|---|---|---|
+| 1 | P21 „Raport, który przejdzie przez cały wykład” | scena (oś wykładu) | rl | **przyjęta 17.11**: szablon raportu progowego (7 wierszy) w wersji złej; poprawki P21-1, P21-3, P21-4, P21-6 na końcach rozdziałów, karta liny P21-5 w rozdz. 5; P16A to ten sam szablon w wersji poprawionej z przełącznikiem przed/po |
 | 1 | P1 „Trzy wentylatory, jedna średnia” | scena | ra | **przyjęta 17.11**: po głosowaniu (A); w głosowaniu „Nie — potrzebujemy rozrzutu” → „Nie wiadomo” |
 | 1 | P2B „Ogon dochodzi ostatni” | symulacja | rb | **przyjęta 17.11** zamiast histogramu z suwakiem; P2A odrzucona i usunięta |
 | 2 | P3 „Pole między dwiema kreskami” | pojęcie | rb | **przyjęta 17.11** |
@@ -33,10 +34,14 @@ w którym miałby zostać. Tam, gdzie są warianty, nad panelem jest notka
 | 5 | P18 „Obciążenie i wytrzymałość w praktyce” | przykłady | ri | **dodana i przyjęta 17.11**: 5 sytuacji L–S (smar, regał, wyłącznik, dach, wał) i zestawienie z liną; po scenie P11 |
 | 5 | P12 „Od chmury par do marginesu” | pojęcie (kadry) | re | **przyjęta 17.11**, przeniesiona za wzory (6.9)–(6.10) do sekcji „Różnica dwóch zmiennych normalnych” |
 | 5 | P13 „Pole nakładania to nie ryzyko” | przypadek brzegowy | rd | **przyjęta 17.11** |
+| 6 | P19B „Czas zatrzymania dwóch pras” | scena (dwa światy z powtórzeniem) | rj | **przyjęta 17.11**; odrzucone P19 „Dwie trasy do pracy” i P19A „Amoniak w dwóch halach” |
 | 6 | P14A „Ten sam środek, inny ogon” | galeria | rf | **przyjęta 17.11** zamiast histogramu kształtów; P14B odrzucona i usunięta; stary panel został jako sam wykres Q–Q w sekcji „Jak czytać wykres kwantylowy” |
 | 6 | P15A „Pięć pomiarów obok modelu” | pojęcie (kadry) | rf | **przyjęta 17.11**; P15B odrzucona i usunięta |
 | 7 | P16A „Raport, wersja poprawiona” | domknięcie | rg | **przyjęta 17.11** (obie) |
-| 8 | P16B „Od pytania do działania” | domknięcie | rg | **przyjęta 17.11**; układ zmieniony na pionową listę kroków |
+| 7 | P20A „Redaktor komunikatu” | piaskownica | rk | **przyjęta 17.11** |
+| 7 | P20B „Popraw raport” | galeria | rk | **przyjęta 17.11**; raporty na innych danych niż P21 |
+| 7 | P20C „Decyzja z budżetem” | piaskownica | rk | **przyjęta 17.11**; koszty ilustracyjne |
+| 8 | P16B „Od pytania do działania” | domknięcie | rg | przyjęta 17.11, potem **usunięta** (kroki pokazuje szablon raportu) |
 
 Pliki: `modules/stop_proto_<plik>.R` i `modules/proto_<plik>.js`; wspólne
 narzędzia w `modules/stop_proto_common.R` i `modules/sceny.js`.

@@ -56,16 +56,20 @@ prog_exercises <- list(
 prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
   list(
     id = "glosowanie", title = "Zmienność a próg", hook = "Średnia w normie, a próg przekroczony",
+    # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
+    widget = z6p_21_fix(1),
     lead = "Bez informacji o zmienności średnia nie odpowiada na pytanie o przekroczenie.",
     intro = c(
-      "Raport z dojrzewalni wygląda uspokajająco: średnia temperatura łożyska wentylatora to 82°C, a wewnętrzny próg ostrzegawczy ustalono na 85°C. Trzy stopnie zapasu — czy sprawa jest zamknięta? Zanim odpowiesz, przypomnij sobie, że średnia to jedna liczba opisująca setki pomiarów, z których każdy wypadł trochę inaczej.",
-      "Ten wykład wprowadza zmienne ciągłe i rozkład normalny, ale jego prawdziwym tematem jest zmienność: dlaczego bez miary rozrzutu nie da się odpowiedzieć na żadne pytanie o przekroczenie progu."
+      "Na biurko kierownika dojrzewalni trafia raport progowy o łożysku wentylatora 2. Stoi niżej, w siedmiu wierszach, i wygląda uspokajająco: średnia temperatura 82°C, próg ostrzegawczy 85°C, trzy stopnie zapasu, „w normie”. Każdy jego wiersz jest jednak błędny albo pusty. Przez cały wykład będziemy go poprawiać, wiersz po wierszu; poprawkę zobaczysz na końcu rozdziału, który ją uzasadnia.",
+      "Ten wykład wprowadza zmienne ciągłe i rozkład normalny, ale jego prawdziwym tematem jest zmienność: dlaczego bez miary rozrzutu nie da się odpowiedzieć na żadne pytanie o przekroczenie progu. Zaczynamy od wiersza 2, czyli od tego, co mówi średnia, a czego nie mówi."
     ),
     callout = list(
       label = "Dane Bananpolu",
       text = "Temperatura łożyska wentylatora: średnia 82°C, odchylenie standardowe 3°C, wewnętrzny próg ostrzegawczy 85°C. Jednostka obserwacji: pojedynczy pomiar w ustalonym trybie pracy; temperatura w °C. Udział pomiarów ponad progiem nie jest prawdopodobieństwem co najmniej jednego przekroczenia w całej zmianie. Próg jest demonstracyjny, a liczby fikcyjne.",
       color = "uwaga"
     ),
+    # Raport P21 (przyjęty 17.11.2026): zła wersja szablonu raportu, oś całego wykładu
+    body = list(z6p_get("z6p_21_ui")),
     sections = list(
       list(
         id = "rozrzut", title = "Średnia to za mało",
@@ -126,7 +130,9 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
   list(
     id = "ciagla", title = "Rozkład normalny", hook = "Dokładnie tej temperatury nie będzie nigdy",
     lead = "Temperatura nie jest liczbą zdarzeń — wymaga gęstości, a rozkład normalny opisują dwa parametry: μ przesuwa środek, σ rozszerza lub zwęża krzywą.",
-    intro = "W wykładach o próbach zmienne losowe zliczały zdarzenia: zero, jedna, dwie wady. Temperatura łożyska nie zlicza niczego — może wynieść 82.1°C, 82.14°C albo dowolną wartość pomiędzy. To wymusza zmianę narzędzi: zamiast prawdopodobieństw pojedynczych wartości pracujemy z gęstością, a prawdopodobieństwa czytamy z pól pod krzywą.",
+    intro = c(
+      "Wiersz 2 raportu poprawiliśmy liczbą 159 na 1000 pomiarów. Ten rozdział buduje model, z którego taką liczbę się liczy: rozkład ciągły i krzywą normalną.",
+      "W wykładach o próbach zmienne losowe zliczały zdarzenia: zero, jedna, dwie wady. Temperatura łożyska nie zlicza niczego — może wynieść 82.1°C, 82.14°C albo dowolną wartość pomiędzy. To wymusza zmianę narzędzi: zamiast prawdopodobieństw pojedynczych wartości pracujemy z gęstością, a prawdopodobieństwa czytamy z pól pod krzywą."),
     sections = list(
       list(
         id = "kontrast", title = "Dwa rodzaje zmiennych",
@@ -229,8 +235,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
   ),
   list(
     id = "standaryzacja", title = "Standaryzacja", hook = "Każdy pomiar da się przyłożyć do jednej linijki",
+    # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
+    widget = z6p_21_fix(3),
     lead = "Standaryzacja mówi, ile odchyleń standardowych dzieli wynik od średniej; próg dzieli rozkład na wyniki akceptowalne i przekroczenia.",
     intro = c(
+      "Ten rozdział poprawia dwa wiersze raportu: horyzont („16% pomiarów, więc 16% zmian”) i mechanizm („pojedyncze, przypadkowe gorące odczyty”).",
       "Czy 85°C przy średniej 82°C i σ = 3°C to dużo? A 62 bary ciśnienia przy średniej 56 i σ = 2? Porównanie surowych liczb z różnych światów jest niemożliwe — dopóki obu nie przełożymy na wspólną jednostkę: liczbę odchyleń standardowych od średniej.",
       "Dla progu łożyska z = (85-82)/3 = 1: próg leży jedno odchylenie nad średnią, co w modelu normalnym oznacza około 16% przekroczeń. Dla ciśnienia z = 3 — przekroczenia są rzadkością. Standaryzacja porządkuje priorytety, zanim padnie jakakolwiek decyzja."
     ),
@@ -341,8 +350,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
   ),
   list(
     id = "dzialania", title = "Hierarchia interwencji", hook = "Schłodzić, uspokoić albo przesunąć próg",
+    # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
+    widget = z6p_21_fix(4),
     lead = "Chłodzenie przesuwa średnią, stabilizacja zwęża rozkład, zmiana progu przesuwa granicę.",
     intro = c(
+      "Wiersz 6 raportu proponuje podnieść próg do 87°C, bo wtedy przekroczeń będzie mniej. Ten rozdział porównuje to z chłodzeniem i stabilizacją i pokazuje, czym te działania naprawdę się różnią.",
       "Gdy górny próg leży powyżej średniej, pole ogona można zmniejszyć przez obniżenie średniej lub ograniczenie zmienności. Zmniejszenie σ przy progu poniżej średniej zwiększa P(T>c), a przy progu równym średniej pozostawia 0.5. Zmiana progu zmienia samo zdarzenie. Fizycznie to trzy zupełnie różne interwencje — lepsze chłodzenie, wyrównanie obciążenia i warunków pracy albo decyzja konstrukcyjna o nowej granicy.",
       "Porównaj skuteczność konkretnych interwencji względem stanu bazowego μ=82°C, σ=3°C, c=85°C. Wynik zależy zarówno od punktu wyjścia, jak i wielkości zmiany parametrów; nie ma uniwersalnego rankingu chłodzenia i stabilizacji."
     ),
@@ -417,8 +429,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
   ),
   list(
     id = "obciazenie", title = "Obciążenie–wytrzymałość", hook = "Nie tylko ciężar się zmienia",
+    # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
+    widget = z6p_21_lina,
     lead = "Awaria zachodzi wtedy, gdy obciążenie L przekracza wytrzymałość S.",
     intro = c(
+      "Raport z rozdziału 1 dotyczy łożyska, ale ten sam dział napisał drugi, o linie dźwigu w magazynie: „ryzyko zerwania około 50%”. Na końcu rozdziału poprawimy go na tym samym szablonie.",
       "W konstrukcjach i instalacjach granica bezpieczeństwa rzadko jest stałą: wytrzymałość liny zmienia się z partią i zużyciem, a obciążenie z ładunkiem i pogodą. Pytanie o awarię staje się pytaniem o wyścig dwóch zmiennych losowych.",
       "Najpierw obejrzyj ten wyścig na przykładzie liny dźwigu: każde podniesienie to jedna para ładunek–lina, a przekątna dzieli pary na bezpieczne i awarie."
     ),
@@ -506,16 +521,22 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
   ),
   list(
     id = "nienormalny", title = "Wykres kwantylowy", hook = "Ta sama średnia, zupełnie inny ogon",
+    # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
+    widget = z6p_21_fix(6),
     lead = "Skośność i ciężki ogon mogą silnie zmienić ryzyko progowe mimo podobnej średniej i odchylenia.",
     intro = c(
-      "Model normalny jest wygodny, ale nie jest prawem przyrody. Procesy z naturalną dolną granicą bywają skośne, a procesy z rzadkimi zaburzeniami mają ogony cięższe, niż przewiduje krzywa dzwonowa. Trzy rozkłady w widgecie mają zbliżone centrum — i wyraźnie różne ryzyko przekroczenia progu.",
+      "Wiersz 5 raportu brzmi po prostu: „Model standardowy”. Ten rozdział sprawdza, co kryje się za tym słowem.",
+      "Model normalny jest wygodny, ale nie jest prawem przyrody. Procesy z naturalną dolną granicą bywają skośne, a procesy z rzadkimi zaburzeniami mają ogony cięższe, niż przewiduje krzywa dzwonowa. Trzy modele w galerii niżej mają tę samą średnią i to samo odchylenie, a wyraźnie różne ryzyko przekroczenia progu.",
       "Do diagnozy służy wykres kwantylowy: punkty na prostej oznaczają zgodność z modelem normalnym, a zagięcia na końcach — ogony inne niż normalne. To najtańsze narzędzie kontroli jakości modelu przed rachunkiem progowym."
     ),
     sections = list(
       list(
         id = "ogony", title = "Ten sam środek, inny ogon",
         body = list(
+          # Scena P19B (przyjęta 17.11.2026): czas zatrzymania dwóch pras, przed pojęciem skośności
+          z6p_get("z6p_19b_ui"),
           c(
+            "Obie prasy mają tę samą średnią i to samo odchylenie standardowe, a prasa B przekracza dopuszczalny czas kilka razy częściej. Jej rozkład jest skośny: ma twardą dolną granicę, bo szybciej niż pozwala mechanika zatrzymać się nie da, i długi prawy ogon, w którym mieszczą się rzadkie zwłoki zaworu.",
             "Wszystkie rachunki z rozdziałów 2–5 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.",
             "Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3). Skośny to przesunięty rozkład gamma: ma twardą dolną granicę około 76.8°C (łożysko nie ostygnie poniżej temperatury otoczenia) i dłuższy prawy ogon. Model z ciężkim ogonem to przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
           ),
@@ -584,6 +605,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     id = "komunikat", title = "Komunikat progowy", hook = "Wynik ma wskazać, co zrobić",
     lead = "Komunikat progowy łączy liczbę z horyzontem, mechanizm i działanie — dopiero wtedy kierownik wie, co zrobić.",
     intro = c(
+      "Wszystkie poprawki z rozdziałów 1–6 składamy teraz w jeden raport. Dochodzą dwa wiersze, których wcześniej brakowało: pytanie z celem i kontrola po wdrożeniu.",
       "Kompletny komunikat progowy mieści się w trzech zdaniach: jaka część wyników przekracza próg i w jakim horyzoncie, jaki mechanizm odpowiada za ogon, które działanie — chłodzenie, stabilizacja czy rewizja progu — rekomendujesz i dlaczego. Liczba bez mechanizmu nie wskazuje działania; działanie bez liczby nie ma uzasadnienia."
     ),
     sections = list(
@@ -601,7 +623,11 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           )
           ,
           # Domknięcie P16A (przyjęte 17.11.2026): raport z rozdziału 1 poprawiony
-          z6p_get("z6p_16a_ui")
+          z6p_get("z6p_16a_ui"),
+          # Widgety P20A–P20C (przyjęte 17.11.2026): samodzielna praca z komunikatem
+          z6p_get("z6p_20a_ui"),
+          z6p_get("z6p_20b_ui"),
+          z6p_get("z6p_20c_ui")
         )
       )
     )
@@ -619,10 +645,6 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           "Wykład zaczął się od raportu, w którym średnia 82°C leżała poniżej progu 85°C, i od obserwacji, że bez miary rozrzutu nie da się ocenić ryzyka. Temperatura jest zmienną ciągłą, więc prawdopodobieństwa są polami pod gęstością (6.1), a pojedyncza wartość ma prawdopodobieństwo zero. Pola odczytujemy z dystrybuanty (6.2). Rozkład normalny N(μ, σ) o gęstości (6.3) opisują dwa parametry: położenie μ i szerokość σ — w tym kursie zawsze z odchyleniem standardowym na drugim miejscu.",
           "Standaryzacja (6.4) przekłada każdy próg na wspólną linijkę z, a wzór (6.5) zamienia z na prawdopodobieństwo przekroczenia; kwantyl (6.6) odpowiada na pytanie odwrotne. Dla łożyska z = 1 i P(T > 85) ≈ 0.159, czyli około 159 pomiarów na tysiąc. Ryzyko w zmianie z wieloma pomiarami to inna zmienna — wzór (6.7). Chłodzenie, stabilizacja i zmiana progu działają przez to samo z, ale tylko dwa pierwsze zmieniają fizykę. Gdy próg sam jest losowy, jak wytrzymałość liny, ryzyko to P(D < 0) dla marginesu D = S - L (6.8), którego wariancja jest sumą wariancji (6.9), a prawdopodobieństwo awarii to Φ(-β) (6.10).",
           "Wszystkie te rachunki zależą od kształtu ogona. Wykres kwantylowy (6.11) pokazuje, czy model normalny opisuje ekstremalne pomiary; skośność i ciężkie ogony potrafią zwiększyć częstość przekroczeń odległych progów kilkakrotnie, przy tej samej średniej i tym samym σ."
-        ),
-        # Domknięcie P16B (przyjęte 17.11.2026): mapa wykładu z wynikami dla łożyska
-        body = list(
-          z6p_get("z6p_16b_ui")
         )
       ),
       list(

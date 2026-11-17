@@ -58,47 +58,42 @@ z6p1_strip <- function(j, step) {
   )
 }
 
-# Kadr 1: sam raport — trzy wiersze z tą samą średnią i adnotacją „w normie”.
+# Kadr 1 (17.11.2026): wiersz 2 raportu P21 z początku rozdziału — ten sam szablon,
+# wycinek jednego wiersza; ocena „w normie” wyróżniona.
 z6p1_report <- function() {
-  rows <- vapply(1:3, function(j) {
-    y <- 118 + (j - 1) * 62
-    paste0(
-      sprintf('<line class="z6p-grid" x1="130" x2="670" y1="%g" y2="%g"/>', y - 34, y - 34),
-      sprintf('<text x="150" y="%g" font-size="18" font-weight="600">Wentylator %d</text>', y, j),
-      sprintf('<text class="z6p-mono" x="360" y="%g" font-size="18">82°C</text>', y),
-      sprintf('<text class="z6p-mono" x="470" y="%g" font-size="18">85°C</text>', y),
-      sprintf('<rect class="z6p-ok" x="560" y="%g" width="96" height="28" rx="14" opacity=".2"/>', y - 20),
-      sprintf('<text class="z6p-ok" x="608" y="%g" font-size="15" font-weight="700" text-anchor="middle">w normie</text>', y)
-    )
-  }, character(1))
   paste0(
-    '<rect class="z6p-paper" x="110" y="20" width="580" height="290" rx="6"/>',
-    '<text x="150" y="54" font-size="15" font-weight="700">RAPORT MIESIĘCZNY · temperatura łożysk</text>',
-    '<text class="z6p-subtle" x="360" y="78" font-size="13">średnia</text>',
-    '<text class="z6p-subtle" x="470" y="78" font-size="13">próg</text>',
-    '<text class="z6p-subtle" x="560" y="78" font-size="13">ocena</text>',
-    paste(rows, collapse = "")
+    '<rect class="z6p-paper" x="60" y="40" width="680" height="230" rx="6"/>',
+    '<rect x="60" y="40" width="680" height="4" rx="2" style="fill:var(--upwr-accent)"/>',
+    '<text class="z6p-mono z6p-subtle" x="90" y="80" font-size="13" letter-spacing="1.2">RAPORT PROGOWY · WENTYLATOR 2 · MAJ · WIERSZ 2</text>',
+    '<line class="z6p-grid" x1="90" x2="710" y1="96" y2="96"/>',
+    '<text class="z6p-mono z6p-subtle" x="90" y="150" font-size="20" font-weight="700">2</text>',
+    '<text x="130" y="150" font-size="20" font-weight="700">Wynik</text>',
+    '<text x="260" y="150" font-size="19">Średnia 82°C przy progu 85°C:</text>',
+    '<rect class="z6p-ok" x="256" y="168" width="104" height="32" rx="16" opacity=".2"/>',
+    '<text class="z6p-ok" x="308" y="191" font-size="17" font-weight="700" text-anchor="middle">w normie</text>',
+    '<text x="362" y="191" font-size="19">, ryzyko przekroczeń pomijalne.</text>',
+    '<text class="z6p-subtle" x="90" y="244" font-size="14">Ocena oparta na dwóch liczbach: średniej i progu.</text>'
   )
 }
 
 z6p1_frames <- list(
   list(name = "Raport",
-    text = "Raport miesięczny podaje średnią temperaturę łożysk trzech wentylatorów. Każdy ma 82°C przy progu 85°C i adnotację „w normie”.",
+    text = "Wiersz 2 raportu z początku rozdziału ocenia wentylator 2 po samej średniej: 82°C przy progu 85°C, więc „w normie”.",
     read = "średnia 82°C · próg 85°C · zapas 3°C"),
   list(name = "Dzienniki",
-    text = "Za każdą średnią stoi tysiąc pomiarów z dziennika. Punkt to jeden pomiar, przerywana linia to średnia.",
+    text = "Tę samą średnią mogą mieć bardzo różne dzienniki. Obok wentylatora 2 stawiamy dwa inne, też ze średnią 82°C. Punkt to jeden pomiar, przerywana linia to średnia.",
     read = NULL),
   list(name = "Próg",
     text = "Dorysowujemy próg 85°C. Pomiary ponad progiem są w kolorze akcentu.",
     read = NULL),
   list(name = "Liczymy",
-    text = "Ta sama średnia, a przekroczeń jest 1, 159 i 274 na tysiąc pomiarów. Wentylatory różni tylko rozrzut.",
+    text = "Ta sama średnia, a przekroczeń jest 1, 159 i 274 na tysiąc pomiarów. Wentylatory różni tylko rozrzut; nasz wentylator 2 ma σ = 3°C i 159 przekroczeń na 1000.",
     read = sprintf("ponad 85°C: %s na 1000", paste(z6p1_over, collapse = " · ")))
 )
 
 z6p1_svg <- function(step) {
   if (step == 1) return(z6p_svg(800, 330,
-    "Raport: trzy wentylatory o średniej temperaturze 82 stopnie, próg 85 stopni, wszystkie ocenione jako w normie.",
+    "Wiersz 2 raportu: średnia 82 stopnie przy progu 85 stopni, ocena w normie.",
     z6p1_report()))
   aria <- c("",
     "Dzienniki trzech wentylatorów: tysiąc pomiarów każdy, ta sama średnia, coraz większy rozrzut.",

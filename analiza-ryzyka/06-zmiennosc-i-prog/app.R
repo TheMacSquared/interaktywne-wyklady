@@ -48,7 +48,7 @@ source(file.path(shared_root, "lc_stat_figures.R"), local = TRUE)
 # Prototypy punktów stop (PUNKTY-STOP-PROPOZYCJA.md): wspólne narzędzia, potem
 # pliki rozdziałów; block.R wpina obiekty przez z6p_get().
 source(file.path(app_dir, "modules", "stop_proto_common.R"), local = TRUE)
-for (.f in c("ra", "rb", "rc", "rd", "re", "rf", "rg", "rh", "ri")) {
+for (.f in c("ra", "rb", "rc", "rd", "re", "rf", "rg", "rh", "ri", "rj", "rk", "rl")) {
   source(file.path(app_dir, "modules", paste0("stop_proto_", .f, ".R")), local = TRUE)
 }
 source(file.path(app_dir, "modules", "wykresy.R"), local = TRUE)
@@ -76,7 +76,7 @@ ui <- lecture_page(
     includeScript(file.path(project_root, "R", "risk_figures.js")),
     includeScript(file.path(app_dir, "modules", "wykresy.js")),
     lc_sf_styles(),
-    lapply(c("ra", "rb", "rc", "rd", "re", "rf"), function(f)
+    lapply(c("ra", "rb", "rc", "rd", "re", "rf", "rj", "rk"), function(f)
       includeScript(file.path(app_dir, "modules", paste0("proto_", f, ".js"))))
   )
 )
