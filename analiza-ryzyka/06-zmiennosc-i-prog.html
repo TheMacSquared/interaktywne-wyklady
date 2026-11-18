@@ -3723,7 +3723,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
                   </li>
                   <li class="z6p16a-row ">
                     <span class="z6p16a-num">3</span>
-                    <strong class="z6p16a-lbl">Okres odniesienia</strong>
+                    <strong class="z6p16a-lbl">Częstość alarmu</strong>
                     <span class="z6p16a-text">Ponad progiem leży 16% pomiarów, więc alarm pojawi się w około 16% zmian.</span>
                   </li>
                   <li class="z6p16a-row ">
@@ -4510,7 +4510,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
           </div>
           <p class="lc-chapter-lead">Prawdopodobieństwo przekroczenia to pole pod krzywą ponad progiem; standaryzacja pozwala je policzyć dla każdego rozkładu normalnego.</p>
         </header>
-        <p class="lc-p">Ten rozdział poprawia dwa wiersze raportu: okres odniesienia („16% pomiarów, więc 16% zmian”) i źródło ryzyka („pojedyncze, przypadkowe gorące odczyty”).</p>
+        <p class="lc-p">Ten rozdział poprawia dwa wiersze raportu: częstość alarmu („16% pomiarów, więc 16% zmian”) i źródło ryzyka („pojedyncze, przypadkowe gorące odczyty”).</p>
         <p class="lc-p">Czy 85°C przy średniej 82°C i σ = 3°C to dużo? A 62 bary ciśnienia przy średniej 56 i σ = 2? Porównanie surowych liczb z różnych światów jest niemożliwe — dopóki obu nie przełożymy na wspólną jednostkę: liczbę odchyleń standardowych od średniej.</p>
         <p class="lc-p">Dla progu łożyska z = (85-82)/3 = 1: próg leży jedno odchylenie nad średnią, co w modelu normalnym oznacza około 16% przekroczeń. Dla ciśnienia z = 3 — przekroczenia są rzadkością. Standaryzacja porządkuje priorytety, zanim padnie jakakolwiek decyzja.</p>
         <h2 id="prog-standaryzacja-jednostki" class="lc-h2" data-lc-section="prog-standaryzacja-jednostki" data-lc-section-num="" data-lc-section-title="Wspólna linijka z">Wspólna linijka z</h2>
@@ -5111,12 +5111,12 @@ SD((X - μ)/σ) = σ/σ = 1
 </style>
             <div class="z6p16a">
               <div class="z6p16a-card z6p16a-after ">
-                <div class="z6p16a-head">Raport z oceny ryzyka · wentylator 2 · maj · wiersze okres odniesienia i źródło ryzyka</div>
+                <div class="z6p16a-head">Raport z oceny ryzyka · wentylator 2 · maj · wiersze częstość alarmu i źródło ryzyka</div>
                 <ol class="z6p16a-rows">
                   <li class="z6p16a-row z6p21-rowfix">
                     <span class="z6p16a-num">3</span>
                     <span class="z6p16a-lbl z6p21-lblfix">
-                      <strong>Okres odniesienia</strong>
+                      <strong>Częstość alarmu</strong>
                       <span class="z6p21-why">pomylono pomiar ze zmianą</span>
                     </span>
                     <span class="z6p16a-text">
@@ -5132,20 +5132,20 @@ SD((X - μ)/σ) = σ/σ = 1
                     </span>
                     <span class="z6p16a-text">
                       <span class="z6p21-old">Przyczyna: pojedyncze, przypadkowe gorące odczyty.</span>
-                      <span class="z6p21-new">Średnia leży jedno odchylenie standardowe pod progiem; przekroczenia wynikają z położenia i rozrzutu temperatury.</span>
+                      <span class="z6p21-new">Łożysko stale pracuje za blisko progu i z dużymi wahaniami: przekroczenia to zwykła praca, nie awaria. Źródła: niewystarczające chłodzenie (średnia 82°C, tylko 3°C pod progiem) i nierówne obciążenie (wahania σ = 3°C).</span>
                     </span>
                   </li>
                 </ol>
                 <div class="z6p21-notes">
                   <p>
-                    <span class="z6p21-mark">3 · Okres odniesienia</span>
+                    <span class="z6p21-mark">3 · Częstość alarmu</span>
                      
                     Odsetek pomiarów to nie odsetek zmian: pytanie o zmianę dotyczy co najmniej jednego z ośmiu pomiarów. Przy skorelowanych pomiarach zmian z alarmem jest mniej.
                   </p>
                   <p>
                     <span class="z6p21-mark">4 · Źródło ryzyka</span>
                      
-                    Gorące odczyty nie są przypadkiem: przy z = 1 mniej więcej co szósty pomiar musi wypaść ponad progiem.
+                    Gorące odczyty nie są przypadkiem: przy z = 1 mniej więcej co szósty pomiar musi wypaść ponad progiem. Średnią przesuwa chłodzenie, rozrzut zależy od obciążenia i warunków pracy.
                   </p>
                 </div>
               </div>
@@ -6295,7 +6295,7 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
           <p class="lc-chapter-lead">Skośność i ciężki ogon mogą silnie zmienić ryzyko progowe mimo podobnej średniej i odchylenia.</p>
         </header>
         <p class="lc-p">Wiersz 5 raportu brzmi po prostu: „Model standardowy”. Ten rozdział sprawdza, co kryje się za tym słowem.</p>
-        <p class="lc-p">Model normalny jest wygodny, ale nie jest prawem przyrody. Ten sam typ łożyska pracuje w dwóch komorach dojrzewalni, z tą samą średnią i tym samym odchyleniem. Zanim cokolwiek nazwiemy, sprawdź, jak często w każdej z nich temperatura przekracza 91°C.</p>
+        <p class="lc-p">Model normalny jest wygodny, ale nie jest prawem przyrody. Ten sam typ łożyska pracuje w dwóch komorach dojrzewalni, z tą samą średnią i tym samym odchyleniem; różni je tylko sposób smarowania. Zanim cokolwiek nazwiemy, sprawdź, jak często w każdej z nich temperatura przekracza 91°C.</p>
         <p class="lc-p">Do diagnozy służy wykres kwantylowy: punkty na prostej oznaczają zgodność z modelem normalnym, a zagięcia na końcach — ogony inne niż normalne. To najtańsze narzędzie kontroli jakości modelu przed rachunkiem progowym.</p>
         <h2 id="prog-nienormalny-ogony" class="lc-h2" data-lc-section="prog-nienormalny-ogony" data-lc-section-num="" data-lc-section-title="Ten sam środek, inny ogon">Ten sam środek, inny ogon</h2>
         <style>
@@ -6340,7 +6340,7 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
   .z6p-nav { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; }
   .z6p-nav .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
 </style>
-            <div class="z6p-scene" data-scene="dwa_swiaty" data-config="{&quot;unit&quot;:&quot;°C&quot;,&quot;digits&quot;:1,&quot;axis&quot;:[72,100],&quot;bin&quot;:1,&quot;ticks&quot;:[75,80,85,90,95,100],&quot;tick_labels&quot;:[&quot;75&quot;,&quot;80&quot;,&quot;85&quot;,&quot;90&quot;,&quot;95&quot;,&quot;100°C&quot;],&quot;limit&quot;:91,&quot;limit_label&quot;:&quot;próg 91°C&quot;,&quot;item&quot;:&quot;Pomiar&quot;,&quot;over_word&quot;:&quot;ponad 91°C&quot;,&quot;aria&quot;:&quot;Histogramy temperatury tego samego łożyska w dwóch komorach dojrzewalni; pomiary powyżej 91°C wyróżnione.&quot;,&quot;a&quot;:{&quot;name&quot;:&quot;Komora 1&quot;,&quot;sub&quot;:&quot;obciążenie w obie strony&quot;,&quot;who&quot;:&quot;Komora 1&quot;,&quot;mu&quot;:82,&quot;sd&quot;:3},&quot;b&quot;:{&quot;name&quot;:&quot;Komora 2&quot;,&quot;sub&quot;:&quot;pełne obciążenie, przegrzania&quot;,&quot;who&quot;:&quot;Komora 2&quot;,&quot;min&quot;:76.8038475772934,&quot;k&quot;:3,&quot;theta&quot;:1.73205080756888},&quot;steps&quot;:[{&quot;n&quot;:1,&quot;label&quot;:&quot;Kolejny pomiar&quot;},{&quot;n&quot;:100,&quot;label&quot;:&quot;+ 100 pomiarów&quot;},{&quot;n&quot;:1000,&quot;label&quot;:&quot;+ 1000&quot;}]}">
+            <div class="z6p-scene" data-scene="dwa_swiaty" data-config="{&quot;unit&quot;:&quot;°C&quot;,&quot;digits&quot;:1,&quot;axis&quot;:[72,100],&quot;bin&quot;:1,&quot;ticks&quot;:[75,80,85,90,95,100],&quot;tick_labels&quot;:[&quot;75&quot;,&quot;80&quot;,&quot;85&quot;,&quot;90&quot;,&quot;95&quot;,&quot;100°C&quot;],&quot;limit&quot;:91,&quot;limit_label&quot;:&quot;próg 91°C&quot;,&quot;item&quot;:&quot;Pomiar&quot;,&quot;over_word&quot;:&quot;ponad 91°C&quot;,&quot;aria&quot;:&quot;Histogramy temperatury tego samego łożyska w dwóch komorach dojrzewalni; pomiary powyżej 91°C wyróżnione.&quot;,&quot;a&quot;:{&quot;name&quot;:&quot;Komora 1&quot;,&quot;sub&quot;:&quot;smarownik co godzinę&quot;,&quot;who&quot;:&quot;Komora 1&quot;,&quot;mu&quot;:82,&quot;sd&quot;:3},&quot;b&quot;:{&quot;name&quot;:&quot;Komora 2&quot;,&quot;sub&quot;:&quot;smarowanie raz w tygodniu&quot;,&quot;who&quot;:&quot;Komora 2&quot;,&quot;min&quot;:76.8038475772934,&quot;k&quot;:3,&quot;theta&quot;:1.73205080756888},&quot;steps&quot;:[{&quot;n&quot;:1,&quot;label&quot;:&quot;Kolejny pomiar&quot;},{&quot;n&quot;:100,&quot;label&quot;:&quot;+ 100 pomiarów&quot;},{&quot;n&quot;:1000,&quot;label&quot;:&quot;+ 1000&quot;}]}">
               <div data-z6p-out="stage"></div>
               <div data-z6p-out="read"></div>
               <div class="z6p-nav">
@@ -6355,13 +6355,13 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
                 </button>
                 <button type="button" class="lc-action is-ghost is-icon" aria-label="Od nowa" title="Od nowa" data-z6p="reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
               </div>
-              <p class="z6p-caption">W komorze 1 obciążenie raz rośnie, raz spada. W komorze 2 łożysko pracuje stale pod pełnym obciążeniem, więc chłodniej niż około 77°C nie bywa, a co jakiś czas zapchany filtr albo przerwa w smarowaniu podbija temperaturę.</p>
+              <p class="z6p-caption">W komorze 1 automatyczny smarownik podaje smar co godzinę. W komorze 2 konserwator smaruje łożysko raz w tygodniu: zaraz po smarowaniu jest najchłodniej, potem z każdym dniem cieplej, a gdy smarowanie się spóźni, łożysko grzeje się dalej.</p>
             </div>
           </div>
         </div>
-        <p class="lc-p">W obu komorach łożysko ma średnio 82°C i odchylenie 3°C, a mimo to w komorze 2 próg 91°C pada kilka razy częściej: około 12 na 1000 pomiarów wobec 1.3 w komorze 1. Różnicę robi kształt. W komorze 2 temperatura ma twardą dolną granicę, bo przy pełnym obciążeniu łożysko nie ostygnie poniżej około 77°C, a zapchany filtr czy przerwa w smarowaniu mogą ją tylko podnieść. Rozkład, którego jeden ogon jest wyraźnie dłuższy od drugiego, nazywamy skośnym; tu długi ogon leży po prawej, więc to skośność prawostronna. Tak zachowuje się wiele procesów z naturalną dolną granicą i zaburzeniami działającymi w jedną stronę.</p>
+        <p class="lc-p">W obu komorach łożysko ma średnio 82°C i odchylenie 3°C, a mimo to w komorze 2 próg 91°C pada kilka razy częściej: około 12 na 1000 pomiarów wobec 1.3 w komorze 1. Różnicę robi kształt. Świeżo nasmarowane łożysko w komorze 2 ma około 77°C i chłodniejsze nie będzie, więc rozkład ma twardą dolną granicę. Każdy dzień bez smarowania dokłada ciepła, a spóźnione smarowanie dokłada go jeszcze więcej, więc prawy ogon jest długi. Rozkład, którego jeden ogon jest wyraźnie dłuższy od drugiego, nazywamy skośnym; tu długi ogon leży po prawej, więc to skośność prawostronna.</p>
         <p class="lc-p">Wszystkie rachunki z rozdziałów 2–5 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.</p>
-        <p class="lc-p">Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3), jak w komorze 1. Skośny to przesunięty rozkład gamma, jak w komorze 2: dolna granica około 76.8°C i dłuższy prawy ogon. Trzeci model opisuje inny mechanizm: rzadkie, gwałtowne odchylenia w obie strony, np. przy chwilowych zakłóceniach pomiaru. To przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym.</p>
+        <p class="lc-p">Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3), jak w komorze 1. Skośny to przesunięty rozkład gamma, jak w komorze 2: dolna granica tuż po smarowaniu, około 76.8°C, i dłuższy prawy ogon. Trzeci model opisuje inny mechanizm: rzadkie, gwałtowne odchylenia w obie strony, np. przy chwilowych zakłóceniach pomiaru. To przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym.</p>
         <div class="lc-note">
           <div class="lc-note-l">Przykład 6.10</div>
           <div class="lc-note-b">
@@ -6469,7 +6469,7 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
   .z6p-nav { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; }
   .z6p-nav .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
 </style>
-            <div class="z6p-scene" data-scene="qq_budowa" data-config="{&quot;mu&quot;:82,&quot;sd&quot;:3,&quot;n&quot;:40,&quot;i0&quot;:36,&quot;data&quot;:{&quot;a&quot;:[83,84.9,86.2,78.6,80.6,75.6,79.5,85.6,83.8,83.7,82.6,81.5,80.6,79.2,83.4,81.8,77.1,85,83.9,83.9,79.9,82.4,76.3,80.1,81.8,80.2,88.3,82.5,78.4,84.6,87.6,78.9,85.2,84,82.1,82.2,83,80.4,77.4,80.1],&quot;b&quot;:[78.6,79.8,83.5,82.7,79.2,80,82.1,86.4,87.5,83.2,82.1,87.8,80.9,82.2,82.4,77.4,84.7,85.5,78.9,80.8,81.8,79.1,80.5,81.6,83.2,78.6,90.7,84.1,78.4,79.8,79.7,81.5,84,81.6,84.5,85.8,81.4,78.2,80.6,80.6]},&quot;sets&quot;:{&quot;a&quot;:&quot;Komora 1&quot;,&quot;b&quot;:&quot;Komora 2&quot;},&quot;steps&quot;:[{&quot;name&quot;:&quot;Dane&quot;,&quot;text&quot;:&quot;Czterdzieści pomiarów temperatury łożyska z wybranej komory. U góry ich histogram, pod nim krzywa modelu normalnego N(82, 3) na tej samej osi.&quot;},{&quot;name&quot;:&quot;Kwantyl empiryczny&quot;,&quot;text&quot;:&quot;Ustawiamy pomiary rosnąco. Pomiar nr i to kwantyl empiryczny: poniżej niego leży ułamek (i − 0.5)/n danych.&quot;},{&quot;name&quot;:&quot;Kwantyl teoretyczny&quot;,&quot;text&quot;:&quot;Model odpowiada na to samo pytanie: gdzie krzywa N(82, 3) odcina z lewej to samo pole? To kwantyl teoretyczny, w jednostkach z.&quot;},{&quot;name&quot;:&quot;Para na wykres&quot;,&quot;text&quot;:&quot;Oba kwantyle tworzą jeden punkt: poziomo kwantyl modelu z, pionowo pomiar. Gdy dane zgadzają się z modelem, punkt leży na prostej 82 + 3z.&quot;},{&quot;name&quot;:&quot;Wszystkie pomiary&quot;,&quot;text&quot;:&quot;To samo dla każdego z czterdziestu pomiarów daje wykres kwantylowy.&quot;}],&quot;end&quot;:{&quot;a&quot;:&quot;Komora 1: punkty idą wzdłuż prostej, a odchylenia są małe i bez wzoru. Model normalny pasuje.&quot;,&quot;b&quot;:&quot;Komora 2: punkty układają się w łuk. Lewy koniec leży nad prostą, bo dane mają dolną granicę, a prawy ucieka w górę, bo prawy ogon jest dłuższy niż w modelu.&quot;}}">
+            <div class="z6p-scene" data-scene="qq_budowa" data-config="{&quot;mu&quot;:82,&quot;sd&quot;:3,&quot;n&quot;:40,&quot;i0&quot;:36,&quot;data&quot;:{&quot;a&quot;:[83,84.9,86.2,78.6,80.6,75.6,79.5,85.6,83.8,83.7,82.6,81.5,80.6,79.2,83.4,81.8,77.1,85,83.9,83.9,79.9,82.4,76.3,80.1,81.8,80.2,88.3,82.5,78.4,84.6,87.6,78.9,85.2,84,82.1,82.2,83,80.4,77.4,80.1],&quot;b&quot;:[78.6,79.8,83.5,82.7,79.2,80,82.1,86.4,87.5,83.2,82.1,87.8,80.9,82.2,82.4,77.4,84.7,85.5,78.9,80.8,81.8,79.1,80.5,81.6,83.2,78.6,90.7,84.1,78.4,79.8,79.7,81.5,84,81.6,84.5,85.8,81.4,78.2,80.6,80.6]},&quot;sets&quot;:{&quot;a&quot;:&quot;Komora 1&quot;,&quot;b&quot;:&quot;Komora 2&quot;},&quot;steps&quot;:[{&quot;name&quot;:&quot;Dane&quot;,&quot;text&quot;:&quot;Czterdzieści pomiarów temperatury łożyska z wybranej komory. U góry ich histogram, pod nim krzywa modelu normalnego N(82, 3) na tej samej osi.&quot;},{&quot;name&quot;:&quot;Kwantyl empiryczny&quot;,&quot;text&quot;:&quot;Ustawiamy pomiary rosnąco. Pomiar nr i to kwantyl empiryczny: poniżej niego leży ułamek (i − 0.5)/n danych.&quot;},{&quot;name&quot;:&quot;Kwantyl teoretyczny&quot;,&quot;text&quot;:&quot;Model odpowiada na to samo pytanie: gdzie krzywa N(82, 3) odcina z lewej to samo pole? To kwantyl teoretyczny, w jednostkach z.&quot;},{&quot;name&quot;:&quot;Para na wykres&quot;,&quot;text&quot;:&quot;Oba kwantyle tworzą jeden punkt: poziomo kwantyl modelu z, pionowo pomiar. Gdy dane zgadzają się z modelem, punkt leży na prostej 82 + 3z.&quot;},{&quot;name&quot;:&quot;Wszystkie pomiary&quot;,&quot;text&quot;:&quot;To samo dla każdego z czterdziestu pomiarów daje wykres kwantylowy.&quot;}],&quot;end&quot;:{&quot;a&quot;:&quot;Komora 1: punkty idą wzdłuż prostej, a odchylenia są małe i bez wzoru. Model normalny pasuje.&quot;,&quot;b&quot;:&quot;Komora 2: punkty układają się w łuk. Lewy koniec leży nad prostą, bo łożysko świeżo po smarowaniu nie schodzi niżej, a prawy ucieka w górę przez spóźnione smarowania.&quot;}}">
               <div data-z6p-out="head"></div>
               <div class="z6p-nav">
                 <div class="lc-grp ">
@@ -6731,7 +6731,7 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
             <span class="lc-next-num">07</span>
             Komunikat o ryzyku
           </span>
-          <span class="lc-next-lead">Komunikat o ryzyku łączy poziom ryzyka w okresie odniesienia, źródło ryzyka i postępowanie z ryzykiem — dopiero wtedy kierownik wie, co zrobić.</span>
+          <span class="lc-next-lead">Komunikat o ryzyku łączy poziom ryzyka i częstość alarmu, źródło ryzyka i postępowanie z ryzykiem — dopiero wtedy kierownik wie, co zrobić.</span>
         </a>
       </section>
       <section id="ch-komunikat" class="lc-chapter lc-content-wrap" data-lc-static-chapter="true" hidden="">
@@ -6741,7 +6741,7 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
             <div class="lc-chapter-num">07</div>
             <h1 class="lc-chapter-title">Wynik ma wskazać, co zrobić.</h1>
           </div>
-          <p class="lc-chapter-lead">Komunikat o ryzyku łączy poziom ryzyka w okresie odniesienia, źródło ryzyka i postępowanie z ryzykiem — dopiero wtedy kierownik wie, co zrobić.</p>
+          <p class="lc-chapter-lead">Komunikat o ryzyku łączy poziom ryzyka i częstość alarmu, źródło ryzyka i postępowanie z ryzykiem — dopiero wtedy kierownik wie, co zrobić.</p>
         </header>
         <p class="lc-p">Wszystkie poprawki z rozdziałów 1–6 składamy teraz w jeden raport. Dochodzą dwa wiersze, których wcześniej brakowało: zakres z kryterium decyzji i monitorowanie po wdrożeniu.</p>
         <p class="lc-p">Kompletny komunikat o ryzyku mieści się w trzech zdaniach: jaka część wyników przekracza próg i w jakim okresie odniesienia (na pomiar, na zmianę), co jest źródłem ryzyka w ogonie, które postępowanie z ryzykiem — chłodzenie, stabilizacja czy rewizja progu — rekomendujesz i dlaczego. Liczba bez źródła ryzyka nie wskazuje działania; działanie bez liczby nie ma uzasadnienia.</p>
@@ -6750,12 +6750,12 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
           <div class="lc-note-l">Przykład 6.12</div>
           <div class="lc-note-b">
             <div class="lc-note-t">Trzy zdania dla kierownika dojrzewalni</div>
-            <p>Na podstawie danych łożyska (μ = 82°C, σ = 3°C, próg 85°C, 8 pomiarów na zmianę) i przykładu 6.7 zredaguj komunikat o ryzyku w trzech zdaniach: poziom ryzyka w okresie odniesienia, źródło ryzyka, postępowanie z ryzykiem.</p>
+            <p>Na podstawie danych łożyska (μ = 82°C, σ = 3°C, próg 85°C, 8 pomiarów na zmianę) i przykładu 6.7 zredaguj komunikat o ryzyku w trzech zdaniach: poziom ryzyka i częstość alarmu, źródło ryzyka, postępowanie z ryzykiem.</p>
             <details class="lc-more">
               <summary class="lc-more-l">Rozwiązanie</summary>
               <div class="lc-more-b">
                 <ol>
-                  <li>Poziom ryzyka i okres odniesienia: około 159 na 1000 pomiarów przekracza 85°C (6.5); przy ośmiu niezależnych pomiarach na zmianę alarm pojawiłby się w około 75% zmian (6.7) — przy skorelowanych pomiarach rzadziej.</li>
+                  <li>Poziom ryzyka i częstość alarmu: około 159 na 1000 pomiarów przekracza 85°C (6.5); przy ośmiu niezależnych pomiarach na zmianę alarm pojawiłby się w około 75% zmian (6.7) — przy skorelowanych pomiarach rzadziej.</li>
                   <li>Źródło ryzyka: średnia leży tylko 1σ pod progiem, więc ryzyko tworzy zarówno położenie, jak i rozrzut temperatury.</li>
                   <li>Postępowanie z ryzykiem: chłodzenie o 2°C obniża częstość do około 48 na 1000, a połączenie z ograniczeniem σ do 2°C — do około 6 na 1000 (przykład 6.7); podniesienie progu tylko po badaniu materiałowym łożyska.</li>
                 </ol>
@@ -6871,14 +6871,14 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
                         </li>
                         <li class="z6p16a-row ">
                           <span class="z6p16a-num">3</span>
-                          <strong class="z6p16a-lbl">Okres odniesienia</strong>
+                          <strong class="z6p16a-lbl">Częstość alarmu</strong>
                           <span class="z6p16a-text">Przy ośmiu pomiarach na zmianę alarm pojawia się w około 75% zmian (przy niezależnych pomiarach).</span>
                           <span class="z6p16a-src">wzór (6.7)</span>
                         </li>
                         <li class="z6p16a-row ">
                           <span class="z6p16a-num">4</span>
                           <strong class="z6p16a-lbl">Źródło ryzyka</strong>
-                          <span class="z6p16a-text">Średnia leży jedno odchylenie standardowe pod progiem; przekroczenia wynikają z położenia i rozrzutu temperatury.</span>
+                          <span class="z6p16a-text">Łożysko stale pracuje za blisko progu i z dużymi wahaniami: przekroczenia to zwykła praca, nie awaria. Źródła: niewystarczające chłodzenie (średnia 82°C, tylko 3°C pod progiem) i nierówne obciążenie (wahania σ = 3°C).</span>
                           <span class="z6p16a-src">wzór (6.4)</span>
                         </li>
                         <li class="z6p16a-row ">
@@ -6923,7 +6923,7 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
                       </li>
                       <li class="z6p16a-row ">
                         <span class="z6p16a-num">3</span>
-                        <strong class="z6p16a-lbl">Okres odniesienia</strong>
+                        <strong class="z6p16a-lbl">Częstość alarmu</strong>
                         <span class="z6p16a-text">Ponad progiem leży 16% pomiarów, więc alarm pojawi się w około 16% zmian.</span>
                       </li>
                       <li class="z6p16a-row ">
@@ -12117,7 +12117,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
         var p0 = tail(c, mu, sd, shape), p1 = tail(now.c, now.mu, now.sd, shape), z = (c - mu) / sd;
         var s0 = shiftP(p0, n);
 
-        // Zdanie 1: poziom ryzyka i okres odniesienia.
+        // Zdanie 1: poziom ryzyka i częstość alarmu.
         var s1 = "Około " + per1000(p0) + " na 1000 pomiarów przekracza " + U.fmt(c, 1) + "°C. Przy " + n +
           (n === 1 ? " pomiarze" : " pomiarach") + " na zmianę alarm pojawia się w około " + pct(s0) +
           " zmian, jeśli pomiary są niezależne.";
@@ -12151,7 +12151,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
 
         ui.set("stage", miniCurve(base, now, shape));
         ui.set("body",
-          '<ol class="z6p20-msg">' + li("", "Poziom ryzyka i okres odniesienia", U.esc(s1)) + li("", "Źródło ryzyka", U.esc(s2)) +
+          '<ol class="z6p20-msg">' + li("", "Poziom ryzyka i częstość alarmu", U.esc(s1)) + li("", "Źródło ryzyka", U.esc(s2)) +
           li(act === "thr" ? "is-warn" : "", "Postępowanie z ryzykiem", U.esc(s3)) + "</ol>" +
           (warn.length ? '<ul class="z6p20-warn">' + warn.map(function (w) { return "<li>" + U.esc(w) + "</li>"; }).join("") + "</ul>" : ""));
       }
