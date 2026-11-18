@@ -1,12 +1,12 @@
 # OŚ WYKŁADU „OD ZŁEGO RAPORTU” (przyjęta 17.11.2026) — grupa rl: P21 i domknięcie P16A
 #
 # Jeden szablon raportu z oceny ryzyka (nazwy wierszy jak w PN-ISO 31000 / ISO Guide 73:
-# zakres i kryteria → poziom ryzyka → okres odniesienia → źródło ryzyka →
+# zakres i kryteria → poziom ryzyka → częstość alarmu → źródło ryzyka →
 # założenia i niepewność → postępowanie z ryzykiem → monitorowanie i przegląd), w dwóch wersjach:
 #   z6p_21_ui      — wersja zła na otwarcie rozdziału 1 (pole body rozdziału).
 #   z6p_21_fix(k)  — notka „Poprawka do raportu” na końcu rozdziału k (pole widget):
 #                    wiersze poprawiane w tym rozdziale, stare skreślone, nowe pod nimi.
-#                    Rozdz. 1: poziom ryzyka; 3: okres odniesienia i źródło ryzyka;
+#                    Rozdz. 1: poziom ryzyka; 3: częstość alarmu i źródło ryzyka;
 #                    4: postępowanie z ryzykiem; 6: założenia i niepewność.
 #   z6p_21_lina_ui — karta liny dźwigu w wersji złej na otwarcie rozdziału 5 (pole body).
 #   z6p_21_lina    — ta sama karta na końcu rozdziału 5, przed i po (pole widget).
@@ -26,15 +26,15 @@ z6p21_rows <- list(
     good = "Średnia temperatura 82°C, odchylenie standardowe 3°C. Próg 85°C przekracza około 159 na 1000 pomiarów.",
     note = "Sama średnia i próg nie wystarczą do oceny ryzyka: bez rozrzutu nie da się policzyć, jak często wyniki przekraczają próg.",
     why = "brakowało rozrzutu", src = "przykład 6.1"),
-  list(key = "horyzont", lbl = "Okres odniesienia", ch = 3,
+  list(key = "horyzont", lbl = "Częstość alarmu", ch = 3,
     bad = "Ponad progiem leży 16% pomiarów, więc alarm pojawi się w około 16% zmian.",
     good = "Przy ośmiu pomiarach na zmianę alarm pojawia się w około 75% zmian (przy niezależnych pomiarach).",
     note = "Odsetek pomiarów to nie odsetek zmian: pytanie o zmianę dotyczy co najmniej jednego z ośmiu pomiarów. Przy skorelowanych pomiarach zmian z alarmem jest mniej.",
     why = "pomylono pomiar ze zmianą", src = "wzór (6.7)"),
   list(key = "mechanizm", lbl = "Źródło ryzyka", ch = 3,
     bad = "Przyczyna: pojedyncze, przypadkowe gorące odczyty.",
-    good = "Średnia leży jedno odchylenie standardowe pod progiem; przekroczenia wynikają z położenia i rozrzutu temperatury.",
-    note = "Gorące odczyty nie są przypadkiem: przy z = 1 mniej więcej co szósty pomiar musi wypaść ponad progiem.",
+    good = "Łożysko stale pracuje za blisko progu i z dużymi wahaniami: przekroczenia to zwykła praca, nie awaria. Źródła: niewystarczające chłodzenie (średnia 82°C, tylko 3°C pod progiem) i nierówne obciążenie (wahania σ = 3°C).",
+    note = "Gorące odczyty nie są przypadkiem: przy z = 1 mniej więcej co szósty pomiar musi wypaść ponad progiem. Średnią przesuwa chłodzenie, rozrzut zależy od obciążenia i warunków pracy.",
     why = "przypadek zamiast mechanizmu", src = "wzór (6.4)"),
   list(key = "zalozenia", lbl = "Założenia i niepewność", ch = 6,
     bad = "Model standardowy.",

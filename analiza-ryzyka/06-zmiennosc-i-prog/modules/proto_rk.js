@@ -87,7 +87,7 @@
         var p0 = tail(c, mu, sd, shape), p1 = tail(now.c, now.mu, now.sd, shape), z = (c - mu) / sd;
         var s0 = shiftP(p0, n);
 
-        // Zdanie 1: poziom ryzyka i okres odniesienia.
+        // Zdanie 1: poziom ryzyka i częstość alarmu.
         var s1 = "Około " + per1000(p0) + " na 1000 pomiarów przekracza " + U.fmt(c, 1) + "°C. Przy " + n +
           (n === 1 ? " pomiarze" : " pomiarach") + " na zmianę alarm pojawia się w około " + pct(s0) +
           " zmian, jeśli pomiary są niezależne.";
@@ -121,7 +121,7 @@
 
         ui.set("stage", miniCurve(base, now, shape));
         ui.set("body",
-          '<ol class="z6p20-msg">' + li("", "Poziom ryzyka i okres odniesienia", U.esc(s1)) + li("", "Źródło ryzyka", U.esc(s2)) +
+          '<ol class="z6p20-msg">' + li("", "Poziom ryzyka i częstość alarmu", U.esc(s1)) + li("", "Źródło ryzyka", U.esc(s2)) +
           li(act === "thr" ? "is-warn" : "", "Postępowanie z ryzykiem", U.esc(s3)) + "</ol>" +
           (warn.length ? '<ul class="z6p20-warn">' + warn.map(function (w) { return "<li>" + U.esc(w) + "</li>"; }).join("") + "</ul>" : ""));
       }

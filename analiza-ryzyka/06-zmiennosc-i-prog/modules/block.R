@@ -244,7 +244,7 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
     widget = z6p_21_fix(3),
     lead = "Prawdopodobieństwo przekroczenia to pole pod krzywą ponad progiem; standaryzacja pozwala je policzyć dla każdego rozkładu normalnego.",
     intro = c(
-      "Ten rozdział poprawia dwa wiersze raportu: okres odniesienia („16% pomiarów, więc 16% zmian”) i źródło ryzyka („pojedyncze, przypadkowe gorące odczyty”).",
+      "Ten rozdział poprawia dwa wiersze raportu: częstość alarmu („16% pomiarów, więc 16% zmian”) i źródło ryzyka („pojedyncze, przypadkowe gorące odczyty”).",
       "Czy 85°C przy średniej 82°C i σ = 3°C to dużo? A 62 bary ciśnienia przy średniej 56 i σ = 2? Porównanie surowych liczb z różnych światów jest niemożliwe — dopóki obu nie przełożymy na wspólną jednostkę: liczbę odchyleń standardowych od średniej.",
       "Dla progu łożyska z = (85-82)/3 = 1: próg leży jedno odchylenie nad średnią, co w modelu normalnym oznacza około 16% przekroczeń. Dla ciśnienia z = 3 — przekroczenia są rzadkością. Standaryzacja porządkuje priorytety, zanim padnie jakakolwiek decyzja."
     ),
@@ -551,19 +551,19 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
     lead = "Skośność i ciężki ogon mogą silnie zmienić ryzyko progowe mimo podobnej średniej i odchylenia.",
     intro = c(
       "Wiersz 5 raportu brzmi po prostu: „Model standardowy”. Ten rozdział sprawdza, co kryje się za tym słowem.",
-      "Model normalny jest wygodny, ale nie jest prawem przyrody. Ten sam typ łożyska pracuje w dwóch komorach dojrzewalni, z tą samą średnią i tym samym odchyleniem. Zanim cokolwiek nazwiemy, sprawdź, jak często w każdej z nich temperatura przekracza 91°C.",
+      "Model normalny jest wygodny, ale nie jest prawem przyrody. Ten sam typ łożyska pracuje w dwóch komorach dojrzewalni, z tą samą średnią i tym samym odchyleniem; różni je tylko sposób smarowania. Zanim cokolwiek nazwiemy, sprawdź, jak często w każdej z nich temperatura przekracza 91°C.",
       "Do diagnozy służy wykres kwantylowy: punkty na prostej oznaczają zgodność z modelem normalnym, a zagięcia na końcach — ogony inne niż normalne. To najtańsze narzędzie kontroli jakości modelu przed rachunkiem progowym."
     ),
     sections = list(
       list(
         id = "ogony", title = "Ten sam środek, inny ogon",
         body = list(
-          # Scena P19B (18.11.2026): to samo łożysko w dwóch komorach, przed pojęciem skośności
+          # Scena P19B (18.11.2026): to samo łożysko w dwóch komorach (smarownik / smarowanie co tydzień), przed pojęciem skośności
           z6p_get("z6p_19b_ui"),
           c(
-            "W obu komorach łożysko ma średnio 82°C i odchylenie 3°C, a mimo to w komorze 2 próg 91°C pada kilka razy częściej: około 12 na 1000 pomiarów wobec 1.3 w komorze 1. Różnicę robi kształt. W komorze 2 temperatura ma twardą dolną granicę, bo przy pełnym obciążeniu łożysko nie ostygnie poniżej około 77°C, a zapchany filtr czy przerwa w smarowaniu mogą ją tylko podnieść. Rozkład, którego jeden ogon jest wyraźnie dłuższy od drugiego, nazywamy skośnym; tu długi ogon leży po prawej, więc to skośność prawostronna. Tak zachowuje się wiele procesów z naturalną dolną granicą i zaburzeniami działającymi w jedną stronę.",
+            "W obu komorach łożysko ma średnio 82°C i odchylenie 3°C, a mimo to w komorze 2 próg 91°C pada kilka razy częściej: około 12 na 1000 pomiarów wobec 1.3 w komorze 1. Różnicę robi kształt. Świeżo nasmarowane łożysko w komorze 2 ma około 77°C i chłodniejsze nie będzie, więc rozkład ma twardą dolną granicę. Każdy dzień bez smarowania dokłada ciepła, a spóźnione smarowanie dokłada go jeszcze więcej, więc prawy ogon jest długi. Rozkład, którego jeden ogon jest wyraźnie dłuższy od drugiego, nazywamy skośnym; tu długi ogon leży po prawej, więc to skośność prawostronna.",
             "Wszystkie rachunki z rozdziałów 2–5 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.",
-            "Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3), jak w komorze 1. Skośny to przesunięty rozkład gamma, jak w komorze 2: dolna granica około 76.8°C i dłuższy prawy ogon. Trzeci model opisuje inny mechanizm: rzadkie, gwałtowne odchylenia w obie strony, np. przy chwilowych zakłóceniach pomiaru. To przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
+            "Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3), jak w komorze 1. Skośny to przesunięty rozkład gamma, jak w komorze 2: dolna granica tuż po smarowaniu, około 76.8°C, i dłuższy prawy ogon. Trzeci model opisuje inny mechanizm: rzadkie, gwałtowne odchylenia w obie strony, np. przy chwilowych zakłóceniach pomiaru. To przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
           ),
           risk_example("6.10", "Trzy modele, trzy ryzyka",
             problem = "Dla trzech modeli temperatury o średniej 82°C i σ = 3°C (normalny, skośny gamma, ciężki ogon t₃) porównaj P(T > 85) oraz P(T > 91), czyli przekroczenie progu leżącego 1σ i 3σ nad średnią.",
@@ -629,7 +629,7 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
   ),
   list(
     id = "komunikat", title = "Komunikat o ryzyku", hook = "Wynik ma wskazać, co zrobić",
-    lead = "Komunikat o ryzyku łączy poziom ryzyka w okresie odniesienia, źródło ryzyka i postępowanie z ryzykiem — dopiero wtedy kierownik wie, co zrobić.",
+    lead = "Komunikat o ryzyku łączy poziom ryzyka i częstość alarmu, źródło ryzyka i postępowanie z ryzykiem — dopiero wtedy kierownik wie, co zrobić.",
     intro = c(
       "Wszystkie poprawki z rozdziałów 1–6 składamy teraz w jeden raport. Dochodzą dwa wiersze, których wcześniej brakowało: zakres z kryterium decyzji i monitorowanie po wdrożeniu.",
       "Kompletny komunikat o ryzyku mieści się w trzech zdaniach: jaka część wyników przekracza próg i w jakim okresie odniesienia (na pomiar, na zmianę), co jest źródłem ryzyka w ogonie, które postępowanie z ryzykiem — chłodzenie, stabilizacja czy rewizja progu — rekomendujesz i dlaczego. Liczba bez źródła ryzyka nie wskazuje działania; działanie bez liczby nie ma uzasadnienia."
@@ -639,9 +639,9 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
         id = "przyklad", title = "Trzy zdania dla kierownika",
         body = list(
           risk_example("6.12", "Trzy zdania dla kierownika dojrzewalni",
-            problem = "Na podstawie danych łożyska (μ = 82°C, σ = 3°C, próg 85°C, 8 pomiarów na zmianę) i przykładu 6.7 zredaguj komunikat o ryzyku w trzech zdaniach: poziom ryzyka w okresie odniesienia, źródło ryzyka, postępowanie z ryzykiem.",
+            problem = "Na podstawie danych łożyska (μ = 82°C, σ = 3°C, próg 85°C, 8 pomiarów na zmianę) i przykładu 6.7 zredaguj komunikat o ryzyku w trzech zdaniach: poziom ryzyka i częstość alarmu, źródło ryzyka, postępowanie z ryzykiem.",
             steps = c(
-              "Poziom ryzyka i okres odniesienia: około 159 na 1000 pomiarów przekracza 85°C (6.5); przy ośmiu niezależnych pomiarach na zmianę alarm pojawiłby się w około 75% zmian (6.7) — przy skorelowanych pomiarach rzadziej.",
+              "Poziom ryzyka i częstość alarmu: około 159 na 1000 pomiarów przekracza 85°C (6.5); przy ośmiu niezależnych pomiarach na zmianę alarm pojawiłby się w około 75% zmian (6.7) — przy skorelowanych pomiarach rzadziej.",
               "Źródło ryzyka: średnia leży tylko 1σ pod progiem, więc ryzyko tworzy zarówno położenie, jak i rozrzut temperatury.",
               "Postępowanie z ryzykiem: chłodzenie o 2°C obniża częstość do około 48 na 1000, a połączenie z ograniczeniem σ do 2°C — do około 6 na 1000 (przykład 6.7); podniesienie progu tylko po badaniu materiałowym łożyska."
             ),

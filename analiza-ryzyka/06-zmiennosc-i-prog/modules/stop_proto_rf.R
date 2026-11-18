@@ -56,7 +56,7 @@ z6rf_qq_cfg <- list(
   ),
   end = list(
     a = "Komora 1: punkty idą wzdłuż prostej, a odchylenia są małe i bez wzoru. Model normalny pasuje.",
-    b = "Komora 2: punkty układają się w łuk. Lewy koniec leży nad prostą, bo dane mają dolną granicę, a prawy ucieka w górę, bo prawy ogon jest dłuższy niż w modelu."
+    b = "Komora 2: punkty układają się w łuk. Lewy koniec leży nad prostą, bo łożysko świeżo po smarowaniu nie schodzi niżej, a prawy ucieka w górę przez spóźnione smarowania."
   )
 )
 

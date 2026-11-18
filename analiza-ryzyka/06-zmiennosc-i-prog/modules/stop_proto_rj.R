@@ -9,9 +9,9 @@
 #   (Warianty odrzucone: P19 „Dwie trasy do pracy” — nie z inżynierii bezpieczeństwa;
 #   P19A „Amoniak w dwóch halach chłodni” — słabiej czytelny skutek przekroczenia.)
 #   z6p_19b_ui — To samo łożysko w dwóch komorach dojrzewalni (P19B, od 18.11.2026; wcześniej
-#                czas zatrzymania pras). Komora 1: obciążenie waha się w obie strony, N(82, 3).
-#                Komora 2: stałe pełne obciążenie i rzadkie przegrzania (zapchany filtr,
-#                przerwa w smarowaniu): 76.8 + Gamma(3, √3), ta sama średnia i SD — ten sam
+#                czas zatrzymania pras). Komora 1: smarownik automatyczny, N(82, 3).
+#                Komora 2: ręczne smarowanie raz w tygodniu (najchłodniej tuż po smarowaniu,
+#                spóźnione smarowanie = prawy ogon): 76.8 + Gamma(3, √3), ta sama średnia i SD — ten sam
 #                model skośny co w galerii P14A. Próg 91°C (3σ): 1.3 wobec 12 na 1000 pomiarów.
 # Wymaga: stop_proto_common.R (z6p_scene_ui, z6p_out, z6p_button).
 
@@ -41,12 +41,12 @@ z6p19b_cfg <- list(
   limit = 91, limit_label = "próg 91°C",
   item = "Pomiar", over_word = "ponad 91°C",
   aria = "Histogramy temperatury tego samego łożyska w dwóch komorach dojrzewalni; pomiary powyżej 91°C wyróżnione.",
-  a = list(name = "Komora 1", sub = "obciążenie w obie strony", who = "Komora 1", mu = z6p_mu, sd = z6p_sd),
-  b = list(name = "Komora 2", sub = "pełne obciążenie, przegrzania", who = "Komora 2",
+  a = list(name = "Komora 1", sub = "smarownik co godzinę", who = "Komora 1", mu = z6p_mu, sd = z6p_sd),
+  b = list(name = "Komora 2", sub = "smarowanie raz w tygodniu", who = "Komora 2",
     min = z6p_mu - sqrt(3) * z6p_sd, k = 3, theta = z6p_sd / sqrt(3)),
   steps = list(list(n = 1, label = "Kolejny pomiar"), list(n = 100, label = "+ 100 pomiarów"), list(n = 1000, label = "+ 1000"))
 )
 
 z6p_19b_ui <- z6p19_ui("P19B", "To samo łożysko w dwóch komorach", z6p19b_cfg,
-  "W komorze 1 obciążenie raz rośnie, raz spada. W komorze 2 łożysko pracuje stale pod pełnym obciążeniem, więc chłodniej niż około 77°C nie bywa, a co jakiś czas zapchany filtr albo przerwa w smarowaniu podbija temperaturę.",
+  "W komorze 1 automatyczny smarownik podaje smar co godzinę. W komorze 2 konserwator smaruje łożysko raz w tygodniu: zaraz po smarowaniu jest najchłodniej, potem z każdym dniem cieplej, a gdy smarowanie się spóźni, łożysko grzeje się dalej.",
   proto = FALSE)
