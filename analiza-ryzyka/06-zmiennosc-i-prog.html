@@ -6431,6 +6431,78 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
             <p>Wykres kwantylowy względem rozkładu normalnego to wykres punktowy, na którym każdy uporządkowany pomiar x₍ᵢ₎ zestawia się z kwantylem standardowego rozkładu normalnego tego samego rzędu. Jeśli dane pochodzą z rozkładu normalnego, punkty leżą w przybliżeniu na prostej o wyrazie wolnym μ i nachyleniu σ.</p>
           </div>
         </div>
+        <div class="lc-figure-panel lc-panel-wide">
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">pojęcie</div>
+          <div class="lc-figure-panel-title">Jak powstaje wykres kwantylowy</div>
+          <div data-proto="P15B">
+            <style>
+  .z6p-svg { display: block; width: 100%; height: auto; margin: .2em auto .4em; }
+  .z6p-svg text { font-family: var(--upwr-sans); }
+  .z6p-svg text:not([fill]):not([style*='fill']) { fill: var(--upwr-ink); }
+  .z6p-mono { font-family: var(--upwr-mono) !important; }
+  .z6p-subtle { fill: var(--upwr-ink-subtle) !important; }
+  .z6p-cell-ok { fill: color-mix(in srgb, var(--upwr-cat-kurkuma) 60%, var(--upwr-surface)); stroke: var(--upwr-cat-kurkuma); stroke-width: 1; }
+  .z6p-cell-bad { fill: var(--upwr-accent); stroke: var(--upwr-accent); stroke-width: 1; }
+  .z6p-cell-idle { fill: var(--upwr-surface-sunken); stroke: var(--upwr-rule); stroke-width: 1; }
+  .z6p-cell-dim { opacity: .3; }
+  .z6p-axis { stroke: var(--upwr-ink-subtle); stroke-width: 1.2; fill: none; }
+  .z6p-grid { stroke: var(--upwr-rule); stroke-width: 1; fill: none; }
+  .z6p-tick { font-family: var(--upwr-mono) !important; font-size: 12px; fill: var(--upwr-ink-subtle) !important; text-anchor: middle; }
+  .z6p-limit { stroke: var(--upwr-ink); stroke-width: 1.6; stroke-dasharray: 6 4; fill: none; }
+  .z6p-mean { stroke: var(--upwr-ink-subtle); stroke-width: 1.4; stroke-dasharray: 3 3; fill: none; }
+  .z6p-curve { stroke: var(--upwr-secondary); stroke-width: 2.2; fill: none; }
+  .z6p-curve-ghost { stroke: var(--upwr-ink-subtle); stroke-width: 1.4; stroke-dasharray: 4 4; fill: none; }
+  .z6p-area { fill: color-mix(in srgb, var(--upwr-accent) 45%, transparent); stroke: none; }
+  .z6p-area-ok { fill: color-mix(in srgb, var(--upwr-sage) 40%, transparent); stroke: none; }
+  .z6p-dot { fill: var(--upwr-secondary); opacity: .55; }
+  .z6p-dot-bad { fill: var(--upwr-accent); opacity: .9; }
+  /* !important: reguła .z6p-svg text:not([fill]) ma wyższą specyficzność niż sama klasa. */
+  .z6p-ok { fill: var(--upwr-sage) !important; }
+  .z6p-bad { fill: var(--upwr-accent) !important; }
+  .z6p-ink { fill: var(--upwr-ink) !important; }
+  .z6p-paper { fill: var(--upwr-surface); stroke: var(--upwr-rule); stroke-width: 1.2; }
+  .z6p-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1em; margin-bottom: .3em; }
+  .z6p-name { font-weight: 700; font-size: 1.05em; }
+  .z6p-step { font-family: var(--upwr-mono); font-size: .9em; color: var(--upwr-ink-subtle); }
+  .z6p-caption { min-height: 3em; margin: .4em 0; }
+  .z6p-read { font-family: var(--upwr-mono); font-weight: 600; margin: .2em 0 .6em; }
+  .z6p-nav { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; }
+  .z6p-nav .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
+</style>
+            <div class="z6p-scene" data-scene="qq_budowa" data-config="{&quot;mu&quot;:82,&quot;sd&quot;:3,&quot;n&quot;:40,&quot;i0&quot;:36,&quot;data&quot;:{&quot;a&quot;:[83,84.9,86.2,78.6,80.6,75.6,79.5,85.6,83.8,83.7,82.6,81.5,80.6,79.2,83.4,81.8,77.1,85,83.9,83.9,79.9,82.4,76.3,80.1,81.8,80.2,88.3,82.5,78.4,84.6,87.6,78.9,85.2,84,82.1,82.2,83,80.4,77.4,80.1],&quot;b&quot;:[78.6,79.8,83.5,82.7,79.2,80,82.1,86.4,87.5,83.2,82.1,87.8,80.9,82.2,82.4,77.4,84.7,85.5,78.9,80.8,81.8,79.1,80.5,81.6,83.2,78.6,90.7,84.1,78.4,79.8,79.7,81.5,84,81.6,84.5,85.8,81.4,78.2,80.6,80.6]},&quot;sets&quot;:{&quot;a&quot;:&quot;Komora 1&quot;,&quot;b&quot;:&quot;Komora 2&quot;},&quot;steps&quot;:[{&quot;name&quot;:&quot;Dane&quot;,&quot;text&quot;:&quot;Czterdzieści pomiarów temperatury łożyska z wybranej komory. U góry ich histogram, pod nim krzywa modelu normalnego N(82, 3) na tej samej osi.&quot;},{&quot;name&quot;:&quot;Kwantyl empiryczny&quot;,&quot;text&quot;:&quot;Ustawiamy pomiary rosnąco. Pomiar nr i to kwantyl empiryczny: poniżej niego leży ułamek (i − 0.5)/n danych.&quot;},{&quot;name&quot;:&quot;Kwantyl teoretyczny&quot;,&quot;text&quot;:&quot;Model odpowiada na to samo pytanie: gdzie krzywa N(82, 3) odcina z lewej to samo pole? To kwantyl teoretyczny, w jednostkach z.&quot;},{&quot;name&quot;:&quot;Para na wykres&quot;,&quot;text&quot;:&quot;Oba kwantyle tworzą jeden punkt: poziomo kwantyl modelu z, pionowo pomiar. Gdy dane zgadzają się z modelem, punkt leży na prostej 82 + 3z.&quot;},{&quot;name&quot;:&quot;Wszystkie pomiary&quot;,&quot;text&quot;:&quot;To samo dla każdego z czterdziestu pomiarów daje wykres kwantylowy.&quot;}],&quot;end&quot;:{&quot;a&quot;:&quot;Komora 1: punkty idą wzdłuż prostej, a odchylenia są małe i bez wzoru. Model normalny pasuje.&quot;,&quot;b&quot;:&quot;Komora 2: punkty układają się w łuk. Lewy koniec leży nad prostą, bo dane mają dolną granicę, a prawy ucieka w górę, bo prawy ogon jest dłuższy niż w modelu.&quot;}}">
+              <div data-z6p-out="head"></div>
+              <div class="z6p-nav">
+                <div class="lc-grp ">
+                  <span class="lc-grp-l">Dane</span>
+                  <div class="lc-seg" role="group" aria-label="Dane">
+                    <button type="button" data-z6p="set" data-value="a" aria-pressed="true">Komora 1</button>
+                    <button type="button" data-z6p="set" data-value="b" aria-pressed="false">Komora 2</button>
+                  </div>
+                </div>
+                <div class="lc-grp lc-sf-ctl lc-sf-slider">
+                  <label for="z6p15b_i" class="lc-grp-l">
+                    Pomiar nr i
+                     
+                    <output data-value="z6p15b_i">36</output>
+                  </label>
+                  <input id="z6p15b_i" type="range" min="1" max="40" value="36" step="1">
+                </div>
+              </div>
+              <div data-z6p-out="stage"></div>
+              <div data-z6p-out="body"></div>
+              <div class="z6p-nav">
+                <button type="button" class="lc-action is-outline " data-z6p="prev">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
+                  <span>Wstecz</span>
+                </button>
+                <button type="button" class="lc-action is-solid " data-z6p="next">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
+                  <span>Dalej</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="lc-formula-box lc-fa " style="--fa-1:var(--upwr-cat-wrzos);--fa-2:var(--upwr-cat-terakota);--fa-3:var(--upwr-accent)">
           <div class="lc-fa-notes lc-fa-above">
             <div class="lc-fa-note" data-k="1" style="--fa-c:var(--upwr-cat-wrzos)">
@@ -6508,61 +6580,6 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
                 </p>
               </div>
             </details>
-          </div>
-        </div>
-        <div class="lc-figure-panel lc-panel-wide">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">pojęcie</div>
-          <div class="lc-figure-panel-title">Pięć pomiarów obok modelu</div>
-          <div data-proto="P15A">
-            <style>
-  .z6p-svg { display: block; width: 100%; height: auto; margin: .2em auto .4em; }
-  .z6p-svg text { font-family: var(--upwr-sans); }
-  .z6p-svg text:not([fill]):not([style*='fill']) { fill: var(--upwr-ink); }
-  .z6p-mono { font-family: var(--upwr-mono) !important; }
-  .z6p-subtle { fill: var(--upwr-ink-subtle) !important; }
-  .z6p-cell-ok { fill: color-mix(in srgb, var(--upwr-cat-kurkuma) 60%, var(--upwr-surface)); stroke: var(--upwr-cat-kurkuma); stroke-width: 1; }
-  .z6p-cell-bad { fill: var(--upwr-accent); stroke: var(--upwr-accent); stroke-width: 1; }
-  .z6p-cell-idle { fill: var(--upwr-surface-sunken); stroke: var(--upwr-rule); stroke-width: 1; }
-  .z6p-cell-dim { opacity: .3; }
-  .z6p-axis { stroke: var(--upwr-ink-subtle); stroke-width: 1.2; fill: none; }
-  .z6p-grid { stroke: var(--upwr-rule); stroke-width: 1; fill: none; }
-  .z6p-tick { font-family: var(--upwr-mono) !important; font-size: 12px; fill: var(--upwr-ink-subtle) !important; text-anchor: middle; }
-  .z6p-limit { stroke: var(--upwr-ink); stroke-width: 1.6; stroke-dasharray: 6 4; fill: none; }
-  .z6p-mean { stroke: var(--upwr-ink-subtle); stroke-width: 1.4; stroke-dasharray: 3 3; fill: none; }
-  .z6p-curve { stroke: var(--upwr-secondary); stroke-width: 2.2; fill: none; }
-  .z6p-curve-ghost { stroke: var(--upwr-ink-subtle); stroke-width: 1.4; stroke-dasharray: 4 4; fill: none; }
-  .z6p-area { fill: color-mix(in srgb, var(--upwr-accent) 45%, transparent); stroke: none; }
-  .z6p-area-ok { fill: color-mix(in srgb, var(--upwr-sage) 40%, transparent); stroke: none; }
-  .z6p-dot { fill: var(--upwr-secondary); opacity: .55; }
-  .z6p-dot-bad { fill: var(--upwr-accent); opacity: .9; }
-  /* !important: reguła .z6p-svg text:not([fill]) ma wyższą specyficzność niż sama klasa. */
-  .z6p-ok { fill: var(--upwr-sage) !important; }
-  .z6p-bad { fill: var(--upwr-accent) !important; }
-  .z6p-ink { fill: var(--upwr-ink) !important; }
-  .z6p-paper { fill: var(--upwr-surface); stroke: var(--upwr-rule); stroke-width: 1.2; }
-  .z6p-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1em; margin-bottom: .3em; }
-  .z6p-name { font-weight: 700; font-size: 1.05em; }
-  .z6p-step { font-family: var(--upwr-mono); font-size: .9em; color: var(--upwr-ink-subtle); }
-  .z6p-caption { min-height: 3em; margin: .4em 0; }
-  .z6p-read { font-family: var(--upwr-mono); font-weight: 600; margin: .2em 0 .6em; }
-  .z6p-nav { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; }
-  .z6p-nav .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
-</style>
-            <div class="z6p-scene" data-scene="kadry" data-config="{&quot;frames&quot;:[{&quot;name&quot;:&quot;Pomiary&quot;,&quot;svg&quot;:&quot;&lt;svg class=\&quot;z6p-svg\&quot; style=\&quot;max-width:800px\&quot; viewBox=\&quot;0 0 800 400\&quot; role=\&quot;img\&quot; aria-label=\&quot;Pięć pomiarów temperatury łożyska w kolejności zapisu, od 79.4 do 88.6 stopni.\&quot;&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;110\&quot; x2=\&quot;110\&quot; y1=\&quot;40\&quot; y2=\&quot;350\&quot;/&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;110\&quot; x2=\&quot;760\&quot; y1=\&quot;350\&quot; y2=\&quot;350\&quot;/&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;350\&quot; y2=\&quot;350\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;354\&quot;&gt;76&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;305.714\&quot; y2=\&quot;305.714\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;309.714\&quot;&gt;78&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;261.429\&quot; y2=\&quot;261.429\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;265.429\&quot;&gt;80&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;217.143\&quot; y2=\&quot;217.143\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;221.143\&quot;&gt;82&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;172.857\&quot; y2=\&quot;172.857\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;176.857\&quot;&gt;84&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;128.571\&quot; y2=\&quot;128.571\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;132.571\&quot;&gt;86&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;84.2857\&quot; y2=\&quot;84.2857\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;88.2857\&quot;&gt;88&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;40\&quot; y2=\&quot;40\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;44\&quot;&gt;90&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;110\&quot; y=\&quot;26\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;middle\&quot;&gt;°C&lt;\/text&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;178\&quot; y=\&quot;210.5\&quot; width=\&quot;44\&quot; height=\&quot;139.5\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;278\&quot; y=\&quot;274.714\&quot; width=\&quot;44\&quot; height=\&quot;75.2857\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot-bad\&quot; x=\&quot;378\&quot; y=\&quot;71\&quot; width=\&quot;44\&quot; height=\&quot;279\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;478\&quot; y=\&quot;241.5\&quot; width=\&quot;44\&quot; height=\&quot;108.5\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;578\&quot; y=\&quot;192.786\&quot; width=\&quot;44\&quot; height=\&quot;157.214\&quot; rx=\&quot;3\&quot;/&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;200\&quot; y=\&quot;202.5\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;82.3&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;300\&quot; y=\&quot;266.714\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;79.4&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;400\&quot; y=\&quot;63\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;88.6&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;500\&quot; y=\&quot;233.5\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;80.9&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;600\&quot; y=\&quot;184.786\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;83.1&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;760\&quot; y=\&quot;392\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;end\&quot;&gt;kolejność zapisu · oś pionowa: temperatura (°C)&lt;\/text&gt;&lt;\/svg&gt;&quot;,&quot;body&quot;:&quot;&lt;p class=\&quot;z6p-caption\&quot;&gt;Pięć pomiarów temperatury łożyska, w kolejności, w jakiej je zapisano. Każdy słupek to jeden pomiar, nad nim wartość w °C.&lt;\/p&gt;&quot;},{&quot;name&quot;:&quot;Rosnąco&quot;,&quot;svg&quot;:&quot;&lt;svg class=\&quot;z6p-svg\&quot; style=\&quot;max-width:800px\&quot; viewBox=\&quot;0 0 800 400\&quot; role=\&quot;img\&quot; aria-label=\&quot;Te same pięć pomiarów posortowane rosnąco, z numerami od 1 do 5.\&quot;&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;110\&quot; x2=\&quot;110\&quot; y1=\&quot;40\&quot; y2=\&quot;350\&quot;/&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;110\&quot; x2=\&quot;760\&quot; y1=\&quot;350\&quot; y2=\&quot;350\&quot;/&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;350\&quot; y2=\&quot;350\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;354\&quot;&gt;76&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;305.714\&quot; y2=\&quot;305.714\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;309.714\&quot;&gt;78&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;261.429\&quot; y2=\&quot;261.429\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;265.429\&quot;&gt;80&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;217.143\&quot; y2=\&quot;217.143\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;221.143\&quot;&gt;82&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;172.857\&quot; y2=\&quot;172.857\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;176.857\&quot;&gt;84&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;128.571\&quot; y2=\&quot;128.571\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;132.571\&quot;&gt;86&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;84.2857\&quot; y2=\&quot;84.2857\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;88.2857\&quot;&gt;88&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;40\&quot; y2=\&quot;40\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;44\&quot;&gt;90&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;110\&quot; y=\&quot;26\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;middle\&quot;&gt;°C&lt;\/text&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;178\&quot; y=\&quot;274.714\&quot; width=\&quot;44\&quot; height=\&quot;75.2857\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;278\&quot; y=\&quot;241.5\&quot; width=\&quot;44\&quot; height=\&quot;108.5\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;378\&quot; y=\&quot;210.5\&quot; width=\&quot;44\&quot; height=\&quot;139.5\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;478\&quot; y=\&quot;192.786\&quot; width=\&quot;44\&quot; height=\&quot;157.214\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot-bad\&quot; x=\&quot;578\&quot; y=\&quot;71\&quot; width=\&quot;44\&quot; height=\&quot;279\&quot; rx=\&quot;3\&quot;/&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;200\&quot; y=\&quot;266.714\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;79.4&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;300\&quot; y=\&quot;233.5\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;80.9&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;400\&quot; y=\&quot;202.5\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;82.3&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;500\&quot; y=\&quot;184.786\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;83.1&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;600\&quot; y=\&quot;63\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;88.6&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;200\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;1&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;300\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;2&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;400\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;3&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;500\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;4&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;600\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;5&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;760\&quot; y=\&quot;392\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;end\&quot;&gt;posortowane rosnąco · oś pionowa: temperatura (°C)&lt;\/text&gt;&lt;\/svg&gt;&quot;,&quot;body&quot;:&quot;&lt;p class=\&quot;z6p-caption\&quot;&gt;Te same słupki posortowane rosnąco. Numer pod słupkiem to miejsce pomiaru w rzędzie.&lt;\/p&gt;&quot;},{&quot;name&quot;:&quot;Kwantyle modelu&quot;,&quot;svg&quot;:&quot;&lt;svg class=\&quot;z6p-svg\&quot; style=\&quot;max-width:800px\&quot; viewBox=\&quot;0 0 800 400\&quot; role=\&quot;img\&quot; aria-label=\&quot;Pary: pomiar i kwantyl modelu normalnego tego samego rzędu, z różnicą nad każdą parą.\&quot;&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;110\&quot; x2=\&quot;110\&quot; y1=\&quot;40\&quot; y2=\&quot;350\&quot;/&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;110\&quot; x2=\&quot;760\&quot; y1=\&quot;350\&quot; y2=\&quot;350\&quot;/&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;350\&quot; y2=\&quot;350\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;354\&quot;&gt;76&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;305.714\&quot; y2=\&quot;305.714\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;309.714\&quot;&gt;78&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;261.429\&quot; y2=\&quot;261.429\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;265.429\&quot;&gt;80&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;217.143\&quot; y2=\&quot;217.143\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;221.143\&quot;&gt;82&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;172.857\&quot; y2=\&quot;172.857\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;176.857\&quot;&gt;84&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;128.571\&quot; y2=\&quot;128.571\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;132.571\&quot;&gt;86&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;84.2857\&quot; y2=\&quot;84.2857\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;88.2857\&quot;&gt;88&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;105\&quot; x2=\&quot;110\&quot; y1=\&quot;40\&quot; y2=\&quot;40\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;100\&quot; y=\&quot;44\&quot;&gt;90&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;110\&quot; y=\&quot;26\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;middle\&quot;&gt;°C&lt;\/text&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;156\&quot; y=\&quot;274.714\&quot; width=\&quot;40\&quot; height=\&quot;75.2857\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;256\&quot; y=\&quot;241.5\&quot; width=\&quot;40\&quot; height=\&quot;108.5\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;356\&quot; y=\&quot;210.5\&quot; width=\&quot;40\&quot; height=\&quot;139.5\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;456\&quot; y=\&quot;192.786\&quot; width=\&quot;40\&quot; height=\&quot;157.214\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-dot-bad\&quot; x=\&quot;556\&quot; y=\&quot;71\&quot; width=\&quot;40\&quot; height=\&quot;279\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;204\&quot; y=\&quot;301.286\&quot; width=\&quot;40\&quot; height=\&quot;48.7143\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;304\&quot; y=\&quot;252.571\&quot; width=\&quot;40\&quot; height=\&quot;97.4286\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;404\&quot; y=\&quot;217.143\&quot; width=\&quot;40\&quot; height=\&quot;132.857\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;504\&quot; y=\&quot;181.714\&quot; width=\&quot;40\&quot; height=\&quot;168.286\&quot; rx=\&quot;3\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;604\&quot; y=\&quot;133\&quot; width=\&quot;40\&quot; height=\&quot;217\&quot; rx=\&quot;3\&quot;/&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;200\&quot; y=\&quot;262.714\&quot; font-size=\&quot;15\&quot; font-weight=\&quot;700\&quot; text-anchor=\&quot;middle\&quot;&gt;+1.2&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;300\&quot; y=\&quot;229.5\&quot; font-size=\&quot;15\&quot; font-weight=\&quot;700\&quot; text-anchor=\&quot;middle\&quot;&gt;+0.5&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;400\&quot; y=\&quot;198.5\&quot; font-size=\&quot;15\&quot; font-weight=\&quot;700\&quot; text-anchor=\&quot;middle\&quot;&gt;+0.3&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;500\&quot; y=\&quot;169.714\&quot; font-size=\&quot;15\&quot; font-weight=\&quot;700\&quot; text-anchor=\&quot;middle\&quot;&gt;−0.5&lt;\/text&gt;&lt;text class=\&quot;z6p-mono z6p-bad\&quot; x=\&quot;600\&quot; y=\&quot;59\&quot; font-size=\&quot;15\&quot; font-weight=\&quot;700\&quot; text-anchor=\&quot;middle\&quot;&gt;+2.8&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;200\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;1&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;300\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;2&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;400\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;3&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;500\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;4&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;600\&quot; y=\&quot;372\&quot; font-size=\&quot;14\&quot; text-anchor=\&quot;middle\&quot;&gt;5&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;760\&quot; y=\&quot;392\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;end\&quot;&gt;pomiar (wypełniony) · kwantyl modelu N(82, 3) (kontur) · różnica pomiar − model&lt;\/text&gt;&lt;\/svg&gt;&quot;,&quot;body&quot;:&quot;&lt;p class=\&quot;z6p-caption\&quot;&gt;Obok każdego pomiaru przerywany kontur: kwantyl N(82, 3) tego samego rzędu. Nad parą różnica pomiar − model.&lt;\/p&gt;&quot;},{&quot;name&quot;:&quot;Wykres Q–Q&quot;,&quot;svg&quot;:&quot;&lt;svg class=\&quot;z6p-svg\&quot; style=\&quot;max-width:800px\&quot; viewBox=\&quot;0 0 800 400\&quot; role=\&quot;img\&quot; aria-label=\&quot;Wykres kwantylowy: pięć punktów nad prostą modelu, ostatni odstaje o 2.8 stopnia.\&quot;&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;40\&quot; x2=\&quot;290\&quot; y1=\&quot;340\&quot; y2=\&quot;340\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;49\&quot; y=\&quot;267.143\&quot; width=\&quot;18\&quot; height=\&quot;72.8571\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;97\&quot; y=\&quot;235\&quot; width=\&quot;18\&quot; height=\&quot;105\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;145\&quot; y=\&quot;205\&quot; width=\&quot;18\&quot; height=\&quot;135\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-dot\&quot; x=\&quot;193\&quot; y=\&quot;187.857\&quot; width=\&quot;18\&quot; height=\&quot;152.143\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-dot-bad\&quot; x=\&quot;241\&quot; y=\&quot;70\&quot; width=\&quot;18\&quot; height=\&quot;270\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;71\&quot; y=\&quot;292.857\&quot; width=\&quot;18\&quot; height=\&quot;47.1429\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;119\&quot; y=\&quot;245.714\&quot; width=\&quot;18\&quot; height=\&quot;94.2857\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;167\&quot; y=\&quot;211.429\&quot; width=\&quot;18\&quot; height=\&quot;128.571\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;215\&quot; y=\&quot;177.143\&quot; width=\&quot;18\&quot; height=\&quot;162.857\&quot; rx=\&quot;2\&quot;/&gt;&lt;rect class=\&quot;z6p-curve-ghost\&quot; x=\&quot;263\&quot; y=\&quot;130\&quot; width=\&quot;18\&quot; height=\&quot;210\&quot; rx=\&quot;2\&quot;/&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;60\&quot; y=\&quot;356\&quot; font-size=\&quot;11\&quot; text-anchor=\&quot;middle\&quot;&gt;1&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;108\&quot; y=\&quot;356\&quot; font-size=\&quot;11\&quot; text-anchor=\&quot;middle\&quot;&gt;2&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;156\&quot; y=\&quot;356\&quot; font-size=\&quot;11\&quot; text-anchor=\&quot;middle\&quot;&gt;3&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;204\&quot; y=\&quot;356\&quot; font-size=\&quot;11\&quot; text-anchor=\&quot;middle\&quot;&gt;4&lt;\/text&gt;&lt;text class=\&quot;z6p-mono\&quot; x=\&quot;252\&quot; y=\&quot;356\&quot; font-size=\&quot;11\&quot; text-anchor=\&quot;middle\&quot;&gt;5&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;40\&quot; y=\&quot;30\&quot; font-size=\&quot;12\&quot;&gt;pary pomiar i model&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;500\&quot; x2=\&quot;760\&quot; y1=\&quot;340\&quot; y2=\&quot;340\&quot;/&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;500\&quot; x2=\&quot;500\&quot; y1=\&quot;40\&quot; y2=\&quot;340\&quot;/&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;500\&quot; x2=\&quot;500\&quot; y1=\&quot;340\&quot; y2=\&quot;345\&quot;/&gt;&lt;text class=\&quot;z6p-mono z6p-subtle\&quot; x=\&quot;500\&quot; y=\&quot;358\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;middle\&quot;&gt;−2&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;565\&quot; x2=\&quot;565\&quot; y1=\&quot;340\&quot; y2=\&quot;345\&quot;/&gt;&lt;text class=\&quot;z6p-mono z6p-subtle\&quot; x=\&quot;565\&quot; y=\&quot;358\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;middle\&quot;&gt;−1&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;630\&quot; x2=\&quot;630\&quot; y1=\&quot;340\&quot; y2=\&quot;345\&quot;/&gt;&lt;text class=\&quot;z6p-mono z6p-subtle\&quot; x=\&quot;630\&quot; y=\&quot;358\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;middle\&quot;&gt;0&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;695\&quot; x2=\&quot;695\&quot; y1=\&quot;340\&quot; y2=\&quot;345\&quot;/&gt;&lt;text class=\&quot;z6p-mono z6p-subtle\&quot; x=\&quot;695\&quot; y=\&quot;358\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;middle\&quot;&gt;1&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;760\&quot; x2=\&quot;760\&quot; y1=\&quot;340\&quot; y2=\&quot;345\&quot;/&gt;&lt;text class=\&quot;z6p-mono z6p-subtle\&quot; x=\&quot;760\&quot; y=\&quot;358\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;middle\&quot;&gt;2&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;495\&quot; x2=\&quot;500\&quot; y1=\&quot;340\&quot; y2=\&quot;340\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;492\&quot; y=\&quot;344\&quot;&gt;76&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;495\&quot; x2=\&quot;500\&quot; y1=\&quot;297.143\&quot; y2=\&quot;297.143\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;492\&quot; y=\&quot;301.143\&quot;&gt;78&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;495\&quot; x2=\&quot;500\&quot; y1=\&quot;254.286\&quot; y2=\&quot;254.286\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;492\&quot; y=\&quot;258.286\&quot;&gt;80&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;495\&quot; x2=\&quot;500\&quot; y1=\&quot;211.429\&quot; y2=\&quot;211.429\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;492\&quot; y=\&quot;215.429\&quot;&gt;82&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;495\&quot; x2=\&quot;500\&quot; y1=\&quot;168.571\&quot; y2=\&quot;168.571\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;492\&quot; y=\&quot;172.571\&quot;&gt;84&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;495\&quot; x2=\&quot;500\&quot; y1=\&quot;125.714\&quot; y2=\&quot;125.714\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;492\&quot; y=\&quot;129.714\&quot;&gt;86&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;495\&quot; x2=\&quot;500\&quot; y1=\&quot;82.8571\&quot; y2=\&quot;82.8571\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;492\&quot; y=\&quot;86.8571\&quot;&gt;88&lt;\/text&gt;&lt;line class=\&quot;z6p-axis\&quot; x1=\&quot;495\&quot; x2=\&quot;500\&quot; y1=\&quot;40\&quot; y2=\&quot;40\&quot;/&gt;&lt;text class=\&quot;z6p-tick\&quot; style=\&quot;text-anchor:end\&quot; x=\&quot;492\&quot; y=\&quot;44\&quot;&gt;90&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;760\&quot; y=\&quot;380\&quot; font-size=\&quot;12\&quot; text-anchor=\&quot;end\&quot;&gt;kwantyl modelu (z)&lt;\/text&gt;&lt;text class=\&quot;z6p-subtle\&quot; x=\&quot;500\&quot; y=\&quot;26\&quot; font-size=\&quot;12\&quot;&gt;pomiar (°C)&lt;\/text&gt;&lt;line class=\&quot;z6p-curve-ghost\&quot; x1=\&quot;500\&quot; x2=\&quot;760\&quot; y1=\&quot;340\&quot; y2=\&quot;82.8571\&quot;/&gt;&lt;line x1=\&quot;713.301\&quot; x2=\&quot;713.301\&quot; y1=\&quot;70\&quot; y2=\&quot;129.043\&quot; style=\&quot;stroke:var(--upwr-accent);stroke-width:2\&quot;/&gt;&lt;circle class=\&quot;z6p-dot\&quot; cx=\&quot;546.699\&quot; cy=\&quot;267.143\&quot; r=\&quot;6\&quot;/&gt;&lt;circle class=\&quot;z6p-dot\&quot; cx=\&quot;595.914\&quot; cy=\&quot;235\&quot; r=\&quot;6\&quot;/&gt;&lt;circle class=\&quot;z6p-dot\&quot; cx=\&quot;630\&quot; cy=\&quot;205\&quot; r=\&quot;6\&quot;/&gt;&lt;circle class=\&quot;z6p-dot\&quot; cx=\&quot;664.086\&quot; cy=\&quot;187.857\&quot; r=\&quot;6\&quot;/&gt;&lt;circle class=\&quot;z6p-dot-bad\&quot; cx=\&quot;713.301\&quot; cy=\&quot;70\&quot; r=\&quot;7\&quot;/&gt;&lt;text class=\&quot;z6p-mono z6p-bad\&quot; x=\&quot;701.301\&quot; y=\&quot;64\&quot; font-size=\&quot;15\&quot; font-weight=\&quot;700\&quot; text-anchor=\&quot;end\&quot;&gt;+2.8°C&lt;\/text&gt;&lt;\/svg&gt;&quot;,&quot;body&quot;:&quot;&lt;p class=\&quot;z6p-caption\&quot;&gt;Każda para daje jeden punkt: poziomo kwantyl modelu, pionowo pomiar. Cztery punkty leżą blisko prostej, piąty odstaje.&lt;\/p&gt;\n&lt;p class=\&quot;z6p-read\&quot;&gt;największy pomiar: 88.6°C · model: 85.8°C · różnica +2.8°C&lt;\/p&gt;&quot;}]}">
-              <div data-z6p-out="head"></div>
-              <div data-z6p-out="stage"></div>
-              <div data-z6p-out="body"></div>
-              <div class="z6p-nav">
-                <button type="button" class="lc-action is-outline " data-z6p="prev">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
-                  <span>Wstecz</span>
-                </button>
-                <button type="button" class="lc-action is-solid " data-z6p="next">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
-                  <span>Dalej</span>
-                </button>
-              </div>
-            </div>
           </div>
         </div>
         <div class="lc-check" data-correct="under">
@@ -11767,6 +11784,150 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
         });
         return S.table(cols, rows);
       }
+    }
+  });
+})();
+
+// Punkt stop P15B (18.11.2026): „Jak powstaje wykres kwantylowy” — scena „qq_budowa”.
+// Kontener w R: z6p_scene_ui(..., "qq_budowa", z6rf_qq_cfg) w stop_proto_rf.R.
+// Po lewej histogram pomiarów i krzywa modelu N(mu, sd) na wspólnej osi temperatury,
+// po prawej wykres Q–Q. Kroki (Wstecz/Dalej): dane → kwantyl empiryczny → kwantyl
+// teoretyczny → para na wykres → wszystkie pary. Przełącznik komory i suwak i.
+(function () {
+  "use strict";
+  var Z = window.lcZ6;
+  if (!Z) return;
+  var U = Z.util, g = U.g;
+
+  // Kwantyl N(0, 1) przez bisekcję dystrybuanty (dokładność daleko ponad potrzeby rysunku).
+  function qnorm(p) {
+    var lo = -8, hi = 8;
+    for (var k = 0; k < 80; k++) { var m = (lo + hi) / 2; if (U.pnorm(m, 0, 1) < p) lo = m; else hi = m; }
+    return (lo + hi) / 2;
+  }
+  var SUB = "₀₁₂₃₄₅₆₇₈₉";
+  function sub(n) { return String(n).split("").map(function (c) { return SUB[+c]; }).join(""); }
+  function sgn(x, d) { return (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(d); }
+  function ln(cls, x1, y1, x2, y2, style) {
+    return '<line class="' + cls + '" x1="' + g(x1) + '" y1="' + g(y1) + '" x2="' + g(x2) + '" y2="' + g(y2) + '"' +
+      (style ? ' style="' + style + '"' : "") + "/>";
+  }
+  function tx(x, y, s, extra) {
+    return '<text x="' + g(x) + '" y="' + g(y) + '" ' + (extra || 'font-size="13"') + ">" + U.esc(s) + "</text>";
+  }
+  var EMP = "stroke:var(--upwr-accent);stroke-width:2", MOD = "stroke:var(--upwr-cat-indygo);stroke-width:2";
+  var EMPD = EMP + ";stroke-dasharray:5 4", MODD = MOD + ";stroke-dasharray:5 4";
+
+  Z.register({
+    qq_budowa: function (cfg, ui) {
+      var step = 0, N = cfg.steps.length, set = "a", root = ui.root, n = cfg.n, MU = cfg.mu, SD = cfg.sd;
+      var sorted = {};
+      Object.keys(cfg.data).forEach(function (k) { sorted[k] = cfg.data[k].slice().sort(function (a, b) { return a - b; }); });
+
+      // Układ: lewa część (temperatura 72–100°C), prawa część (wykres Q–Q).
+      var T0 = 72, T1 = 100, LX0 = 50, LX1 = 450;
+      var HB = 165, HT = 40, DB = 340, DT = 215;
+      var QX0 = 545, QX1 = 780, Z0 = -2.5, Z1 = 2.5, QB = 340, QT = 40, Q0 = 74, Q1 = 94;
+      function cl(t, a, b) { return Math.min(Math.max(t, a), b); }
+      function xT(t) { return LX0 + (cl(t, T0, T1) - T0) / (T1 - T0) * (LX1 - LX0); }
+      function xZ(z) { return QX0 + (cl(z, Z0, Z1) - Z0) / (Z1 - Z0) * (QX1 - QX0); }
+      function yQ(t) { return QB - (cl(t, Q0, Q1) - Q0) / (Q1 - Q0) * (QB - QT); }
+      var yDmax = U.dnorm(MU, MU, SD) * 1.12;
+      function yD(f) { return DB - f / yDmax * (DB - DT); }
+
+      function rank() {
+        var el = root.querySelector("#z6p15b_i");
+        var i = el ? Math.round(+el.value) : cfg.i0;
+        var out = root.querySelector('output[data-value="z6p15b_i"]');
+        if (out) out.textContent = i;
+        return cl(i, 1, n);
+      }
+
+      function hist(xs) {
+        var counts = {}, top = 1, out = "";
+        xs.forEach(function (t) { var b = Math.floor(t); counts[b] = (counts[b] || 0) + 1; top = Math.max(top, counts[b]); });
+        var h = (HB - HT - 10) / Math.max(top, 6);
+        Object.keys(counts).forEach(function (b) {
+          b = +b;
+          out += '<rect class="z6p19-bar" x="' + g(xT(b) + 0.5) + '" y="' + g(HB - counts[b] * h) + '" width="' +
+            g(xT(b + 1) - xT(b) - 1) + '" height="' + g(counts[b] * h) + '"/>';
+        });
+        return out;
+      }
+
+      function render() {
+        var xs = sorted[set], i = rank(), p = (i - 0.5) / n, xi = xs[i - 1], z = qnorm(p), q = MU + SD * z;
+        var b = "";
+        // Panele i osie.
+        b += tx(LX0, HT - 14, "histogram pomiarów", 'class="z6p-subtle" font-size="12"');
+        b += tx(LX0, DT - 14, "model N(" + MU + ", " + SD + ")", 'class="z6p-subtle" font-size="12"');
+        b += tx(QX0, QT - 14, "wykres kwantylowy: pomiar (°C) względem z", 'class="z6p-subtle" font-size="12"');
+        b += hist(xs) + ln("z6p-axis", LX0, HB, LX1, HB);
+        b += '<path class="z6p-curve" d="' + U.normPath(MU, SD, xT, yD, T0, T1, false) + '"/>';
+        b += U.axis(xT, DB, [72, 76, 80, 84, 88, 92, 96, 100], "temperatura (°C)");
+        b += U.axis(xZ, QB, [-2, -1, 0, 1, 2], "kwantyl modelu (z)", ["−2", "−1", "0", "1", "2"]);
+        b += U.axisY(yQ, QX0, [74, 78, 82, 86, 90, 94]);
+
+        // Krok 2+: pomiary rosnąco jako kreski pod histogramem, i-ty wyróżniony.
+        if (step >= 1) {
+          xs.forEach(function (t, k) {
+            b += ln("", xT(t), HB + 4, xT(t), HB + 16, k < i - 1 ? "stroke:var(--upwr-sage);stroke-width:2" :
+              k === i - 1 ? "stroke:var(--upwr-accent);stroke-width:3" : "stroke:var(--upwr-ink-subtle);stroke-width:1.2");
+          });
+          b += ln("", xT(xi), HT - 12, xT(xi), HB + 18, EMP);
+          b += tx(xT(xi) + 6, HT - 2, "x" + sub(i) + " = " + xi.toFixed(1) + "°C", 'class="z6p-mono z6p-bad" font-size="13" font-weight="700"');
+        }
+        // Krok 3+: to samo pole pod krzywą modelu, kwantyl teoretyczny.
+        if (step >= 2) {
+          var pts = [], m = 80;
+          for (var k = 0; k <= m; k++) { var t = T0 + (q - T0) * k / m; pts.push(g(xT(t)) + "," + g(yD(U.dnorm(t, MU, SD)))); }
+          b += '<path class="z6p-area-ok" d="M' + g(xT(T0)) + "," + g(DB) + " L" + pts.join(" L") + " L" + g(xT(q)) + "," + g(DB) + ' Z"/>';
+          b += ln("", xT(q), DT, xT(q), DB, MOD);
+          b += tx(xT(q) + 6, DT + 12, "z = " + z.toFixed(2), 'class="z6p-mono" font-size="13" font-weight="700" style="fill:var(--upwr-cat-indygo)"');
+          b += tx(xT(q) - 8, DB - 8, "pole " + p.toFixed(3), 'class="z6p-mono z6p-subtle" font-size="12" text-anchor="end"');
+        }
+        // Krok 4+: prosta modelu i punkt (z, x_i) z przeniesieniem obu kwantyli.
+        if (step >= 3) {
+          b += ln("z6p-curve-ghost", xZ(Z0), yQ(MU + SD * Z0), xZ(Z1), yQ(MU + SD * Z1));
+          if (step === 3) {
+            b += ln("", xT(xi), HB, xZ(z), yQ(xi), EMPD);
+            b += ln("", xT(q), DT + 22, xZ(z), QB, MODD);
+          }
+          b += ln("", xZ(z), yQ(xi), QX0, yQ(xi), EMPD) + ln("", xZ(z), yQ(xi), xZ(z), QB, MODD);
+        }
+        if (step >= 4) {
+          xs.forEach(function (t, k) {
+            var zz = qnorm((k + 0.5) / n);
+            b += '<circle class="z6p-dot" cx="' + g(xZ(zz)) + '" cy="' + g(yQ(t)) + '" r="4"/>';
+          });
+        }
+        if (step >= 3) b += '<circle class="z6p-dot-bad" cx="' + g(xZ(z)) + '" cy="' + g(yQ(xi)) + '" r="7"/>';
+
+        var aria = cfg.sets[set] + ": " + cfg.steps[step].name + ". Pomiar nr " + i + " z " + n + ": " + xi.toFixed(1) +
+          " stopni, kwantyl modelu z = " + z.toFixed(2) + ".";
+        ui.set("head", U.head(cfg.steps[step].name, "Krok " + (step + 1) + " z " + N));
+        ui.set("stage", U.svgWrap(800, 390, aria, b));
+
+        var read = [
+          "",
+          "x" + sub(i) + " = " + xi.toFixed(1) + "°C · rząd (" + i + " − 0.5)/" + n + " = " + p.toFixed(3),
+          "pole " + p.toFixed(3) + " → z = " + z.toFixed(2) + " → " + MU + " + " + SD + " · " + z.toFixed(2) + " = " + q.toFixed(1) + "°C",
+          "punkt (" + z.toFixed(2) + "; " + xi.toFixed(1) + "°C) · od prostej " + sgn(xi - q, 1) + "°C",
+          ""
+        ][step];
+        var text = cfg.steps[step].text + (step === N - 1 ? " " + cfg.end[set] : "");
+        ui.set("body", '<p class="z6p-caption">' + U.esc(text) + "</p>" + (read ? '<p class="z6p-read">' + U.esc(read) + "</p>" : ""));
+        ui.ends(step, N);
+      }
+
+      return {
+        on: {
+          prev: function () { step = Math.max(0, step - 1); },
+          next: function () { step = Math.min(N - 1, step + 1); },
+          set: function (btn) { set = U.press(btn); }
+        },
+        render: render
+      };
     }
   });
 })();</script>
