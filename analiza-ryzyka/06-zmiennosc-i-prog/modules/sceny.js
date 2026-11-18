@@ -1,4 +1,4 @@
-// Silnik scen wykładu 06 „Zmienność i próg” w przeglądarce, bez serwera R.
+// Silnik scen wykładu 06 „Przekroczenie progu” w przeglądarce, bez serwera R.
 //
 // Kontener .z6p-scene[data-scene][data-config]; sloty [data-z6p-out="…"],
 // przyciski [data-z6p="…"] (R: z6p_scene_ui, z6p_button, z6p_seg w stop_proto_common.R).

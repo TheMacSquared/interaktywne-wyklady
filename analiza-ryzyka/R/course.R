@@ -14,7 +14,7 @@
     list(num = "03", slug = "alarm",       title = "Alarm i prawda",       short = "Bayes",      href = "#"),
     list(num = "04", slug = "proby",       title = "Wiele prób",           short = "Próby",      href = "#"),
     list(num = "05", slug = "oczekiwanie", title = "Do zdarzenia",         short = "Czekanie",   href = "#"),
-    list(num = "06", slug = "prog",        title = "Zmienność i próg",     short = "Próg",       href = "#"),
+    list(num = "06", slug = "prog",        title = "Przekroczenie progu",  short = "Próg",       href = "#"),
     list(num = "07", slug = "czas-zycia",  title = "Czas życia",           short = "Czas życia", href = "#"),
     list(num = "08", slug = "systemy",     title = "Niezawodność systemu", short = "Systemy",    href = "#"),
     list(num = "09", slug = "fta",         title = "Drzewo błędów",        short = "FTA",        href = "#"),

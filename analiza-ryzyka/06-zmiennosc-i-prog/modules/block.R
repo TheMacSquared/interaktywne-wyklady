@@ -1,4 +1,4 @@
-# Blok 06: Zmienność i próg ---------------------------------------------
+# Blok 06: Przekroczenie progu ---------------------------------------------
 
 prog_quiz <- list(questions = list(
   list(question = "Która zmiana bezpośrednio zmniejsza P(T>85°C), gdy próg jest stały i leży powyżej średniej?", choices = c("Obniżenie średniej lub odchylenia standardowego" = "both", "Zwiększenie średniej" = "mean", "Ignorowanie ogona rozkładu" = "ignore"), correct = "both", explanation = "Położenie i rozrzut rozkładu wspólnie wyznaczają pole za progiem."),
@@ -53,7 +53,7 @@ prog_exercises <- list(
   )
 )
 
-prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
+prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
   list(
     id = "glosowanie", title = "Zmienność a próg", hook = "Średnia w normie, a próg przekroczony",
     # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
@@ -179,7 +179,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             c("P(T = 82) ≈ 0.133" = "point", "Pomiar trafia w przedział 82 ± 0.05°C z prawdopodobieństwem około 0.133 · 0.1" = "interval", "13.3% pomiarów wynosi dokładnie 82°C" = "share"),
             correct = "interval",
             explanation = "Gęstość to prawdopodobieństwo na jednostkę szerokości. Pomnożona przez szerokość wąskiego przedziału (0.1°C) daje prawdopodobieństwo około 0.0133; dla pojedynczego punktu prawdopodobieństwo wynosi 0.",
-            hints = c(point = "Dla zmiennej ciągłej P(T = x) = 0 — wzór (6.1). Gęstość wymaga pomnożenia przez szerokość.", share = "Żaden odsetek pomiarów nie wynosi „dokładnie” 82°C przy ciągłym pomiarze; to pytanie o punkt.")
+            hints = c(point = "Dla zmiennej ciągłej P(X = x) = 0 — wzór (6.1). Gęstość wymaga pomnożenia przez szerokość.", share = "Żaden odsetek pomiarów nie wynosi „dokładnie” 82°C przy ciągłym pomiarze; to pytanie o punkt.")
           )
         ),
         pitfall = "Pytanie „jakie jest prawdopodobieństwo, że temperatura wyniesie dokładnie 85°C” nie ma użytecznej odpowiedzi; pytaj o przedział albo przekroczenie progu."
@@ -189,14 +189,14 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         body = list(
           "Wśród rozkładów ciągłych jeden odgrywa szczególną rolę. Gdy wynik powstaje jako suma wielu drobnych, niezależnych wpływów — wahań obciążenia, temperatury otoczenia, przepływu powietrza, tolerancji montażu — jego rozkład zbliża się do symetrycznej krzywej dzwonowej. W poprzednim wykładzie widzieliśmy to samo zjawisko przy rozkładzie ujemnym dwumianowym: suma wielu czasów oczekiwania z rosnącym r stawała się coraz bardziej symetryczna.",
           risk_definition("6.3", "Rozkład normalny", c(
-            "Zmienna T ma rozkład normalny z parametrami μ i σ > 0, co w tym kursie zapisujemy T ~ N(μ, σ), jeśli jej gęstość dana jest wzorem (6.3). Średnia rozkładu wynosi μ, a odchylenie standardowe σ. Rozkład jest symetryczny względem μ i przyjmuje wartości z całej osi liczbowej."
+            "Zmienna X ma rozkład normalny z parametrami μ i σ > 0, co w tym kursie zapisujemy X ~ N(μ, σ), jeśli jej gęstość dana jest wzorem (6.3). Średnia rozkładu wynosi μ, a odchylenie standardowe σ. Rozkład jest symetryczny względem μ i przyjmuje wartości z całej osi liczbowej."
           )),
-          risk_formula("f(t)=⟦1|\\frac{1}{\\sigma\\sqrt{2\\pi}}⟧\\exp\\!\\left(-\\frac{⟦2|(t-\\mu)^2⟧}{⟦3|2\\sigma^2⟧}\\right)", num = "6.3",
-            notes = list("stała: całe pole wynosi 1, więc większe σ to niższa krzywa", "kwadrat odległości od średniej μ: krzywa symetryczna, najwyższa w μ", "σ: szerokość krzywej, w jednostkach t"),
-            note_colors = c("terakota", "niebo", "szalwia"), above = 1),
+          risk_formula("f(x)=⟦1|\\frac{1}{\\sigma\\sqrt{2\\pi}}⟧\\exp\\!\\left(-\\frac{⟦2|(x-\\mu)^2⟧}{⟦3|2\\sigma^2⟧}\\right)", num = "6.3",
+            notes = list("stała: całe pole wynosi 1, więc większe σ to niższa krzywa", "kwadrat odległości od μ: krzywa symetryczna, najwyższa w μ", "σ: szerokość krzywej, w jednostkach x"),
+            note_colors = c("terakota", "niebo", "szalwia"), above = c(1, 2)),
           c(
-            "Rozkład normalny jest opisany dwiema liczbami o czytelnych rolach: μ mówi, gdzie leży środek, a σ — jak szeroko wyniki rozrzucają się wokół niego. Praktyczna linijka: około 68% wyników mieści się w przedziale μ±σ, około 95% w μ±2σ, a wyniki poza μ±3σ są rzadkością.",
-            "Wzór (6.3) wygląda groźnie, ale jego treść jest prosta. Gęstość zależy od t tylko przez kwadrat odległości od średniej, mierzonej w jednostkach σ — dlatego krzywa jest symetryczna i najwyższa w μ. Czynnik przed wykładnikiem pilnuje, żeby całe pole wynosiło 1: im większe σ, tym krzywa szersza i jednocześnie niższa."
+            "W przykładach z Bananpolu zmienną jest temperatura łożyska, więc oznaczamy ją T i piszemy T ~ N(82, 3). Rozkład normalny jest opisany dwiema liczbami o czytelnych rolach: μ mówi, gdzie leży środek, a σ — jak szeroko wyniki rozrzucają się wokół niego. Praktyczna linijka: około 68% wyników mieści się w przedziale μ±σ, około 95% w μ±2σ, a wyniki poza μ±3σ są rzadkością.",
+            "Wzór (6.3) wygląda groźnie, ale jego treść jest prosta. Gęstość zależy od x tylko przez kwadrat odległości od średniej, mierzonej w jednostkach σ — dlatego krzywa jest symetryczna i najwyższa w μ. Czynnik przed wykładnikiem pilnuje, żeby całe pole wynosiło 1: im większe σ, tym krzywa szersza i jednocześnie niższa."
           ),
           risk_example("6.3", "Linijka 68–95–99.7 dla łożyska",
             problem = "Dla T ~ N(82, 3) wyznacz przedziały, w których leży około 68% i 95% pomiarów. Na tej podstawie oszacuj, bez tablic, odsetek pomiarów powyżej 85°C.",
@@ -210,8 +210,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           # Pojęcie P5 (przyjęte 17.11.2026): linijka σ
           z6p_get("z6p_5_ui"),
           "Pobaw się suwakami i obserwuj wskaźnik z dla progu 85°C. Zauważ, że tę samą odległość od progu można osiągnąć chłodzeniem (mniejsze μ) albo stabilizacją pracy (mniejsze σ) — rozróżnienie, które wróci przy decyzjach.",
-          risk_formula("T\\sim N(⟦1|\\mu⟧,⟦2|\\sigma⟧),\\qquad ⟦3|z=\\frac{t-\\mu}{\\sigma}⟧",
-            notes = list("średnia: suwak μ przesuwa krzywą", "odchylenie standardowe: suwak σ zwęża lub poszerza krzywą", "wynik z: ile odchyleń σ dzieli próg t od średniej"),
+          risk_formula("X\\sim N(⟦1|\\mu⟧,⟦2|\\sigma⟧),\\qquad ⟦3|z=\\frac{x-\\mu}{\\sigma}⟧",
+            notes = list("średnia: suwak μ przesuwa krzywą", "odchylenie standardowe: suwak σ zwęża lub poszerza krzywą", "wynik z: ile odchyleń σ dzieli wartość x, np. próg, od średniej"),
             note_colors = c("niebo", "szalwia", "accent")),
           risk_try("zacznij od μ = 82°C i σ = 3°C (z = 1). Najpierw obniż μ do 80°C, potem wróć do 82°C i zmniejsz σ do 2°C. Zapisz z w obu przypadkach i zwróć uwagę, jak zmienia się wysokość krzywej przy zmianie σ."),
           # Piaskownica P4 (przyjęta 17.11.2026): zastępuje dawny panel „Model”
@@ -224,7 +224,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
       ),
       list(
         id = "konwencja", title = "Konwencja zapisu",
-        text = "W tym kursie zapis T~N(μ, σ) oznacza, że drugim parametrem jest odchylenie standardowe σ. W wielu podręcznikach ten sam rozkład zapisuje się jako N(μ, σ²) z wariancją na drugim miejscu — przed podstawieniem liczb zawsze sprawdź, którą konwencję przyjmuje źródło.",
+        text = "W tym kursie zapis X ~ N(μ, σ) oznacza, że drugim parametrem jest odchylenie standardowe σ. W wielu podręcznikach ten sam rozkład zapisuje się jako N(μ, σ²) z wariancją na drugim miejscu — przed podstawieniem liczb zawsze sprawdź, którą konwencję przyjmuje źródło.",
         body = list(
           "Konwencja z odchyleniem standardowym ma praktyczną przewagę: σ ma te same jednostki co pomiar (°C), więc można je bezpośrednio porównywać z odległością do progu. Funkcje R też jej używają: pnorm(85, mean = 82, sd = 3). Wariancja ma jednostki do kwadratu (°C²) i nie da się jej wprost odłożyć na osi temperatury.",
           risk_check("z6_chk_konwencja",
@@ -239,10 +239,10 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     )
   ),
   list(
-    id = "standaryzacja", title = "Standaryzacja", hook = "Każdy pomiar da się przyłożyć do jednej linijki",
+    id = "standaryzacja", title = "Prawdopodobieństwo przekroczenia", hook = "Trzy stopnie zapasu nie chronią łożyska",
     # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
     widget = z6p_21_fix(3),
-    lead = "Standaryzacja mówi, ile odchyleń standardowych dzieli wynik od średniej; próg dzieli rozkład na wyniki akceptowalne i przekroczenia.",
+    lead = "Prawdopodobieństwo przekroczenia to pole pod krzywą ponad progiem; standaryzacja pozwala je policzyć dla każdego rozkładu normalnego.",
     intro = c(
       "Ten rozdział poprawia dwa wiersze raportu: okres odniesienia („16% pomiarów, więc 16% zmian”) i źródło ryzyka („pojedyncze, przypadkowe gorące odczyty”).",
       "Czy 85°C przy średniej 82°C i σ = 3°C to dużo? A 62 bary ciśnienia przy średniej 56 i σ = 2? Porównanie surowych liczb z różnych światów jest niemożliwe — dopóki obu nie przełożymy na wspólną jednostkę: liczbę odchyleń standardowych od średniej.",
@@ -254,7 +254,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         text = "Po standaryzacji można porównywać temperaturę, ciśnienie i drgania, ale tylko w ramach sensownego modelu. Wynik z = 1 znaczy „jedno odchylenie nad średnią” zawsze; przełożenie tego na prawdopodobieństwo wymaga już założenia o kształcie rozkładu.",
         body = list(
           risk_definition("6.4", "Standaryzacja", c(
-            "Standaryzacją wartości x zmiennej o średniej μ i odchyleniu standardowym σ nazywamy przekształcenie (6.4). Wynik z mówi, o ile odchyleń standardowych x leży powyżej (z > 0) lub poniżej (z < 0) średniej. Jeśli T ~ N(μ, σ), to Z = (T - μ)/σ ma standardowy rozkład normalny N(0, 1)."
+            "Standaryzacją wartości x zmiennej o średniej μ i odchyleniu standardowym σ nazywamy przekształcenie (6.4). Wynik z mówi, o ile odchyleń standardowych x leży powyżej (z > 0) lub poniżej (z < 0) średniej. Jeśli X ~ N(μ, σ), to Z = (X - μ)/σ ma standardowy rozkład normalny N(0, 1)."
           )),
           risk_formula("⟦1|z⟧=(⟦2|x-\\mu⟧)/⟦3|\\sigma⟧", num = "6.4",
             notes = list("ile odchyleń standardowych dzieli x od średniej; bez jednostki", "odległość od średniej w jednostkach pomiaru, np. w °C", "odchylenie standardowe: linijka do mierzenia odległości"),
@@ -262,7 +262,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           risk_derivation("dlaczego Z ma rozkład N(0, 1)", c(
             "Odjęcie stałej μ przesuwa cały rozkład, nie zmieniając jego kształtu ani rozrzutu: średnia spada do zera, odchylenie zostaje σ. Podzielenie przez σ zmienia skalę: odchylenie standardowe dzieli się przez σ i wynosi 1. Przekształcenie liniowe nie psuje kształtu krzywej dzwonowej, więc wynik nadal jest normalny.",
             "Dzięki temu jedna tablica, albo jedna funkcja Φ, wystarcza dla wszystkich rozkładów normalnych — wystarczy przeliczyć próg na z."
-          ), lines = c("E(T - μ) = μ - μ = 0", "SD(T - μ) = σ", "SD((T - μ)/σ) = σ/σ = 1", "⇒ Z = (T - μ)/σ ~ N(0, 1)")),
+          ), lines = c("E(X - μ) = μ - μ = 0", "SD(X - μ) = σ", "SD((X - μ)/σ) = σ/σ = 1", "⇒ Z = (X - μ)/σ ~ N(0, 1)")),
           risk_example("6.4", "Temperatura czy ciśnienie?",
             problem = "W dojrzewalni monitoruje się temperaturę łożyska T ~ N(82, 3) z progiem 85°C oraz ciśnienie w instalacji chłodniczej P ~ N(56, 2) z progiem 62 bar. Które przekroczenie jest częstsze i ile razy?",
             steps = c(
@@ -284,7 +284,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         )
       ),
       list(
-        id = "ogon", title = "Ryzyko przekroczenia",
+        id = "ogon", title = "Pole ogona i kwantyl",
         text = c(
           "Wracamy do pytania z głosowania, tym razem z pełnym warsztatem. Prawdopodobieństwo przekroczenia progu to pole pod gęstością na prawo od progu — dla T~N(82, 3) i progu 85°C około 0.16. W naturalnych częstościach: mniej więcej 159 na 1000 porównywalnych pomiarów.",
           "Zanim zapiszemy to wzorem, pobaw się progiem i obserwuj, jak pole reaguje nieliniowo: w okolicy średniej każda zmiana progu o pół stopnia silnie zmienia wynik, a daleko w ogonie te same pół stopnia znaczy niewiele. Ta nieliniowość to znak rozpoznawczy ogonów rozkładu normalnego."
@@ -296,16 +296,19 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           c(
             "Przy progu 82°C panel pokazuje 0.500, a przy 82.5°C — 0.434: pół stopnia zabrało 6.6 punktu procentowego. Między 91 a 91.5°C prawdopodobieństwo spada z 0.00135 do 0.00077, czyli o niecałe 0.06 punktu procentowego. W liczbach bezwzględnych daleki ogon jest mało wrażliwy na próg. W liczbach względnych jest odwrotnie: te same pół stopnia zmniejsza ryzyko o ponad 40%. Która skala jest ważniejsza, zależy od tego, czy pytamy o liczbę przekroczeń, czy o rząd wielkości rzadkiego zdarzenia."
           ),
-          "To, co robił suwak — odcinał pole na prawo od progu — zapisujemy jedną linijką, korzystając ze standaryzacji:",
-          risk_formula("⟦1|P(T>c)⟧=1-⟦2|\\Phi⟧\\!\\left(⟦3|\\frac{c-\\mu}{\\sigma}⟧\\right)", num = "6.5",
-            notes = list("prawy ogon: szansa przekroczenia progu c", "dystrybuanta N(0, 1): pole na lewo", "wynik z progu c, wzór (6.4)"),
+          risk_definition("6.5", "Prawdopodobieństwo przekroczenia", c(
+            "Prawdopodobieństwem przekroczenia progu c przez zmienną X nazywamy P(X > c) = 1 - F(c), czyli pole pod gęstością na prawo od c. Wyrażone jako naturalna częstość mówi, ile wyników na 1000 porównywalnych obserwacji leży ponad progiem; zawsze podajemy je z okresem odniesienia: na pomiar, na zmianę, na rok."
+          )),
+          "To, co robił suwak — odcinał pole na prawo od progu — dla rozkładu normalnego zapisujemy jedną linijką, korzystając ze standaryzacji:",
+          risk_formula("⟦1|P(X>c)⟧=1-⟦2|\\Phi⟧\\!\\left(⟦3|\\frac{c-\\mu}{\\sigma}⟧\\right)", num = "6.5",
+            notes = list("prawdopodobieństwo przekroczenia progu c (definicja 6.5)", "dystrybuanta N(0, 1): pole na lewo", "wynik z progu c, wzór (6.4)"),
             note_colors = c("accent", "wrzos", "indygo")),
           "Φ jest dystrybuantą standardowego rozkładu normalnego, a (c-μ)/σ to wynik z progu — odległość od średniej we wspólnej linijce odchyleń.",
-          risk_definition("6.5", "Kwantyl rozkładu normalnego", c(
-            "Kwantylem rzędu α zmiennej T nazywamy taką wartość t_α, że P(T ≤ t_α) = α. Dla standardowego rozkładu normalnego oznaczamy go z_α (w R: qnorm(α)); na przykład z₀,₉₅ ≈ 1.645, z₀,₉₉ ≈ 2.326, z₀,₉₉₉ ≈ 3.090. Z symetrii Φ(-z) = 1 - Φ(z)."
+          risk_definition("6.6", "Kwantyl rozkładu normalnego", c(
+            "Kwantylem rzędu α zmiennej X nazywamy taką wartość x_α, że P(X ≤ x_α) = α. Dla standardowego rozkładu normalnego oznaczamy go z_α (w R: qnorm(α)); na przykład z₀,₉₅ ≈ 1.645, z₀,₉₉ ≈ 2.326, z₀,₉₉₉ ≈ 3.090. Z symetrii Φ(-z) = 1 - Φ(z)."
           )),
-          "Wzór (6.5) odpowiada na pytanie „jakie ryzyko przy danym progu?”. Często pytanie jest odwrotne: przy jakim progu ryzyko spadnie do uzgodnionego poziomu? Odpowiedzią jest kwantyl, który z definicji 6.5 i wzoru (6.4) dostajemy, cofając standaryzację:",
-          risk_formula("⟦1|t_{\\alpha}⟧=⟦2|\\mu⟧+⟦3|z_{\\alpha}⟧\\,⟦4|\\sigma⟧", num = "6.6",
+          "Wzór (6.5) odpowiada na pytanie „jakie ryzyko przy danym progu?”. Często pytanie jest odwrotne: przy jakim progu ryzyko spadnie do uzgodnionego poziomu? Odpowiedzią jest kwantyl, który z definicji 6.6 i wzoru (6.4) dostajemy, cofając standaryzację:",
+          risk_formula("⟦1|x_{\\alpha}⟧=⟦2|\\mu⟧+⟦3|z_{\\alpha}⟧\\,⟦4|\\sigma⟧", num = "6.6",
             notes = list("próg, którego nie przekracza odsetek α pomiarów", "start: średnia", "ile odchyleń w górę: kwantyl N(0, 1)", "długość jednego odchylenia w jednostkach pomiaru"),
             note_colors = c("indygo", "niebo", "accent", "szalwia"), above = c(1, 3)),
           risk_example("6.5", "Ogon łożyska w liczbach",
@@ -364,7 +367,15 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     lead = "Chłodzenie przesuwa średnią, stabilizacja zwęża rozkład, zmiana progu przesuwa granicę.",
     intro = c(
       "Wiersz 6 raportu proponuje podnieść próg do 87°C, bo wtedy przekroczeń będzie mniej. Ten rozdział porównuje to z chłodzeniem i stabilizacją i pokazuje, czym te działania naprawdę się różnią.",
-      "Gdy górny próg leży powyżej średniej, pole ogona można zmniejszyć przez obniżenie średniej lub ograniczenie zmienności. Zmniejszenie σ przy progu poniżej średniej zwiększa P(T>c), a przy progu równym średniej pozostawia 0.5. Zmiana progu zmienia samo zdarzenie. Fizycznie to trzy zupełnie różne interwencje — lepsze chłodzenie, wyrównanie obciążenia i warunków pracy albo decyzja konstrukcyjna o nowej granicy.",
+      "Gdy próg leży nad średnią, prawdopodobieństwo przekroczenia można zmniejszyć na cztery sposoby:"
+    ),
+    body = list(
+      tags$ol(class = "lc-p",
+        tags$li(tags$strong("Obniżenie średniej μ:"), " lepsze chłodzenie przesuwa całą krzywą od progu."),
+        tags$li(tags$strong("Ograniczenie zmienności σ:"), " wyrównanie obciążenia i warunków pracy zwęża krzywą; pomaga tylko wtedy, gdy próg leży nad średnią."),
+        tags$li(tags$strong("Rewizja progu c:"), " decyzja konstrukcyjna o nowej granicy; zmienia samo zdarzenie, a nie temperaturę łożyska."),
+        tags$li(tags$strong("Kombinacja powyższych:"), " na przykład chłodzenie ze stabilizacją; działania wzmacniają się, bo oba zwiększają z = (c - μ)/σ.")
+      ),
       "Porównaj skuteczność konkretnych interwencji względem stanu bazowego μ=82°C, σ=3°C, c=85°C. Wynik zależy zarówno od punktu wyjścia, jak i wielkości zmiany parametrów; nie ma uniwersalnego rankingu chłodzenia i stabilizacji."
     ),
     sections = list(
@@ -372,7 +383,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         id = "mechanizm", title = "Wszystko przez z",
         body = list(
           c(
-            "Wzór (6.5) pokazuje, że dla rozkładu normalnego ryzyko zależy od trzech parametrów tylko przez jedną liczbę: z = (c - μ)/σ. Im większe z, tym mniejsze P(T > c). Każde działanie na ogonie jest więc sposobem na zwiększenie z — i każde robi to inną drogą: chłodzenie zmniejsza μ w liczniku, stabilizacja zmniejsza σ w mianowniku, a podniesienie progu zwiększa c w liczniku.",
+            "Wzór (6.5) pokazuje, że dla rozkładu normalnego ryzyko zależy od trzech parametrów tylko przez jedną liczbę: z = (c - μ)/σ. Im większe z, tym mniejsze P(X > c). Każde działanie na ogonie jest więc sposobem na zwiększenie z — i każde robi to inną drogą: chłodzenie zmniejsza μ w liczniku, stabilizacja zmniejsza σ w mianowniku, a podniesienie progu zwiększa c w liczniku.",
             "Ta obserwacja pozwala porównywać interwencje na papierze, zanim wyda się pieniądze. Ale z nie mówi, która interwencja jest tańsza ani która zmienia fizykę łożyska; to trzeba dołożyć z wiedzy inżynierskiej."
           ),
           risk_example("6.7", "Trzy interwencje dla łożyska",
@@ -426,9 +437,9 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         text = "Kolejność działań zakłada, że próg leży nad średnią, tak jak 85°C nad 82°C. Gdy próg leży pod średnią, stabilizacja działa odwrotnie: zwężenie rozkładu podnosi ryzyko, zamiast je obniżać.",
         body = list(
           risk_derivation("kiedy zmniejszenie σ pomaga", c(
-            "Φ jest funkcją rosnącą, więc P(T > c) = 1 - Φ(z) maleje, gdy z rośnie. Zmniejszenie σ mnoży z przez liczbę większą od 1 — ale z może być dodatnie, ujemne albo zerowe, zależnie od znaku c - μ.",
+            "Φ jest funkcją rosnącą, więc P(X > c) = 1 - Φ(z) maleje, gdy z rośnie. Zmniejszenie σ mnoży z przez liczbę większą od 1 — ale z może być dodatnie, ujemne albo zerowe, zależnie od znaku c - μ.",
             "Dla progu 80°C poniżej średniej 82°C zmniejszenie σ z 3 do 2°C podnosi P(T > 80) z 0.748 do 0.841. Zwężenie rozkładu zbliża wszystkie wyniki do średniej, a średnia leży po „złej” stronie progu."
-          ), lines = c("c > μ: z > 0, mniejsze σ ⇒ większe z ⇒ mniejsze P(T > c)", "c = μ: z = 0 dla każdego σ ⇒ P(T > c) = 0.5", "c < μ: z < 0, mniejsze σ ⇒ bardziej ujemne z ⇒ większe P(T > c)")),
+          ), lines = c("c > μ: z > 0, mniejsze σ ⇒ większe z ⇒ mniejsze P(X > c)", "c = μ: z = 0 dla każdego σ ⇒ P(X > c) = 0.5", "c < μ: z < 0, mniejsze σ ⇒ bardziej ujemne z ⇒ większe P(X > c)")),
           # Przypadek brzegowy P10A (przyjęty 17.11.2026): próg poniżej średniej
           z6p_get("z6p_10a_ui")
         )
@@ -470,7 +481,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
       list(
         id = "roznica", title = "Różnica dwóch zmiennych normalnych",
         body = list(
-          risk_definition("6.6", "Model obciążenie–wytrzymałość", c(
+          risk_definition("6.7", "Model obciążenie–wytrzymałość", c(
             "W modelu obciążenie–wytrzymałość awaria zachodzi, gdy losowe obciążenie L przekroczy losową wytrzymałość S. Prawdopodobieństwo awarii to P(L > S) = P(D < 0), gdzie D = S - L jest marginesem bezpieczeństwa.",
             "Iloraz średniej marginesu przez jego odchylenie standardowe, β = μ_D/σ_D, nazywamy indeksem niezawodności: mówi, o ile odchyleń standardowych zero leży poniżej średniego marginesu."
           )),
@@ -483,7 +494,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           ), lines = c("D = S + (-L)", "Var(D) = Var(S) + Var(-L) = σ_S² + σ_L²", "przy korelacji: Var(D) = σ_S² + σ_L² - 2ρ·σ_S·σ_L")),
           "Skoro D ~ N(μ_D, σ_D), prawdopodobieństwo awarii dostajemy ze wzoru (6.5) zastosowanego do progu zero — tym razem z lewego ogona:",
           risk_formula("P(L>S)=⟦1|\\Phi⟧\\!\\left(\\frac{0-\\mu_D}{\\sigma_D}\\right)=⟦1|\\Phi⟧(-⟦2|\\beta⟧),\\quad ⟦2|\\beta⟧=\\frac{⟦3|\\mu_S-\\mu_L⟧}{⟦4|\\sqrt{\\sigma_S^{2}+\\sigma_L^{2}}⟧}", num = "6.10",
-            notes = list("dystrybuanta N(0, 1): lewy ogon, bo awaria to D < 0", "indeks niezawodności (definicja 6.6): ile σ_D dzieli zero od średniego marginesu", "średni margines μ_D, wzór (6.9)", "rozrzut marginesu σ_D, wzór (6.9)"),
+            notes = list("dystrybuanta N(0, 1): lewy ogon, bo awaria to D < 0", "indeks niezawodności (definicja 6.7): ile σ_D dzieli zero od średniego marginesu", "średni margines μ_D, wzór (6.9)", "rozrzut marginesu σ_D, wzór (6.9)"),
             note_colors = c("wrzos", "accent", "terakota", "szalwia"), above = 1),
           # Pojęcie P12 (przyjęte 17.11.2026): od chmury par do marginesu D; stoi po (6.9)–(6.10),
           # bo kadry używają β i σ_D
@@ -574,7 +585,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
       list(
         id = "qq", title = "Jak czytać wykres kwantylowy",
         body = list(
-          risk_definition("6.7", "Wykres kwantylowy (Q–Q)", c(
+          risk_definition("6.8", "Wykres kwantylowy (Q–Q)", c(
             "Wykres kwantylowy względem rozkładu normalnego to wykres punktowy, na którym każdy uporządkowany pomiar x₍ᵢ₎ zestawia się z kwantylem standardowego rozkładu normalnego tego samego rzędu. Jeśli dane pochodzą z rozkładu normalnego, punkty leżą w przybliżeniu na prostej o wyrazie wolnym μ i nachyleniu σ."
           )),
           risk_formula("\\left(⟦1|\\Phi^{-1}⟧\\!\\left(⟦2|\\frac{i-0.5}{n}⟧\\right),\\; ⟦3|x_{(i)}⟧\\right),\\qquad i=1,\\ldots,n", num = "6.11",

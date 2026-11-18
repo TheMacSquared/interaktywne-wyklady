@@ -1,4 +1,4 @@
-// Wykresy wykładu 06 „Zmienność i próg” liczone w przeglądarce (dawniej ggplot
+// Wykresy wykładu 06 „Przekroczenie progu” liczone w przeglądarce (dawniej ggplot
 // na serwerze). Silnik: window.lcSF (shared/lc_stat_figures.js).
 //
 //   z6_shapes  — Trzy kształty na wykresie kwantylowym (dane z R)

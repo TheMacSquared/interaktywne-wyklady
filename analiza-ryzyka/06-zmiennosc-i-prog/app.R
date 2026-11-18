@@ -61,7 +61,7 @@ lc_apply_ggplot_defaults()
 ui <- lecture_page(
   lecture_id = "zmiennosc-i-prog",
   lecture_num = "06",
-  lecture_title = "Zmienność i próg",
+  lecture_title = "Przekroczenie progu",
   module_label = "Analiza ryzyka · Bananpol",
   chapters = .chapters,
   # Prototypy punktów stop działają w przeglądarce, bez serwera R: sceny
