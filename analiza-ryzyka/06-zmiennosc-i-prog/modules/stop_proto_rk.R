@@ -3,8 +3,8 @@
 #   z6p_20a_ui — piaskownica „Redaktor komunikatu” (P20A): suwaki μ, σ, próg, liczba
 #                pomiarów na zmianę, kształt rozkładu i działanie; trzy zdania komunikatu
 #                i ostrzeżenia składa JS (modules/proto_rk.js, scena „redaktor”).
-#   z6p_20b_ui — galeria „Popraw raport” (P20B): pięć raportów, w każdym jedno błędne
-#                zdanie (pułapki z rozdziałów 1–6); scena „raporty”.
+#   z6p_20b_ui — galeria „Popraw raport” (P20B): pięć raportów w szablonie raportu o łożysku,
+#                w każdym jeden błędny wiersz (pułapki z rozdziałów 1–6); scena „raporty”.
 #   z6p_20c_ui — „Decyzja z budżetem” (P20C): pakiet działań z kosztem, cel ≤ 10
 #                przekroczeń na 1000 przy budżecie 20 tys. zł; scena „budzet”.
 # Koszty i efekty działań są ilustracyjne (jak liczby Bananpolu). σ łączonych działań:
@@ -19,10 +19,6 @@ z6p20_css <- tags$style(HTML("
   .z6p20-row.is-warn { border-left-color: var(--upwr-accent); }
   .z6p20-k { font-weight: 700; }
   .z6p20-warn { margin: .3em 0 .2em; padding-left: 1.2em; color: var(--upwr-accent); }
-  .z6p20-report { border: 1px solid var(--upwr-rule); border-radius: 6px; background: var(--upwr-surface); padding: .6em .9em; }
-  .z6p20-rhead { font-family: var(--upwr-mono); font-size: .75em; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--upwr-ink-subtle); border-bottom: 1px solid var(--upwr-rule); padding-bottom: .35em; margin-bottom: .4em; }
-  .z6p20-sents { margin: 0; padding-left: 1.4em; display: grid; gap: .25em; }
   .z6p20-sent { all: unset; cursor: pointer; display: block; padding: .3em .5em; border-radius: 4px; line-height: 1.45; }
   .z6p20-sent:hover, .z6p20-sent:focus-visible { background: var(--upwr-surface-sunken); outline: 1px dashed var(--upwr-rule); }
   .z6p20-sent.is-fine { background: color-mix(in srgb, var(--upwr-sage) 18%, transparent); }
@@ -72,52 +68,64 @@ z6p_20a_ui <- tagList(z6p20_css,
 # żeby galeria była sprawdzianem, a nie powtórką. Liczby: N(56, 2) i próg 58 bar;
 # 1 − 0.95¹⁶ ≈ 0.56; dach N(1.2, 0.4) i N(2.5, 0.25): pole wspólne 0.044, P(L > S) 0.0029;
 # dojazd jak w scenie P19: N(30, 6) daje 6, skośny 21 + Gamma(2.25, 4) daje 25 na 1000.
+# Raporty w szablonie raportu o łożysku (stop_proto_rl.R): wiersze z nazwami jak w PN-ISO 31000
+# i numerami z pełnego szablonu (1 zakres i kryteria … 7 monitorowanie i przegląd); w każdym
+# raporcie trzy wiersze, jeden błędny (wrong = indeks od 0).
+# Etykiety jak w z6p21_rows (stop_proto_rl.R, ładowany później): przy zmianie nazw poprawić oba miejsca.
+z6p20b_lbl <- c("Zakres i kryteria", "Poziom ryzyka", "Częstość alarmu", "Źródło ryzyka",
+  "Założenia i niepewność", "Postępowanie z ryzykiem", "Monitorowanie i przegląd")
+z6p20b_row <- function(n, text) list(n = n, lbl = z6p20b_lbl[[n]], text = text)
 z6p20b_cfg <- list(reports = list(
-  list(head = "Raport tygodniowy · ciśnienie w instalacji chłodniczej",
-    sentences = c("Średnie ciśnienie w tym tygodniu: 56 bar.",
-                  "Próg ostrzegawczy zaworu bezpieczeństwa: 58 bar.",
-                  "Zapas 2 bar: instalacja w normie, ryzyko przekroczeń pomijalne."),
-    wrong = 2L,
-    hint = "Szukaj zdania, które wyciąga wniosek z samych dwóch liczb.",
+  list(head = "Raport z oceny ryzyka · ciśnienie w instalacji chłodniczej",
+    rows = list(
+      z6p20b_row(1, "Próg ostrzegawczy zaworu bezpieczeństwa: 58 bar."),
+      z6p20b_row(2, "Średnie ciśnienie w tym tygodniu 56 bar, zapas 2 bar: instalacja w normie, ryzyko przekroczeń pomijalne."),
+      z6p20b_row(6, "Bez działań; kolejny przegląd zgodnie z planem.")),
+    wrong = 1L,
+    hint = "Szukaj wiersza, który wyciąga wniosek z samych dwóch liczb.",
     diag = "Średnia i próg nie wystarczą; bez rozrzutu nie wiadomo, jak często odczyty przekraczają próg.",
     fix = "Przy σ = 2 bar próg leży jedno odchylenie nad średnią: około 159 na 1000 odczytów przekracza 58 bar."),
-  list(head = "Raport utrzymania ruchu · czujnik drgań wentylatora",
-    sentences = c("Czujnik zapisuje drgania co 30 minut, 16 razy na zmianę.",
-                  "Ponad progiem alarmowym leży 5% odczytów.",
-                  "Zatem alarm drgań pojawi się w około 5% zmian."),
+  list(head = "Raport z oceny ryzyka · czujnik drgań wentylatora",
+    rows = list(
+      z6p20b_row(1, "Czujnik zapisuje drgania co 30 minut, 16 razy na zmianę."),
+      z6p20b_row(2, "Ponad progiem alarmowym leży 5% odczytów."),
+      z6p20b_row(3, "Alarm drgań pojawi się w około 5% zmian.")),
     wrong = 2L,
-    hint = "Które zdanie zmienia jednostkę obserwacji?",
+    hint = "Który wiersz zmienia jednostkę obserwacji?",
     diag = "Odsetek odczytów to nie odsetek zmian; zmiana ma alarm, gdy przekroczy choć jeden z 16 odczytów.",
     fix = "Przy niezależnych odczytach alarm pojawi się w około 1 − 0.95¹⁶ ≈ 56% zmian; przy skorelowanych rzadziej."),
-  list(head = "Raport magazynu · regały w chłodni",
-    sentences = c("Dopuszczalne obciążenie miejsca paletowego podnieśliśmy w instrukcji z 1000 do 1100 kg.",
-                  "Dzięki temu „za ciężkich” palet jest trzy razy mniej, więc regały są bezpieczniejsze.",
-                  "Zmiana weszła w życie od poniedziałku."),
+  list(head = "Raport z oceny ryzyka · regały w chłodni",
+    rows = list(
+      z6p20b_row(2, "Po zmianie instrukcji „za ciężkich” palet jest trzy razy mniej."),
+      z6p20b_row(6, "Podnieśliśmy dopuszczalne obciążenie miejsca paletowego z 1000 do 1100 kg, więc regały są bezpieczniejsze."),
+      z6p20b_row(7, "Nowy limit obowiązuje od poniedziałku.")),
     wrong = 1L,
     hint = "Co fizycznie zmieniło się w regale?",
     diag = "Zmieniono definicję „za ciężkiej” palety, nie nośność regału: ubyło przekroczeń w raporcie, nie w magazynie.",
     fix = "Nowy limit jest uprawniony tylko po ocenie nośności regału; bez niej ryzyko przeciążenia zostaje takie jak przedtem."),
-  list(head = "Ocena dachu magazynu przed zimą",
-    sentences = c("Obciążenie śniegiem w najgorszym dniu zimy: N(1.2, 0.4) kN/m²; nośność dachu: N(2.5, 0.25) kN/m².",
-                  "Krzywe obu rozkładów nakładają się na polu 0.044, więc ryzyko zawalenia wynosi około 4% na zimę.",
-                  "Rekomendujemy przegląd konstrukcji przed sezonem."),
-    wrong = 1L,
-    hint = "Które zdanie liczy ryzyko z rysunku zamiast z par L i S?",
+  list(head = "Raport z oceny ryzyka · dach magazynu przed zimą",
+    rows = list(
+      z6p20b_row(2, "Krzywe obciążenia śniegiem i nośności nakładają się na polu 0.044, więc ryzyko zawalenia wynosi około 4% na zimę."),
+      z6p20b_row(5, "Obciążenie śniegiem w najgorszym dniu zimy N(1.2, 0.4) kN/m²; nośność dachu N(2.5, 0.25) kN/m²; zmienne niezależne."),
+      z6p20b_row(6, "Rekomendujemy przegląd konstrukcji przed sezonem.")),
+    wrong = 0L,
+    hint = "Który wiersz liczy ryzyko z rysunku zamiast z par L i S?",
     diag = "Pole nakładania gęstości nie jest prawdopodobieństwem awarii; tu zawyża ryzyko piętnastokrotnie.",
     fix = "Ryzyko to P(L > S) = Φ(−2.76) ≈ 0.003, czyli około 3 zimy na 1000."),
-  list(head = "Ocena dostaw · czas dojazdu dostawcy",
-    sentences = c("Czas dojazdu dostawcy: średnio 30 min, odchylenie standardowe 6 min, 500 dostaw.",
-                  "Model standardowy: dojazd dłuższy niż 45 min zdarza się 6 razy na 1000 dostaw.",
-                  "Histogram ma ostrą lewą krawędź przy 21 min i długi prawy ogon."),
+  list(head = "Raport z oceny ryzyka · czas dojazdu dostawcy",
+    rows = list(
+      z6p20b_row(2, "Dojazd dłuższy niż 45 min zdarza się 6 razy na 1000 dostaw."),
+      z6p20b_row(5, "Model standardowy: czas dojazdu N(30, 6) min, oszacowany z 500 dostaw."),
+      z6p20b_row(7, "Histogram 500 dostaw ma ostrą lewą krawędź przy 21 min i długi prawy ogon.")),
     wrong = 1L,
     hint = "Co mówi kształt histogramu o prawym ogonie?",
     diag = "„Model standardowy” przyjęto bez sprawdzenia; histogram i wykres kwantylowy pokazują skośność prawostronną.",
-    fix = "Model skośny (jak w scenie z dwiema trasami) daje około 25 spóźnień na 1000 dostaw, cztery razy więcej.")
+    fix = "Model skośny daje około 25 spóźnień na 1000 dostaw, cztery razy więcej; wiersz 2 trzeba przeliczyć.")
 ))
 
-z6p_20b_ui <- tagList(z6p20_css,
+z6p_20b_ui <- tagList(z6p20_css, z6p16a_css,
   z6p_scene_ui("P20B", "galeria", "Popraw raport", "raporty", z6p20b_cfg, proto = FALSE,
-    tags$div(class = "z6p-head", tags$span(class = "z6p-name", "Znajdź błędne zdanie"), z6p_out("step", class = "z6p-step")),
+    tags$div(class = "z6p-head", tags$span(class = "z6p-name", "Znajdź błędny wiersz"), z6p_out("step", class = "z6p-step")),
     z6p_out("stage"),
     z6p_out("body"),
     tags$div(class = "z6p-nav",

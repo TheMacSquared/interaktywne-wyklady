@@ -3,8 +3,8 @@
 //
 //   redaktor — piaskownica „Redaktor komunikatu” (P20A): suwaki μ, σ, c, n, kształt
 //              i działanie; trzy zdania komunikatu i ostrzeżenia składane na bieżąco.
-//   raporty  — galeria „Popraw raport” (P20B): pięć raportów, w każdym jedno błędne
-//              zdanie; kliknięcie zdania daje diagnozę i poprawkę.
+//   raporty  — galeria „Popraw raport” (P20B): pięć raportów w szablonie raportu o łożysku,
+//              w każdym jeden błędny wiersz; kliknięcie wiersza daje diagnozę i poprawkę.
 //   budzet   — „Decyzja z budżetem” (P20C): pakiet działań z kosztami, cel ≤ 10 na
 //              1000 pomiarów, komunikat z wybranego pakietu.
 // Model temperatury: normalny N(μ, σ) albo skośny 82-style (przesunięta gamma o kształcie 3,
@@ -144,18 +144,20 @@
       var i = 0, picked = null, root = ui.root;
       function render() {
         var r = cfg.reports[i], ok = picked === r.wrong;
-        var sents = r.sentences.map(function (s, k) {
-          var cls = "z6p20-sent" + (picked === k ? (ok ? " is-bad" : " is-fine") : "") + (ok && k === r.wrong ? " is-bad" : "");
-          return '<li><button type="button" class="' + cls + '" data-z6p="pick" data-value="' + k + '"' +
-            (ok ? " disabled" : "") + ">" + U.esc(s) + "</button></li>";
+        // Wiersze w szablonie raportu o łożysku (klasy z6p16a-*): numer, etykieta, treść jako przycisk.
+        var rows = r.rows.map(function (row, k) {
+          var cls = "z6p20-sent z6p16a-text" + (picked === k ? (ok ? " is-bad" : " is-fine") : "") + (ok && k === r.wrong ? " is-bad" : "");
+          return '<li class="z6p16a-row"><span class="z6p16a-num">' + row.n + '</span><strong class="z6p16a-lbl">' + U.esc(row.lbl) +
+            '</strong><button type="button" class="' + cls + '" data-z6p="pick" data-value="' + k + '"' +
+            (ok ? " disabled" : "") + ">" + U.esc(row.text) + "</button></li>";
         }).join("");
         var fb = picked === null
-          ? '<p class="z6p-caption">Kliknij zdanie, które jest błędne.</p>'
+          ? '<p class="z6p-caption">Kliknij wiersz, który jest błędny.</p>'
           : ok
             ? '<div class="z6p20-diag"><p><strong>Błąd:</strong> ' + U.esc(r.diag) + '</p><p><strong>Poprawnie:</strong> ' + U.esc(r.fix) + "</p></div>"
-            : '<p class="z6p-caption">To zdanie jest w porządku. ' + U.esc(r.hint) + "</p>";
-        ui.set("stage", '<div class="z6p20-report"><div class="z6p20-rhead">' + U.esc(r.head) + "</div>" +
-          '<ol class="z6p20-sents">' + sents + "</ol></div>");
+            : '<p class="z6p-caption">Ten wiersz jest w porządku. ' + U.esc(r.hint) + "</p>";
+        ui.set("stage", '<div class="z6p16a-card z6p16a-after"><div class="z6p16a-head">' + U.esc(r.head) + "</div>" +
+          '<ol class="z6p16a-rows">' + rows + "</ol></div>");
         ui.set("body", fb);
         ui.set("step", "Raport " + (i + 1) + " z " + cfg.reports.length);
         var prev = root.querySelector('[data-z6p="prevr"]'), next = root.querySelector('[data-z6p="nextr"]');
