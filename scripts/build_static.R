@@ -337,6 +337,8 @@ typeset_math <- function(body, head_parts, mathjax_src, mathjax_config, out_dir)
     head_css,
     # Skład potrzebuje widocznych elementów: MathJax mierzy krój otoczenia.
     "<style>section[data-lc-static-chapter][hidden]{display:block!important}</style>",
+    # \\text{…} we wzorach: krój tekstu wykładu (wbudowany), nie mono z .lc-formula-box.
+    "<style>.MathJax_SVG{font-family:'IBM Plex Sans',sans-serif}</style>",
     mathjax_config,
     "<script type=\"text/x-mathjax-config\">MathJax.Hub.Config({",
     "  jax: ['input/TeX', 'output/SVG'], showMathMenu: false, messageStyle: 'none',",
@@ -364,6 +366,16 @@ typeset_math <- function(body, head_parts, mathjax_src, mathjax_config, out_dir)
       var closed = Array.prototype.filter.call(document.querySelectorAll('details'), function (d) { return !d.open; });
       closed.forEach(function (d) { d.open = true; });
       await new Promise(function (r) { MathJax.Hub.Queue(['Typeset', MathJax.Hub], r); });
+      // \\text{…} trafia do SVG jako <text> bez rozmiaru: dziedziczy krój i rozmiar strony,
+      // a skala w transform jest policzona dla rozmiaru z chwili składu. Przy innym rozmiarze
+      // tekstu (S/L) napis rozjeżdża się z resztą wzoru, więc zamrażamy go w jednostkach SVG.
+      document.querySelectorAll('.MathJax_SVG svg text').forEach(function (t) {
+        var cs = getComputedStyle(t);
+        t.style.fontSize = cs.fontSize;
+        t.style.fontFamily = cs.fontFamily;
+        t.style.fontWeight = cs.fontWeight;
+        t.style.fontStyle = cs.fontStyle;
+      });
       closed.forEach(function (d) { d.open = false; });
       ['MathJax_Message', 'MathJax_Hidden', 'MathJax_Font_Test', 'MathJax_SVG_Hidden'].forEach(function (id) {
         var el = document.getElementById(id);
