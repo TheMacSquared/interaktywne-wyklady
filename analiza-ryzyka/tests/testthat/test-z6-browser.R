@@ -23,7 +23,7 @@ testthat::test_that("wykład 06: prototypy punktów stop są wpięte i działaj�
   }, args = list(path = file.path(risk_root, "06-zmiennosc-i-prog")), show = FALSE)
 
   # Każdy prototyp stoi raz; P1 jest przyjęta (po głosowaniu, bez plakietki prototypu).
-  expected <- c("P21", paste0("P21-", c(1, 3, 4, 5, 6)), "P20A", "P20B", "P20C", "P19B", "P18", "P17", "P1", "P2B", "P3", "P4", "P5", "P6", "P7", "P8", "P8b", "P9A",
+  expected <- c("P21", paste0("P21-", c(1, 3, 4, 5, 6)), "P21-5a", "P20A", "P20B", "P20C", "P19B", "P18", "P17", "P1", "P2B", "P3", "P4", "P5", "P6", "P7", "P8", "P8b", "P9A",
     "P10A", "P11", "P12", "P13", "P14A", "P15A", "P16A")
   testthat::expect_equal(sort(res$protos), sort(expected))
   testthat::expect_false(res$pending)

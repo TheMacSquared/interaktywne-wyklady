@@ -453,10 +453,12 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
     widget = z6p_21_lina,
     lead = "Awaria zachodzi wtedy, gdy obciążenie L przekracza wytrzymałość S.",
     intro = c(
-      "Raport z rozdziału 1 dotyczy łożyska, ale ten sam dział napisał drugi, o linie dźwigu w magazynie: „ryzyko zerwania około 50%”. Na końcu rozdziału poprawimy go na tym samym szablonie.",
-      "W konstrukcjach i instalacjach granica bezpieczeństwa rzadko jest stałą: wytrzymałość liny zmienia się z partią i zużyciem, a obciążenie z ładunkiem i pogodą. Pytanie o awarię staje się pytaniem o wyścig dwóch zmiennych losowych.",
-      "Najpierw obejrzyj ten wyścig na przykładzie liny dźwigu: każde podniesienie to jedna para ładunek–lina, a przekątna dzieli pary na bezpieczne i awarie."
+      "Raport z rozdziału 1 dotyczy łożyska, ale ten sam dział napisał drugi, o linie dźwigu w magazynie. Stoi niżej i, jak tamten, brzmi pewnie: „ryzyko 50%, zerwie się albo się nie zerwie”. Na końcu rozdziału poprawimy go na tym samym szablonie."
     ),
+    # Raport o linie w wersji złej (jak P21 w rozdziale 1); poprawka w polu widget
+    body = list(z6p_get("z6p_21_lina_ui"),
+      "W konstrukcjach i instalacjach granica bezpieczeństwa rzadko jest stałą: wytrzymałość liny zmienia się z partią i zużyciem, a obciążenie z ładunkiem i pogodą. Pytanie o awarię staje się pytaniem o wyścig dwóch zmiennych losowych.",
+      "Najpierw obejrzyj ten wyścig na przykładzie liny dźwigu: każde podniesienie to jedna para ładunek–lina, a przekątna dzieli pary na bezpieczne i awarie."),
     sections = list(
       list(id = "most", title = "Próg też bywa zmienny", text = "Dotąd próg był stałą konstrukcyjną, a zmienna była tylko temperatura. Teraz sam próg — wytrzymałość S — również jest zmienną losową, więc porównujemy dwie zmienne naraz i pytamy o prawdopodobieństwo, że jedna przewyższy drugą.",
         # Scena P11 (przyjęta 17.11.2026): lina dźwigu, zastępuje dawną chmurę par z suwakami
@@ -549,19 +551,19 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
     lead = "Skośność i ciężki ogon mogą silnie zmienić ryzyko progowe mimo podobnej średniej i odchylenia.",
     intro = c(
       "Wiersz 5 raportu brzmi po prostu: „Model standardowy”. Ten rozdział sprawdza, co kryje się za tym słowem.",
-      "Model normalny jest wygodny, ale nie jest prawem przyrody. Procesy z naturalną dolną granicą bywają skośne, a procesy z rzadkimi zaburzeniami mają ogony cięższe, niż przewiduje krzywa dzwonowa. Trzy modele w galerii niżej mają tę samą średnią i to samo odchylenie, a wyraźnie różne ryzyko przekroczenia progu.",
+      "Model normalny jest wygodny, ale nie jest prawem przyrody. Ten sam typ łożyska pracuje w dwóch komorach dojrzewalni, z tą samą średnią i tym samym odchyleniem. Zanim cokolwiek nazwiemy, sprawdź, jak często w każdej z nich temperatura przekracza 91°C.",
       "Do diagnozy służy wykres kwantylowy: punkty na prostej oznaczają zgodność z modelem normalnym, a zagięcia na końcach — ogony inne niż normalne. To najtańsze narzędzie kontroli jakości modelu przed rachunkiem progowym."
     ),
     sections = list(
       list(
         id = "ogony", title = "Ten sam środek, inny ogon",
         body = list(
-          # Scena P19B (przyjęta 17.11.2026): czas zatrzymania dwóch pras, przed pojęciem skośności
+          # Scena P19B (18.11.2026): to samo łożysko w dwóch komorach, przed pojęciem skośności
           z6p_get("z6p_19b_ui"),
           c(
-            "Obie prasy mają tę samą średnią i to samo odchylenie standardowe, a prasa B przekracza dopuszczalny czas kilka razy częściej. Jej rozkład jest skośny: ma twardą dolną granicę, bo szybciej niż pozwala mechanika zatrzymać się nie da, i długi prawy ogon, w którym mieszczą się rzadkie zwłoki zaworu.",
+            "W obu komorach łożysko ma średnio 82°C i odchylenie 3°C, a mimo to w komorze 2 próg 91°C pada kilka razy częściej: około 12 na 1000 pomiarów wobec 1.3 w komorze 1. Różnicę robi kształt. W komorze 2 temperatura ma twardą dolną granicę, bo przy pełnym obciążeniu łożysko nie ostygnie poniżej około 77°C, a zapchany filtr czy przerwa w smarowaniu mogą ją tylko podnieść. Rozkład, którego jeden ogon jest wyraźnie dłuższy od drugiego, nazywamy skośnym; tu długi ogon leży po prawej, więc to skośność prawostronna. Tak zachowuje się wiele procesów z naturalną dolną granicą i zaburzeniami działającymi w jedną stronę.",
             "Wszystkie rachunki z rozdziałów 2–5 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.",
-            "Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3). Skośny to przesunięty rozkład gamma: ma twardą dolną granicę około 76.8°C (łożysko nie ostygnie poniżej temperatury otoczenia) i dłuższy prawy ogon. Model z ciężkim ogonem to przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
+            "Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3), jak w komorze 1. Skośny to przesunięty rozkład gamma, jak w komorze 2: dolna granica około 76.8°C i dłuższy prawy ogon. Trzeci model opisuje inny mechanizm: rzadkie, gwałtowne odchylenia w obie strony, np. przy chwilowych zakłóceniach pomiaru. To przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
           ),
           risk_example("6.10", "Trzy modele, trzy ryzyka",
             problem = "Dla trzech modeli temperatury o średniej 82°C i σ = 3°C (normalny, skośny gamma, ciężki ogon t₃) porównaj P(T > 85) oraz P(T > 91), czyli przekroczenie progu leżącego 1σ i 3σ nad średnią.",

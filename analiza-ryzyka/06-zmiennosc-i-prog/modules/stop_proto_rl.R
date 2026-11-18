@@ -8,7 +8,8 @@
 #                    wiersze poprawiane w tym rozdziale, stare skreślone, nowe pod nimi.
 #                    Rozdz. 1: poziom ryzyka; 3: okres odniesienia i źródło ryzyka;
 #                    4: postępowanie z ryzykiem; 6: założenia i niepewność.
-#   z6p_21_lina    — osobna karta liny dźwigu (rozdz. 5) na tym samym szablonie, przed i po.
+#   z6p_21_lina_ui — karta liny dźwigu w wersji złej na otwarcie rozdziału 5 (pole body).
+#   z6p_21_lina    — ta sama karta na końcu rozdziału 5, przed i po (pole widget).
 #   z6p_16a_ui     — domknięcie P16A (rozdz. 7): wersja poprawiona, z przełącznikiem na
 #                    wersję z rozdziału 1; tu dochodzą wiersze „zakres i kryteria” oraz „monitorowanie i przegląd”.
 # Wygląd: klasy z6p16a-* (stop_proto_rg.R). Liczby z wykładu: przykłady 6.1, 6.7, 6.9,
@@ -54,10 +55,10 @@ z6p21_rows <- list(
 
 z6p21_lina <- list(
   list(key = "wynik", lbl = "Poziom ryzyka",
-    bad = "Krzywe obciążenia i wytrzymałości nakładają się na polu 0.50: ryzyko zerwania około 50%.",
+    bad = "Ryzyko 50%. Zerwie się albo się nie zerwie.",
     good = "Ryzyko zerwania przy pojedynczym podniesieniu: P(L > S) ≈ 0.173, czyli około 173 na 1000.",
-    note = "Pole wspólne dwóch gęstości nie jest prawdopodobieństwem awarii. Ryzyko to P(L > S), liczone z marginesu D = S − L.",
-    why = "pole nakładania wzięto za ryzyko", src = "przykład 6.8"),
+    note = "Dwa możliwe wyniki to nie dwie równe szanse. Ryzyko to P(L > S), liczone z rozkładów obciążenia i wytrzymałości przez margines D = S − L.",
+    why = "dwa wyniki wzięto za 50 na 50", src = "przykład 6.8"),
   list(key = "zalozenia", lbl = "Założenia i niepewność",
     bad = NULL,
     good = "Obciążenie N(85, 8) kN, wytrzymałość liny N(95, 7) kN, zmienne niezależne.",
@@ -136,9 +137,16 @@ z6p_21_fix <- function(ch) {
 }
 
 # ---- Lina dźwigu (rozdz. 5) -------------------------------------------------------
+z6p21_lina_head <- "Raport z oceny ryzyka · lina dźwigu w magazynie"
+
+z6p_21_lina_ui <- z6p_panel("P21-5a", "scena", "Raport o linie dźwigu", width_mode = "text", proto = FALSE,
+  z6p_css, z6p16a_css, z6p21_css,
+  tags$div(class = "z6p16a", z6p21_card(z6p21_lina, "bad", z6p21_lina_head)),
+  lc_caption("Ten sam szablon co raport o łożysku i te same pułapki: liczba, której nie da się obronić, brak modelu i działanie bez rachunku. Poprawiamy go na końcu rozdziału."))
+
 z6p_21_lina <- z6p_panel("P21-5", "poprawka", "Raport o linie dźwigu, przed i po", width_mode = "text", proto = FALSE,
   z6p_css, z6p16a_css, z6p21_css,
-  tags$div(class = "z6p16a", z6p21_card(z6p21_lina, "fix", "Raport z oceny ryzyka · lina dźwigu w magazynie")))
+  tags$div(class = "z6p16a", z6p21_card(z6p21_lina, "fix", z6p21_lina_head)))
 
 # ---- Domknięcie (rozdz. 7): wersja poprawiona z przełącznikiem ----------------------
 z6p_16a_ui <- z6p_panel("P16A", "domknięcie", "Raport, wersja poprawiona", proto = FALSE, z6p_css, z6p16a_css, z6p21_css,

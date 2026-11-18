@@ -8,10 +8,11 @@
 #
 #   (Warianty odrzucone: P19 „Dwie trasy do pracy” — nie z inżynierii bezpieczeństwa;
 #   P19A „Amoniak w dwóch halach chłodni” — słabiej czytelny skutek przekroczenia.)
-#   z6p_19b_ui — Czas zatrzymania dwóch pras po przecięciu kurtyny świetlnej (P19B):
-#                dopuszczalne 260 ms. Prasa A N(200, 20); prasa B 160 + Gamma(4, 10)
-#                (szybciej niż mechanika pozwala się nie da, czasem zwłoka zaworu).
-#                1.3 wobec 10 na 1000 zatrzymań.
+#   z6p_19b_ui — To samo łożysko w dwóch komorach dojrzewalni (P19B, od 18.11.2026; wcześniej
+#                czas zatrzymania pras). Komora 1: obciążenie waha się w obie strony, N(82, 3).
+#                Komora 2: stałe pełne obciążenie i rzadkie przegrzania (zapchany filtr,
+#                przerwa w smarowaniu): 76.8 + Gamma(3, √3), ta sama średnia i SD — ten sam
+#                model skośny co w galerii P14A. Próg 91°C (3σ): 1.3 wobec 12 na 1000 pomiarów.
 # Wymaga: stop_proto_common.R (z6p_scene_ui, z6p_out, z6p_button).
 
 z6p19_css <- tags$style(HTML("
@@ -33,18 +34,19 @@ z6p19_ui <- function(num, title, cfg, caption, proto = TRUE) {
       tags$p(class = "z6p-caption", caption)))
 }
 
-# ---- P19B: czas zatrzymania prasy ----------------------------------------------------
+# ---- P19B: łożysko w dwóch komorach ---------------------------------------------------
 z6p19b_cfg <- list(
-  unit = "ms", digits = 0, axis = c(140, 320), bin = 5,
-  ticks = c(160, 200, 240, 280, 320), tick_labels = c("160", "200", "240", "280", "320 ms"),
-  limit = 260, limit_label = "dopuszczalne: 260 ms",
-  item = "Zatrzymanie", over_word = "dłużej niż 260 ms",
-  aria = "Histogramy czasów zatrzymania dwóch pras po przecięciu kurtyny świetlnej; zatrzymania dłuższe niż 260 ms wyróżnione.",
-  a = list(name = "Prasa A", sub = "hamulec mechaniczny: raz szybciej, raz wolniej", who = "Prasa A", mu = 200, sd = 20),
-  b = list(name = "Prasa B", sub = "zwykle szybko, czasem zwłoka zaworu", who = "Prasa B", min = 160, k = 4, theta = 10),
-  steps = list(list(n = 1, label = "Kolejne zatrzymanie"), list(n = 100, label = "+ tydzień (100)"), list(n = 1000, label = "+ 1000"))
+  unit = "°C", digits = 1, axis = c(72, 100), bin = 1,
+  ticks = c(75, 80, 85, 90, 95, 100), tick_labels = c("75", "80", "85", "90", "95", "100°C"),
+  limit = 91, limit_label = "próg 91°C",
+  item = "Pomiar", over_word = "ponad 91°C",
+  aria = "Histogramy temperatury tego samego łożyska w dwóch komorach dojrzewalni; pomiary powyżej 91°C wyróżnione.",
+  a = list(name = "Komora 1", sub = "obciążenie w obie strony", who = "Komora 1", mu = z6p_mu, sd = z6p_sd),
+  b = list(name = "Komora 2", sub = "pełne obciążenie, przegrzania", who = "Komora 2",
+    min = z6p_mu - sqrt(3) * z6p_sd, k = 3, theta = z6p_sd / sqrt(3)),
+  steps = list(list(n = 1, label = "Kolejny pomiar"), list(n = 100, label = "+ 100 pomiarów"), list(n = 1000, label = "+ 1000"))
 )
 
-z6p_19b_ui <- z6p19_ui("P19B", "Czas zatrzymania dwóch pras", z6p19b_cfg,
-  "Gdy operator przetnie kurtynę świetlną, prasa musi się zatrzymać. Odległość kurtyny od narzędzia dobrano dla czasu zatrzymania najwyżej 260 ms.",
+z6p_19b_ui <- z6p19_ui("P19B", "To samo łożysko w dwóch komorach", z6p19b_cfg,
+  "W komorze 1 obciążenie raz rośnie, raz spada. W komorze 2 łożysko pracuje stale pod pełnym obciążeniem, więc chłodniej niż około 77°C nie bywa, a co jakiś czas zapchany filtr albo przerwa w smarowaniu podbija temperaturę.",
   proto = FALSE)
