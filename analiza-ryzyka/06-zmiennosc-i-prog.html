@@ -6952,10 +6952,6 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
   .z6p20-row.is-warn { border-left-color: var(--upwr-accent); }
   .z6p20-k { font-weight: 700; }
   .z6p20-warn { margin: .3em 0 .2em; padding-left: 1.2em; color: var(--upwr-accent); }
-  .z6p20-report { border: 1px solid var(--upwr-rule); border-radius: 6px; background: var(--upwr-surface); padding: .6em .9em; }
-  .z6p20-rhead { font-family: var(--upwr-mono); font-size: .75em; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--upwr-ink-subtle); border-bottom: 1px solid var(--upwr-rule); padding-bottom: .35em; margin-bottom: .4em; }
-  .z6p20-sents { margin: 0; padding-left: 1.4em; display: grid; gap: .25em; }
   .z6p20-sent { all: unset; cursor: pointer; display: block; padding: .3em .5em; border-radius: 4px; line-height: 1.45; }
   .z6p20-sent:hover, .z6p20-sent:focus-visible { background: var(--upwr-surface-sunken); outline: 1px dashed var(--upwr-rule); }
   .z6p20-sent.is-fine { background: color-mix(in srgb, var(--upwr-sage) 18%, transparent); }
@@ -7081,10 +7077,6 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
   .z6p20-row.is-warn { border-left-color: var(--upwr-accent); }
   .z6p20-k { font-weight: 700; }
   .z6p20-warn { margin: .3em 0 .2em; padding-left: 1.2em; color: var(--upwr-accent); }
-  .z6p20-report { border: 1px solid var(--upwr-rule); border-radius: 6px; background: var(--upwr-surface); padding: .6em .9em; }
-  .z6p20-rhead { font-family: var(--upwr-mono); font-size: .75em; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--upwr-ink-subtle); border-bottom: 1px solid var(--upwr-rule); padding-bottom: .35em; margin-bottom: .4em; }
-  .z6p20-sents { margin: 0; padding-left: 1.4em; display: grid; gap: .25em; }
   .z6p20-sent { all: unset; cursor: pointer; display: block; padding: .3em .5em; border-radius: 4px; line-height: 1.45; }
   .z6p20-sent:hover, .z6p20-sent:focus-visible { background: var(--upwr-surface-sunken); outline: 1px dashed var(--upwr-rule); }
   .z6p20-sent.is-fine { background: color-mix(in srgb, var(--upwr-sage) 18%, transparent); }
@@ -7101,6 +7093,31 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
   .z6p20-acts .lc-action[aria-pressed='true'] { background: var(--upwr-ink); color: var(--upwr-surface); border-color: var(--upwr-ink); }
   .z6p20-cost { font-family: var(--upwr-mono); font-size: .85em; opacity: .8; }
   @media (max-width: 640px) { .z6p20-row { grid-template-columns: minmax(0, 1fr); } }
+</style>
+        <style>
+  .z6p16a { display: grid; gap: 1em; margin: .4em 0; }
+  .z6p16a-card { background: var(--upwr-surface); border: 1px solid var(--upwr-rule); border-radius: 6px; padding: .8em 1em; }
+  .z6p16a-before { max-width: 640px; opacity: .7; padding: .6em .9em; font-size: .9em; }
+  .z6p16a-head { font-family: var(--upwr-mono); font-size: .75em; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--upwr-ink-subtle); border-bottom: 1px solid var(--upwr-rule); padding-bottom: .4em; margin-bottom: .5em; }
+  .z6p16a-line { margin: 0; font-family: var(--upwr-mono); font-size: .95em; color: var(--upwr-ink-subtle); }
+  .z6p16a-struck { text-decoration: line-through; text-decoration-thickness: 2px; }
+  .z6p16a-after { border-top: 3px solid var(--upwr-ink); }
+  .z6p16a-main { display: grid; gap: .6em; justify-items: start; }
+  .z6p16a-rows { list-style: none; margin: 0; padding: 0; }
+  .z6p16a-row { display: grid; grid-template-columns: 1.6em 11.5em minmax(0, 1fr) auto; gap: .2em .7em; align-items: start;
+    padding: .65em 0; border-bottom: 1px solid var(--upwr-rule); }
+  .z6p16a-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .z6p16a-num { font-family: var(--upwr-mono); font-weight: 700; color: var(--upwr-ink-subtle); }
+  .z6p16a-lbl { font-size: .95em; }
+  .z6p16a-text { font-size: .95em; line-height: 1.45; }
+  .z6p16a-src { font-family: var(--upwr-mono); font-size: .72em; color: var(--upwr-ink-subtle); white-space: nowrap;
+    border: 1px solid var(--upwr-rule); border-radius: 999px; padding: .15em .6em; justify-self: start; margin-top: .15em; }
+  @media (max-width: 720px) {
+    .z6p16a-row { grid-template-columns: 1.6em minmax(0, 1fr); }
+    .z6p16a-num { grid-row: span 3; }
+    .z6p16a-lbl, .z6p16a-text, .z6p16a-src { grid-column: 2; }
+  }
 </style>
         <div class="lc-figure-panel lc-panel-wide">
           <div class="lc-figure-panel-badge" style="background:#6b1a26;">galeria</div>
@@ -7140,9 +7157,9 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
   .z6p-nav { display: flex; gap: .6em; flex-wrap: wrap; align-items: center; }
   .z6p-nav .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
 </style>
-            <div class="z6p-scene" data-scene="raporty" data-config="{&quot;reports&quot;:[{&quot;head&quot;:&quot;Raport tygodniowy · ciśnienie w instalacji chłodniczej&quot;,&quot;sentences&quot;:[&quot;Średnie ciśnienie w tym tygodniu: 56 bar.&quot;,&quot;Próg ostrzegawczy zaworu bezpieczeństwa: 58 bar.&quot;,&quot;Zapas 2 bar: instalacja w normie, ryzyko przekroczeń pomijalne.&quot;],&quot;wrong&quot;:2,&quot;hint&quot;:&quot;Szukaj zdania, które wyciąga wniosek z samych dwóch liczb.&quot;,&quot;diag&quot;:&quot;Średnia i próg nie wystarczą; bez rozrzutu nie wiadomo, jak często odczyty przekraczają próg.&quot;,&quot;fix&quot;:&quot;Przy σ = 2 bar próg leży jedno odchylenie nad średnią: około 159 na 1000 odczytów przekracza 58 bar.&quot;},{&quot;head&quot;:&quot;Raport utrzymania ruchu · czujnik drgań wentylatora&quot;,&quot;sentences&quot;:[&quot;Czujnik zapisuje drgania co 30 minut, 16 razy na zmianę.&quot;,&quot;Ponad progiem alarmowym leży 5% odczytów.&quot;,&quot;Zatem alarm drgań pojawi się w około 5% zmian.&quot;],&quot;wrong&quot;:2,&quot;hint&quot;:&quot;Które zdanie zmienia jednostkę obserwacji?&quot;,&quot;diag&quot;:&quot;Odsetek odczytów to nie odsetek zmian; zmiana ma alarm, gdy przekroczy choć jeden z 16 odczytów.&quot;,&quot;fix&quot;:&quot;Przy niezależnych odczytach alarm pojawi się w około 1 − 0.95¹⁶ ≈ 56% zmian; przy skorelowanych rzadziej.&quot;},{&quot;head&quot;:&quot;Raport magazynu · regały w chłodni&quot;,&quot;sentences&quot;:[&quot;Dopuszczalne obciążenie miejsca paletowego podnieśliśmy w instrukcji z 1000 do 1100 kg.&quot;,&quot;Dzięki temu „za ciężkich” palet jest trzy razy mniej, więc regały są bezpieczniejsze.&quot;,&quot;Zmiana weszła w życie od poniedziałku.&quot;],&quot;wrong&quot;:1,&quot;hint&quot;:&quot;Co fizycznie zmieniło się w regale?&quot;,&quot;diag&quot;:&quot;Zmieniono definicję „za ciężkiej” palety, nie nośność regału: ubyło przekroczeń w raporcie, nie w magazynie.&quot;,&quot;fix&quot;:&quot;Nowy limit jest uprawniony tylko po ocenie nośności regału; bez niej ryzyko przeciążenia zostaje takie jak przedtem.&quot;},{&quot;head&quot;:&quot;Ocena dachu magazynu przed zimą&quot;,&quot;sentences&quot;:[&quot;Obciążenie śniegiem w najgorszym dniu zimy: N(1.2, 0.4) kN/m²; nośność dachu: N(2.5, 0.25) kN/m².&quot;,&quot;Krzywe obu rozkładów nakładają się na polu 0.044, więc ryzyko zawalenia wynosi około 4% na zimę.&quot;,&quot;Rekomendujemy przegląd konstrukcji przed sezonem.&quot;],&quot;wrong&quot;:1,&quot;hint&quot;:&quot;Które zdanie liczy ryzyko z rysunku zamiast z par L i S?&quot;,&quot;diag&quot;:&quot;Pole nakładania gęstości nie jest prawdopodobieństwem awarii; tu zawyża ryzyko piętnastokrotnie.&quot;,&quot;fix&quot;:&quot;Ryzyko to P(L &gt; S) = Φ(−2.76) ≈ 0.003, czyli około 3 zimy na 1000.&quot;},{&quot;head&quot;:&quot;Ocena dostaw · czas dojazdu dostawcy&quot;,&quot;sentences&quot;:[&quot;Czas dojazdu dostawcy: średnio 30 min, odchylenie standardowe 6 min, 500 dostaw.&quot;,&quot;Model standardowy: dojazd dłuższy niż 45 min zdarza się 6 razy na 1000 dostaw.&quot;,&quot;Histogram ma ostrą lewą krawędź przy 21 min i długi prawy ogon.&quot;],&quot;wrong&quot;:1,&quot;hint&quot;:&quot;Co mówi kształt histogramu o prawym ogonie?&quot;,&quot;diag&quot;:&quot;„Model standardowy” przyjęto bez sprawdzenia; histogram i wykres kwantylowy pokazują skośność prawostronną.&quot;,&quot;fix&quot;:&quot;Model skośny (jak w scenie z dwiema trasami) daje około 25 spóźnień na 1000 dostaw, cztery razy więcej.&quot;}]}">
+            <div class="z6p-scene" data-scene="raporty" data-config="{&quot;reports&quot;:[{&quot;head&quot;:&quot;Raport z oceny ryzyka · ciśnienie w instalacji chłodniczej&quot;,&quot;rows&quot;:[{&quot;n&quot;:1,&quot;lbl&quot;:&quot;Zakres i kryteria&quot;,&quot;text&quot;:&quot;Próg ostrzegawczy zaworu bezpieczeństwa: 58 bar.&quot;},{&quot;n&quot;:2,&quot;lbl&quot;:&quot;Poziom ryzyka&quot;,&quot;text&quot;:&quot;Średnie ciśnienie w tym tygodniu 56 bar, zapas 2 bar: instalacja w normie, ryzyko przekroczeń pomijalne.&quot;},{&quot;n&quot;:6,&quot;lbl&quot;:&quot;Postępowanie z ryzykiem&quot;,&quot;text&quot;:&quot;Bez działań; kolejny przegląd zgodnie z planem.&quot;}],&quot;wrong&quot;:1,&quot;hint&quot;:&quot;Szukaj wiersza, który wyciąga wniosek z samych dwóch liczb.&quot;,&quot;diag&quot;:&quot;Średnia i próg nie wystarczą; bez rozrzutu nie wiadomo, jak często odczyty przekraczają próg.&quot;,&quot;fix&quot;:&quot;Przy σ = 2 bar próg leży jedno odchylenie nad średnią: około 159 na 1000 odczytów przekracza 58 bar.&quot;},{&quot;head&quot;:&quot;Raport z oceny ryzyka · czujnik drgań wentylatora&quot;,&quot;rows&quot;:[{&quot;n&quot;:1,&quot;lbl&quot;:&quot;Zakres i kryteria&quot;,&quot;text&quot;:&quot;Czujnik zapisuje drgania co 30 minut, 16 razy na zmianę.&quot;},{&quot;n&quot;:2,&quot;lbl&quot;:&quot;Poziom ryzyka&quot;,&quot;text&quot;:&quot;Ponad progiem alarmowym leży 5% odczytów.&quot;},{&quot;n&quot;:3,&quot;lbl&quot;:&quot;Częstość alarmu&quot;,&quot;text&quot;:&quot;Alarm drgań pojawi się w około 5% zmian.&quot;}],&quot;wrong&quot;:2,&quot;hint&quot;:&quot;Który wiersz zmienia jednostkę obserwacji?&quot;,&quot;diag&quot;:&quot;Odsetek odczytów to nie odsetek zmian; zmiana ma alarm, gdy przekroczy choć jeden z 16 odczytów.&quot;,&quot;fix&quot;:&quot;Przy niezależnych odczytach alarm pojawi się w około 1 − 0.95¹⁶ ≈ 56% zmian; przy skorelowanych rzadziej.&quot;},{&quot;head&quot;:&quot;Raport z oceny ryzyka · regały w chłodni&quot;,&quot;rows&quot;:[{&quot;n&quot;:2,&quot;lbl&quot;:&quot;Poziom ryzyka&quot;,&quot;text&quot;:&quot;Po zmianie instrukcji „za ciężkich” palet jest trzy razy mniej.&quot;},{&quot;n&quot;:6,&quot;lbl&quot;:&quot;Postępowanie z ryzykiem&quot;,&quot;text&quot;:&quot;Podnieśliśmy dopuszczalne obciążenie miejsca paletowego z 1000 do 1100 kg, więc regały są bezpieczniejsze.&quot;},{&quot;n&quot;:7,&quot;lbl&quot;:&quot;Monitorowanie i przegląd&quot;,&quot;text&quot;:&quot;Nowy limit obowiązuje od poniedziałku.&quot;}],&quot;wrong&quot;:1,&quot;hint&quot;:&quot;Co fizycznie zmieniło się w regale?&quot;,&quot;diag&quot;:&quot;Zmieniono definicję „za ciężkiej” palety, nie nośność regału: ubyło przekroczeń w raporcie, nie w magazynie.&quot;,&quot;fix&quot;:&quot;Nowy limit jest uprawniony tylko po ocenie nośności regału; bez niej ryzyko przeciążenia zostaje takie jak przedtem.&quot;},{&quot;head&quot;:&quot;Raport z oceny ryzyka · dach magazynu przed zimą&quot;,&quot;rows&quot;:[{&quot;n&quot;:2,&quot;lbl&quot;:&quot;Poziom ryzyka&quot;,&quot;text&quot;:&quot;Krzywe obciążenia śniegiem i nośności nakładają się na polu 0.044, więc ryzyko zawalenia wynosi około 4% na zimę.&quot;},{&quot;n&quot;:5,&quot;lbl&quot;:&quot;Założenia i niepewność&quot;,&quot;text&quot;:&quot;Obciążenie śniegiem w najgorszym dniu zimy N(1.2, 0.4) kN/m²; nośność dachu N(2.5, 0.25) kN/m²; zmienne niezależne.&quot;},{&quot;n&quot;:6,&quot;lbl&quot;:&quot;Postępowanie z ryzykiem&quot;,&quot;text&quot;:&quot;Rekomendujemy przegląd konstrukcji przed sezonem.&quot;}],&quot;wrong&quot;:0,&quot;hint&quot;:&quot;Który wiersz liczy ryzyko z rysunku zamiast z par L i S?&quot;,&quot;diag&quot;:&quot;Pole nakładania gęstości nie jest prawdopodobieństwem awarii; tu zawyża ryzyko piętnastokrotnie.&quot;,&quot;fix&quot;:&quot;Ryzyko to P(L &gt; S) = Φ(−2.76) ≈ 0.003, czyli około 3 zimy na 1000.&quot;},{&quot;head&quot;:&quot;Raport z oceny ryzyka · czas dojazdu dostawcy&quot;,&quot;rows&quot;:[{&quot;n&quot;:2,&quot;lbl&quot;:&quot;Poziom ryzyka&quot;,&quot;text&quot;:&quot;Dojazd dłuższy niż 45 min zdarza się 6 razy na 1000 dostaw.&quot;},{&quot;n&quot;:5,&quot;lbl&quot;:&quot;Założenia i niepewność&quot;,&quot;text&quot;:&quot;Model standardowy: czas dojazdu N(30, 6) min, oszacowany z 500 dostaw.&quot;},{&quot;n&quot;:7,&quot;lbl&quot;:&quot;Monitorowanie i przegląd&quot;,&quot;text&quot;:&quot;Histogram 500 dostaw ma ostrą lewą krawędź przy 21 min i długi prawy ogon.&quot;}],&quot;wrong&quot;:1,&quot;hint&quot;:&quot;Co mówi kształt histogramu o prawym ogonie?&quot;,&quot;diag&quot;:&quot;„Model standardowy” przyjęto bez sprawdzenia; histogram i wykres kwantylowy pokazują skośność prawostronną.&quot;,&quot;fix&quot;:&quot;Model skośny daje około 25 spóźnień na 1000 dostaw, cztery razy więcej; wiersz 2 trzeba przeliczyć.&quot;}]}">
               <div class="z6p-head">
-                <span class="z6p-name">Znajdź błędne zdanie</span>
+                <span class="z6p-name">Znajdź błędny wiersz</span>
                 <div data-z6p-out="step" class="z6p-step"></div>
               </div>
               <div data-z6p-out="stage"></div>
@@ -7166,10 +7183,6 @@ przy korelacji: Var(D) = σ<sub>S</sub>² + σ<sub>L</sub>² - 2ρ·σ<sub>S</su
   .z6p20-row.is-warn { border-left-color: var(--upwr-accent); }
   .z6p20-k { font-weight: 700; }
   .z6p20-warn { margin: .3em 0 .2em; padding-left: 1.2em; color: var(--upwr-accent); }
-  .z6p20-report { border: 1px solid var(--upwr-rule); border-radius: 6px; background: var(--upwr-surface); padding: .6em .9em; }
-  .z6p20-rhead { font-family: var(--upwr-mono); font-size: .75em; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--upwr-ink-subtle); border-bottom: 1px solid var(--upwr-rule); padding-bottom: .35em; margin-bottom: .4em; }
-  .z6p20-sents { margin: 0; padding-left: 1.4em; display: grid; gap: .25em; }
   .z6p20-sent { all: unset; cursor: pointer; display: block; padding: .3em .5em; border-radius: 4px; line-height: 1.45; }
   .z6p20-sent:hover, .z6p20-sent:focus-visible { background: var(--upwr-surface-sunken); outline: 1px dashed var(--upwr-rule); }
   .z6p20-sent.is-fine { background: color-mix(in srgb, var(--upwr-sage) 18%, transparent); }
@@ -12027,8 +12040,8 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
 //
 //   redaktor — piaskownica „Redaktor komunikatu” (P20A): suwaki μ, σ, c, n, kształt
 //              i działanie; trzy zdania komunikatu i ostrzeżenia składane na bieżąco.
-//   raporty  — galeria „Popraw raport” (P20B): pięć raportów, w każdym jedno błędne
-//              zdanie; kliknięcie zdania daje diagnozę i poprawkę.
+//   raporty  — galeria „Popraw raport” (P20B): pięć raportów w szablonie raportu o łożysku,
+//              w każdym jeden błędny wiersz; kliknięcie wiersza daje diagnozę i poprawkę.
 //   budzet   — „Decyzja z budżetem” (P20C): pakiet działań z kosztami, cel ≤ 10 na
 //              1000 pomiarów, komunikat z wybranego pakietu.
 // Model temperatury: normalny N(μ, σ) albo skośny 82-style (przesunięta gamma o kształcie 3,
@@ -12168,18 +12181,20 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
       var i = 0, picked = null, root = ui.root;
       function render() {
         var r = cfg.reports[i], ok = picked === r.wrong;
-        var sents = r.sentences.map(function (s, k) {
-          var cls = "z6p20-sent" + (picked === k ? (ok ? " is-bad" : " is-fine") : "") + (ok && k === r.wrong ? " is-bad" : "");
-          return '<li><button type="button" class="' + cls + '" data-z6p="pick" data-value="' + k + '"' +
-            (ok ? " disabled" : "") + ">" + U.esc(s) + "</button></li>";
+        // Wiersze w szablonie raportu o łożysku (klasy z6p16a-*): numer, etykieta, treść jako przycisk.
+        var rows = r.rows.map(function (row, k) {
+          var cls = "z6p20-sent z6p16a-text" + (picked === k ? (ok ? " is-bad" : " is-fine") : "") + (ok && k === r.wrong ? " is-bad" : "");
+          return '<li class="z6p16a-row"><span class="z6p16a-num">' + row.n + '</span><strong class="z6p16a-lbl">' + U.esc(row.lbl) +
+            '</strong><button type="button" class="' + cls + '" data-z6p="pick" data-value="' + k + '"' +
+            (ok ? " disabled" : "") + ">" + U.esc(row.text) + "</button></li>";
         }).join("");
         var fb = picked === null
-          ? '<p class="z6p-caption">Kliknij zdanie, które jest błędne.</p>'
+          ? '<p class="z6p-caption">Kliknij wiersz, który jest błędny.</p>'
           : ok
             ? '<div class="z6p20-diag"><p><strong>Błąd:</strong> ' + U.esc(r.diag) + '</p><p><strong>Poprawnie:</strong> ' + U.esc(r.fix) + "</p></div>"
-            : '<p class="z6p-caption">To zdanie jest w porządku. ' + U.esc(r.hint) + "</p>";
-        ui.set("stage", '<div class="z6p20-report"><div class="z6p20-rhead">' + U.esc(r.head) + "</div>" +
-          '<ol class="z6p20-sents">' + sents + "</ol></div>");
+            : '<p class="z6p-caption">Ten wiersz jest w porządku. ' + U.esc(r.hint) + "</p>";
+        ui.set("stage", '<div class="z6p16a-card z6p16a-after"><div class="z6p16a-head">' + U.esc(r.head) + "</div>" +
+          '<ol class="z6p16a-rows">' + rows + "</ol></div>");
         ui.set("body", fb);
         ui.set("step", "Raport " + (i + 1) + " z " + cfg.reports.length);
         var prev = root.querySelector('[data-z6p="prevr"]'), next = root.querySelector('[data-z6p="nextr"]');
