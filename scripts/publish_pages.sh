@@ -98,7 +98,8 @@ else
   git -C "$WT" commit -q -m "Publikacja stron z $SRC_BRANCH@$SRC_COMMIT$DIRTY"
 fi
 echo "Gałąź gh-pages: $(git -C "$WT" log -1 --format='%h %s')"
-echo "Pliki: $(git -C "$WT" ls-files | wc -l), rozmiar: $(du -sh --exclude=.git "$WT" | cut -f1)"
+# W worktree .git to mały plik ze wskaźnikiem, więc du bez wykluczeń (GNU i BSD/macOS).
+echo "Pliki: $(git -C "$WT" ls-files | wc -l | tr -d ' '), rozmiar: $(du -sh "$WT" | cut -f1)"
 
 if [ "$DRY" = 1 ]; then
   echo "--dry-run: bez wypychania."
