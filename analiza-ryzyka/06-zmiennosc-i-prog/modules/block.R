@@ -210,8 +210,8 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           # Pojęcie P5 (przyjęte 17.11.2026): linijka σ
           z6p_get("z6p_5_ui"),
           "Pobaw się suwakami i obserwuj wskaźnik z dla progu 85°C. Zauważ, że tę samą odległość od progu można osiągnąć chłodzeniem (mniejsze μ) albo stabilizacją pracy (mniejsze σ) — rozróżnienie, które wróci przy decyzjach.",
-          risk_formula("T\\sim N(⟦1|\\mu⟧,⟦2|\\sigma⟧),\\qquad ⟦3|z⟧=\\frac{t-⟦1|\\mu⟧}{⟦2|\\sigma⟧}",
-            notes = list("średnia: suwak μ przesuwa krzywą", "odchylenie standardowe: suwak σ zwęża lub poszerza krzywą", "odległość progu od środka w odchyleniach standardowych"),
+          risk_formula("T\\sim N(⟦1|\\mu⟧,⟦2|\\sigma⟧),\\qquad ⟦3|z=\\frac{t-\\mu}{\\sigma}⟧",
+            notes = list("średnia: suwak μ przesuwa krzywą", "odchylenie standardowe: suwak σ zwęża lub poszerza krzywą", "wynik z: ile odchyleń σ dzieli próg t od średniej"),
             note_colors = c("niebo", "szalwia", "accent")),
           risk_try("zacznij od μ = 82°C i σ = 3°C (z = 1). Najpierw obniż μ do 80°C, potem wróć do 82°C i zmniejsz σ do 2°C. Zapisz z w obu przypadkach i zwróć uwagę, jak zmienia się wysokość krzywej przy zmianie σ."),
           # Piaskownica P4 (przyjęta 17.11.2026): zastępuje dawny panel „Model”
