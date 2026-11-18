@@ -298,7 +298,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           ),
           "To, co robił suwak — odcinał pole na prawo od progu — zapisujemy jedną linijką, korzystając ze standaryzacji:",
           risk_formula("⟦1|P(T>c)⟧=1-⟦2|\\Phi⟧\\!\\left(⟦3|\\frac{c-\\mu}{\\sigma}⟧\\right)", num = "6.5",
-            notes = list("prawy ogon: szansa przekroczenia progu c", "dystrybuanta N(0, 1): pole na lewo, w R pnorm()", "wynik z progu c, wzór (6.4)"),
+            notes = list("prawy ogon: szansa przekroczenia progu c", "dystrybuanta N(0, 1): pole na lewo", "wynik z progu c, wzór (6.4)"),
             note_colors = c("accent", "wrzos", "indygo")),
           "Φ jest dystrybuantą standardowego rozkładu normalnego, a (c-μ)/σ to wynik z progu — odległość od średniej we wspólnej linijce odchyleń.",
           risk_definition("6.5", "Kwantyl rozkładu normalnego", c(
@@ -306,7 +306,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
           )),
           "Wzór (6.5) odpowiada na pytanie „jakie ryzyko przy danym progu?”. Często pytanie jest odwrotne: przy jakim progu ryzyko spadnie do uzgodnionego poziomu? Odpowiedzią jest kwantyl, który z definicji 6.5 i wzoru (6.4) dostajemy, cofając standaryzację:",
           risk_formula("⟦1|t_{\\alpha}⟧=⟦2|\\mu⟧+⟦3|z_{\\alpha}⟧\\,⟦4|\\sigma⟧", num = "6.6",
-            notes = list("próg, którego nie przekracza odsetek α pomiarów", "start: średnia", "ile odchyleń w górę: kwantyl N(0, 1), w R qnorm(α)", "długość jednego odchylenia w jednostkach pomiaru"),
+            notes = list("próg, którego nie przekracza odsetek α pomiarów", "start: średnia", "ile odchyleń w górę: kwantyl N(0, 1)", "długość jednego odchylenia w jednostkach pomiaru"),
             note_colors = c("indygo", "niebo", "accent", "szalwia"), above = c(1, 3)),
           risk_example("6.5", "Ogon łożyska w liczbach",
             problem = "Dla T ~ N(82, 3) oblicz P(T > 85), P(T > 88) i P(T > 90) wraz z naturalnymi częstościami. Następnie wyznacz temperaturę, którą przekracza tylko 1% pomiarów.",
@@ -578,7 +578,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             "Wykres kwantylowy względem rozkładu normalnego to wykres punktowy, na którym każdy uporządkowany pomiar x₍ᵢ₎ zestawia się z kwantylem standardowego rozkładu normalnego tego samego rzędu. Jeśli dane pochodzą z rozkładu normalnego, punkty leżą w przybliżeniu na prostej o wyrazie wolnym μ i nachyleniu σ."
           )),
           risk_formula("\\left(⟦1|\\Phi^{-1}⟧\\!\\left(⟦2|\\frac{i-0.5}{n}⟧\\right),\\; ⟦3|x_{(i)}⟧\\right),\\qquad i=1,\\ldots,n", num = "6.11",
-            notes = list("funkcja kwantylowa N(0, 1), w R qnorm()", "rząd kwantyla i-tego pomiaru; poprawka 0.5 jak w R dla n > 10", "i-ty najmniejszy pomiar"),
+            notes = list("funkcja kwantylowa N(0, 1)", "rząd kwantyla i-tego pomiaru, z poprawką 0.5", "i-ty najmniejszy pomiar"),
             note_colors = c("wrzos", "terakota", "accent"), above = 1),
           c(
             "Logika jest ta sama co w standaryzacji (6.4), tylko odwrócona. Gdyby pomiary były dokładnie normalne, i-ty najmniejszy pomiar leżałby blisko μ + σ · Φ⁻¹((i - 0.5)/n) — to wzór (6.6) z α = (i - 0.5)/n. Odchylenie punktu od prostej mówi, o ile rzeczywisty kwantyl różni się od normalnego.",
