@@ -24,7 +24,7 @@ z6p16a_css <- tags$style(HTML("
   .z6p16a-after { border-top: 3px solid var(--upwr-ink); }
   .z6p16a-main { display: grid; gap: .6em; justify-items: start; }
   .z6p16a-rows { list-style: none; margin: 0; padding: 0; }
-  .z6p16a-row { display: grid; grid-template-columns: 1.6em 8.6em minmax(0, 1fr) auto; gap: .2em .7em; align-items: start;
+  .z6p16a-row { display: grid; grid-template-columns: 1.6em 11.5em minmax(0, 1fr) auto; gap: .2em .7em; align-items: start;
     padding: .65em 0; border-bottom: 1px solid var(--upwr-rule); }
   .z6p16a-row:last-child { border-bottom: none; padding-bottom: 0; }
   .z6p16a-num { font-family: var(--upwr-mono); font-weight: 700; color: var(--upwr-ink-subtle); }

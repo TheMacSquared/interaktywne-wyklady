@@ -60,7 +60,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     widget = z6p_21_fix(1),
     lead = "Bez informacji o zmienności średnia nie odpowiada na pytanie o przekroczenie.",
     intro = c(
-      "Na biurko kierownika dojrzewalni trafia raport progowy o łożysku wentylatora 2. Stoi niżej, w siedmiu wierszach, i wygląda uspokajająco: średnia temperatura 82°C, próg ostrzegawczy 85°C, trzy stopnie zapasu, „w normie”. Każdy jego wiersz jest jednak błędny albo pusty. Przez cały wykład będziemy go poprawiać, wiersz po wierszu; poprawkę zobaczysz na końcu rozdziału, który ją uzasadnia.",
+      "Na biurko kierownika dojrzewalni trafia raport z oceny ryzyka dla łożyska wentylatora 2. Stoi niżej, w siedmiu wierszach, i wygląda uspokajająco: średnia temperatura 82°C, próg ostrzegawczy 85°C, trzy stopnie zapasu, „w normie”. Każdy jego wiersz jest jednak błędny albo pusty. Przez cały wykład będziemy go poprawiać, wiersz po wierszu; poprawkę zobaczysz na końcu rozdziału, który ją uzasadnia.",
       "Ten wykład wprowadza zmienne ciągłe i rozkład normalny, ale jego prawdziwym tematem jest zmienność: dlaczego bez miary rozrzutu nie da się odpowiedzieć na żadne pytanie o przekroczenie progu. Zaczynamy od wiersza 2, czyli od tego, co mówi średnia, a czego nie mówi."
     ),
     callout = list(
@@ -244,7 +244,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     widget = z6p_21_fix(3),
     lead = "Standaryzacja mówi, ile odchyleń standardowych dzieli wynik od średniej; próg dzieli rozkład na wyniki akceptowalne i przekroczenia.",
     intro = c(
-      "Ten rozdział poprawia dwa wiersze raportu: horyzont („16% pomiarów, więc 16% zmian”) i mechanizm („pojedyncze, przypadkowe gorące odczyty”).",
+      "Ten rozdział poprawia dwa wiersze raportu: okres odniesienia („16% pomiarów, więc 16% zmian”) i źródło ryzyka („pojedyncze, przypadkowe gorące odczyty”).",
       "Czy 85°C przy średniej 82°C i σ = 3°C to dużo? A 62 bary ciśnienia przy średniej 56 i σ = 2? Porównanie surowych liczb z różnych światów jest niemożliwe — dopóki obu nie przełożymy na wspólną jednostkę: liczbę odchyleń standardowych od średniej.",
       "Dla progu łożyska z = (85-82)/3 = 1: próg leży jedno odchylenie nad średnią, co w modelu normalnym oznacza około 16% przekroczeń. Dla ciśnienia z = 3 — przekroczenia są rzadkością. Standaryzacja porządkuje priorytety, zanim padnie jakakolwiek decyzja."
     ),
@@ -318,7 +318,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
             answer = "Około 159, 23 i 4 pomiary na tysiąc; 1% pomiarów przekracza około 89.0°C. Przesunięcie progu z 85 do 88°C zmniejsza częstość przekroczeń prawie siedmiokrotnie."
           )
         ),
-        takeaway = "Wynik progowy zawsze raportuj podwójnie: jako pole ogona i jako naturalną częstość w ustalonym horyzoncie. „P = 0.16” i „około 159 pomiarów na 1000” to ta sama liczba, ale tylko druga wersja uruchamia wyobraźnię decydenta."
+        takeaway = "Wynik progowy zawsze raportuj podwójnie: jako pole ogona i jako naturalną częstość w ustalonym okresie odniesienia. „P = 0.16” i „około 159 pomiarów na 1000” to ta sama liczba, ale tylko druga wersja uruchamia wyobraźnię decydenta."
       ),
       list(
         id = "horyzont", title = "Pomiar a zmiana robocza",
@@ -434,7 +434,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         )
       )
     ),
-    decision = "Raportuj pole ogona oraz naturalną częstość w ustalonym horyzoncie; najpierw redukuj mechanizm, podniesienie progu wymaga uzasadnienia konstrukcyjnego."
+    decision = "Raportuj pole ogona oraz naturalną częstość w ustalonym okresie odniesienia; najpierw redukuj źródło ryzyka, podniesienie progu wymaga uzasadnienia konstrukcyjnego."
   ),
   list(
     id = "obciazenie", title = "Obciążenie–wytrzymałość", hook = "Nie tylko ciężar się zmienia",
@@ -615,22 +615,22 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
     pitfall = "Dopasowanie środka wykresu nie gwarantuje dobrego opisu ekstremów."
   ),
   list(
-    id = "komunikat", title = "Komunikat progowy", hook = "Wynik ma wskazać, co zrobić",
-    lead = "Komunikat progowy łączy liczbę z horyzontem, mechanizm i działanie — dopiero wtedy kierownik wie, co zrobić.",
+    id = "komunikat", title = "Komunikat o ryzyku", hook = "Wynik ma wskazać, co zrobić",
+    lead = "Komunikat o ryzyku łączy poziom ryzyka w okresie odniesienia, źródło ryzyka i postępowanie z ryzykiem — dopiero wtedy kierownik wie, co zrobić.",
     intro = c(
-      "Wszystkie poprawki z rozdziałów 1–6 składamy teraz w jeden raport. Dochodzą dwa wiersze, których wcześniej brakowało: pytanie z celem i kontrola po wdrożeniu.",
-      "Kompletny komunikat progowy mieści się w trzech zdaniach: jaka część wyników przekracza próg i w jakim horyzoncie, jaki mechanizm odpowiada za ogon, które działanie — chłodzenie, stabilizacja czy rewizja progu — rekomendujesz i dlaczego. Liczba bez mechanizmu nie wskazuje działania; działanie bez liczby nie ma uzasadnienia."
+      "Wszystkie poprawki z rozdziałów 1–6 składamy teraz w jeden raport. Dochodzą dwa wiersze, których wcześniej brakowało: zakres z kryterium decyzji i monitorowanie po wdrożeniu.",
+      "Kompletny komunikat o ryzyku mieści się w trzech zdaniach: jaka część wyników przekracza próg i w jakim okresie odniesienia (na pomiar, na zmianę), co jest źródłem ryzyka w ogonie, które postępowanie z ryzykiem — chłodzenie, stabilizacja czy rewizja progu — rekomendujesz i dlaczego. Liczba bez źródła ryzyka nie wskazuje działania; działanie bez liczby nie ma uzasadnienia."
     ),
     sections = list(
       list(
         id = "przyklad", title = "Trzy zdania dla kierownika",
         body = list(
           risk_example("6.12", "Trzy zdania dla kierownika dojrzewalni",
-            problem = "Na podstawie danych łożyska (μ = 82°C, σ = 3°C, próg 85°C, 8 pomiarów na zmianę) i przykładu 6.7 zredaguj komunikat progowy w trzech zdaniach: liczba z horyzontem, mechanizm, rekomendacja.",
+            problem = "Na podstawie danych łożyska (μ = 82°C, σ = 3°C, próg 85°C, 8 pomiarów na zmianę) i przykładu 6.7 zredaguj komunikat o ryzyku w trzech zdaniach: poziom ryzyka w okresie odniesienia, źródło ryzyka, postępowanie z ryzykiem.",
             steps = c(
-              "Liczba i horyzont: około 159 na 1000 pomiarów przekracza 85°C (6.5); przy ośmiu niezależnych pomiarach na zmianę alarm pojawiłby się w około 75% zmian (6.7) — przy skorelowanych pomiarach rzadziej.",
-              "Mechanizm: średnia leży tylko 1σ pod progiem, więc ryzyko tworzy zarówno położenie, jak i rozrzut temperatury.",
-              "Rekomendacja: chłodzenie o 2°C obniża częstość do około 48 na 1000, a połączenie z ograniczeniem σ do 2°C — do około 6 na 1000 (przykład 6.7); podniesienie progu tylko po badaniu materiałowym łożyska."
+              "Poziom ryzyka i okres odniesienia: około 159 na 1000 pomiarów przekracza 85°C (6.5); przy ośmiu niezależnych pomiarach na zmianę alarm pojawiłby się w około 75% zmian (6.7) — przy skorelowanych pomiarach rzadziej.",
+              "Źródło ryzyka: średnia leży tylko 1σ pod progiem, więc ryzyko tworzy zarówno położenie, jak i rozrzut temperatury.",
+              "Postępowanie z ryzykiem: chłodzenie o 2°C obniża częstość do około 48 na 1000, a połączenie z ograniczeniem σ do 2°C — do około 6 na 1000 (przykład 6.7); podniesienie progu tylko po badaniu materiałowym łożyska."
             ),
             answer = "„Około 16% pomiarów, a w praktyce większość zmian, przekracza próg 85°C. Przyczyną jest średnia zbyt blisko progu przy rozrzucie 3°C. Rekomendujemy poprawę chłodzenia i wyrównanie obciążenia, co może obniżyć częstość przekroczeń do kilku na tysiąc; progu nie podnosimy bez badania materiałowego.”"
           )
@@ -664,7 +664,7 @@ prog_block <- list(id = "prog", title = "Zmienność i próg", chapters = list(
         id = "sciaga", title = "Ściąga",
         bullets = c("Pytanie: jaka część wyników przekracza próg?", "Model: rozkład zmiennej ciągłej", "Założenia: stabilność, kształt ogona, jednostki", "Wynik: P(X>c) i naturalna częstość", "Interpretacja: oczekiwane przekroczenia w porównywalnych ekspozycjach"),
         widget = risk_assessment_ui("z6", prog_quiz, prog_exercises),
-        decision = "Najpierw redukuj mechanizm ryzyka; podniesienie progu wymaga uzasadnienia konstrukcyjnego."
+        decision = "Najpierw redukuj źródło ryzyka; podniesienie progu wymaga uzasadnienia konstrukcyjnego."
       ),
       list(id = "most", title = "Co dalej", text = "Następny wykład zastosuje ten sam język gęstości, pola i ogona do szczególnej zmiennej ciągłej: czasu do awarii elementu.")
     )

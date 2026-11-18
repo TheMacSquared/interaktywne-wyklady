@@ -64,7 +64,7 @@ z6p1_report <- function() {
   paste0(
     '<rect class="z6p-paper" x="60" y="40" width="680" height="230" rx="6"/>',
     '<rect x="60" y="40" width="680" height="4" rx="2" style="fill:var(--upwr-accent)"/>',
-    '<text class="z6p-mono z6p-subtle" x="90" y="80" font-size="13" letter-spacing="1.2">RAPORT PROGOWY · WENTYLATOR 2 · MAJ · WIERSZ 2</text>',
+    '<text class="z6p-mono z6p-subtle" x="90" y="80" font-size="13" letter-spacing="1.2">RAPORT Z OCENY RYZYKA · WENTYLATOR 2 · MAJ · WIERSZ 2</text>',
     '<line class="z6p-grid" x1="90" x2="710" y1="96" y2="96"/>',
     '<text class="z6p-mono z6p-subtle" x="90" y="150" font-size="20" font-weight="700">2</text>',
     '<text x="130" y="150" font-size="20" font-weight="700">Wynik</text>',

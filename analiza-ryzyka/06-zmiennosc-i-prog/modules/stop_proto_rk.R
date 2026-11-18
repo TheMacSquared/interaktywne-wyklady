@@ -1,4 +1,4 @@
-# WIDGETY (2026-11-17, przyjęte) — grupa rk: P20A–P20C, rozdział 7 „Komunikat progowy”
+# WIDGETY (2026-11-17, przyjęte) — grupa rk: P20A–P20C, rozdział 7 „Komunikat o ryzyku”
 #
 #   z6p_20a_ui — piaskownica „Redaktor komunikatu” (P20A): suwaki μ, σ, próg, liczba
 #                pomiarów na zmianę, kształt rozkładu i działanie; trzy zdania komunikatu
@@ -14,7 +14,7 @@
 
 z6p20_css <- tags$style(HTML("
   .z6p20-msg { list-style: none; padding: 0; margin: .4em 0; display: grid; gap: .35em; }
-  .z6p20-row { display: grid; grid-template-columns: 10em minmax(0, 1fr); gap: .2em 1em; align-items: baseline;
+  .z6p20-row { display: grid; grid-template-columns: 12em minmax(0, 1fr); gap: .2em 1em; align-items: baseline;
     border-left: 4px solid var(--upwr-ink); background: var(--upwr-surface); border-radius: 4px; padding: .45em .8em; }
   .z6p20-row.is-warn { border-left-color: var(--upwr-accent); }
   .z6p20-k { font-weight: 700; }
