@@ -34,6 +34,7 @@ z6p20_css <- tags$style(HTML("
   .z6p20-status { font-weight: 700; margin: .2em 0; }
   .z6p20-status.is-ok { color: var(--upwr-sage); }
   .z6p20-status.is-bad { color: var(--upwr-accent); }
+  .z6p20-joke { font-style: italic; border-left: 4px solid var(--upwr-accent); padding: .25em .8em; margin: .4em 0; }
   .z6p20-acts { display: flex; flex-wrap: wrap; gap: .4em; }
   .z6p20-acts .lc-action[aria-pressed='true'] { background: var(--upwr-ink); color: var(--upwr-surface); border-color: var(--upwr-ink); }
   .z6p20-cost { font-family: var(--upwr-mono); font-size: .85em; opacity: .8; }

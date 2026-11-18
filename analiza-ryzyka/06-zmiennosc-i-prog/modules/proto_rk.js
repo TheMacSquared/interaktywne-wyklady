@@ -203,6 +203,8 @@
           '<p class="z6p-read">Koszt: ' + cost + " / " + cfg.budget + " tys. zł · μ = " + U.fmt(mu, 1) + "°C · σ = " + U.fmt(sd, 1) +
           "°C · próg " + U.fmt(c, 0) + "°C · przekroczenia: " + per1000(pTrue) + " na 1000 (cel ≤ " + cfg.target + ")</p>" +
           '<p class="z6p20-status ' + (!chosen.length ? "" : over || !hit ? "is-bad" : "is-ok") + '">' + U.esc(status) + "</p>" +
+          // Żart przy rewizji progu bez badania: liczba w raporcie spada, odpowiedzialność nie.
+          (thrNoProof ? '<p class="z6p20-joke">Pół roku później łożysko się zaciera, a w dokumentacji stoi: „próg podniesiony bez badania”. Na portierni czeka już pan z prokuratury.</p>' : "") +
           (msg ? '<p class="z6p-caption">' + U.esc(msg) + "</p>" : ""));
       }
       on.toggle = function (btn) {
