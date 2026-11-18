@@ -590,6 +590,8 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
           risk_definition("6.8", "Wykres kwantylowy (Q–Q)", c(
             "Wykres kwantylowy względem rozkładu normalnego to wykres punktowy, na którym każdy uporządkowany pomiar x₍ᵢ₎ zestawia się z kwantylem standardowego rozkładu normalnego tego samego rzędu. Jeśli dane pochodzą z rozkładu normalnego, punkty leżą w przybliżeniu na prostej o wyrazie wolnym μ i nachyleniu σ."
           )),
+          # Pojęcie P15B (18.11.2026): budowa wykresu Q–Q krok po kroku; zastępuje kadry P15A
+          z6p_get("z6p_15b_ui"),
           risk_formula("\\left(⟦1|\\Phi^{-1}⟧\\!\\left(⟦2|\\frac{i-0.5}{n}⟧\\right),\\; ⟦3|x_{(i)}⟧\\right),\\qquad i=1,\\ldots,n", num = "6.11",
             notes = list("funkcja kwantylowa N(0, 1)", "rząd kwantyla i-tego pomiaru, z poprawką 0.5", "i-ty najmniejszy pomiar"),
             note_colors = c("wrzos", "terakota", "accent"), above = 1),
@@ -611,8 +613,6 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
             ),
             answer = "Największy pomiar jest o 2.8°C wyższy, niż przewiduje model normalny — sygnał możliwego ciężkiego prawego ogona. Przy pięciu pomiarach to jednak tylko sygnał; do oceny ogona potrzeba znacznie więcej danych."
           ),
-          # Pojęcie P15A (przyjęte 17.11.2026): jak powstaje punkt wykresu Q–Q
-          z6p_get("z6p_15a_ui"),
           risk_check("z6_chk_qq", extension = TRUE,
             "Na wykresie Q–Q punkty w środku leżą na prostej, a na prawym końcu wyraźnie zaginają się w górę. Co to oznacza dla oceny P(T > c) przy wysokim progu c?",
             c("Model normalny zaniża ryzyko" = "under", "Model normalny zawyża ryzyko" = "over", "Nic, bo środek jest zgodny" = "nothing"),
