@@ -493,9 +493,9 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
             "Formalnie wariancja sumy niezależnych zmiennych to suma wariancji, a Var(-L) = (-1)² · Var(L) = Var(L). Gdy L i S są skorelowane ze współczynnikiem ρ, dochodzi składnik -2ρσ_Sσ_L: dodatnia korelacja (na przykład oba zależą od temperatury otoczenia) zmniejsza rozrzut marginesu."
           ), lines = c("D = S + (-L)", "Var(D) = Var(S) + Var(-L) = σ_S² + σ_L²", "przy korelacji: Var(D) = σ_S² + σ_L² - 2ρ·σ_S·σ_L")),
           "Skoro D ~ N(μ_D, σ_D), prawdopodobieństwo awarii dostajemy ze wzoru (6.5) zastosowanego do progu zero — tym razem z lewego ogona:",
-          risk_formula("P(L>S)=⟦1|\\Phi⟧\\!\\left(\\frac{0-\\mu_D}{\\sigma_D}\\right)=⟦1|\\Phi⟧(-⟦2|\\beta⟧),\\quad ⟦2|\\beta⟧=\\frac{⟦3|\\mu_S-\\mu_L⟧}{⟦4|\\sqrt{\\sigma_S^{2}+\\sigma_L^{2}}⟧}", num = "6.10",
+          risk_formula("P(L>S)=⟦1|\\Phi⟧\\!\\left(\\frac{0-\\mu_D}{\\sigma_D}\\right)=\\Phi(-\\beta),\\quad ⟦2|\\beta⟧=\\frac{⟦3|\\mu_S-\\mu_L⟧}{⟦4|\\sqrt{\\sigma_S^{2}+\\sigma_L^{2}}⟧}", num = "6.10",
             notes = list("dystrybuanta N(0, 1): lewy ogon, bo awaria to D < 0", "indeks niezawodności (definicja 6.7): ile σ_D dzieli zero od średniego marginesu", "średni margines μ_D, wzór (6.9)", "rozrzut marginesu σ_D, wzór (6.9)"),
-            note_colors = c("wrzos", "accent", "terakota", "szalwia"), above = 1),
+            note_colors = c("wrzos", "accent", "terakota", "szalwia"), above = c(1, 3)),
           # Pojęcie P12 (przyjęte 17.11.2026): od chmury par do marginesu D; stoi po (6.9)–(6.10),
           # bo kadry używają β i σ_D
           z6p_get("z6p_12_ui"),
