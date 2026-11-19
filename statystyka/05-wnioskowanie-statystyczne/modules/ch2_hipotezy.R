@@ -76,6 +76,9 @@ ch2h_ui <- list(
       tags$em("czy w ogóle"), " istnieje wpływ, i nie przesądza, czy telefon
       koncentrację obniża, czy podnosi. Hₐ mówi więc po prostu, że średnie się
       różnią, a jej znakiem jest „≠”."),
+    lc_p(strong("Krok 3 — sformułowanie:"), " obie odpowiedzi składamy w parę
+      zdań, tak jak w ostatnim kadrze Ryc. 2.2. H₀ mówi, że średnie w obu
+      warunkach są równe, a Hₐ, że się różnią."),
     lc_p("H₀ i Hₐ są przeciwstawne i razem wyczerpują wszystkie możliwości:
       średnie albo są równe, albo się różnią. Trzeciej możliwości nie ma, więc
       odrzucenie jednej hipotezy przemawia za drugą. Tej zasady pilnujemy przy
@@ -119,6 +122,10 @@ ch2h_ui <- list(
       właściwie porównujemy. Każda para hipotez ma ten sam szkielet:"),
     # Ryc. 2.3: przepis na parę hipotez (modules/ch2_panels.R)
     ch2h_fig_recipe,
+
+    lc_p("Obie reguły widać na osi liczbowej. Ryc. 2.4 pokazuje wszystkie
+      możliwe wartości parametru i to, którą część osi zajmuje każda
+      z hipotez przy kolejnych parach znaków."),
 
     # Ryc. 2.4: dwie hipotezy dzielą oś parametru (modules/ch2_panels.R)
     ch2h_fig_axis,
