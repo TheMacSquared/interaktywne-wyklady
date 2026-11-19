@@ -156,7 +156,7 @@ ch4_scenario_params <- list(
     h0_text_1s = "\\(H_0: \\rho \\geq 0\\)",
     h1_text_1s = "\\(H_a: \\rho < 0\\)",
     alt_1s = "less"),
-  # Scenariusz kierunkowy (IDKiS): NDVI to wskaźnik zieleni od 0 do 1 liczony ze zdjęcia
+  # Scenariusz kierunkowy (IDSiK): NDVI to wskaźnik zieleni od 0 do 1 liczony ze zdjęcia
   # satelitarnego; x_digits = 2, bo zaokrąglenie do 0.1 zlałoby wartości w kilka kolumn.
   ndvi_yield = list(
     r_true = 0.60, xlab = "Zieleń pola z satelity (NDVI, od 0 do 1)", ylab = "Plon pszenicy (t/ha)",
@@ -357,7 +357,7 @@ ch4_ui <- list(
                 "Nawadnianie a plon" = "irrigation_yield",
                 "Stężenie konserwantu a trwałość" = "preserv_shelf",
                 "Szkolenie BHP a wypadki (IB)" = "training_accidents",
-                "Zieleń pola z satelity a plon (IDKiS)" = "ndvi_yield"
+                "Zieleń pola z satelity a plon (IDSiK)" = "ndvi_yield"
               ),
               selected = "sleep_grade"
             )),

@@ -124,7 +124,7 @@ ch2_scenario_params <- list(
                 question = "Czy średni poziom hałasu w hali mieści się w normie NDS 85 dB?",
                 h0_text = "\\(H_0: \\mu = 85\\) (hałas zgodny z normą)",
                 h1_text = "\\(H_a: \\mu \\neq 85\\) (hałas odbiega od normy)"),
-  # Scenariusz kierunkowy: inżynieria danych kosmicznych i satelitarnych (IDKiS).
+  # Scenariusz kierunkowy: inżynieria danych kosmicznych i satelitarnych (IDSiK).
   gps    = list(mu0 = 5, mu_true = 5.6, sd = 1.8,
                 xlab = "Błąd pozycji GPS (m)",
                 title = "Dokładność GPS w telefonie",
@@ -354,7 +354,7 @@ ch2_ui <- list(
                 "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
                 "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
                 "Hałas w hali (μ₀ = 85 dB, IB)" = "noise",
-                "Błąd pozycji GPS (μ₀ = 5 m, IDKiS)" = "gps"
+                "Błąd pozycji GPS (μ₀ = 5 m, IDSiK)" = "gps"
               ),
               selected = "concentration"
             )),

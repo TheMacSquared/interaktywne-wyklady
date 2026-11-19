@@ -2374,7 +2374,9 @@ section[data-lc-static-chapter][hidden] { display: none !important; }
 /* Treść nad wykresem: np. tabela kroku po lewej, odczyty (legenda) po prawej */
 .lc-step-above{display:flex;flex-wrap:wrap;align-items:flex-start;gap:1em 2.4em;margin:.5em 0 .9em}
 .lc-step-above>*{min-width:0}
-.lc-step-above>.shiny-html-output:first-child{flex:1 1 22em}
+/* Tabela kroku: dawniej uiOutput (.shiny-html-output), na stronie statycznej [data-role="table"]. Bez tej reguły
+   blok tabeli (kontener o inline-size) kurczy się w rzędzie flex do zerowej szerokości. */
+.lc-step-above>.shiny-html-output:first-child,.lc-step-above>[data-role="table"]:first-child{flex:1 1 22em}
 .lc-step-above>.lc-reads{flex:0 1 auto;flex-direction:column;margin-left:auto}
 
 /* Stopka: opis kroku + nawigacja */

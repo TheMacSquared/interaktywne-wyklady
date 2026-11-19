@@ -175,7 +175,7 @@ cas_ch6_sol7_ui <- function() {
 # Nazwy zmiennych do zdań hipotezy (Ryc. 8.1).
 ch6_ind_var_names <- c(wzrost = "wzrost", waga = "waga", srednia_ocen = "średnia ocen", czas_dojazdu = "czas dojazdu",
                        temp_sat = "temperatura powierzchni")
-# Grupy porównywane w Ryc. 8.1: studenci według płci albo, w scenariuszu kierunkowym (IDKiS),
+# Grupy porównywane w Ryc. 8.1: studenci według płci albo, w scenariuszu kierunkowym (IDSiK),
 # punkty pomiaru temperatury powierzchni z satelity w terenach zielonych i w mieście.
 ch6_ind_groups <- function(var) {
   if (var == "temp_sat") list(a = "Z", b = "M", h0 = "w terenach zielonych i w mieście", ha = "między terenami zielonymi a miastem")
@@ -348,7 +348,7 @@ ch6_ui <- list(
                 "Waga" = "waga",
                 "Średnia ocen" = "srednia_ocen",
                 "Czas dojazdu" = "czas_dojazdu",
-                "Temperatura powierzchni: zieleń a miasto (IDKiS)" = "temp_sat"
+                "Temperatura powierzchni: zieleń a miasto (IDSiK)" = "temp_sat"
               ),
               selected = "wzrost"
             )),
@@ -432,7 +432,7 @@ ch6_ui <- list(
           selectInput("ch6_paired_scenario", "Scenariusz", selectize = FALSE,
             choices = c(
               "Korepetycje: wynik przed i po" = "tutoring",
-              "Susza: zieleń pól w czerwcu i sierpniu (IDKiS)" = "ndvi"
+              "Susza: zieleń pól w czerwcu i sierpniu (IDSiK)" = "ndvi"
             ),
             selected = "tutoring"
           ),

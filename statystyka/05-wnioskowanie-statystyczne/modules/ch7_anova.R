@@ -356,7 +356,7 @@ ch7_ui <- list(
               "Fermentacja jogurtu (TŻ)" = "fermentation",
               "Kierunki studiów" = "students",
               "Stanowisko pracy a wypadki/stres (IB)" = "workplace",
-              "Pokrycie terenu z satelity (IDKiS)" = "landcover"
+              "Pokrycie terenu z satelity (IDSiK)" = "landcover"
             ),
             selected = "fermentation"
           ),

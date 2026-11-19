@@ -153,7 +153,7 @@ ch5_scenario_params <- list(
     question = "Czy stosowanie pełnych środków ochrony indywidualnej wpływa na ciężkość wypadku przy pracy?",
     h0_text = "\\(H_0:\\) stosowanie SOI i ciężkość wypadku są niezależne",
     h1_text = "\\(H_a:\\) stosowanie SOI i ciężkość wypadku są powiązane"),
-  # Scenariusz kierunkowy (IDKiS): trafność automatycznej klasyfikacji terenu na zdjęciach.
+  # Scenariusz kierunkowy (IDSiK): trafność automatycznej klasyfikacji terenu na zdjęciach.
   landcover = list(
     lab1 = "Typ terenu", lab2 = "Klasyfikacja automatu",
     cats1 = c("Las", "Pole uprawne", "Zabudowa"),
@@ -411,7 +411,7 @@ ch5_ui <- list(
                 "Opakowanie a pleśń (TŻ)" = "packaging",
                 "Typ gleby a kategoria plonu (R)" = "soil",
                 "Środki ochrony a uraz (IB)" = "ppe_accident",
-                "Typ terenu a błąd klasyfikacji (IDKiS)" = "landcover"
+                "Typ terenu a błąd klasyfikacji (IDSiK)" = "landcover"
               ),
               selected = "packaging"
             )),

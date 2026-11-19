@@ -169,7 +169,7 @@
       if (name === "wzrost") return round(female ? r.norm(166, 6) : r.norm(178, 7), 1);
       if (name === "waga") return round(female ? r.norm(62, 8) : r.norm(78, 10), 1);
       if (name === "czas_dojazdu") return round(r.gamma(3, 10), 1);
-      // Scenariusz kierunkowy (IDKiS): temperatura powierzchni z satelity, tereny zielone (K) i miasto (M).
+      // Scenariusz kierunkowy (IDSiK): temperatura powierzchni z satelity, tereny zielone (K) i miasto (M).
       if (name === "temp_sat") return round(female ? r.norm(24, 3) : r.norm(27, 3.5), 1);
       // Średnia ocen: poziom zależy od kierunku (losowanego z wagami), ograniczona do 2–5.
       var base = [3.6, 3.4, 3.8, 3.5][r.choose([0.3, 0.25, 0.25, 0.2]) - 1];
@@ -178,7 +178,7 @@
     return { K: r.many(n, function () { return one(true); }), M: r.many(n, function () { return one(false); }) };
   }
   // generate_paired_data(): wynik przed N(50, 12), po = przed + N(efekt, 8); do 0.1 pkt.
-  // Scenariusz "ndvi" (IDKiS): zieleń tych samych pól w czerwcu N(0.70, 0.08) i w sierpniu,
+  // Scenariusz "ndvi" (IDSiK): zieleń tych samych pól w czerwcu N(0.70, 0.08) i w sierpniu,
   // po = przed − efekt/100 + N(0, 0.04), ograniczone do 0–1; do 0.01.
   function pairedData(r, n, effect, scenario) {
     if (scenario === "ndvi") {
@@ -203,7 +203,7 @@
                                                                        kwasowosc_SH: function (g) { return round([28, 33, 38][g] + r.norm(0, 3.5), 1); } } },
                workplace: { groups: ["Budowa", "Magazyn", "Biuro"], vars: { nieobecnosci: function (g) { return Math.max(0, Math.round([9, 5, 2][g] + r.norm(0, 3))); },
                                                                            stres: function (g) { return Math.min(100, Math.max(0, Math.round([62, 58, 48][g] + r.norm(0, 12)))); } } },
-               // Scenariusz kierunkowy (IDKiS): zachmurzenie nie zależy od typu terenu.
+               // Scenariusz kierunkowy (IDSiK): zachmurzenie nie zależy od typu terenu.
                landcover: { groups: ["Las", "Pole", "Zabudowa"], vars: { temp_pow: function (g) { return round([22, 26, 30][g] + r.norm(0, 2.5), 1); },
                                                                          ndvi: function (g) { return round(Math.min(1, Math.max(0, [0.80, 0.60, 0.25][g] + r.norm(0, 0.08))), 2); },
                                                                          zachmurzenie: function () { return Math.min(100, Math.max(0, Math.round(r.norm(40, 18)))); } } } };
@@ -870,7 +870,7 @@
   };
 
   // Ryc. 8.2: dane sparowane „przed i po”; próba nieaktualna po zmianie suwaków albo scenariusza.
-  // Napisy scenariuszy: korepetycje (wynik w punktach) i susza (NDVI tych samych pól, IDKiS).
+  // Napisy scenariuszy: korepetycje (wynik w punktach) i susza (NDVI tych samych pól, IDSiK).
   var PAIRED = {
     tutoring: { first: "Przed", second: "Po", axis: "Moment", y: "Wynik", diff: "po − przed", unit: " pkt", digits: 2,
       up: "wzrosły", down: "spadły", same: "nie zmieniły się", changed: "wyniki istotnie się zmieniły", nochange: "wyniki się zmieniły",

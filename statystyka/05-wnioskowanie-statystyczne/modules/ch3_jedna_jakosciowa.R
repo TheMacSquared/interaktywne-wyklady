@@ -143,7 +143,7 @@ ch3_scenario_params <- list(
     h0_text_1s = "\\(H_0: p \\geq 0.95\\)",
     h1_text_1s = "\\(H_a: p < 0.95\\)",
     alt_1s = "less"),
-  # Scenariusz kierunkowy (IDKiS): scena jest użyteczna, gdy chmury zasłaniają mniej niż 20% obszaru.
+  # Scenariusz kierunkowy (IDSiK): scena jest użyteczna, gdy chmury zasłaniają mniej niż 20% obszaru.
   clear_scenes = list(
     p0 = 0.60, p_true = 0.52, n_default = 50,
     success_label = "użyteczna", failure_label = "zachmurzona",
@@ -352,7 +352,7 @@ ch3_ui <- list(
                 "Kiełkowalność nasion (p₀ = 90%)" = "germination",
                 "Produkty poza normą (p₀ = 3%)" = "defects",
                 "Używanie kasków na budowie (p₀ = 95%, IB)" = "helmets",
-                "Zdjęcia satelitarne bez chmur (p₀ = 60%, IDKiS)" = "clear_scenes"
+                "Zdjęcia satelitarne bez chmur (p₀ = 60%, IDSiK)" = "clear_scenes"
               ),
               selected = "water_quality"
             )),
