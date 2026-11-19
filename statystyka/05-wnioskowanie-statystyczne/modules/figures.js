@@ -79,9 +79,11 @@
   // generate_correlation_data(type = "linear"): x normalne, y = r · z(x) · sd_y + reszta; wartości do 0.1.
   function corData(r, n, par) {
     var round1 = function (v) { return Math.round(v * 10) / 10; };
+    // x_digits: miejsca po przecinku wartości x (NDVI potrzebuje dwóch); domyślnie jedno.
+    var kx = Math.pow(10, par.x_digits === undefined ? 1 : par.x_digits), roundX = function (v) { return Math.round(v * kx) / kx; };
     var x = r.many(n, function () { return r.norm(par.x_mean, par.x_sd); }), mx = T.mean(x), sx = T.sd(x);
     var y = x.map(function (v) { return par.r_true * (v - mx) / sx * par.y_sd + Math.sqrt(1 - par.r_true * par.r_true) * r.norm() * par.y_sd + par.y_mean; });
-    return { x: x.map(round1), y: y.map(round1) };
+    return { x: x.map(roundX), y: y.map(round1) };
   }
   // Test korelacji Pearsona: r, statystyka t = r · √(n − 2) / √(1 − r²), p i prosta MNK.
   function corTest(x, y, alternative) {
@@ -167,6 +169,8 @@
       if (name === "wzrost") return round(female ? r.norm(166, 6) : r.norm(178, 7), 1);
       if (name === "waga") return round(female ? r.norm(62, 8) : r.norm(78, 10), 1);
       if (name === "czas_dojazdu") return round(r.gamma(3, 10), 1);
+      // Scenariusz kierunkowy (IDKiS): temperatura powierzchni z satelity, tereny zielone (K) i miasto (M).
+      if (name === "temp_sat") return round(female ? r.norm(24, 3) : r.norm(27, 3.5), 1);
       // Średnia ocen: poziom zależy od kierunku (losowanego z wagami), ograniczona do 2–5.
       var base = [3.6, 3.4, 3.8, 3.5][r.choose([0.3, 0.25, 0.25, 0.2]) - 1];
       return round(Math.min(5, Math.max(2, base + r.norm(0, 0.4))), 2);
@@ -174,7 +178,14 @@
     return { K: r.many(n, function () { return one(true); }), M: r.many(n, function () { return one(false); }) };
   }
   // generate_paired_data(): wynik przed N(50, 12), po = przed + N(efekt, 8); do 0.1 pkt.
-  function pairedData(r, n, effect) {
+  // Scenariusz "ndvi" (IDKiS): zieleń tych samych pól w czerwcu N(0.70, 0.08) i w sierpniu,
+  // po = przed − efekt/100 + N(0, 0.04), ograniczone do 0–1; do 0.01.
+  function pairedData(r, n, effect, scenario) {
+    if (scenario === "ndvi") {
+      var r2 = function (v) { return Math.round(Math.min(1, Math.max(0, v)) * 100) / 100; }, june = [], aug = [];
+      for (var j = 0; j < n; j++) { var z = r.norm(0.70, 0.08); june.push(r2(z)); aug.push(r2(z - effect / 100 + r.norm(0, 0.04))); }
+      return { przed: june, po: aug };
+    }
     var round1 = function (v) { return Math.round(v * 10) / 10; }, przed = [], po = [];
     for (var i = 0; i < n; i++) { var a = r.norm(50, 12); przed.push(round1(a)); po.push(round1(a + r.norm(effect, 8))); }
     return { przed: przed, po: po };
@@ -191,7 +202,11 @@
     var S3 = { fermentation: { groups: ["20°C", "25°C", "30°C"], vars: { pH: function (g) { return round([4.55, 4.30, 4.05][g] + r.norm(0, 0.14), 2); },
                                                                        kwasowosc_SH: function (g) { return round([28, 33, 38][g] + r.norm(0, 3.5), 1); } } },
                workplace: { groups: ["Budowa", "Magazyn", "Biuro"], vars: { nieobecnosci: function (g) { return Math.max(0, Math.round([9, 5, 2][g] + r.norm(0, 3))); },
-                                                                           stres: function (g) { return Math.min(100, Math.max(0, Math.round([62, 58, 48][g] + r.norm(0, 12)))); } } } };
+                                                                           stres: function (g) { return Math.min(100, Math.max(0, Math.round([62, 58, 48][g] + r.norm(0, 12)))); } } },
+               // Scenariusz kierunkowy (IDKiS): zachmurzenie nie zależy od typu terenu.
+               landcover: { groups: ["Las", "Pole", "Zabudowa"], vars: { temp_pow: function (g) { return round([22, 26, 30][g] + r.norm(0, 2.5), 1); },
+                                                                         ndvi: function (g) { return round(Math.min(1, Math.max(0, [0.80, 0.60, 0.25][g] + r.norm(0, 0.08))), 2); },
+                                                                         zachmurzenie: function () { return Math.min(100, Math.max(0, Math.round(r.norm(40, 18)))); } } } };
     var out = { vars: {} }, i, g;
     if (S3[scenario]) {
       var cfg = S3[scenario];
@@ -772,8 +787,14 @@
   };
 
   // ---- Rozdział 8: dwie grupy (test t niezależny i dla par) ---------------------
-  var IND_LABEL = { wzrost: "Wzrost (cm)", waga: "Waga (kg)", srednia_ocen: "Średnia ocen", czas_dojazdu: "Czas dojazdu (min)" };
-  var IND_NAME = { wzrost: "wzrost", waga: "waga", srednia_ocen: "średnia ocen", czas_dojazdu: "czas dojazdu" };
+  var IND_LABEL = { wzrost: "Wzrost (cm)", waga: "Waga (kg)", srednia_ocen: "Średnia ocen", czas_dojazdu: "Czas dojazdu (min)", temp_sat: "Temperatura powierzchni (°C)" };
+  var IND_NAME = { wzrost: "wzrost", waga: "waga", srednia_ocen: "średnia ocen", czas_dojazdu: "czas dojazdu", temp_sat: "temperatura powierzchni" };
+  // Nazwy grup i jednostek obserwacji: studenci według płci albo punkty pomiaru satelitarnego.
+  var IND_PEOPLE = { a: "Kobieta", b: "Mężczyzna", axis: "Płeć", unit: "osób", each: "jedna osoba", order: "kobiety − mężczyźni",
+                     aria: "Wykresy pudełkowe wybranej zmiennej u kobiet i mężczyzn." };
+  var IND_GROUPS = { temp_sat: { a: "Tereny zielone", b: "Miasto", axis: "Strefa", unit: "punktów pomiaru", each: "jeden punkt pomiaru",
+                                 order: "tereny zielone − miasto", aria: "Wykresy pudełkowe temperatury powierzchni w terenach zielonych i w mieście." } };
+  function indGroups(name) { return IND_GROUPS[name] || IND_PEOPLE; }
   // Zapis p jak ui_p_value() w shared.R: liczba wyróżniona, „p <” przy wartości granicznej.
   function pValueHtml(p) {
     var v = T.fmtPValue(p), bound = v.charAt(0) === "<" || v.charAt(0) === ">";
@@ -819,24 +840,26 @@
           layers.push({ type: "text", x: i === 0 ? 0.9 : 2.1, y: m + span * 0.04, text: "x̄ = " + fmt(m, 1), color: P.accent, bold: true, align: i === 0 ? "right" : "left", valign: "middle" });
         });
       }
-      return { x: [0.4, 2.6], y: [lo - span * 0.08, hi + span * 0.08], layers: layers, xLabels: { 1: "Kobieta", 2: "Mężczyzna" },
-        xName: "Płeć", yName: IND_LABEL[d.name], aria: "Wykresy pudełkowe wybranej zmiennej u kobiet i mężczyzn." };
+      var G = indGroups(d.name);
+      return { x: [0.4, 2.6], y: [lo - span * 0.08, hi + span * 0.08], layers: layers, xLabels: { 1: G.a, 2: G.b },
+        xName: G.axis, yName: IND_LABEL[d.name], aria: G.aria };
     },
     // Tabela średnich pod wykresem (krok 2).
     table: function (state, v, vals, step) {
       var d = state.d;
       if (!d || step !== 2) return "";
       return S.table([{ label: "Grupa", row: true }, { label: "n", digits: 0 }, { label: "x̄", digits: 2 }, { label: "s", digits: 2 }],
-        [["Kobieta", d.K.length, T.mean(d.K), T.sd(d.K)], ["Mężczyzna", d.M.length, T.mean(d.M), T.sd(d.M)]]);
+        [[indGroups(d.name).a, d.K.length, T.mean(d.K), T.sd(d.K)], [indGroups(d.name).b, d.M.length, T.mean(d.M), T.sd(d.M)]]);
     },
     text: function (state, v, vals, step) {
       var d = state.d;
       if (!d) return "";
-      var t = state.test, mk = T.mean(d.K), mm = T.mean(d.M), higher = mk >= mm ? "Kobieta" : "Mężczyzna", lower = mk >= mm ? "Mężczyzna" : "Kobieta";
+      var G = indGroups(d.name);
+      var t = state.test, mk = T.mean(d.K), mm = T.mean(d.M), higher = mk >= mm ? G.a : G.b, lower = mk >= mm ? G.b : G.a;
       var diff = fmt(Math.abs(mk - mm), 2), name = IND_NAME[d.name];
-      if (step === 1) return "n = " + b(2 * d.n) + " osób łącznie. Każdy punkt to jedna osoba. Najpierw patrzymy, czy grupy wizualnie wyglądają na przesunięte względem siebie.";
+      if (step === 1) return "n = " + b(2 * d.n) + " " + G.unit + " łącznie. Każdy punkt to " + G.each + ". Najpierw patrzymy, czy grupy wizualnie wyglądają na przesunięte względem siebie.";
       if (step === 2) return "Różnica średnich w próbie wynosi " + b(diff) + ". Test pyta, czy taka różnica jest duża względem zmienności w grupach.";
-      if (step === 3) return "t = " + b(fmt(t.t, 3)) + " (df Welcha = " + fmt(t.df, 1) + "). Tyle błędów standardowych dzieli średnie obu grup (kobiety − mężczyźni).";
+      if (step === 3) return "t = " + b(fmt(t.t, 3)) + " (df Welcha = " + fmt(t.df, 1) + "). Tyle błędów standardowych dzieli średnie obu grup (" + G.order + ").";
       return "Wynik testu t niezależnego: t(" + fmt(t.df, 1) + ") = " + b(fmt(t.t, 3)) + ". " + verdictHtml(t.p) + " <strong>Werdykt:</strong>" +
         (t.p < 0.05
           ? " średnia zmiennej „" + name + "” różni się istotnie między grupami — w próbie była wyższa w grupie " + higher + " niż " + lower + " o " + b(diff) + "."
@@ -846,38 +869,51 @@
     noteKey: function (vals, state) { return state.d ? "data" : "empty"; }
   };
 
-  // Ryc. 8.2: dane sparowane „przed i po”; próba nieaktualna po zmianie suwaków.
+  // Ryc. 8.2: dane sparowane „przed i po”; próba nieaktualna po zmianie suwaków albo scenariusza.
+  // Napisy scenariuszy: korepetycje (wynik w punktach) i susza (NDVI tych samych pól, IDKiS).
+  var PAIRED = {
+    tutoring: { first: "Przed", second: "Po", axis: "Moment", y: "Wynik", diff: "po − przed", unit: " pkt", digits: 2,
+      up: "wzrosły", down: "spadły", same: "nie zmieniły się", changed: "wyniki istotnie się zmieniły", nochange: "wyniki się zmieniły",
+      aria: "Wyniki tych samych osób przed interwencją i po niej, połączone liniami." },
+    ndvi: { first: "Czerwiec", second: "Sierpień", axis: "Miesiąc", y: "Zieleń pola (NDVI)", diff: "sierpień − czerwiec", unit: "", digits: 3,
+      up: "wzrosła", down: "spadła", same: "nie zmieniła się", changed: "zieleń pól istotnie się zmieniła", nochange: "zieleń pól się zmieniła",
+      aria: "Wskaźnik zieleni tych samych pól w czerwcu i w sierpniu, połączony liniami." }
+  };
+  function pairedScenario(el) { var sc = el.querySelector("#ch6_paired_scenario"); return sc ? sc.value : "tutoring"; }
   figures.s05_paired = {
     act: function (state, action, el) {
       var n = Number(el.querySelector("#ch6_paired_n").value), effect = Number(el.querySelector("#ch6_paired_effect").value);
-      var d = pairedData(rng, n, effect);
-      state.sample = { n: n, effect: effect, przed: d.przed, po: d.po };
+      var scenario = pairedScenario(el), d = pairedData(rng, n, effect, scenario);
+      state.sample = { n: n, effect: effect, scenario: scenario, przed: d.przed, po: d.po };
     },
     prepare: function (state, v, vals, el) {
       var s = state.sample;
-      state.d = s && s.n === Number(el.querySelector("#ch6_paired_n").value) && s.effect === Number(el.querySelector("#ch6_paired_effect").value) ? s : null;
+      state.d = s && s.scenario === pairedScenario(el) && s.n === Number(el.querySelector("#ch6_paired_n").value) &&
+        s.effect === Number(el.querySelector("#ch6_paired_effect").value) ? s : null;
     },
     draw: function (v, P, k, state) {
       var d = state.d;
       if (!d) return null;
       var all = d.przed.concat(d.po), lo = Math.min.apply(null, all), hi = Math.max.apply(null, all), pad = (hi - lo) * 0.05;
-      return { x: [0.4, 2.6], y: [lo - pad, hi + pad], xLabels: { 1: "Przed", 2: "Po" },
+      var L = PAIRED[d.scenario] || PAIRED.tutoring;
+      return { x: [0.4, 2.6], y: [lo - pad, hi + pad], xLabels: { 1: L.first, 2: L.second },
         layers: [{ type: "segs", items: d.przed.map(function (a, i) { return { from: [1, a], to: [2, d.po[i]] }; }), color: C.token("--upwr-cat-kurkuma", "#cbb858"), width: 1.4, alpha: 0.3 },
                  { type: "points", data: d.przed.map(function (a) { return [1, a]; }), color: P.niebo, size: 8, alpha: 0.7 },
                  { type: "points", data: d.po.map(function (a) { return [2, a]; }), color: P.accent, size: 8, alpha: 0.7 }],
-        xName: "Moment", yName: "Wynik", aria: "Wyniki tych samych osób przed interwencją i po niej, połączone liniami." };
+        xName: L.axis, yName: L.y, aria: L.aria };
     },
     update: function (el, state) {
       var box = el.querySelector('[data-role="result"]'), d = state.d;
       if (!box) return;
       if (!d) { box.innerHTML = ""; return; }
-      var r = pairedTest(d.przed, d.po), dir = r.mean > 0 ? "wzrosły" : r.mean < 0 ? "spadły" : "nie zmieniły się";
+      var r = pairedTest(d.przed, d.po), L = PAIRED[d.scenario] || PAIRED.tutoring;
+      var dir = r.mean > 0 ? L.up : r.mean < 0 ? L.down : L.same, val = function (x) { return T.round(x, L.digits) + L.unit; };
       box.innerHTML = S.status("<p><strong>Wynik testu t dla danych sparowanych:</strong></p>" +
-        "<p>Średnia różnica (po − przed): " + T.round(r.mean, 2) + " pkt</p><p>t(" + r.df + ") = " + T.round(r.t, 3) + "</p>" + pValueHtml(r.p) + decisionHtml(r.p) +
+        "<p>Średnia różnica (" + L.diff + "): " + val(r.mean) + "</p><p>t(" + r.df + ") = " + T.round(r.t, 3) + "</p>" + pValueHtml(r.p) + decisionHtml(r.p) +
         (r.p < 0.05
-          ? "<p><strong>Werdykt:</strong> wyniki istotnie się zmieniły — średnio " + dir + " o " + T.round(Math.abs(r.mean), 2) + " pkt.</p>"
-          : "<p><strong>Werdykt:</strong> nie ma podstaw, by twierdzić, że wyniki się zmieniły. Obserwowana w próbie zmiana (" + T.round(r.mean, 2) +
-            " pkt) mieści się w zakresie wahań losowych.</p>"));
+          ? "<p><strong>Werdykt:</strong> " + L.changed + " — średnio " + dir + " o " + val(Math.abs(r.mean)) + ".</p>"
+          : "<p><strong>Werdykt:</strong> nie ma podstaw, by twierdzić, że " + L.nochange + ". Obserwowana w próbie zmiana (" + val(r.mean) +
+            ") mieści się w zakresie wahań losowych.</p>"));
     },
     noteKey: function (vals, state) { return state.d ? "data" : "empty"; }
   };

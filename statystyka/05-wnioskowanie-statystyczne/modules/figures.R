@@ -205,6 +205,12 @@ ch7_anova_config <- list(scenarios = list(
     group_label = "Kierunek",
     vars = list("Średnia ocen" = "srednia_ocen", "Wzrost" = "wzrost", "Czas dojazdu" = "czas_dojazdu"),
     var_labels = list(srednia_ocen = "Średnia ocen", wzrost = "Wzrost (cm)", czas_dojazdu = "Czas dojazdu (min)")
+  ),
+  # Scenariusz kierunkowy (IDKiS): zachmurzenie nie zależy od typu terenu (H₀ prawdziwa).
+  landcover = list(
+    group_label = "Typ pokrycia terenu",
+    vars = list("Temperatura powierzchni (°C)" = "temp_pow", "Zieleń (NDVI)" = "ndvi", "Zachmurzenie (%)" = "zachmurzenie"),
+    var_labels = list(temp_pow = "Temperatura powierzchni (°C)", ndvi = "Zieleń (NDVI, od 0 do 1)", zachmurzenie = "Zachmurzenie (%)")
   )
 ))
 

@@ -152,7 +152,16 @@ ch5_scenario_params <- list(
                       0.80, 0.17, 0.03), nrow = 2, byrow = TRUE),
     question = "Czy stosowanie pełnych środków ochrony indywidualnej wpływa na ciężkość wypadku przy pracy?",
     h0_text = "\\(H_0:\\) stosowanie SOI i ciężkość wypadku są niezależne",
-    h1_text = "\\(H_a:\\) stosowanie SOI i ciężkość wypadku są powiązane")
+    h1_text = "\\(H_a:\\) stosowanie SOI i ciężkość wypadku są powiązane"),
+  # Scenariusz kierunkowy (IDKiS): trafność automatycznej klasyfikacji terenu na zdjęciach.
+  landcover = list(
+    lab1 = "Typ terenu", lab2 = "Klasyfikacja automatu",
+    cats1 = c("Las", "Pole uprawne", "Zabudowa"),
+    cats2 = c("Poprawna", "Błędna"),
+    probs = matrix(c(0.94, 0.06, 0.88, 0.12, 0.78, 0.22), nrow = 3, byrow = TRUE),
+    question = "Czy automat rozpoznający teren na zdjęciach satelitarnych myli się równie często w lesie, na polu i w zabudowie?",
+    h0_text = "\\(H_0:\\) typ terenu i wynik klasyfikacji są niezależne",
+    h1_text = "\\(H_a:\\) typ terenu i wynik klasyfikacji są powiązane")
 )
 
 # Dane dla rycin s05_x2 i s05_x2cmp (modules/figures.js); probs jako lista wierszy.
@@ -380,7 +389,7 @@ ch5_ui <- list(
     # ========================================================================
     lc_h2("ch5-krok", "Test χ² niezależności — krok po kroku"),
 
-    lc_p("Panel losuje próbę o zadanej wielkości z jednego z trzech scenariuszy.
+    lc_p("Panel losuje próbę o zadanej wielkości z jednego z czterech scenariuszy.
       Każda tabela ma sześć komórek (3 × 2 albo 2 × 3), więc df = 2. Kolejne
       kroki prowadzą od liczebności obserwowanych przez procenty wierszowe,
       znane z wykładu 01, i tabelę oczekiwaną do p-wartości i decyzji. Procenty
@@ -401,7 +410,8 @@ ch5_ui <- list(
               choices = c(
                 "Opakowanie a pleśń (TŻ)" = "packaging",
                 "Typ gleby a kategoria plonu (R)" = "soil",
-                "Środki ochrony a uraz (IB)" = "ppe_accident"
+                "Środki ochrony a uraz (IB)" = "ppe_accident",
+                "Typ terenu a błąd klasyfikacji (IDKiS)" = "landcover"
               ),
               selected = "packaging"
             )),

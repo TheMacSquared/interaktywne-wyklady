@@ -155,12 +155,29 @@ ch4_scenario_params <- list(
     question_1s = "Czy więcej godzin szkolenia BHP wiąże się z mniejszą liczbą wypadków?",
     h0_text_1s = "\\(H_0: \\rho \\geq 0\\)",
     h1_text_1s = "\\(H_a: \\rho < 0\\)",
-    alt_1s = "less")
+    alt_1s = "less"),
+  # Scenariusz kierunkowy (IDKiS): NDVI to wskaźnik zieleni od 0 do 1 liczony ze zdjęcia
+  # satelitarnego; x_digits = 2, bo zaokrąglenie do 0.1 zlałoby wartości w kilka kolumn.
+  ndvi_yield = list(
+    r_true = 0.60, xlab = "Zieleń pola z satelity (NDVI, od 0 do 1)", ylab = "Plon pszenicy (t/ha)",
+    x_mean = 0.65, x_sd = 0.08, x_digits = 2,
+    y_mean = 6,    y_sd = 1.2,
+    title = "Zieleń pola a plon",
+    question = "Czy zieleń pola widziana z satelity (wskaźnik NDVI) jest powiązana z plonem?",
+    h0_text = "\\(H_0: \\rho = 0\\) (brak związku)",
+    h1_text = "\\(H_a: \\rho \\neq 0\\) (jest związek)",
+    question_1s = "Czy bardziej zielone pola dają wyższy plon?",
+    h0_text_1s = "\\(H_0: \\rho \\leq 0\\)",
+    h1_text_1s = "\\(H_a: \\rho > 0\\)",
+    alt_1s = "greater")
 )
 
 # Dane dla rycin s05_r1 i s05_r1b (modules/figures.js).
-ch4_r1_config <- list(scenarios = lapply(ch4_scenario_params, `[`,
-  c("r_true", "xlab", "ylab", "x_mean", "x_sd", "y_mean", "y_sd", "alt_1s")))
+# x_digits: liczba miejsc po przecinku wartości x (domyślnie 1).
+ch4_r1_config <- list(scenarios = lapply(ch4_scenario_params, function(par) {
+  c(par[c("r_true", "xlab", "ylab", "x_mean", "x_sd", "y_mean", "y_sd", "alt_1s")],
+    list(x_digits = if (is.null(par$x_digits)) 1 else par$x_digits))
+}))
 
 ch4_ui <- list(
   id = "ch-korelacja", num = "06", title = "Korelacja",
@@ -339,7 +356,8 @@ ch4_ui <- list(
                 "Azotany a odległość od źródła" = "nitrate_dist",
                 "Nawadnianie a plon" = "irrigation_yield",
                 "Stężenie konserwantu a trwałość" = "preserv_shelf",
-                "Szkolenie BHP a wypadki (IB)" = "training_accidents"
+                "Szkolenie BHP a wypadki (IB)" = "training_accidents",
+                "Zieleń pola z satelity a plon (IDKiS)" = "ndvi_yield"
               ),
               selected = "sleep_grade"
             )),

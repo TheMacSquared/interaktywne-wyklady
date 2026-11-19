@@ -123,7 +123,14 @@ ch2_scenario_params <- list(
                 title = "Hałas w hali produkcyjnej",
                 question = "Czy średni poziom hałasu w hali mieści się w normie NDS 85 dB?",
                 h0_text = "\\(H_0: \\mu = 85\\) (hałas zgodny z normą)",
-                h1_text = "\\(H_a: \\mu \\neq 85\\) (hałas odbiega od normy)")
+                h1_text = "\\(H_a: \\mu \\neq 85\\) (hałas odbiega od normy)"),
+  # Scenariusz kierunkowy: inżynieria danych kosmicznych i satelitarnych (IDKiS).
+  gps    = list(mu0 = 5, mu_true = 5.6, sd = 1.8,
+                xlab = "Błąd pozycji GPS (m)",
+                title = "Dokładność GPS w telefonie",
+                question = "Czy średni błąd pozycji GPS w telefonie odpowiada deklarowanym 5 m?",
+                h0_text = "\\(H_0: \\mu = 5\\) (błąd zgodny z deklaracją)",
+                h1_text = "\\(H_a: \\mu \\neq 5\\) (błąd odbiega od deklaracji)")
 )
 
 # Te same scenariusze z pytaniem kierunkowym (test jednostronny).
@@ -147,7 +154,11 @@ ch2_scenario_params_1s <- list(
   noise  = list(alt = "greater",
                 question = "Czy średni poziom hałasu w hali przekracza normę NDS 85 dB?",
                 h0_text = "\\(H_0: \\mu \\leq 85\\) (hałas w normie)",
-                h1_text = "\\(H_a: \\mu > 85\\) (hałas przekracza normę)")
+                h1_text = "\\(H_a: \\mu > 85\\) (hałas przekracza normę)"),
+  gps    = list(alt = "greater",
+                question = "Czy średni błąd pozycji GPS jest większy niż deklarowane 5 m?",
+                h0_text = "\\(H_0: \\mu \\leq 5\\) (błąd nie przekracza deklaracji)",
+                h1_text = "\\(H_a: \\mu > 5\\) (błąd jest większy niż deklarowany)")
 )
 
 # Panel hipotezy nad krokami: wariant wybiera lista „Scenariusz”; podpowiedź widać,
@@ -320,7 +331,7 @@ ch2_ui <- list(
     # ========================================================================
     lc_h2("ch2-krok", "Test t jednej próby — krok po kroku"),
 
-    lc_p("Panel przeprowadza ", gloss("test dwustronny"), " w pięciu scenariuszach. W każdym
+    lc_p("Panel przeprowadza ", gloss("test dwustronny"), " w sześciu scenariuszach. W każdym
       dane losowane są z ", gloss("rozkład normalny", "rozkładu normalnego"), ", którego prawdziwa średnia nieco
       różni się od \\(\\mu_0\\), więc H₀ jest w nich fałszywa. Kolejne kroki
       prowadzą od ", gloss("histogram", "histogramu"), " ", gloss("próba", "próby"), " przez średnią
@@ -342,7 +353,8 @@ ch2_ui <- list(
                 "Zużycie wody (μ₀ = 150 l)" = "water",
                 "Plon pszenicy (μ₀ = 5 t/ha)" = "yield",
                 "Trwałość jogurtu (μ₀ = 14 dni)" = "yogurt",
-                "Hałas w hali (μ₀ = 85 dB, IB)" = "noise"
+                "Hałas w hali (μ₀ = 85 dB, IB)" = "noise",
+                "Błąd pozycji GPS (μ₀ = 5 m, IDKiS)" = "gps"
               ),
               selected = "concentration"
             )),

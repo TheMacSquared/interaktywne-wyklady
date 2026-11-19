@@ -142,6 +142,18 @@ ch3_scenario_params <- list(
     question_1s = "Czy odsetek pracowników używających kasków jest niższy niż wymagane 95%?",
     h0_text_1s = "\\(H_0: p \\geq 0.95\\)",
     h1_text_1s = "\\(H_a: p < 0.95\\)",
+    alt_1s = "less"),
+  # Scenariusz kierunkowy (IDKiS): scena jest użyteczna, gdy chmury zasłaniają mniej niż 20% obszaru.
+  clear_scenes = list(
+    p0 = 0.60, p_true = 0.52, n_default = 50,
+    success_label = "użyteczna", failure_label = "zachmurzona",
+    title = "Zdjęcia satelitarne bez chmur",
+    question = "Czy odsetek zdjęć satelitarnych nadających się do użytku różni się od deklarowanych 60%?",
+    h0_text = "\\(H_0: p = 0.60\\) (odsetek zgodny z deklaracją)",
+    h1_text = "\\(H_a: p \\neq 0.60\\) (odsetek odbiega od deklaracji)",
+    question_1s = "Czy odsetek użytecznych zdjęć jest niższy niż deklarowane 60%?",
+    h0_text_1s = "\\(H_0: p \\geq 0.60\\)",
+    h1_text_1s = "\\(H_a: p < 0.60\\)",
     alt_1s = "less")
 )
 
@@ -339,7 +351,8 @@ ch3_ui <- list(
                 "Zdawalność egzaminu (p₀ = 60%)" = "exam_pass",
                 "Kiełkowalność nasion (p₀ = 90%)" = "germination",
                 "Produkty poza normą (p₀ = 3%)" = "defects",
-                "Używanie kasków na budowie (p₀ = 95%, IB)" = "helmets"
+                "Używanie kasków na budowie (p₀ = 95%, IB)" = "helmets",
+                "Zdjęcia satelitarne bez chmur (p₀ = 60%, IDKiS)" = "clear_scenes"
               ),
               selected = "water_quality"
             )),

@@ -173,7 +173,14 @@ cas_ch6_sol7_ui <- function() {
 }
 
 # Nazwy zmiennych do zdań hipotezy (Ryc. 8.1).
-ch6_ind_var_names <- c(wzrost = "wzrost", waga = "waga", srednia_ocen = "średnia ocen", czas_dojazdu = "czas dojazdu")
+ch6_ind_var_names <- c(wzrost = "wzrost", waga = "waga", srednia_ocen = "średnia ocen", czas_dojazdu = "czas dojazdu",
+                       temp_sat = "temperatura powierzchni")
+# Grupy porównywane w Ryc. 8.1: studenci według płci albo, w scenariuszu kierunkowym (IDKiS),
+# punkty pomiaru temperatury powierzchni z satelity w terenach zielonych i w mieście.
+ch6_ind_groups <- function(var) {
+  if (var == "temp_sat") list(a = "Z", b = "M", h0 = "w terenach zielonych i w mieście", ha = "między terenami zielonymi a miastem")
+  else list(a = "K", b = "M", h0 = "u kobiet i mężczyzn", ha = "między grupami")
+}
 
 ch6_ui <- list(
   id = "ch-dwie-grupy", num = "08", title = "Test t dwóch grup",
@@ -312,20 +319,24 @@ ch6_ui <- list(
       (σ = 6 cm), a mężczyźni 178 cm (σ = 7 cm). Średnia waga to 62 kg i 78 kg.
       Średnia ocen i czas dojazdu od płci nie zależą, więc dla tych dwóch
       zmiennych H₀ jest prawdziwa. Suwak ustala liczebność każdej z dwóch
-      grup."),
+      grup. Ostatnia pozycja listy zmienia grupy: porównuje temperaturę
+      powierzchni zmierzoną z satelity w punktach położonych w terenach zielonych
+      (średnio 24 °C) i w mieście (średnio 27 °C). To zjawisko nazywa się miejską
+      wyspą ciepła."),
 
     figure_panel(
       label = "Ryc. 8.1",
       title = "Porównanie dwóch grup",
       # Losowanie, wykresy kroków, tabelę i opisy liczy przeglądarka (modules/figures.js, rycina s05_ind).
       lc_sf_figure("s05_ind", bare = TRUE, body = tagList(
-        lc_variants("ch6_ind_var", lapply(ch6_ind_var_names, function(var_name) {
+        lc_variants("ch6_ind_var", lapply(stats::setNames(names(ch6_ind_var_names), names(ch6_ind_var_names)), function(var) {
+          var_name <- ch6_ind_var_names[[var]]; g <- ch6_ind_groups(var)
           lc_formula_box(
             p(tags$b("Hipoteza formalna (dwustronna):")),
-            p(withMathJax("\\(H_0: \\mu_{K} = \\mu_{M}\\)"),
-              " — średnia zmiennej „", var_name, "” jest taka sama u kobiet i mężczyzn."),
-            p(withMathJax("\\(H_a: \\mu_{K} \\neq \\mu_{M}\\)"),
-              " — średnia zmiennej „", var_name, "” różni się między grupami.")
+            p(withMathJax(sprintf("\\(H_0: \\mu_{%s} = \\mu_{%s}\\)", g$a, g$b)),
+              " — średnia zmiennej „", var_name, "” jest taka sama ", g$h0, "."),
+            p(withMathJax(sprintf("\\(H_a: \\mu_{%s} \\neq \\mu_{%s}\\)", g$a, g$b)),
+              " — średnia zmiennej „", var_name, "” różni się ", g$ha, ".")
           )
         })),
         lc_step_widget("ch6_ind",
@@ -336,7 +347,8 @@ ch6_ui <- list(
                 "Wzrost" = "wzrost",
                 "Waga" = "waga",
                 "Średnia ocen" = "srednia_ocen",
-                "Czas dojazdu" = "czas_dojazdu"
+                "Czas dojazdu" = "czas_dojazdu",
+                "Temperatura powierzchni: zieleń a miasto (IDKiS)" = "temp_sat"
               ),
               selected = "wzrost"
             )),
@@ -406,15 +418,26 @@ ch6_ui <- list(
       różnic, a \\(n\\) to liczba par. Panel generuje wyniki studentów przed
       korepetycjami i po nich. Wyniki przed mają średnią 50 pkt i odchylenie
       12 pkt. Wynik po to wynik przed plus efekt ustawiony suwakiem plus losowy
-      szum o odchyleniu 8 pkt. Linie łączą dwa pomiary tej samej osoby."),
+      szum o odchyleniu 8 pkt. Linie łączą dwa pomiary tej samej osoby. Drugi
+      scenariusz bierze pary z danych satelitarnych: wskaźnik zieleni NDVI
+      (od 0 do 1, liczony ze zdjęcia) tych samych pól w czerwcu i w sierpniu,
+      po suszy. Suwak zmiany oznacza tam spadek NDVI w setnych: 5 to spadek
+      o 0.05."),
 
     figure_panel(
       label = "Ryc. 8.2",
       title = "Test t dla danych sparowanych: przed i po",
       lc_sf_figure("s05_paired",
         control = list(
-          lc_sf_slider("ch6_paired_n", "Liczba studentów", 10, 50, 25, 5),
-          lc_sf_slider("ch6_paired_effect", "Efekt interwencji (pkt)", 0, 15, 5, 1)
+          selectInput("ch6_paired_scenario", "Scenariusz", selectize = FALSE,
+            choices = c(
+              "Korepetycje: wynik przed i po" = "tutoring",
+              "Susza: zieleń pól w czerwcu i sierpniu (IDKiS)" = "ndvi"
+            ),
+            selected = "tutoring"
+          ),
+          lc_sf_slider("ch6_paired_n", "Liczba par", 10, 50, 25, 5),
+          lc_sf_slider("ch6_paired_effect", "Wielkość zmiany", 0, 15, 5, 1)
         ),
         toolbar = lc_sf_action("gen", "ch6_run_paired", "Generuj i testuj", variant = "solid"),
         ratio = "2.4/1", max_height = "300px",

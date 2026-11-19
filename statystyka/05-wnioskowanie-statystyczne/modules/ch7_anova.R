@@ -340,7 +340,7 @@ ch7_ui <- list(
     # ========================================================================
     lc_h2("ch7-akcja", "ANOVA w akcji"),
 
-    lc_p("Panel losuje dane z jednego z trzech scenariuszy, rysuje ", gloss("wykres pudełkowy", "wykresy pudełkowe"), "
+    lc_p("Panel losuje dane z jednego z czterech scenariuszy, rysuje ", gloss("wykres pudełkowy", "wykresy pudełkowe"), "
       w grupach i liczy ANOVA. Suwak n ustala liczebność całej próby; każda
       obserwacja trafia do grupy losowo, więc liczebności grup są zbliżone, ale
       nie równe. Panel liczy klasyczną ANOVA."),
@@ -355,7 +355,8 @@ ch7_ui <- list(
             choices = c(
               "Fermentacja jogurtu (TŻ)" = "fermentation",
               "Kierunki studiów" = "students",
-              "Stanowisko pracy a wypadki/stres (IB)" = "workplace"
+              "Stanowisko pracy a wypadki/stres (IB)" = "workplace",
+              "Pokrycie terenu z satelity (IDKiS)" = "landcover"
             ),
             selected = "fermentation"
           ),
@@ -389,6 +390,12 @@ ch7_ui <- list(
       wybierając α = 0.05. Brak podstaw do odrzucenia H₀ w pozostałych losowaniach
       nie dowodzi jednak, że średnie są równe, tylko że dane nie przemawiają
       przeciw tej hipotezie."),
+
+    lc_p("Scenariusz pokrycia terenu ma ten sam układ na danych satelitarnych.
+      Temperatura powierzchni (średnio 22 °C w lesie, 26 °C na polu i 30 °C
+      w zabudowie) i wskaźnik zieleni NDVI różnią się między typami terenu.
+      Zachmurzenie generator losuje niezależnie od typu terenu, więc dla niego
+      H₀ jest prawdziwa."),
 
     lc_p("Klasyczna ANOVA zakłada podobne wariancje w grupach. Gdy wariancje wyraźnie
       się różnią, stosuje się wariant Welcha, który tego założenia nie potrzebuje. Daje on
