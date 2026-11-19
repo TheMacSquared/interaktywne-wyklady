@@ -2,7 +2,7 @@
 # CHAPTER 1: Logika testowania hipotez
 # ============================================================================
 
-# Komentarz do błędnej interpretacji p-wartości (dwie odpowiedzi w pytaniu Ryc. 3.4).
+# Komentarz do błędnej interpretacji p-wartości (dwie odpowiedzi w pytaniu Ryc. 3.5).
 ch1_pvalue_wrong <- lc_status(
   lc_verdict(tags$strong("Nie."), type = "danger"),
   " p-wartość liczymy przy założeniu, że H₀ jest prawdziwa, więc nie jest
@@ -163,8 +163,8 @@ ch1d_ui <- list(
       Obu błędów nie da się wyeliminować jednocześnie: czulszy czujnik rzadziej
       przegapia pożar, ale częściej włącza się bez powodu, a mniej czuły odwrotnie."),
 
-    # PROTOTYP 5A (2026-11-09): czujka dymu, próg czułości
-    p5("5A"),
+    # Ryc. 3.1: czujka dymu, próg czułości (modules/proto05.R, rysunek: proto05.js)
+    ch1d_fig_smoke,
 
     lc_p("Test statystyczny ma tę samą strukturę. Stany świata to „H₀ prawdziwa”
       i „H₀ fałszywa”, decyzje to „nie odrzucamy H₀” i „odrzucamy H₀”."),
@@ -201,7 +201,7 @@ ch1d_ui <- list(
       prawdopodobieństwo wykrycia efektu, który naprawdę istnieje, nazywamy ",
       gloss("moc testu", "mocą testu"), "."),
 
-    # α, β i moc ze znacznikami (kolory jak na Ryc. 3.1)
+    # α, β i moc ze znacznikami (kolory jak na Ryc. 3.2)
     lc_formula_annotated(
       "\\begin{aligned}
       P(\\text{odrzucamy } H_0 \\mid H_0 \\text{ prawdziwa}) &= ⟦1|\\alpha⟧ \\\\
@@ -255,7 +255,7 @@ ch1d_ui <- list(
       poza wartości krytyczne."),
 
     figure_panel(
-      label = "Ryc. 3.1",
+      label = "Ryc. 3.2",
       title = "Moc testu i błędy",
       lc_sf_figure("s05_power",
         control = list(
@@ -323,7 +323,7 @@ ch1d_ui <- list(
       w obie strony. Hₐ mówi tylko, że telefon wpływa na koncentrację, bez
       wskazania kierunku, więc równie mocnym sygnałem byłaby różnica tej samej
       wielkości na korzyść grupy „biurko”. Wariant jednostronny, w którym liczy się
-      tylko jeden ogon, pokażemy na końcu tej części, przy Ryc. 3.5."),
+      tylko jeden ogon, pokażemy na końcu tej części, przy Ryc. 3.6."),
 
     lc_p("Definicję najłatwiej zrozumieć przez symulację. Wyobraźmy sobie, że
       eksperyment powtarzamy wiele razy w świecie, w którym telefon nie ma wpływu.
@@ -340,7 +340,7 @@ ch1d_ui <- list(
       co najmniej tak skrajne jak nasza."),
 
     figure_panel(
-      label = "Ryc. 3.2",
+      label = "Ryc. 3.3",
       title = "Powtórzone eksperymenty pod H₀",
       lc_sf_figure("s05_sim",
         toolbar = tagList(
@@ -374,7 +374,7 @@ ch1d_ui <- list(
       i wyniku 2.17."),
 
     figure_panel(
-      label = "Ryc. 3.3",
+      label = "Ryc. 3.4",
       title = "p-wartość jako pole ogonów",
       div(class = "ws-chart-wrap", `data-ws-id` = "ch1_pvalue_chart", `data-ws-type` = "pvalue",
         `data-stat` = 2.17,
@@ -391,7 +391,7 @@ ch1d_ui <- list(
       która z trzech interpretacji wyniku p = 0.03 jest poprawna."),
 
     figure_panel(
-      label = "Ryc. 3.4",
+      label = "Ryc. 3.5",
       title = "Co naprawdę oznacza p-wartość?",
       p("Załóżmy, że w badaniu wyszło p = 0.03. Które zdanie jest poprawną
         interpretacją?"),
@@ -434,11 +434,11 @@ ch1d_ui <- list(
     # ========================================================================
     lc_h2("ch1-ogony", "Jeden ogon czy dwa?"),
 
-    lc_p("Ryc. 3.3 pokazuje test dwustronny: p-wartość zbiera pole z obu ogonów,
+    lc_p("Ryc. 3.4 pokazuje test dwustronny: p-wartość zbiera pole z obu ogonów,
       bo Hₐ dopuszcza efekt w obie strony. W rozdziale 02 widzieliśmy, że test
       jednostronny patrzy tylko w stronę wskazaną przez Hₐ. Na rozkładzie
       statystyki testowej oznacza to jeden ogon. To samo dotyczy obszaru
-      odrzucenia z Ryc. 3.1: w teście dwustronnym α dzielimy na dwa ogony
+      odrzucenia z Ryc. 3.2: w teście dwustronnym α dzielimy na dwa ogony
       rozkładu, po α/2 na każdy, a w teście jednostronnym całe α leży w ogonie
       wskazanym przez Hₐ."),
     lc_p("Panel pokazuje rozkład statystyki testowej przy prawdziwej H₀
@@ -446,7 +446,7 @@ ch1d_ui <- list(
       a przerywane linie to wartości krytyczne, czyli jego granice."),
 
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.6",
       title = "Wizualizacja: jedno- i dwustronny",
       lc_toolbar(
         lc_segmented("ch2h_sided", "Typ testu", choices = c(
@@ -493,7 +493,7 @@ ch1d_ui <- list(
 
     # Jeden wynik naraz; środek = H₀, krańce = Hₐ, p jako liczba
     figure_panel(
-      label = "Ryc. 3.6",
+      label = "Ryc. 3.7",
       title = "p-wartość a α",
       width_mode = "text",
       ch1_palpha_fig()
@@ -546,7 +546,7 @@ ch1d_ui <- list(
       i przyjęty poziom istotności."),
 
     figure_panel(
-      label = "Ryc. 3.7",
+      label = "Ryc. 3.8",
       title = "Quiz: odrzucić czy nie?",
       ch1_quiz_fig()
     ),

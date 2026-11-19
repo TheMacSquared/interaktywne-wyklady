@@ -17,7 +17,7 @@ s05_reads_figure <- function(fig, ..., config = NULL) {
 # Rozdział 1
 # ---------------------------------------------------------------------------
 
-# Ryc. 3.6: jeden wynik na N(0, 1) pod H₀. Środek (|z| < 1.96) podpisany H₀,
+# Ryc. 3.7: jeden wynik na N(0, 1) pod H₀. Środek (|z| < 1.96) podpisany H₀,
 # krańce Hₐ; pole za ±|z| to p-wartość, jej liczba w odczycie.
 ch1_palpha_fig <- function() {
   cases <- c("2.17", "1.50")
@@ -60,7 +60,7 @@ ch1_palpha_fig <- function() {
     ratio = "2/1", max_height = "380px")
 }
 
-# Ryc. 3.7: scenariusze quizu „odrzucić czy nie?”.
+# Ryc. 3.8: scenariusze quizu „odrzucić czy nie?”.
 ch1_quiz_scenarios <- list(
   list(p = 0.003, alpha = 0.05, context = "Badanie wpływu kawy na czas reakcji: p = 0.003, α = 0.05"),
   list(p = 0.12, alpha = 0.05, context = "Czy notatki odręczne dają lepsze wyniki niż notatki na laptopie? p = 0.12, α = 0.05"),

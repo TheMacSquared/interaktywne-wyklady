@@ -85,7 +85,7 @@ header_extras <- tagList(
   includeScript(file.path(app_dir, "modules", "proto05.js")),
   # Panele rozdziałów 01–02 (ch1_panels.R, ch2_panels.R): sam CSS, bez JS
   tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "panels_ch12.css"), warn = FALSE), collapse = "\n"))),
-  # Wykresy rozkładu statystyki testowej (Ryc. 3.3, 3.5): ECharts przez lcCharts.
+  # Wykresy rozkładu statystyki testowej (Ryc. 3.4, 3.6): ECharts przez lcCharts.
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
   includeScript(file.path(shared_root, "lc_charts.js")),
   includeScript(file.path(app_dir, "modules", "ws_charts.js")),

@@ -176,7 +176,7 @@ ch2h_ui <- list(
       testu. Rozdziały 04–09 omawiają po kolei testy dla tych sytuacji."),
 
     # ========================================================================
-    # Jednostronny vs dwustronny (bez α; rozkład i wartości krytyczne: rozdz. 03, Ryc. 3.5)
+    # Jednostronny vs dwustronny (bez α; rozkład i wartości krytyczne: rozdz. 03, Ryc. 3.6)
     # ========================================================================
     lc_h2("ch2h-jedno-dwustronny", "Test jednostronny a dwustronny"),
 
@@ -216,7 +216,7 @@ ch2h_ui <- list(
     ),
 
     # Ryc. 2.5: jedno- i dwustronny bez α i bez rozkładu (modules/ch2_panels.R). Akapity
-    # o mechanizmie decyzji i dawna Ryc. 2.4 są od 19.11 w rozdziale 03 (Ryc. 3.5).
+    # o mechanizmie decyzji i dawna Ryc. 2.4 są od 19.11 w rozdziale 03 (Ryc. 3.6).
     ch2h_fig_side,
 
     lc_p("Wybór ma swoją cenę. Test jednostronny łatwiej wykrywa efekt

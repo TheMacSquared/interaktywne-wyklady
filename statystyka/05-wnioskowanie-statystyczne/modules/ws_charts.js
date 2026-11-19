@@ -1,7 +1,7 @@
 // Rozkład statystyki testowej N(0, 1) z zacienionymi ogonami (ECharts, lcCharts).
-//  - Ryc. 3.5 „Test jedno- i dwustronny” (ch1_logika.R, dawna Ryc. 2.4): obszar odrzucenia,
+//  - Ryc. 3.6 „Test jedno- i dwustronny” (ch1_logika.R, dawna Ryc. 2.4): obszar odrzucenia,
 //    wartość krytyczna z serwera (komunikat ws_sided_chart).
-//  - Ryc. 3.3 „p-wartość jako pole ogonów” (ch1_logika.R): oba ogony od |stat|.
+//  - Ryc. 3.4 „p-wartość jako pole ogonów” (ch1_logika.R): oba ogony od |stat|.
 // Kontener: .ws-chart-wrap[data-ws-id][data-ws-type="sided"|"pvalue"]
 //   [data-sided][data-crit] albo [data-stat], z <div class="lc-ec">. Atrybuty
 // dają stan początkowy, więc wykres rysuje się też bez serwera (wersja offline);
@@ -97,7 +97,7 @@
     if (live[msg.id]) draw(live[msg.id], latest[msg.id]);
     return true;
   };
-  // Ryc. 3.5 bez serwera: typ testu i α czytamy z kontrolek strony, wartość krytyczną
+  // Ryc. 3.6 bez serwera: typ testu i α czytamy z kontrolek strony, wartość krytyczną
   // liczy window.lcDist (shared/lc_dist.js), jak dawniej qnorm() na serwerze.
   function sidedFromControls() {
     var el = document.getElementById("ch2h_alpha"), q = window.lcDist && window.lcDist.qnorm;

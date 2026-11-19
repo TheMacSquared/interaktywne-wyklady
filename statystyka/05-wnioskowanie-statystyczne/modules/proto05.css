@@ -14,18 +14,34 @@
 .p5-sign { fill: var(--upwr-ink-soft); }
 .p5-sign-t { font: 700 12px var(--upwr-mono); fill: var(--upwr-surface); letter-spacing: .08em; }
 
-/* 5A: krzywe i pola */
+/* Ryc. 3.1 (dawny 5A): krzywe i pola */
 .p5-curve0 { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: 2; }
 .p5-curve1 { fill: none; stroke: var(--upwr-ink); stroke-width: 2; stroke-dasharray: 7 4; }
 .p5-area-fa { fill: var(--upwr-accent); opacity: .55; }
 .p5-area-miss { fill: var(--upwr-single-alt); opacity: .55; }
 .p5-thresh { stroke: var(--upwr-ink); stroke-width: 2; }
-.p5-handle { fill: var(--upwr-accent); stroke: var(--upwr-surface); stroke-width: 2; }
+.p5-thresh { stroke-dasharray: none; }
+.p5-zone-alarm { fill: var(--upwr-accent); opacity: .06; }
+.p5-zone-t { font: 600 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); }
+.p5-zone-t.is-alarm { font-weight: 700; letter-spacing: .08em; fill: var(--upwr-accent); }
+/* obwódka w kolorze tła: napis zostaje czytelny, gdy przechodzi przez niego linia progu */
+.p5-icon-t { font: 600 14px var(--upwr-sans); fill: var(--upwr-ink-soft); paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 5px; stroke-linejoin: round; }
+/* czujka pod sufitem */
 .p5-ceiling { fill: var(--upwr-rule); }
-.p5-detector { fill: var(--upwr-surface); stroke: var(--upwr-ink-subtle); }
-.p5-toaster { fill: var(--upwr-ink-subtle); }
-.p5-bread { fill: #c99a5b; }
+.p5-det-body { fill: var(--upwr-surface); stroke: var(--upwr-ink-soft); stroke-width: 1.6; }
+.p5-det-dome { fill: var(--upwr-surface-sunken); stroke: var(--upwr-ink-soft); stroke-width: 1.6; stroke-linejoin: round; }
+.p5-det-vent { stroke: var(--upwr-ink-subtle); stroke-width: 1.4; stroke-linecap: round; }
+.p5-det-led { fill: var(--upwr-accent); }
+/* toster i płomień (kolory materiałów) */
+.p5-toaster { fill: #8d959b; stroke: #5d656b; stroke-width: 1.4; }
+.p5-toaster-slot { fill: #3e4448; }
+.p5-toaster-base { fill: #5d656b; }
+.p5-toaster-dial { fill: #e9ecee; stroke: #5d656b; stroke-width: 1; }
+.p5-bread { fill: #d6a35c; stroke: #96652a; stroke-width: 1.4; }
+.p5-smoke { fill: none; stroke: var(--upwr-ink-subtle); stroke-width: 1.6; stroke-linecap: round; opacity: .55; }
 .p5-flame { fill: var(--upwr-accent); }
+.p5-flame-in { fill: #e58a2e; }
+.p5-flame-core { fill: #f6d77a; }
 
 /* 5D: żelki */
 .p5-bean { stroke: var(--upwr-ink-soft); stroke-width: 1; }

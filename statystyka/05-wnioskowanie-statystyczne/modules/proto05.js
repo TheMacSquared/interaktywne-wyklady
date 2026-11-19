@@ -3,7 +3,7 @@
 // Kontener: .p5-sc[data-config] wewnątrz widgetu krokowego (.lc-stepper)
 // albo wewnątrz .p5-host (jeden obraz z suwakiem, bez kroków).
 // config.kind:
-//   "smoke"   5A czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
+//   "smoke"   Ryc. 3.1 (dawny 5A) czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
 //   "jelly"   5D żelki i trądzik: jedna chmura wyników cięta na 20 podgrup kolorów (kadry)
 //   "tickets" 5E mandaty: świat bez związku → porównanie → χ² (kadry)
 // Sterowanie: [data-sc-act] go | m10 | m100 | m1000, [data-sc-opt] "nazwa:wartość",
@@ -95,45 +95,67 @@
   var KINDS = {};
 
   // =========================================================================
-  // 5A — CZUJKA DYMU: próg czułości (jeden obraz z „co, jeśli”)
+  // Ryc. 3.1 (dawny 5A) — CZUJKA DYMU: próg czułości (jeden obraz z „co, jeśli”)
   // =========================================================================
   KINDS.smoke = function (cfg, api) {
     var M0 = cfg.m0, S0 = cfg.s0, M1 = cfg.m1, S1 = cfg.s1, LO = 0, HI = cfg.xmax || 80;
     var st = { t: cfg.t || 32 };
-    var PL = 60, PR = 610, PT = 70, PB = 300, YMAX = 1.1 * Math.max(dnorm(M0, M0, S0), dnorm(M1, M1, S1));
+    var PL = 60, PR = 610, PT = 118, PB = 350, YMAX = 1.1 * Math.max(dnorm(M0, M0, S0), dnorm(M1, M1, S1));
     var X = function (v) { return PL + (PR - PL) * (v - LO) / (HI - LO); };
     var Y = function (d) { return PB - (PB - PT) * d / YMAX; };
     var f0 = function (v) { return dnorm(v, M0, S0); }, f1 = function (v) { return dnorm(v, M1, S1); };
 
+    // Toster z dwiema grzankami i smużką dymu; środek obudowy w (x, y).
     function toast(g, x, y) {
-      svg("rect", { x: x - 16, y: y - 10, width: 32, height: 20, rx: 6, class: "p5-toaster" }, g);
-      svg("rect", { x: x - 9, y: y - 16, width: 7, height: 8, rx: 2, class: "p5-bread" }, g);
-      svg("rect", { x: x + 2, y: y - 16, width: 7, height: 8, rx: 2, class: "p5-bread" }, g);
+      svg("path", { d: "M" + (x - 9) + " " + (y - 24) + " q-5 -5 0 -10 q5 -5 0 -10 M" + (x + 8) + " " + (y - 24) + " q-5 -5 0 -10 q5 -5 0 -10", class: "p5-smoke" }, g);
+      svg("rect", { x: x - 15, y: y - 21, width: 12, height: 16, rx: 3.5, class: "p5-bread" }, g);
+      svg("rect", { x: x + 3, y: y - 21, width: 12, height: 16, rx: 3.5, class: "p5-bread" }, g);
+      svg("rect", { x: x - 23, y: y - 9, width: 46, height: 25, rx: 8, class: "p5-toaster" }, g);
+      svg("rect", { x: x - 17, y: y - 9, width: 34, height: 3, rx: 1.5, class: "p5-toaster-slot" }, g);
+      svg("rect", { x: x + 23, y: y - 3, width: 5, height: 9, rx: 2, class: "p5-toaster-base" }, g);
+      svg("circle", { cx: x - 12, cy: y + 6, r: 3.2, class: "p5-toaster-dial" }, g);
+      svg("rect", { x: x - 26, y: y + 15, width: 52, height: 4.5, rx: 2, class: "p5-toaster-base" }, g);
     }
+    // Płomień w trzech warstwach; środek w (x, y).
     function flame(g, x, y) {
-      svg("path", { d: "M" + x + " " + (y + 12) + " C" + (x - 14) + " " + (y + 10) + " " + (x - 10) + " " + (y - 6) + " " + x + " " + (y - 16) +
-        " C" + (x + 2) + " " + (y - 6) + " " + (x + 14) + " " + (y - 2) + " " + x + " " + (y + 12) + " Z", class: "p5-flame" }, g);
+      svg("path", { d: "M" + x + " " + (y + 20) + " C" + (x - 21) + " " + (y + 18) + " " + (x - 18) + " " + (y - 4) + " " + (x - 4) + " " + (y - 23) +
+        " C" + (x - 4) + " " + (y - 10) + " " + (x + 4) + " " + (y - 8) + " " + (x + 6) + " " + (y - 16) +
+        " C" + (x + 18) + " " + (y - 4) + " " + (x + 21) + " " + (y + 16) + " " + x + " " + (y + 20) + " Z", class: "p5-flame" }, g);
+      svg("path", { d: "M" + x + " " + (y + 18) + " C" + (x - 12) + " " + (y + 16) + " " + (x - 10) + " " + (y + 3) + " " + (x - 1) + " " + (y - 8) +
+        " C" + (x + 2) + " " + (y + 1) + " " + (x + 11) + " " + (y + 5) + " " + x + " " + (y + 18) + " Z", class: "p5-flame-in" }, g);
+      svg("path", { d: "M" + x + " " + (y + 17) + " C" + (x - 6) + " " + (y + 15) + " " + (x - 4) + " " + (y + 8) + " " + x + " " + (y + 3) +
+        " C" + (x + 3) + " " + (y + 8) + " " + (x + 6) + " " + (y + 13) + " " + x + " " + (y + 17) + " Z", class: "p5-flame-core" }, g);
     }
-    function detector(g, alarmish) {
-      svg("rect", { x: 14, y: 12, width: 612, height: 6, class: "p5-ceiling" }, g);
-      svg("rect", { x: 18, y: 18, width: 44, height: 10, rx: 3, class: "p5-detector" }, g);
-      lampAt(g, 40, 36, alarmish ? true : null, 5);
+    // Czujka wisi pod sufitem dokładnie nad progiem: próg to miejsce, w którym decyduje.
+    function detector(g, x) {
+      svg("rect", { x: 14, y: 10, width: 612, height: 7, class: "p5-ceiling" }, g);
+      svg("rect", { x: x - 36, y: 17, width: 72, height: 11, rx: 4, class: "p5-det-body" }, g);
+      svg("path", { d: "M" + (x - 30) + " 28 Q" + x + " 58 " + (x + 30) + " 28 Z", class: "p5-det-dome" }, g);
+      [-14, -7, 7, 14].forEach(function (dx) {
+        svg("line", { x1: x + dx, x2: x + dx * 0.8, y1: 31, y2: 37 - Math.abs(dx) * 0.12, class: "p5-det-vent" }, g);
+      });
+      svg("circle", { cx: x, cy: 35, r: 7, class: "lc-sc-halo" }, g);
+      svg("circle", { cx: x, cy: 35, r: 3.6, class: "p5-det-led" }, g);
     }
 
     function render() {
       var g = api.stage; g.textContent = ""; api.low.textContent = "";
       var t = st.t, fa = 1 - pnorm((t - M0) / S0), miss = pnorm((t - M1) / S1);
-      detector(g, false);
+      var tx = X(t);
+      svg("rect", { x: tx, y: 46, width: PR - tx, height: PB - 46, class: "p5-zone-alarm" }, g);
       svg("path", { d: areaPath(X, Y, f0, t, HI), class: "p5-area-fa" }, g);
       svg("path", { d: areaPath(X, Y, f1, LO, t), class: "p5-area-miss" }, g);
       svg("path", { d: curvePath(X, Y, f0, LO, HI), class: "p5-curve0" }, g);
       svg("path", { d: curvePath(X, Y, f1, LO, HI), class: "p5-curve1" }, g);
-      toast(g, X(M0), Y(f0(M0)) - 22);
-      flame(g, X(M1), Y(f1(M1)) - 24);
-      var tx = X(t);
-      svg("line", { x1: tx, x2: tx, y1: PT - 20, y2: PB, class: "p5-thresh" }, g);
-      svg("circle", { cx: tx, cy: PT - 20, r: 7, class: "p5-handle" }, g);
-      svg("text", { x: tx + 12, y: PT - 15, class: "lc-sc-th-t" }, g, "próg");
+      var y0 = Y(f0(M0)) - 30, y1 = Y(f1(M1)) - 34;
+      toast(g, X(M0), y0);
+      svg("text", { x: X(M0) + 36, y: y0 + 4, class: "p5-icon-t" }, g, "zwykły dzień");
+      flame(g, X(M1), y1);
+      svg("text", { x: X(M1) + 30, y: y1 + 6, class: "p5-icon-t" }, g, "pożar");
+      svg("line", { x1: tx, x2: tx, y1: 43, y2: PB, class: "p5-thresh" }, g);
+      detector(g, tx);
+      svg("text", { x: tx - 44, y: 40, "text-anchor": "end", class: "p5-zone-t" }, g, "czujka milczy");
+      svg("text", { x: tx + 44, y: 40, class: "p5-zone-t is-alarm" }, g, "ALARM");
       axisX(g, PL, PR, PB, LO, HI, 10, 0, "odczyt czujki (gęstość dymu, jedn. umowne)");
       var days = Math.round(365 * fa);
       readout(g, PL, PB + 62, [

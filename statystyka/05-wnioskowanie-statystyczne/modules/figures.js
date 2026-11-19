@@ -6,11 +6,11 @@
 //
 // Rozdział 1 (logika testu):
 //   s05_case   — Ryc. 1.2: eksperyment „telefon w plecaku / na biurku” (losowanie, pudełka)
-//   s05_sim    — Ryc. 3.2: powtórzone eksperymenty pod H₀ (histogram różnic)
-//   s05_power  — Ryc. 3.1: moc testu i błędy (α, odległość, n)
-//   s05_quiz   — Ryc. 3.7: quiz „odrzucić czy nie?” (bez wykresu)
+//   s05_sim    — Ryc. 3.3: powtórzone eksperymenty pod H₀ (histogram różnic)
+//   s05_power  — Ryc. 3.2: moc testu i błędy (α, odległość, n)
+//   s05_quiz   — Ryc. 3.8: quiz „odrzucić czy nie?” (bez wykresu)
 //
-// Wynik eksperymentu z Ryc. 1.2 jest wspólny dla Ryc. 3.2 (store.caseData);
+// Wynik eksperymentu z Ryc. 1.2 jest wspólny dla Ryc. 3.3 (store.caseData);
 // po nowym losowaniu rycina zależna dostaje zdarzenie lc:sf-redraw.
 // Funkcje liczące są w window.lcS05 (testy: tests/js/stat05.test.js).
 (function () {

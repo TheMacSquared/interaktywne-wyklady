@@ -13,7 +13,7 @@ system("Rscript scripts/build_static.R statystyka/05-wnioskowanie-statystyczne")
 
 | Rozdz. | Element | Status |
 |---|---|---|
-| 03 | Prototyp 5A „Czujka dymu w akademiku” | przyjęty (9.11), do poprawy grafiki; `type-error.jpg` zostaje |
+| 03 | Prototyp 5A „Czujka dymu w akademiku” | przyjęty (9.11); wdrożony 19.11 jako Ryc. 3.1 po poprawie grafiki (czujka nad progiem, toster, płomień, strefa alarmu); `type-error.jpg` zostaje |
 | 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | odrzucony (9.11), usunięty |
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | odrzucony (9.11), usunięty |
 | 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | przyjęty (9.11) |
@@ -157,3 +157,10 @@ Usunięte: lista opisująca eksperyment (Ryc. 1.1), „Krok 3” z ramką hipote
 (Ryc. 2.2), szkielet pary hipotez i akapit o parach znaków (Ryc. 2.3 i 2.4).
 Zostają jako rozwinięcie: akapity „Krok 1” i „Krok 2”, lista pięciu błędów
 (nazwy błędów, HARKing, uzasadnienie zamiany ról), tabela typów testu.
+
+### 9. Numeracja rozdziału 03 po wdrożeniu 5A (19.11)
+
+Czujka dymu to Ryc. 3.1, pozostałe ryciny przesunięte o jeden: moc i błędy 3.2,
+symulacja pod H₀ 3.3, pole ogonów 3.4, pytanie o p-wartość 3.5, jeden ogon czy
+dwa (dawna 2.4) 3.6, p-wartość a α 3.7, quiz 3.8. Wcześniejsze wpisy w tym pliku
+i w PUNKTY-STOP-PROPOZYCJA.md używają numerów sprzed zmiany.

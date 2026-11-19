@@ -3,8 +3,9 @@
 # Każdy prototyp ma złotą plakietkę „Prototyp <nr> · <rodzaj>”, jak w wykładzie 04.
 # Rysunek i obliczenia: modules/proto05.js (+ proto05.css), działają bez serwera R.
 # Lista propozycji: PUNKTY-STOP-PROPOZYCJA.md, decyzje: KOLEJKA-ZATWIERDZANIA.md.
-# 5B (dubel Ryc. 3.1), 5C (rozkład r z powtórzonych grupek) i 5E-2 odrzucone 2026-11-09.
-# Wstawki w tekście: p5("5A"), p5("5D"), p5("5E"); teksty kroków: p5_server().
+# 5B (dubel ryciny mocy, dziś Ryc. 3.2), 5C (rozkład r z powtórzonych grupek) i 5E-2 odrzucone 2026-11-09.
+# Wstawki w tekście: p5("5D"), p5("5E"). Czujka dymu (dawny 5A) jest stałą Ryc. 3.1
+# (ch1d_fig_smoke); jej rysunek zostaje w proto05.js, kind "smoke".
 # Wymaga: lecture_layout.R (lc_step_widget, lc_toolbar, figure_panel), helpers.R.
 
 p5_panel <- function(num, kind, title, ..., width_mode = "text") {
@@ -53,11 +54,11 @@ p5_static <- function(id, config, name, label, min, max, value, step = 1) {
   )
 }
 
-# --- 5A: czujka dymu (rozdz. 03, przed tabelą błędów) -------------------------
-p5_5A_ui <- p5_panel("5A", "scena", "Czujka dymu w akademiku",
+# --- Ryc. 3.1 (dawny prototyp 5A, wdrożony 2026-11-19): czujka dymu, przed tabelą błędów ---
+ch1d_fig_smoke <- figure_panel(label = "Ryc. 3.1", width_mode = "text", title = "Czujka dymu w akademiku",
   p5_static("p5_smoke",
     config = list(kind = "smoke", m0 = 20, s0 = 6, m1 = 45, s1 = 8, xmax = 80, t = 32,
-      height = 410,
+      height = 460,
       aria = "Dwa rozkłady odczytu czujki dymu: zwykłe dni z tostami i prysznicem oraz pożar. Przesuwany próg czułości zmienia odsetek fałszywych alarmów i przeoczonych pożarów"),
     name = "t", label = "Próg czułości czujki", min = 10, max = 60, value = 32, step = 1)
 )

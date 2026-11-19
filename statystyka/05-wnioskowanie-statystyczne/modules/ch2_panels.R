@@ -11,7 +11,7 @@
 #   ch2h_fig_axis    Ryc. 2.4  Dwie hipotezy dzielą oś parametru  galeria
 #   ch2h_fig_side    Ryc. 2.5  Jedno słowo w pytaniu, inny test   galeria, bez α
 #   ch2h_fig_errors  Ryc. 2.6  Popraw hipotezę                    galeria błędów
-# Dawna Ryc. 2.4 (obszar odrzucenia, α) jest w rozdziale 03 jako Ryc. 3.5.
+# Dawna Ryc. 2.4 (obszar odrzucenia, α) jest w rozdziale 03 jako Ryc. 3.6.
 
 .p5_sub <- function(sym, idx) HTML(sprintf("%s<sub>%s</sub>", sym, idx))
 
