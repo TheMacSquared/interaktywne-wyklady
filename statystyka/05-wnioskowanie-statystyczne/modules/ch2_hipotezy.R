@@ -76,15 +76,6 @@ ch2h_ui <- list(
       tags$em("czy w ogóle"), " istnieje wpływ, i nie przesądza, czy telefon
       koncentrację obniża, czy podnosi. Hₐ mówi więc po prostu, że średnie się
       różnią, a jej znakiem jest „≠”."),
-    lc_p(strong("Krok 3 — sformułowanie:")),
-    lc_formula_box(
-      p(tags$b("H₀ (stan domyślny):"),
-        " średnia koncentracja w grupie z telefonem na biurku jest równa
-        średniej koncentracji w grupie z telefonem w plecaku."),
-      p(tags$b("Hₐ (to, co chcemy wykazać):"),
-        " średnia koncentracja w grupie z telefonem na biurku różni się od
-        średniej koncentracji w grupie z telefonem w plecaku.")
-    ),
     lc_p("H₀ i Hₐ są przeciwstawne i razem wyczerpują wszystkie możliwości:
       średnie albo są równe, albo się różnią. Trzeciej możliwości nie ma, więc
       odrzucenie jednej hipotezy przemawia za drugą. Tej zasady pilnujemy przy
@@ -129,16 +120,8 @@ ch2h_ui <- list(
     # Ryc. 2.3: przepis na parę hipotez (modules/ch2_panels.R)
     ch2h_fig_recipe,
 
-    lc_formula_box(
-      p(tags$b("H₀:"), " parametr  =  /  ≤  /  ≥  wartość odniesienia"),
-      p(tags$b("Hₐ:"), " parametr  ≠  /  >  /  <  wartość odniesienia")
-    ),
     # Ryc. 2.4: dwie hipotezy dzielą oś parametru (modules/ch2_panels.R)
     ch2h_fig_axis,
-
-    lc_p("Znaki łączą się w pary: równości w H₀ odpowiada „≠” w Hₐ, znakowi
-      „≤” odpowiada „>”, a znakowi „≥” odpowiada „<”. W każdej parze dwa znaki
-      razem pokrywają wszystkie możliwe wartości parametru."),
 
     # ========================================================================
     # WIDGET 1: Galeria przykładów (język naturalny) — część dwustronna

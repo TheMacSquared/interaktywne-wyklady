@@ -149,7 +149,11 @@ Kod: `modules/proto05_ch1.R`, `proto05_ch1.css`, bez JS. Oba przyjęte 19.11;
 
 Prototypy 5S, 5T, 5P, 5L, 5Q, 5M, 5R, 5O są stałymi rycinami z numerami
 (tabela na górze). Kod: `modules/ch1_panels.R`, `modules/ch2_panels.R`,
-`modules/panels_ch12.css` (dawne `proto05_ch1.*`, `proto05_ch2.*`). Tekst obok
-paneli został (lista opisująca eksperyment, akapity „Krok 1–3”, szkielet pary
-hipotez, lista pięciu błędów); do decyzji, czy go skracać. W `proto05.*`
+`modules/panels_ch12.css` (dawne `proto05_ch1.*`, `proto05_ch2.*`). W `proto05.*`
 zostają prototypy 5A, 5D, 5E (rozdz. 03, 07, 09).
+
+Tekst obok paneli (zasada z 19.11: powtórzenie panelu znika, rozwinięcie zostaje).
+Usunięte: lista opisująca eksperyment (Ryc. 1.1), „Krok 3” z ramką hipotez słownych
+(Ryc. 2.2), szkielet pary hipotez i akapit o parach znaków (Ryc. 2.3 i 2.4).
+Zostają jako rozwinięcie: akapity „Krok 1” i „Krok 2”, lista pięciu błędów
+(nazwy błędów, HARKing, uzasadnienie zamiany ról), tabela typów testu.

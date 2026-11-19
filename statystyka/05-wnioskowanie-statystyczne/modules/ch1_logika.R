@@ -41,13 +41,6 @@ ch1_ui <- list(
 
     lc_p("Wyobraź sobie eksperyment przeprowadzony na uczelni, inspirowany
       badaniem Ward i in. (2017):"),
-    tags$ul(
-      tags$li("80 studentów losowo przydzielonych do dwóch grup po 40 osób"),
-      tags$li(tags$strong("Grupa A:"), " telefon schowany w plecaku"),
-      tags$li(tags$strong("Grupa B:"), " telefon leży na biurku (ekranem w dół, wyciszony)"),
-      tags$li("Wszyscy rozwiązują ten sam test koncentracji (0–100 punktów)")
-    ),
-
     # Ryc. 1.1: przebieg eksperymentu w kadrach (modules/ch1_panels.R)
     ch1_fig_case,
 
