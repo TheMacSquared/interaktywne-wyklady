@@ -29,9 +29,10 @@ test("rozdział 1: eksperyment, powtórzenia pod H₀ i p z symulacji", () => {
 test("rozdział 1: moc testu jak w R i decyzja w quizie", () => {
   // R: se <- 13 / sqrt(40); lo <- 70 + qnorm(.025) * se; hi <- 70 + qnorm(.975) * se
   //    pnorm(lo, 77, se) + 1 - pnorm(hi, 77, se)  # 0.925850528
-  close(Z.power(0.05, 7, 40).power, 0.925850528, 1e-7, "moc 7 pkt, n = 40");
+  // Dwie grupy po n osób, σ = 13: se = 13·√(2/n). R: pnorm(lo, d, se) + 1 - pnorm(hi, d, se).
+  close(Z.power(0.05, 7, 40).power, 0.672969082, 1e-7, "moc 7 pkt, n = 40 w grupie");
   close(Z.power(0.05, 0, 40).power, 0.05, 1e-7, "bez efektu moc = α");
-  close(Z.power(0.01, 3, 100).power, 0.3942975, 1e-6, "moc 3 pkt, n = 100, α = 0.01");   // R: 0.3942975
+  close(Z.power(0.01, 3, 100).power, 0.172586378, 1e-6, "moc 3 pkt, n = 100 w grupie, α = 0.01");
   assert.equal(Z.quizAnswer({ p: 0.048, alpha: 0.05 }), "reject");
   assert.equal(Z.quizAnswer({ p: 0.06, alpha: 0.01 }), "fail_to_reject");
   assert.equal(Z.quizAnswer({ p: 0.05, alpha: 0.05 }), "fail_to_reject");            // p = α: nie odrzucamy

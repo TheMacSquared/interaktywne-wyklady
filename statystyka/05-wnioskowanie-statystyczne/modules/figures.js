@@ -7,8 +7,8 @@
 // Rozdział 1 (logika testu):
 //   s05_case   — Ryc. 1.2: eksperyment „telefon w plecaku / na biurku” (losowanie, pudełka)
 //   s05_sim    — Ryc. 3.3: powtórzone eksperymenty pod H₀ (histogram różnic)
-//   s05_power  — Ryc. 3.2: moc testu i błędy (α, odległość, n)
-//   s05_quiz   — Ryc. 3.8: quiz „odrzucić czy nie?” (bez wykresu)
+//   s05_power  — Ryc. 3.2: moc testu i błędy dla dwóch grup (α, różnica, n w grupie)
+//   s05_quiz   — Ryc. 3.9: quiz „odrzucić czy nie?” (bez wykresu)
 //
 // Wynik eksperymentu z Ryc. 1.2 jest wspólny dla Ryc. 3.3 (store.caseData);
 // po nowym losowaniu rycina zależna dostaje zdarzenie lc:sf-redraw.
@@ -37,10 +37,11 @@
   function simP(diffs, obs) {
     return diffs.filter(function (d) { return Math.abs(d) >= Math.abs(obs); }).length / diffs.length;
   }
-  // Moc testu dwustronnego dla średniej: H₀ μ = 70, σ = 13, prawdziwa średnia 70 + odległość.
+  // Moc testu dwustronnego dla różnicy średnich dwóch grup po n osób (σ = 13 w każdej),
+  // jak w eksperymencie z telefonem: H₀ różnica = 0, prawdziwa różnica = effect.
   function power(alpha, effect, n) {
-    var se = 13 / Math.sqrt(n), mu0 = 70, mu1 = mu0 + effect;
-    var lo = mu0 + D.qnorm(alpha / 2) * se, hi = mu0 + D.qnorm(1 - alpha / 2) * se;
+    var se = 13 * Math.sqrt(2 / n), mu0 = 0, mu1 = effect;
+    var lo = D.qnorm(alpha / 2) * se, hi = D.qnorm(1 - alpha / 2) * se;
     return { se: se, mu0: mu0, mu1: mu1, lo: lo, hi: hi, power: D.pnorm(lo, mu1, se) + (1 - D.pnorm(hi, mu1, se)) };
   }
   // Decyzja w quizie: odrzucamy, gdy p < α.
@@ -323,7 +324,8 @@
   figures.s05_power = {
     draw: function (v, P, k, state, vals) {
       var w = power(Number(vals.ch1_alpha), Number(vals.ch1_effect), Number(vals.ch1_power_n));
-      var a = w.mu0 - 4 * w.se, b = Math.max(w.mu1, w.mu0) + 4 * w.se, h0 = [], h1 = [], i, x;
+      // Stały zakres osi: większa próba widocznie zwęża obie krzywe.
+      var a = -16, b = 30, h0 = [], h1 = [], i, x;
       for (i = 0; i < 500; i++) { x = a + (b - a) * i / 499; h0.push([x, D.dnorm(x, w.mu0, w.se)]); h1.push([x, D.dnorm(x, w.mu1, w.se)]); }
       // Ogony poza wartościami krytycznymi: pod H₀ obszar odrzucenia (α), pod Hₐ moc.
       function tails(curve, mean, color) {
@@ -338,9 +340,9 @@
           { type: "line", data: h1, color: P.accent, width: 2.6 },
           { type: "vline", x: w.lo, color: P.secondary, width: 1.4, dash: [6, 5] },
           { type: "vline", x: w.hi, color: P.secondary, width: 1.4, dash: [6, 5] }]),
-        legend: [{ color: P.niebo, text: "H₀: μ = 70" }, { color: P.accent, text: "Hₐ: μ = 70 + odległość" }],
-        xName: "Średnia koncentracja w próbie", yName: "Gęstość",
-        aria: "Rozkłady średniej z próby pod hipotezą zerową i alternatywną z obszarami odrzucenia i mocą testu." };
+        legend: [{ color: P.niebo, text: "H₀: telefon nie wpływa (różnica = 0)" }, { color: P.accent, text: "Hₐ: telefon obniża wynik o ustawioną różnicę" }],
+        xName: "Różnica średnich w próbie: plecak − biurko (pkt)", yName: "Gęstość",
+        aria: "Rozkłady różnicy średnich dwóch grup pod hipotezą zerową i alternatywną z obszarami odrzucenia i mocą testu." };
     },
     update: function (el) {
       var num = function (id) { return Number(el.querySelector("#" + id).value); };

@@ -2,7 +2,7 @@
 #
 # Bez liczenia i bez własnego JS: kadry prowadzi lc_step_widget(), a ruch i odsłanianie
 # robi CSS z atrybutu data-lc-step (klasy p5q-fK: element widoczny od kroku K).
-# Style: modules/panels_ch12.css. Powstały jako prototypy 5S i 5T, przyjęte 2026-11-19.
+# Style: modules/panels.css. Powstały jako prototypy 5S i 5T, przyjęte 2026-11-19.
 #
 #   ch1_fig_case   Ryc. 1.1  Eksperyment: telefon a koncentracja   kadry (case)
 #   ch1_fig_court  Ryc. 1.3  Sąd i test statystyczny               kadry; zastąpił tabelę analogii

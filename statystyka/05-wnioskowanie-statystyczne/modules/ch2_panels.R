@@ -2,7 +2,7 @@
 #
 # Panele przerywające tekst rozdziału. Bez liczenia i bez własnego JS: kroki,
 # przełączniki i odsłanianie robią klocki layoutu (lc_step_widget, lc_segmented +
-# lc_variants, lc_toggle_*), rysunki SVG składa R. Style: modules/panels_ch12.css.
+# lc_variants, lc_toggle_*), rysunki SVG składa R. Style: modules/panels.css.
 # Powstały jako prototypy 5P, 5L, 5Q, 5M, 5R, 5O, przyjęte 2026-11-19.
 #
 #   ch2h_fig_ask     Ryc. 2.1  O co naprawdę pyta pytanie?        scena (trzy pytania z tekstu)
@@ -177,7 +177,7 @@ ch2h_fig_ask <- figure_panel(label = "Ryc. 2.1", width_mode = "text", title = "O
 # --- Ryc. 2.2: rozbiór pytania (kadry) -----------------------------------------------
 # Bez kadru z symbolami (decyzja 19.11: za wcześnie; zapis formalny jest w następnej sekcji).
 # Jeden układ, kolejne kadry odsłaniają elementy (klasy p5q-f2 … p5q-f4 i atrybut
-# data-lc-step widgetu krokowego; panels_ch12.css).
+# data-lc-step widgetu krokowego; panels.css).
 ch2h_fig_parse <- figure_panel(label = "Ryc. 2.2", width_mode = "text", title = "Rozbiór pytania: telefon a koncentracja",
   lc_step_widget("p5_parse",
     steps = c("Pytanie", "Parametr", "Relacja", "Hipotezy"),

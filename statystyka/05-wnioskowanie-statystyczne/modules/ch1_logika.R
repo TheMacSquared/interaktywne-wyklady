@@ -236,22 +236,24 @@ ch1d_ui <- list(
 
     lc_p("Definicje \\(\\alpha\\) i \\(\\beta\\) łatwiej zrozumieć na wykresie.
       Panel poniżej rysuje dwa ", gloss("rozkład próbkowy", "rozkłady próbkowe"),
-      " średniej koncentracji. Niebieska krzywa to rozkład średniej z próby, gdy
-      prawdziwa jest H₀ i średnia w populacji wynosi 70 pkt. Burgundowa krzywa
-      to rozkład średniej, gdy prawdziwa jest Hₐ i średnia jest większa o różnicę
-      ustawioną suwakiem. Odchylenie standardowe wyników w populacji wynosi
-      w panelu 13 pkt, więc szerokość obu krzywych wyznacza ",
-      gloss("błąd standardowy"), " \\(13/\\sqrt{n}\\)."),
+      " różnicy średnich w eksperymencie z telefonem: średnia grupy „plecak” minus
+      średnia grupy „biurko”. Niebieska krzywa to rozkład tej różnicy, gdy
+      prawdziwa jest H₀ i telefon nie wpływa na koncentrację: różnice układają
+      się wokół zera. Burgundowa krzywa to rozkład różnicy, gdy prawdziwa jest Hₐ
+      i telefon na biurku obniża średni wynik o wartość ustawioną suwakiem.
+      Odchylenie standardowe wyników wynosi w panelu 13 pkt w każdej grupie,
+      więc szerokość obu krzywych wyznacza ", gloss("błąd standardowy"),
+      " różnicy \\(13\\sqrt{2/n}\\), gdzie n to liczebność jednej grupy."),
 
     lc_p("Przerywane pionowe linie to ", gloss("wartość krytyczna", "wartości krytyczne"),
       ". Wyznacza je samo \\(\\alpha\\): w ", gloss("test dwustronny", "teście dwustronnym"),
-      " odcinają po \\(\\alpha/2\\) w każdym ogonie niebieskiej krzywej. Średnia
-      z próby, która wypadnie poza nimi, trafia do ",
+      " odcinają po \\(\\alpha/2\\) w każdym ogonie niebieskiej krzywej. Różnica
+      średnich, która wypadnie poza nimi, trafia do ",
       gloss("obszar odrzucenia", "obszaru odrzucenia"), " i prowadzi do odrzucenia
       H₀. Burgundowe pole pod niebieską krzywą w obu ogonach to \\(\\alpha\\).
       Zielone pole pod burgundową krzywą poza liniami krytycznymi to moc.
       Niezacieniowana część burgundowej krzywej między liniami to \\(\\beta\\):
-      prawdopodobieństwo, że mimo prawdziwego efektu średnia z próby nie wyjdzie
+      prawdopodobieństwo, że mimo prawdziwego efektu różnica z próby nie wyjdzie
       poza wartości krytyczne."),
 
     figure_panel(
@@ -260,8 +262,8 @@ ch1d_ui <- list(
       lc_sf_figure("s05_power",
         control = list(
           lc_sf_slider("ch1_alpha", "α (poziom istotności)", 0.01, 0.20, 0.05, 0.01),
-          lc_sf_slider("ch1_effect", "Odległość μ od μ₀ (pkt)", 0, 15, 7, 1),
-          lc_sf_slider("ch1_power_n", "n (liczebność próby)", 10, 200, 40, 5)
+          lc_sf_slider("ch1_effect", "Różnica średnich w populacji (pkt)", 0, 15, 7, 1),
+          lc_sf_slider("ch1_power_n", "n w każdej grupie", 10, 200, 40, 5)
         ),
         toolbar = lc_readouts(
           lc_readout("Moc", lc_sf_value("power_value"), color = col_accept),
@@ -271,13 +273,15 @@ ch1d_ui <- list(
     ),
 
     lc_p("Przy ustawieniach startowych (\\(\\alpha = 0.05\\), różnica 7 pkt,
-      n = 40) błąd standardowy wynosi 2.06 pkt, a wartości krytyczne leżą przy
-      65.97 i 74.03 pkt. Moc wynosi 92.6%, a \\(\\beta\\) 7.4%. Trzy suwaki
-      pokazują trzy mechanizmy. Zmniejszenie \\(\\alpha\\) do 0.01 odsuwa wartości
-      krytyczne od środka: fałszywych alarmów jest mniej, ale moc spada do 79.7%.
-      Mniejsza różnica zbliża krzywe do siebie: przy 3 pkt moc wynosi tylko 30.9%.
-      Większa próba zwęża obie krzywe, bo błąd standardowy maleje jak
-      \\(1/\\sqrt{n}\\): przy n = 10 moc to 39.9%, przy n = 100 ponad 99.9%."),
+      n = 40 w każdej grupie) błąd standardowy różnicy wynosi 2.91 pkt,
+      a wartości krytyczne leżą przy -5.70 i 5.70 pkt. Moc wynosi 67.3%,
+      a \\(\\beta\\) 32.7%: mniej więcej co trzecie powtórzenie eksperymentu
+      nie wykryje różnicy, która naprawdę istnieje. Trzy suwaki pokazują trzy
+      mechanizmy. Zmniejszenie \\(\\alpha\\) do 0.01 odsuwa wartości krytyczne
+      od środka: fałszywych alarmów jest mniej, ale moc spada do 43.3%. Mniejsza
+      różnica zbliża krzywe do siebie: przy 3 pkt moc wynosi tylko 17.8%. Większa
+      próba zwęża obie krzywe, bo błąd standardowy maleje jak
+      \\(1/\\sqrt{n}\\): przy n = 10 moc to 22.6%, przy n = 100 już 96.8%."),
 
     lc_p("Wynika z tego ten sam kompromis co przy czujniku dymu. Przy ustalonej
       próbie zmniejszenie \\(\\alpha\\) zwiększa \\(\\beta\\). Oba błędy naraz
@@ -285,15 +289,10 @@ ch1d_ui <- list(
       badaniem, tak żeby moc dla efektu, który uznajemy za praktycznie ważny,
       była wystarczająca."),
 
-    lc_p("Panel opisuje najprostszy test: średnią jednej próby porównujemy ze
-      znaną wartością \\(\\mu_0 = 70\\) pkt (takim testem zajmie się rozdział 04).
-      Eksperyment z telefonem porównuje jednak dwie grupy. Przy dwóch grupach po n osób błąd
-      standardowy różnicy średnich jest około \\(\\sqrt{2}\\) razy większy, więc
-      moc jest niższa. W eksperymencie z rozdziału 01 wyniki losujemy z populacji,
-      których średnie różnią się o 7 pkt, a odchylenia standardowe wynoszą 12
-      i 14 pkt. Test porównujący dwie grupy po 40 osób ma dla takich danych moc
-      około 67%: mniej więcej co trzecie powtórzenie eksperymentu nie wykryje
-      różnicy, która naprawdę istnieje."),
+    lc_p("Panel upraszcza eksperyment z rozdziału 01 w jednym miejscu: przyjmuje
+      to samo odchylenie standardowe 13 pkt w obu grupach, choć tam wyniki
+      losowaliśmy z populacji o odchyleniach 12 i 14 pkt. Moc wychodzi
+      praktycznie taka sama, około 67%."),
 
     # ========================================================================
     # SEKCJA 2: P-wartość (po błędach — bo α jest już zdefiniowane)
@@ -306,26 +305,7 @@ ch1d_ui <- list(
       ten wynik odstaje od tego, czego spodziewalibyśmy się przy prawdziwej H₀.
       Tą liczbą jest ", "p-wartość", "."),
 
-    lc_p("p-wartość to prawdopodobieństwo, że gdyby H₀ była prawdziwa,
-      otrzymalibyśmy wynik co najmniej tak skrajny jak zaobserwowany. Dla różnicy
-      średnich w eksperymencie z telefonem:"),
-
-    # Definicja p-wartości ze znacznikami
-    lc_formula_annotated(
-      "⟦1|p⟧ = P\\left(⟦2|\\left|\\bar{X}_A - \\bar{X}_B\\right|⟧ \\geq ⟦3|\\left|d_{\\text{obs}}\\right|⟧ \\;\\middle|\\; ⟦4|H_0⟧\\right)",
-      notes  = list("p-wartość", "różnica w powtórzeniu", "różnica z naszej próby", "założenie"),
-      colors = c("bursztyn", "niebo", "accent", "grafit"),
-      above  = c(2)
-    ),
-
-    lc_p("gdzie \\(d_{\\text{obs}}\\) to różnica średnich zaobserwowana w naszej
-      próbie. Wartość bezwzględna oznacza, że „co najmniej tak skrajny” liczymy
-      w obie strony. Hₐ mówi tylko, że telefon wpływa na koncentrację, bez
-      wskazania kierunku, więc równie mocnym sygnałem byłaby różnica tej samej
-      wielkości na korzyść grupy „biurko”. Wariant jednostronny, w którym liczy się
-      tylko jeden ogon, pokażemy na końcu tej części, przy Ryc. 3.6."),
-
-    lc_p("Definicję najłatwiej zrozumieć przez symulację. Wyobraźmy sobie, że
+    lc_p("Najłatwiej zobaczyć ją w symulacji. Wyobraźmy sobie, że
       eksperyment powtarzamy wiele razy w świecie, w którym telefon nie ma wpływu.
       Każde powtórzenie da inną różnicę średnich, bo każda grupa to inna losowa
       próba. Rozkład tych różnic pokazuje, jakie wyniki wytwarza sam przypadek,
@@ -364,6 +344,27 @@ ch1d_ui <- list(
       w świecie bez efektu. Przy kilkuset symulacjach odsetek bursztynowych
       słupków zbliża się do teoretycznej p-wartości. Przy dziesięciu mocno skacze,
       tak jak pokrycie przedziałów ufności w wykładzie 04."),
+
+    # Definicja i wzór stoją po symulacji (zmiana kolejności 2026-11-19, dawna pozycja 5G).
+    lc_p("Symulacja przybliża liczbę, którą definiuje się ogólnie. p-wartość to
+      prawdopodobieństwo, że gdyby H₀ była prawdziwa,
+      otrzymalibyśmy wynik co najmniej tak skrajny jak zaobserwowany. Dla różnicy
+      średnich w eksperymencie z telefonem:"),
+
+    # Definicja p-wartości ze znacznikami
+    lc_formula_annotated(
+      "⟦1|p⟧ = P\\left(⟦2|\\left|\\bar{X}_A - \\bar{X}_B\\right|⟧ \\geq ⟦3|\\left|d_{\\text{obs}}\\right|⟧ \\;\\middle|\\; ⟦4|H_0⟧\\right)",
+      notes  = list("p-wartość", "różnica w powtórzeniu", "różnica z naszej próby", "założenie"),
+      colors = c("bursztyn", "niebo", "accent", "grafit"),
+      above  = c(2)
+    ),
+
+    lc_p("gdzie \\(d_{\\text{obs}}\\) to różnica średnich zaobserwowana w naszej
+      próbie. Wartość bezwzględna oznacza, że „co najmniej tak skrajny” liczymy
+      w obie strony. Hₐ mówi tylko, że telefon wpływa na koncentrację, bez
+      wskazania kierunku, więc równie mocnym sygnałem byłaby różnica tej samej
+      wielkości na korzyść grupy „biurko”. Wariant jednostronny, w którym liczy się
+      tylko jeden ogon, pokażemy na końcu tej części, przy Ryc. 3.6."),
 
     lc_p("W praktyce nikt nie symuluje tysięcy eksperymentów. Wynik przelicza się
       na ", gloss("statystyka testowa", "statystykę testową"), ", czyli liczbę,
@@ -523,6 +524,9 @@ ch1d_ui <- list(
       mogła być za mała, by go wykryć. To właśnie błąd II rodzaju, a przy małej
       mocy jego prawdopodobieństwo jest duże."),
 
+    # Ryc. 3.8: od p-wartości do zdania w raporcie (modules/ch3_panels.R)
+    ch1d_fig_report,
+
     lc_p("Formalny werdykt trzeba jeszcze przetłumaczyć z powrotem na język ", gloss("pytanie badawcze", "pytania
       badawczego"), ". W eksperymencie z telefonem po odrzuceniu H₀ piszemy: „średnia
       koncentracja studentów z telefonem na biurku istotnie statystycznie różni się
@@ -546,7 +550,7 @@ ch1d_ui <- list(
       i przyjęty poziom istotności."),
 
     figure_panel(
-      label = "Ryc. 3.8",
+      label = "Ryc. 3.9",
       title = "Quiz: odrzucić czy nie?",
       ch1_quiz_fig()
     ),

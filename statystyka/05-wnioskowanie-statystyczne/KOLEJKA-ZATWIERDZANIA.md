@@ -164,3 +164,33 @@ Czujka dymu to Ryc. 3.1, pozostałe ryciny przesunięte o jeden: moc i błędy 3
 symulacja pod H₀ 3.3, pole ogonów 3.4, pytanie o p-wartość 3.5, jeden ogon czy
 dwa (dawna 2.4) 3.6, p-wartość a α 3.7, quiz 3.8. Wcześniejsze wpisy w tym pliku
 i w PUNKTY-STOP-PROPOZYCJA.md używają numerów sprzed zmiany.
+
+### 10. 5U–5Z — rozdział 03 (19.11)
+
+Kod: `modules/proto05_ch3.R`, `proto05_ch3.css`; rycina `s05_power2` w `figures.js`,
+opcja `k` w scenie `smoke` (`proto05.js`). Rozstrzygnięte 19.11, patrz pod tabelą.
+
+| ID | Co | Gdzie | Zastępuje / uzupełnia |
+|---|---|---|---|
+| 5Z | Czujka, która uśrednia odczyty (1 / 4 / 16) | pod Ryc. 3.1 | wariant Ryc. 3.1 |
+| 5U | Cztery sytuacje: czujka / sąd / test | pod 5Z, przed tabelą błędów | tabela błędów |
+| 5X | Moc testu i błędy dla dwóch grup | pod Ryc. 3.2 | Ryc. 3.2 i akapit o √2 |
+| 5Y | p-wartość i α na jednym wykresie (trzy widoki) | pod Ryc. 3.4 | Ryc. 3.4 i 3.7 |
+| 5V | Odwrócony warunek: koszykarze i wysocy | przed akapitem o odwróceniu warunku | uzupełnia akapit |
+| 5W | Od p-wartości do zdania w raporcie (kadry, dwa wyniki) | sekcja „Decyzja w praktyce” | ramki werdyktów |
+
+Bez prototypu, zmiana w tekście (dawna pozycja 5G): opis symulacji i Ryc. 3.3 stoją
+teraz przed definicją i wzorem p-wartości. Do cofnięcia, jeśli kolejność nie pasuje.
+
+Decyzje 19.11 i wdrożenie:
+
+- 5Z odrzucony (za dużo niuansu naraz), usunięty razem z opcją `k` w scenie czujki.
+- 5U i 5V odrzucone (niepotrzebne), usunięte; tabela błędów i akapit o koszykarzach zostają.
+- 5X przyjęty i zastąpił Ryc. 3.2: moc liczona dla dwóch grup po n osób (różnica
+  średnich „plecak − biurko”, H₀: różnica = 0). Tekst sekcji przeliczony (moc 67.3%
+  zamiast 92.6%), akapit o √2 zastąpiony jednym zdaniem o odchyleniach 12 i 14 pkt.
+- 5Y przyjęty jako nowa Ryc. 3.7 (trzy widoki); Ryc. 3.4 bez zmian.
+- 5W przyjęty jako Ryc. 3.8 (`modules/ch3_panels.R`); quiz to teraz Ryc. 3.9.
+- Kolejność „symulacja przed wzorem p-wartości” została w tekście.
+
+W rozdziale 03 nie ma już prototypów. `panels_ch12.css` to teraz `panels.css`.

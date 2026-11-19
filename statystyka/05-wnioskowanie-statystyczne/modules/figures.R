@@ -17,50 +17,52 @@ s05_reads_figure <- function(fig, ..., config = NULL) {
 # Rozdział 1
 # ---------------------------------------------------------------------------
 
-# Ryc. 3.7: jeden wynik na N(0, 1) pod H₀. Środek (|z| < 1.96) podpisany H₀,
-# krańce Hₐ; pole za ±|z| to p-wartość, jej liczba w odczycie.
+# Ryc. 3.7: statystyka na N(0, 1) pod H₀ w trzech widokach: samo pole ogonów (p-wartość),
+# to samo z α i wartościami krytycznymi (środek podpisany H₀, krańce Hₐ), potem inny wynik.
+# Wersja z 2026-11-19 (dawny prototyp 5Y); wcześniej dwa wyniki od razu z α.
 ch1_palpha_fig <- function() {
-  cases <- c("2.17", "1.50")
   crit <- qnorm(0.975)
   x <- seq(-4, 4, length.out = 801)
-  one <- function(case) {
-    z <- as.numeric(case)
+  one <- function(z, with_alpha) {
     tail <- function(sel) sf_line(x[sel], dnorm(x[sel]), color = "@bursztyn", width = 0, fill = "@bursztyn", fill_alpha = 0.6)
-    sf_spec(c(-4, 4), c(0, 0.43 * 1.04), c(
-        list(list(type = "band", lo = -4, hi = -crit, color = "@accent", alpha = 0.06),
-             list(type = "band", lo = crit, hi = 4, color = "@accent", alpha = 0.06),
-             tail(x <= -abs(z)), tail(x >= abs(z)),
+    alpha_layers <- if (with_alpha) list(
+      list(type = "band", lo = -4, hi = -crit, color = "@accent", alpha = 0.06),
+      list(type = "band", lo = crit, hi = 4, color = "@accent", alpha = 0.06),
+      sf_vline(-crit, color = "@accent"), sf_vline(crit, color = "@accent"))
+    labels <- if (with_alpha) sf_texts(c(-3.05, 0, 3.05), rep(0.22, 3), c("Hₐ", "H₀", "Hₐ"), valign = "middle", bold = TRUE, size = 2.2)
+    spec <- sf_spec(c(-4, 4), c(0, 0.43 * 1.04), c(alpha_layers,
+        list(tail(x <= -abs(z)), tail(x >= abs(z)),
              sf_line(x, dnorm(x), color = "@niebo", width = 2.6),
-             sf_vline(-crit, color = "@accent"), sf_vline(crit, color = "@accent"),
              sf_vline(z, color = "@secondary", width = 2.4, dash = NULL, from = 0, to = 0.41),
              sf_text(z, 0.41, sprintf("z = %.2f", z), color = "@secondary", mono = TRUE, halo = TRUE)),
-        sf_texts(c(-3.05, 0, 3.05), rep(0.22, 3), c("Hₐ", "H₀", "Hₐ"), valign = "middle", bold = TRUE, size = 2.2)),
-      "Statystyka testowa", "", aria = "Rozkład statystyki testowej pod hipotezą zerową z obszarami odrzucenia i polem p-wartości.",
-      xTicks = c(-1.96, 0, 1.96), hideY = TRUE, noYGrid = TRUE)
+        labels),
+      "Statystyka testowa", "", aria = "Rozkład statystyki testowej pod hipotezą zerową z polem p-wartości w ogonach.",
+      xTicks = if (with_alpha) c(-1.96, 0, 1.96) else c(-2, 0, 2), hideY = TRUE, noYGrid = TRUE)
+    if (with_alpha) {
+      n <- length(spec$layers); cols <- c("@accent", "@niebo", "@accent")
+      for (i in 1:3) spec$layers[[n - 3 + i]]$color <- cols[i]
+    }
+    spec
   }
-  variants <- lapply(stats::setNames(cases, cases), one)
-  # Napisy regionów w barwach: Hₐ jak obszar odrzucenia, H₀ jak krzywa.
-  for (k in names(variants)) {
-    n <- length(variants[[k]]$layers)
-    cols <- c("@accent", "@niebo", "@accent")
-    for (i in 1:3) variants[[k]]$layers[[n - 3 + i]]$color <- cols[i]
-  }
-  reads <- lapply(stats::setNames(cases, cases), function(case) {
-    p <- 2 * pnorm(-abs(as.numeric(case)))
-    list(palpha_p = sprintf("%.3f", p), palpha_verdict = if (p < 0.05) "p < α" else "p ≥ α")
+  views <- list(p = list(2.17, FALSE), pa = list(2.17, TRUE), pb = list(1.50, TRUE))
+  variants <- lapply(views, function(v) one(v[[1]], v[[2]]))
+  reads <- lapply(views, function(v) {
+    p <- 2 * pnorm(-abs(v[[1]]))
+    list(pz_p = sprintf("%.3f", p), pz_alpha = if (v[[2]]) "0.05" else "—",
+         pz_verdict = if (!v[[2]]) "" else if (p < 0.05) "p < α" else "p ≥ α")
   })
   lc_sf_spec(variants = variants, reads = reads,
-    control = lc_segmented("ch1d_palpha_case", "Wynik",
-      choices = c("z = 2.17" = "2.17", "z = 1.50" = "1.50"), selected = "2.17"),
+    control = lc_segmented("ch1d_palpha_view", "Widok",
+      choices = c("Pole ogonów" = "p", "Dodaj α" = "pa", "Inny wynik" = "pb"), selected = "p"),
     toolbar = lc_readouts(
-      lc_readout("p", lc_sf_value("palpha_p"), color = col_pvalue, swatch = TRUE),
-      lc_readout("α", "0.05", color = col_reject, swatch = TRUE),
-      lc_readout(NULL, lc_sf_value("palpha_verdict"))
+      lc_readout("p", lc_sf_value("pz_p"), color = col_pvalue, swatch = TRUE),
+      lc_readout("α", lc_sf_value("pz_alpha"), color = col_reject, swatch = TRUE),
+      lc_readout(NULL, lc_sf_value("pz_verdict"))
     ),
     ratio = "2/1", max_height = "380px")
 }
 
-# Ryc. 3.8: scenariusze quizu „odrzucić czy nie?”.
+# Ryc. 3.9: scenariusze quizu „odrzucić czy nie?”.
 ch1_quiz_scenarios <- list(
   list(p = 0.003, alpha = 0.05, context = "Badanie wpływu kawy na czas reakcji: p = 0.003, α = 0.05"),
   list(p = 0.12, alpha = 0.05, context = "Czy notatki odręczne dają lepsze wyniki niż notatki na laptopie? p = 0.12, α = 0.05"),

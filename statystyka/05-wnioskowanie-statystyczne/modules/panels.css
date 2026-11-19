@@ -1,4 +1,4 @@
-/* PANELE ROZDZIAŁÓW 01–02 (Ryc. 1.1, 1.3, 2.1–2.6); HTML i SVG z ch1_panels.R i ch2_panels.R; tokeny --upwr-* */
+/* PANELE ROZDZIAŁÓW 01–03 (Ryc. 1.1, 1.3, 2.1–2.6, 3.8); HTML i SVG z ch1_panels.R, ch2_panels.R, ch3_panels.R; tokeny --upwr-* */
 /* H₀ = niebo, Hₐ = akcent (jak test_colors w helpers.R) */
 
 /* Ryc. 2.1: sylwetki */
@@ -175,3 +175,9 @@
   .p5t-row { grid-template-columns: 1fr 1fr; }
   .p5t-l { grid-column: 1 / -1; }
 }
+
+/* --- rozdział 03 --- */
+/* Ryc. 3.8: od p do zdania */
+.p5w .p5t-c.is-a { border-left-color: var(--upwr-accent); }
+.p5w .p5t-c.is-b { border-left-color: var(--upwr-cat-szalwia, #4a8a6a); }
+.p5w .p5w-num { font: 700 22px var(--upwr-mono); }
