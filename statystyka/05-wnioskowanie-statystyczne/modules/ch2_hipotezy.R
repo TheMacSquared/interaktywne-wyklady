@@ -30,6 +30,9 @@ ch2h_ui <- list(
       tags$li(em("„Czy korepetycje pomagają?”")),
       tags$li(em("„Czy lodów sprzedaje się więcej w ciepłe dni?”"))
     ),
+    # Ryc. 2.1: trzy potoczne pytania i to, o co naprawdę pytają (modules/ch2_panels.R)
+    ch2h_fig_ask,
+
     lc_p("Żadnego z nich nie da się sprawdzić danymi wprost. „Wyżsi” znaczy
       tu „przeciętnie wyżsi”, bo zawsze znajdzie się wysoka kobieta i niski
       mężczyzna. „Pomagają” trzeba wyrazić czymś, co da się zmierzyć.
@@ -61,6 +64,9 @@ ch2h_ui <- list(
     lc_note("Pytanie",
       tags$em("„Czy telefon na biurku wpływa na koncentrację?”")
     ),
+    # Ryc. 2.2: rozbiór pytania w kadrach (modules/ch2_panels.R)
+    ch2h_fig_parse,
+
     lc_p(strong("Krok 1 — parametr:"), " mamy dwie grupy (telefon w plecaku
       i telefon na biurku) i w każdej mierzymy wynik testu koncentracji.
       Interesuje nas średnia koncentracja w populacji, osobno dla warunku
@@ -120,10 +126,16 @@ ch2h_ui <- list(
       parametrów → zapis formalny"),
       ". Chroni to przed mechanicznym wpisywaniem znaków bez zrozumienia, co
       właściwie porównujemy. Każda para hipotez ma ten sam szkielet:"),
+    # Ryc. 2.3: przepis na parę hipotez (modules/ch2_panels.R)
+    ch2h_fig_recipe,
+
     lc_formula_box(
       p(tags$b("H₀:"), " parametr  =  /  ≤  /  ≥  wartość odniesienia"),
       p(tags$b("Hₐ:"), " parametr  ≠  /  >  /  <  wartość odniesienia")
     ),
+    # Ryc. 2.4: dwie hipotezy dzielą oś parametru (modules/ch2_panels.R)
+    ch2h_fig_axis,
+
     lc_p("Znaki łączą się w pary: równości w H₀ odpowiada „≠” w Hₐ, znakowi
       „≤” odpowiada „>”, a znakowi „≥” odpowiada „<”. W każdej parze dwa znaki
       razem pokrywają wszystkie możliwe wartości parametru."),
@@ -174,7 +186,7 @@ ch2h_ui <- list(
       testu. Rozdziały 04–09 omawiają po kolei testy dla tych sytuacji."),
 
     # ========================================================================
-    # WIDGET 4: Jednostronny vs dwustronny
+    # Jednostronny vs dwustronny (bez α; rozkład i wartości krytyczne: rozdz. 03, Ryc. 3.5)
     # ========================================================================
     lc_h2("ch2h-jedno-dwustronny", "Test jednostronny a dwustronny"),
 
@@ -213,60 +225,16 @@ ch2h_ui <- list(
       prose = TRUE
     ),
 
-    lc_p("Żeby zobaczyć, co ten wybór zmienia, trzeba zajrzeć na chwilę do
-      mechanizmu decyzji, który szczegółowo omówimy w rozdziale 03. Z danych
-      liczymy ", gloss("statystyka testowa", "statystykę testową"), ", czyli
-      liczbę mierzącą, jak daleko wynik z próby odbiega od tego, czego
-      oczekiwalibyśmy przy prawdziwej H₀. Jeśli H₀ jest prawdziwa, statystyka
-      ma znany rozkład, a wartości z jego skrajów zdarzają się rzadko. Te
-      skrajne wartości tworzą ", gloss("obszar odrzucenia"), ": gdy statystyka
-      do niego wpada, odrzucamy H₀."),
-    lc_p("Prawdopodobieństwo obszaru odrzucenia przy prawdziwej H₀ to ",
-      gloss("poziom istotności"), " α. Jest to ryzyko, że odrzucimy H₀, choć
-      jest prawdziwa. Zwyczajowo przyjmuje się α = 0.05. To umowa, którą
-      ustala się przed analizą, tak jak ", gloss("poziom ufności"), " w wykładzie 04. Oba
-      pojęcia są zresztą ze sobą powiązane: poziom ufności 95% odpowiada
-      α = 0.05. W teście dwustronnym α dzielimy na dwa ogony rozkładu, po α/2
-      na każdy. W teście jednostronnym całe α leży w ogonie wskazanym
-      przez Hₐ."),
-    lc_p("Panel pokazuje rozkład statystyki testowej przy prawdziwej H₀
-      (", gloss("standardowy rozkład normalny"), "). Zacieniowany jest obszar odrzucenia,
-      a przerywane linie to ", gloss("wartość krytyczna", "wartości krytyczne"),
-      ", czyli jego granice."),
+    # Ryc. 2.5: jedno- i dwustronny bez α i bez rozkładu (modules/ch2_panels.R). Akapity
+    # o mechanizmie decyzji i dawna Ryc. 2.4 są od 19.11 w rozdziale 03 (Ryc. 3.5).
+    ch2h_fig_side,
 
-    figure_panel(
-      label = "Ryc. 2.4",
-      title = "Wizualizacja: jedno- i dwustronny",
-      lc_toolbar(
-        lc_segmented("ch2h_sided", "Typ testu", choices = c(
-              "Dwustronny (≠)" = "two.sided",
-              "Prawostronny (>)" = "greater",
-              "Lewostronny (<)" = "less"
-            ), selected = "two.sided"),
-        lc_slider("ch2h_alpha", "α", 0.01, 0.10, 0.05, 0.01)
-      ),
-      div(class = "ws-chart-wrap", `data-ws-id` = "ch2h_sided_chart", `data-ws-type` = "sided",
-          `data-sided` = "two.sided", `data-crit` = qnorm(0.975),
-          tags$div(class = "lc-ec", role = "img",
-                   `aria-label` = "Rozkład statystyki testowej pod H0 z zacienionym obszarem odrzucenia"))
-    ),
-
-    lc_p("Przy α = 0.05 test dwustronny odrzuca H₀, gdy statystyka jest
-      większa niż 1.96 lub mniejsza niż -1.96; w każdym ogonie leży 2.5%
-      rozkładu. Test prawostronny odrzuca H₀ już powyżej 1.645, bo całe 5%
-      mieści się w jednym ogonie. Lewostronny działa symetrycznie: odrzuca
-      poniżej -1.645. Zmniejszenie α odsuwa granice od środka: przy α = 0.01
-      wynoszą one 2.576 dla testu dwustronnego i 2.326 dla jednostronnego.
-      Zwiększenie α do 0.10 przysuwa je do 1.645 i 1.282."),
-    lc_p("Weźmy statystykę równą 1.8. W teście prawostronnym wpada ona
-      w obszar odrzucenia, w dwustronnym nie. Test jednostronny łatwiej więc
-      wykrywa efekt w zapowiedzianym kierunku, czyli ma w tym kierunku większą ",
-      gloss("moc testu", "moc"), ". Płaci za to ślepotą na kierunek przeciwny:
-      statystyka równa -3 w teście prawostronnym nie prowadzi do odrzucenia H₀,
-      choć jest daleko od zera. Stąd wymóg, by kierunek ustalić przed
-      zebraniem danych. Kto wybiera ogon po zobaczeniu znaku wyniku,
-      w praktyce odrzuca H₀ zawsze, gdy statystyka wychodzi poza ±1.645.
-      Przy prawdziwej H₀ zdarza się to w 10% prób, a nie w deklarowanych 5%."),
+    lc_p("Wybór ma swoją cenę. Test jednostronny łatwiej wykrywa efekt
+      w zapowiedzianym kierunku, ale nie widzi kierunku przeciwnego: nawet bardzo
+      duża różnica w drugą stronę nie prowadzi do odrzucenia H₀. Stąd wymóg, by
+      kierunek ustalić przed zebraniem danych. Kto wybiera kierunek po zobaczeniu
+      wyniku, ogłasza efekt częściej, niż pozwala na to sam przypadek. Jak to
+      wygląda w liczbach, pokażemy w rozdziale 03, gdy poznamy p-wartość."),
 
     lc_note("Zasada", rule = TRUE,
       "W razie wątpliwości wybieraj test dwustronny. Test jednostronny ma sens
@@ -331,6 +299,9 @@ ch2h_ui <- list(
     lc_p("Ćwiczenia pokazują, że zamiana pytania na hipotezy wymaga kilku
       decyzji, a każda z nich może pójść źle. Najczęstsze pomyłki są
       następujące:"),
+    # Ryc. 2.6: popraw hipotezę (modules/ch2_panels.R)
+    ch2h_fig_errors,
+
     tags$ol(
       tags$li(
         tags$b("H₀ bez równości."),
@@ -353,8 +324,8 @@ ch2h_ui <- list(
         tags$b("Zmiana hipotezy po zobaczeniu danych (HARKing)."),
         " Hipotezy, także wybór testu jedno- lub dwustronnego, ustalamy ",
         tags$em("przed"), " analizą. Dopasowanie H₀ i Hₐ do wyniku sprawia,
-        że test potwierdza tylko to, co już widać w danych, a rzeczywiste
-        ryzyko fałszywego alarmu przestaje odpowiadać α."
+        że test potwierdza tylko to, co już widać w danych, a ryzyko
+        fałszywego alarmu jest większe od deklarowanego."
       ),
       tags$li(
         tags$b("Zamienione role H₀ i Hₐ."),
@@ -366,11 +337,11 @@ ch2h_ui <- list(
       )
     ),
 
-    lc_p("Mamy więc parę hipotez i wiemy, na czym polega obszar odrzucenia.
+    lc_p("Mamy więc parę hipotez i wiemy, w którą stronę patrzy test.
       Każda decyzja podjęta na podstawie próby może jednak okazać się błędna,
       i to na dwa sposoby: możemy odrzucić prawdziwą H₀ albo nie odrzucić
-      fałszywej. W następnym rozdziale nazwiemy oba błędy, przyjrzymy się
-      bliżej α oraz poznamy p-wartość, czyli liczbę, na podstawie której
+      fałszywej. W następnym rozdziale nazwiemy oba błędy, wprowadzimy poziom
+      istotności α oraz poznamy p-wartość, czyli liczbę, na podstawie której
       w praktyce podejmuje się decyzję."),
 
     lc_chapter_next(

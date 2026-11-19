@@ -2,7 +2,7 @@
 # CHAPTER 1: Logika testowania hipotez
 # ============================================================================
 
-# Komentarz do błędnej interpretacji p-wartości (dwie odpowiedzi w pytaniu przy Ryc. 3.3).
+# Komentarz do błędnej interpretacji p-wartości (dwie odpowiedzi w pytaniu Ryc. 3.4).
 ch1_pvalue_wrong <- lc_status(
   lc_verdict(tags$strong("Nie."), type = "danger"),
   " p-wartość liczymy przy założeniu, że H₀ jest prawdziwa, więc nie jest
@@ -48,6 +48,9 @@ ch1_ui <- list(
       tags$li("Wszyscy rozwiązują ten sam test koncentracji (0–100 punktów)")
     ),
 
+    # Ryc. 1.1: przebieg eksperymentu w kadrach (modules/ch1_panels.R)
+    ch1_fig_case,
+
     lc_p("Nikt nie używa telefonu w trakcie testu. Grupy różnią się tylko tym,
       czy telefon leży w zasięgu wzroku. O przydziale do grupy decydowało
       losowanie, więc wszystkie inne cechy studentów rozkładają się między
@@ -56,7 +59,7 @@ ch1_ui <- list(
       takiego eksperymentu, a każde kliknięcie to nowa grupa 80 studentów."),
 
     figure_panel(
-      label = "Ryc. 1.1",
+      label = "Ryc. 1.2",
       title = "Wyniki eksperymentu",
       # Losowanie, wykres i odczyty liczy przeglądarka (modules/figures.js, rycina s05_case).
       lc_sf_figure("s05_case",
@@ -98,25 +101,8 @@ ch1_ui <- list(
       zaprzeczenie, czyli twierdzenie, że efekt istnieje, to ",
       gloss("hipoteza alternatywna"), " Hₐ."),
 
-    lc_table(
-      data.frame(
-        element = c("H₀", "Hₐ", "Dane", "Możliwy werdykt"),
-        court = c("Oskarżony jest niewinny", "Oskarżony jest winny",
-                  "Dowody złożone w sądzie",
-                  "Wina nie została wykazana — albo dowody wystarczają, by uznać oskarżonego za winnego"),
-        phone = c("Telefon nie wpływa na koncentrację (różnica = 0)",
-                  "Telefon wpływa na koncentrację (różnica ≠ 0)",
-                  "Wyniki testu 80 studentów",
-                  "Nie mamy podstaw, by twierdzić, że telefon wpływa — albo odrzucamy hipotezę o braku wpływu")
-      ),
-      cols = list(
-        lc_col("element", "Element", "row"),
-        lc_col("court", "Sąd", "text"),
-        lc_col("phone", "Nasz eksperyment z telefonem", "text")
-      ),
-      narrow = "cards",
-      prose = TRUE
-    ),
+    # Ryc. 1.3: sąd i test w kadrach (modules/ch1_panels.R); zastąpiła tabelę analogii
+    ch1_fig_court,
 
     lc_p("Z tej analogii wynikają dwie własności testu. Pierwsza: dane oceniamy
       z perspektywy H₀. Pytamy, czy wyniki takie jak nasze byłyby czymś
@@ -344,7 +330,7 @@ ch1d_ui <- list(
       w obie strony. Hₐ mówi tylko, że telefon wpływa na koncentrację, bez
       wskazania kierunku, więc równie mocnym sygnałem byłaby różnica tej samej
       wielkości na korzyść grupy „biurko”. Wariant jednostronny, w którym liczy się
-      tylko jeden ogon, omówiliśmy w poprzednim rozdziale."),
+      tylko jeden ogon, pokażemy na końcu tej części, przy Ryc. 3.5."),
 
     lc_p("Definicję najłatwiej zrozumieć przez symulację. Wyobraźmy sobie, że
       eksperyment powtarzamy wiele razy w świecie, w którym telefon nie ma wpływu.
@@ -451,6 +437,56 @@ ch1d_ui <- list(
       rozdział 10."),
 
     # ========================================================================
+    # Jeden ogon czy dwa (przeniesione z rozdz. 02, 2026-11-19; dawna Ryc. 2.4, teraz 3.5)
+    # ========================================================================
+    lc_h2("ch1-ogony", "Jeden ogon czy dwa?"),
+
+    lc_p("Ryc. 3.3 pokazuje test dwustronny: p-wartość zbiera pole z obu ogonów,
+      bo Hₐ dopuszcza efekt w obie strony. W rozdziale 02 widzieliśmy, że test
+      jednostronny patrzy tylko w stronę wskazaną przez Hₐ. Na rozkładzie
+      statystyki testowej oznacza to jeden ogon. To samo dotyczy obszaru
+      odrzucenia z Ryc. 3.1: w teście dwustronnym α dzielimy na dwa ogony
+      rozkładu, po α/2 na każdy, a w teście jednostronnym całe α leży w ogonie
+      wskazanym przez Hₐ."),
+    lc_p("Panel pokazuje rozkład statystyki testowej przy prawdziwej H₀
+      (standardowy rozkład normalny). Zacieniowany jest obszar odrzucenia,
+      a przerywane linie to wartości krytyczne, czyli jego granice."),
+
+    figure_panel(
+      label = "Ryc. 3.5",
+      title = "Wizualizacja: jedno- i dwustronny",
+      lc_toolbar(
+        lc_segmented("ch2h_sided", "Typ testu", choices = c(
+              "Dwustronny (≠)" = "two.sided",
+              "Prawostronny (>)" = "greater",
+              "Lewostronny (<)" = "less"
+            ), selected = "two.sided"),
+        lc_slider("ch2h_alpha", "α", 0.01, 0.10, 0.05, 0.01)
+      ),
+      div(class = "ws-chart-wrap", `data-ws-id` = "ch2h_sided_chart", `data-ws-type` = "sided",
+          `data-sided` = "two.sided", `data-crit` = qnorm(0.975),
+          tags$div(class = "lc-ec", role = "img",
+                   `aria-label` = "Rozkład statystyki testowej pod H0 z zacienionym obszarem odrzucenia"))
+    ),
+
+    lc_p("Przy α = 0.05 test dwustronny odrzuca H₀, gdy statystyka jest
+      większa niż 1.96 lub mniejsza niż -1.96; w każdym ogonie leży 2.5%
+      rozkładu. Test prawostronny odrzuca H₀ już powyżej 1.645, bo całe 5%
+      mieści się w jednym ogonie. Lewostronny działa symetrycznie: odrzuca
+      poniżej -1.645. Zmniejszenie α odsuwa granice od środka: przy α = 0.01
+      wynoszą one 2.576 dla testu dwustronnego i 2.326 dla jednostronnego.
+      Zwiększenie α do 0.10 przysuwa je do 1.645 i 1.282."),
+    lc_p("Weźmy statystykę równą 1.8. W teście prawostronnym wpada ona
+      w obszar odrzucenia, w dwustronnym nie. Test jednostronny łatwiej więc
+      wykrywa efekt w zapowiedzianym kierunku, czyli ma w tym kierunku większą ",
+      gloss("moc testu", "moc"), ". Płaci za to ślepotą na kierunek przeciwny:
+      statystyka równa -3 w teście prawostronnym nie prowadzi do odrzucenia H₀,
+      choć jest daleko od zera. Stąd wymóg, by kierunek ustalić przed
+      zebraniem danych. Kto wybiera ogon po zobaczeniu znaku wyniku,
+      w praktyce odrzuca H₀ zawsze, gdy statystyka wychodzi poza ±1.645.
+      Przy prawdziwej H₀ zdarza się to w 10% prób, a nie w deklarowanych 5%."),
+
+    # ========================================================================
     # SEKCJA 3: Quiz — decyzja
     # ========================================================================
     lc_h2("ch1-decyzja", "Decyzja w praktyce"),
@@ -464,7 +500,7 @@ ch1d_ui <- list(
 
     # Jeden wynik naraz; środek = H₀, krańce = Hₐ, p jako liczba
     figure_panel(
-      label = "Ryc. 3.5",
+      label = "Ryc. 3.6",
       title = "p-wartość a α",
       width_mode = "text",
       ch1_palpha_fig()
@@ -517,7 +553,7 @@ ch1d_ui <- list(
       i przyjęty poziom istotności."),
 
     figure_panel(
-      label = "Ryc. 3.6",
+      label = "Ryc. 3.7",
       title = "Quiz: odrzucić czy nie?",
       ch1_quiz_fig()
     ),

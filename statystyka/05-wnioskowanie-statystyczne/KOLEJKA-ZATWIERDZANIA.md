@@ -1,6 +1,6 @@
 # Wykład 05 — kolejka zatwierdzania prototypów
 
-Stan: 9 listopada 2026. Opis i uzasadnienie w
+Stan: 19 listopada 2026. Opis i uzasadnienie w
 [PUNKTY-STOP-PROPOZYCJA.md](PUNKTY-STOP-PROPOZYCJA.md).
 
 Oglądanie (z katalogu repo, osobny port):
@@ -20,6 +20,15 @@ system("Rscript scripts/build_static.R statystyka/05-wnioskowanie-statystyczne")
 | 07 | Prototyp 5E-2: 5E w wyglądzie ludzików z karteczkami (scena „stop” z 02) | odrzucony (9.11), usunięty |
 | 09 | Prototyp 5D „Żelki i trądzik” | przyjęty (9.11) po przebudowie, z cytowaniem xkcd 882 |
 | 09 | Sceny `jars`, `worlds`, `stress` (8.10) | czekają na ocenę (5F) |
+| 01 | Prototyp 5S „Eksperyment: telefon a koncentracja” (kadry) | wdrożony 19.11 jako Ryc. 1.1 (dawna Ryc. 1.1 to teraz 1.2) |
+| 01 | Prototyp 5T „Sąd i test statystyczny” (kadry) | wdrożony 19.11 jako Ryc. 1.3; zastąpił tabelę analogii |
+| 02 | Prototyp 5P „O co naprawdę pyta pytanie?” (trzy pytania z tekstu: wzrost, korepetycje, lody) | wdrożony 19.11 jako Ryc. 2.1 |
+| 02 | Prototyp 5L „Rozbiór pytania” (kadry: pytanie → parametr → relacja → hipotezy) | wdrożony 19.11 jako Ryc. 2.2 |
+| 02 | Prototyp 5M „Dwie hipotezy dzielą oś parametru” (trzy pary znaków) | wdrożony 19.11 jako Ryc. 2.4 |
+| 02 | Prototyp 5N „Jedno słowo zmienia hipotezy” (zmienił / skrócił / wydłużył) | złączony z 5R (19.11), usunięty |
+| 02 | Prototyp 5O „Popraw hipotezę” (pięć błędnych zapisów) | wdrożony 19.11 jako Ryc. 2.6 |
+| 02 | Prototyp 5Q „Przepis na parę hipotez” (panel statyczny: trzy kroki, pary znaków, dwie reguły) | wdrożony 19.11 jako Ryc. 2.3 |
+| 02 | Prototyp 5R „Jedno słowo w pytaniu, inny test” (5N + 5R: słowo → hipotezy słownie → sygnał na osi wyniku; bez α) | wdrożony 19.11 jako Ryc. 2.5 |
 
 ## Kolejka
 
@@ -92,3 +101,55 @@ daje wzór 64%.
 
 Pozycje 5F–5K z propozycji: sceny ANOVA, kolejność 3.2 i wzoru p-wartości,
 parowanie, siła efektu, szablon rozdz. 04–08, porządki numeracji.
+
+### 6. 5L–5P — rozdział 02 (19.11)
+
+Rozdział 02 miał jedną rycinę (2.4) na siedem sekcji tekstu. Pięć paneli bez
+liczenia i bez własnego JS (`modules/proto05_ch2.R`, `proto05_ch2.css`), każdy
+stoi obok tekstu, który mógłby zastąpić; tekstu na razie nie ruszano.
+
+- 5P: sekcja „Zasada”, po trzech potocznych pytaniach.
+- 5L: sekcja „Rozbiór przykładu”, przed akapitami „Krok 1–3”. Kadr z symbolami
+  usunięty 19.11 (za wcześnie); zapis formalny zostaje w następnej sekcji.
+- 5M: po szkielecie pary hipotez, przed akapitem „Znaki łączą się w pary”.
+- 5N: po galerii jednostronnej, przed akapitem o słowach zdradzających kierunek.
+  Ta sama oś co w 5M; do decyzji, czy zostają oba.
+- 5O: sekcja „Typowe błędy”, przed listą pięciu pomyłek.
+- 5Q: przed szkieletem „parametr = / ≤ / ≥ wartość odniesienia”; wyróżnia równość
+  w H₀ i rozłączność hipotez, które dotąd były tylko w tekście.
+- 5R: sekcja „Test jednostronny a dwustronny”, po tabeli typów. Powód (19.11):
+  Ryc. 2.4 z α, rozkładem statystyki i wartościami krytycznymi stoi za wcześnie,
+  bo błędy wprowadza dopiero rozdział 03. Decyzja 19.11 (wariant B): Ryc. 2.4
+  z akapitami o mechanizmie przeniesiona do rozdz. 03 jako Ryc. 3.5, w nowej sekcji
+  „Jeden ogon czy dwa?” po p-wartości; dawne Ryc. 3.5 i 3.6 to teraz 3.6 i 3.7.
+  Rozdział 02 nie używa już α.
+
+Decyzja 19.11: 5M, 5N i 5R były zbyt podobne. Zostają dwa: 5M (oś parametru, pary
+znaków, przy zapisie formalnym obok 5Q) i 5R (słowo w pytaniu → hipotezy słownie →
+oś wyniku z próby, w sekcji o teście jednostronnym). 5N usunięty; przykład w 5R
+to na razie nawóz i plon.
+
+Rozdział 02 zamknięty 19.11: przyjęte 5P, 5L, 5M, 5O, 5Q, 5R oraz przeniesienie
+dawnej Ryc. 2.4 do rozdz. 03. Do zrobienia przy wdrożeniu: numery rycin zamiast
+plakietek „Prototyp” i usunięcie tekstu, który panele zastępują (akapity „Krok 1–3”,
+szkielet pary hipotez, lista błędów).
+
+### 7. 5S–5T — rozdział 01 (19.11)
+
+Kod: `modules/proto05_ch1.R`, `proto05_ch1.css`, bez JS. Oba przyjęte 19.11;
+5T zastąpił tabelę analogii (usunięta z tekstu).
+
+- 5S „Eksperyment: telefon a koncentracja” (kadry): 80 studentów → losowanie →
+  dwie grupy → test. Stoi po liście opisującej eksperyment, przed Ryc. 1.1.
+- 5T „Sąd i test statystyczny” (kadry): założenie → dowody → mocne dowody →
+  słabe dowody, z przekreślonym „niewinny” i „telefon nie wpływa”. Stoi przed
+  tabelą analogii.
+
+### 8. Wdrożenie rozdziałów 01 i 02 (19.11)
+
+Prototypy 5S, 5T, 5P, 5L, 5Q, 5M, 5R, 5O są stałymi rycinami z numerami
+(tabela na górze). Kod: `modules/ch1_panels.R`, `modules/ch2_panels.R`,
+`modules/panels_ch12.css` (dawne `proto05_ch1.*`, `proto05_ch2.*`). Tekst obok
+paneli został (lista opisująca eksperyment, akapity „Krok 1–3”, szkielet pary
+hipotez, lista pięciu błędów); do decyzji, czy go skracać. W `proto05.*`
+zostają prototypy 5A, 5D, 5E (rozdz. 03, 07, 09).

@@ -72,11 +72,12 @@ hypothesis_practice <- function(prefix, questions) {
         else tags$span(q$question)
       ),
       tags$div(class = "hp-controls",
-        lc_action(btn_id, "Pokaż odpowiedź", variant = "outline")
+        lc_toggle_button(btn_id, "Pokaż odpowiedź", "Ukryj odpowiedź", variant = "outline")
       ),
-      conditionalPanel(
-        condition = paste0("input['", btn_id, "'] % 2 === 1"),
-        tags$div(class = "hp-answer",
+      # Bez serwera: odpowiedź odsłania przełącznik z lc_widgets.js. Dawny warunek
+      # conditionalPanel() liczył kliknięcia przycisku, czego strona statyczna nie robi.
+      lc_toggle_content(btn_id, off = NULL,
+        on = tags$div(class = "hp-answer",
           tags$div(class = "hp-hypotheses",
             tags$div(tags$b("H₀: "), render_hyp(q$h0)),
             tags$div(tags$b("Hₐ: "), render_hyp(q$ha))

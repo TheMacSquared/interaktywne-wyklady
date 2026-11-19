@@ -58,6 +58,8 @@ addResourcePath("assets", file.path(app_dir, "assets"))
 source(file.path(app_dir, "modules", "helpers.R"),              local = TRUE)
 source(file.path(app_dir, "modules", "figures.R"),              local = TRUE)
 source(file.path(app_dir, "modules", "proto05.R"),              local = TRUE)  # PROTOTYPY 5A–5E
+source(file.path(app_dir, "modules", "ch1_panels.R"),           local = TRUE)  # Ryc. 1.1, 1.3
+source(file.path(app_dir, "modules", "ch2_panels.R"),           local = TRUE)  # Ryc. 2.1–2.6
 source(file.path(app_dir, "modules", "ch1_logika.R"),           local = TRUE)
 source(file.path(app_dir, "modules", "ch2_hipotezy.R"),         local = TRUE)
 source(file.path(app_dir, "modules", "ch2_jedna_ilosciowa.R"),  local = TRUE)
@@ -81,7 +83,9 @@ header_extras <- tagList(
   # PROTOTYPY 5A–5E (2026-11-09): modules/proto05.js + modules/proto05.css
   tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "proto05.css"), warn = FALSE), collapse = "\n"))),
   includeScript(file.path(app_dir, "modules", "proto05.js")),
-  # Wykresy rozkładu statystyki testowej (Ryc. 2.4, 3.3): ECharts przez lcCharts.
+  # Panele rozdziałów 01–02 (ch1_panels.R, ch2_panels.R): sam CSS, bez JS
+  tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "panels_ch12.css"), warn = FALSE), collapse = "\n"))),
+  # Wykresy rozkładu statystyki testowej (Ryc. 3.3, 3.5): ECharts przez lcCharts.
   tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
   includeScript(file.path(shared_root, "lc_charts.js")),
   includeScript(file.path(app_dir, "modules", "ws_charts.js")),
