@@ -3095,7 +3095,16 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
 .p32-lab.is-ci { fill: var(--upwr-accent); }
 .p32-ci-bracket { stroke: var(--upwr-accent); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .p32-val.is-end, .p32-lab.is-end { text-anchor: end; }
-.p32-val.is-start, .p32-lab.is-start { text-anchor: start; }</style>
+.p32-val.is-start, .p32-lab.is-start { text-anchor: start; }
+/* Ryc. 3.3: dwie grupy i oś różnicy */
+.p32-dot.is-2 { fill: var(--upwr-cat-bursztyn, #c08540); }
+.p32-grp { font: 700 15px var(--upwr-sans); }
+.p32-grp.is-1 { fill: var(--upwr-cat-indygo, #3a5a8a); }
+.p32-grp.is-2 { fill: var(--upwr-cat-terakota, #b25838); }
+.p32-grp.is-end { text-anchor: end; }
+.p32-guide { stroke: var(--upwr-ink-subtle); stroke-width: 1.3; stroke-dasharray: 4 4; fill: none; }
+.p32-span { stroke: var(--upwr-ink); stroke-width: 3; stroke-linecap: round; fill: none; }
+.p32-zero { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); text-anchor: middle; }</style>
   
   <style>/* Ryc. 4.1: próba jako kropki, odsetek jako pasek 100%, przedział jako ramka; rysuje fig_41.js; tokeny --upwr-* */
 .p41-svg svg { display: block; width: 100%; height: auto; }
@@ -3124,8 +3133,15 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
 .p41-in { font: 700 18px var(--upwr-sans); fill: var(--upwr-surface); }
 .p41-in.is-no { text-anchor: end; fill: var(--upwr-ink-soft); }
 .p41-band { fill: var(--upwr-accent); fill-opacity: .22; stroke: var(--upwr-accent); stroke-width: 2.5; }
-.p41-edge { stroke: var(--upwr-ink); stroke-width: 3; }</style>
-  
+.p41-edge { stroke: var(--upwr-ink); stroke-width: 3; }
+/* Ryc. 4.3: dwie grupy i oś różnicy */
+.p41-note.is-end { text-anchor: end; }
+.p41-guide { stroke: var(--upwr-ink-subtle); stroke-width: 1.3; stroke-dasharray: 4 4; fill: none; }
+.p41-span { stroke: var(--upwr-ink); stroke-width: 3.5; stroke-linecap: round; fill: none; }
+.p41-zero { font: 13px var(--upwr-sans); fill: var(--upwr-ink-subtle); text-anchor: middle; }
+.p41-ci-bracket { stroke: var(--upwr-accent); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.p41-val.is-end, .p41-lab.is-end { text-anchor: end; }
+.p41-val.is-start, .p41-lab.is-start { text-anchor: start; }</style>
   
   
   
@@ -3169,8 +3185,6 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
       .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
       /* Wykresy ECharts wypełniają kontener z aspect-ratio. */
       .lc-ec { position: absolute; inset: 0; }
-      .ci-construction { position: relative; aspect-ratio: 2.5 / 1; }
-      .ci-construction[data-kind=diff] { aspect-ratio: 2 / 1; }
       .fig-zero-canvas { position: relative; aspect-ratio: 2.4 / 1; touch-action: none; margin-top: .6em; }
       .fig-zero[data-lc-chart-large='true'] .fig-zero-canvas { aspect-ratio: 1.65 / 1; }
       .fig-zero .fig-zero-range { width: 100%; cursor: pointer; }
@@ -4804,19 +4818,18 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
       równych wariancji. To wersja Welcha i tak liczą ją panele w tym wykładzie.</p>
         <p class="lc-p">Panel porównuje wzrost 25 mężczyzn i 25 kobiet. Próby losowane są
       z populacji o średnich 178 cm (σ = 7 cm) i 165 cm (σ = 6 cm), więc
-      prawdziwa różnica wynosi 13 cm. Od trzeciego kroku dolny panel przechodzi
+      prawdziwa różnica wynosi 13 cm. Od trzeciego kroku dolna oś przechodzi
       na skalę różnicy, na której zero oznacza brak różnicy.</p>
-        <div class="lc-figure-panel lc-full">
+        <div class="lc-figure-panel lc-panel-wide">
           <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 3.3</div>
-          <div class="lc-stepper" id="ch3_dstep" data-lc-step="1">
+          <div class="lc-stepper" id="ch3_ddstep" data-lc-step="1">
             <div class="lc-stepper-head">
               <div class="lc-stepper-title">Konstruowanie CI dla różnicy</div>
               <div class="lc-toolbar">
-                <button id="ch3_dstep_new_sample" type="button" class="action-button lc-action is-outline ">
+                <button type="button" class="lc-action is-outline" data-p32="new">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path></svg>
                   <span>Nowe próby</span>
                 </button>
-                <button type="button" class="lc-chart-zoom" data-lc-chart-zoom="true" aria-pressed="false" aria-label="Powiększ wykres i napisy" title="Powiększ wykres i napisy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"></circle><path d="M15 15l5 5M7 10h6"></path><path class="lc-chart-zoom-plus" d="M10 7v6"></path></svg></button>
               </div>
             </div>
             <ol class="lc-step-track" style="--lc-steps:5;">
@@ -4852,14 +4865,14 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               </li>
             </ol>
             <div class="lc-step-body">
-              <div class="ci-construction" data-kind="diff" data-config="[{&quot;x&quot;:[171.564526747676,181.051555011143,186.78840568323,185.485364040474,172.335651930914,184.569588827176,180.624581839983,180.164349559494,175.541420874294,167.435257317847,180.664447551145,176.980596622521,181.128979471462,175.583948292136,164.288130958197,170.937898657973,181.322425184902,179.269996394176,184.206851212244,185.64438878905,174.230471723761,166.900078400281,182.863954130659,175.208002016527,175.679197004983],&quot;y&quot;:[165.712733283152,176.37620947944,166.593076707031,166.442811081134,164.341236466269,164.99241238389,160.327420633693,170.530673062864,161.649887917498,168.590698924986,167.014930088875,154.64618073213,162.289309471125,158.172185128834,172.333409904599,166.082621017526,169.437827735981,167.849805370768,160.029959484365,158.379283226677,165.730085901142,164.342132786198,167.387285922716,160.319022238539,166.357218210182],&quot;mean&quot;:12.581666043305,&quot;se&quot;:1.575221510144,&quot;df&quot;:45.180301750078,&quot;t&quot;:2.013881566539,&quot;lower&quot;:9.409356480812,&quot;upper&quot;:15.753975605799}]">
-                <div class="lc-ec" role="img" aria-label="Konstrukcja przedziału ufności dla różnicy średnich"></div>
+              <div class="p32" data-kind="diff" data-x="[171.56,181.05,186.79,185.49,172.34,184.57,180.62,180.16,175.54,167.44,180.66,176.98,181.13,175.58,164.29,170.94,181.32,179.27,184.21,185.64,174.23,166.9,182.86,175.21,175.68]" data-y="[165.71,176.38,166.59,166.44,164.34,164.99,160.33,170.53,161.65,168.59,167.01,154.65,162.29,158.17,172.33,166.08,169.44,167.85,160.03,158.38,165.73,164.34,167.39,160.32,166.36]">
+                <div class="p32-svg"></div>
               </div>
             </div>
             <div class="lc-stepper-foot">
               <div class="lc-stepper-text" aria-live="polite">
                 <span class="lc-stepper-kicker">Krok 1 z 5 · Dwie próby</span>
-                <span id="ch3_dstep_text"></span>
+                <span id="ch3_ddstep_text"></span>
               </div>
               <div class="lc-stepper-actions">
                 <button type="button" class="lc-action is-ghost is-icon" data-lc-nav="reset" title="Od początku" aria-label="Od początku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
@@ -6690,84 +6703,70 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
       jest większy od SE każdej z proporcji, ale mniejszy od ich sumy. Panel
       losuje dwie niezależne próby po 60 osób z populacji, w których odsetek
       osób zadowolonych z usługi wynosi 70% i 50%.</p>
-        <div class="lc-figure-panel lc-full">
+        <div class="lc-figure-panel lc-panel-wide">
           <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 4.3</div>
-          <div class="lc-sf" data-fig="s04-pdstep">
-            <div class="lc-stepper" id="ch4_dstep" data-lc-step="1">
-              <div class="lc-stepper-head">
-                <div class="lc-stepper-title">Konstruowanie CI dla różnicy</div>
-                <div class="lc-toolbar">
-                  <button id="ch4_dstep_new_sample" type="button" class="action-button lc-action is-outline " data-stat-act="new">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path></svg>
-                    <span>Nowe próby</span>
-                  </button>
-                  <button type="button" class="lc-chart-zoom" data-lc-chart-zoom="true" aria-pressed="false" aria-label="Powiększ wykres i napisy" title="Powiększ wykres i napisy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"></circle><path d="M15 15l5 5M7 10h6"></path><path class="lc-chart-zoom-plus" d="M10 7v6"></path></svg></button>
-                </div>
+          <div class="lc-stepper" id="ch4_ddstep" data-lc-step="1">
+            <div class="lc-stepper-head">
+              <div class="lc-stepper-title">Konstruowanie CI dla różnicy</div>
+              <div class="lc-toolbar">
+                <button type="button" class="lc-action is-outline" data-p41="new">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path></svg>
+                  <span>Nowe próby</span>
+                </button>
               </div>
-              <ol class="lc-step-track" style="--lc-steps:5;">
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="1" aria-current="step">
-                    <b>1</b>
-                    <span>Dwie próby</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="2">
-                    <b>2</b>
-                    <span>Dwie p̂</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="3">
-                    <b>3</b>
-                    <span>Różnica</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="4">
-                    <b>4</b>
-                    <span>± SE</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="5">
-                    <b>5</b>
-                    <span>Przedział</span>
-                  </button>
-                </li>
-              </ol>
-              <div class="lc-step-body">
-                <style>.lc-sf[data-lc-chart-large='true'] .s04-grid { max-height: none !important;
-                aspect-ratio: auto !important; min-height: calc(24em * var(--s04-rows, 1)) !important;
-                grid-template-columns: var(--s04-zoom-cols) !important; }</style>
-                <div class="s04-grid" style="display:grid;grid-template-columns:1fr 2fr;grid-auto-rows:1fr;gap:.4em;aspect-ratio:2/1;max-height:460px;min-height:18em;--s04-rows:2;--s04-zoom-cols:1.5fr 2fr;">
-                  <div class="lc-sf-chart" data-k="0" style="height:100%;min-height:0;max-height:none;grid-row:span 2;">
-                    <div class="lc-ec" data-chart="0" role="img" aria-label="Wykres"></div>
-                  </div>
-                  <div class="lc-sf-chart" data-k="1" style="height:100%;min-height:0;max-height:none;">
-                    <div class="lc-ec" data-chart="1" role="img" aria-label="Wykres"></div>
-                  </div>
-                  <div class="lc-sf-chart" data-k="2" style="height:100%;min-height:0;max-height:none;">
-                    <div class="lc-ec" data-chart="2" role="img" aria-label="Wykres"></div>
-                  </div>
-                </div>
+            </div>
+            <ol class="lc-step-track" style="--lc-steps:5;">
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="1" aria-current="step">
+                  <b>1</b>
+                  <span>Dwie próby</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="2">
+                  <b>2</b>
+                  <span>Dwie p̂</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="3">
+                  <b>3</b>
+                  <span>Różnica</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="4">
+                  <b>4</b>
+                  <span>± SE</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="5">
+                  <b>5</b>
+                  <span>Przedział</span>
+                </button>
+              </li>
+            </ol>
+            <div class="lc-step-body">
+              <div class="p41" data-kind="diff" data-x="45" data-y="29">
+                <div class="p41-svg"></div>
               </div>
-              <div class="lc-stepper-foot">
-                <div class="lc-stepper-text" aria-live="polite">
-                  <span class="lc-stepper-kicker">Krok 1 z 5 · Dwie próby</span>
-                  <span id="ch4_dstep_text"></span>
-                </div>
-                <div class="lc-stepper-actions">
-                  <button type="button" class="lc-action is-ghost is-icon" data-lc-nav="reset" title="Od początku" aria-label="Od początku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
-                  <button type="button" class="lc-action is-outline" data-lc-nav="prev" disabled="">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
-                    <span>Wstecz</span>
-                  </button>
-                  <button type="button" class="lc-action is-solid" data-lc-nav="next">
-                    <span>Dalej</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
-                  </button>
-                </div>
+            </div>
+            <div class="lc-stepper-foot">
+              <div class="lc-stepper-text" aria-live="polite">
+                <span class="lc-stepper-kicker">Krok 1 z 5 · Dwie próby</span>
+                <span id="ch4_ddstep_text"></span>
+              </div>
+              <div class="lc-stepper-actions">
+                <button type="button" class="lc-action is-ghost is-icon" data-lc-nav="reset" title="Od początku" aria-label="Od początku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
+                <button type="button" class="lc-action is-outline" data-lc-nav="prev" disabled="">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
+                  <span>Wstecz</span>
+                </button>
+                <button type="button" class="lc-action is-solid" data-lc-nav="next">
+                  <span>Dalej</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
+                </button>
               </div>
             </div>
           </div>
@@ -13049,15 +13048,18 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
   new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});
   document.addEventListener("DOMContentLoaded",scan);scan();
 })();</script>
-<script>// Ryc. 3.2 „Konstruowanie przedziału” dla średniej (wersja z 2026-11-20, dawny prototyp 3.2-A3).
-// 25 pomiarów wzrostu z N(170, 10) jako stos kropek na osi; średnia to gruba kreska; ± SE to
-// czarna klamra (tylko krok 3); 95% przedział to burgundowa klamra nad kropkami z granicami
-// po bokach (krok 4). Nigdy nie ma dwóch odcinków naraz. Poprzednia wersja (ci_construction.js)
-// kładła średnią, ± SE i przedział jeden pod drugim; tamten skrypt rysuje nadal Ryc. 3.3.
-// Kontener: .p32[data-x] (pierwsza próba z R) wewnątrz lc_step_widget(); przycisk [data-p32="new"].
+<script>// Ryc. 3.2 i 3.3 wykładu 04: budowa przedziału ufności dla średniej i dla różnicy średnich
+// (wersja z 2026-11-20; wcześniej ci_construction.js kładł średnią, ± SE i przedział jeden
+// pod drugim). Wspólny wygląd: pomiary jako stos kropek na osi, średnia jako gruba kreska,
+// ± SE jako czarna klamra (tylko w swoim kroku), 95% przedział jako burgundowa klamra
+// z granicami po bokach. Nigdy nie ma dwóch odcinków naraz.
+//   .p32[data-x]                    Ryc. 3.2: 25 pomiarów wzrostu z N(170, 10)
+//   .p32[data-kind="diff"][data-x][data-y]  Ryc. 3.3: 25 mężczyzn N(178, 7) i 25 kobiet N(165, 6);
+//       u góry obie próby na osi wzrostu, niżej oś różnicy z zerem (wersja Welcha).
+// Kroki prowadzi lc_step_widget(); przycisk [data-p32="new"] losuje nowe próby (lcDist).
 (function () {
   "use strict";
-  var NS = "http://www.w3.org/2000/svg", T24 = 2.063899, MU = 170, W = 640, LO = 145, HI = 195;
+  var NS = "http://www.w3.org/2000/svg", MU = 170, W = 640;
   function el(name, attrs, parent, text) {
     var e = document.createElementNS(NS, name);
     Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
@@ -13066,65 +13068,120 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     return e;
   }
   function f(v, d) { return Number(v).toFixed(d); }
+  function mean(x) { return x.reduce(function (a, b) { return a + b; }, 0) / x.length; }
+  function variance(x) { var m = mean(x); return x.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / (x.length - 1); }
+  // Kwantyl 0.975 rozkładu t; bez lcDist (testy) zostaje wartość dla df = 24.
+  function tcrit(df) { var D = typeof window !== "undefined" && window.lcDist; return D && D.qt ? D.qt(0.975, df) : 2.063899; }
   function stats(x) {
-    var n = x.length, m = x.reduce(function (a, b) { return a + b; }, 0) / n;
-    var s = Math.sqrt(x.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / (n - 1)), se = s / Math.sqrt(n);
-    return { x: x, n: n, m: m, s: s, se: se, me: T24 * se, lo: m - T24 * se, hi: m + T24 * se };
+    var n = x.length, m = mean(x), s = Math.sqrt(variance(x)), se = s / Math.sqrt(n), t = tcrit(n - 1);
+    return { x: x, n: n, m: m, s: s, se: se, t: t, me: t * se, lo: m - t * se, hi: m + t * se };
   }
-  function draw25() {
+  // Różnica średnich w wersji Welcha, jak ci_construction_stats(x, y) w R.
+  function diffStats(x, y) {
+    var a = variance(x) / x.length, b = variance(y) / y.length, d = mean(x) - mean(y), se = Math.sqrt(a + b);
+    var df = (a + b) * (a + b) / (a * a / (x.length - 1) + b * b / (y.length - 1)), t = tcrit(df);
+    return { x: x, y: y, m1: mean(x), m2: mean(y), s1: Math.sqrt(variance(x)), s2: Math.sqrt(variance(y)),
+             d: d, se: se, df: df, t: t, me: t * se, lo: d - t * se, hi: d + t * se };
+  }
+  function draw(n, mu, sd) {
     var r = window.lcDist && window.lcDist.r;
-    return r ? r.many(25, function () { return r.norm(MU, 10); }) : null;
+    return r ? r.many(n, function () { return r.norm(mu, sd); }) : null;
   }
-  var X = function (v) { return 50 + (Math.min(HI, Math.max(LO, v)) - LO) / (HI - LO) * 540; };
+  function scale(lo, hi) { return function (v) { return 50 + (Math.min(hi, Math.max(lo, v)) - lo) / (hi - lo) * 540; }; }
 
   // Kropki ułożone w stos nad osią: każda w najniższym wolnym rzędzie.
-  function dots(g, xs, base, r, cls) {
+  function dots(g, xs, X, base, r, cls) {
     var rows = [];
     xs.slice().sort(function (a, b) { return a - b; }).forEach(function (v) {
       var px = X(v), k = 0;
       while (rows[k] !== undefined && px - rows[k] < 2 * r + 1) k++;
       rows[k] = px;
-      el("circle", { cx: px, cy: base - r - k * (2 * r + 1), r: r, class: cls || "p32-dot" }, g);
+      el("circle", { cx: px, cy: base - r - k * (2 * r + 1), r: r, class: "p32-dot" + (cls ? " " + cls : "") }, g);
     });
   }
-  function axis(g, y, small) {
-    el("line", { x1: X(LO), x2: X(HI), y1: y, y2: y, class: "p32-axis" }, g);
-    for (var v = 150; v <= 190; v += 10) {
+  function axis(g, X, y, ticks) {
+    el("line", { x1: 50, x2: 590, y1: y, y2: y, class: "p32-axis" }, g);
+    ticks.forEach(function (v) {
       el("line", { x1: X(v), x2: X(v), y1: y, y2: y + 6, class: "p32-axis" }, g);
-      el("text", { x: X(v), y: y + (small ? 20 : 24), class: "p32-tick" + (small ? " is-small" : "") }, g, String(v));
-    }
+      el("text", { x: X(v), y: y + 24, class: "p32-tick" }, g, String(v));
+    });
   }
-  function bracket(g, x1, x2, y, cap) {
+  function seBracket(g, x1, x2, y, label) {
     el("line", { x1: x1, x2: x2, y1: y, y2: y, class: "p32-se" }, g);
-    [x1, x2].forEach(function (x) { el("line", { x1: x, x2: x, y1: y - cap, y2: y + cap, class: "p32-se" }, g); });
+    [x1, x2].forEach(function (x) { el("line", { x1: x, x2: x, y1: y - 8, y2: y + 8, class: "p32-se" }, g); });
+    el("text", { x: x2 + 12, y: y + 5, class: "p32-lab is-start" }, g, label);
+  }
+  // Burgundowa klamra przedziału: górna belka na wysokości y, granice po bokach.
+  function ciBracket(g, x1, x2, y, lo, hi) {
+    el("path", { d: "M" + x1 + " " + (y + 14) + " v-14 H" + x2 + " v14", class: "p32-ci-bracket" }, g);
+    el("text", { x: x1 - 8, y: y + 6, class: "p32-val is-ci is-end" }, g, lo);
+    el("text", { x: x2 + 8, y: y + 6, class: "p32-val is-ci is-start" }, g, hi);
   }
 
-  function draw(g, s, step) {
-    var xm = X(s.m), x1 = X(s.lo), x2 = X(s.hi);
-    dots(g, s.x, 190, 6);
-    axis(g, 196);
-    el("text", { x: X(HI), y: 246, class: "p32-axt" }, g, "wzrost (cm)");
+  // ---- Ryc. 3.2: jedna średnia ---------------------------------------------------
+  function drawMean(g, s, step) {
+    var X = scale(145, 195), xm = X(s.m);
+    dots(g, s.x, X, 190, 6);
+    axis(g, X, 196, [150, 160, 170, 180, 190]);
+    el("text", { x: 590, y: 246, class: "p32-axt" }, g, "wzrost (cm)");
     if (step < 2) return;
     if (step >= 4) {
-      el("path", { d: "M" + x1 + " 86 v-14 H" + x2 + " v14", class: "p32-ci-bracket" }, g);
-      el("text", { x: x1 - 8, y: 78, class: "p32-val is-ci is-end" }, g, f(s.lo, 2));
-      el("text", { x: x2 + 8, y: 78, class: "p32-val is-ci is-start" }, g, f(s.hi, 2));
+      ciBracket(g, X(s.lo), X(s.hi), 72, f(s.lo, 2), f(s.hi, 2));
       el("text", { x: xm, y: 280, class: "p32-lab is-ci" }, g, "95% przedział ufności dla średniej");
     }
     el("line", { x1: xm, x2: xm, y1: step >= 4 ? 72 : 56, y2: 204, class: "p32-mean" }, g);
     el("text", { x: xm, y: 36, class: "p32-val" }, g, "x̄ = " + f(s.m, 2) + " cm");
-    if (step === 3) {
-      bracket(g, X(s.m - s.se), X(s.m + s.se), 66, 8);
-      el("text", { x: X(s.m + s.se) + 12, y: 71, class: "p32-lab is-start" }, g, "± SE = " + f(s.se, 2) + " cm");
-    }
+    if (step === 3) seBracket(g, X(s.m - s.se), X(s.m + s.se), 66, "± SE = " + f(s.se, 2) + " cm");
   }
-
-  function text(s, step) {
+  function textMean(s, step) {
     if (step === 1) return s.n + " pomiarów wzrostu, każda kropka to jedna osoba. <i>x̄</i> = " + f(s.m, 2) + " cm, <i>s</i> = " + f(s.s, 2) + " cm.";
     if (step === 2) return "Średnia z próby <i>x̄</i> = " + f(s.m, 2) + " cm to estymata punktowa μ. Inna próba dałaby inną wartość.";
     if (step === 3) return "<i>SE</i> = <i>s</i>/√<i>n</i> = " + f(s.s, 2) + "/√" + s.n + " = " + f(s.se, 2) + " cm. Jeden błąd standardowy w każdą stronę to tylko około 67% ufności.";
-    return "<i>t</i>* = 2.064 (df = 24), margines 2.064 · " + f(s.se, 2) + " = " + f(s.me, 2) + " cm. 95% CI: <b>[" + f(s.lo, 2) + ", " + f(s.hi, 2) +
+    return "<i>t</i>* = " + f(s.t, 3) + " (df = " + (s.n - 1) + "), margines " + f(s.t, 3) + " · " + f(s.se, 2) + " = " + f(s.me, 2) + " cm. 95% CI: <b>[" + f(s.lo, 2) + ", " + f(s.hi, 2) +
       "]</b> cm. " + (s.lo <= MU && MU <= s.hi ? "Ten przedział zawiera μ = 170 cm." : "Ten przedział nie zawiera μ = 170 cm.");
+  }
+
+  // ---- Ryc. 3.3: różnica średnich ------------------------------------------------
+  function drawDiff(g, s, step) {
+    var X = scale(148, 198), XD = scale(-2, 22), x1 = X(s.m1), x2 = X(s.m2), xd = XD(s.d);
+    el("text", { x: 50, y: 84, class: "p32-grp is-1" }, g, "Mężczyźni");
+    el("text", { x: 590, y: 160, class: "p32-grp is-2 is-end" }, g, "Kobiety");
+    dots(g, s.x, X, 92, 5, "is-1");
+    dots(g, s.y, X, 168, 5, "is-2");
+    axis(g, X, 174, [150, 160, 170, 180, 190]);
+    el("text", { x: 590, y: 222, class: "p32-axt" }, g, "wzrost (cm)");
+    if (step < 2) return;
+    el("line", { x1: x1, x2: x1, y1: 34, y2: 96, class: "p32-mean" }, g);
+    el("line", { x1: x2, x2: x2, y1: 112, y2: 172, class: "p32-mean" }, g);
+    el("text", { x: x1, y: 24, class: "p32-val" }, g, "x̄₁ = " + f(s.m1, 2));
+    el("text", { x: x2 - 10, y: 124, class: "p32-val is-end" }, g, "x̄₂ = " + f(s.m2, 2));
+    if (step < 3) return;
+    // Różnica jako odległość między średnimi, potem ta sama liczba na własnej osi z zerem.
+    el("path", { d: "M" + x1 + " 100 V244 M" + x2 + " 176 V244", class: "p32-guide" }, g);
+    el("path", { d: "M" + Math.min(x1, x2) + " 244 H" + Math.max(x1, x2), class: "p32-span" }, g);
+    el("text", { x: (x1 + x2) / 2, y: 268, class: "p32-lab" }, g, "x̄₁ − x̄₂ = " + f(s.d, 2) + " cm");
+    axis(g, XD, 384, [0, 5, 10, 15, 20]);
+    el("line", { x1: XD(0), x2: XD(0), y1: 300, y2: 384, class: "p32-guide" }, g);
+    el("text", { x: XD(0), y: 426, class: "p32-zero" }, g, "brak różnicy");
+    el("text", { x: 590, y: 426, class: "p32-axt" }, g, "różnica średnich (cm)");
+    if (step >= 5) {
+      ciBracket(g, XD(s.lo), XD(s.hi), 330, f(s.lo, 2), f(s.hi, 2));
+      el("text", { x: 320, y: 452, class: "p32-lab is-ci" }, g, "95% przedział ufności dla różnicy średnich");
+    }
+    el("line", { x1: xd, x2: xd, y1: step >= 5 ? 330 : 318, y2: 392, class: "p32-mean" }, g);
+    el("text", { x: xd, y: 306, class: "p32-val" }, g, f(s.d, 2));
+    if (step === 4) seBracket(g, XD(s.d - s.se), XD(s.d + s.se), 326, "± SE = " + f(s.se, 2) + " cm");
+  }
+  function textDiff(s, step) {
+    var n1 = s.x.length, n2 = s.y.length;
+    if (step === 1) return n1 + " mężczyzn (niebieskie kropki) i " + n2 + " kobiet (bursztynowe). Każda kropka to jedna osoba.";
+    if (step === 2) return "<i>x̄</i><sub>1</sub> = " + f(s.m1, 2) + " cm, <i>x̄</i><sub>2</sub> = " + f(s.m2, 2) + " cm. Każda średnia ma własną niepewność.";
+    if (step === 3) return "<i>x̄</i><sub>1</sub> − <i>x̄</i><sub>2</sub> = " + f(s.d, 2) + " cm. Dolna oś ma skalę różnicy: zero oznacza brak różnicy.";
+    if (step === 4) return "<i>SE</i> = √(" + f(s.s1, 2) + "²/" + n1 + " + " + f(s.s2, 2) + "²/" + n2 + ") = " + f(s.se, 2) +
+      " cm, mniej niż suma SE obu średnich (" + f(s.s1 / Math.sqrt(n1) + s.s2 / Math.sqrt(n2), 2) + " cm).";
+    return "df Welcha ≈ " + f(s.df, 1) + ", <i>t</i>* = " + f(s.t, 3) + ", margines " + f(s.t, 3) + " · " + f(s.se, 2) + " = " + f(s.me, 2) +
+      " cm. 95% CI: <b>[" + f(s.lo, 2) + ", " + f(s.hi, 2) + "]</b> cm. " +
+      (s.lo <= 0 && 0 <= s.hi ? "Przedział obejmuje 0." : "Przedział nie obejmuje 0: mężczyźni są średnio wyżsi o co najmniej " + f(s.lo, 1) + " cm.");
   }
 
   function init(root) {
@@ -13132,39 +13189,51 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     var stepper = root.closest(".lc-stepper");
     if (!stepper) return;
     root.dataset.ready = "1";
-    var s = stats(JSON.parse(root.dataset.x)), H = 296;
+    var diff = root.dataset.kind === "diff", x = JSON.parse(root.dataset.x);
+    var s = diff ? diffStats(x, JSON.parse(root.dataset.y)) : stats(x);
     var out = document.getElementById(stepper.id + "_text"), box = root.querySelector(".p32-svg");
     function render() {
-      var step = Number(stepper.getAttribute("data-lc-step")) || 1;
+      var step = Number(stepper.getAttribute("data-lc-step")) || 1, last = step >= (diff ? 5 : 4);
       box.textContent = "";
-      var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
-        "aria-label": "Budowa przedziału ufności dla średniej, krok " + step + ": średnia " + f(s.m, 2) + " cm" +
-          (step >= 4 ? ", 95% przedział ufności od " + f(s.lo, 2) + " do " + f(s.hi, 2) + " cm" : "") }, box);
-      draw(svg, s, step);
-      if (out) out.innerHTML = text(s, step);
+      var svg = el("svg", { viewBox: "0 0 " + W + " " + (diff ? 466 : 296), role: "img",
+        "aria-label": diff
+          ? "Budowa przedziału ufności dla różnicy średnich, krok " + step + (step >= 3 ? ": różnica " + f(s.d, 2) + " cm" : "") +
+            (last ? ", 95% przedział ufności od " + f(s.lo, 2) + " do " + f(s.hi, 2) + " cm" : "")
+          : "Budowa przedziału ufności dla średniej, krok " + step + ": średnia " + f(s.m, 2) + " cm" +
+            (last ? ", 95% przedział ufności od " + f(s.lo, 2) + " do " + f(s.hi, 2) + " cm" : "") }, box);
+      if (diff) drawDiff(svg, s, step); else drawMean(svg, s, step);
+      if (out) out.innerHTML = diff ? textDiff(s, step) : textMean(s, step);
     }
     stepper.addEventListener("click", function (e) {
-      if (e.target.closest('[data-p32="new"]')) { var x = draw25(); if (x) { s = stats(x); render(); } }
+      if (!e.target.closest('[data-p32="new"]')) return;
+      var a = diff ? draw(25, 178, 7) : draw(25, 170, 10), b = diff ? draw(25, 165, 6) : null;
+      if (!a) return;
+      s = diff ? diffStats(a, b) : stats(a);
+      render();
     });
     new MutationObserver(render).observe(stepper, { attributes: true, attributeFilter: ["data-lc-step"] });
     render();
   }
-  if (typeof window !== "undefined") window.lcStat04Fig32 = { stats: stats, text: text };
+  // Funkcje liczące do testów (statystyka/tests/js/stat04_fig32.test.js).
+  if (typeof window !== "undefined") window.lcStat04Fig32 = { stats: stats, diffStats: diffStats, text: textMean, textDiff: textDiff };
   function scan() { document.querySelectorAll(".p32:not([data-ready])").forEach(init); }
   document.addEventListener("DOMContentLoaded", scan);
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
   scan();
 })();</script>
-<script>// Ryc. 4.1 „Konstruowanie przedziału” dla proporcji (wersja z 2026-11-20, dawny prototyp 4.1-C).
-// Próba 50 odpowiedzi TAK/NIE (p = 0.6) jako kropki; odsetek TAK jako pasek wypełniony od 0 do
-// 100%; ± SE jako klamra nad krawędzią wypełnienia; 95% przedział jako ramka wokół tej krawędzi,
-// z granicami w procentach. Cztery kroki prowadzi lc_step_widget(); przycisk [data-p41="new"]
-// losuje nową próbę. Kontener: .p41[data-x] (pierwsza próba) wewnątrz widgetu krokowego.
-// Poprzednia wersja (słupki TAK/NIE i oś 0–1 z trzema znakami na różnych wysokościach) rysowała
-// przedział jako nakładające się odcinki; ramka na pasku czyta się wyraźniej.
+<script>// Ryc. 4.1 i 4.3 wykładu 04: budowa przedziału ufności dla proporcji i dla różnicy proporcji
+// (wersja z 2026-11-20; wcześniej słupki TAK/NIE i odcinki na osi 0–1 w sf_steps.js).
+// Wspólny wygląd: odpowiedzi jako kropki (TAK wypełnione, NIE puste), odsetek TAK jako pasek
+// wypełniony od 0 do 100%, ± SE jako czarna klamra tylko w swoim kroku.
+//   .p41[data-x]                         Ryc. 4.1: 50 odpowiedzi, p = 0.6; 95% przedział to
+//       ramka wokół krawędzi wypełnienia, z granicami w procentach.
+//   .p41[data-kind="diff"][data-x][data-y]  Ryc. 4.3: dwie grupy po 60 osób (p = 0.7 i 0.5);
+//       dwa paski, różnica jako odstęp między krawędziami, niżej oś różnicy z zerem,
+//       95% przedział jako burgundowa klamra z granicami w punktach procentowych.
+// Kroki prowadzi lc_step_widget(); przycisk [data-p41="new"] losuje nowe próby.
 (function () {
   "use strict";
-  var NS = "http://www.w3.org/2000/svg", N = 50, P0 = 0.6, Z = 1.959964;
+  var NS = "http://www.w3.org/2000/svg", Z = 1.959964;
   function el(name, attrs, parent, text) {
     var e = document.createElementNS(NS, name);
     Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
@@ -13174,38 +13243,56 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
   }
   function f(v, d) { return Number(v).toFixed(d); }
   function pct(v, d) { return f(100 * v, d === undefined ? 1 : d) + "%"; }
-  function draw50() { var x = 0; for (var i = 0; i < N; i++) if (Math.random() < P0) x++; return x; }
-  function stats(x) { var p = x / N, se = Math.sqrt(p * (1 - p) / N); return { x: x, p: p, se: se, me: Z * se, lo: p - Z * se, hi: p + Z * se }; }
+  function pp(v) { return f(100 * v, 1).replace("-", "−"); }
+  function rbinom(n, p) { var x = 0; for (var i = 0; i < n; i++) if (Math.random() < p) x++; return x; }
+  function stats(x, n) {
+    n = n || 50;
+    var p = x / n, se = Math.sqrt(p * (1 - p) / n);
+    return { x: x, n: n, p: p, se: se, me: Z * se, lo: p - Z * se, hi: p + Z * se };
+  }
+  // Różnica dwóch proporcji (przedział Walda), jak diffStats() w dawnym sf_steps.js.
+  function diffStats(x1, x2, n) {
+    n = n || 60;
+    var p1 = x1 / n, p2 = x2 / n, d = p1 - p2, se = Math.sqrt(p1 * (1 - p1) / n + p2 * (1 - p2) / n);
+    return { x1: x1, x2: x2, n: n, p1: p1, p2: p2, d: d, se: se, me: Z * se, lo: d - Z * se, hi: d + Z * se };
+  }
+  var X = function (v) { return 50 + 540 * Math.min(1, Math.max(0, v)); };
 
-  // 50 odpowiedzi jako kropki: TAK wypełnione, NIE puste.
-  function waffle(g, s, x0, y0, cols, step, r) {
-    for (var i = 0; i < N; i++) {
+  // Odpowiedzi jako kropki: TAK wypełnione, NIE puste.
+  function waffle(g, x, n, x0, y0, cols, step, r) {
+    for (var i = 0; i < n; i++) {
       el("circle", { cx: x0 + (i % cols) * step, cy: y0 + Math.floor(i / cols) * step, r: r,
-        class: "p41-dot" + (i < s.x ? " is-yes" : "") }, g);
+        class: "p41-dot" + (i < x ? " is-yes" : "") }, g);
     }
   }
-  function axis(g, X, y, lo, hi, by, asPct) {
-    el("line", { x1: X(lo), x2: X(hi), y1: y, y2: y, class: "p41-axis" }, g);
-    for (var v = lo; v <= hi + 1e-9; v += by) {
+  function pctAxis(g, y) {
+    el("line", { x1: 50, x2: 590, y1: y, y2: y, class: "p41-axis" }, g);
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
       el("line", { x1: X(v), x2: X(v), y1: y, y2: y + 7, class: "p41-axis" }, g);
-      el("text", { x: X(v), y: y + 26, class: "p41-tick" }, g, asPct ? pct(v, 0) : f(v, 1));
-    }
+      el("text", { x: X(v), y: y + 26, class: "p41-tick" }, g, pct(v, 0));
+    });
   }
-  function bar(g, x1, x2, y, cls, cap) {
-    el("line", { x1: x1, x2: x2, y1: y, y2: y, class: "p41-bar " + cls }, g);
-    [x1, x2].forEach(function (x) { el("line", { x1: x, x2: x, y1: y - cap, y2: y + cap, class: "p41-cap " + cls }, g); });
+  // Pasek 100% wypełniony do odsetka TAK, z kreską na krawędzi wypełnienia.
+  function fillBar(g, p, y, h) {
+    el("rect", { x: 50, y: y, width: 540, height: h, rx: 6, class: "p41-full" }, g);
+    el("rect", { x: 50, y: y, width: X(p) - 50, height: h, rx: 6, class: "p41-fill" }, g);
+    el("text", { x: 62, y: y + h / 2 + 6, class: "p41-in" }, g, "TAK " + pct(p, 0));
+    el("text", { x: 578, y: y + h / 2 + 6, class: "p41-in is-no" }, g, "NIE " + pct(1 - p, 0));
+  }
+  function seBracket(g, x1, x2, y, label) {
+    el("line", { x1: x1, x2: x2, y1: y, y2: y, class: "p41-bar is-se" }, g);
+    [x1, x2].forEach(function (x) { el("line", { x1: x, x2: x, y1: y - 8, y2: y + 8, class: "p41-cap is-se" }, g); });
+    return label;
   }
 
-  function barChart(svg, s, step) {
-    var x0 = 50, x1 = 600, X = function (v) { return x0 + (x1 - x0) * v; }, yt = 150, h = 46;
-    waffle(svg, s, 62, 30, 25, 21.4, 7.5);
-    el("text", { x: x0, y: 96, class: "p41-note" }, svg, s.x + " × TAK · " + (N - s.x) + " × NIE");
+  // ---- Ryc. 4.1: jedna proporcja -------------------------------------------------
+  function drawOne(svg, s, step) {
+    var yt = 150, h = 46;
+    waffle(svg, s.x, s.n, 62, 30, 25, 21.4, 7.5);
+    el("text", { x: 50, y: 96, class: "p41-note" }, svg, s.x + " × TAK · " + (s.n - s.x) + " × NIE");
     if (step < 2) return;
-    el("rect", { x: x0, y: yt, width: x1 - x0, height: h, rx: 6, class: "p41-full" }, svg);
-    el("rect", { x: x0, y: yt, width: X(s.p) - x0, height: h, rx: 6, class: "p41-fill" }, svg);
-    el("text", { x: x0 + 12, y: yt + 30, class: "p41-in" }, svg, "TAK " + pct(s.p, 0));
-    el("text", { x: x1 - 12, y: yt + 30, class: "p41-in is-no" }, svg, "NIE " + pct(1 - s.p, 0));
-    axis(svg, X, yt + h + 8, 0, 1, 0.25, true);
+    fillBar(svg, s.p, yt, h);
+    pctAxis(svg, yt + h + 8);
     if (step >= 4) {
       el("rect", { x: X(s.lo), y: yt - 10, width: X(s.hi) - X(s.lo), height: h + 20, rx: 4, class: "p41-band" }, svg);
       el("text", { x: X(s.lo), y: yt - 22, class: "p41-val is-ci" }, svg, pct(s.lo));
@@ -13213,18 +13300,74 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
       el("text", { x: X(s.p), y: yt + h + 70, class: "p41-lab is-ci" }, svg, "95% przedział ufności dla odsetka TAK");
     }
     if (step === 3) {
-      bar(svg, X(s.p - s.se), X(s.p + s.se), yt - 14, "is-se", 8);
+      seBracket(svg, X(s.p - s.se), X(s.p + s.se), yt - 14);
       el("text", { x: X(s.p), y: yt - 30, class: "p41-lab is-se" }, svg, "± SE = " + pct(s.se));
     }
     el("line", { x1: X(s.p), x2: X(s.p), y1: yt - 6, y2: yt + h + 6, class: "p41-edge" }, svg);
   }
-
-  function text(s, step) {
-    if (step === 1) return N + " odpowiedzi: " + s.x + " razy TAK, " + (N - s.x) + " razy NIE.";
-    if (step === 2) return "<i>p̂</i> = <i>x</i>/<i>n</i> = " + s.x + "/" + N + " = " + f(s.p, 2) + ". To estymata odsetka w populacji.";
+  function textOne(s, step) {
+    if (step === 1) return s.n + " odpowiedzi: " + s.x + " razy TAK, " + (s.n - s.x) + " razy NIE.";
+    if (step === 2) return "<i>p̂</i> = <i>x</i>/<i>n</i> = " + s.x + "/" + s.n + " = " + f(s.p, 2) + ". To estymata odsetka w populacji.";
     if (step === 3) return "<i>SE</i> = √(<i>p̂</i>(1 − <i>p̂</i>)/<i>n</i>) = " + f(s.se, 3) + ". Jeden błąd standardowy w każdą stronę to jeszcze nie 95%.";
     return "<i>p̂</i> ± 1.96 · <i>SE</i> = " + f(s.p, 2) + " ± " + f(s.me, 3) + ", czyli 95% CI: <b>[" + f(s.lo, 3) + ", " + f(s.hi, 3) +
       "]</b>, od " + pct(s.lo) + " do " + pct(s.hi) + ".";
+  }
+
+  // ---- Ryc. 4.3: różnica proporcji -----------------------------------------------
+  function drawDiff(svg, s, step) {
+    var XD = function (v) { return 50 + 540 * (Math.min(0.5, Math.max(-0.5, v)) + 0.5); };
+    [[s.x1, s.p1, "Grupa 1", 0], [s.x2, s.p2, "Grupa 2", 122]].forEach(function (gr) {
+      var off = gr[3];
+      el("text", { x: 50, y: 22 + off, class: "p41-note" }, svg, gr[2]);
+      el("text", { x: 590, y: 22 + off, class: "p41-note is-end" }, svg, gr[0] + " × TAK · " + (s.n - gr[0]) + " × NIE");
+      waffle(svg, gr[0], s.n, 59, 40 + off, 30, 18, 6.5);
+      if (step >= 2) {
+        fillBar(svg, gr[1], 74 + off, 30);
+        el("line", { x1: X(gr[1]), x2: X(gr[1]), y1: 70 + off, y2: 108 + off, class: "p41-edge" }, svg);
+      }
+    });
+    if (step < 2) return;
+    pctAxis(svg, 236);
+    if (step < 3) return;
+    // Różnica jako odstęp między krawędziami wypełnienia, potem ta sama liczba na osi z zerem.
+    var a = X(Math.min(s.p1, s.p2)), b = X(Math.max(s.p1, s.p2));
+    el("path", { d: "M" + X(s.p2) + " 118 V192", class: "p41-guide" }, svg);
+    el("path", { d: "M" + a + " 118 H" + b, class: "p41-span" }, svg);
+    el("text", { x: b > 440 ? a - 12 : b + 12, y: 123, class: "p41-lab is-se " + (b > 440 ? "is-end" : "is-start") }, svg,
+      "różnica " + pp(s.d) + " p.p.");
+    el("line", { x1: 50, x2: 590, y1: 404, y2: 404, class: "p41-axis" }, svg);
+    [-0.5, -0.25, 0, 0.25, 0.5].forEach(function (v) {
+      el("line", { x1: XD(v), x2: XD(v), y1: 404, y2: 411, class: "p41-axis" }, svg);
+      el("text", { x: XD(v), y: 430, class: "p41-tick" }, svg, pp(v).replace(".0", ""));
+    });
+    el("line", { x1: XD(0), x2: XD(0), y1: 316, y2: 404, class: "p41-guide" }, svg);
+    el("text", { x: XD(0), y: 448, class: "p41-zero" }, svg, "brak różnicy");
+    el("text", { x: 590, y: 448, class: "p41-axt" }, svg, "grupa 1 − grupa 2 (p.p.)");
+    var xd = XD(s.d);
+    if (step >= 5) {
+      el("path", { d: "M" + XD(s.lo) + " 360 v-14 H" + XD(s.hi) + " v14", class: "p41-ci-bracket" }, svg);
+      el("text", { x: XD(s.lo) - 8, y: 352, class: "p41-val is-ci is-end" }, svg, pp(s.lo));
+      el("text", { x: XD(s.hi) + 8, y: 352, class: "p41-val is-ci is-start" }, svg, pp(s.hi));
+      el("text", { x: 320, y: 476, class: "p41-lab is-ci" }, svg, "95% przedział ufności dla różnicy odsetków");
+    }
+    el("line", { x1: xd, x2: xd, y1: step >= 5 ? 346 : 334, y2: 412, class: "p41-edge" }, svg);
+    el("text", { x: xd, y: 322, class: "p41-val is-p" }, svg, pp(s.d));
+    if (step === 4) {
+      seBracket(svg, XD(s.d - s.se), XD(s.d + s.se), 342);
+      el("text", { x: XD(s.d + s.se) + 12, y: 347, class: "p41-lab is-se is-start" }, svg, "± SE = " + pp(s.se) + " p.p.");
+    }
+  }
+  function textDiff(s, step) {
+    var p1 = "<i>p̂</i><sub>1</sub>", p2 = "<i>p̂</i><sub>2</sub>";
+    if (step === 1) return "Grupa 1: " + s.x1 + " TAK i " + (s.n - s.x1) + " NIE. Grupa 2: " + s.x2 + " TAK i " + (s.n - s.x2) + " NIE.";
+    if (step === 2) return p1 + " = " + s.x1 + "/" + s.n + " = " + f(s.p1, 3) + "&emsp;&emsp;" + p2 + " = " + s.x2 + "/" + s.n + " = " + f(s.p2, 3);
+    if (step === 3) return p1 + " − " + p2 + " = " + f(s.p1, 3) + " − " + f(s.p2, 3) + " = " + f(s.d, 3) +
+      ", czyli " + pp(s.d) + " punktu procentowego. Dolna oś ma skalę różnicy: zero oznacza brak różnicy.";
+    if (step === 4) return "<i>SE</i> = √(" + p1 + "(1 − " + p1 + ")/<i>n</i><sub>1</sub> + " + p2 + "(1 − " + p2 + ")/<i>n</i><sub>2</sub>) = " + f(s.se, 3) + ".";
+    var verdict = s.lo > 0 ? "Przedział nie obejmuje 0: w grupie 1 odsetek TAK jest wyższy, z 95% ufnością o co najmniej " + f(s.lo, 3) + "." :
+      s.hi < 0 ? "Przedział nie obejmuje 0: w grupie 2 odsetek TAK jest wyższy, z 95% ufnością o co najmniej " + f(-s.hi, 3) + "." :
+      "Przedział obejmuje 0: te próby nie rozstrzygają, która grupa ma wyższy odsetek.";
+    return "Margines 1.96 · " + f(s.se, 3) + " = " + f(s.me, 3) + ". 95% CI: <b>[" + f(s.lo, 3) + ", " + f(s.hi, 3) + "]</b>. " + verdict;
   }
 
   function init(root) {
@@ -13232,25 +13375,32 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     var stepper = root.closest(".lc-stepper");
     if (!stepper) return;
     root.dataset.ready = "1";
-    var s = stats(Number(root.dataset.x) || draw50());
+    var diff = root.dataset.kind === "diff";
+    var s = diff ? diffStats(Number(root.dataset.x) || rbinom(60, 0.7), Number(root.dataset.y) || rbinom(60, 0.5))
+                 : stats(Number(root.dataset.x) || rbinom(50, 0.6));
     var out = document.getElementById(stepper.id + "_text"), svgBox = root.querySelector(".p41-svg");
     function render() {
-      var step = Number(stepper.getAttribute("data-lc-step")) || 1;
+      var step = Number(stepper.getAttribute("data-lc-step")) || 1, last = step >= (diff ? 5 : 4);
       svgBox.textContent = "";
-      var svg = el("svg", { viewBox: "0 0 640 300", role: "img",
-        "aria-label": "Budowa przedziału ufności dla proporcji, krok " + step + ": odsetek TAK " + pct(s.p, 0) +
-          (step >= 4 ? ", 95% przedział ufności od " + pct(s.lo) + " do " + pct(s.hi) : "") }, svgBox);
-      barChart(svg, s, step);
-      if (out) out.innerHTML = text(s, step);
+      var svg = el("svg", { viewBox: "0 0 640 " + (diff ? 490 : 300), role: "img",
+        "aria-label": diff
+          ? "Budowa przedziału ufności dla różnicy proporcji, krok " + step + (step >= 3 ? ": różnica " + pp(s.d) + " punktu procentowego" : "") +
+            (last ? ", 95% przedział ufności od " + pp(s.lo) + " do " + pp(s.hi) : "")
+          : "Budowa przedziału ufności dla proporcji, krok " + step + ": odsetek TAK " + pct(s.p, 0) +
+            (last ? ", 95% przedział ufności od " + pct(s.lo) + " do " + pct(s.hi) : "") }, svgBox);
+      if (diff) drawDiff(svg, s, step); else drawOne(svg, s, step);
+      if (out) out.innerHTML = diff ? textDiff(s, step) : textOne(s, step);
     }
     stepper.addEventListener("click", function (e) {
-      if (e.target.closest('[data-p41="new"]')) { s = stats(draw50()); render(); }
+      if (!e.target.closest('[data-p41="new"]')) return;
+      s = diff ? diffStats(rbinom(60, 0.7), rbinom(60, 0.5)) : stats(rbinom(50, 0.6));
+      render();
     });
     new MutationObserver(render).observe(stepper, { attributes: true, attributeFilter: ["data-lc-step"] });
     render();
   }
   // Funkcje liczące do testów (statystyka/tests/js/stat04_fig41.test.js).
-  if (typeof window !== "undefined") window.lcStat04Fig41 = { stats: stats, text: text };
+  if (typeof window !== "undefined") window.lcStat04Fig41 = { stats: stats, diffStats: diffStats, text: textOne, textDiff: textDiff };
   function scan() { document.querySelectorAll(".p41:not([data-ready])").forEach(init); }
   document.addEventListener("DOMContentLoaded", scan);
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
@@ -13630,184 +13780,6 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
   }
 
   Charts.onReady(".fig-zero", init);
-})();</script>
-<script>/* Ryc. 3.2–3.3: dotychczasowy układ i kroki, wektorowy renderer ECharts.
-   Próby, statystyki i tekst kroku liczy przeglądarka (działa offline): pierwsza próba
-   z banku policzonego w R (ci_construction_bank), „Nowa próba” losuje przez lcDist. */
-(function () {
-  'use strict';
-  const C = window.lcCharts;
-  if (!C) return;
-  const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
-  const variance = xs => { const m = mean(xs); return xs.reduce((a, b) => a + (b - m) * (b - m), 0) / (xs.length - 1); };
-  // Jak ci_construction_stats() w R: średnia (różnica), SE, df (Welch), t*, granice 95% CI.
-  function stats(x, y) {
-    let center = mean(x), se = Math.sqrt(variance(x) / x.length), df = x.length - 1;
-    if (y) {
-      const a = variance(x) / x.length, b = variance(y) / y.length;
-      center -= mean(y); se = Math.sqrt(a + b);
-      df = (a + b) * (a + b) / (a * a / (x.length - 1) + b * b / (y.length - 1));
-    }
-    const t = window.lcDist.qt(0.975, df);
-    return {x, y: y || null, mean: center, se, df, t, lower: center - t * se, upper: center + t * se};
-  }
-  function sample(diff) {
-    const r = window.lcDist.r, draw = (n, mu, sd) => r.many(n, () => r.norm(mu, sd));
-    return diff ? stats(draw(25, 178, 7), draw(25, 165, 6)) : stats(draw(25, 170, 10));
-  }
-  // round(v, d) z R: bez końcowych zer.
-  const rd = (v, d) => { const s = v.toFixed(d); return s.indexOf('.') < 0 ? s : s.replace(/0+$/, '').replace(/\.$/, ''); };
-  // Tekst kroku jak dawny output$ch3_step_text / ch3_dstep_text w R. Wzory jako HTML,
-  // bo wersja offline nie ma MathJax (wzory wstawiane dynamicznie zostałyby surowym TeX-em).
-  const XB = '<i>x̄</i>', xb = (k) => '<i>x̄</i><sub>' + k + '</sub>';
-  function stepText(d, step, diff) {
-    if (!diff) {
-      const s = d.se * Math.sqrt(d.x.length), n = d.x.length, me = d.t * d.se;
-      if (step === 1) return n + ' pomiarów wzrostu, każda kropka to jedna osoba. ' + XB + ' = ' + rd(d.mean, 2) +
-        ' cm, <i>s</i> = ' + rd(s, 2) + ' cm.';
-      if (step === 2) return 'Średnia z próby ' + XB + ' = ' + rd(d.mean, 2) +
-        ' cm to estymata punktowa μ. Inna próba dałaby inną wartość.';
-      if (step === 3) return '<i>SE</i> = <i>s</i>/√<i>n</i> = ' + rd(s, 2) + '/√' + n + ' = ' + rd(d.se, 2) +
-        ' cm. Pasek ' + XB + ' ± <i>SE</i> to tylko około 67% ufności.';
-      const covers = d.mean - me <= 170 && 170 <= d.mean + me;
-      return '<i>t</i>* = ' + rd(d.t, 3) + ' (df = ' + (n - 1) + '), <i>ME</i> = ' + rd(d.t, 3) + ' · ' + rd(d.se, 2) +
-        ' = ' + rd(me, 2) + ' cm. 95% CI: [' + rd(d.mean - me, 2) + ' ; ' + rd(d.mean + me, 2) + ']. ' +
-        (covers ? 'Ten przedział zawiera μ = 170 cm.' : 'Ten przedział nie zawiera μ = 170 cm.');
-    }
-    const n1 = d.x.length, n2 = d.y.length, s1 = Math.sqrt(variance(d.x)), s2 = Math.sqrt(variance(d.y));
-    const me = d.t * d.se;
-    if (step === 1) return n1 + ' mężczyzn (niebieskie punkty) i ' + n2 + ' kobiet (bursztynowe). Każdy punkt to jedna osoba.';
-    if (step === 2) return xb(1) + ' = ' + rd(mean(d.x), 2) + ' cm, ' + xb(2) + ' = ' + rd(mean(d.y), 2) +
-      ' cm. Każda średnia ma własną niepewność.';
-    if (step === 3) return xb(1) + ' − ' + xb(2) + ' = ' + rd(d.mean, 2) +
-      ' cm. Dolny panel to skala różnicy: linia 0 oznacza brak różnicy.';
-    if (step === 4) return '<i>SE</i> = √(' + rd(s1, 2) + '²/' + n1 + ' + ' + rd(s2, 2) + '²/' + n2 + ') = ' + rd(d.se, 2) +
-      ' cm, mniej niż suma SE obu średnich (' + rd(s1 / Math.sqrt(n1) + s2 / Math.sqrt(n2), 2) + ' cm).';
-    const lower = d.mean - me, upper = d.mean + me;
-    return 'df Welcha ≈ ' + rd(d.df, 1) + ', <i>t</i>* = ' + rd(d.t, 3) + ', <i>ME</i> = ' + rd(d.t, 3) + ' · ' +
-      rd(d.se, 2) + ' = ' + rd(me, 2) + ' cm. 95% CI: [' + rd(lower, 2) + ' ; ' + rd(upper, 2) + '] cm. ' +
-      (lower <= 0 && 0 <= upper ? 'Przedział obejmuje 0.' :
-        'Przedział nie obejmuje 0: mężczyźni są średnio wyżsi o co najmniej ' + rd(lower, 1) + ' cm.');
-  }
-  function typeset(el) {
-    const MJ = window.MathJax;
-    if (MJ && MJ.Hub && MJ.Hub.Queue) MJ.Hub.Queue(['Typeset', MJ.Hub, el]);
-    else if (MJ && MJ.typesetPromise) MJ.typesetPromise([el]);
-  }
-  window.lcCiConstruction = {stats, stepText};
-  C.onReady('#ch3_step, #ch3_dstep', function (root) {
-    const holder = root.querySelector('.ci-construction');
-    if (!holder) return false;
-    const kind = holder.dataset.kind, diff = kind === 'diff';
-    const bank = JSON.parse(holder.dataset.config), el = holder.querySelector('.lc-ec');
-    let data = bank[0], lastText = '';
-    // Tekst kroku pisze przeglądarka (jak w lcSF).
-    const textEl = root.querySelector('#' + root.id + '_text');
-    const chart = C.chart(el, {}, {renderer: 'svg'});
-    const f = n => n.toFixed(2), avg = xs => xs.reduce((a,b) => a+b,0)/xs.length;
-    function draw() {
-      const d = data, step = Number(root.dataset.lcStep) || 1;
-      const P = C.palette(), fs = C.axisFontSize(root), series = [];
-      const color = intro => step === intro ? P.accent : P.ink;
-      const add = (s, panel) => {
-        s.xAxisIndex = panel || 0; s.yAxisIndex = panel || 0; s.silent = true;
-        s.id = 'part-' + series.length; series.push(s);
-      };
-      const point = (x,y,col,size,panel) => add({type:'scatter',data:[[x,y]],symbol:'diamond',
-        symbolSize:size || 13,itemStyle:{color:col,opacity:1},z:5},panel);
-      const line = (points,col,width,panel,dashed) => add({type:'line',data:points,symbol:'none',
-        lineStyle:{color:col,width:width || 2,type:dashed?'dashed':'solid'},z:2},panel);
-      const label = (x,y,text,col,panel,position) => add({type:'scatter',data:[[x,y]],symbolSize:0,
-        label:{show:true,formatter:text,position:position || 'bottom',distance:5,color:col,
-          fontFamily:C.token('--upwr-sans'),fontSize:fs},z:7},panel);
-      const interval = (m,w,y,col,panel,width) => {
-        line([[m-w,y],[m+w,y]],col,width,panel);
-        [-1,1].forEach(sign => line([[m+sign*w,y-.035],[m+sign*w,y+.035]],col,width,panel));
-      };
-      const raw = (xs, y, col) => add({type:'scatter',
-        data:xs.map((x,i)=>[x,y+((i*7%13)-6)*.023]),symbolSize:6,
-        itemStyle:{color:col,opacity:.65},z:1});
-      const xRange = values => {
-        const lo=Math.min(...values), hi=Math.max(...values), pad=(hi-lo)*.06 || 1;
-        return [lo-pad,hi+pad];
-      };
-      const topRange = xRange(diff ? d.x.concat(d.y) : d.x.concat([d.mean-1.2*d.t*d.se,d.mean+1.2*d.t*d.se]));
-      const xAxis = [], yAxis = [], grids = [];
-      const axis = (range,name,panel) => {
-        xAxis.push(C.ecAxis(P,fs,{type:'value',gridIndex:panel,min:range[0],max:range[1],
-          splitNumber:5,name:name,nameGap:Math.round(fs*2),
-          nameTextStyle:{fontFamily:C.token('--upwr-sans'),fontSize:fs,color:P.soft},
-          axisLabel:{color:P.subtle,fontSize:fs,fontFamily:P.mono,hideOverlap:true,
-            formatter:v=>String(Math.round(v*10)/10)}}));
-        yAxis.push({type:'value',gridIndex:panel,min:0,max:1,show:false});
-      };
-      if (!diff) {
-        grids.push({left:22,right:24,top:16,bottom:Math.round(fs*3.2)});
-        axis(topRange,'Wzrost (cm)',0);
-        raw(d.x,.82,P.niebo);
-        if(step>=2) {
-          line([[d.mean,.04],[d.mean,.98]],P.ref,1,0,true);
-          point(d.mean,.53,color(2)); label(d.mean,.53,'x̄',color(2));
-        }
-        if(step>=3) {
-          interval(d.mean,d.se,.34,color(3),0,step===3?4:2);
-          label(d.mean,.34,'± SE',color(3));
-        }
-        if(step>=4) {
-          interval(d.mean,d.t*d.se,.12,P.accent,0,4);
-          label(d.mean,.12,'95% CI',P.accent);
-        }
-      } else {
-        // Jedna rycina o dotychczasowej proporcji 2:1; dwie niezależne skale.
-        grids.push({left:22,right:24,top:16,height:'43%'},
-          {left:22,right:24,top:'68%',bottom:Math.round(fs*3.2)});
-        axis(topRange,'Wzrost (cm)',0);
-        const bottomRange = xRange([0,d.mean-1.3*d.t*d.se,d.mean+1.3*d.t*d.se]);
-        axis(bottomRange,'Różnica średnich (cm)',1);
-        raw(d.x,.70,P.niebo); raw(d.y,.23,P.bursztyn);
-        label(topRange[0],.86,'Mężczyźni',P.niebo,0,'right');
-        label(topRange[0],.39,'Kobiety',P.bursztyn,0,'right');
-        if(step>=2) {
-          [[avg(d.x),.70,'x̄₁'],[avg(d.y),.23,'x̄₂']].forEach(([m,y,name])=>{
-            line([[m,.04],[m,.98]],P.ref,1,0,true);
-            point(m,y,color(2)); label(m,.98,name+' = '+f(m),color(2),0,'top');
-          });
-        }
-        if(step>=3) {
-          line([[0,.06],[0,.98]],P.ref,1,1,true);
-          point(d.mean,.52,color(3),13,1);
-          if(step===3) label(d.mean,.52,'x̄₁ − x̄₂ = '+f(d.mean),color(3),1);
-        }
-        if(step>=4) {
-          interval(d.mean,d.se,.52,color(4),1,step===4?4:2);
-          if(step===4) label(d.mean,.65,'± SE = ±'+f(d.se),color(4),1,'top');
-        }
-        if(step>=5) {
-          interval(d.mean,d.t*d.se,.52,C.alpha(P.accent,.65),1,5);
-          label(d.mean,.65,'95% CI: ['+f(d.lower)+'; '+f(d.upper)+']',P.accent,1,'top');
-        }
-      }
-      chart.setOption({animation:false,grid:grids,xAxis,yAxis,series,
-        textStyle:{fontFamily:C.token('--upwr-sans'),fontSize:fs},tooltip:{show:false}},true);
-      el.setAttribute('aria-label', (diff?'Różnica średnich':'Średnia')+'; krok '+step+
-        '. Estymata '+f(d.mean)+' cm, SE '+f(d.se)+' cm'+
-        (step===(diff?5:4)?', 95% CI od '+f(d.lower)+' do '+f(d.upper)+' cm.':'.'));
-      if (textEl) {
-        const html = stepText(d, step, diff);
-        if (html !== lastText) { lastText = html; textEl.innerHTML = html; typeset(textEl); }
-      }
-    }
-    const observer=new MutationObserver(draw);
-    observer.observe(root,{attributes:true,attributeFilter:['data-lc-step','data-lc-chart-large']});
-    const newButton=root.querySelector('[id$="_new_sample"]');
-    const next=()=>{data=sample(diff);draw();};
-    C.listen(newButton,'click',next);
-    C.zoomControl(root); C.onTheme(root,draw);
-    C.onDispose(root,()=>{
-      observer.disconnect(); newButton.removeEventListener('click',next);
-    });
-    draw();
-  });
 })();</script>
 <script>// Eksploratory CI (Ryc. 2.2, 2.4, 3.4, 3.5) w ECharts SVG. Dane prób i kwantyle t
 // przychodzą z R w data-config (ci_explorers.R); tu tylko marginesy i rysunek.
@@ -15106,33 +15078,23 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
 <script>// Ryciny wykładu 04 liczone w przeglądarce (silnik lcSF): sf_steps
 //   s04-tnorm  — Ryc. 3.1: rozkład t (df = 4) a N(0, 1), wartości krytyczne
 //   s04-comp   — Przykłady A–C (rozdz. 3): CI grup i CI różnicy (dane z config)
-//   s04-pdstep — Ryc. 4.3: budowa przedziału dla różnicy proporcji
-// Ryc. 3.2–3.3 (budowa CI dla średniej i różnicy średnich) rysuje ci_construction.js,
-// Ryc. 4.1 (budowa CI dla proporcji) rysuje fig_41.js.
+// Ryc. 3.2–3.3 (budowa CI dla średniej i różnicy średnich) rysuje fig_32.js,
+// Ryc. 4.1 i 4.3 (proporcja i różnica proporcji) rysuje fig_41.js.
 // Grubości jak w moście ggplot→ECharts: linewidth × 2 px; punkt size s → średnica ≈ 2.1·s.
 (function () {
   "use strict";
-  // Wzory w tekstach kroków jako HTML: wersja offline nie ma MathJax.
-  var PH = "<i>p̂</i>", ME = "<i>ME</i> = <i>z</i>* · <i>SE</i> = 1.96 · ";
-  function ph(k) { return "<i>p̂</i><sub>" + k + "</sub>"; }
   var C = window.lcCharts, SF = window.lcSF, D = window.lcDist;
   if (!C || !SF || !D) return;
   var fmt = SF.fmt;  // round(v, d) z R: bez końcowych zer
   var Z = D.qnorm(0.975);
 
   function cat(name, fallback) { return C.token("--upwr-cat-" + name, fallback); }
-  // Role kroków jak STEP_ROLES w R/theme_upwr.R: nowy element w akcencie, znany w kolorze pomocniczym.
-  function role(P, step, from) { return step === from ? P.accent : P.secondary; }
   // geom_errorbar(orientation = "y"): odcinek lo–hi i wąsy o łącznej wysokości cap.
   function errbar(lo, hi, y, cap, color, width, alpha) {
     var h = cap / 2;
     return { type: "segs", color: color, width: width, alpha: alpha, z: 4, items: [
       { from: [lo, y], to: [hi, y] }, { from: [lo, y - h], to: [lo, y + h] }, { from: [hi, y - h], to: [hi, y + h] }] };
   }
-  function label(x, y, text, color, size) {
-    return { type: "text", x: x, y: y, text: text, color: color, bold: true, valign: "middle", size: size || 1 };
-  }
-  function diamond(x, y, color) { return { type: "point", x: x, y: y, color: color, symbol: "diamond", size: 17 }; }
 
   // ---- Ryc. 3.1 ---------------------------------------------------------------
   function tnorm(v, P) {
@@ -15203,105 +15165,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
 
   // ---- Ryc. 4.1: proporcja krok po kroku --------------------------------------
   // Słupki TAK / NIE: TAK w roli „data” (niebo), NIE w roli „group” (bursztyn), czarna krawędź.
-  function bars(P, groups, xmax) {
-    var data = [], colors = [], texts = [], top = 0;
-    groups.forEach(function (g) {
-      [[g.at, g.n - g.x], [g.at + 1, g.x]].forEach(function (b, i) {
-        data.push([b[0] - g.w / 2, b[0] + g.w / 2, b[1]]);
-        colors.push(i ? cat("niebo", P.niebo) : cat("bursztyn", P.bursztyn));
-        top = Math.max(top, b[1]);
-      });
-    });
-    top *= groups.length > 1 ? 1.2 : 1.15;
-    data.forEach(function (d) {
-      texts.push({ type: "text", x: (d[0] + d[1]) / 2, y: d[2], text: String(d[2]), color: P.secondary, bold: true, mono: true, size: 1.1 });
-    });
-    var xl = {};
-    groups.forEach(function (g) { xl[g.at] = "NIE"; xl[g.at + 1] = "TAK"; });
-    return { x: [0.4, xmax], y: [0, top], yName: "Liczebność", xLabels: xl, noXGrid: true,
-             layers: [{ type: "bins", data: data, colors: colors, alpha: 0.7, stroke: P.ink, lineWidth: 0.7 }].concat(texts) };
-  }
-
-  function propStats(x, n) {
-    var p = x / n, se = Math.sqrt(p * (1 - p) / n);
-    return { x: x, n: n, p: p, se: se, me: Z * se };
-  }
-
-
-  // ---- Ryc. 4.3: różnica proporcji --------------------------------------------
-  function diffStats(x1, x2) {
-    var n = 60, p1 = x1 / n, p2 = x2 / n, d = p1 - p2;
-    var se = Math.sqrt(p1 * (1 - p1) / n + p2 * (1 - p2) / n);
-    return { x1: x1, x2: x2, n1: n, n2: n, p1: p1, p2: p2, d: d, se: se, me: Z * se };
-  }
-
-  var pdstep = {
-    init: function (state) { this.act(state); },
-    act: function (state) { state.x1 = D.r.binom(60, 0.7); state.x2 = D.r.binom(60, 0.5); },
-    draw: function (v, P, k, state, vals, step) {
-      var s = diffStats(state.x1, state.x2);
-      if (k === 0) {
-        // facet_wrap(~grp): dwa panele obok siebie na jednej osi (NIE, TAK | NIE, TAK).
-        var b = bars(P, [{ at: 1, n: s.n1, x: s.x1, w: 0.65 }, { at: 4, n: s.n2, x: s.x2, w: 0.65 }], 5.6);
-        b.layers.unshift({ type: "vline", x: 3, color: P.rule, width: 1 });
-        b.layers.push({ type: "text", x: 1.5, y: "top", text: "Grupa 1", color: P.ink, bold: true },
-                      { type: "text", x: 4.5, y: "top", text: "Grupa 2", color: P.ink, bold: true });
-        b.y[1] *= 1.08;  // miejsce na nagłówki paneli
-        b.aria = "Liczebności TAK/NIE: grupa 1 " + s.x1 + "/" + (s.n1 - s.x1) + ", grupa 2 " + s.x2 + "/" + (s.n2 - s.x2);
-        return b;
-      }
-      if (k === 1) {
-        var L = [];
-        if (step >= 2) {
-          var c2 = role(P, step, 2);
-          L.push(diamond(s.p1, 1, c2), diamond(s.p2, 2, c2),
-                 label(s.p1, 1.45, "p̂₁ = " + fmt(s.p1, 3), c2), label(s.p2, 2.45, "p̂₂ = " + fmt(s.p2, 3), c2));
-        }
-        return { x: [0, 1], y: [0.4, 2.6], xLabelEvery: 0.2, yLabels: { 1: "Grupa 1", 2: "Grupa 2" }, xName: "Proporcja", noYGrid: true,
-                 layers: L, aria: "Proporcje TAK w grupach" + (step >= 2 ? ": " + fmt(s.p1, 3) + " i " + fmt(s.p2, 3) : "") };
-      }
-      var lo = Math.min(-0.5, s.d - 1.3 * s.me), hi = Math.max(0.5, s.d + 1.3 * s.me), e = (hi - lo) * 0.08;
-      var B = [{ type: "vline", x: 0, color: P.secondary, width: 1.1, dash: [4, 4] }];
-      if (step >= 3) {
-        var c3 = role(P, step, 3);
-        B.push(diamond(s.d, 0, c3));
-        if (step === 3) B.push(label(s.d, -0.22, "p̂₁ − p̂₂ = " + fmt(s.d, 3), c3));
-      }
-      if (step >= 4) {
-        var c4 = role(P, step, 4);
-        B.push(errbar(s.d - s.se, s.d + s.se, 0, 0.08, c4, step === 4 ? 3.6 : 2.2));
-        if (step === 4) B.push(label(s.d, 0.17, "± SE = ±" + fmt(s.se, 3), c4, 0.95));
-      }
-      if (step >= 5) {
-        B.push(errbar(s.d - s.me, s.d + s.me, 0, 0.14, P.accent, 4.4, 0.6),
-               label(s.d, 0.20, "95% CI: [" + fmt(s.d - s.me, 3) + " ; " + fmt(s.d + s.me, 3) + "]", P.accent, 1.07));
-      }
-      return { x: [lo - e, hi + e], y: [-0.55, 0.55], xName: "Różnica proporcji  —  Grupa 1 − Grupa 2",
-               hideY: true, noYGrid: true, layers: B,
-               aria: "Skala różnicy; krok " + step + (step >= 3 ? ". Różnica " + fmt(s.d, 3) : "") +
-                     (step >= 5 ? ", 95% CI od " + fmt(s.d - s.me, 3) + " do " + fmt(s.d + s.me, 3) : "") };
-    },
-    text: function (state, v, vals, step) {
-      var s = diffStats(state.x1, state.x2);
-      if (step === 1) return "<p>Grupa 1: " + s.x1 + " TAK i " + (s.n1 - s.x1) + " NIE. Grupa 2: " +
-                             s.x2 + " TAK i " + (s.n2 - s.x2) + " NIE.</p>";
-      if (step === 2) return "<p>" + ph(1) + " = " + s.x1 + "/" + s.n1 + " = " + fmt(s.p1, 3) +
-                             "&emsp;&emsp;" + ph(2) + " = " + s.x2 + "/" + s.n2 + " = " + fmt(s.p2, 3) + "</p>";
-      if (step === 3) return "<p>" + ph(1) + " − " + ph(2) + " = " + fmt(s.p1, 3) + " − " + fmt(s.p2, 3) + " = " +
-                             fmt(s.d, 3) + "</p><p>Dolny panel ma skalę różnicy. Linia w zerze oznacza brak różnicy.</p>";
-      if (step === 4) return "<p><i>SE</i> = √(" + ph(1) + "(1 − " + ph(1) + ")/<i>n</i><sub>1</sub> + " +
-                             ph(2) + "(1 − " + ph(2) + ")/<i>n</i><sub>2</sub>) = " + fmt(s.se, 3) + "</p>";
-      var lower = s.d - s.me, upper = s.d + s.me;
-      var verdict = lower > 0 ? "Przedział nie obejmuje 0: w grupie 1 odsetek TAK jest wyższy, z 95% ufnością o co najmniej " + fmt(lower, 3) + "." :
-        upper < 0 ? "Przedział nie obejmuje 0: w grupie 2 odsetek TAK jest wyższy, z 95% ufnością o co najmniej " + fmt(-upper, 3) + "." :
-        "Przedział obejmuje 0: te próby nie rozstrzygają, która grupa ma wyższy odsetek.";
-      return "<p>" + ME + fmt(s.se, 3) + " = " + fmt(s.me, 3) + "</p>" +
-             "<p>95% CI: <b>[" + fmt(lower, 3) + " ; " + fmt(upper, 3) + "]</b></p><p>" + verdict + "</p>";
-    }
-  };
-
-  SF.register({ "s04-tnorm": tnorm, "s04-comp": comp, "s04-pdstep": pdstep });
-  window.lcStat04Steps = { propStats: propStats, diffStats: diffStats };
+  SF.register({ "s04-tnorm": tnorm, "s04-comp": comp });
 })();</script>
 <script>// Ryciny wykładu 04 liczone w przeglądarce (silnik lcSF): sf_examples
 //
