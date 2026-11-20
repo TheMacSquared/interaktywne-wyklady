@@ -181,3 +181,33 @@
 .p5w .p5t-c.is-a { border-left-color: var(--upwr-accent); }
 .p5w .p5t-c.is-b { border-left-color: var(--upwr-cat-szalwia, #4a8a6a); }
 .p5w .p5w-num { font: 700 22px var(--upwr-mono); }
+
+/* --- rozdział 07 --- */
+/* Ryc. 7.2: obliczenia χ² w komórkach tabeli krzyżowej. O akcent, E niebo, sumy bursztyn, n szałwia, χ² indygo. */
+.p5k-fig { display: grid; gap: 1em; padding: .4em 0 .2em; }
+.p5k-wrap { overflow-x: auto; }
+.p5k { border-collapse: separate; border-spacing: .45em; margin: 0 auto; font-family: var(--upwr-sans); }
+.p5k th { font: 600 15px var(--upwr-sans); color: var(--upwr-ink-soft); text-align: center; padding: .2em .5em; }
+.p5k tbody th, .p5k tfoot th { text-align: right; white-space: nowrap; }
+.p5k tbody td:not(.is-sum) { min-width: 11.5em; padding: .6em .8em; border-radius: 10px; background: var(--upwr-surface-sunken); vertical-align: top; }
+.p5k td.is-sum { text-align: center; font: 700 20px var(--upwr-mono); color: var(--upwr-ink-soft); padding: .2em .6em; transition: color .35s ease; }
+.lc-stepper:not([data-lc-step="1"]) .p5k td.is-m { color: var(--upwr-cat-bursztyn, #c08540); }
+.lc-stepper:not([data-lc-step="1"]) .p5k td.is-n { color: var(--upwr-cat-szalwia, #4a8a6a); }
+.p5k-o { display: block; font: 700 30px/1.1 var(--upwr-mono); color: var(--upwr-accent); text-align: center; }
+.p5k-line { display: flex; justify-content: space-between; align-items: baseline; gap: .6em; margin-top: .3em; padding-top: .3em; border-top: 1px solid var(--upwr-rule-soft); }
+.p5k-line small { font: 13px var(--upwr-mono); color: var(--upwr-ink-subtle); white-space: nowrap; }
+.p5k-line small i { font-style: normal; font-weight: 700; }
+.p5k-line small i.is-m { color: var(--upwr-cat-bursztyn, #c08540); }
+.p5k-line small i.is-n { color: var(--upwr-cat-szalwia, #4a8a6a); }
+.p5k-line b { font: 700 19px var(--upwr-mono); color: var(--upwr-ink); }
+.p5k-line.is-e b { color: var(--upwr-cat-niebo, #6a9dc4); }
+.p5k-line.is-c b { color: var(--upwr-cat-indygo, #3a5a8a); }
+.p5k-sum { display: grid; gap: .5em; max-width: 640px; width: 100%; margin: 0 auto; }
+.p5k-total { margin: 0; text-align: center; font: 500 18px var(--upwr-mono); color: var(--upwr-ink); }
+.p5k-total b { font-size: 1.3em; color: var(--upwr-cat-indygo, #3a5a8a); }
+.p5k-total span { font-size: .8em; color: var(--upwr-ink-subtle); }
+.p5k-bar { display: flex; gap: 3px; }
+.p5k-seg { flex: 1 1 0; min-width: 0; display: grid; gap: .1em; justify-items: center; padding: .45em .3em; border-radius: 6px; background: var(--upwr-cat-indygo, #3a5a8a); color: var(--upwr-surface); }
+.p5k-seg:nth-child(even) { background: color-mix(in srgb, var(--upwr-cat-indygo, #3a5a8a) 62%, var(--upwr-surface)); }
+.p5k-seg b { font: 700 16px var(--upwr-mono); }
+.p5k-seg span { font: 12px var(--upwr-sans); white-space: nowrap; }

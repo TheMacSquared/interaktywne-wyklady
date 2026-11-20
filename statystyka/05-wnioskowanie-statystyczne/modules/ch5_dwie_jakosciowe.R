@@ -106,7 +106,7 @@ cas_ch5_sol9_ui <- function() {
   )
 }
 
-# Scenariusze testu χ² (Ryc. 7.2 i 7.3): kategorie, prawdopodobieństwa w wierszach, teksty hipotez.
+# Scenariusze testu χ² (Ryc. 7.3 i 7.4): kategorie, prawdopodobieństwa w wierszach, teksty hipotez.
 ch5_scenario_params <- list(
   packaging = list(
     lab1 = "Opakowanie", lab2 = "Pleśń",
@@ -170,45 +170,58 @@ ch5_x2_config <- list(scenarios = lapply(ch5_scenario_params, function(par) {
        probs = lapply(seq_len(nrow(par$probs)), function(i) par$probs[i, ]))
 }))
 
-# Narracja niezależności (Ryc. 7.1): stałe dane o mandatach, tabele i opisy trzech kroków.
+# Ryc. 7.2: obliczenia χ² krok po kroku na tabeli krzyżowej mandatów (te same dane co scena
+# przed wzorami). Każda komórka dostaje kolejne wiersze: O, E z sum brzegowych, O − E, wkład.
+# Kolory jak we wzorach: O akcent, E niebo, sumy brzegowe bursztyn, n szałwia, χ² indygo.
+# Odsłanianie: klasy p5q-fK (element widoczny od kroku K, modules/panels.css).
 ch5_narr_tab <- matrix(c(30, 70, 50, 50), nrow = 2, byrow = TRUE,
   dimnames = list(c("Kobiety", "Mężczyźni"), c("Mandat", "Brak mandatu")))
-ch5_narr_exp <- matrix(c(40, 60, 40, 60), nrow = 2, byrow = TRUE, dimnames = dimnames(ch5_narr_tab))
-ch5_narr_views <- function() {
-  obs <- function() tags$div(
-    tags$p(class = "lc-tbl-lead", tags$b("Obserwowane")),
-    lc_crosstab(ch5_narr_tab, measure = "n", lead = FALSE, label = "Dane z 200 kontroli")
-  )
-  list(
-    obs(),
-    tags$div(class = "lc-tbl-row",
-      obs(),
-      tags$div(
-        tags$p(class = "lc-tbl-lead", tags$b("Oczekiwane przy H₀")),
-        lc_crosstab(ch5_narr_exp, measure = "n", lead = FALSE, label = "Tabela oczekiwana")
-      )
-    ),
-    lc_table(
-      data.frame(group = rownames(ch5_narr_tab), obs = ch5_narr_tab[, "Mandat"],
-                 exp = ch5_narr_exp[, "Mandat"],
-                 diff = ch5_narr_tab[, "Mandat"] - ch5_narr_exp[, "Mandat"]),
-      cols = list(
-        lc_col("group", "", "row"),
-        lc_col("obs", "Mandat (obs.)"),
-        lc_col("exp", "Mandat (oczek.)"),
-        lc_col("diff", "Różnica")
-      )
-    )
+ch5_narr_exp <- outer(rowSums(ch5_narr_tab), colSums(ch5_narr_tab)) / sum(ch5_narr_tab)
+ch5_narr_contrib <- (ch5_narr_tab - ch5_narr_exp)^2 / ch5_narr_exp
+
+ch5_narr_table <- function() {
+  O <- ch5_narr_tab; E <- ch5_narr_exp; K <- ch5_narr_contrib
+  rs <- rowSums(O); cs <- colSums(O); n <- sum(O)
+  minus <- function(x) sub("-", "−", format(x), fixed = TRUE)
+  cell <- function(i, j) {
+    d <- O[i, j] - E[i, j]
+    tags$td(
+      tags$span(class = "p5k-o", O[i, j]),
+      tags$span(class = "p5k-line is-e p5q-f2",
+        tags$small(tags$i(class = "is-m", rs[i]), " · ", tags$i(class = "is-m", cs[j]), " / ", tags$i(class = "is-n", n), " ="),
+        tags$b(E[i, j])),
+      tags$span(class = "p5k-line is-d p5q-f3",
+        tags$small(O[i, j], " − ", E[i, j], " ="), tags$b(minus(d))),
+      tags$span(class = "p5k-line is-c p5q-f4",
+        tags$small(HTML(sprintf("(%s)² / %s =", minus(d), E[i, j]))), tags$b(sprintf("%.2f", K[i, j]))))
+  }
+  short <- c("K, mandat", "K, bez", "M, mandat", "M, bez")
+  vals <- as.vector(t(K))
+  tagList(
+    tags$div(class = "p5k-wrap",
+      tags$table(class = "p5k", `aria-label` = "Tabela krzyżowa płci i mandatu z obliczeniami w komórkach",
+        tags$thead(tags$tr(tags$th(), lapply(colnames(O), function(x) tags$th(scope = "col", x)),
+          tags$th(scope = "col", class = "is-sum", "Razem"))),
+        tags$tbody(lapply(1:2, function(i) tags$tr(tags$th(scope = "row", rownames(O)[i]),
+          cell(i, 1), cell(i, 2), tags$td(class = "is-sum is-m", rs[i])))),
+        tags$tfoot(tags$tr(tags$th(scope = "row", "Razem"),
+          lapply(cs, function(x) tags$td(class = "is-sum is-m", x)), tags$td(class = "is-sum is-n", n))))),
+    tags$div(class = "p5k-sum p5q-f5",
+      tags$p(class = "p5k-total", "χ² = ", paste(sprintf("%.2f", vals), collapse = " + "), " = ",
+        tags$b(sprintf("%.2f", sum(vals))), tags$span(" · df = (2 − 1)(2 − 1) = 1")),
+      tags$div(class = "p5k-bar", role = "img",
+        `aria-label` = "Wkłady czterech komórek do statystyki chi-kwadrat jako odcinki jednego paska",
+        lapply(seq_along(vals), function(k) tags$div(class = "p5k-seg", style = sprintf("flex-grow:%.3f;", vals[k]),
+          tags$b(sprintf("%.2f", vals[k])), tags$span(short[k])))))
   )
 }
+ch5_narr_steps <- c("Obserwowane", "Oczekiwane", "Różnice", "Wkłady", "Suma χ²")
 ch5_narr_texts <- list(
-  tagList("Mandat: ", step_num("30"), " ze 100 kobiet i ", step_num("50"),
-    " ze 100 mężczyzn; łącznie 80 z 200, czyli 40%."),
-  tagList("Przy niezależności 40% dotyczy obu płci: oczekujemy po ",
-    step_num("40"), " mandatów i po ", step_num("60"),
-    " kontroli bez mandatu w każdej grupie."),
-  tagList("Każda komórka odbiega o 10: χ² = 10²/40 + 10²/60 + 10²/40 + 10²/60 = ",
-    step_num("8.33"), " (df = 1).")
+  "Tabela z archiwum: mandat dostało 30 ze 100 kobiet i 50 ze 100 mężczyzn.",
+  "Liczebność oczekiwana to suma wiersza razy suma kolumny, podzielona przez liczbę wszystkich kontroli. Tyle byłoby w komórce, gdyby płeć nie miała znaczenia.",
+  "Różnica mówi, o ile komórka odbiega od świata bez związku. W tabeli 2 × 2 wszystkie cztery różnice mają tę samą wielkość.",
+  "Różnicę podnosimy do kwadratu i dzielimy przez liczebność oczekiwaną. Ta sama różnica waży więcej tam, gdzie spodziewaliśmy się mniej obserwacji.",
+  "Suma czterech wkładów to statystyka χ². Tabela 2 × 2 ma jeden stopień swobody."
 )
 
 ch5_ui <- list(
@@ -262,8 +275,8 @@ ch5_ui <- list(
       p(withMathJax("\\(H_a:\\)"), " zmienne są powiązane")
     ),
 
-    # PROTOTYP 5E (2026-11-09): mandaty, świat bez związku (kadry przed wzorami)
-    p5("5E"),
+    # Ryc. 7.1: scena mandatów, od pytania o niezależność do różnic (modules/proto05.R, rysunek: proto05.js)
+    ch5_fig_tickets,
 
     lc_p("Punktem odniesienia jest tabela, jakiej spodziewalibyśmy się przy
       prawdziwej H₀. Jeśli zmienne są niezależne, odsetek obserwacji w danej
@@ -315,23 +328,23 @@ ch5_ui <- list(
     lc_p("Zanim zastosujemy wzory do większych tabel, prześledźmy je na
       najprostszej tabeli 2 × 2. Mamy dane z 200 kontroli drogowych i pytamy,
       czy szansa dostania mandatu jest niezależna od płci. Panel pokazuje
-      w trzech krokach tabelę obserwowaną, tabelę oczekiwaną przy założeniu
-      niezależności i porównanie obu tabel."),
+      w pięciu krokach, jak z tabeli obserwowanej powstają liczebności oczekiwane,
+      różnice, wkłady poszczególnych komórek i na końcu statystyka χ²."),
 
     figure_panel(
-      label = "Ryc. 7.1",
-      title = "Przykład: czy płeć wpływa na dostawanie mandatów?",
-
+      label = "Ryc. 7.2",
+      title = "Od tabeli do χ²: mandaty a płeć",
+      width_mode = "text",
       lc_step_widget("ch5_narr",
-        steps = c("Pokaż dane", "Załóżmy niezależność", "Porównaj"),
-        body = lc_step_views(ch5_narr_views()),
+        steps = ch5_narr_steps,
+        body = tags$div(class = "p5k-fig", ch5_narr_table()),
         texts = ch5_narr_texts
       )
     ),
 
     lc_p("Krok drugi to sedno testu. Tabela oczekiwana nie pochodzi z danych
       o poszczególnych płciach, tylko z łącznego odsetka mandatów w całej próbie:
-      tak wyglądałaby tabela, gdyby płeć nie miała znaczenia. Krok trzeci mierzy,
+      tak wyglądałaby tabela, gdyby płeć nie miała znaczenia. Kolejne kroki mierzą,
       jak daleko dane od niej odeszły. W tabeli 2 × 2 przy ustalonych sumach
       wierszy i kolumn wszystkie cztery komórki odbiegają od oczekiwań o tę samą
       liczbę obserwacji, dlatego wystarcza jeden stopień swobody. Te same
@@ -397,7 +410,7 @@ ch5_ui <- list(
       jest taki sam w każdej kategorii pierwszej."),
 
     figure_panel(
-      label = "Ryc. 7.2",
+      label = "Ryc. 7.3",
       title = "Test χ² niezależności — krok po kroku",
       # Losowanie, wykresy, tabele kroków i opisy liczy przeglądarka (modules/figures.js, rycina s05_x2).
       lc_sf_figure("s05_x2", bare = TRUE, config = ch5_x2_config, body = tagList(
@@ -478,9 +491,9 @@ ch5_ui <- list(
       w panelu powyżej."),
 
     figure_panel(
-      label = "Ryc. 7.3",
+      label = "Ryc. 7.4",
       title = "Porównanie: χ² vs Fisher",
-      # Oba testy liczy przeglądarka na tabeli z Ryc. 7.2 (rycina s05_x2cmp, bez wykresu).
+      # Oba testy liczy przeglądarka na tabeli z Ryc. 7.3 (rycina s05_x2cmp, bez wykresu).
       tags$div(class = "lc-sf", `data-fig` = "s05_x2cmp", `data-lc-nochart` = NA,
         lc_toolbar(lc_sf_action("cmp", "ch5_compare", "Porównaj χ² i Fishera (na tych samych danych)", variant = "solid")),
         tags$div(`data-when` = "nodata", hidden = NA, lc_caption("Najpierw wylosuj próbę w widgecie powyżej.")),

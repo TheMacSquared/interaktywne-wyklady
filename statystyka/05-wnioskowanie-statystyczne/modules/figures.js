@@ -697,7 +697,7 @@
     return '<div class="lc-tbl-block">' + (pct ? '<p class="lc-tbl-lead"><b>% wierszowe:</b> każdy wiersz sumuje się do 100.</p>' : "") +
       '<div class="lc-tbl-scroll" tabindex="0" role="region" aria-label="' + e(o.label) + '"><table class="lc-tbl is-fit">' + head + body + foot + "</table></div></div>";
   }
-  // Jedna wspólna tabela dla Ryc. 7.2 (kroki) i 7.3 (χ² a Fisher); po zmianie scenariusza albo n jest nieaktualna.
+  // Jedna wspólna tabela dla Ryc. 7.3 (kroki) i 7.4 (χ² a Fisher); po zmianie scenariusza albo n jest nieaktualna.
   store.x2 = null;
   function x2Controls() {
     var sc = document.getElementById("ch5_scenario"), n = document.getElementById("ch5_n");
@@ -759,7 +759,7 @@
     noteKey: function () { return x2Data() ? "data" : "empty"; }
   };
 
-  // Ryc. 7.3: test χ² a test dokładny Fishera na tej samej tabeli; bez wykresu.
+  // Ryc. 7.4: test χ² a test dokładny Fishera na tej samej tabeli; bez wykresu.
   figures.s05_x2cmp = {
     act: function (state) { state.asked = true; },
     update: function (el, state) {

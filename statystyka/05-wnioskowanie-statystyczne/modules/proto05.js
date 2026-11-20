@@ -5,7 +5,7 @@
 // config.kind:
 //   "smoke"   Ryc. 3.1 (dawny 5A) czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
 //   "jelly"   5D żelki i trądzik: jedna chmura wyników cięta na 20 podgrup kolorów (kadry)
-//   "tickets" 5E mandaty: świat bez związku → porównanie → χ² (kadry)
+//   "tickets" Ryc. 7.1 (dawny 5E) mandaty: kontrole bez podziału → pytanie → świat bez związku → archiwum → różnice (kadry)
 // Sterowanie: [data-sc-act] go | m10 | m100 | m1000, [data-sc-opt] "nazwa:wartość",
 // input[data-p5-range] "nazwa" (suwak, wartość liczbowa). Rysuje SVG bez serwera R.
 (function () {
@@ -295,20 +295,34 @@
 
     function cell(i, k) { return { x: BLK[i][0] + (k % 10) * DX + 12, y: TOP + Math.floor(k / 10) * DY + 10 }; }
 
+    // Kadry (kolejność od 2026-11-20: najpierw pytanie o niezależność, potem dane z podziałem):
+    //   1 kontrole bez podziału, 2 podział na płeć bez mandatów (pytanie), 3 świat bez związku
+    //   (oczekiwane), 4 archiwum (obserwowane), 5 różnice. Wkłady do χ² liczy Ryc. 7.2.
     function render() {
       var step = api.step(), g = api.stage, lo = api.low;
       g.textContent = ""; lo.textContent = "";
-      var total = O[0][0] + O[1][0], all = N * 2;
+      var total = O[0][0] + O[1][0], all = N * 2, y = TOP + 10 * DY + 26, k, c;
+      if (step === 1) {
+        // Jedna grupa 200 kierowców; 80 mandatów rozrzuconych po całej siatce (stały układ).
+        svg("text", { x: 50, y: TOP - 18, class: "lc-sc-rowlab" }, g, all + " kontroli · " + total + " z mandatem");
+        for (k = 0; k < all; k++) {
+          svg("circle", { cx: 62 + (k % 20) * 27.5, cy: TOP + Math.floor(k / 20) * DY + 10, r: 8,
+            class: "p5-driver" + ((k * 73 + 11) % all < total ? " is-ticket" : "") }, g);
+        }
+        readout(g, 50, y, [{ box: "p5-driver is-ticket", text: "mandat" }, { text: total + " mandatów na " + all + " kontroli" }]);
+        return;
+      }
       for (var i = 0; i < 2; i++) {
         var obs = O[i][0], exp = E[i][0];
-        var shown = step === 2 ? exp : obs;
+        var shown = step === 2 ? 0 : step === 3 ? exp : obs;
         svg("text", { x: BLK[i][0], y: TOP - 18, class: "lc-sc-rowlab" }, g,
-          ROWS[i] + " · " + (step === 2 ? "oczekiwane " + fmt(exp, 0) + " z " + N : obs + " z " + N + " z mandatem"));
-        for (var k = 0; k < N; k++) {
-          var c = cell(i, k), on = k < shown;
+          ROWS[i] + " · " + (step === 2 ? N + " kontroli" : step === 3 ? "oczekiwane " + fmt(exp, 0) + " z " + N : obs + " z " + N + " z mandatem"));
+        for (k = 0; k < N; k++) {
+          c = cell(i, k);
+          var on = k < shown;
           svg("circle", { cx: c.x, cy: c.y, r: 8,
-            class: "p5-driver" + (on ? (step === 2 ? " is-exp" : " is-ticket") : "") }, g);
-          if (step >= 3) {
+            class: "p5-driver" + (on ? (step === 3 ? " is-exp" : " is-ticket") : "") }, g);
+          if (step >= 5) {
             // brakujące (oczekiwane, a nie ma) i nadmiarowe (są, a nie oczekiwane)
             var rc = { cx: c.x, cy: c.y, r: 10.5 };
             if (k >= obs && k < exp) svg("circle", Object.assign({ class: "p5-ring is-gap" }, rc), g);
@@ -316,36 +330,18 @@
           }
         }
       }
-      var y = TOP + 10 * DY + 26;
-      if (step === 1) {
-        readout(g, 50, y, [{ box: "p5-driver is-ticket", text: "mandat" }, { text: "łącznie " + total + " mandatów na " + all + " kontroli" }]);
-      } else if (step === 2) {
+      if (step === 2) {
+        readout(g, 50, y, [{ text: total + " mandatów na " + all + " kontroli. Kto je dostał?" }]);
+      } else if (step === 3) {
         readout(g, 50, y, [{ box: "p5-driver is-exp", text: "oczekiwany mandat" },
           { text: total + " / " + all + " = " + pct(total / all, 0) + " w każdej grupie" }]);
+      } else if (step === 4) {
+        readout(g, 50, y, [{ box: "p5-driver is-ticket", text: "mandat" },
+          { text: ROWS[0] + ": " + O[0][0] + " z " + N }, { text: ROWS[1] + ": " + O[1][0] + " z " + N }]);
       } else {
         readout(g, 50, y, [{ text: ROWS[0] + ": " + O[0][0] + " zamiast " + fmt(E[0][0], 0) },
           { text: ROWS[1] + ": " + O[1][0] + " zamiast " + fmt(E[1][0], 0) }]);
       }
-      if (step < 4) return;
-      // χ²: wkład każdej komórki (O − E)² / E
-      var cells = [], chi = 0;
-      for (i = 0; i < 2; i++) for (var j = 0; j < 2; j++) {
-        var v = Math.pow(O[i][j] - E[i][j], 2) / E[i][j];
-        chi += v;
-        cells.push({ lab: ROWS[i] + (j === 0 ? ", mandat" : ", bez mandatu"), o: O[i][j], e: E[i][j], v: v });
-      }
-      var x0 = 50, x1 = 610, yb = y + 54, scale = (x1 - x0) / Math.max(10, Math.ceil(chi));
-      var x = x0;
-      cells.forEach(function (cc, k) {
-        var w = cc.v * scale;
-        svg("rect", { x: x, y: yb, width: Math.max(1, w - 2), height: 24, class: "p5-chi" + (k % 2 ? " is-no" : "") }, lo);
-        svg("text", { x: x + w / 2, y: yb + 42, "text-anchor": "middle", class: "lc-sc-tick" }, lo, fmt(cc.v, 2));
-        x += w;
-      });
-      svg("text", { x: x0, y: yb - 12, class: "lc-sc-n" }, lo,
-        "(O − E)² / E w czterech komórkach · suma χ² = " + fmt(chi, 2));
-      svg("text", { x: x0, y: yb + 66, class: "lc-sc-sub" }, lo,
-        "od lewej: " + cells.map(function (cc) { return cc.lab; }).join(" · "));
     }
     return { render: render, reset: render, opt: function () {} };
   };

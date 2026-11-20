@@ -16,7 +16,7 @@ system("Rscript scripts/build_static.R statystyka/05-wnioskowanie-statystyczne")
 | 03 | Prototyp 5A „Czujka dymu w akademiku” | przyjęty (9.11); wdrożony 19.11 jako Ryc. 3.1 po poprawie grafiki (czujka nad progiem, toster, płomień, strefa alarmu); `type-error.jpg` zostaje |
 | 03 | Prototyp 5B „Ile osób zaprosić do powtórki badania?” | odrzucony (9.11), usunięty |
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | odrzucony (9.11), usunięty |
-| 07 | Prototyp 5E „Mandaty: jak by było, gdyby płeć nie miała znaczenia?” | przyjęty (9.11) |
+| 07 | Prototyp 5E „Mandaty: czy płeć ma znaczenie?” | wdrożony 20.11 jako Ryc. 7.1 w odwróconej kolejności kadrów, bez liczby |
 | 07 | Prototyp 5E-2: 5E w wyglądzie ludzików z karteczkami (scena „stop” z 02) | odrzucony (9.11), usunięty |
 | 09 | Prototyp 5D „Żelki i trądzik” | przyjęty (9.11) po przebudowie, z cytowaniem xkcd 882 |
 | 09 | Sceny `jars`, `worlds`, `stress` (8.10) | czekają na ocenę (5F) |
@@ -194,3 +194,20 @@ Decyzje 19.11 i wdrożenie:
 - Kolejność „symulacja przed wzorem p-wartości” została w tekście.
 
 W rozdziale 03 nie ma już prototypów. `panels_ch12.css` to teraz `panels.css`.
+
+### 11. 5E — odwrócona kolejność kadrów (20.11)
+
+Uwaga z 20.11: scena zaczynająca od danych z podziałem na płeć szkodzi myśleniu
+o niezależności jako punkcie odniesienia. Nowa kolejność (6 kadrów): kontrole bez
+podziału (80 mandatów na 200) → pytanie o wpływ płci (podział 100 + 100, mandaty
+ukryte) → świat bez wpływu (oczekiwane 40 i 40) → archiwum (30 i 50) → różnice →
+wkłady do χ². Tytuł: „Mandaty: czy płeć ma znaczenie?”. Czeka na ocenę.
+
+Zmiany 20.11 po obejrzeniu: 5E bez kadru „Jedna liczba” (5 kadrów, scena czysto
+narracyjna). Ryc. 7.1 przebudowana zamiast usuwana: obliczenia w komórkach jednej
+tabeli krzyżowej w pięciu krokach (O → E z sum brzegowych → O − E → wkład → suma χ²
+z paskiem czterech wkładów, przeniesionym z dawnego ostatniego kadru 5E). Czeka na ocenę.
+
+Wdrożenie 20.11: 5E to Ryc. 7.1. Obliczenia na tabeli krzyżowej to Ryc. 7.2, test
+krok po kroku 7.3, χ² a Fisher 7.4. W rozdziale 07 nie ma już prototypów; zostają
+5D i trzy sceny ANOVA w rozdziale 09.

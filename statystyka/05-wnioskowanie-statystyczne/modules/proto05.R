@@ -4,8 +4,8 @@
 # Rysunek i obliczenia: modules/proto05.js (+ proto05.css), działają bez serwera R.
 # Lista propozycji: PUNKTY-STOP-PROPOZYCJA.md, decyzje: KOLEJKA-ZATWIERDZANIA.md.
 # 5B (dubel ryciny mocy, dziś Ryc. 3.2), 5C (rozkład r z powtórzonych grupek) i 5E-2 odrzucone 2026-11-09.
-# Wstawki w tekście: p5("5D"), p5("5E"). Czujka dymu (dawny 5A) jest stałą Ryc. 3.1
-# (ch1d_fig_smoke); jej rysunek zostaje w proto05.js, kind "smoke".
+# Wstawka w tekście: p5("5D"). Stałe ryciny z tego pliku: czujka dymu (Ryc. 3.1, dawny 5A,
+# ch1d_fig_smoke) i mandaty (Ryc. 7.1, dawny 5E, ch5_fig_tickets); rysunki w proto05.js.
 # Wymaga: lecture_layout.R (lc_step_widget, lc_toolbar, figure_panel), helpers.R.
 
 p5_panel <- function(num, kind, title, ..., width_mode = "text") {
@@ -123,27 +123,32 @@ p5_5D_ui <- local({
       "), licencja CC BY-NC 2.5. Grafika i dane własne."))
 })
 
-# --- 5E: mandaty i świat bez związku (rozdz. 07, przed wzorami E i χ²) -----------
+# --- Ryc. 7.1 (dawny prototyp 5E, wdrożony 2026-11-20): mandaty, od pytania o niezależność do różnic ---
 # 5E-2 (ten sam scenariusz w ludzikach z wykładu 02) odrzucony 2026-11-09: za dużo szczegółów.
 p5_tickets_config <- local({
   obs <- matrix(c(30, 70, 50, 50), nrow = 2, byrow = TRUE)
   list(kind = "tickets", obs = obs, exp = outer(rowSums(obs), colSums(obs)) / sum(obs),
        rows = c("Kobiety", "Mężczyźni"), n_row = 100,
-       aria = "Sto kobiet i stu mężczyzn po kontroli drogowej, z zaznaczonymi mandatami; kolejne kadry pokazują liczby oczekiwane przy braku związku, różnice i ich wkład do statystyki chi-kwadrat")
+       aria = "Dwustu kierowców po kontroli drogowej, osiemdziesięciu z mandatem; kolejne kadry dzielą ich na sto kobiet i stu mężczyzn, pokazują liczby oczekiwane przy braku związku, liczby z archiwum i różnice między nimi")
 })
-p5_tickets_steps <- c("Kontrole", "Świat bez związku", "Porównaj", "Jedna liczba")
+p5_tickets_steps <- c("Kontrole", "Pytanie", "Bez wpływu", "Archiwum", "Porównaj")
 
-p5_5E_ui <- p5_panel("5E", "scena", "Mandaty: jak by było, gdyby płeć nie miała znaczenia?",
-  p5_scene_widget("p5_tickets", "200 kontroli drogowych, 100 kobiet i 100 mężczyzn",
-    steps = p5_tickets_steps, config = c(p5_tickets_config, list(height = 450)),
+# Kolejność kadrów od 2026-11-20: scena zaczyna od całej grupy i pytania o wpływ płci,
+# liczebności oczekiwane stoją przed danymi z podziałem. Wcześniej dane były pierwsze,
+# co utrudniało myślenie o niezależności jako o punkcie odniesienia. Scena jest czysto
+# narracyjna: obliczenia (E, O − E, wkłady, χ²) pokazuje Ryc. 7.2 na tabeli krzyżowej.
+ch5_fig_tickets <- figure_panel(label = "Ryc. 7.1", width_mode = "text", title = "Mandaty: czy płeć ma znaczenie?",
+  p5_scene_widget("p5_tickets", "200 kontroli drogowych",
+    steps = p5_tickets_steps, config = c(p5_tickets_config, list(height = 330)),
     texts = list(
-    tagList("Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet
-    i 50 mężczyzn."),
+    tagList("Policja skontrolowała 200 kierowców. 80 kontroli skończyło się mandatem."),
+    tagList("Wśród kontrolowanych było 100 kobiet i 100 mężczyzn. Czy płeć ma wpływ na to,
+    kto dostaje mandat?"),
     tagList("Gdyby płeć nie miała znaczenia, w obu grupach mandat dostawałby ten sam
-    odsetek kierowców, co w całej próbie. To liczebności oczekiwane."),
+    odsetek kierowców: 80 z 200, czyli 40 na 100. To liczebności oczekiwane."),
+    tagList("Sprawdzamy w archiwum, kto naprawdę dostał mandat: 30 kobiet i 50 mężczyzn.
+    Czy to nadal wygląda na niezależność?"),
     tagList("Obrysy pokazują różnice: u kobiet brakuje 10 mandatów, u mężczyzn jest
-    10 nadmiarowych. Tyle samo różnią się komórki bez mandatu."),
-    tagList("Każdą różnicę podnosimy do kwadratu i dzielimy przez liczbę oczekiwaną.
-    Suma czterech wkładów to statystyka χ².")
+    10 nadmiarowych. Tyle samo różnią się komórki bez mandatu.")
     )
   ))
