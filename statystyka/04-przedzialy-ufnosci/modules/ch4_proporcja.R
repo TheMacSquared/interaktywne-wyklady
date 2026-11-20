@@ -279,27 +279,6 @@ ch4_case_ui <- function(case_id) {
                  s4_case_notes(id, cfg$hypotheses, ch4_case_verdict(cfg), pairwise))
 }
 
-# Ryc. 4.3 (s04-pdstep): kilka wykresów lcSF w siatce o stałej
-# proporcji, jak układ patchwork w R. Wykres wypełnia swoją komórkę siatki.
-s04_grid <- function(columns, ratio, max_height, ..., rows = 1, zoom_columns = columns) {
-  tagList(
-    # Lupa (data-lc-chart-large): siatka rośnie jak pojedyncze wykresy lcSF (min. 24em na wiersz);
-    # zoom_columns poszerza kolumnę, gdy większe napisy by się w niej nie zmieściły.
-    tags$style(".lc-sf[data-lc-chart-large='true'] .s04-grid { max-height: none !important;
-                aspect-ratio: auto !important; min-height: calc(24em * var(--s04-rows, 1)) !important;
-                grid-template-columns: var(--s04-zoom-cols) !important; }"),
-    tags$div(class = "s04-grid", style = paste0("display:grid;grid-template-columns:", columns,
-                          ";grid-auto-rows:1fr;gap:.4em;aspect-ratio:", ratio,
-                          ";max-height:", max_height, ";min-height:18em;--s04-rows:", rows,
-                          ";--s04-zoom-cols:", zoom_columns, ";"), ...))
-}
-s04_grid_chart <- function(k, rows = 1) {
-  tags$div(class = "lc-sf-chart", `data-k` = k,
-    style = paste0("height:100%;min-height:0;max-height:none;",
-                   if (rows > 1) paste0("grid-row:span ", rows, ";")),
-    tags$div(class = "lc-ec", `data-chart` = k, role = "img", `aria-label` = "Wykres"))
-}
-
 ch4_ui <- list(
   id    = "ch-proporcja",
   num   = "04",
@@ -465,18 +444,16 @@ ch4_ui <- list(
 
     figure_panel(
       label = "Ryc. 4.3",
-      full_width = TRUE,
-      # Rycina lcSF „s04-pdstep” (sf_steps.js): słupki obu grup | p̂ grup nad skalą różnicy.
-      lc_sf_figure("s04-pdstep", bare = TRUE, body = lc_step_widget("ch4_dstep",
+      width_mode = "wide",
+      # Rysuje modules/fig_41.js (od 2026-11-20): dwa paski 100%, niżej oś różnicy z zerem.
+      lc_step_widget("ch4_ddstep",
         title = "Konstruowanie CI dla różnicy",
         steps = c("Dwie próby", "Dwie p̂", "Różnica", "± SE", "Przedział"),
-        toolbar = lc_toolbar(
-          lc_sf_action("new", "ch4_dstep_new_sample", "Nowe próby", icon = "shuffle",
-                       variant = "outline"), lc_chart_zoom_button()
-        ),
-        body = s04_grid("1fr 2fr", "2/1", "460px", rows = 2, zoom_columns = "1.5fr 2fr",
-                        s04_grid_chart(0, rows = 2), s04_grid_chart(1), s04_grid_chart(2))
-      ))
+        toolbar = lc_toolbar(tags$button(type = "button", class = "lc-action is-outline", `data-p41` = "new",
+          lc_icon("shuffle"), tags$span("Nowe próby"))),
+        body = tags$div(class = "p41", `data-kind` = "diff", `data-x` = 45, `data-y` = 29,
+          tags$div(class = "p41-svg"))
+      )
     ),
 
     lc_p("Dla tych parametrów SE obu proporcji wynosi około 0.059 i 0.065,

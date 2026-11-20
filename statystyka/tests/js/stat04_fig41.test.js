@@ -28,3 +28,14 @@ test("Ryc. 4.1: tekst ostatniego kroku podaje przedział ułamkiem i w procentac
   assert.ok(txt.includes("[0.402, 0.678]"), txt);
   assert.ok(txt.includes("od 40.2% do 67.8%"), txt);
 });
+
+test("Ryc. 4.3: różnica proporcji, SE i granice jak w R (45 i 29 × TAK na 60)", () => {
+  const F = load(), s = F.diffStats(45, 29);
+  // R: p1 = 0.75, p2 = 29/60; se = sqrt(p1*(1-p1)/60 + p2*(1-p2)/60) = 0.08536414;
+  // ME = qnorm(0.975) * se = 0.1673106; granice 0.09935602 i 0.4339773.
+  near(s.d, 0.2666667); near(s.se, 0.08536414); near(s.me, 0.1673106);
+  near(s.lo, 0.09935602); near(s.hi, 0.4339773);
+  const txt = F.textDiff(s, 5);
+  assert.ok(txt.includes("[0.099, 0.434]"), txt);
+  assert.ok(txt.includes("w grupie 1 odsetek TAK jest wyższy"), txt);
+});

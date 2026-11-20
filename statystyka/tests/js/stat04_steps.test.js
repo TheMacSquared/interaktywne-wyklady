@@ -1,5 +1,5 @@
-// Wykład 04 — ryciny liczone w przeglądarce: Ryc. 3.1, Przykłady A–C, Ryc. 4.1, 4.3
-// (sf_steps.js) oraz próby i tekst kroku Ryc. 3.2–3.3 (ci_construction.js).
+// Wykład 04 — ryciny liczone w przeglądarce w sf_steps.js: Ryc. 3.1 i Przykłady A–C.
+// Ryc. 3.2–3.3 i 4.1, 4.3 mają własne testy: stat04_fig32.test.js, stat04_fig41.test.js.
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { environment, Element, root } = require("./harness");
@@ -7,7 +7,6 @@ const { environment, Element, root } = require("./harness");
 function load() {
   const env = environment();
   env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
-  env.load("04-przedzialy-ufnosci/modules/ci_construction.js");
   env.load("04-przedzialy-ufnosci/modules/sf_steps.js");
   const F = env.window.lcSF.figures, P = env.window.lcCharts.palette();
   const run = (name, config) => {
@@ -60,62 +59,3 @@ test("Przykłady A–C: CI grup z pasem nakładania i CI różnicy z zerem", () 
   assert.equal(band.color, "#f1c40f");
 });
 
-test("Ryc. 4.3: dwie grupy, p̂ obu grup, skala różnicy i werdykt jak w R", () => {
-  const { run, P } = load();
-  const r = run("s04-pdstep");
-  r.state.x1 = 42; r.state.x2 = 30;
-  const left = r.spec(0, 1);
-  assert.deepEqual(Array.from(left.layers.find(l => l.type === "bins").data, b => b[2]), [18, 42, 30, 30]);
-  assert.deepEqual(texts(left).slice(-2), ["Grupa 1", "Grupa 2"]);
-  assert.equal(r.spec(1, 1).layers.length, 0);
-  assert.deepEqual(texts(r.spec(1, 2)), ["p̂₁ = 0.7", "p̂₂ = 0.5"]);
-  assert.deepEqual(texts(r.spec(2, 3)), ["p̂₁ − p̂₂ = 0.2"]);
-  assert.deepEqual(texts(r.spec(2, 4)), ["± SE = ±0.088"]);
-  const s5 = r.spec(2, 5);
-  assert.deepEqual(texts(s5), ["95% CI: [0.028 ; 0.372]"]);
-  // Oś różnicy jak w R: range(−0.5, 0.5, d ± 1.3·ME) z marginesem 8%.
-  near(s5.x[0], -0.5 - 0.08); near(s5.x[1], 0.5 + 0.08);
-  assert.equal(s5.layers.filter(l => l.type === "segs").pop().alpha, 0.6);
-  assert.equal(s5.layers.find(l => l.type === "point").color, P.secondary);
-  assert.match(r.fig.text(r.state, null, null, 1), /Grupa 1: 42 TAK i 18 NIE\. Grupa 2: 30 TAK i 30 NIE\./);
-  assert.match(r.fig.text(r.state, null, null, 5), /\[0\.028 ; 0\.372\].*w grupie 1 odsetek TAK jest wyższy, z 95% ufnością o co najmniej 0\.028\./);
-  r.state.x1 = 31;
-  assert.match(r.fig.text(r.state, null, null, 5), /Przedział obejmuje 0/);
-  r.state.x1 = 10;
-  assert.match(r.fig.text(r.state, null, null, 5), /w grupie 2 odsetek TAK jest wyższy/);
-});
-
-test("Ryc. 3.2–3.3: statystyki jak ci_construction_stats() w R i tekst kroku", () => {
-  const { env } = load();
-  const K = env.window.lcCiConstruction;
-  const x = [165.2, 171.4, 180.3, 158.9, 175, 169.1, 172.8, 162.4, 177.7, 168.3];
-  const y = [160.1, 166.4, 158.2, 171.9, 163.5, 159.8, 167.2, 164.4];
-  let s = K.stats(x);
-  near(s.mean, 170.11); near(s.se, 2.12855976347); near(s.t, 2.26215716280, 1e-5); near(s.lower, 165.29486328462, 1e-4);
-  s = K.stats(x, y);
-  near(s.mean, 6.1725); near(s.se, 2.669275193667); near(s.df, 15.657278413783, 1e-6); near(s.upper, 11.841193866049, 1e-4);
-  const m = K.stats(x);
-  assert.match(K.stepText(m, 1, false), /^10 pomiarów wzrostu.*<i>x̄<\/i> = 170\.11 cm/);
-  assert.match(K.stepText(m, 4, false), /<i>t<\/i>\* = 2\.262 \(df = 9\).*95% CI: \[165\.29 ; 174\.93\]\. Ten przedział zawiera μ = 170 cm\.$/);
-  assert.match(K.stepText(s, 5, true), /df Welcha ≈ 15\.7.*95% CI: \[0\.5 ; 11\.84\] cm\. Przedział nie obejmuje 0: mężczyźni są średnio wyżsi o co najmniej 0\.5 cm\.$/);
-  assert.match(K.stepText(s, 4, true), /mniej niż suma SE obu średnich/);
-});
-
-test("Ryc. 3.2: widget losuje nową próbę i pisze tekst kroku bez serwera", () => {
-  const { env } = load();
-  const bank = [{ x: [170, 172, 168], y: null, mean: 170, se: 1.1547, df: 2, t: 4.3027, lower: 165.03, upper: 174.97 }];
-  const holder = new Element("div", { class: "ci-construction", "data-kind": "mean", "data-config": JSON.stringify(bank) },
-                             [new Element("div", { class: "lc-ec" })]);
-  const out = new Element("span", { id: "ch3_step_text" });
-  const btn = new Element("button", { id: "ch3_step_new_sample" });
-  const host = root("lc-stepper", [btn, holder, out], { id: "ch3_step", "data-lc-step": "1" });
-  host.id = "ch3_step";  // atrapa DOM nie ma własności id
-  env.mount(host);
-  assert.match(out.innerHTML, /^3 pomiarów wzrostu/);
-  host.setAttribute("data-lc-step", "4");
-  env.observers.filter(o => o.options.attributes).forEach(o => o.fn([{ target: host }]));
-  assert.match(out.innerHTML, /^<i>t<\/i>\* = /);
-  btn.emit("click");
-  assert.match(out.innerHTML, /\(df = 24\)/, "nowa próba: 25 pomiarów");
-  assert.deepEqual(env.errors, []);
-});

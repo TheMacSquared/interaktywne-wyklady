@@ -1,4 +1,4 @@
-# Statystyki i kwantyle liczone w R; ECharts odpowiada za rysowanie.
+# Pierwsze próby Ryc. 3.2 i 3.3 (rysuje je modules/fig_32.js); statystyki liczone w R dla porównania.
 ci_construction_stats <- function(x, y = NULL) {
   center <- mean(x); se <- sd(x) / sqrt(length(x)); df <- length(x) - 1
   if (!is.null(y)) {
@@ -24,13 +24,3 @@ ci_construction_bank <- local({
   else rm(".Random.seed", envir = .GlobalEnv)
   bank
 })
-
-ci_construction_ui <- function(kind) {
-  tags$div(class = "ci-construction", `data-kind` = kind,
-    `data-config` = jsonlite::toJSON(ci_construction_bank[[kind]],
-      auto_unbox = TRUE, null = "null", digits = 12),
-    tags$div(class = "lc-ec", role = "img",
-      `aria-label` = if (kind == "mean") "Konstrukcja przedziału ufności dla średniej" else
-        "Konstrukcja przedziału ufności dla różnicy średnich")
-  )
-}

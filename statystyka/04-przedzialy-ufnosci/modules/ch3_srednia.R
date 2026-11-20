@@ -554,8 +554,7 @@ ch3_ui <- list(
     figure_panel(
       label = "Ryc. 3.2",
       width_mode = "wide",
-      # Rysuje modules/fig_32.js (od 2026-11-20). Identyfikator inny niż dawne ch3_step,
-      # bo ci_construction.js szuka pod tamtym swojego kontenera.
+      # Rysuje modules/fig_32.js (od 2026-11-20).
       lc_step_widget("ch3_mstep",
         title = "Konstruowanie przedziału",
         steps = c("Próba", "Średnia", "± SE", "Przedział"),
@@ -605,20 +604,22 @@ ch3_ui <- list(
 
     lc_p("Panel porównuje wzrost 25 mężczyzn i 25 kobiet. Próby losowane są
       z populacji o średnich 178 cm (σ = 7 cm) i 165 cm (σ = 6 cm), więc
-      prawdziwa różnica wynosi 13 cm. Od trzeciego kroku dolny panel przechodzi
+      prawdziwa różnica wynosi 13 cm. Od trzeciego kroku dolna oś przechodzi
       na skalę różnicy, na której zero oznacza brak różnicy."),
 
     figure_panel(
       label = "Ryc. 3.3",
-      full_width = TRUE,
-      lc_step_widget("ch3_dstep",
+      width_mode = "wide",
+      # Rysuje modules/fig_32.js (od 2026-11-20): obie próby na osi wzrostu, niżej oś różnicy.
+      lc_step_widget("ch3_ddstep",
         title = "Konstruowanie CI dla różnicy",
         steps = c("Dwie próby", "Dwie średnie", "Różnica", "± SE", "Przedział"),
-        toolbar = lc_toolbar(
-          lc_action("ch3_dstep_new_sample", "Nowe próby", icon = "shuffle",
-                    variant = "outline"), lc_chart_zoom_button()
-        ),
-        body = ci_construction_ui("diff")
+        toolbar = lc_toolbar(tags$button(type = "button", class = "lc-action is-outline", `data-p32` = "new",
+          lc_icon("shuffle"), tags$span("Nowe próby"))),
+        body = tags$div(class = "p32", `data-kind` = "diff",
+          `data-x` = jsonlite::toJSON(round(ci_construction_bank$diff[[1]]$x, 2)),
+          `data-y` = jsonlite::toJSON(round(ci_construction_bank$diff[[1]]$y, 2)),
+          tags$div(class = "p32-svg"))
       )
     ),
 

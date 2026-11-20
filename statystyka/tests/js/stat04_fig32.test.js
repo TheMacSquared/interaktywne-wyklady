@@ -31,3 +31,14 @@ test("Ryc. 3.2: tekst ostatniego kroku mówi, czy przedział zawiera μ = 170", 
   assert.ok(F.text(F.stats(x), 4).includes("zawiera μ = 170 cm"));
   assert.ok(F.text(F.stats(x.map(v => v + 20)), 4).includes("nie zawiera μ = 170 cm"));
 });
+
+test("Ryc. 3.3: różnica średnich, SE i liczba stopni swobody Welcha jak w R", () => {
+  const F = load(), x = [], y = [];
+  for (let i = 0; i < 25; i++) { x.push(170 + i); y.push(160 + 0.5 * i); }
+  const s = F.diffStats(x, y);
+  // R: x <- 170:194; y <- 160 + 0.5 * (0:24); t.test(x, y): różnica 16, se = 1.645701, df = 35.29412.
+  near(s.d, 16); near(s.se, 1.645701); near(s.df, 35.29412, 1e-3);
+  // Bez lcDist kwantyl jest stały (2.063899); granice sprawdzamy względem niego.
+  near(s.lo, 16 - s.t * s.se); near(s.hi, 16 + s.t * s.se);
+  assert.ok(F.textDiff(s, 5).includes("Przedział nie obejmuje 0"));
+});

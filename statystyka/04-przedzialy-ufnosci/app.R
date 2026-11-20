@@ -93,13 +93,13 @@ ui <- lecture_page(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "panels.css"), warn = FALSE), collapse = "\n"))),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "visual_scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "visual_scenes.js")),
-    # Ryc. 3.2 (kropki na osi, klamra przedziału): modules/fig_32.js + fig_32.css
+    # Ryc. 3.2 i 3.3 (kropki na osi, klamra przedziału): modules/fig_32.js + fig_32.css
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "fig_32.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "fig_32.js")),
-    # Ryc. 4.1 (pasek 100% z ramką przedziału): modules/fig_41.js + fig_41.css
+    # Ryc. 4.1 i 4.3 (paski 100%, ramka i klamra przedziału): modules/fig_41.js + fig_41.css
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "fig_41.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "fig_41.js")),
-    lapply(file.path(app_dir, "modules", c("fig_ch2.js", "fig_ch4.js", "ci_construction.js",
+    lapply(file.path(app_dir, "modules", c("fig_ch2.js", "fig_ch4.js",
                                            "ci_explorers.js")),
            includeScript),
     # Ryciny liczone w przeglądarce: silnik lcSF, rozkłady lcDist, ryciny wykładu.
@@ -115,8 +115,6 @@ ui <- lecture_page(
       .lc-seg button[aria-pressed='true'] { background: var(--upwr-accent); color: var(--upwr-surface); }
       /* Wykresy ECharts wypełniają kontener z aspect-ratio. */
       .lc-ec { position: absolute; inset: 0; }
-      .ci-construction { position: relative; aspect-ratio: 2.5 / 1; }
-      .ci-construction[data-kind=diff] { aspect-ratio: 2 / 1; }
       .fig-zero-canvas { position: relative; aspect-ratio: 2.4 / 1; touch-action: none; margin-top: .6em; }
       .fig-zero[data-lc-chart-large='true'] .fig-zero-canvas { aspect-ratio: 1.65 / 1; }
       .fig-zero .fig-zero-range { width: 100%; cursor: pointer; }
