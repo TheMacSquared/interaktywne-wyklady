@@ -93,6 +93,9 @@ ui <- lecture_page(
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "panels.css"), warn = FALSE), collapse = "\n"))),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "visual_scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "visual_scenes.js")),
+    # Ryc. 3.2 (kropki na osi, klamra przedziału): modules/fig_32.js + fig_32.css
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "fig_32.css"), warn = FALSE), collapse = "\n"))),
+    includeScript(file.path(app_dir, "modules", "fig_32.js")),
     # Ryc. 4.1 (pasek 100% z ramką przedziału): modules/fig_41.js + fig_41.css
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "fig_41.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "fig_41.js")),

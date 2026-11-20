@@ -548,20 +548,22 @@ ch3_ui <- list(
 
     lc_p("Panel składa przedział z próby 25 pomiarów wzrostu losowanej
       z populacji o średniej μ = 170 cm i odchyleniu standardowym σ = 10 cm.
-      Kolejne kroki dodają do wykresu średnią, pasek ±1 SE i pełny 95% przedział.
+      Kolejne kroki dodają do wykresu średnią, klamrę ±1 SE i pełny 95% przedział.
       Przycisk „Nowa próba” losuje kolejne 25 osób."),
 
     figure_panel(
       label = "Ryc. 3.2",
-      full_width = TRUE,
-      lc_step_widget("ch3_step",
+      width_mode = "wide",
+      # Rysuje modules/fig_32.js (od 2026-11-20). Identyfikator inny niż dawne ch3_step,
+      # bo ci_construction.js szuka pod tamtym swojego kontenera.
+      lc_step_widget("ch3_mstep",
         title = "Konstruowanie przedziału",
         steps = c("Próba", "Średnia", "± SE", "Przedział"),
-        toolbar = lc_toolbar(
-          lc_action("ch3_step_new_sample", "Nowa próba", icon = "shuffle",
-                    variant = "outline"), lc_chart_zoom_button()
-        ),
-        body = ci_construction_ui("mean")
+        toolbar = lc_toolbar(tags$button(type = "button", class = "lc-action is-outline", `data-p32` = "new",
+          lc_icon("shuffle"), tags$span("Nowa próba"))),
+        body = tags$div(class = "p32",
+          `data-x` = jsonlite::toJSON(round(ci_construction_bank$mean[[1]]$x, 2)),
+          tags$div(class = "p32-svg"))
       )
     ),
 
@@ -571,7 +573,7 @@ ch3_ui <- list(
       \\(10/\\sqrt{25} = 2\\) cm, pięć razy mniej niż rozrzut pojedynczych
       osób. Uśrednianie znosi większość przypadkowych odchyleń w górę i w dół."),
 
-    lc_p("Pasek ±1 SE obejmuje μ tylko w około dwóch trzecich prób. Żeby
+    lc_p("Klamra ±1 SE obejmuje μ tylko w około dwóch trzecich prób. Żeby
       osiągnąć 95%, mnożymy SE przez \\(t^*\\) = 2.06 (df = 24). Przy SE
       równym około 2 cm margines błędu wynosi około 4.1 cm, a cały przedział
       ma około 8 cm szerokości. Większa część tego poszerzenia wynika
