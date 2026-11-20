@@ -82,15 +82,6 @@ ch1_ui <- list(
       withMathJax("\\(\\hat{\\theta}\\)"), " oznacza estymator parametru ",
       withMathJax("\\(\\theta\\)"), "."),
 
-    fig("1b"),
-
-    lc_p("Ryc. 1.1 pokazuje estymatory na tarczy. Środek tarczy to parametr,
-      a każdy strzał to estymata z jednej próby. Dwie górne tarcze celują
-      w środek: strzały rozkładają się wokół niego, raz ciasno, raz szeroko.
-      Dwie dolne celują obok, więc nawet ciasna chmura leży w złym miejscu.
-      Obciążenie mówi, gdzie leży chmura estymat, a rozrzut, jak jest szeroka.
-      To dwie osobne wady i estymator może mieć jedną bez drugiej."),
-
     lc_h3("Nieobciążoność", num = "1"),
 
     lc_p("Estymator jest nieobciążony, gdy jego ", gloss("wartość oczekiwana"), " jest równa
@@ -110,6 +101,15 @@ ch1_ui <- list(
     lc_note("Przykład", tags$p("Średnia z próby jest nieobciążonym estymatorem μ.
       To wzór E(X̄) = μ z wykładu 03 i to właśnie widać w scenie powyżej:
       stos średnich układa się wokół μ.")),
+
+    fig("1b"),
+
+    lc_p("Ryc. 1.1 pokazuje estymatory na tarczy. Środek tarczy to parametr,
+      a każdy strzał to estymata z jednej próby. Dwie górne tarcze celują
+      w środek: strzały rozkładają się wokół niego, raz ciasno, raz szeroko.
+      Dwie dolne celują obok, więc nawet ciasna chmura leży w złym miejscu.
+      Obciążenie mówi, gdzie leży chmura estymat, a rozrzut, jak jest szeroka.
+      To dwie osobne wady i estymator może mieć jedną bez drugiej."),
 
     lc_h3("Efektywność", num = "2"),
 
