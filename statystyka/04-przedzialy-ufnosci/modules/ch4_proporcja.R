@@ -279,7 +279,7 @@ ch4_case_ui <- function(case_id) {
                  s4_case_notes(id, cfg$hypotheses, ch4_case_verdict(cfg), pairwise))
 }
 
-# Ryc. 4.1 i 4.3 (s04-pstep, s04-pdstep): kilka wykresów lcSF w siatce o stałej
+# Ryc. 4.3 (s04-pdstep): kilka wykresów lcSF w siatce o stałej
 # proporcji, jak układ patchwork w R. Wykres wypełnia swoją komórkę siatki.
 s04_grid <- function(columns, ratio, max_height, ..., rows = 1, zoom_columns = columns) {
   tagList(
@@ -384,17 +384,15 @@ ch4_ui <- list(
 
     figure_panel(
       label = "Ryc. 4.1",
-      full_width = TRUE,
-      # Rycina lcSF „s04-pstep” (sf_steps.js): słupki TAK/NIE | oś proporcji (1 : 2.5).
-      lc_sf_figure("s04-pstep", bare = TRUE, body = lc_step_widget("ch4_step",
+      width_mode = "wide",
+      # Rysuje modules/fig_41.js: kropki próby, pasek 100% i ramka przedziału (od 2026-11-20).
+      lc_step_widget("ch4_step",
         title = "Konstruowanie przedziału",
         steps = c("Próba", "p̂", "± SE", "Przedział"),
-        toolbar = lc_toolbar(
-          lc_sf_action("new", "ch4_step_new_sample", "Nowa próba", icon = "shuffle",
-                       variant = "outline"), lc_chart_zoom_button()
-        ),
-        body = s04_grid("1fr 2.5fr", "2.5/1", "420px", s04_grid_chart(0), s04_grid_chart(1))
-      ))
+        toolbar = lc_toolbar(tags$button(type = "button", class = "lc-action is-outline", `data-p41` = "new",
+          lc_icon("shuffle"), tags$span("Nowa próba"))),
+        body = tags$div(class = "p41", `data-x` = 27, tags$div(class = "p41-svg"))
+      )
     ),
 
     lc_p("Przy \\(p = 0.6\\) i \\(n = 50\\) błąd standardowy wynosi około

@@ -325,6 +325,9 @@ ch5_ui <- list(
       „pewne”, „prawdopodobne” i „wątpliwe”, a statystyka pozwala tę pewność
       zmierzyć."),
 
+    # Zestawienie: trzy poziomy ufności obok siebie (modules/panels.R)
+    ch5_panel_levels,
+
     lc_p("Wybór poziomu ufności powinien wynikać z kosztu pomyłki. Przy wstępnej
       eksploracji, gdy błąd niewiele kosztuje, można przyjąć 90%. W badaniach
       medycznych czy kontroli jakości uzasadnione bywa 99%. Ten swobodny wybór

@@ -60,33 +60,6 @@ test("Przykłady A–C: CI grup z pasem nakładania i CI różnicy z zerem", () 
   assert.equal(band.color, "#f1c40f");
 });
 
-test("Ryc. 4.1: słupki TAK/NIE, kroki p̂, ± SE, przedział i tekst jak w R", () => {
-  const { run } = load();
-  const r = run("s04-pstep");
-  assert.ok(r.state.x >= 0 && r.state.x <= 50);
-  r.state.x = 30;
-  const bars = r.spec(0, 1);
-  assert.deepEqual(Array.from(bars.layers[0].data, b => b[2]), [20, 30]);
-  near(bars.y[1], 30 * 1.15);
-  assert.deepEqual(plain(bars.xLabels), { 1: "NIE", 2: "TAK" });
-  assert.equal(r.spec(1, 1).layers.length, 0, "krok 1: pusta oś proporcji");
-  assert.deepEqual(texts(r.spec(1, 2)), ["p̂"]);
-  assert.deepEqual(texts(r.spec(1, 3)), ["p̂", "± SE"]);
-  const s4 = r.spec(1, 4), ci = s4.layers.filter(l => l.type === "segs").pop();
-  // R: SE = 0.06928203, ME = 0.1357903.
-  near(ci.items[0].from[0], 0.6 - 0.1357903); near(ci.items[0].to[0], 0.6 + 0.1357903);
-  assert.deepEqual(texts(s4), ["p̂", "± SE", "95% CI"]);
-  const P = load().P;
-  assert.equal(s4.layers.find(l => l.type === "point").color, P.secondary, "p̂ już znane");
-  assert.equal(r.spec(1, 2).layers.find(l => l.type === "point").color, P.accent, "p̂ nowe w kroku 2");
-  assert.equal(r.fig.text(r.state, null, null, 1), "<p>50 odpowiedzi: 30 razy TAK, 20 razy NIE.</p>");
-  assert.match(r.fig.text(r.state, null, null, 2), /= 30\/50 = 0\.6<\/p>/);
-  assert.match(r.fig.text(r.state, null, null, 3), /√\(0\.6 · 0\.4\/50\) = 0\.069<\/p>/);
-  assert.match(r.fig.text(r.state, null, null, 4), /= 0\.136<\/p><p>95% CI: <b>\[0\.464 ; 0\.736\]<\/b>/);
-  r.fig.act(r.state, "new");
-  assert.ok(Number.isInteger(r.state.x));
-});
-
 test("Ryc. 4.3: dwie grupy, p̂ obu grup, skala różnicy i werdykt jak w R", () => {
   const { run, P } = load();
   const r = run("s04-pdstep");

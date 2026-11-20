@@ -45,6 +45,9 @@ ch1_ui <- list(
       withMathJax("\\(\\bar{x} = 171.3\\)"), " cm, to 171.3 cm jest estymatą.
       Estymator to przepis, estymata to wynik zastosowania go do jednej próby."),
 
+    # Schemat: sześć pojęć z dwóch akapitów powyżej na jednym obrazie (modules/panels.R)
+    ch1_panel_dict,
+
     lc_h2("ch1-estymator", "Estymator w akcji"),
 
     lc_p("Żeby ocenić, jak działa estymator, trzeba odwrócić typową sytuację:

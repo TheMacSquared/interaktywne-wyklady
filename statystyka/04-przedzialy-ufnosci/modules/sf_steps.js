@@ -1,9 +1,9 @@
 // Ryciny wykładu 04 liczone w przeglądarce (silnik lcSF): sf_steps
 //   s04-tnorm  — Ryc. 3.1: rozkład t (df = 4) a N(0, 1), wartości krytyczne
 //   s04-comp   — Przykłady A–C (rozdz. 3): CI grup i CI różnicy (dane z config)
-//   s04-pstep  — Ryc. 4.1: budowa przedziału dla proporcji krok po kroku
 //   s04-pdstep — Ryc. 4.3: budowa przedziału dla różnicy proporcji
-// Ryc. 3.2–3.3 (budowa CI dla średniej i różnicy średnich) rysuje ci_construction.js.
+// Ryc. 3.2–3.3 (budowa CI dla średniej i różnicy średnich) rysuje ci_construction.js,
+// Ryc. 4.1 (budowa CI dla proporcji) rysuje fig_41.js.
 // Grubości jak w moście ggplot→ECharts: linewidth × 2 px; punkt size s → średnica ≈ 2.1·s.
 (function () {
   "use strict";
@@ -122,46 +122,6 @@
     return { x: x, n: n, p: p, se: se, me: Z * se };
   }
 
-  var pstep = {
-    init: function (state) { this.act(state); },
-    act: function (state) { state.x = D.r.binom(50, 0.6); },
-    draw: function (v, P, k, state, vals, step) {
-      var s = propStats(state.x, 50);
-      if (k === 0) {
-        var b = bars(P, [{ at: 1, n: s.n, x: s.x, w: 0.6 }], 2.6);
-        b.aria = "Liczebności: " + s.x + " razy TAK, " + (s.n - s.x) + " razy NIE";
-        return b;
-      }
-      var L = [], Y_EST = 0.30, Y_SE = 0.05, Y_CI = -0.25;
-      if (step >= 2) {
-        var c2 = role(P, step, 2);
-        L.push({ type: "vline", x: s.p, color: P.secondary, width: 1.1, dash: [4, 4] },
-               diamond(s.p, Y_EST, c2), label(s.p, Y_EST - 0.13, "p̂", c2, 1.1));
-      }
-      if (step >= 3) {
-        var c3 = role(P, step, 3);
-        L.push(errbar(s.p - s.se, s.p + s.se, Y_SE, 0.08, c3, step === 3 ? 3.6 : 2.2),
-               label(s.p, Y_SE - 0.12, "± SE", c3));
-      }
-      if (step >= 4) {
-        L.push(errbar(s.p - s.me, s.p + s.me, Y_CI, 0.12, P.accent, 4.4),
-               label(s.p, Y_CI - 0.13, "95% CI", P.accent, 1.1));
-      }
-      return { x: [0, 1], y: [-0.6, 0.6], xLabelEvery: 0.2, xName: "Proporcja", hideY: true, noYGrid: true, layers: L,
-               aria: "Oś proporcji; krok " + step + ". p̂ = " + fmt(s.p, 3) +
-                     (step >= 4 ? ", 95% CI od " + fmt(s.p - s.me, 3) + " do " + fmt(s.p + s.me, 3) : "") };
-    },
-    text: function (state, v, vals, step) {
-      var s = propStats(state.x, 50);
-      if (step === 1) return "<p>" + s.n + " odpowiedzi: " + s.x + " razy TAK, " + (s.n - s.x) + " razy NIE.</p>";
-      if (step === 2) return "<p>" + PH + " = <i>x</i>/<i>n</i> = " + s.x + "/" + s.n + " = " + fmt(s.p, 3) + "</p>";
-      if (step === 3) return "<p><i>SE</i> = √(" + PH + "(1 − " + PH + ")/<i>n</i>) = √(" + fmt(s.p, 2) +
-        " · " + fmt(1 - s.p, 2) + "/" + s.n + ") = " + fmt(s.se, 3) + "</p>" +
-        "<p>Pasek ± SE to jeden błąd standardowy w każdą stronę. Przedział 95% sięga 1.96 SE.</p>";
-      return "<p>" + ME + fmt(s.se, 3) + " = " + fmt(s.me, 3) + "</p>" +
-             "<p>95% CI: <b>[" + fmt(s.p - s.me, 3) + " ; " + fmt(s.p + s.me, 3) + "]</b></p>";
-    }
-  };
 
   // ---- Ryc. 4.3: różnica proporcji --------------------------------------------
   function diffStats(x1, x2) {
@@ -235,6 +195,6 @@
     }
   };
 
-  SF.register({ "s04-tnorm": tnorm, "s04-comp": comp, "s04-pstep": pstep, "s04-pdstep": pdstep });
+  SF.register({ "s04-tnorm": tnorm, "s04-comp": comp, "s04-pdstep": pdstep });
   window.lcStat04Steps = { propStats: propStats, diffStats: diffStats };
 })();

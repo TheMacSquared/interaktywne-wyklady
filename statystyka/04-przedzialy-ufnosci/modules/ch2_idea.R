@@ -237,6 +237,9 @@ ch2_ui <- list(
       ch2_quiz_ui()
     ),
 
+    # Zestawienie: co jest losowe przed próbą i po niej (modules/panels.R)
+    ch2_panel_random,
+
     lc_p("Poprawne jest zdanie C, bo mówi o metodzie. Zdanie A brzmi podobnie
       i jest najczęstszym błędem. Po wylosowaniu próby zarówno μ, jak i końce
       przedziału, 165 i 175, są ustalonymi liczbami. μ albo leży w tym przedziale,

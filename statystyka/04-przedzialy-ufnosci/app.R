@@ -61,6 +61,7 @@ for (.f in c("common", paste0("ch", 1:5))) {
 source(file.path(app_dir, "modules", "ci_explorers.R"), local = TRUE)
 source(file.path(app_dir, "modules", "visual_scenes.R"), local = TRUE)
 source(file.path(app_dir, "modules", "cases_common.R"), local = TRUE)
+source(file.path(app_dir, "modules", "panels.R"), local = TRUE)  # panele do zatrzymania (rozdz. 01, 02, 05)
 source(file.path(app_dir, "modules", "ch1_estymacja.R"), local = TRUE)
 source(file.path(app_dir, "modules", "ch2_idea.R"),      local = TRUE)
 source(file.path(app_dir, "modules", "ch3_srednia.R"),   local = TRUE)
@@ -88,8 +89,13 @@ ui <- lecture_page(
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/6.1.0/echarts.min.js"),
     includeScript(file.path(shared_root, "lc_charts.js")),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "ci_explorers.css"), warn = FALSE), collapse = "\n"))),
+    # Panele do zatrzymania (rozdz. 01, 02, 05): modules/panels.R + panels.css, bez JS
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "panels.css"), warn = FALSE), collapse = "\n"))),
     tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "visual_scenes.css"), warn = FALSE), collapse = "\n"))),
     includeScript(file.path(app_dir, "modules", "visual_scenes.js")),
+    # Ryc. 4.1 (pasek 100% z ramką przedziału): modules/fig_41.js + fig_41.css
+    tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "fig_41.css"), warn = FALSE), collapse = "\n"))),
+    includeScript(file.path(app_dir, "modules", "fig_41.js")),
     lapply(file.path(app_dir, "modules", c("fig_ch2.js", "fig_ch4.js", "ci_construction.js",
                                            "ci_explorers.js")),
            includeScript),
