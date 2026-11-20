@@ -3080,6 +3080,23 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
   .vs-widget .vs-art > svg { min-width: 36em; }
 }</style>
   
+  <style>/* Ryc. 3.2: kropki na osi, średnia, klamra ± SE i klamra przedziału; rysuje fig_32.js; tokeny --upwr-* */
+.p32 { padding: .3em 0; }
+.p32-svg svg { display: block; width: 100%; height: auto; }
+.p32-dot { fill: var(--upwr-cat-niebo, #6a9dc4); }
+.p32-axis { stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.p32-tick { font: 15px var(--upwr-mono); fill: var(--upwr-ink-soft); text-anchor: middle; }
+.p32-axt { font: 14px var(--upwr-sans); fill: var(--upwr-ink-subtle); text-anchor: end; }
+.p32-mean { stroke: var(--upwr-ink); stroke-width: 3.5; stroke-linecap: round; }
+.p32-se { stroke: var(--upwr-ink); stroke-width: 3.5; stroke-linecap: round; }
+.p32-val { font: 700 19px var(--upwr-mono); fill: var(--upwr-ink); text-anchor: middle; paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 5px; stroke-linejoin: round; }
+.p32-val.is-ci { fill: var(--upwr-accent); }
+.p32-lab { font: 600 16px var(--upwr-sans); fill: var(--upwr-ink); text-anchor: middle; paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 5px; stroke-linejoin: round; }
+.p32-lab.is-ci { fill: var(--upwr-accent); }
+.p32-ci-bracket { stroke: var(--upwr-accent); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.p32-val.is-end, .p32-lab.is-end { text-anchor: end; }
+.p32-val.is-start, .p32-lab.is-start { text-anchor: start; }</style>
+  
   <style>/* Ryc. 4.1: próba jako kropki, odsetek jako pasek 100%, przedział jako ramka; rysuje fig_41.js; tokeny --upwr-* */
 .p41-svg svg { display: block; width: 100%; height: auto; }
 .p41 { padding: .3em 0; }
@@ -4675,19 +4692,18 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
         <h2 id="ch3-budowa" class="lc-h2" data-lc-section="ch3-budowa" data-lc-section-num="" data-lc-section-title="Budowa przedziału — krok po kroku">Budowa przedziału — krok po kroku</h2>
         <p class="lc-p">Panel składa przedział z próby 25 pomiarów wzrostu losowanej
       z populacji o średniej μ = 170 cm i odchyleniu standardowym σ = 10 cm.
-      Kolejne kroki dodają do wykresu średnią, pasek ±1 SE i pełny 95% przedział.
+      Kolejne kroki dodają do wykresu średnią, klamrę ±1 SE i pełny 95% przedział.
       Przycisk „Nowa próba” losuje kolejne 25 osób.</p>
-        <div class="lc-figure-panel lc-full">
+        <div class="lc-figure-panel lc-panel-wide">
           <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 3.2</div>
-          <div class="lc-stepper" id="ch3_step" data-lc-step="1">
+          <div class="lc-stepper" id="ch3_mstep" data-lc-step="1">
             <div class="lc-stepper-head">
               <div class="lc-stepper-title">Konstruowanie przedziału</div>
               <div class="lc-toolbar">
-                <button id="ch3_step_new_sample" type="button" class="action-button lc-action is-outline ">
+                <button type="button" class="lc-action is-outline" data-p32="new">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path></svg>
                   <span>Nowa próba</span>
                 </button>
-                <button type="button" class="lc-chart-zoom" data-lc-chart-zoom="true" aria-pressed="false" aria-label="Powiększ wykres i napisy" title="Powiększ wykres i napisy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"></circle><path d="M15 15l5 5M7 10h6"></path><path class="lc-chart-zoom-plus" d="M10 7v6"></path></svg></button>
               </div>
             </div>
             <ol class="lc-step-track" style="--lc-steps:4;">
@@ -4717,14 +4733,14 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               </li>
             </ol>
             <div class="lc-step-body">
-              <div class="ci-construction" data-kind="mean" data-config="[{&quot;x&quot;:[190.63333574846,167.561983844439,170.066558746466,174.015254734669,166.375983576733,164.246476201906,178.761110478445,167.4511289261,154.798111204875,171.131914422118,189.878824992174,177.193754515726,170.128192194547,175.799806762378,153.384213086964,166.016489605256,174.499788579241,162.524611828307,177.048622560228,169.687474177351,170.895848738848,166.264503995233,164.531418610914,175.447705724224,177.697875418605],&quot;y&quot;:null,&quot;mean&quot;:171.041639546968,&quot;se&quot;:1.739051684475,&quot;df&quot;:24,&quot;t&quot;:2.063898561628,&quot;lower&quot;:167.452413276783,&quot;upper&quot;:174.630865817153}]">
-                <div class="lc-ec" role="img" aria-label="Konstrukcja przedziału ufności dla średniej"></div>
+              <div class="p32" data-x="[190.63,167.56,170.07,174.02,166.38,164.25,178.76,167.45,154.8,171.13,189.88,177.19,170.13,175.8,153.38,166.02,174.5,162.52,177.05,169.69,170.9,166.26,164.53,175.45,177.7]">
+                <div class="p32-svg"></div>
               </div>
             </div>
             <div class="lc-stepper-foot">
               <div class="lc-stepper-text" aria-live="polite">
                 <span class="lc-stepper-kicker">Krok 1 z 4 · Próba</span>
-                <span id="ch3_step_text"></span>
+                <span id="ch3_mstep_text"></span>
               </div>
               <div class="lc-stepper-actions">
                 <button type="button" class="lc-action is-ghost is-icon" data-lc-nav="reset" title="Od początku" aria-label="Od początku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
@@ -4745,7 +4761,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
       stabilniejsza: przy σ = 10 cm jej błąd standardowy wynosi około
       <span class="MathJax_Preview" style=""></span><span class="MathJax_SVG" id="MathJax-Element-40-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mn&gt;10&lt;/mn&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo&gt;/&lt;/mo&gt;&lt;/mrow&gt;&lt;msqrt&gt;&lt;mn&gt;25&lt;/mn&gt;&lt;/msqrt&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="12.009ex" height="3.04ex" viewBox="0 -993.6 5170.6 1308.7" role="img" focusable="false" style="vertical-align: -0.732ex;" aria-hidden="true"><defs><path stroke-width="1" id="E40-MJMAIN-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path stroke-width="1" id="E40-MJMAIN-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path stroke-width="1" id="E40-MJMAIN-2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path><path stroke-width="1" id="E40-MJMAIN-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path stroke-width="1" id="E40-MJMAIN-35" d="M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z"></path><path stroke-width="1" id="E40-MJMAIN-221A" d="M95 178Q89 178 81 186T72 200T103 230T169 280T207 309Q209 311 212 311H213Q219 311 227 294T281 177Q300 134 312 108L397 -77Q398 -77 501 136T707 565T814 786Q820 800 834 800Q841 800 846 794T853 782V776L620 293L385 -193Q381 -200 366 -200Q357 -200 354 -197Q352 -195 256 15L160 225L144 214Q129 202 113 190T95 178Z"></path><path stroke-width="1" id="E40-MJMAIN-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E40-MJMAIN-31"></use><use xlink:href="#E40-MJMAIN-30" x="500" y="0"></use><use xlink:href="#E40-MJMAIN-2F" x="1001" y="0"></use><g transform="translate(1501,0)"><use xlink:href="#E40-MJMAIN-221A" x="0" y="42"></use><rect stroke="none" width="1001" height="60" x="833" y="783"></rect><g transform="translate(833,0)"><use xlink:href="#E40-MJMAIN-32"></use><use xlink:href="#E40-MJMAIN-35" x="500" y="0"></use></g></g><use xlink:href="#E40-MJMAIN-3D" x="3613" y="0"></use><use xlink:href="#E40-MJMAIN-32" x="4670" y="0"></use></g></svg><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>10</mn><mrow class="MJX-TeXAtom-ORD"><mo>/</mo></mrow><msqrt><mn>25</mn></msqrt><mo>=</mo><mn>2</mn></math></span></span><script type="math/tex" id="MathJax-Element-40">10/\sqrt{25} = 2</script> cm, pięć razy mniej niż rozrzut pojedynczych
       osób. Uśrednianie znosi większość przypadkowych odchyleń w górę i w dół.</p>
-        <p class="lc-p">Pasek ±1 SE obejmuje μ tylko w około dwóch trzecich prób. Żeby
+        <p class="lc-p">Klamra ±1 SE obejmuje μ tylko w około dwóch trzecich prób. Żeby
       osiągnąć 95%, mnożymy SE przez <span class="MathJax_Preview" style=""></span><span class="MathJax_SVG" id="MathJax-Element-41-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msup&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mo&gt;&amp;#x2217;&lt;/mo&gt;&lt;/msup&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1.894ex" height="2.07ex" viewBox="0 -784.8 815.4 891.2" role="img" focusable="false" style="vertical-align: -0.247ex;" aria-hidden="true"><defs><path stroke-width="1" id="E41-MJMATHI-74" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path><path stroke-width="1" id="E41-MJMAIN-2217" d="M229 286Q216 420 216 436Q216 454 240 464Q241 464 245 464T251 465Q263 464 273 456T283 436Q283 419 277 356T270 286L328 328Q384 369 389 372T399 375Q412 375 423 365T435 338Q435 325 425 315Q420 312 357 282T289 250L355 219L425 184Q434 175 434 161Q434 146 425 136T401 125Q393 125 383 131T328 171L270 213Q283 79 283 63Q283 53 276 44T250 35Q231 35 224 44T216 63Q216 80 222 143T229 213L171 171Q115 130 110 127Q106 124 100 124Q87 124 76 134T64 161Q64 166 64 169T67 175T72 181T81 188T94 195T113 204T138 215T170 230T210 250L74 315Q65 324 65 338Q65 353 74 363T98 374Q106 374 116 368T171 328L229 286Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E41-MJMATHI-74" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E41-MJMAIN-2217" x="511" y="513"></use></g></svg><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>t</mi><mo>∗</mo></msup></math></span></span><script type="math/tex" id="MathJax-Element-41">t^*</script> = 2.06 (df = 24). Przy SE
       równym około 2 cm margines błędu wynosi około 4.1 cm, a cały przedział
       ma około 8 cm szerokości. Większa część tego poszerzenia wynika
@@ -13032,6 +13048,112 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
   }
   new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});
   document.addEventListener("DOMContentLoaded",scan);scan();
+})();</script>
+<script>// Ryc. 3.2 „Konstruowanie przedziału” dla średniej (wersja z 2026-11-20, dawny prototyp 3.2-A3).
+// 25 pomiarów wzrostu z N(170, 10) jako stos kropek na osi; średnia to gruba kreska; ± SE to
+// czarna klamra (tylko krok 3); 95% przedział to burgundowa klamra nad kropkami z granicami
+// po bokach (krok 4). Nigdy nie ma dwóch odcinków naraz. Poprzednia wersja (ci_construction.js)
+// kładła średnią, ± SE i przedział jeden pod drugim; tamten skrypt rysuje nadal Ryc. 3.3.
+// Kontener: .p32[data-x] (pierwsza próba z R) wewnątrz lc_step_widget(); przycisk [data-p32="new"].
+(function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg", T24 = 2.063899, MU = 170, W = 640, LO = 145, HI = 195;
+  function el(name, attrs, parent, text) {
+    var e = document.createElementNS(NS, name);
+    Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function f(v, d) { return Number(v).toFixed(d); }
+  function stats(x) {
+    var n = x.length, m = x.reduce(function (a, b) { return a + b; }, 0) / n;
+    var s = Math.sqrt(x.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / (n - 1)), se = s / Math.sqrt(n);
+    return { x: x, n: n, m: m, s: s, se: se, me: T24 * se, lo: m - T24 * se, hi: m + T24 * se };
+  }
+  function draw25() {
+    var r = window.lcDist && window.lcDist.r;
+    return r ? r.many(25, function () { return r.norm(MU, 10); }) : null;
+  }
+  var X = function (v) { return 50 + (Math.min(HI, Math.max(LO, v)) - LO) / (HI - LO) * 540; };
+
+  // Kropki ułożone w stos nad osią: każda w najniższym wolnym rzędzie.
+  function dots(g, xs, base, r, cls) {
+    var rows = [];
+    xs.slice().sort(function (a, b) { return a - b; }).forEach(function (v) {
+      var px = X(v), k = 0;
+      while (rows[k] !== undefined && px - rows[k] < 2 * r + 1) k++;
+      rows[k] = px;
+      el("circle", { cx: px, cy: base - r - k * (2 * r + 1), r: r, class: cls || "p32-dot" }, g);
+    });
+  }
+  function axis(g, y, small) {
+    el("line", { x1: X(LO), x2: X(HI), y1: y, y2: y, class: "p32-axis" }, g);
+    for (var v = 150; v <= 190; v += 10) {
+      el("line", { x1: X(v), x2: X(v), y1: y, y2: y + 6, class: "p32-axis" }, g);
+      el("text", { x: X(v), y: y + (small ? 20 : 24), class: "p32-tick" + (small ? " is-small" : "") }, g, String(v));
+    }
+  }
+  function bracket(g, x1, x2, y, cap) {
+    el("line", { x1: x1, x2: x2, y1: y, y2: y, class: "p32-se" }, g);
+    [x1, x2].forEach(function (x) { el("line", { x1: x, x2: x, y1: y - cap, y2: y + cap, class: "p32-se" }, g); });
+  }
+
+  function draw(g, s, step) {
+    var xm = X(s.m), x1 = X(s.lo), x2 = X(s.hi);
+    dots(g, s.x, 190, 6);
+    axis(g, 196);
+    el("text", { x: X(HI), y: 246, class: "p32-axt" }, g, "wzrost (cm)");
+    if (step < 2) return;
+    if (step >= 4) {
+      el("path", { d: "M" + x1 + " 86 v-14 H" + x2 + " v14", class: "p32-ci-bracket" }, g);
+      el("text", { x: x1 - 8, y: 78, class: "p32-val is-ci is-end" }, g, f(s.lo, 2));
+      el("text", { x: x2 + 8, y: 78, class: "p32-val is-ci is-start" }, g, f(s.hi, 2));
+      el("text", { x: xm, y: 280, class: "p32-lab is-ci" }, g, "95% przedział ufności dla średniej");
+    }
+    el("line", { x1: xm, x2: xm, y1: step >= 4 ? 72 : 56, y2: 204, class: "p32-mean" }, g);
+    el("text", { x: xm, y: 36, class: "p32-val" }, g, "x̄ = " + f(s.m, 2) + " cm");
+    if (step === 3) {
+      bracket(g, X(s.m - s.se), X(s.m + s.se), 66, 8);
+      el("text", { x: X(s.m + s.se) + 12, y: 71, class: "p32-lab is-start" }, g, "± SE = " + f(s.se, 2) + " cm");
+    }
+  }
+
+  function text(s, step) {
+    if (step === 1) return s.n + " pomiarów wzrostu, każda kropka to jedna osoba. <i>x̄</i> = " + f(s.m, 2) + " cm, <i>s</i> = " + f(s.s, 2) + " cm.";
+    if (step === 2) return "Średnia z próby <i>x̄</i> = " + f(s.m, 2) + " cm to estymata punktowa μ. Inna próba dałaby inną wartość.";
+    if (step === 3) return "<i>SE</i> = <i>s</i>/√<i>n</i> = " + f(s.s, 2) + "/√" + s.n + " = " + f(s.se, 2) + " cm. Jeden błąd standardowy w każdą stronę to tylko około 67% ufności.";
+    return "<i>t</i>* = 2.064 (df = 24), margines 2.064 · " + f(s.se, 2) + " = " + f(s.me, 2) + " cm. 95% CI: <b>[" + f(s.lo, 2) + ", " + f(s.hi, 2) +
+      "]</b> cm. " + (s.lo <= MU && MU <= s.hi ? "Ten przedział zawiera μ = 170 cm." : "Ten przedział nie zawiera μ = 170 cm.");
+  }
+
+  function init(root) {
+    if (root.dataset.ready) return;
+    var stepper = root.closest(".lc-stepper");
+    if (!stepper) return;
+    root.dataset.ready = "1";
+    var s = stats(JSON.parse(root.dataset.x)), H = 296;
+    var out = document.getElementById(stepper.id + "_text"), box = root.querySelector(".p32-svg");
+    function render() {
+      var step = Number(stepper.getAttribute("data-lc-step")) || 1;
+      box.textContent = "";
+      var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+        "aria-label": "Budowa przedziału ufności dla średniej, krok " + step + ": średnia " + f(s.m, 2) + " cm" +
+          (step >= 4 ? ", 95% przedział ufności od " + f(s.lo, 2) + " do " + f(s.hi, 2) + " cm" : "") }, box);
+      draw(svg, s, step);
+      if (out) out.innerHTML = text(s, step);
+    }
+    stepper.addEventListener("click", function (e) {
+      if (e.target.closest('[data-p32="new"]')) { var x = draw25(); if (x) { s = stats(x); render(); } }
+    });
+    new MutationObserver(render).observe(stepper, { attributes: true, attributeFilter: ["data-lc-step"] });
+    render();
+  }
+  if (typeof window !== "undefined") window.lcStat04Fig32 = { stats: stats, text: text };
+  function scan() { document.querySelectorAll(".p32:not([data-ready])").forEach(init); }
+  document.addEventListener("DOMContentLoaded", scan);
+  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+  scan();
 })();</script>
 <script>// Ryc. 4.1 „Konstruowanie przedziału” dla proporcji (wersja z 2026-11-20, dawny prototyp 4.1-C).
 // Próba 50 odpowiedzi TAK/NIE (p = 0.6) jako kropki; odsetek TAK jako pasek wypełniony od 0 do
