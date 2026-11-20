@@ -3527,7 +3527,37 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
 /* Ryc. 3.8: od p do zdania */
 .p5w .p5t-c.is-a { border-left-color: var(--upwr-accent); }
 .p5w .p5t-c.is-b { border-left-color: var(--upwr-cat-szalwia, #4a8a6a); }
-.p5w .p5w-num { font: 700 22px var(--upwr-mono); }</style>
+.p5w .p5w-num { font: 700 22px var(--upwr-mono); }
+
+/* --- rozdział 07 --- */
+/* Ryc. 7.2: obliczenia χ² w komórkach tabeli krzyżowej. O akcent, E niebo, sumy bursztyn, n szałwia, χ² indygo. */
+.p5k-fig { display: grid; gap: 1em; padding: .4em 0 .2em; }
+.p5k-wrap { overflow-x: auto; }
+.p5k { border-collapse: separate; border-spacing: .45em; margin: 0 auto; font-family: var(--upwr-sans); }
+.p5k th { font: 600 15px var(--upwr-sans); color: var(--upwr-ink-soft); text-align: center; padding: .2em .5em; }
+.p5k tbody th, .p5k tfoot th { text-align: right; white-space: nowrap; }
+.p5k tbody td:not(.is-sum) { min-width: 11.5em; padding: .6em .8em; border-radius: 10px; background: var(--upwr-surface-sunken); vertical-align: top; }
+.p5k td.is-sum { text-align: center; font: 700 20px var(--upwr-mono); color: var(--upwr-ink-soft); padding: .2em .6em; transition: color .35s ease; }
+.lc-stepper:not([data-lc-step="1"]) .p5k td.is-m { color: var(--upwr-cat-bursztyn, #c08540); }
+.lc-stepper:not([data-lc-step="1"]) .p5k td.is-n { color: var(--upwr-cat-szalwia, #4a8a6a); }
+.p5k-o { display: block; font: 700 30px/1.1 var(--upwr-mono); color: var(--upwr-accent); text-align: center; }
+.p5k-line { display: flex; justify-content: space-between; align-items: baseline; gap: .6em; margin-top: .3em; padding-top: .3em; border-top: 1px solid var(--upwr-rule-soft); }
+.p5k-line small { font: 13px var(--upwr-mono); color: var(--upwr-ink-subtle); white-space: nowrap; }
+.p5k-line small i { font-style: normal; font-weight: 700; }
+.p5k-line small i.is-m { color: var(--upwr-cat-bursztyn, #c08540); }
+.p5k-line small i.is-n { color: var(--upwr-cat-szalwia, #4a8a6a); }
+.p5k-line b { font: 700 19px var(--upwr-mono); color: var(--upwr-ink); }
+.p5k-line.is-e b { color: var(--upwr-cat-niebo, #6a9dc4); }
+.p5k-line.is-c b { color: var(--upwr-cat-indygo, #3a5a8a); }
+.p5k-sum { display: grid; gap: .5em; max-width: 640px; width: 100%; margin: 0 auto; }
+.p5k-total { margin: 0; text-align: center; font: 500 18px var(--upwr-mono); color: var(--upwr-ink); }
+.p5k-total b { font-size: 1.3em; color: var(--upwr-cat-indygo, #3a5a8a); }
+.p5k-total span { font-size: .8em; color: var(--upwr-ink-subtle); }
+.p5k-bar { display: flex; gap: 3px; }
+.p5k-seg { flex: 1 1 0; min-width: 0; display: grid; gap: .1em; justify-items: center; padding: .45em .3em; border-radius: 6px; background: var(--upwr-cat-indygo, #3a5a8a); color: var(--upwr-surface); }
+.p5k-seg:nth-child(even) { background: color-mix(in srgb, var(--upwr-cat-indygo, #3a5a8a) 62%, var(--upwr-surface)); }
+.p5k-seg b { font: 700 16px var(--upwr-mono); }
+.p5k-seg span { font: 12px var(--upwr-sans); white-space: nowrap; }</style>
   
   
   
@@ -9354,13 +9384,13 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
           </p>
         </div>
         <div class="lc-figure-panel lc-panel-text">
-          <div class="lc-figure-panel-badge" style="background:#b48a2a;">Prototyp 5E · scena</div>
-          <div class="lc-figure-panel-title">Mandaty: jak by było, gdyby płeć nie miała znaczenia?</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 7.1</div>
+          <div class="lc-figure-panel-title">Mandaty: czy płeć ma znaczenie?</div>
           <div class="lc-stepper" id="p5_tickets" data-lc-step="1">
             <div class="lc-stepper-head">
-              <div class="lc-stepper-title">200 kontroli drogowych, 100 kobiet i 100 mężczyzn</div>
+              <div class="lc-stepper-title">200 kontroli drogowych</div>
             </div>
-            <ol class="lc-step-track" style="--lc-steps:4;">
+            <ol class="lc-step-track" style="--lc-steps:5;">
               <li>
                 <button type="button" class="lc-step-tab" data-lc-go="1" aria-current="step">
                   <b>1</b>
@@ -9370,37 +9400,44 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
               <li>
                 <button type="button" class="lc-step-tab" data-lc-go="2">
                   <b>2</b>
-                  <span>Świat bez związku</span>
+                  <span>Pytanie</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="lc-step-tab" data-lc-go="3">
                   <b>3</b>
-                  <span>Porównaj</span>
+                  <span>Bez wpływu</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="lc-step-tab" data-lc-go="4">
                   <b>4</b>
-                  <span>Jedna liczba</span>
+                  <span>Archiwum</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="5">
+                  <b>5</b>
+                  <span>Porównaj</span>
                 </button>
               </li>
             </ol>
             <div class="lc-step-body">
-              <div class="p5-sc" data-config="{&quot;kind&quot;:&quot;tickets&quot;,&quot;obs&quot;:[[30,70],[50,50]],&quot;exp&quot;:[[40,60],[40,60]],&quot;rows&quot;:[&quot;Kobiety&quot;,&quot;Mężczyźni&quot;],&quot;n_row&quot;:100,&quot;aria&quot;:&quot;Sto kobiet i stu mężczyzn po kontroli drogowej, z zaznaczonymi mandatami; kolejne kadry pokazują liczby oczekiwane przy braku związku, różnice i ich wkład do statystyki chi-kwadrat&quot;,&quot;height&quot;:450}"></div>
+              <div class="p5-sc" data-config="{&quot;kind&quot;:&quot;tickets&quot;,&quot;obs&quot;:[[30,70],[50,50]],&quot;exp&quot;:[[40,60],[40,60]],&quot;rows&quot;:[&quot;Kobiety&quot;,&quot;Mężczyźni&quot;],&quot;n_row&quot;:100,&quot;aria&quot;:&quot;Dwustu kierowców po kontroli drogowej, osiemdziesięciu z mandatem; kolejne kadry dzielą ich na sto kobiet i stu mężczyzn, pokazują liczby oczekiwane przy braku związku, liczby z archiwum i różnice między nimi&quot;,&quot;height&quot;:330}"></div>
             </div>
             <div class="lc-stepper-foot">
               <div class="lc-stepper-text" aria-live="polite">
-                <span class="lc-stepper-kicker">Krok 1 z 4 · Kontrole</span>
+                <span class="lc-stepper-kicker">Krok 1 z 5 · Kontrole</span>
                 <span id="p5_tickets_text" class="lc-step-texts">
-                  <span data-lc-step-text="1">Policja skontrolowała 100 kobiet i 100 mężczyzn. Mandat dostało 30 kobiet
-    i 50 mężczyzn.</span>
-                  <span data-lc-step-text="2" hidden="">Gdyby płeć nie miała znaczenia, w obu grupach mandat dostawałby ten sam
-    odsetek kierowców, co w całej próbie. To liczebności oczekiwane.</span>
-                  <span data-lc-step-text="3" hidden="">Obrysy pokazują różnice: u kobiet brakuje 10 mandatów, u mężczyzn jest
+                  <span data-lc-step-text="1">Policja skontrolowała 200 kierowców. 80 kontroli skończyło się mandatem.</span>
+                  <span data-lc-step-text="2" hidden="">Wśród kontrolowanych było 100 kobiet i 100 mężczyzn. Czy płeć ma wpływ na to,
+    kto dostaje mandat?</span>
+                  <span data-lc-step-text="3" hidden="">Gdyby płeć nie miała znaczenia, w obu grupach mandat dostawałby ten sam
+    odsetek kierowców: 80 z 200, czyli 40 na 100. To liczebności oczekiwane.</span>
+                  <span data-lc-step-text="4" hidden="">Sprawdzamy w archiwum, kto naprawdę dostał mandat: 30 kobiet i 50 mężczyzn.
+    Czy to nadal wygląda na niezależność?</span>
+                  <span data-lc-step-text="5" hidden="">Obrysy pokazują różnice: u kobiet brakuje 10 mandatów, u mężczyzn jest
     10 nadmiarowych. Tyle samo różnią się komórki bez mandatu.</span>
-                  <span data-lc-step-text="4" hidden="">Każdą różnicę podnosimy do kwadratu i dzielimy przez liczbę oczekiwaną.
-    Suma czterech wkładów to statystyka χ².</span>
                 </span>
               </div>
               <div class="lc-stepper-actions">
@@ -9498,216 +9535,223 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
         <p class="lc-p">Zanim zastosujemy wzory do większych tabel, prześledźmy je na
       najprostszej tabeli 2 × 2. Mamy dane z 200 kontroli drogowych i pytamy,
       czy szansa dostania mandatu jest niezależna od płci. Panel pokazuje
-      w trzech krokach tabelę obserwowaną, tabelę oczekiwaną przy założeniu
-      niezależności i porównanie obu tabel.</p>
-        <div class="lc-figure-panel">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 7.1</div>
-          <div class="lc-figure-panel-title">Przykład: czy płeć wpływa na dostawanie mandatów?</div>
+      w pięciu krokach, jak z tabeli obserwowanej powstają liczebności oczekiwane,
+      różnice, wkłady poszczególnych komórek i na końcu statystyka χ².</p>
+        <div class="lc-figure-panel lc-panel-text">
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 7.2</div>
+          <div class="lc-figure-panel-title">Od tabeli do χ²: mandaty a płeć</div>
           <div class="lc-stepper" id="ch5_narr" data-lc-step="1">
             <div class="lc-stepper-head"></div>
-            <ol class="lc-step-track" style="--lc-steps:3;">
+            <ol class="lc-step-track" style="--lc-steps:5;">
               <li>
                 <button type="button" class="lc-step-tab" data-lc-go="1" aria-current="step">
                   <b>1</b>
-                  <span>Pokaż dane</span>
+                  <span>Obserwowane</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="lc-step-tab" data-lc-go="2">
                   <b>2</b>
-                  <span>Załóżmy niezależność</span>
+                  <span>Oczekiwane</span>
                 </button>
               </li>
               <li>
                 <button type="button" class="lc-step-tab" data-lc-go="3">
                   <b>3</b>
-                  <span>Porównaj</span>
+                  <span>Różnice</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="4">
+                  <b>4</b>
+                  <span>Wkłady</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="5">
+                  <b>5</b>
+                  <span>Suma χ²</span>
                 </button>
               </li>
             </ol>
             <div class="lc-step-body">
-              <div class="lc-step-texts">
-                <div data-lc-step-text="1">
-                  <div>
-                    <p class="lc-tbl-lead">
-                      <b>Obserwowane</b>
-                    </p>
-                    <div class="lc-tbl-block">
-                      <div class="lc-tbl-scroll" tabindex="0" role="region" aria-label="Dane z 200 kontroli">
-                        <table class="lc-tbl is-fit">
-                          <thead>
-                            <tr>
-                              <th scope="col" rowspan="2" class="lc-tbl-corner"></th>
-                              <th scope="colgroup" colspan="2" class="lc-tbl-span"></th>
-                              <th scope="col" rowspan="2" class="n is-total">Razem</th>
-                            </tr>
-                            <tr>
-                              <th scope="col" class="n">Mandat</th>
-                              <th scope="col" class="n">Brak mandatu</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <th scope="row">Kobiety</th>
-                              <td class="n" data-label="Mandat">30</td>
-                              <td class="n" data-label="Brak mandatu"><span class="lc-pad" aria-hidden="true">0</span>70</td>
-                              <td class="n is-total">100</td>
-                            </tr>
-                            <tr>
-                              <th scope="row">Mężczyźni</th>
-                              <td class="n" data-label="Mandat">50</td>
-                              <td class="n" data-label="Brak mandatu"><span class="lc-pad" aria-hidden="true">0</span>50</td>
-                              <td class="n is-total">100</td>
-                            </tr>
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <th scope="row">Razem</th>
-                              <td class="n">80</td>
-                              <td class="n">120</td>
-                              <td class="n is-total">200</td>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
+              <div class="p5k-fig">
+                <div class="p5k-wrap">
+                  <table class="p5k" aria-label="Tabela krzyżowa płci i mandatu z obliczeniami w komórkach">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th scope="col">Mandat</th>
+                        <th scope="col">Brak mandatu</th>
+                        <th scope="col" class="is-sum">Razem</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">Kobiety</th>
+                        <td>
+                          <span class="p5k-o">30</span>
+                          <span class="p5k-line is-e p5q-f2">
+                            <small>
+                              <i class="is-m">100</i>
+                               · 
+                              <i class="is-m">80</i>
+                               / 
+                              <i class="is-n">200</i>
+                               =
+                            </small>
+                            <b>40</b>
+                          </span>
+                          <span class="p5k-line is-d p5q-f3">
+                            <small>
+                              30
+                               − 
+                              40
+                               =
+                            </small>
+                            <b>−10</b>
+                          </span>
+                          <span class="p5k-line is-c p5q-f4">
+                            <small>(−10)² / 40 =</small>
+                            <b>2.50</b>
+                          </span>
+                        </td>
+                        <td>
+                          <span class="p5k-o">70</span>
+                          <span class="p5k-line is-e p5q-f2">
+                            <small>
+                              <i class="is-m">100</i>
+                               · 
+                              <i class="is-m">120</i>
+                               / 
+                              <i class="is-n">200</i>
+                               =
+                            </small>
+                            <b>60</b>
+                          </span>
+                          <span class="p5k-line is-d p5q-f3">
+                            <small>
+                              70
+                               − 
+                              60
+                               =
+                            </small>
+                            <b>10</b>
+                          </span>
+                          <span class="p5k-line is-c p5q-f4">
+                            <small>(10)² / 60 =</small>
+                            <b>1.67</b>
+                          </span>
+                        </td>
+                        <td class="is-sum is-m">100</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Mężczyźni</th>
+                        <td>
+                          <span class="p5k-o">50</span>
+                          <span class="p5k-line is-e p5q-f2">
+                            <small>
+                              <i class="is-m">100</i>
+                               · 
+                              <i class="is-m">80</i>
+                               / 
+                              <i class="is-n">200</i>
+                               =
+                            </small>
+                            <b>40</b>
+                          </span>
+                          <span class="p5k-line is-d p5q-f3">
+                            <small>
+                              50
+                               − 
+                              40
+                               =
+                            </small>
+                            <b>10</b>
+                          </span>
+                          <span class="p5k-line is-c p5q-f4">
+                            <small>(10)² / 40 =</small>
+                            <b>2.50</b>
+                          </span>
+                        </td>
+                        <td>
+                          <span class="p5k-o">50</span>
+                          <span class="p5k-line is-e p5q-f2">
+                            <small>
+                              <i class="is-m">100</i>
+                               · 
+                              <i class="is-m">120</i>
+                               / 
+                              <i class="is-n">200</i>
+                               =
+                            </small>
+                            <b>60</b>
+                          </span>
+                          <span class="p5k-line is-d p5q-f3">
+                            <small>
+                              50
+                               − 
+                              60
+                               =
+                            </small>
+                            <b>−10</b>
+                          </span>
+                          <span class="p5k-line is-c p5q-f4">
+                            <small>(−10)² / 60 =</small>
+                            <b>1.67</b>
+                          </span>
+                        </td>
+                        <td class="is-sum is-m">100</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th scope="row">Razem</th>
+                        <td class="is-sum is-m">80</td>
+                        <td class="is-sum is-m">120</td>
+                        <td class="is-sum is-n">200</td>
+                      </tr>
+                    </tfoot>
+                  </table>
                 </div>
-                <div data-lc-step-text="2" hidden="">
-                  <div class="lc-tbl-row">
-                    <div>
-                      <p class="lc-tbl-lead">
-                        <b>Obserwowane</b>
-                      </p>
-                      <div class="lc-tbl-block">
-                        <div class="lc-tbl-scroll" tabindex="0" role="region" aria-label="Dane z 200 kontroli">
-                          <table class="lc-tbl is-fit">
-                            <thead>
-                              <tr>
-                                <th scope="col" rowspan="2" class="lc-tbl-corner"></th>
-                                <th scope="colgroup" colspan="2" class="lc-tbl-span"></th>
-                                <th scope="col" rowspan="2" class="n is-total">Razem</th>
-                              </tr>
-                              <tr>
-                                <th scope="col" class="n">Mandat</th>
-                                <th scope="col" class="n">Brak mandatu</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <th scope="row">Kobiety</th>
-                                <td class="n" data-label="Mandat">30</td>
-                                <td class="n" data-label="Brak mandatu"><span class="lc-pad" aria-hidden="true">0</span>70</td>
-                                <td class="n is-total">100</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">Mężczyźni</th>
-                                <td class="n" data-label="Mandat">50</td>
-                                <td class="n" data-label="Brak mandatu"><span class="lc-pad" aria-hidden="true">0</span>50</td>
-                                <td class="n is-total">100</td>
-                              </tr>
-                            </tbody>
-                            <tfoot>
-                              <tr>
-                                <th scope="row">Razem</th>
-                                <td class="n">80</td>
-                                <td class="n">120</td>
-                                <td class="n is-total">200</td>
-                              </tr>
-                            </tfoot>
-                          </table>
-                        </div>
-                      </div>
+                <div class="p5k-sum p5q-f5">
+                  <p class="p5k-total">
+                    χ² = 
+                    2.50 + 1.67 + 2.50 + 1.67
+                     = 
+                    <b>8.33</b>
+                    <span> · df = (2 − 1)(2 − 1) = 1</span>
+                  </p>
+                  <div class="p5k-bar" role="img" aria-label="Wkłady czterech komórek do statystyki chi-kwadrat jako odcinki jednego paska">
+                    <div class="p5k-seg" style="flex-grow:2.500;">
+                      <b>2.50</b>
+                      <span>K, mandat</span>
                     </div>
-                    <div>
-                      <p class="lc-tbl-lead">
-                        <b>Oczekiwane przy H₀</b>
-                      </p>
-                      <div class="lc-tbl-block">
-                        <div class="lc-tbl-scroll" tabindex="0" role="region" aria-label="Tabela oczekiwana">
-                          <table class="lc-tbl is-fit">
-                            <thead>
-                              <tr>
-                                <th scope="col" rowspan="2" class="lc-tbl-corner"></th>
-                                <th scope="colgroup" colspan="2" class="lc-tbl-span"></th>
-                                <th scope="col" rowspan="2" class="n is-total">Razem</th>
-                              </tr>
-                              <tr>
-                                <th scope="col" class="n">Mandat</th>
-                                <th scope="col" class="n">Brak mandatu</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <th scope="row">Kobiety</th>
-                                <td class="n" data-label="Mandat">40</td>
-                                <td class="n" data-label="Brak mandatu"><span class="lc-pad" aria-hidden="true">0</span>60</td>
-                                <td class="n is-total">100</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">Mężczyźni</th>
-                                <td class="n" data-label="Mandat">40</td>
-                                <td class="n" data-label="Brak mandatu"><span class="lc-pad" aria-hidden="true">0</span>60</td>
-                                <td class="n is-total">100</td>
-                              </tr>
-                            </tbody>
-                            <tfoot>
-                              <tr>
-                                <th scope="row">Razem</th>
-                                <td class="n">80</td>
-                                <td class="n">120</td>
-                                <td class="n is-total">200</td>
-                              </tr>
-                            </tfoot>
-                          </table>
-                        </div>
-                      </div>
+                    <div class="p5k-seg" style="flex-grow:1.667;">
+                      <b>1.67</b>
+                      <span>K, bez</span>
                     </div>
-                  </div>
-                </div>
-                <div data-lc-step-text="3" hidden="">
-                  <div class="lc-tbl-block">
-                    <table class="lc-tbl is-fit">
-                      <thead>
-                        <tr>
-                          <th scope="col"></th>
-                          <th scope="col" class="n">Mandat (obs.)</th>
-                          <th scope="col" class="n">Mandat (oczek.)</th>
-                          <th scope="col" class="n">Różnica</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row">Kobiety</th>
-                          <td class="n" data-label="Mandat (obs.)">30</td>
-                          <td class="n" data-label="Mandat (oczek.)">40</td>
-                          <td class="n" data-label="Różnica">-10</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">Mężczyźni</th>
-                          <td class="n" data-label="Mandat (obs.)">50</td>
-                          <td class="n" data-label="Mandat (oczek.)">40</td>
-                          <td class="n" data-label="Różnica"><span class="lc-pad" aria-hidden="true">0</span>10</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <div class="p5k-seg" style="flex-grow:2.500;">
+                      <b>2.50</b>
+                      <span>M, mandat</span>
+                    </div>
+                    <div class="p5k-seg" style="flex-grow:1.667;">
+                      <b>1.67</b>
+                      <span>M, bez</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="lc-stepper-foot">
               <div class="lc-stepper-text" aria-live="polite">
-                <span class="lc-stepper-kicker">Krok 1 z 3 · Pokaż dane</span>
+                <span class="lc-stepper-kicker">Krok 1 z 5 · Obserwowane</span>
                 <span id="ch5_narr_text" class="lc-step-texts">
-                  <span data-lc-step-text="1">
-                    Mandat: <b>30</b> ze 100 kobiet i <b>50</b> ze 100 mężczyzn; łącznie 80 z 200, czyli 40%.
-                  </span>
-                  <span data-lc-step-text="2" hidden="">
-                    Przy niezależności 40% dotyczy obu płci: oczekujemy po <b>40</b> mandatów i po <b>60</b> kontroli bez mandatu w każdej grupie.
-                  </span>
-                  <span data-lc-step-text="3" hidden="">
-                    Każda komórka odbiega o 10: χ² = 10²/40 + 10²/60 + 10²/40 + 10²/60 = <b>8.33</b> (df = 1).
-                  </span>
+                  <span data-lc-step-text="1">Tabela z archiwum: mandat dostało 30 ze 100 kobiet i 50 ze 100 mężczyzn.</span>
+                  <span data-lc-step-text="2" hidden="">Liczebność oczekiwana to suma wiersza razy suma kolumny, podzielona przez liczbę wszystkich kontroli. Tyle byłoby w komórce, gdyby płeć nie miała znaczenia.</span>
+                  <span data-lc-step-text="3" hidden="">Różnica mówi, o ile komórka odbiega od świata bez związku. W tabeli 2 × 2 wszystkie cztery różnice mają tę samą wielkość.</span>
+                  <span data-lc-step-text="4" hidden="">Różnicę podnosimy do kwadratu i dzielimy przez liczebność oczekiwaną. Ta sama różnica waży więcej tam, gdzie spodziewaliśmy się mniej obserwacji.</span>
+                  <span data-lc-step-text="5" hidden="">Suma czterech wkładów to statystyka χ². Tabela 2 × 2 ma jeden stopień swobody.</span>
                 </span>
               </div>
               <div class="lc-stepper-actions">
@@ -9726,7 +9770,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
         </div>
         <p class="lc-p">Krok drugi to sedno testu. Tabela oczekiwana nie pochodzi z danych
       o poszczególnych płciach, tylko z łącznego odsetka mandatów w całej próbie:
-      tak wyglądałaby tabela, gdyby płeć nie miała znaczenia. Krok trzeci mierzy,
+      tak wyglądałaby tabela, gdyby płeć nie miała znaczenia. Kolejne kroki mierzą,
       jak daleko dane od niej odeszły. W tabeli 2 × 2 przy ustalonych sumach
       wierszy i kolumn wszystkie cztery komórki odbiegają od oczekiwań o tę samą
       liczbę obserwacji, dlatego wystarcza jeden stopień swobody. Te same
@@ -9861,7 +9905,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
       wierszowe są tu właściwym wyborem, bo pytamy, czy rozkład drugiej zmiennej
       jest taki sam w każdej kategorii pierwszej.</p>
         <div class="lc-figure-panel">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 7.2</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 7.3</div>
           <div class="lc-figure-panel-title">Test χ² niezależności — krok po kroku</div>
           <div class="lc-sf" data-fig="s05_x2" data-config="{&quot;scenarios&quot;:{&quot;packaging&quot;:{&quot;lab1&quot;:&quot;Opakowanie&quot;,&quot;lab2&quot;:&quot;Pleśń&quot;,&quot;cats1&quot;:[&quot;Szkło&quot;,&quot;Plastik&quot;,&quot;Karton&quot;],&quot;cats2&quot;:[&quot;Tak&quot;,&quot;Nie&quot;],&quot;probs&quot;:[[0.05,0.95],[0.12,0.88],[0.2,0.8]]},&quot;atmosphere&quot;:{&quot;lab1&quot;:&quot;Atmosfera pakowania&quot;,&quot;lab2&quot;:&quot;Ocena świeżości po 7 dniach&quot;,&quot;cats1&quot;:[&quot;Powietrze&quot;,&quot;MAP (modyfikowana)&quot;,&quot;Próżnia&quot;],&quot;cats2&quot;:[&quot;Świeże&quot;,&quot;Średniej jakości&quot;,&quot;Zepsute&quot;],&quot;probs&quot;:[[0.15,0.4,0.45],[0.55,0.35,0.1],[0.7,0.25,0.05]]},&quot;soil&quot;:{&quot;lab1&quot;:&quot;Typ gleby&quot;,&quot;lab2&quot;:&quot;Plon&quot;,&quot;cats1&quot;:[&quot;Piaszczysta&quot;,&quot;Gliniasta&quot;,&quot;Czarnoziemna&quot;],&quot;cats2&quot;:[&quot;Niski&quot;,&quot;Wysoki&quot;],&quot;probs&quot;:[[0.65,0.35],[0.45,0.55],[0.25,0.75]]},&quot;pasteurization&quot;:{&quot;lab1&quot;:&quot;Metoda pasteryzacji&quot;,&quot;lab2&quot;:&quot;Liczba bakterii po 7 dniach&quot;,&quot;cats1&quot;:[&quot;Niska (63°C, 30 min)&quot;,&quot;Wysoka (72°C, 15 s)&quot;,&quot;UHT (135°C, 2 s)&quot;],&quot;cats2&quot;:[&quot;Niska (&lt; norma)&quot;,&quot;Średnia&quot;,&quot;Wysoka (&gt; norma)&quot;],&quot;probs&quot;:[[0.35,0.4,0.25],[0.6,0.3,0.1],[0.9,0.08,0.02]]},&quot;ppe_accident&quot;:{&quot;lab1&quot;:&quot;Środki ochrony (SOI)&quot;,&quot;lab2&quot;:&quot;Ciężkość wypadku&quot;,&quot;cats1&quot;:[&quot;Niepełne&quot;,&quot;Pełne&quot;],&quot;cats2&quot;:[&quot;Brak urazu&quot;,&quot;Uraz lekki&quot;,&quot;Uraz ciężki&quot;],&quot;probs&quot;:[[0.45,0.35,0.2],[0.8,0.17,0.03]]},&quot;landcover&quot;:{&quot;lab1&quot;:&quot;Typ terenu&quot;,&quot;lab2&quot;:&quot;Klasyfikacja automatu&quot;,&quot;cats1&quot;:[&quot;Las&quot;,&quot;Pole uprawne&quot;,&quot;Zabudowa&quot;],&quot;cats2&quot;:[&quot;Poprawna&quot;,&quot;Błędna&quot;],&quot;probs&quot;:[[0.94,0.06],[0.88,0.12],[0.78,0.22]]}}}">
             <div class="lc-variants" data-lc-variants="ch5_scenario">
@@ -10139,7 +10183,7 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
       w panelu powyżej.
         </p>
         <div class="lc-figure-panel">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 7.3</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 7.4</div>
           <div class="lc-figure-panel-title">Porównanie: χ² vs Fisher</div>
           <div class="lc-sf" data-fig="s05_x2cmp" data-lc-nochart="">
             <div class="lc-toolbar">
@@ -11355,7 +11399,7 @@ d">4</td>
       grup, i poznamy test, który zastępuje całą serię porównań jednym.</p>
         <h2 id="ch7-motywacja" class="lc-h2" data-lc-section="ch7-motywacja" data-lc-section-num="" data-lc-section-title="Dlaczego nie kilka testów t?">Dlaczego nie kilka testów t?</h2>
         <div class="lc-figure-panel lc-panel-text">
-          <div class="lc-figure-panel-badge" style="background:#b48a2a;">Prototyp 5D · scena</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.1</div>
           <div class="lc-figure-panel-title">Żelki i trądzik</div>
           <div class="lc-stepper" id="p5_jelly" data-lc-step="1">
             <div class="lc-stepper-head">
@@ -11469,7 +11513,7 @@ d">4</td>
         <p class="lc-p">Panel rysuje grupy jako wierzchołki, a każdą parę do porównania jako
       odcinek. Obok podaje liczbę testów i ryzyko obliczone z tego wzoru.</p>
         <div class="lc-figure-panel">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.1</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.2</div>
           <div class="lc-figure-panel-title">Dodaj grupy i obserwuj inflację błędu I rodzaju</div>
           <div class="lc-sf" data-fig="s05_fwer" data-lc-nochart="">
             <div class="lc-toolbar">
@@ -11556,34 +11600,11 @@ d">4</td>
       ogólnej) i zmienność 
           <em>wewnątrz</em>
            grup (jak daleko obserwacje
-      leżą od średniej własnej grupy). <span class="lc-gloss" data-term="statystyka F" data-def="Statystyka testowa w ANOVA i regresji: stosunek zmienności wyjaśnionej (między grupami) do niewyjaśnionej (wewnątrz grup).">Statystyka F</span> to stosunek tych dwóch części:
+      leżą od średniej własnej grupy). Tak wygląda ten podział na piętnastu
+      słoikach jogurtu z trzech komór fermentacyjnych.
         </p>
-        <div class="lc-formula-box lc-fa " style="--fa-1:var(--upwr-cat-indygo);--fa-2:var(--upwr-cat-bursztyn);--fa-3:var(--upwr-cat-niebo)">
-          <div class="lc-fa-notes lc-fa-above">
-            <div class="lc-fa-note" data-k="2" style="--fa-c:var(--upwr-cat-bursztyn)">
-              <div class="lc-fa-text">zmienność między grupami</div>
-            </div>
-          </div>
-          <div class="lc-fa-tex"><span class="MathJax_Preview" style=""></span><div class="MathJax_SVG_Display" style="text-align: center;"><span class="MathJax_SVG" id="MathJax-Element-370-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi class=&quot;lc-fa-p1&quot;&gt;F&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mrow class=&quot;lc-fa-p2&quot;&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;/mrow&gt;&lt;/munderover&gt;&lt;msub&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msub&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo&gt;/&lt;/mo&gt;&lt;/mrow&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;mrow class=&quot;lc-fa-p3&quot;&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;/mrow&gt;&lt;/munderover&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;msub&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;/mrow&gt;&lt;/munderover&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/mrow&gt;&lt;/msub&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msub&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo&gt;/&lt;/mo&gt;&lt;/mrow&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="36.823ex" height="7.649ex" viewBox="0 -1887.3 15854.3 3293.3" role="img" focusable="false" style="vertical-align: -3.266ex;" aria-hidden="true"><defs><path stroke-width="1" id="E371-MJMATHI-46" d="M48 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H742Q749 676 749 669Q749 664 736 557T722 447Q720 440 702 440H690Q683 445 683 453Q683 454 686 477T689 530Q689 560 682 579T663 610T626 626T575 633T503 634H480Q398 633 393 631Q388 629 386 623Q385 622 352 492L320 363H375Q378 363 398 363T426 364T448 367T472 374T489 386Q502 398 511 419T524 457T529 475Q532 480 548 480H560Q567 475 567 470Q567 467 536 339T502 207Q500 200 482 200H470Q463 206 463 212Q463 215 468 234T473 274Q473 303 453 310T364 317H309L277 190Q245 66 245 60Q245 46 334 46H359Q365 40 365 39T363 19Q359 6 353 0H336Q295 2 185 2Q120 2 86 2T48 1Z"></path><path stroke-width="1" id="E371-MJMAIN-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path stroke-width="1" id="E371-MJSZ1-2211" d="M61 748Q64 750 489 750H913L954 640Q965 609 976 579T993 533T999 516H979L959 517Q936 579 886 621T777 682Q724 700 655 705T436 710H319Q183 710 183 709Q186 706 348 484T511 259Q517 250 513 244L490 216Q466 188 420 134T330 27L149 -187Q149 -188 362 -188Q388 -188 436 -188T506 -189Q679 -189 778 -162T936 -43Q946 -27 959 6H999L913 -249L489 -250Q65 -250 62 -248Q56 -246 56 -239Q56 -234 118 -161Q186 -81 245 -11L428 206Q428 207 242 462L57 717L56 728Q56 744 61 748Z"></path><path stroke-width="1" id="E371-MJMATHI-6B" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path><path stroke-width="1" id="E371-MJMATHI-6A" d="M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"></path><path stroke-width="1" id="E371-MJMAIN-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path stroke-width="1" id="E371-MJMATHI-6E" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path stroke-width="1" id="E371-MJMAIN-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path stroke-width="1" id="E371-MJMATHI-78" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path stroke-width="1" id="E371-MJMAIN-AF" d="M69 544V590H430V544H69Z"></path><path stroke-width="1" id="E371-MJMAIN-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path stroke-width="1" id="E371-MJMAIN-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path stroke-width="1" id="E371-MJMAIN-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path stroke-width="1" id="E371-MJMAIN-2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path><path stroke-width="1" id="E371-MJMATHI-69" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g class="lc-fa-p1"><use xlink:href="#E371-MJMATHI-46"></use></g><use xlink:href="#E371-MJMAIN-3D" x="1027" y="0"></use><g transform="translate(1805,0)"><g transform="translate(397,0)"><rect stroke="none" width="13530" height="60" x="0" y="220"></rect><g class="lc-fa-p2" transform="translate(1001,871)"><use xlink:href="#E371-MJSZ1-2211" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6B" x="1494" y="675"></use><g transform="translate(1056,-287)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-3D" x="412" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-31" x="1191" y="0"></use></g><g transform="translate(2519,0)"><use xlink:href="#E371-MJMATHI-6E" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="849" y="-213"></use></g><use xlink:href="#E371-MJMAIN-28" x="3678" y="0"></use><g transform="translate(4067,0)"><use xlink:href="#E371-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E371-MJMAIN-AF" x="63" y="-40"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="809" y="-213"></use></g><use xlink:href="#E371-MJMAIN-2212" x="5253" y="0"></use><g transform="translate(6254,0)"><use xlink:href="#E371-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E371-MJMAIN-AF" x="63" y="-40"></use></g><g transform="translate(6827,0)"><use xlink:href="#E371-MJMAIN-29" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-32" x="550" y="513"></use></g><use xlink:href="#E371-MJMAIN-2F" x="7837" y="0"></use><use xlink:href="#E371-MJMAIN-28" x="8504" y="0"></use><use xlink:href="#E371-MJMATHI-6B" x="8893" y="0"></use><use xlink:href="#E371-MJMAIN-2212" x="9637" y="0"></use><use xlink:href="#E371-MJMAIN-31" x="10638" y="0"></use><use xlink:href="#E371-MJMAIN-29" x="11138" y="0"></use></g><g class="lc-fa-p3" transform="translate(60,-910)"><use xlink:href="#E371-MJSZ1-2211" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6B" x="1494" y="675"></use><g transform="translate(1056,-287)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-3D" x="412" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-31" x="1191" y="0"></use></g><g transform="translate(2519,0)"><use xlink:href="#E371-MJSZ1-2211" x="0" y="0"></use><g transform="translate(1056,553)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6E" x="0" y="0"></use><use transform="scale(0.5)" xlink:href="#E371-MJMATHI-6A" x="849" y="-213"></use></g><g transform="translate(1056,-308)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-69" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-3D" x="345" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-31" x="1124" y="0"></use></g></g><use xlink:href="#E371-MJMAIN-28" x="4824" y="0"></use><g transform="translate(5213,0)"><use xlink:href="#E371-MJMATHI-78" x="0" y="0"></use><g transform="translate(572,-150)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-69" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="345" y="0"></use></g></g><use xlink:href="#E371-MJMAIN-2212" x="6644" y="0"></use><g transform="translate(7645,0)"><use xlink:href="#E371-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E371-MJMAIN-AF" x="63" y="-40"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="809" y="-213"></use></g><g transform="translate(8609,0)"><use xlink:href="#E371-MJMAIN-29" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-32" x="550" y="408"></use></g><use xlink:href="#E371-MJMAIN-2F" x="9619" y="0"></use><use xlink:href="#E371-MJMAIN-28" x="10286" y="0"></use><use xlink:href="#E371-MJMATHI-6E" x="10676" y="0"></use><use xlink:href="#E371-MJMAIN-2212" x="11499" y="0"></use><use xlink:href="#E371-MJMATHI-6B" x="12499" y="0"></use><use xlink:href="#E371-MJMAIN-29" x="13021" y="0"></use></g></g></g></g></svg><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi class="lc-fa-p1">F</mi><mo>=</mo><mfrac><mrow class="lc-fa-p2"><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mrow class="MJX-TeXAtom-ORD"><mi>k</mi></mrow></munderover><msub><mi>n</mi><mi>j</mi></msub><mspace width="thinmathspace"></mspace><mo stretchy="false">(</mo><msub><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow><mi>j</mi></msub><mo>−</mo><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mspace width="thinmathspace"></mspace><mrow class="MJX-TeXAtom-ORD"><mo>/</mo></mrow><mspace width="thinmathspace"></mspace><mo stretchy="false">(</mo><mi>k</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mrow class="lc-fa-p3"><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mrow class="MJX-TeXAtom-ORD"><mi>k</mi></mrow></munderover><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow class="MJX-TeXAtom-ORD"><msub><mi>n</mi><mi>j</mi></msub></mrow></munderover><mo stretchy="false">(</mo><msub><mi>x</mi><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow><mi>j</mi></msub><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mspace width="thinmathspace"></mspace><mrow class="MJX-TeXAtom-ORD"><mo>/</mo></mrow><mspace width="thinmathspace"></mspace><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>k</mi><mo stretchy="false">)</mo></mrow></mfrac></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-370">\class{lc-fa-p1}{F} = \frac{\class{lc-fa-p2}{\sum_{j=1}^{k} n_j\,(\bar{x}_j - \bar{x})^2 \,/\, (k-1)}}{\class{lc-fa-p3}{\sum_{j=1}^{k} \sum_{i=1}^{n_j} (x_{ij} - \bar{x}_j)^2 \,/\, (n-k)}}</script></div>
-          <div class="lc-fa-notes">
-            <div class="lc-fa-note" data-k="1" style="--fa-c:var(--upwr-cat-indygo)">
-              <div class="lc-fa-text">statystyka F</div>
-            </div>
-            <div class="lc-fa-note" data-k="3" style="--fa-c:var(--upwr-cat-niebo)">
-              <div class="lc-fa-text">zmienność wewnątrz grup</div>
-            </div>
-          </div>
-          <svg class="lc-fa-links" aria-hidden="true"></svg>
-        </div>
-        
-        <p class="lc-p">
-          Tu <span class="MathJax_Preview" style=""></span><span class="MathJax_SVG" id="MathJax-Element-371-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.239ex" height="2.312ex" viewBox="0 -628.3 964.2 995.6" role="img" focusable="false" style="vertical-align: -0.853ex;" aria-hidden="true"><defs><path stroke-width="1" id="E372-MJMATHI-78" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path stroke-width="1" id="E372-MJMAIN-AF" d="M69 544V590H430V544H69Z"></path><path stroke-width="1" id="E372-MJMATHI-6A" d="M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E372-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E372-MJMAIN-AF" x="63" y="-22"></use><use transform="scale(0.707)" xlink:href="#E372-MJMATHI-6A" x="809" y="-213"></use></g></svg><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow><mi>j</mi></msub></math></span></span><script type="math/tex" id="MathJax-Element-371">\bar{x}_j</script> i <span class="MathJax_Preview" style=""></span><span class="MathJax_SVG" id="MathJax-Element-372-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.304ex" height="2.07ex" viewBox="0 -523.9 992.2 891.2" role="img" focusable="false" style="vertical-align: -0.853ex;" aria-hidden="true"><defs><path stroke-width="1" id="E373-MJMATHI-6E" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path stroke-width="1" id="E373-MJMATHI-6A" d="M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E373-MJMATHI-6E" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E373-MJMATHI-6A" x="849" y="-213"></use></g></svg><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>n</mi><mi>j</mi></msub></math></span></span><script type="math/tex" id="MathJax-Element-372">n_j</script> to średnia i liczebność j-tej grupy,
-      <span class="MathJax_Preview" style=""></span><span class="MathJax_SVG" id="MathJax-Element-373-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1.33ex" height="1.706ex" viewBox="0 -628.3 572.5 734.6" role="img" focusable="false" style="vertical-align: -0.028ex; margin-bottom: -0.219ex;" aria-hidden="true"><defs><path stroke-width="1" id="E374-MJMATHI-78" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path stroke-width="1" id="E374-MJMAIN-AF" d="M69 544V590H430V544H69Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E374-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E374-MJMAIN-AF" x="63" y="-22"></use></g></svg><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow></math></span></span><script type="math/tex" id="MathJax-Element-373">\bar{x}</script> — średnia wszystkich n obserwacji. Licznik i mianownik to <span class="lc-gloss" data-term="wariancja" data-def="Średnia kwadratów odchyleń od średniej. Mierzy rozproszenie danych.">wariancje</span>: sumy kwadratów odchyleń podzielone przez
-      liczby <span class="lc-gloss" data-term="stopnie swobody" data-def="Parametr df rozkładów t, χ² i F; zwykle liczba obserwacji pomniejszona o liczbę oszacowanych parametrów (np. n - 1).">stopni swobody</span>, k - 1 i n − k.
-        </p>
-        <p class="lc-p">Tak wygląda ten podział na piętnastu słoikach z trzech komór.</p>
         <div class="lc-figure-panel lc-panel-text">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Prototyp sceny</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.3</div>
           <div class="lc-stepper" id="ch7_sc_jars" data-lc-step="1">
             <div class="lc-stepper-head">
               <div class="lc-stepper-title">Skąd się bierze rozrzut</div>
@@ -11641,9 +11662,36 @@ d">4</td>
             </div>
           </div>
         </div>
+        <p class="lc-p"><span class="lc-gloss" data-term="statystyka F" data-def="Statystyka testowa w ANOVA i regresji: stosunek zmienności wyjaśnionej (między grupami) do niewyjaśnionej (wewnątrz grup).">Statystyka F</span> zapisuje ostatni kadr sceny wzorem.
+      To stosunek zmienności między grupami do zmienności wewnątrz grup, każdej
+      podzielonej przez jej stopnie swobody:
+        </p>
+        <div class="lc-formula-box lc-fa " style="--fa-1:var(--upwr-cat-indygo);--fa-2:var(--upwr-cat-bursztyn);--fa-3:var(--upwr-cat-niebo)">
+          <div class="lc-fa-notes lc-fa-above">
+            <div class="lc-fa-note" data-k="2" style="--fa-c:var(--upwr-cat-bursztyn)">
+              <div class="lc-fa-text">zmienność między grupami</div>
+            </div>
+          </div>
+          <div class="lc-fa-tex"><span class="MathJax_Preview" style=""></span><div class="MathJax_SVG_Display" style="text-align: center;"><span class="MathJax_SVG" id="MathJax-Element-370-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi class=&quot;lc-fa-p1&quot;&gt;F&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mrow class=&quot;lc-fa-p2&quot;&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;/mrow&gt;&lt;/munderover&gt;&lt;msub&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msub&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo&gt;/&lt;/mo&gt;&lt;/mrow&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;mrow class=&quot;lc-fa-p3&quot;&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;/mrow&gt;&lt;/munderover&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;msub&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;/mrow&gt;&lt;/munderover&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/mrow&gt;&lt;/msub&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msub&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo&gt;/&lt;/mo&gt;&lt;/mrow&gt;&lt;mspace width=&quot;thinmathspace&quot; /&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mi&gt;k&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="36.823ex" height="7.649ex" viewBox="0 -1887.3 15854.3 3293.3" role="img" focusable="false" style="vertical-align: -3.266ex;" aria-hidden="true"><defs><path stroke-width="1" id="E371-MJMATHI-46" d="M48 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H742Q749 676 749 669Q749 664 736 557T722 447Q720 440 702 440H690Q683 445 683 453Q683 454 686 477T689 530Q689 560 682 579T663 610T626 626T575 633T503 634H480Q398 633 393 631Q388 629 386 623Q385 622 352 492L320 363H375Q378 363 398 363T426 364T448 367T472 374T489 386Q502 398 511 419T524 457T529 475Q532 480 548 480H560Q567 475 567 470Q567 467 536 339T502 207Q500 200 482 200H470Q463 206 463 212Q463 215 468 234T473 274Q473 303 453 310T364 317H309L277 190Q245 66 245 60Q245 46 334 46H359Q365 40 365 39T363 19Q359 6 353 0H336Q295 2 185 2Q120 2 86 2T48 1Z"></path><path stroke-width="1" id="E371-MJMAIN-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path stroke-width="1" id="E371-MJSZ1-2211" d="M61 748Q64 750 489 750H913L954 640Q965 609 976 579T993 533T999 516H979L959 517Q936 579 886 621T777 682Q724 700 655 705T436 710H319Q183 710 183 709Q186 706 348 484T511 259Q517 250 513 244L490 216Q466 188 420 134T330 27L149 -187Q149 -188 362 -188Q388 -188 436 -188T506 -189Q679 -189 778 -162T936 -43Q946 -27 959 6H999L913 -249L489 -250Q65 -250 62 -248Q56 -246 56 -239Q56 -234 118 -161Q186 -81 245 -11L428 206Q428 207 242 462L57 717L56 728Q56 744 61 748Z"></path><path stroke-width="1" id="E371-MJMATHI-6B" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path><path stroke-width="1" id="E371-MJMATHI-6A" d="M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"></path><path stroke-width="1" id="E371-MJMAIN-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path stroke-width="1" id="E371-MJMATHI-6E" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path stroke-width="1" id="E371-MJMAIN-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path stroke-width="1" id="E371-MJMATHI-78" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path stroke-width="1" id="E371-MJMAIN-AF" d="M69 544V590H430V544H69Z"></path><path stroke-width="1" id="E371-MJMAIN-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path stroke-width="1" id="E371-MJMAIN-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path stroke-width="1" id="E371-MJMAIN-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path stroke-width="1" id="E371-MJMAIN-2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path><path stroke-width="1" id="E371-MJMATHI-69" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g class="lc-fa-p1"><use xlink:href="#E371-MJMATHI-46"></use></g><use xlink:href="#E371-MJMAIN-3D" x="1027" y="0"></use><g transform="translate(1805,0)"><g transform="translate(397,0)"><rect stroke="none" width="13530" height="60" x="0" y="220"></rect><g class="lc-fa-p2" transform="translate(1001,871)"><use xlink:href="#E371-MJSZ1-2211" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6B" x="1494" y="675"></use><g transform="translate(1056,-287)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-3D" x="412" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-31" x="1191" y="0"></use></g><g transform="translate(2519,0)"><use xlink:href="#E371-MJMATHI-6E" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="849" y="-213"></use></g><use xlink:href="#E371-MJMAIN-28" x="3678" y="0"></use><g transform="translate(4067,0)"><use xlink:href="#E371-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E371-MJMAIN-AF" x="63" y="-40"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="809" y="-213"></use></g><use xlink:href="#E371-MJMAIN-2212" x="5253" y="0"></use><g transform="translate(6254,0)"><use xlink:href="#E371-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E371-MJMAIN-AF" x="63" y="-40"></use></g><g transform="translate(6827,0)"><use xlink:href="#E371-MJMAIN-29" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-32" x="550" y="513"></use></g><use xlink:href="#E371-MJMAIN-2F" x="7837" y="0"></use><use xlink:href="#E371-MJMAIN-28" x="8504" y="0"></use><use xlink:href="#E371-MJMATHI-6B" x="8893" y="0"></use><use xlink:href="#E371-MJMAIN-2212" x="9637" y="0"></use><use xlink:href="#E371-MJMAIN-31" x="10638" y="0"></use><use xlink:href="#E371-MJMAIN-29" x="11138" y="0"></use></g><g class="lc-fa-p3" transform="translate(60,-910)"><use xlink:href="#E371-MJSZ1-2211" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6B" x="1494" y="675"></use><g transform="translate(1056,-287)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-3D" x="412" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-31" x="1191" y="0"></use></g><g transform="translate(2519,0)"><use xlink:href="#E371-MJSZ1-2211" x="0" y="0"></use><g transform="translate(1056,553)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6E" x="0" y="0"></use><use transform="scale(0.5)" xlink:href="#E371-MJMATHI-6A" x="849" y="-213"></use></g><g transform="translate(1056,-308)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-69" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-3D" x="345" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-31" x="1124" y="0"></use></g></g><use xlink:href="#E371-MJMAIN-28" x="4824" y="0"></use><g transform="translate(5213,0)"><use xlink:href="#E371-MJMATHI-78" x="0" y="0"></use><g transform="translate(572,-150)"><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-69" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="345" y="0"></use></g></g><use xlink:href="#E371-MJMAIN-2212" x="6644" y="0"></use><g transform="translate(7645,0)"><use xlink:href="#E371-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E371-MJMAIN-AF" x="63" y="-40"></use><use transform="scale(0.707)" xlink:href="#E371-MJMATHI-6A" x="809" y="-213"></use></g><g transform="translate(8609,0)"><use xlink:href="#E371-MJMAIN-29" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E371-MJMAIN-32" x="550" y="408"></use></g><use xlink:href="#E371-MJMAIN-2F" x="9619" y="0"></use><use xlink:href="#E371-MJMAIN-28" x="10286" y="0"></use><use xlink:href="#E371-MJMATHI-6E" x="10676" y="0"></use><use xlink:href="#E371-MJMAIN-2212" x="11499" y="0"></use><use xlink:href="#E371-MJMATHI-6B" x="12499" y="0"></use><use xlink:href="#E371-MJMAIN-29" x="13021" y="0"></use></g></g></g></g></svg><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi class="lc-fa-p1">F</mi><mo>=</mo><mfrac><mrow class="lc-fa-p2"><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mrow class="MJX-TeXAtom-ORD"><mi>k</mi></mrow></munderover><msub><mi>n</mi><mi>j</mi></msub><mspace width="thinmathspace"></mspace><mo stretchy="false">(</mo><msub><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow><mi>j</mi></msub><mo>−</mo><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mspace width="thinmathspace"></mspace><mrow class="MJX-TeXAtom-ORD"><mo>/</mo></mrow><mspace width="thinmathspace"></mspace><mo stretchy="false">(</mo><mi>k</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mrow class="lc-fa-p3"><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mrow class="MJX-TeXAtom-ORD"><mi>k</mi></mrow></munderover><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow class="MJX-TeXAtom-ORD"><msub><mi>n</mi><mi>j</mi></msub></mrow></munderover><mo stretchy="false">(</mo><msub><mi>x</mi><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><msub><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow><mi>j</mi></msub><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mspace width="thinmathspace"></mspace><mrow class="MJX-TeXAtom-ORD"><mo>/</mo></mrow><mspace width="thinmathspace"></mspace><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>k</mi><mo stretchy="false">)</mo></mrow></mfrac></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-370">\class{lc-fa-p1}{F} = \frac{\class{lc-fa-p2}{\sum_{j=1}^{k} n_j\,(\bar{x}_j - \bar{x})^2 \,/\, (k-1)}}{\class{lc-fa-p3}{\sum_{j=1}^{k} \sum_{i=1}^{n_j} (x_{ij} - \bar{x}_j)^2 \,/\, (n-k)}}</script></div>
+          <div class="lc-fa-notes">
+            <div class="lc-fa-note" data-k="1" style="--fa-c:var(--upwr-cat-indygo)">
+              <div class="lc-fa-text">statystyka F</div>
+            </div>
+            <div class="lc-fa-note" data-k="3" style="--fa-c:var(--upwr-cat-niebo)">
+              <div class="lc-fa-text">zmienność wewnątrz grup</div>
+            </div>
+          </div>
+          <svg class="lc-fa-links" aria-hidden="true"></svg>
+        </div>
+        
+        <p class="lc-p">
+          Tu <span class="MathJax_Preview" style=""></span><span class="MathJax_SVG" id="MathJax-Element-371-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.239ex" height="2.312ex" viewBox="0 -628.3 964.2 995.6" role="img" focusable="false" style="vertical-align: -0.853ex;" aria-hidden="true"><defs><path stroke-width="1" id="E372-MJMATHI-78" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path stroke-width="1" id="E372-MJMAIN-AF" d="M69 544V590H430V544H69Z"></path><path stroke-width="1" id="E372-MJMATHI-6A" d="M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E372-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E372-MJMAIN-AF" x="63" y="-22"></use><use transform="scale(0.707)" xlink:href="#E372-MJMATHI-6A" x="809" y="-213"></use></g></svg><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow><mi>j</mi></msub></math></span></span><script type="math/tex" id="MathJax-Element-371">\bar{x}_j</script> i <span class="MathJax_Preview" style=""></span><span class="MathJax_SVG" id="MathJax-Element-372-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="2.304ex" height="2.07ex" viewBox="0 -523.9 992.2 891.2" role="img" focusable="false" style="vertical-align: -0.853ex;" aria-hidden="true"><defs><path stroke-width="1" id="E373-MJMATHI-6E" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path stroke-width="1" id="E373-MJMATHI-6A" d="M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E373-MJMATHI-6E" x="0" y="0"></use><use transform="scale(0.707)" xlink:href="#E373-MJMATHI-6A" x="849" y="-213"></use></g></svg><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>n</mi><mi>j</mi></msub></math></span></span><script type="math/tex" id="MathJax-Element-372">n_j</script> to średnia i liczebność j-tej grupy,
+      <span class="MathJax_Preview" style=""></span><span class="MathJax_SVG" id="MathJax-Element-373-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x00AF;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;/math&gt;" role="presentation" style="font-size: 100%; display: inline-block; position: relative;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1.33ex" height="1.706ex" viewBox="0 -628.3 572.5 734.6" role="img" focusable="false" style="vertical-align: -0.028ex; margin-bottom: -0.219ex;" aria-hidden="true"><defs><path stroke-width="1" id="E374-MJMATHI-78" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path stroke-width="1" id="E374-MJMAIN-AF" d="M69 544V590H430V544H69Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E374-MJMATHI-78" x="0" y="0"></use><use xlink:href="#E374-MJMAIN-AF" x="63" y="-22"></use></g></svg><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow class="MJX-TeXAtom-ORD"><mover><mi>x</mi><mo stretchy="false">¯</mo></mover></mrow></math></span></span><script type="math/tex" id="MathJax-Element-373">\bar{x}</script> — średnia wszystkich n obserwacji. Licznik i mianownik to <span class="lc-gloss" data-term="wariancja" data-def="Średnia kwadratów odchyleń od średniej. Mierzy rozproszenie danych.">wariancje</span>: sumy kwadratów odchyleń podzielone przez
+      liczby <span class="lc-gloss" data-term="stopnie swobody" data-def="Parametr df rozkładów t, χ² i F; zwykle liczba obserwacji pomniejszona o liczbę oszacowanych parametrów (np. n - 1).">stopni swobody</span>, k - 1 i n − k.
+        </p>
         <p class="lc-p">Ten sam rozrzut całkowity może się podzielić zupełnie inaczej.</p>
         <div class="lc-figure-panel lc-panel-text">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Prototyp sceny</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.4</div>
           <div class="lc-figure-panel-title">Dwie partie</div>
           <div class="lc-sc-host">
             <div class="lc-toolbar">
@@ -11833,7 +11881,7 @@ d">4</td>
       nie równe. Panel liczy klasyczną ANOVA.
         </p>
         <div class="lc-figure-panel">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.2</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.5</div>
           <div class="lc-figure-panel-title">ANOVA jednoczynnikowa</div>
           <div class="lc-sf" data-fig="s05_anova" data-config="{&quot;scenarios&quot;:{&quot;fermentation&quot;:{&quot;group_label&quot;:&quot;Temperatura fermentacji&quot;,&quot;vars&quot;:{&quot;pH jogurtu&quot;:&quot;pH&quot;,&quot;Kwasowość miareczkowa (°SH)&quot;:&quot;kwasowosc_SH&quot;},&quot;var_labels&quot;:{&quot;pH&quot;:&quot;pH jogurtu&quot;,&quot;kwasowosc_SH&quot;:&quot;Kwasowość (°SH)&quot;}},&quot;workplace&quot;:{&quot;group_label&quot;:&quot;Stanowisko pracy&quot;,&quot;vars&quot;:{&quot;Dni nieobecności (urazy) / rok&quot;:&quot;nieobecnosci&quot;,&quot;Poziom stresu (0–100)&quot;:&quot;stres&quot;},&quot;var_labels&quot;:{&quot;nieobecnosci&quot;:&quot;Dni nieobecności / rok&quot;,&quot;stres&quot;:&quot;Poziom stresu (0–100)&quot;}},&quot;students&quot;:{&quot;group_label&quot;:&quot;Kierunek&quot;,&quot;vars&quot;:{&quot;Średnia ocen&quot;:&quot;srednia_ocen&quot;,&quot;Wzrost&quot;:&quot;wzrost&quot;,&quot;Czas dojazdu&quot;:&quot;czas_dojazdu&quot;},&quot;var_labels&quot;:{&quot;srednia_ocen&quot;:&quot;Średnia ocen&quot;,&quot;wzrost&quot;:&quot;Wzrost (cm)&quot;,&quot;czas_dojazdu&quot;:&quot;Czas dojazdu (min)&quot;}},&quot;landcover&quot;:{&quot;group_label&quot;:&quot;Typ pokrycia terenu&quot;,&quot;vars&quot;:{&quot;Temperatura powierzchni (°C)&quot;:&quot;temp_pow&quot;,&quot;Zieleń (NDVI)&quot;:&quot;ndvi&quot;,&quot;Zachmurzenie (%)&quot;:&quot;zachmurzenie&quot;},&quot;var_labels&quot;:{&quot;temp_pow&quot;:&quot;Temperatura powierzchni (°C)&quot;,&quot;ndvi&quot;:&quot;Zieleń (NDVI, od 0 do 1)&quot;,&quot;zachmurzenie&quot;:&quot;Zachmurzenie (%)&quot;}}}}">
             <div class="lc-toolbar">
@@ -11911,7 +11959,7 @@ d">4</td>
       zwykłych testów t dla tych samych par.</p>
         <p class="lc-p">Tak to wygląda na stresie pracowników trzech stanowisk.</p>
         <div class="lc-figure-panel lc-panel-text">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Prototyp sceny</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.6</div>
           <div class="lc-stepper" id="ch7_sc_stress" data-lc-step="1">
             <div class="lc-stepper-head">
               <div class="lc-stepper-title">Co odstaje?</div>
@@ -11979,12 +12027,12 @@ d">4</td>
        porównań parami nie interpretujemy.</div>
         </div>
         <p class="lc-p">
-          Panel korzysta z danych wylosowanych w Ryc. 9.2. Macierz p-wartości ma
+          Panel korzysta z danych wylosowanych w Ryc. 9.5. Macierz p-wartości ma
       układ typowej tabeli post hoc, a wykres pokazuje różnicę średnich dla każdej pary
       z 95-procentowym <span class="lc-gloss" data-term="przedział ufności" data-def="Zakres wartości wyznaczany metodą, która z zadanym prawdopodobieństwem (poziomem ufności) daje przedział pokrywający nieznany parametr.">przedziałem ufności</span>.
         </p>
         <div class="lc-figure-panel">
-          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.3</div>
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 9.7</div>
           <div class="lc-figure-panel-title">Games-Howell</div>
           <div class="lc-sf" data-fig="s05_gh">
             <div class="lc-toolbar">
@@ -11995,7 +12043,7 @@ d">4</td>
             </div>
             <div class="lc-sf-legend" hidden=""></div>
             <div class="lc-caption">
-              <div>Panel używa danych z Ryc. 9.2. Najpierw uruchom tam ANOVA.</div>
+              <div>Panel używa danych z Ryc. 9.5. Najpierw uruchom tam ANOVA.</div>
             </div>
             <div data-when="nodata" hidden="">
               <div class="lc-caption">
@@ -21746,14 +21794,14 @@ document.addEventListener('DOMContentLoaded', lcInitTabsScroll);
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
   scan();
 })();</script>
-<script>// PROTOTYPY PUNKTÓW STOP 5A–5E (2026-11-09). Osobny silnik, żeby nie ruszać
+<script>// SCENY Ryc. 3.1, 7.1 i 9.1 (dawne prototypy 5A, 5E, 5D z 2026-11-09). Osobny silnik, żeby nie ruszać
 // scen ANOVA w scenes.js (tamten skaner oznacza każde .lc-sc jako gotowe).
 // Kontener: .p5-sc[data-config] wewnątrz widgetu krokowego (.lc-stepper)
 // albo wewnątrz .p5-host (jeden obraz z suwakiem, bez kroków).
 // config.kind:
 //   "smoke"   Ryc. 3.1 (dawny 5A) czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
-//   "jelly"   5D żelki i trądzik: jedna chmura wyników cięta na 20 podgrup kolorów (kadry)
-//   "tickets" 5E mandaty: świat bez związku → porównanie → χ² (kadry)
+//   "jelly"   Ryc. 9.1 (dawny 5D) żelki i trądzik: jedna chmura wyników cięta na 20 podgrup kolorów (kadry)
+//   "tickets" Ryc. 7.1 (dawny 5E) mandaty: kontrole bez podziału → pytanie → świat bez związku → archiwum → różnice (kadry)
 // Sterowanie: [data-sc-act] go | m10 | m100 | m1000, [data-sc-opt] "nazwa:wartość",
 // input[data-p5-range] "nazwa" (suwak, wartość liczbowa). Rysuje SVG bez serwera R.
 (function () {
@@ -22043,20 +22091,34 @@ document.addEventListener('DOMContentLoaded', lcInitTabsScroll);
 
     function cell(i, k) { return { x: BLK[i][0] + (k % 10) * DX + 12, y: TOP + Math.floor(k / 10) * DY + 10 }; }
 
+    // Kadry (kolejność od 2026-11-20: najpierw pytanie o niezależność, potem dane z podziałem):
+    //   1 kontrole bez podziału, 2 podział na płeć bez mandatów (pytanie), 3 świat bez związku
+    //   (oczekiwane), 4 archiwum (obserwowane), 5 różnice. Wkłady do χ² liczy Ryc. 7.2.
     function render() {
       var step = api.step(), g = api.stage, lo = api.low;
       g.textContent = ""; lo.textContent = "";
-      var total = O[0][0] + O[1][0], all = N * 2;
+      var total = O[0][0] + O[1][0], all = N * 2, y = TOP + 10 * DY + 26, k, c;
+      if (step === 1) {
+        // Jedna grupa 200 kierowców; 80 mandatów rozrzuconych po całej siatce (stały układ).
+        svg("text", { x: 50, y: TOP - 18, class: "lc-sc-rowlab" }, g, all + " kontroli · " + total + " z mandatem");
+        for (k = 0; k < all; k++) {
+          svg("circle", { cx: 62 + (k % 20) * 27.5, cy: TOP + Math.floor(k / 20) * DY + 10, r: 8,
+            class: "p5-driver" + ((k * 73 + 11) % all < total ? " is-ticket" : "") }, g);
+        }
+        readout(g, 50, y, [{ box: "p5-driver is-ticket", text: "mandat" }, { text: total + " mandatów na " + all + " kontroli" }]);
+        return;
+      }
       for (var i = 0; i < 2; i++) {
         var obs = O[i][0], exp = E[i][0];
-        var shown = step === 2 ? exp : obs;
+        var shown = step === 2 ? 0 : step === 3 ? exp : obs;
         svg("text", { x: BLK[i][0], y: TOP - 18, class: "lc-sc-rowlab" }, g,
-          ROWS[i] + " · " + (step === 2 ? "oczekiwane " + fmt(exp, 0) + " z " + N : obs + " z " + N + " z mandatem"));
-        for (var k = 0; k < N; k++) {
-          var c = cell(i, k), on = k < shown;
+          ROWS[i] + " · " + (step === 2 ? N + " kontroli" : step === 3 ? "oczekiwane " + fmt(exp, 0) + " z " + N : obs + " z " + N + " z mandatem"));
+        for (k = 0; k < N; k++) {
+          c = cell(i, k);
+          var on = k < shown;
           svg("circle", { cx: c.x, cy: c.y, r: 8,
-            class: "p5-driver" + (on ? (step === 2 ? " is-exp" : " is-ticket") : "") }, g);
-          if (step >= 3) {
+            class: "p5-driver" + (on ? (step === 3 ? " is-exp" : " is-ticket") : "") }, g);
+          if (step >= 5) {
             // brakujące (oczekiwane, a nie ma) i nadmiarowe (są, a nie oczekiwane)
             var rc = { cx: c.x, cy: c.y, r: 10.5 };
             if (k >= obs && k < exp) svg("circle", Object.assign({ class: "p5-ring is-gap" }, rc), g);
@@ -22064,36 +22126,18 @@ document.addEventListener('DOMContentLoaded', lcInitTabsScroll);
           }
         }
       }
-      var y = TOP + 10 * DY + 26;
-      if (step === 1) {
-        readout(g, 50, y, [{ box: "p5-driver is-ticket", text: "mandat" }, { text: "łącznie " + total + " mandatów na " + all + " kontroli" }]);
-      } else if (step === 2) {
+      if (step === 2) {
+        readout(g, 50, y, [{ text: total + " mandatów na " + all + " kontroli. Kto je dostał?" }]);
+      } else if (step === 3) {
         readout(g, 50, y, [{ box: "p5-driver is-exp", text: "oczekiwany mandat" },
           { text: total + " / " + all + " = " + pct(total / all, 0) + " w każdej grupie" }]);
+      } else if (step === 4) {
+        readout(g, 50, y, [{ box: "p5-driver is-ticket", text: "mandat" },
+          { text: ROWS[0] + ": " + O[0][0] + " z " + N }, { text: ROWS[1] + ": " + O[1][0] + " z " + N }]);
       } else {
         readout(g, 50, y, [{ text: ROWS[0] + ": " + O[0][0] + " zamiast " + fmt(E[0][0], 0) },
           { text: ROWS[1] + ": " + O[1][0] + " zamiast " + fmt(E[1][0], 0) }]);
       }
-      if (step < 4) return;
-      // χ²: wkład każdej komórki (O − E)² / E
-      var cells = [], chi = 0;
-      for (i = 0; i < 2; i++) for (var j = 0; j < 2; j++) {
-        var v = Math.pow(O[i][j] - E[i][j], 2) / E[i][j];
-        chi += v;
-        cells.push({ lab: ROWS[i] + (j === 0 ? ", mandat" : ", bez mandatu"), o: O[i][j], e: E[i][j], v: v });
-      }
-      var x0 = 50, x1 = 610, yb = y + 54, scale = (x1 - x0) / Math.max(10, Math.ceil(chi));
-      var x = x0;
-      cells.forEach(function (cc, k) {
-        var w = cc.v * scale;
-        svg("rect", { x: x, y: yb, width: Math.max(1, w - 2), height: 24, class: "p5-chi" + (k % 2 ? " is-no" : "") }, lo);
-        svg("text", { x: x + w / 2, y: yb + 42, "text-anchor": "middle", class: "lc-sc-tick" }, lo, fmt(cc.v, 2));
-        x += w;
-      });
-      svg("text", { x: x0, y: yb - 12, class: "lc-sc-n" }, lo,
-        "(O − E)² / E w czterech komórkach · suma χ² = " + fmt(chi, 2));
-      svg("text", { x: x0, y: yb + 66, class: "lc-sc-sub" }, lo,
-        "od lewej: " + cells.map(function (cc) { return cc.lab; }).join(" · "));
     }
     return { render: render, reset: render, opt: function () {} };
   };
@@ -24670,7 +24714,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     return '<div class="lc-tbl-block">' + (pct ? '<p class="lc-tbl-lead"><b>% wierszowe:</b> każdy wiersz sumuje się do 100.</p>' : "") +
       '<div class="lc-tbl-scroll" tabindex="0" role="region" aria-label="' + e(o.label) + '"><table class="lc-tbl is-fit">' + head + body + foot + "</table></div></div>";
   }
-  // Jedna wspólna tabela dla Ryc. 7.2 (kroki) i 7.3 (χ² a Fisher); po zmianie scenariusza albo n jest nieaktualna.
+  // Jedna wspólna tabela dla Ryc. 7.3 (kroki) i 7.4 (χ² a Fisher); po zmianie scenariusza albo n jest nieaktualna.
   store.x2 = null;
   function x2Controls() {
     var sc = document.getElementById("ch5_scenario"), n = document.getElementById("ch5_n");
@@ -24732,7 +24776,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     noteKey: function () { return x2Data() ? "data" : "empty"; }
   };
 
-  // Ryc. 7.3: test χ² a test dokładny Fishera na tej samej tabeli; bez wykresu.
+  // Ryc. 7.4: test χ² a test dokładny Fishera na tej samej tabeli; bez wykresu.
   figures.s05_x2cmp = {
     act: function (state) { state.asked = true; },
     update: function (el, state) {
@@ -24892,7 +24936,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
   };
 
   // ---- Rozdział 9: ANOVA i porównania par -------------------------------------
-  // Ryc. 9.1: rysunki dla 2–8 grup są w dokumencie (R); tu licznik grup i odczyty.
+  // Ryc. 9.2: rysunki dla 2–8 grup są w dokumencie (R); tu licznik grup i odczyty.
   figures.s05_fwer = {
     init: function (state) { state.k = 2; },
     act: function (state, action) { state.k = action === "reset" ? 2 : Math.min(state.k + 1, 8); },
@@ -24905,7 +24949,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     noteKey: function (vals, state) { return String(state.k); }
   };
 
-  // Ryc. 9.2 i 9.3 pracują na jednych danych; po zmianie scenariusza albo n dane są nieaktualne.
+  // Ryc. 9.5 i 9.7 pracują na jednych danych; po zmianie scenariusza albo n dane są nieaktualne.
   store.anova = null;
   function anovaControls() {
     var sc = document.getElementById("ch7_scenario"), n = document.getElementById("ch7_n"), v = document.getElementById("ch7_var");
@@ -24957,7 +25001,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     noteKey: function () { return anovaGroups() ? "data" : "empty"; }
   };
 
-  // Ryc. 9.3: porównania par Gamesa-Howella na danych z Ryc. 9.2 (macierz p, wykres różnic, lista).
+  // Ryc. 9.7: porównania par Gamesa-Howella na danych z Ryc. 9.5 (macierz p, wykres różnic, lista).
   figures.s05_gh = {
     act: function (state) { state.asked = true; },
     prepare: function (state) {

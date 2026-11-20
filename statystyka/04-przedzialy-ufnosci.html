@@ -2999,6 +2999,72 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
 .ci-explorer .ci-explorer-map span { aspect-ratio: 2.2; border-radius: .15em; background: var(--upwr-cat-szalwia); }
 .ci-explorer .ci-explorer-map span.is-miss { background: var(--upwr-cat-terakota); }
 .ci-explorer button:focus-visible, .ci-explorer input:focus-visible { outline: 2px solid var(--upwr-accent); outline-offset: 3px; }</style>
+  <style>/* PANELE DO ZATRZYMANIA (2026-11-20); HTML i SVG z panels.R; tokeny --upwr-* */
+
+/* Kadry: element z klasą pp-fK jest widoczny od kroku K. */
+[class*="pp-f"] { transition: opacity .4s ease, transform .4s ease; }
+.lc-stepper[data-lc-step="1"] .pp-f2,
+.lc-stepper[data-lc-step="1"] .pp-f3, .lc-stepper[data-lc-step="2"] .pp-f3,
+.lc-stepper[data-lc-step="1"] .pp-f4, .lc-stepper[data-lc-step="2"] .pp-f4, .lc-stepper[data-lc-step="3"] .pp-f4 {
+  opacity: 0; transform: translateY(6px); visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) { [class*="pp-f"] { transition: none; } }
+
+/* Schemat: słownik estymacji (rozdz. 01) */
+.pp-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1.25fr; gap: .7em; align-items: stretch; padding: .5em 0 .2em; }
+.pp-card { display: grid; gap: .35em; align-content: start; padding: .8em .9em; border-radius: 12px; background: var(--upwr-surface-sunken); border-top: 4px solid var(--upwr-rule); min-width: 0; }
+.pp-card.is-pop { border-top-color: var(--upwr-ink-soft); }
+.pp-card.is-sample { border-top-color: var(--upwr-cat-niebo, #6a9dc4); }
+.pp-card.is-est { border-top-color: var(--upwr-accent); }
+.pp-term { font: 700 13px var(--upwr-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--upwr-ink-soft); }
+.pp-desc { font: 14px/1.35 var(--upwr-sans); color: var(--upwr-ink-soft); }
+.pp-dots { width: 100%; height: auto; }
+.pp-dot { fill: var(--upwr-rule); }
+.pp-dot.is-in { fill: var(--upwr-cat-niebo, #6a9dc4); }
+.pp-big { font: 700 clamp(17px, 2vw, 22px)/1.2 var(--upwr-mono); color: var(--upwr-accent); margin: .2em 0; white-space: nowrap; }
+.pp-tag { display: grid; font: 14px/1.35 var(--upwr-sans); color: var(--upwr-ink-soft); padding-top: .35em; border-top: 1px solid var(--upwr-rule-soft); }
+.pp-tag b { font: 700 15px var(--upwr-sans); color: var(--upwr-ink); }
+.pp-tag.is-param { font: 700 20px var(--upwr-mono); color: var(--upwr-ink); }
+.pp-tag.is-param b { font: 700 15px var(--upwr-sans); }
+.pp-arrow { display: grid; align-content: center; justify-items: center; font: 700 26px var(--upwr-sans); color: var(--upwr-ink-subtle); }
+.pp-arrow span { font: 600 12px var(--upwr-sans); letter-spacing: .04em; text-transform: uppercase; }
+.pp-back { grid-column: 1 / -1; display: flex; align-items: center; gap: .7em; padding: .6em .9em; border-radius: 10px; border: 2px dashed var(--upwr-accent); font: 16px/1.35 var(--upwr-sans); color: var(--upwr-ink); }
+.pp-back b { color: var(--upwr-accent); }
+.pp-back { font-size: 16px; }
+@media (max-width: 640px) {
+  .pp-flow { grid-template-columns: 1fr; }
+  .pp-arrow { transform: rotate(90deg); }
+  .pp-arrow span { display: none; }
+}
+
+/* Zestawienie: przed próbą i po niej (rozdz. 02) */
+.pp-tbl { display: grid; gap: .55em; padding: .4em 0 .2em; }
+.pp-row { display: grid; grid-template-columns: 8.5em 1fr 1fr; gap: .7em; align-items: stretch; }
+.pp-row-l { align-self: center; font: 600 12px/1.3 var(--upwr-sans); letter-spacing: .04em; text-transform: uppercase; color: var(--upwr-ink-subtle); }
+.pp-head { font: 700 17px var(--upwr-sans); color: var(--upwr-ink); padding: 0 .9em; }
+.pp-cell { display: grid; gap: .15em; align-content: center; padding: .65em .9em; border-radius: 10px; background: var(--upwr-surface-sunken); border-left: 5px solid var(--upwr-cat-bursztyn, #c08540); min-height: 3.6em; }
+.pp-cell.is-after { border-left-color: var(--upwr-cat-niebo, #6a9dc4); }
+.pp-row.is-same .pp-cell { border-left-color: var(--upwr-ink-soft); }
+.pp-row.is-key .pp-cell.is-after { border-left-color: var(--upwr-accent); }
+.pp-cell b { font: 600 18px/1.3 var(--upwr-sans); color: var(--upwr-ink); }
+.pp-cell small { font: 13px/1.35 var(--upwr-sans); color: var(--upwr-ink-subtle); }
+.pp-not { font: 14px/1.3 var(--upwr-sans); color: var(--upwr-ink-subtle); }
+.pp-not::before { content: "nie: "; }
+.pp-not s { text-decoration-color: var(--upwr-accent); text-decoration-thickness: 2px; }
+@media (max-width: 620px) { .pp-row { grid-template-columns: 1fr 1fr; } .pp-row-l { grid-column: 1 / -1; } }
+
+/* Zestawienie: trzy poziomy ufności (rozdz. 05) */
+.pp-levels { display: grid; gap: .6em; padding: .4em 0 .2em; }
+.pp-level { display: grid; grid-template-columns: 4.2em minmax(8em, 1.2fr) 6.4em 1fr; gap: .2em .9em; align-items: center; padding: .7em .9em; border-radius: 12px; background: var(--upwr-surface-sunken); border-left: 5px solid var(--upwr-rule); }
+.pp-level.is-default { border-left-color: var(--upwr-accent); }
+.pp-level-n { font: 700 28px var(--upwr-mono); color: var(--upwr-ink); grid-row: span 2; }
+.pp-level-bar { height: 14px; border-radius: 7px; background: var(--upwr-surface); display: flex; justify-content: center; }
+.pp-level-bar i { display: block; height: 100%; border-radius: 7px; background: var(--upwr-cat-niebo, #6a9dc4); }
+.pp-level.is-default .pp-level-bar i { background: var(--upwr-accent); }
+.pp-level-z { font: 600 14px var(--upwr-mono); color: var(--upwr-ink-soft); }
+.pp-level-miss { font: 600 16px var(--upwr-sans); color: var(--upwr-ink); }
+.pp-level-when { grid-column: 2 / -1; font: 14px/1.35 var(--upwr-sans); color: var(--upwr-ink-soft); }
+@media (max-width: 620px) { .pp-level { grid-template-columns: 4.2em 1fr; } .pp-level-when, .pp-level-miss, .pp-level-z { grid-column: 2; } }</style>
   <style>.vs-widget { margin-block: 1.5em 2em; }
 .vs-widget .vs-art { width: 100%; overflow: hidden; }
 .vs-widget .vs-art > svg { display: block; width: 100%; height: auto; }
@@ -3013,6 +3079,35 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
   .vs-widget .vs-art { overflow-x: auto; }
   .vs-widget .vs-art > svg { min-width: 36em; }
 }</style>
+  
+  <style>/* Ryc. 4.1: próba jako kropki, odsetek jako pasek 100%, przedział jako ramka; rysuje fig_41.js; tokeny --upwr-* */
+.p41-svg svg { display: block; width: 100%; height: auto; }
+.p41 { padding: .3em 0; }
+.p41-dot { fill: var(--upwr-surface); stroke: var(--upwr-cat-bursztyn, #c08540); stroke-width: 2; }
+.p41-dot.is-yes { fill: var(--upwr-cat-niebo, #6a9dc4); stroke: var(--upwr-cat-niebo, #6a9dc4); }
+.p41-note { font: 600 15px var(--upwr-sans); fill: var(--upwr-ink-soft); }
+.p41-axis { stroke: var(--upwr-ink-subtle); stroke-width: 1.5; }
+.p41-tick { font: 15px var(--upwr-mono); fill: var(--upwr-ink-soft); text-anchor: middle; }
+.p41-axt { font: 14px var(--upwr-sans); fill: var(--upwr-ink-subtle); text-anchor: end; }
+.p41-guide { stroke: var(--upwr-ink-subtle); stroke-width: 1.2; stroke-dasharray: 4 4; }
+.p41-bar, .p41-cap { stroke-linecap: round; }
+.p41-bar.is-ci { stroke: var(--upwr-accent); stroke-width: 12; }
+.p41-cap.is-ci { stroke: var(--upwr-accent); stroke-width: 4; }
+.p41-bar.is-se { stroke: var(--upwr-ink); stroke-width: 4; }
+.p41-cap.is-se { stroke: var(--upwr-ink); stroke-width: 3; }
+.p41-pt { fill: var(--upwr-surface); stroke: var(--upwr-ink); stroke-width: 4; }
+.p41-val { font: 700 19px var(--upwr-mono); text-anchor: middle; paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 5px; stroke-linejoin: round; }
+.p41-val.is-p { fill: var(--upwr-ink); }
+.p41-val.is-ci { fill: var(--upwr-accent); }
+.p41-lab { font: 600 16px var(--upwr-sans); text-anchor: middle; }
+.p41-lab.is-se { fill: var(--upwr-ink); }
+.p41-lab.is-ci { fill: var(--upwr-accent); }
+.p41-full { fill: color-mix(in srgb, var(--upwr-cat-bursztyn, #c08540) 30%, var(--upwr-surface)); }
+.p41-fill { fill: var(--upwr-cat-niebo, #6a9dc4); }
+.p41-in { font: 700 18px var(--upwr-sans); fill: var(--upwr-surface); }
+.p41-in.is-no { text-anchor: end; fill: var(--upwr-ink-soft); }
+.p41-band { fill: var(--upwr-accent); fill-opacity: .22; stroke: var(--upwr-accent); stroke-width: 2.5; }
+.p41-edge { stroke: var(--upwr-ink); stroke-width: 3; }</style>
   
   
   
@@ -3442,6 +3537,106 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
            cm, to 171.3 cm jest estymatą.
       Estymator to przepis, estymata to wynik zastosowania go do jednej próby.
         </p>
+        <div class="lc-figure-panel lc-panel-text">
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Schemat</div>
+          <div class="lc-figure-panel-title">Słownik estymacji na jednym obrazie</div>
+          <div class="lc-stepper" id="pp_dict" data-lc-step="1">
+            <div class="lc-stepper-head"></div>
+            <ol class="lc-step-track" style="--lc-steps:4;">
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="1" aria-current="step">
+                  <b>1</b>
+                  <span>Populacja</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="2">
+                  <b>2</b>
+                  <span>Próba</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="3">
+                  <b>3</b>
+                  <span>Estymator</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="4">
+                  <b>4</b>
+                  <span>Estymacja</span>
+                </button>
+              </li>
+            </ol>
+            <div class="lc-step-body">
+              <div class="pp-flow">
+                <div class="pp-card is-pop">
+                  <span class="pp-term">populacja</span>
+                  <svg class="pp-dots" viewBox="0 0 150 96" aria-hidden="true"><circle class="pp-dot" cx="87.0" cy="35.7" r="3.2"></circle><circle class="pp-dot" cx="6.4" cy="8.3" r="3.2"></circle><circle class="pp-dot" cx="46.2" cy="56.0" r="3.2"></circle><circle class="pp-dot" cx="43.9" cy="87.5" r="3.2"></circle><circle class="pp-dot" cx="118.8" cy="26.8" r="3.2"></circle><circle class="pp-dot" cx="41.6" cy="77.7" r="3.2"></circle><circle class="pp-dot" cx="106.3" cy="23.4" r="3.2"></circle><circle class="pp-dot" cx="131.7" cy="29.0" r="3.2"></circle><circle class="pp-dot" cx="137.7" cy="46.2" r="3.2"></circle><circle class="pp-dot" cx="15.4" cy="72.0" r="3.2"></circle><circle class="pp-dot" cx="110.6" cy="82.3" r="3.2"></circle><circle class="pp-dot" cx="45.1" cy="86.0" r="3.2"></circle><circle class="pp-dot" cx="19.2" cy="40.7" r="3.2"></circle><circle class="pp-dot" cx="138.4" cy="33.8" r="3.2"></circle><circle class="pp-dot" cx="63.2" cy="29.4" r="3.2"></circle><circle class="pp-dot" cx="68.7" cy="11.4" r="3.2"></circle><circle class="pp-dot" cx="140.8" cy="11.3" r="3.2"></circle><circle class="pp-dot" cx="86.7" cy="18.8" r="3.2"></circle><circle class="pp-dot" cx="139.5" cy="18.1" r="3.2"></circle><circle class="pp-dot" cx="111.5" cy="69.6" r="3.2"></circle><circle class="pp-dot" cx="104.9" cy="13.4" r="3.2"></circle><circle class="pp-dot" cx="144.3" cy="57.5" r="3.2"></circle><circle class="pp-dot" cx="75.9" cy="22.4" r="3.2"></circle><circle class="pp-dot" cx="73.6" cy="48.3" r="3.2"></circle><circle class="pp-dot" cx="95.8" cy="16.3" r="3.2"></circle><circle class="pp-dot" cx="121.2" cy="5.5" r="3.2"></circle><circle class="pp-dot" cx="72.5" cy="60.3" r="3.2"></circle><circle class="pp-dot" cx="122.7" cy="25.8" r="3.2"></circle><circle class="pp-dot" cx="76.9" cy="41.2" r="3.2"></circle><circle class="pp-dot" cx="79.2" cy="66.4" r="3.2"></circle><circle class="pp-dot" cx="84.4" cy="13.8" r="3.2"></circle><circle class="pp-dot" cx="38.6" cy="57.1" r="3.2"></circle><circle class="pp-dot" cx="127.8" cy="23.4" r="3.2"></circle><circle class="pp-dot" cx="96.6" cy="81.8" r="3.2"></circle><circle class="pp-dot" cx="72.5" cy="53.4" r="3.2"></circle><circle class="pp-dot" cx="140.8" cy="26.4" r="3.2"></circle><circle class="pp-dot" cx="69.4" cy="67.7" r="3.2"></circle><circle class="pp-dot" cx="92.0" cy="28.0" r="3.2"></circle><circle class="pp-dot" cx="59.4" cy="69.8" r="3.2"></circle><circle class="pp-dot" cx="6.1" cy="87.2" r="3.2"></circle><circle class="pp-dot" cx="136.2" cy="46.4" r="3.2"></circle><circle class="pp-dot" cx="39.0" cy="83.1" r="3.2"></circle><circle class="pp-dot" cx="84.2" cy="90.0" r="3.2"></circle><circle class="pp-dot" cx="30.5" cy="25.1" r="3.2"></circle><circle class="pp-dot" cx="131.5" cy="29.3" r="3.2"></circle><circle class="pp-dot" cx="17.0" cy="65.5" r="3.2"></circle><circle class="pp-dot" cx="131.0" cy="76.6" r="3.2"></circle><circle class="pp-dot" cx="129.7" cy="45.1" r="3.2"></circle><circle class="pp-dot" cx="106.2" cy="38.6" r="3.2"></circle><circle class="pp-dot" cx="84.0" cy="13.2" r="3.2"></circle><circle class="pp-dot" cx="59.4" cy="69.7" r="3.2"></circle><circle class="pp-dot" cx="109.3" cy="73.1" r="3.2"></circle><circle class="pp-dot" cx="130.2" cy="44.1" r="3.2"></circle><circle class="pp-dot" cx="118.1" cy="36.1" r="3.2"></circle><circle class="pp-dot" cx="119.5" cy="36.1" r="3.2"></circle><circle class="pp-dot" cx="64.0" cy="10.4" r="3.2"></circle><circle class="pp-dot" cx="29.9" cy="44.4" r="3.2"></circle><circle class="pp-dot" cx="29.5" cy="46.9" r="3.2"></circle><circle class="pp-dot" cx="129.8" cy="49.5" r="3.2"></circle><circle class="pp-dot" cx="109.0" cy="8.4" r="3.2"></circle><circle class="pp-dot" cx="83.5" cy="8.8" r="3.2"></circle><circle class="pp-dot" cx="15.1" cy="82.4" r="3.2"></circle><circle class="pp-dot" cx="124.4" cy="85.7" r="3.2"></circle><circle class="pp-dot" cx="132.8" cy="59.0" r="3.2"></circle><circle class="pp-dot" cx="36.7" cy="72.1" r="3.2"></circle><circle class="pp-dot" cx="92.9" cy="69.3" r="3.2"></circle><circle class="pp-dot" cx="14.9" cy="16.8" r="3.2"></circle><circle class="pp-dot" cx="77.1" cy="20.3" r="3.2"></circle><circle class="pp-dot" cx="117.6" cy="8.8" r="3.2"></circle><circle class="pp-dot" cx="140.9" cy="62.1" r="3.2"></circle><circle class="pp-dot" cx="53.1" cy="62.2" r="3.2"></circle><circle class="pp-dot" cx="93.3" cy="60.6" r="3.2"></circle><circle class="pp-dot" cx="62.4" cy="71.3" r="3.2"></circle><circle class="pp-dot" cx="53.5" cy="30.0" r="3.2"></circle><circle class="pp-dot" cx="120.4" cy="74.2" r="3.2"></circle><circle class="pp-dot" cx="101.5" cy="52.1" r="3.2"></circle><circle class="pp-dot" cx="50.0" cy="58.3" r="3.2"></circle><circle class="pp-dot" cx="66.8" cy="45.6" r="3.2"></circle><circle class="pp-dot" cx="41.8" cy="44.1" r="3.2"></circle><circle class="pp-dot" cx="23.8" cy="88.2" r="3.2"></circle><circle class="pp-dot" cx="132.3" cy="62.0" r="3.2"></circle><circle class="pp-dot" cx="104.2" cy="77.3" r="3.2"></circle><circle class="pp-dot" cx="85.1" cy="23.4" r="3.2"></circle><circle class="pp-dot" cx="133.2" cy="20.9" r="3.2"></circle><circle class="pp-dot" cx="131.1" cy="28.6" r="3.2"></circle><circle class="pp-dot" cx="13.4" cy="54.9" r="3.2"></circle><circle class="pp-dot" cx="11.6" cy="87.1" r="3.2"></circle><circle class="pp-dot" cx="143.2" cy="26.7" r="3.2"></circle><circle class="pp-dot" cx="33.9" cy="25.5" r="3.2"></circle><circle class="pp-dot" cx="134.9" cy="28.5" r="3.2"></circle><circle class="pp-dot" cx="32.3" cy="43.5" r="3.2"></circle><circle class="pp-dot" cx="22.9" cy="36.2" r="3.2"></circle><circle class="pp-dot" cx="80.5" cy="18.8" r="3.2"></circle><circle class="pp-dot" cx="43.2" cy="58.2" r="3.2"></circle><circle class="pp-dot" cx="54.6" cy="88.2" r="3.2"></circle><circle class="pp-dot" cx="16.9" cy="9.8" r="3.2"></circle><circle class="pp-dot" cx="112.1" cy="36.7" r="3.2"></circle><circle class="pp-dot" cx="67.3" cy="66.5" r="3.2"></circle><circle class="pp-dot" cx="10.2" cy="76.7" r="3.2"></circle><circle class="pp-dot" cx="103.1" cy="28.3" r="3.2"></circle><circle class="pp-dot" cx="40.6" cy="77.0" r="3.2"></circle><circle class="pp-dot" cx="93.1" cy="13.4" r="3.2"></circle><circle class="pp-dot" cx="42.4" cy="20.0" r="3.2"></circle><circle class="pp-dot" cx="79.5" cy="37.6" r="3.2"></circle><circle class="pp-dot" cx="70.6" cy="59.7" r="3.2"></circle><circle class="pp-dot" cx="85.4" cy="57.2" r="3.2"></circle><circle class="pp-dot" cx="98.5" cy="28.8" r="3.2"></circle><circle class="pp-dot" cx="34.8" cy="90.7" r="3.2"></circle><circle class="pp-dot" cx="141.4" cy="5.9" r="3.2"></circle><circle class="pp-dot" cx="118.2" cy="80.6" r="3.2"></circle><circle class="pp-dot" cx="43.6" cy="78.8" r="3.2"></circle><circle class="pp-dot" cx="60.9" cy="14.7" r="3.2"></circle><circle class="pp-dot" cx="45.7" cy="69.2" r="3.2"></circle><circle class="pp-dot" cx="74.0" cy="15.4" r="3.2"></circle><circle class="pp-dot" cx="110.8" cy="19.5" r="3.2"></circle><circle class="pp-dot" cx="76.5" cy="5.6" r="3.2"></circle><circle class="pp-dot" cx="66.4" cy="7.3" r="3.2"></circle><circle class="pp-dot" cx="115.6" cy="52.7" r="3.2"></circle><circle class="pp-dot" cx="132.4" cy="29.1" r="3.2"></circle><circle class="pp-dot" cx="15.1" cy="83.9" r="3.2"></circle><circle class="pp-dot" cx="25.1" cy="76.6" r="3.2"></circle><circle class="pp-dot" cx="60.1" cy="86.0" r="3.2"></circle><circle class="pp-dot" cx="124.8" cy="65.9" r="3.2"></circle><circle class="pp-dot" cx="42.1" cy="54.7" r="3.2"></circle><circle class="pp-dot" cx="18.4" cy="45.2" r="3.2"></circle><circle class="pp-dot" cx="106.3" cy="80.1" r="3.2"></circle><circle class="pp-dot" cx="142.1" cy="9.2" r="3.2"></circle><circle class="pp-dot" cx="33.2" cy="83.9" r="3.2"></circle><circle class="pp-dot" cx="82.3" cy="81.2" r="3.2"></circle><circle class="pp-dot" cx="53.4" cy="57.4" r="3.2"></circle><circle class="pp-dot" cx="62.2" cy="77.2" r="3.2"></circle><circle class="pp-dot" cx="31.4" cy="40.7" r="3.2"></circle><circle class="pp-dot" cx="53.4" cy="70.6" r="3.2"></circle><circle class="pp-dot" cx="30.8" cy="6.0" r="3.2"></circle><circle class="pp-dot" cx="118.7" cy="22.3" r="3.2"></circle><circle class="pp-dot" cx="128.3" cy="14.0" r="3.2"></circle><circle class="pp-dot" cx="103.0" cy="67.9" r="3.2"></circle><circle class="pp-dot" cx="43.8" cy="14.2" r="3.2"></circle><circle class="pp-dot" cx="65.5" cy="25.3" r="3.2"></circle><circle class="pp-dot" cx="7.0" cy="42.7" r="3.2"></circle><circle class="pp-dot" cx="83.8" cy="33.2" r="3.2"></circle><circle class="pp-dot" cx="98.8" cy="6.2" r="3.2"></circle><circle class="pp-dot" cx="49.0" cy="15.1" r="3.2"></circle><circle class="pp-dot" cx="137.5" cy="44.1" r="3.2"></circle><circle class="pp-dot" cx="28.8" cy="61.0" r="3.2"></circle><circle class="pp-dot" cx="66.7" cy="89.8" r="3.2"></circle><circle class="pp-dot" cx="85.0" cy="31.1" r="3.2"></circle><circle class="pp-dot" cx="141.3" cy="30.2" r="3.2"></circle><circle class="pp-dot" cx="112.0" cy="75.3" r="3.2"></circle><circle class="pp-dot" cx="67.1" cy="20.3" r="3.2"></circle></svg>
+                  <span class="pp-desc">wszyscy studenci w Polsce</span>
+                  <span class="pp-tag is-param">
+                    <b>parametr</b>
+                    μ = ?
+                  </span>
+                </div>
+                <div class="pp-arrow pp-f2">
+                  <span>losujemy</span>
+                  →
+                </div>
+                <div class="pp-card is-sample pp-f2">
+                  <span class="pp-term">próba</span>
+                  <svg class="pp-dots" viewBox="0 0 150 96" aria-hidden="true"><circle class="pp-dot is-in" cx="36.1" cy="39.0" r="3.2"></circle><circle class="pp-dot is-in" cx="8.6" cy="37.9" r="3.2"></circle><circle class="pp-dot is-in" cx="34.1" cy="88.0" r="3.2"></circle><circle class="pp-dot is-in" cx="35.3" cy="77.8" r="3.2"></circle><circle class="pp-dot is-in" cx="67.1" cy="22.4" r="3.2"></circle><circle class="pp-dot is-in" cx="23.9" cy="88.5" r="3.2"></circle><circle class="pp-dot is-in" cx="59.7" cy="45.4" r="3.2"></circle><circle class="pp-dot is-in" cx="56.8" cy="82.3" r="3.2"></circle><circle class="pp-dot is-in" cx="98.5" cy="5.6" r="3.2"></circle><circle class="pp-dot is-in" cx="143.7" cy="80.4" r="3.2"></circle><circle class="pp-dot is-in" cx="21.6" cy="74.8" r="3.2"></circle><circle class="pp-dot is-in" cx="6.4" cy="85.8" r="3.2"></circle><circle class="pp-dot is-in" cx="128.5" cy="25.7" r="3.2"></circle><circle class="pp-dot is-in" cx="47.2" cy="69.8" r="3.2"></circle><circle class="pp-dot is-in" cx="74.0" cy="87.4" r="3.2"></circle><circle class="pp-dot is-in" cx="75.1" cy="66.9" r="3.2"></circle><circle class="pp-dot is-in" cx="61.3" cy="54.2" r="3.2"></circle><circle class="pp-dot is-in" cx="141.6" cy="20.5" r="3.2"></circle><circle class="pp-dot is-in" cx="55.2" cy="39.0" r="3.2"></circle><circle class="pp-dot is-in" cx="73.8" cy="22.4" r="3.2"></circle><circle class="pp-dot is-in" cx="130.7" cy="75.6" r="3.2"></circle><circle class="pp-dot is-in" cx="8.1" cy="63.3" r="3.2"></circle><circle class="pp-dot is-in" cx="49.8" cy="26.1" r="3.2"></circle><circle class="pp-dot is-in" cx="21.0" cy="85.1" r="3.2"></circle><circle class="pp-dot is-in" cx="79.0" cy="90.5" r="3.2"></circle><circle class="pp-dot is-in" cx="132.6" cy="51.1" r="3.2"></circle></svg>
+                  <span class="pp-desc">100 zmierzonych osób</span>
+                </div>
+                <div class="pp-arrow pp-f3">
+                  <span>liczymy</span>
+                  →
+                </div>
+                <div class="pp-card is-est pp-f3">
+                  <span class="pp-term">statystyka</span>
+                  <span class="pp-big">x̄ = 171.3 cm</span>
+                  <span class="pp-tag">
+                    <b>estymator</b>
+                    przepis: policz średnią z próby
+                  </span>
+                  <span class="pp-tag">
+                    <b>estymata</b>
+                    wynik przepisu: 171.3 cm
+                  </span>
+                </div>
+                <div class="pp-back pp-f4">
+                  ←
+                  <span>
+                    <b>estymacja:</b>
+                     z jednej próby szacujemy nieznane μ
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="lc-stepper-foot">
+              <div class="lc-stepper-text" aria-live="polite">
+                <span class="lc-stepper-kicker">Krok 1 z 4 · Populacja</span>
+                <span id="pp_dict_text" class="lc-step-texts">
+                  <span data-lc-step-text="1">Parametr opisuje całą populację. Ma jedną stałą wartość, ale jej nie znamy.</span>
+                  <span data-lc-step-text="2" hidden="">Zamiast wszystkich mierzymy próbę: tu 100 osób.</span>
+                  <span data-lc-step-text="3" hidden="">Estymator to przepis, estymata to liczba, którą przepis dał w tej próbie.</span>
+                  <span data-lc-step-text="4" hidden="">Estymacja to droga powrotna: z liczby policzonej w próbie do wniosku o populacji.</span>
+                </span>
+              </div>
+              <div class="lc-stepper-actions">
+                <button type="button" class="lc-action is-ghost is-icon" data-lc-nav="reset" title="Od początku" aria-label="Od początku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
+                <button type="button" class="lc-action is-outline" data-lc-nav="prev" disabled="">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
+                  <span>Wstecz</span>
+                </button>
+                <button type="button" class="lc-action is-solid" data-lc-nav="next">
+                  <span>Dalej</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <h2 id="ch1-estymator" class="lc-h2" data-lc-section="ch1-estymator" data-lc-section-num="" data-lc-section-title="Estymator w akcji">Estymator w akcji</h2>
         <p class="lc-p">
           Żeby ocenić, jak działa estymator, trzeba odwrócić typową sytuację:
@@ -4217,6 +4412,117 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
                 </span>
                 <p>Średnia z próby jest środkiem przedziału, więc leży w nim zawsze.</p>
                 <p>Poprawna odpowiedź to C.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lc-figure-panel lc-panel-text">
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Zestawienie</div>
+          <div class="lc-figure-panel-title">Co jest losowe: przed próbą i po niej</div>
+          <div class="lc-stepper" id="pp_random" data-lc-step="1">
+            <div class="lc-stepper-head"></div>
+            <ol class="lc-step-track" style="--lc-steps:4;">
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="1" aria-current="step">
+                  <b>1</b>
+                  <span>Średnia</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="2">
+                  <b>2</b>
+                  <span>Przedział</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="3">
+                  <b>3</b>
+                  <span>Parametr</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="4">
+                  <b>4</b>
+                  <span>Co znaczy 95%</span>
+                </button>
+              </li>
+            </ol>
+            <div class="lc-step-body">
+              <div class="pp-tbl">
+                <div class="pp-row is-head">
+                  <span class="pp-row-l"></span>
+                  <div class="pp-head">Przed losowaniem próby</div>
+                  <div class="pp-head">Po losowaniu próby</div>
+                </div>
+                <div class="pp-row">
+                  <span class="pp-row-l">Średnia z próby</span>
+                  <div class="pp-cell is-before">
+                    <b>X̄</b>
+                    <small>losowa: każda próba da inną</small>
+                  </div>
+                  <div class="pp-cell is-after">
+                    <b>x̄ = 170 cm</b>
+                    <small>jedna ustalona liczba</small>
+                  </div>
+                </div>
+                <div class="pp-row pp-f2">
+                  <span class="pp-row-l">Przedział</span>
+                  <div class="pp-cell is-before">
+                    <b>X̄ ± 1.96 · SE</b>
+                    <small>losowy: jego końce jeżdżą razem ze średnią</small>
+                  </div>
+                  <div class="pp-cell is-after">
+                    <b>[165, 175]</b>
+                    <small>dwa ustalone końce</small>
+                  </div>
+                </div>
+                <div class="pp-row pp-f3 is-same">
+                  <span class="pp-row-l">Parametr</span>
+                  <div class="pp-cell is-before">
+                    <b>stały, nieznany</b>
+                    <small>nie zależy od próby</small>
+                  </div>
+                  <div class="pp-cell is-after">
+                    <b>stały, nieznany</b>
+                    <small>leży w [165, 175] albo nie</small>
+                  </div>
+                </div>
+                <div class="pp-row pp-f4 is-key">
+                  <span class="pp-row-l">Liczba 95%</span>
+                  <div class="pp-cell is-before">
+                    <b>prawdopodobieństwo</b>
+                    <small>że przedział, który dopiero powstanie, obejmie μ</small>
+                  </div>
+                  <div class="pp-cell is-after">
+                    <b>ufność</b>
+                    <small>metoda trafia w 95% prób; ten przedział trafił albo nie</small>
+                    <span class="pp-not">
+                      <s>95% szans, że μ leży w [165, 175]</s>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="lc-stepper-foot">
+              <div class="lc-stepper-text" aria-live="polite">
+                <span class="lc-stepper-kicker">Krok 1 z 4 · Średnia</span>
+                <span id="pp_random_text" class="lc-step-texts">
+                  <span data-lc-step-text="1">Zanim wylosujemy próbę, średnia jest zmienną losową. Po losowaniu to zwykła liczba.</span>
+                  <span data-lc-step-text="2" hidden="">Przedział budujemy wokół średniej, więc przed losowaniem jest losowy razem z nią.</span>
+                  <span data-lc-step-text="3" hidden="">Parametr się nie zmienia. Losowanie próby niczego w nim nie rusza.</span>
+                  <span data-lc-step-text="4" hidden="">Po losowaniu nie zostało nic losowego, czemu można by przypisać 95%. Dlatego mówimy o ufności.</span>
+                </span>
+              </div>
+              <div class="lc-stepper-actions">
+                <button type="button" class="lc-action is-ghost is-icon" data-lc-nav="reset" title="Od początku" aria-label="Od początku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
+                <button type="button" class="lc-action is-outline" data-lc-nav="prev" disabled="">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
+                  <span>Wstecz</span>
+                </button>
+                <button type="button" class="lc-action is-solid" data-lc-nav="next">
+                  <span>Dalej</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
+                </button>
               </div>
             </div>
           </div>
@@ -6181,75 +6487,64 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
       50 odpowiedzi TAK/NIE, na przykład pytając 50 studentów, czy zdali
       egzamin, z populacji, w której prawdziwy odsetek TAK wynosi 60%.
       Przycisk „Nowa próba” losuje kolejnych 50 odpowiedzi.</p>
-        <div class="lc-figure-panel lc-full">
+        <div class="lc-figure-panel lc-panel-wide">
           <div class="lc-figure-panel-badge" style="background:#6b1a26;">Ryc. 4.1</div>
-          <div class="lc-sf" data-fig="s04-pstep">
-            <div class="lc-stepper" id="ch4_step" data-lc-step="1">
-              <div class="lc-stepper-head">
-                <div class="lc-stepper-title">Konstruowanie przedziału</div>
-                <div class="lc-toolbar">
-                  <button id="ch4_step_new_sample" type="button" class="action-button lc-action is-outline " data-stat-act="new">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path></svg>
-                    <span>Nowa próba</span>
-                  </button>
-                  <button type="button" class="lc-chart-zoom" data-lc-chart-zoom="true" aria-pressed="false" aria-label="Powiększ wykres i napisy" title="Powiększ wykres i napisy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"></circle><path d="M15 15l5 5M7 10h6"></path><path class="lc-chart-zoom-plus" d="M10 7v6"></path></svg></button>
-                </div>
+          <div class="lc-stepper" id="ch4_step" data-lc-step="1">
+            <div class="lc-stepper-head">
+              <div class="lc-stepper-title">Konstruowanie przedziału</div>
+              <div class="lc-toolbar">
+                <button type="button" class="lc-action is-outline" data-p41="new">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path></svg>
+                  <span>Nowa próba</span>
+                </button>
               </div>
-              <ol class="lc-step-track" style="--lc-steps:4;">
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="1" aria-current="step">
-                    <b>1</b>
-                    <span>Próba</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="2">
-                    <b>2</b>
-                    <span>p̂</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="3">
-                    <b>3</b>
-                    <span>± SE</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="lc-step-tab" data-lc-go="4">
-                    <b>4</b>
-                    <span>Przedział</span>
-                  </button>
-                </li>
-              </ol>
-              <div class="lc-step-body">
-                <style>.lc-sf[data-lc-chart-large='true'] .s04-grid { max-height: none !important;
-                aspect-ratio: auto !important; min-height: calc(24em * var(--s04-rows, 1)) !important;
-                grid-template-columns: var(--s04-zoom-cols) !important; }</style>
-                <div class="s04-grid" style="display:grid;grid-template-columns:1fr 2.5fr;grid-auto-rows:1fr;gap:.4em;aspect-ratio:2.5/1;max-height:420px;min-height:18em;--s04-rows:1;--s04-zoom-cols:1fr 2.5fr;">
-                  <div class="lc-sf-chart" data-k="0" style="height:100%;min-height:0;max-height:none;">
-                    <div class="lc-ec" data-chart="0" role="img" aria-label="Wykres"></div>
-                  </div>
-                  <div class="lc-sf-chart" data-k="1" style="height:100%;min-height:0;max-height:none;">
-                    <div class="lc-ec" data-chart="1" role="img" aria-label="Wykres"></div>
-                  </div>
-                </div>
+            </div>
+            <ol class="lc-step-track" style="--lc-steps:4;">
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="1" aria-current="step">
+                  <b>1</b>
+                  <span>Próba</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="2">
+                  <b>2</b>
+                  <span>p̂</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="3">
+                  <b>3</b>
+                  <span>± SE</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="lc-step-tab" data-lc-go="4">
+                  <b>4</b>
+                  <span>Przedział</span>
+                </button>
+              </li>
+            </ol>
+            <div class="lc-step-body">
+              <div class="p41" data-x="27">
+                <div class="p41-svg"></div>
               </div>
-              <div class="lc-stepper-foot">
-                <div class="lc-stepper-text" aria-live="polite">
-                  <span class="lc-stepper-kicker">Krok 1 z 4 · Próba</span>
-                  <span id="ch4_step_text"></span>
-                </div>
-                <div class="lc-stepper-actions">
-                  <button type="button" class="lc-action is-ghost is-icon" data-lc-nav="reset" title="Od początku" aria-label="Od początku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
-                  <button type="button" class="lc-action is-outline" data-lc-nav="prev" disabled="">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
-                    <span>Wstecz</span>
-                  </button>
-                  <button type="button" class="lc-action is-solid" data-lc-nav="next">
-                    <span>Dalej</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
-                  </button>
-                </div>
+            </div>
+            <div class="lc-stepper-foot">
+              <div class="lc-stepper-text" aria-live="polite">
+                <span class="lc-stepper-kicker">Krok 1 z 4 · Próba</span>
+                <span id="ch4_step_text"></span>
+              </div>
+              <div class="lc-stepper-actions">
+                <button type="button" class="lc-action is-ghost is-icon" data-lc-nav="reset" title="Od początku" aria-label="Od początku"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></button>
+                <button type="button" class="lc-action is-outline" data-lc-nav="prev" disabled="">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6"></path></svg>
+                  <span>Wstecz</span>
+                </button>
+                <button type="button" class="lc-action is-solid" data-lc-nav="next">
+                  <span>Dalej</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"></path></svg>
+                </button>
               </div>
             </div>
           </div>
@@ -7850,6 +8145,43 @@ html[data-lc-theme="halloween"] .lc-deko { display: block; }
       tylko precyzyjnym opisem siły dowodów. Potoczne myślenie zna tylko
       „pewne”, „prawdopodobne” i „wątpliwe”, a statystyka pozwala tę pewność
       zmierzyć.</p>
+        <div class="lc-figure-panel lc-panel-text">
+          <div class="lc-figure-panel-badge" style="background:#6b1a26;">Zestawienie</div>
+          <div class="lc-figure-panel-title">Trzy poziomy ufności, trzy ceny</div>
+          <div class="pp-levels">
+            <div class="pp-level">
+              <span class="pp-level-n">90%</span>
+              <div class="pp-level-bar">
+                <i style="width:63.9%;"></i>
+              </div>
+              <span class="pp-level-z">z* = 1.645</span>
+              <span class="pp-level-miss">chybia 1 przedział na 10</span>
+              <span class="pp-level-when">wstępna eksploracja, gdy pomyłka niewiele kosztuje</span>
+            </div>
+            <div class="pp-level is-default">
+              <span class="pp-level-n">95%</span>
+              <div class="pp-level-bar">
+                <i style="width:76.1%;"></i>
+              </div>
+              <span class="pp-level-z">z* = 1.960</span>
+              <span class="pp-level-miss">chybia 1 przedział na 20</span>
+              <span class="pp-level-when">zwyczajowy wybór w raportach i publikacjach</span>
+            </div>
+            <div class="pp-level">
+              <span class="pp-level-n">99%</span>
+              <div class="pp-level-bar">
+                <i style="width:100.0%;"></i>
+              </div>
+              <span class="pp-level-z">z* = 2.576</span>
+              <span class="pp-level-miss">chybia 1 przedział na 100</span>
+              <span class="pp-level-when">badania medyczne, kontrola jakości, bezpieczeństwo</span>
+            </div>
+          </div>
+          <div class="lc-caption">
+            <div>Pasek pokazuje szerokość przedziału z tych samych danych. Większa pewność zawsze kosztuje szerszy przedział.
+    Poziom wybieramy przed obejrzeniem wyników.</div>
+          </div>
+        </div>
         <p class="lc-p">Wybór poziomu ufności powinien wynikać z kosztu pomyłki. Przy wstępnej
       eksploracji, gdy błąd niewiele kosztuje, można przyjąć 90%. W badaniach
       medycznych czy kontroli jakości uzasadnione bywa 99%. Ten swobodny wybór
@@ -12701,6 +13033,107 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
   new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});
   document.addEventListener("DOMContentLoaded",scan);scan();
 })();</script>
+<script>// Ryc. 4.1 „Konstruowanie przedziału” dla proporcji (wersja z 2026-11-20, dawny prototyp 4.1-C).
+// Próba 50 odpowiedzi TAK/NIE (p = 0.6) jako kropki; odsetek TAK jako pasek wypełniony od 0 do
+// 100%; ± SE jako klamra nad krawędzią wypełnienia; 95% przedział jako ramka wokół tej krawędzi,
+// z granicami w procentach. Cztery kroki prowadzi lc_step_widget(); przycisk [data-p41="new"]
+// losuje nową próbę. Kontener: .p41[data-x] (pierwsza próba) wewnątrz widgetu krokowego.
+// Poprzednia wersja (słupki TAK/NIE i oś 0–1 z trzema znakami na różnych wysokościach) rysowała
+// przedział jako nakładające się odcinki; ramka na pasku czyta się wyraźniej.
+(function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg", N = 50, P0 = 0.6, Z = 1.959964;
+  function el(name, attrs, parent, text) {
+    var e = document.createElementNS(NS, name);
+    Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function f(v, d) { return Number(v).toFixed(d); }
+  function pct(v, d) { return f(100 * v, d === undefined ? 1 : d) + "%"; }
+  function draw50() { var x = 0; for (var i = 0; i < N; i++) if (Math.random() < P0) x++; return x; }
+  function stats(x) { var p = x / N, se = Math.sqrt(p * (1 - p) / N); return { x: x, p: p, se: se, me: Z * se, lo: p - Z * se, hi: p + Z * se }; }
+
+  // 50 odpowiedzi jako kropki: TAK wypełnione, NIE puste.
+  function waffle(g, s, x0, y0, cols, step, r) {
+    for (var i = 0; i < N; i++) {
+      el("circle", { cx: x0 + (i % cols) * step, cy: y0 + Math.floor(i / cols) * step, r: r,
+        class: "p41-dot" + (i < s.x ? " is-yes" : "") }, g);
+    }
+  }
+  function axis(g, X, y, lo, hi, by, asPct) {
+    el("line", { x1: X(lo), x2: X(hi), y1: y, y2: y, class: "p41-axis" }, g);
+    for (var v = lo; v <= hi + 1e-9; v += by) {
+      el("line", { x1: X(v), x2: X(v), y1: y, y2: y + 7, class: "p41-axis" }, g);
+      el("text", { x: X(v), y: y + 26, class: "p41-tick" }, g, asPct ? pct(v, 0) : f(v, 1));
+    }
+  }
+  function bar(g, x1, x2, y, cls, cap) {
+    el("line", { x1: x1, x2: x2, y1: y, y2: y, class: "p41-bar " + cls }, g);
+    [x1, x2].forEach(function (x) { el("line", { x1: x, x2: x, y1: y - cap, y2: y + cap, class: "p41-cap " + cls }, g); });
+  }
+
+  function barChart(svg, s, step) {
+    var x0 = 50, x1 = 600, X = function (v) { return x0 + (x1 - x0) * v; }, yt = 150, h = 46;
+    waffle(svg, s, 62, 30, 25, 21.4, 7.5);
+    el("text", { x: x0, y: 96, class: "p41-note" }, svg, s.x + " × TAK · " + (N - s.x) + " × NIE");
+    if (step < 2) return;
+    el("rect", { x: x0, y: yt, width: x1 - x0, height: h, rx: 6, class: "p41-full" }, svg);
+    el("rect", { x: x0, y: yt, width: X(s.p) - x0, height: h, rx: 6, class: "p41-fill" }, svg);
+    el("text", { x: x0 + 12, y: yt + 30, class: "p41-in" }, svg, "TAK " + pct(s.p, 0));
+    el("text", { x: x1 - 12, y: yt + 30, class: "p41-in is-no" }, svg, "NIE " + pct(1 - s.p, 0));
+    axis(svg, X, yt + h + 8, 0, 1, 0.25, true);
+    if (step >= 4) {
+      el("rect", { x: X(s.lo), y: yt - 10, width: X(s.hi) - X(s.lo), height: h + 20, rx: 4, class: "p41-band" }, svg);
+      el("text", { x: X(s.lo), y: yt - 22, class: "p41-val is-ci" }, svg, pct(s.lo));
+      el("text", { x: X(s.hi), y: yt - 22, class: "p41-val is-ci" }, svg, pct(s.hi));
+      el("text", { x: X(s.p), y: yt + h + 70, class: "p41-lab is-ci" }, svg, "95% przedział ufności dla odsetka TAK");
+    }
+    if (step === 3) {
+      bar(svg, X(s.p - s.se), X(s.p + s.se), yt - 14, "is-se", 8);
+      el("text", { x: X(s.p), y: yt - 30, class: "p41-lab is-se" }, svg, "± SE = " + pct(s.se));
+    }
+    el("line", { x1: X(s.p), x2: X(s.p), y1: yt - 6, y2: yt + h + 6, class: "p41-edge" }, svg);
+  }
+
+  function text(s, step) {
+    if (step === 1) return N + " odpowiedzi: " + s.x + " razy TAK, " + (N - s.x) + " razy NIE.";
+    if (step === 2) return "<i>p̂</i> = <i>x</i>/<i>n</i> = " + s.x + "/" + N + " = " + f(s.p, 2) + ". To estymata odsetka w populacji.";
+    if (step === 3) return "<i>SE</i> = √(<i>p̂</i>(1 − <i>p̂</i>)/<i>n</i>) = " + f(s.se, 3) + ". Jeden błąd standardowy w każdą stronę to jeszcze nie 95%.";
+    return "<i>p̂</i> ± 1.96 · <i>SE</i> = " + f(s.p, 2) + " ± " + f(s.me, 3) + ", czyli 95% CI: <b>[" + f(s.lo, 3) + ", " + f(s.hi, 3) +
+      "]</b>, od " + pct(s.lo) + " do " + pct(s.hi) + ".";
+  }
+
+  function init(root) {
+    if (root.dataset.ready) return;
+    var stepper = root.closest(".lc-stepper");
+    if (!stepper) return;
+    root.dataset.ready = "1";
+    var s = stats(Number(root.dataset.x) || draw50());
+    var out = document.getElementById(stepper.id + "_text"), svgBox = root.querySelector(".p41-svg");
+    function render() {
+      var step = Number(stepper.getAttribute("data-lc-step")) || 1;
+      svgBox.textContent = "";
+      var svg = el("svg", { viewBox: "0 0 640 300", role: "img",
+        "aria-label": "Budowa przedziału ufności dla proporcji, krok " + step + ": odsetek TAK " + pct(s.p, 0) +
+          (step >= 4 ? ", 95% przedział ufności od " + pct(s.lo) + " do " + pct(s.hi) : "") }, svgBox);
+      barChart(svg, s, step);
+      if (out) out.innerHTML = text(s, step);
+    }
+    stepper.addEventListener("click", function (e) {
+      if (e.target.closest('[data-p41="new"]')) { s = stats(draw50()); render(); }
+    });
+    new MutationObserver(render).observe(stepper, { attributes: true, attributeFilter: ["data-lc-step"] });
+    render();
+  }
+  // Funkcje liczące do testów (statystyka/tests/js/stat04_fig41.test.js).
+  if (typeof window !== "undefined") window.lcStat04Fig41 = { stats: stats, text: text };
+  function scan() { document.querySelectorAll(".p41:not([data-ready])").forEach(init); }
+  document.addEventListener("DOMContentLoaded", scan);
+  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+  scan();
+})();</script>
 <script>// Ryc. 2.1 „Odwrócenie: od μ do x̄ i z powrotem” (rozdz. 2)
 // Vanilla JS + SVG, bez serwera. Kontener (R: fig_2a_ui):
 //   .fig-flip[data-mu][data-se][data-x][data-min][data-max]
@@ -14551,9 +14984,9 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
 <script>// Ryciny wykładu 04 liczone w przeglądarce (silnik lcSF): sf_steps
 //   s04-tnorm  — Ryc. 3.1: rozkład t (df = 4) a N(0, 1), wartości krytyczne
 //   s04-comp   — Przykłady A–C (rozdz. 3): CI grup i CI różnicy (dane z config)
-//   s04-pstep  — Ryc. 4.1: budowa przedziału dla proporcji krok po kroku
 //   s04-pdstep — Ryc. 4.3: budowa przedziału dla różnicy proporcji
-// Ryc. 3.2–3.3 (budowa CI dla średniej i różnicy średnich) rysuje ci_construction.js.
+// Ryc. 3.2–3.3 (budowa CI dla średniej i różnicy średnich) rysuje ci_construction.js,
+// Ryc. 4.1 (budowa CI dla proporcji) rysuje fig_41.js.
 // Grubości jak w moście ggplot→ECharts: linewidth × 2 px; punkt size s → średnica ≈ 2.1·s.
 (function () {
   "use strict";
@@ -14672,46 +15105,6 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     return { x: x, n: n, p: p, se: se, me: Z * se };
   }
 
-  var pstep = {
-    init: function (state) { this.act(state); },
-    act: function (state) { state.x = D.r.binom(50, 0.6); },
-    draw: function (v, P, k, state, vals, step) {
-      var s = propStats(state.x, 50);
-      if (k === 0) {
-        var b = bars(P, [{ at: 1, n: s.n, x: s.x, w: 0.6 }], 2.6);
-        b.aria = "Liczebności: " + s.x + " razy TAK, " + (s.n - s.x) + " razy NIE";
-        return b;
-      }
-      var L = [], Y_EST = 0.30, Y_SE = 0.05, Y_CI = -0.25;
-      if (step >= 2) {
-        var c2 = role(P, step, 2);
-        L.push({ type: "vline", x: s.p, color: P.secondary, width: 1.1, dash: [4, 4] },
-               diamond(s.p, Y_EST, c2), label(s.p, Y_EST - 0.13, "p̂", c2, 1.1));
-      }
-      if (step >= 3) {
-        var c3 = role(P, step, 3);
-        L.push(errbar(s.p - s.se, s.p + s.se, Y_SE, 0.08, c3, step === 3 ? 3.6 : 2.2),
-               label(s.p, Y_SE - 0.12, "± SE", c3));
-      }
-      if (step >= 4) {
-        L.push(errbar(s.p - s.me, s.p + s.me, Y_CI, 0.12, P.accent, 4.4),
-               label(s.p, Y_CI - 0.13, "95% CI", P.accent, 1.1));
-      }
-      return { x: [0, 1], y: [-0.6, 0.6], xLabelEvery: 0.2, xName: "Proporcja", hideY: true, noYGrid: true, layers: L,
-               aria: "Oś proporcji; krok " + step + ". p̂ = " + fmt(s.p, 3) +
-                     (step >= 4 ? ", 95% CI od " + fmt(s.p - s.me, 3) + " do " + fmt(s.p + s.me, 3) : "") };
-    },
-    text: function (state, v, vals, step) {
-      var s = propStats(state.x, 50);
-      if (step === 1) return "<p>" + s.n + " odpowiedzi: " + s.x + " razy TAK, " + (s.n - s.x) + " razy NIE.</p>";
-      if (step === 2) return "<p>" + PH + " = <i>x</i>/<i>n</i> = " + s.x + "/" + s.n + " = " + fmt(s.p, 3) + "</p>";
-      if (step === 3) return "<p><i>SE</i> = √(" + PH + "(1 − " + PH + ")/<i>n</i>) = √(" + fmt(s.p, 2) +
-        " · " + fmt(1 - s.p, 2) + "/" + s.n + ") = " + fmt(s.se, 3) + "</p>" +
-        "<p>Pasek ± SE to jeden błąd standardowy w każdą stronę. Przedział 95% sięga 1.96 SE.</p>";
-      return "<p>" + ME + fmt(s.se, 3) + " = " + fmt(s.me, 3) + "</p>" +
-             "<p>95% CI: <b>[" + fmt(s.p - s.me, 3) + " ; " + fmt(s.p + s.me, 3) + "]</b></p>";
-    }
-  };
 
   // ---- Ryc. 4.3: różnica proporcji --------------------------------------------
   function diffStats(x1, x2) {
@@ -14785,7 +15178,7 @@ var yo={},mo={};var xo,_o=function(){function t(t,e,n){var i=this;this._sleepAft
     }
   };
 
-  SF.register({ "s04-tnorm": tnorm, "s04-comp": comp, "s04-pstep": pstep, "s04-pdstep": pdstep });
+  SF.register({ "s04-tnorm": tnorm, "s04-comp": comp, "s04-pdstep": pdstep });
   window.lcStat04Steps = { propStats: propStats, diffStats: diffStats };
 })();</script>
 <script>// Ryciny wykładu 04 liczone w przeglądarce (silnik lcSF): sf_examples
