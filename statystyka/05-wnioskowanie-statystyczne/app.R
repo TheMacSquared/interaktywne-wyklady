@@ -57,7 +57,7 @@ addResourcePath("assets", file.path(app_dir, "assets"))
 
 source(file.path(app_dir, "modules", "helpers.R"),              local = TRUE)
 source(file.path(app_dir, "modules", "figures.R"),              local = TRUE)
-source(file.path(app_dir, "modules", "proto05.R"),              local = TRUE)  # PROTOTYPY 5A–5E
+source(file.path(app_dir, "modules", "proto05.R"),              local = TRUE)  # sceny Ryc. 3.1, 7.1, 9.1
 source(file.path(app_dir, "modules", "ch1_panels.R"),           local = TRUE)  # Ryc. 1.1, 1.3
 source(file.path(app_dir, "modules", "ch2_panels.R"),           local = TRUE)  # Ryc. 2.1–2.6
 source(file.path(app_dir, "modules", "ch3_panels.R"),           local = TRUE)  # Ryc. 3.8
@@ -78,10 +78,10 @@ source(file.path(app_dir, "modules", "ch9_cwiczenia.R"),        local = TRUE)
 # ============================================================================
 
 header_extras <- tagList(
-  # Sceny SVG (ANOVA, rozdz. 09): modules/scenes.js + modules/scenes.css
+  # Sceny SVG ANOVA (Ryc. 9.3, 9.4, 9.6): modules/scenes.js + modules/scenes.css
   tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "scenes.css"), warn = FALSE), collapse = "\n"))),
   includeScript(file.path(app_dir, "modules", "scenes.js")),
-  # PROTOTYPY 5A–5E (2026-11-09): modules/proto05.js + modules/proto05.css
+  # Sceny Ryc. 3.1, 7.1, 9.1 (dawne prototypy 5A, 5E, 5D): modules/proto05.js + modules/proto05.css
   tags$style(HTML(paste(readLines(file.path(app_dir, "modules", "proto05.css"), warn = FALSE), collapse = "\n"))),
   includeScript(file.path(app_dir, "modules", "proto05.js")),
   # Panele rozdziałów 01–03 (ch1_panels.R, ch2_panels.R, ch3_panels.R): sam CSS, bez JS

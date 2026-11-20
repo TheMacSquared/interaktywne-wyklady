@@ -18,8 +18,8 @@ system("Rscript scripts/build_static.R statystyka/05-wnioskowanie-statystyczne")
 | 06 | Prototyp 5C „Sen i ostatnia cyfra telefonu” | odrzucony (9.11), usunięty |
 | 07 | Prototyp 5E „Mandaty: czy płeć ma znaczenie?” | wdrożony 20.11 jako Ryc. 7.1 w odwróconej kolejności kadrów, bez liczby |
 | 07 | Prototyp 5E-2: 5E w wyglądzie ludzików z karteczkami (scena „stop” z 02) | odrzucony (9.11), usunięty |
-| 09 | Prototyp 5D „Żelki i trądzik” | przyjęty (9.11) po przebudowie, z cytowaniem xkcd 882 |
-| 09 | Sceny `jars`, `worlds`, `stress` (8.10) | czekają na ocenę (5F) |
+| 09 | Prototyp 5D „Żelki i trądzik” | wdrożony 20.11 jako Ryc. 9.1, z cytowaniem xkcd 882 |
+| 09 | Sceny `jars`, `worlds`, `stress` (8.10) | przyjęte 20.11: Ryc. 9.3, 9.4, 9.6 |
 | 01 | Prototyp 5S „Eksperyment: telefon a koncentracja” (kadry) | wdrożony 19.11 jako Ryc. 1.1 (dawna Ryc. 1.1 to teraz 1.2) |
 | 01 | Prototyp 5T „Sąd i test statystyczny” (kadry) | wdrożony 19.11 jako Ryc. 1.3; zastąpił tabelę analogii |
 | 02 | Prototyp 5P „O co naprawdę pyta pytanie?” (trzy pytania z tekstu: wzrost, korepetycje, lody) | wdrożony 19.11 jako Ryc. 2.1 |
@@ -211,3 +211,10 @@ z paskiem czterech wkładów, przeniesionym z dawnego ostatniego kadru 5E). Czek
 Wdrożenie 20.11: 5E to Ryc. 7.1. Obliczenia na tabeli krzyżowej to Ryc. 7.2, test
 krok po kroku 7.3, χ² a Fisher 7.4. W rozdziale 07 nie ma już prototypów; zostają
 5D i trzy sceny ANOVA w rozdziale 09.
+
+### 12. Rozdział 09 bez prototypów (20.11)
+
+5D i trzy sceny ANOVA przyjęte bez zmian. Numeracja: 9.1 żelki, 9.2 inflacja błędu
+(dawna 9.1), 9.3 skąd się bierze rozrzut, 9.4 dwie partie, 9.5 ANOVA (dawna 9.2),
+9.6 co odstaje?, 9.7 Games-Howell (dawna 9.3). W całym wykładzie nie ma już
+prototypów. Decyzja z listy 5F (20.11): scena 9.3 stoi przed wzorem F, 9.4 po nim.

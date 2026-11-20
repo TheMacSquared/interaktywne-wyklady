@@ -158,7 +158,7 @@ ch6_compare_paired_fig <- function() {
 # Rozdział 9: ANOVA
 # ---------------------------------------------------------------------------
 
-# Ryc. 9.1: k grup na okręgu i wszystkie pary połączone odcinkami; barwa odcinków
+# Ryc. 9.2: k grup na okręgu i wszystkie pary połączone odcinkami; barwa odcinków
 # zależy od ryzyka co najmniej jednego błędu I rodzaju. Rysunki dla k = 2…8.
 ch7_fwer_svg <- function(k) {
   angles <- seq(0, 2 * pi, length.out = k + 1)[-(k + 1)]
@@ -189,7 +189,7 @@ ch7_fwer_fig <- function() {
   )
 }
 
-# Konfiguracja scenariuszy ANOVA (Ryc. 9.2 i 9.3): etykieta grup, zmienne zależne, podpisy osi.
+# Konfiguracja scenariuszy ANOVA (Ryc. 9.5 i 9.7): etykieta grup, zmienne zależne, podpisy osi.
 ch7_anova_config <- list(scenarios = list(
   fermentation = list(
     group_label = "Temperatura fermentacji",

@@ -2,7 +2,7 @@
 # CHAPTER 7: ANOVA
 # ============================================================================
 
-# PROTOTYP SCENY (2026-10-08): dane stałe dla scen „Skąd się bierze rozrzut”,
+# Dane stałe dla scen (Ryc. 9.3, 9.4, 9.6; przyjęte 2026-11-20) „Skąd się bierze rozrzut”,
 # „Dwie partie” i „Co odstaje?” (modules/scenes.js). Liczone raz przy starcie.
 .ch7_scene_parts <- function(y, g) {
   g <- factor(g)
@@ -148,8 +148,8 @@ ch7_ui <- list(
     # ========================================================================
     lc_h2("ch7-motywacja", "Dlaczego nie kilka testów t?"),
 
-    # PROTOTYP 5D (2026-11-09): żelki i trądzik, 20 testów
-    p5("5D"),
+    # Ryc. 9.1: żelki i trądzik, 20 podgrup (modules/proto05.R, rysunek: proto05.js)
+    ch7_fig_jelly,
 
     lc_p("Najprostszy pomysł to wykonać ", gloss("test t", "test t"), " dla każdej
       pary grup. Przy trzech grupach A, B i C są to trzy porównania: A z B, A z C
@@ -178,7 +178,7 @@ ch7_ui <- list(
       odcinek. Obok podaje liczbę testów i ryzyko obliczone z tego wzoru."),
 
     figure_panel(
-      label = "Ryc. 9.1",
+      label = "Ryc. 9.2",
       title = "Dodaj grupy i obserwuj inflację błędu I rodzaju",
       # Rysunki dla 2–8 grup składa R (modules/figures.R); licznik i odczyty prowadzi przeglądarka.
       ch7_fwer_fig(),
@@ -225,8 +225,28 @@ ch7_ui <- list(
       obserwację w test. Całkowitą zmienność danych rozkłada na zmienność ",
       tags$em("między"), " grupami (jak daleko średnie grup leżą od średniej
       ogólnej) i zmienność ", tags$em("wewnątrz"), " grup (jak daleko obserwacje
-      leżą od średniej własnej grupy). ", gloss("statystyka F", "Statystyka F"),
-      " to stosunek tych dwóch części:"),
+      leżą od średniej własnej grupy). Tak wygląda ten podział na piętnastu
+      słoikach jogurtu z trzech komór fermentacyjnych."),
+
+    # Ryc. 9.3: skąd się bierze rozrzut (scena, modules/scenes.js); od 2026-11-20 przed wzorem F
+    figure_panel(
+      label = "Ryc. 9.3", width_mode = "text",
+      scene_widget("ch7_sc_jars",
+        title = "Skąd się bierze rozrzut",
+        steps = c("Słoiki", "Całość", "Dwie części", "F"),
+        config = .ch7_scenes$jars,
+        texts = list(
+        "Pięć słoików z każdej komory. Przerywana linia to średnie pH wszystkich piętnastu.",
+        "Każdy słoik leży w pewnej odległości od średniej ogólnej. Suma kwadratów tych odległości to cały rozrzut.",
+        "Drogę do słoika dzielimy w średniej jego komory: bursztynowy odcinek należy do komory, niebieski do słoika.",
+        "Każdą część dzielimy przez jej stopnie swobody. F to stosunek górnego paska do dolnego."
+        )
+      )
+    ),
+
+    lc_p(gloss("statystyka F", "Statystyka F"), " zapisuje ostatni kadr sceny wzorem.
+      To stosunek zmienności między grupami do zmienności wewnątrz grup, każdej
+      podzielonej przez jej stopnie swobody:"),
 
     # Statystyka F ze znacznikami. Licznik i mianownik w kolorach
     # scen (bursztyn = między, niebo = wewnątrz); opisy zastępują słowny ułamek.
@@ -242,29 +262,11 @@ ch7_ui <- list(
       gloss("wariancja", "wariancje"), ": sumy kwadratów odchyleń podzielone przez
       liczby ", gloss("stopnie swobody", "stopni swobody"), ", k - 1 i n − k."),
 
-    # PROTOTYP SCENY (2026-10-08): Skąd się bierze rozrzut
-    lc_p("Tak wygląda ten podział na piętnastu słoikach z trzech komór."),
-
-    figure_panel(
-      label = "Prototyp sceny", width_mode = "text",
-      scene_widget("ch7_sc_jars",
-        title = "Skąd się bierze rozrzut",
-        steps = c("Słoiki", "Całość", "Dwie części", "F"),
-        config = .ch7_scenes$jars,
-        texts = list(
-        "Pięć słoików z każdej komory. Przerywana linia to średnie pH wszystkich piętnastu.",
-        "Każdy słoik leży w pewnej odległości od średniej ogólnej. Suma kwadratów tych odległości to cały rozrzut.",
-        "Drogę do słoika dzielimy w średniej jego komory: bursztynowy odcinek należy do komory, niebieski do słoika.",
-        "Każdą część dzielimy przez jej stopnie swobody. F to stosunek górnego paska do dolnego."
-        )
-      )
-    ),
-
-    # PROTOTYP SCENY (2026-10-08): Dwie partie
+    # Ryc. 9.4: dwie partie (scena, modules/scenes.js)
     lc_p("Ten sam rozrzut całkowity może się podzielić zupełnie inaczej."),
 
     figure_panel(
-      label = "Prototyp sceny", width_mode = "text",
+      label = "Ryc. 9.4", width_mode = "text",
       title = "Dwie partie",
       scene_static(.ch7_scenes$worlds, options = list(
         list(name = "world", label = "Partia", selected = "diff",
@@ -346,7 +348,7 @@ ch7_ui <- list(
       nie równe. Panel liczy klasyczną ANOVA."),
 
     figure_panel(
-      label = "Ryc. 9.2",
+      label = "Ryc. 9.5",
       title = "ANOVA jednoczynnikowa",
       # Losowanie, wykres i ANOVA liczy przeglądarka (modules/figures.js, rycina s05_anova).
       lc_sf_figure("s05_anova", config = ch7_anova_config,
@@ -414,11 +416,11 @@ ch7_ui <- list(
       w tabeli post hoc są skorygowane (p.adj) i zwykle większe niż p-wartości
       zwykłych testów t dla tych samych par."),
 
-    # PROTOTYP SCENY (2026-10-08): Co odstaje?
+    # Ryc. 9.6: co odstaje? (scena, modules/scenes.js)
     lc_p("Tak to wygląda na stresie pracowników trzech stanowisk."),
 
     figure_panel(
-      label = "Prototyp sceny", width_mode = "text",
+      label = "Ryc. 9.6", width_mode = "text",
       scene_widget("ch7_sc_stress",
         title = "Co odstaje?",
         steps = c("Trzy grupy", "ANOVA", "Które pary"),
@@ -446,18 +448,18 @@ ch7_ui <- list(
        porównań parami nie interpretujemy."
     ),
 
-    lc_p("Panel korzysta z danych wylosowanych w Ryc. 9.2. Macierz p-wartości ma
+    lc_p("Panel korzysta z danych wylosowanych w Ryc. 9.5. Macierz p-wartości ma
       układ typowej tabeli post hoc, a wykres pokazuje różnicę średnich dla każdej pary
       z 95-procentowym ", gloss("przedział ufności", "przedziałem ufności"), "."),
 
     figure_panel(
-      label = "Ryc. 9.3",
+      label = "Ryc. 9.7",
       title = "Games-Howell",
-      # Porównania par liczy przeglądarka na danych z Ryc. 9.2 (shared/lc_stats.js, rycina s05_gh).
+      # Porównania par liczy przeglądarka na danych z Ryc. 9.5 (shared/lc_stats.js, rycina s05_gh).
       lc_sf_figure("s05_gh", legend = TRUE,
         toolbar = lc_sf_action("test", "ch7_run_tukey", "Testuj Games-Howellem", variant = "solid"),
         body = tagList(
-          lc_caption("Panel używa danych z Ryc. 9.2. Najpierw uruchom tam ANOVA."),
+          lc_caption("Panel używa danych z Ryc. 9.5. Najpierw uruchom tam ANOVA."),
           tags$div(`data-when` = "nodata", hidden = NA, lc_caption("Najpierw uruchom ANOVA.")),
           tags$h4(`data-gh-part` = NA, hidden = NA, "Macierz p-wartości"),
           tags$div(`data-role` = "matrix"),

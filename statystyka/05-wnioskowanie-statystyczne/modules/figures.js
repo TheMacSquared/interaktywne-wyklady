@@ -919,7 +919,7 @@
   };
 
   // ---- Rozdział 9: ANOVA i porównania par -------------------------------------
-  // Ryc. 9.1: rysunki dla 2–8 grup są w dokumencie (R); tu licznik grup i odczyty.
+  // Ryc. 9.2: rysunki dla 2–8 grup są w dokumencie (R); tu licznik grup i odczyty.
   figures.s05_fwer = {
     init: function (state) { state.k = 2; },
     act: function (state, action) { state.k = action === "reset" ? 2 : Math.min(state.k + 1, 8); },
@@ -932,7 +932,7 @@
     noteKey: function (vals, state) { return String(state.k); }
   };
 
-  // Ryc. 9.2 i 9.3 pracują na jednych danych; po zmianie scenariusza albo n dane są nieaktualne.
+  // Ryc. 9.5 i 9.7 pracują na jednych danych; po zmianie scenariusza albo n dane są nieaktualne.
   store.anova = null;
   function anovaControls() {
     var sc = document.getElementById("ch7_scenario"), n = document.getElementById("ch7_n"), v = document.getElementById("ch7_var");
@@ -984,7 +984,7 @@
     noteKey: function () { return anovaGroups() ? "data" : "empty"; }
   };
 
-  // Ryc. 9.3: porównania par Gamesa-Howella na danych z Ryc. 9.2 (macierz p, wykres różnic, lista).
+  // Ryc. 9.7: porównania par Gamesa-Howella na danych z Ryc. 9.5 (macierz p, wykres różnic, lista).
   figures.s05_gh = {
     act: function (state) { state.asked = true; },
     prepare: function (state) {

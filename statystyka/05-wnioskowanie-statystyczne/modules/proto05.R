@@ -1,19 +1,12 @@
-# PROTOTYPY PUNKTÓW STOP 5A–5E (2026-11-09) ----------------------------------
+# SCENY RYSOWANE W proto05.js: Ryc. 3.1, 7.1 i 9.1 ---------------------------------
 #
-# Każdy prototyp ma złotą plakietkę „Prototyp <nr> · <rodzaj>”, jak w wykładzie 04.
-# Rysunek i obliczenia: modules/proto05.js (+ proto05.css), działają bez serwera R.
-# Lista propozycji: PUNKTY-STOP-PROPOZYCJA.md, decyzje: KOLEJKA-ZATWIERDZANIA.md.
-# 5B (dubel ryciny mocy, dziś Ryc. 3.2), 5C (rozkład r z powtórzonych grupek) i 5E-2 odrzucone 2026-11-09.
-# Wstawka w tekście: p5("5D"). Stałe ryciny z tego pliku: czujka dymu (Ryc. 3.1, dawny 5A,
-# ch1d_fig_smoke) i mandaty (Ryc. 7.1, dawny 5E, ch5_fig_tickets); rysunki w proto05.js.
+# Powstały jako prototypy punktów stop 5A, 5E i 5D (2026-11-09) i są stałymi rycinami;
+# nazwy plików proto05.* zostały z tamtego etapu. Rysunek i obliczenia: modules/proto05.js
+# (+ proto05.css), bez serwera R. Historia decyzji: KOLEJKA-ZATWIERDZANIA.md.
+#   ch1d_fig_smoke   Ryc. 3.1  Czujka dymu w akademiku            (kind "smoke")
+#   ch5_fig_tickets  Ryc. 7.1  Mandaty: czy płeć ma znaczenie?    (kind "tickets")
+#   ch7_fig_jelly    Ryc. 9.1  Żelki i trądzik                    (kind "jelly")
 # Wymaga: lecture_layout.R (lc_step_widget, lc_toolbar, figure_panel), helpers.R.
-
-p5_panel <- function(num, kind, title, ..., width_mode = "text") {
-  figure_panel(label = paste0("Prototyp ", num, " · ", kind), title = title,
-    color = upwr_single_alt, width_mode = width_mode, ...)
-}
-
-p5 <- function(num) get(paste0("p5_", num, "_ui"), inherits = TRUE)
 
 .p5_body <- function(config) {
   tags$div(class = "p5-sc",
@@ -63,7 +56,7 @@ ch1d_fig_smoke <- figure_panel(label = "Ryc. 3.1", width_mode = "text", title = 
     name = "t", label = "Próg czułości czujki", min = 10, max = 60, value = 32, step = 1)
 )
 
-# --- 5D: żelki i trądzik (rozdz. 09, przed problemem porównań wielokrotnych) -----
+# --- Ryc. 9.1 (dawny prototyp 5D, wdrożony 2026-11-20): żelki i trądzik -----------
 # Kolory żelków to kolory materiału (SCENY.md: własne kolory dla materiałów).
 p5_jelly_colors <- c("#c43d2f", "#2aa65e", "#2e6fd1", "#f0c419", "#e5832a", "#8b47ab", "#f78fb3",
                      "#8d5524", "#f5f0e6", "#2d2d2d", "#1abc9c", "#a3d65c", "#7b1e3a", "#e8d3a9",
@@ -93,11 +86,11 @@ p5_jelly_data <- function(seed = 833, n_ctrl = 100, k = 20, m = 20, mu = 12, sd 
        m_ctrl = mean(ctrl), m_eat = mean(eat))
 }
 
-p5_5D_ui <- local({
+ch7_fig_jelly <- local({
   d <- p5_jelly_data()
   hit <- which(d$p < 0.05)
   stopifnot(length(hit) == 1, d$rm[hit] > d$m_ctrl)
-  p5_panel("5D", "scena", "Żelki i trądzik",
+  figure_panel(label = "Ryc. 9.1", width_mode = "text", title = "Żelki i trądzik",
     p5_scene_widget("p5_jelly", "Badacz dzieli jedzących żelki według ulubionego koloru",
       steps = c("Pytanie", "Podział na kolory", "Gazeta", "Cała seria"),
       config = c(list(kind = "jelly", colors = p5_jelly_colors, names = p5_jelly_names,

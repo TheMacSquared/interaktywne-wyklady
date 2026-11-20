@@ -1,10 +1,10 @@
-// PROTOTYPY PUNKTÓW STOP 5A–5E (2026-11-09). Osobny silnik, żeby nie ruszać
+// SCENY Ryc. 3.1, 7.1 i 9.1 (dawne prototypy 5A, 5E, 5D z 2026-11-09). Osobny silnik, żeby nie ruszać
 // scen ANOVA w scenes.js (tamten skaner oznacza każde .lc-sc jako gotowe).
 // Kontener: .p5-sc[data-config] wewnątrz widgetu krokowego (.lc-stepper)
 // albo wewnątrz .p5-host (jeden obraz z suwakiem, bez kroków).
 // config.kind:
 //   "smoke"   Ryc. 3.1 (dawny 5A) czujka dymu: próg wymienia fałszywe alarmy na przeoczone pożary
-//   "jelly"   5D żelki i trądzik: jedna chmura wyników cięta na 20 podgrup kolorów (kadry)
+//   "jelly"   Ryc. 9.1 (dawny 5D) żelki i trądzik: jedna chmura wyników cięta na 20 podgrup kolorów (kadry)
 //   "tickets" Ryc. 7.1 (dawny 5E) mandaty: kontrole bez podziału → pytanie → świat bez związku → archiwum → różnice (kadry)
 // Sterowanie: [data-sc-act] go | m10 | m100 | m1000, [data-sc-opt] "nazwa:wartość",
 // input[data-p5-range] "nazwa" (suwak, wartość liczbowa). Rysuje SVG bez serwera R.
