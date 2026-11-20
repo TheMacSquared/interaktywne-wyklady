@@ -7,6 +7,7 @@ const { environment, Element, root } = require("./harness");
 function load() {
   const env = environment();
   env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
+  env.load("04-przedzialy-ufnosci/modules/ci_look.js");
   env.load("04-przedzialy-ufnosci/modules/sf_steps.js");
   const F = env.window.lcSF.figures, P = env.window.lcCharts.palette();
   const run = (name, config) => {
@@ -42,16 +43,18 @@ test("Przykłady A–C: CI grup z pasem nakładania i CI różnicy z zerem", () 
   let r = run("s04-comp", A), top = r.spec(0), bot = r.spec(1);
   assert.ok(!types(top).includes("band"), "rozłączne CI: bez pasa nakładania");
   assert.deepEqual(plain(top.yLabels), { 1: "Dostawca B", 2: "Dostawca A" });
-  assert.deepEqual(texts(top), ["11.96", "10.97"]);
-  near(top.x[0], 10.80 - 0.05 * 1.36); near(top.x[1], 12.16 + 0.05 * 1.36);
+  // Średnie nad kreskami, granice przedziałów po bokach klamer (wygląd Ryc. 3.2).
+  assert.deepEqual(texts(top), ["11.96", "11.76", "12.16", "10.97", "10.80", "11.15"]);
+  near(top.x[0], 10.80 - 0.2 * 1.36); near(top.x[1], 12.16 + 0.2 * 1.36);
   assert.equal(top.xName, "zawartość białka (%)");
+  assert.equal(types(top).filter(t => t === "bracket").length, 2);
   // Dolny: oś obejmuje zero (linia odniesienia), CI różnicy w wierszu 1.
-  near(bot.x[0], -0.05 * 1.25); near(bot.x[1], 1.25 * 1.05);
+  near(bot.x[0], -0.2 * 1.25); near(bot.x[1], 1.25 * 1.2);
   assert.equal(bot.yLabels[1], "Dostawca A − Dostawca B");
   assert.equal(bot.xName, "różnica — zawartość białka (%)");
-  assert.deepEqual(texts(bot), ["0", "0.99"]);
-  const bar = bot.layers.find(l => l.type === "segs");
-  assert.deepEqual(Array.from(bar.items[0].from), [0.72, 1]); assert.deepEqual(Array.from(bar.items[0].to), [1.25, 1]);
+  assert.deepEqual(texts(bot), ["brak różnicy", "0.99", "0.72", "1.25"]);
+  const br = bot.layers.find(l => l.type === "bracket");
+  assert.deepEqual([br.lo, br.hi, br.y], [0.72, 1.25, 1]);
   // B: CI grup się nakrywają — żółty pas na odcinku wspólnym.
   r = run("s04-comp", { ...A, ci1: [3.03, 3.17], ci2: [3.11, 3.28], m1: 3.10, m2: 3.20, md: -0.10, ci_d: [-0.21, 0.01] });
   const band = r.spec(0).layers.find(l => l.type === "band");

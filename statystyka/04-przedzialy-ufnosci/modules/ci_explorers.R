@@ -22,6 +22,12 @@ ex_slider <- function(id, key, label, min, max, value, step = 1) {
 ex_action <- function(key, label) tags$button(type = "button", class = "lc-action is-outline",
                                               `data-ex-action` = key, label)
 ex_actions <- function(...) tags$div(class = "lc-action-group", ...)
+# Oko: pokazuje i chowa objaśnienia na wykresie (podpisy stref, werdykt w odczycie).
+ex_explain_toggle <- function() {
+  tags$button(type = "button", class = "lc-action is-outline is-icon", `data-ex-action` = "explain",
+              `aria-pressed` = "false", `aria-label` = "Pokaż objaśnienia", title = "Pokaż objaśnienia",
+              lc_icon("eye"))
+}
 
 ex_panel <- function(id, label, title, controls, config, caption, ..., ratio = "2 / 1") {
   tags$div(class = "ci-explorer", id = paste0("ex_", id), `data-kind` = id,
@@ -70,9 +76,11 @@ ex_ui <- list(
   useful = ex_panel("useful", "Ryc. 3.5", "Czy oszczędność czasu jest użyteczna?",
     tagList(ex_slider("useful", "effect", "Oszczędność (min)", -4, 8, .4, .1),
             ex_slider("useful", "n", "Pomiarów w każdej grupie", 20, 2000, 1000),
-            ex_actions(ex_action("tiny", "Mała, precyzyjna"), ex_action("uncertain", "Duża, niepewna"),
-                       ex_action("useful", "Wyraźnie użyteczna"))), ex_configs$useful,
-    "Założony przed badaniem próg użytecznej zmiany: 2 min; s = 10 min w obu niezależnych grupach, 95% CI różnicy.",
+            ex_actions(ex_action("tiny", "Niejasny kierunek"), ex_action("small", "Poprawia, ale pomijalnie"),
+                       ex_action("uncertain", "Duża, niepewna"), ex_action("useful", "Wyraźnie użyteczna")),
+            ex_explain_toggle()),
+    ex_configs$useful,
+    "Założony przed badaniem próg: zmiana o mniej niż 2 min w którąkolwiek stronę jest pomijalna (zielony pas); s = 10 min w obu niezależnych grupach, 95% CI różnicy.",
     ratio = "2.5 / 1")
 )
 

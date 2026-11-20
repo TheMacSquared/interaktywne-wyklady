@@ -21,7 +21,13 @@
 //   vline {x, color, width, dash, from, to}  — pionowa linia
 //   line {data:[[x,y]], color, width, dash, fill, fillAlpha}  — krzywa (z polem)
 //   segment, arrow(s), point(s), rect(s), segs, polygon, box, rug, cells
-//   text {x, y, text, color, align, valign, bold, mono, size, halo}  (y = "top": przy górnej krawędzi)
+//   bracket {lo, hi, y, color, width, leg, sym}  — klamra przedziału: belka na y, nóżki
+//            długości leg px w dół (sym: w obie strony, jak klamra ± SE); wygląd Ryc. 3.2 stat. 04
+//   tick {x, y, up, down, color, width}      — pionowa kreska estymaty, up/down w px od y
+//   dotstack {data:[x], y, r, color, colors, alpha}  — kropki o promieniu r px w stosie nad y
+//   text {x, y, text, color, align, valign, bold, mono, size, halo, minW, fit}  (y = "top" / "bottom": przy górnej / dolnej krawędzi;
+//        minW: napis znika na wykresie węższym niż minW px, np. granice przedziału na telefonie;
+//        fit: napis wychodzący poza wykres przesuwa się do środka i linię wyżej)
 // Inne klucze opisu: xBig, xTicks, xLabels, yLabels, xLabelEvery, xInt, noXGrid, noYGrid, hideY, alignLeft,
 // yNegative (podpisy ujemnych wartości osi Y), xRotate, xInterval / yInterval (stały odstęp siatki),
 // yBig (podpisy osi Y z odstępem tysięcy).
@@ -240,6 +246,40 @@
               line(pt(b.q3, 0), pt(b.hi, 0))
             ] };
           } });
+      } else if (L.type === "bracket") {
+        // Klamra przedziału w pikselach: grubość i nóżki nie zależą od skali osi.
+        series.push({ type: "custom", silent: true, z: L.z || 5, data: [[0]], clip: false,
+          renderItem: function (params, api) {
+            var a = api.coord([L.lo, L.y]), b = api.coord([L.hi, L.y]), leg = L.leg == null ? Math.round(fs * 0.9) : L.leg;
+            var up = L.sym ? leg / 2 : 0, down = L.sym ? leg / 2 : leg;
+            var d = "M" + a[0] + " " + (a[1] + down) + " V" + (a[1] - up) + " M" + a[0] + " " + a[1] + " H" + b[0] +
+                    " M" + b[0] + " " + (b[1] + down) + " V" + (b[1] - up);
+            return { type: "path", x: 0, y: 0, shape: { pathData: d },
+                     style: { fill: null, stroke: L.color, lineWidth: L.width || 4, lineCap: "round", lineJoin: "round",
+                              opacity: L.alpha == null ? 1 : L.alpha } };
+          } });
+      } else if (L.type === "tick") {
+        series.push({ type: "custom", silent: true, z: L.z || 6, data: [[0]], clip: false,
+          renderItem: function (params, api) {
+            var p = api.coord([L.x, L.y]), up = L.up == null ? fs : L.up, down = L.down == null ? fs : L.down;
+            return { type: "line", x: 0, y: 0, shape: { x1: p[0], y1: p[1] - up, x2: p[0], y2: p[1] + down },
+                     style: { stroke: L.color, lineWidth: L.width || 3.5, lineCap: "round" } };
+          } });
+      } else if (L.type === "dotstack") {
+        // Stos kropek: każda w najniższym wolnym rzędzie nad y (jak Ryc. 3.2 stat. 04).
+        series.push({ type: "custom", silent: true, z: L.z || 4, data: [[0]], clip: true,
+          renderItem: function (params, api) {
+            var r = L.r || 6, rows = [], kids = [];
+            L.data.map(function (v, i) { return { v: v, i: i }; }).sort(function (a, b) { return a.v - b.v; })
+              .forEach(function (d) {
+                var p = api.coord([d.v, L.y]), k = 0;
+                while (rows[k] !== undefined && p[0] - rows[k] < 2 * r + 1) k++;
+                rows[k] = p[0];
+                kids.push({ type: "circle", shape: { cx: p[0], cy: p[1] - r - 1 - k * (2 * r + 1), r: r },
+                            style: { fill: L.colors ? L.colors[d.i] : L.color, opacity: L.alpha == null ? 1 : L.alpha } });
+              });
+            return { type: "group", children: kids };
+          } });
       } else if (L.type === "rug") {
         // Kreski obserwacji pod osią: jedna seria custom zamiast serii na każdą wartość.
         series.push({ type: "custom", silent: true, z: 3, data: L.values.map(function (t) { return [t]; }),
@@ -253,17 +293,25 @@
     });
     spec.layers.forEach(function (T) {
       if (T.type !== "text") return;
-      var top = T.y === "top", size = Math.round(fs * (T.size || 1));
+      if (T.minW && W && W < T.minW) return;  // napis tylko na wykresie szerszym niż minW px
+      // y = "top" / "bottom": napis przy górnej / dolnej krawędzi wykresu, do środka od x.
+      var bottom = T.y === "bottom", top = T.y === "top" || bottom, size = Math.round(fs * (T.size || 1));
       series.push({ type: "scatter", silent: true, z: 6, symbolSize: 0,
-        data: [[T.x, top ? ymax : T.y]],
+        data: [[T.x, bottom ? ymin : top ? ymax : T.y]],
+        // fit: napis wychodzący poza wykres wraca do środka i idzie linię wyżej (np. granica
+        // przedziału przy krawędzi: stoi wtedy nad końcem klamry, a nie obok niej).
+        labelLayout: T.fit ? function (p) {
+          var r = p.labelRect, dx = r.x < 2 ? 2 - r.x : r.x + r.width > W - 2 ? W - 2 - r.x - r.width : 0;
+          return dx ? { dx: dx, dy: -(r.height + 4) } : {};
+        } : undefined,
         label: { show: true, formatter: T.text, color: T.color,
-          position: top ? (T.align === "left" ? "insideTopLeft" : T.align === "right" ? "insideTopRight" : "insideTop") :
+          position: top ? (bottom ? "insideBottom" : "insideTop") + (T.align === "left" ? "Left" : T.align === "right" ? "Right" : "") :
                     T.valign === "middle" ? (T.align === "left" ? "right" : T.align === "right" ? "left" : "inside") :
                     (T.align === "left" ? "insideBottomLeft" : T.align === "right" ? "insideBottomRight" : "top"),
           // Napis obok punktu (middle + left/right) odsuwamy przez distance, nie offset:
           // offset przesuwa sam tekst, a tło halo zostawało w miejscu.
           distance: top ? 0 : (T.valign === "middle" && (T.align === "left" || T.align === "right")) ? 8 : 4,
-          offset: top ? [T.align === "left" ? 6 : T.align === "right" ? -6 : 0, 6] :
+          offset: top ? [T.align === "left" ? 6 : T.align === "right" ? -6 : 0, bottom ? -6 : 6] :
                   T.valign === "middle" ? [0, 0] :
                   (T.align === "left" ? [4, 0] : T.align === "right" ? [-4, 0] : [0, 0]),
           fontSize: size, fontWeight: T.bold ? 600 : 400, fontStyle: T.italic ? "italic" : "normal",

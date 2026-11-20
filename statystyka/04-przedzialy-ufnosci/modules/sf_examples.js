@@ -1,6 +1,6 @@
 // Ryciny wykładu 04 liczone w przeglądarce (silnik lcSF): sf_examples
 //
-//   s4-case — przykłady z hipotezą (rozdz. 3: A1–C2, rozdz. 4: A1–C1). Rycina krokowa
+//   s4-case — przykłady z hipotezą (rozdz. 3: A1, B1–C2, rozdz. 4: A1, B1–C1). Rycina krokowa
 //             (lc_step_widget): kolejne kroki budują przedział, na ostatnim kroku
 //             przełącznik „Hipoteza 1/2” zacienia obszar hipotezy, a „Pokaż werdykt”
 //             odsłania opis policzony w R (notes, data-when = "h<i>" / "h<i>r").
@@ -8,8 +8,8 @@
 // Dane przykładów są stałe, więc R liczy wszystko z góry (ch3_case_config(),
 // ch4_case_config()): punkty prób, przedziały, zakresy osi dla każdej hipotezy
 // i napisy. Tu tylko składamy warstwy według kroku i wybranej hipotezy.
-// Typy: single_mean, compare_n, diff_means, forest (średnie) oraz single_prop,
-// compare_n_prop, diff_props, forest_prop (proporcje).
+// Typy: single_mean, diff_means, forest (średnie) oraz single_prop,
+// diff_props, forest_prop (proporcje).
 (function () {
   "use strict";
   var C = window.lcCharts, S = window.lcSF;
@@ -19,7 +19,11 @@
   // hipotezy (#8e44ad w R, w motywie indygo — tak mapował go most ggplot→ECharts).
   function roles(P) {
     return { ci: P.niebo, miss: P.terakota, hit: P.szalwia, est: P.bursztyn, sec: P.secondary,
-             hyp: C.token("--upwr-cat-indygo", "#3a5a8a"), zero: "#9b59b6" };
+             hyp: C.token("--upwr-cat-indygo", "#3a5a8a"),
+             // Napisy grup jak Ryc. 3.3: ciemniejsze odcienie kolorów kropek.
+             grp1: C.token("--upwr-cat-indygo", "#3a5a8a"), grp2: C.token("--upwr-cat-terakota", "#b25838"),
+             // Zero na osi różnicy: przerywana szara linia jak „brak różnicy” na Ryc. 3.3.
+             zeroLine: function (y) { return { type: "vline", x: 0, from: y[0], to: y[1], color: P.ref, width: 1.3, dash: [4, 4] }; } };
   }
   // Rozmiary jak w moście ggplot→ECharts: punkt o średnicy 2.1 · size,
   // napis fs · size / 4.5 (nie mniejszy niż fs), linia 2 · linewidth. Napisy zwykłą
@@ -29,32 +33,26 @@
     return { type: "text", x: x, y: y, text: text, color: color, size: Math.max(1, (size || 3.9) / 4.5),
              align: o.align, valign: o.valign || "middle" };
   }
-  function dot(x, y, color, size, diamond) {
-    return { type: "point", x: x, y: y, color: color, size: 2.1 * size, symbol: diamond ? "diamond" : "circle" };
-  }
-  function dots(data, color, size, alpha) {
-    return { type: "points", data: data, color: color, size: 2.1 * size, alpha: alpha };
-  }
-  // geom_errorbar(orientation = "y"): odcinek i dwa wąsy o łącznej wysokości w.
-  function errbar(rows, w, color, lw, alpha) {
-    var items = [];
-    rows.forEach(function (r) {
-      var lo = r[0], hi = r[1], y = r[2];
-      items.push({ from: [lo, y], to: [hi, y] },
-                 { from: [lo, y - w / 2], to: [lo, y + w / 2] }, { from: [hi, y - w / 2], to: [hi, y + w / 2] });
-    });
-    return { type: "segs", items: items, color: color, width: 2 * lw, alpha: alpha, z: 4 };
-  }
-  // Obszar hipotezy: pas od granicy w stronę hipotezy, linia i napis „≥ 168”.
-  function hypLayers(h, x, yLabel, R, size) {
+  // Obszar hipotezy: pas od granicy w stronę hipotezy, linia i napis „≥ 168” przy krawędzi
+  // wykresu, po stronie obszaru: domyślnie tuż nad osią (u góry wchodził na napis estymaty),
+  // edge = "top" tam, gdzie przy osi stoją kropki próby.
+  function hypLayers(h, x, edge, R, size) {
     if (!h) return [];
+    var lab = txt(h.bound, edge === "top" ? "top" : "bottom", h.label, R.hyp, size || 4.5, { align: h.dir === "gt" ? "left" : "right" });
+    lab.bold = true; lab.halo = true;
     return [{ type: "band", lo: h.dir === "gt" ? h.bound : x[0], hi: h.dir === "gt" ? x[1] : h.bound,
               color: R.hyp, alpha: 0.15 },
             { type: "vline", x: h.bound, color: R.hyp, width: 2 },
-            txt(h.bound, yLabel, h.label, R.hyp, size || 4.5, { align: "left" })];
+            lab];
   }
   function axis(x, y, xName, layers, aria) {
     return { x: x, y: y, xName: xName, hideY: true, noYGrid: true, layers: layers, aria: aria };
+  }
+  // Oś z nazwami wierszy po lewej (grupy, liczebności): napisy nie wchodzą na przedziały.
+  function rowAxis(x, y, xName, names, layers, aria) {
+    var yl = {};
+    names.forEach(function (t, i) { yl[i + 1] = t; });
+    return { x: x, y: y, xName: xName, noYGrid: true, yLabels: yl, layers: layers, aria: aria };
   }
   // Słupki kategorii: centra cx, szerokość w, wysokości ys; liczby nad słupkami.
   function bars(cx, w, ys, colors, R) {
@@ -69,123 +67,89 @@
   }
   function range(n) { var out = []; for (var i = 1; i <= n; i++) out.push(i); return out; }
 
+  // ---- Wygląd przedziałów (ci_look.js, jak Ryc. 3.2–4.3) ---------------------------
+  // Pomiary jako stos kropek na osi, estymata jako gruba czarna kreska, ± SE jako
+  // czarna klamra (tylko w swoim kroku), przedział jako burgundowa klamra z granicami.
+  var K = window.lc04Look;
+  function xs(pts) { return pts.map(function (p) { return p[0]; }); }
+  // Oś jednej estymaty (średnia, proporcja, różnica): kreska od dołu osi do belki, napis
+  // estymaty w kroku est, ± SE w kroku se, przedział od kroku ci. y0 — dół osi, yb — belka.
+  function oneAxis(layers, c, P, o) {
+    var step = o.step, x = o.x, yb = o.yb, d = o.d;
+    if (step < o.estStep) return layers;
+    layers.push(K.est(x, o.y0, yb, P));
+    if (step >= o.ciStep) layers = layers.concat(K.ci(c.lo, c.hi, yb, P, { d: d }));
+    else if (step === o.seStep) layers = layers.concat(K.se(x - c.se, x + c.se, yb, P, "± SE = " + K.num(c.se, d), { lift: o.lift }));
+    if (step < o.seStep || step >= o.ciStep) layers.push(K.label(x, step >= o.ciStep ? yb + o.lift : yb, o.lab, P));
+    return layers;
+  }
+
   // ---- Rozdział 3: średnie ----------------------------------------------------
   var TYPES = {
     // Krok 1 punkty, 2 średnia, 3 ± SE, 4 przedział.
-    single_mean: function (c, k, step, h, L, R) {
-      var x = L.x, layers = hypLayers(h, x, 0.68, R), aria = "Wzrost " + c.pts.length + " osób na osi";
-      layers.push(dots(c.pts, R.ci, 3, 0.7));
-      if (step >= 2) {
-        layers.push({ type: "vline", x: c.xbar, color: R.est, width: 2, dash: "dotted" }, dot(c.xbar, 0, R.est, 7, true));
-        if (step === 2) layers.push(txt(c.xbar, -0.18, c.lab_mean, R.est, 5));
-        aria += "; " + c.lab_mean;
-      }
-      if (step >= 3) {
-        layers.push(errbar([[c.xbar - c.se, c.xbar + c.se, 0]], 0.06, R.hit, 1.8));
-        if (step === 3) layers.push(txt(c.xbar, 0.14, c.lab_se, R.hit, 4));
-      }
-      if (step >= 4) {
-        layers.push(errbar([[c.lo, c.hi, 0]], 0.12, R.ci, 2.2, 0.6), txt(c.xbar, -0.22, c.lab_ci, R.ci, 4.8));
-        aria += "; " + c.lab_ci;
-      }
-      return axis(x, c.y, c.xlab, layers, aria);
-    },
-    // Krok i: przedziały dla pierwszych i liczebności.
-    compare_n: function (c, k, step, h, L, R) {
-      var n = Math.min(step, c.lo.length), ys = range(n);
-      var layers = hypLayers(h, L.x, c.lo.length + 0.5, R);
-      layers.push(errbar(ys.map(function (y) { return [c.lo[y - 1], c.hi[y - 1], y]; }), 0.12, R.ci, 1.8),
-                  dots(ys.map(function (y) { return [c.xbar, y]; }), R.est, 5));
-      layers[layers.length - 1].symbol = "diamond";
-      ys.forEach(function (y) {
-        layers.push(txt(L.raw[0], y, c.lab_n[y - 1], R.sec, 4.5, { align: "left" }),
-                    txt(c.hi[y - 1], y + 0.22, c.lab_ci[y - 1], R.ci, 3.8, { align: "right" }));
-      });
-      return axis(L.x, c.y, c.xlab, layers, "Przedziały 95% dla " +
-        ys.map(function (y) { return c.lab_n[y - 1] + ": " + c.lab_ci[y - 1]; }).join("; "));
+    single_mean: function (c, k, step, h, L, R, P) {
+      var y0 = c.y[0], yb = 0.42, layers = hypLayers(h, L.x, "top", R), aria = "Wzrost " + c.pts.length + " osób na osi";
+      layers.push(K.dots(xs(c.pts), y0, R.ci));
+      layers = oneAxis(layers, c, P, { step: step, x: c.xbar, y0: y0, yb: yb, d: 2, lift: 0.08,
+        estStep: 2, seStep: 3, ciStep: 4, lab: c.lab_mean });
+      if (step >= 2) aria += "; " + c.lab_mean;
+      if (step >= 4) aria += "; " + c.lab_ci;
+      // Wolny pas nad napisem x̄ na napis hipotezy (przy osi stoją kropki).
+      return axis(L.x, [c.y[0], c.y[1] + 0.25], c.xlab, layers, aria);
     },
     // Wykres 0: obie próby (krok 1) i średnie (krok 2+); wykres 1 od kroku 3: różnica,
     // ± SE (4) i przedział (5).
-    diff_means: function (c, k, step, h, L, R) {
+    diff_means: function (c, k, step, h, L, R, P) {
       if (k === 0) {
-        var x0 = c.top.raw[0], layers = [
-          txt(x0, 1.8, c.label1, R.ci, 4.5, { align: "left" }), txt(x0, 1.0, c.label2, R.miss, 4.5, { align: "left" }),
-          dots(c.pts1, R.ci, 3, 0.7), dots(c.pts2, R.miss, 3, 0.7)];
+        var x0 = c.top.raw[0], b1 = 1.32, b2 = c.y[0], layers = [
+          K.value(x0, 2.12, c.label1, R.grp1, { align: "left", size: 1.05 }),
+          K.value(x0, 1.08, c.label2, R.grp2, { align: "left", size: 1.05 }),
+          K.dots(xs(c.pts1), b1, R.ci, { r: 4 }), K.dots(xs(c.pts2), b2, R.est, { r: 4 })];
         if (step >= 2) {
-          layers.push({ type: "vline", x: c.x1, from: 0.6, to: 2.1, color: R.ci, width: 1.6, dash: "dotted" },
-                      { type: "vline", x: c.x2, from: 0.6, to: 2.1, color: R.miss, width: 1.6, dash: "dotted" },
-                      dot(c.x1, 1.8, R.ci, 7, true), dot(c.x2, 1.0, R.miss, 7, true),
-                      txt(c.x1, 2.15, c.lab_x1, R.ci, 4.5),
-                      // x̄₂ pod grupą B: przy bliskich średnich etykiety nie nachodzą na siebie.
-                      txt(c.x2, 0.47, c.lab_x2, R.miss, 4.5));
+          layers.push(K.est(c.x1, b1, b1 + 0.62, P), K.est(c.x2, b2, b2 + 0.62, P),
+                      K.label(c.x1, b1 + 0.62, c.lab_x1, P, { size: 1.1 }), K.label(c.x2, b2 + 0.62, c.lab_x2, P, { size: 1.1 }));
         }
         return axis(c.top.x, c.y, c.xlab, layers, "Dwie próby: " + c.label1 + " i " + c.label2 +
           (step >= 2 ? "; " + c.lab_x1 + ", " + c.lab_x2 : ""));
       }
       if (step < 3) return null;
-      var lb = hypLayers(h, L.x, 0.55, R);
-      if (!h) lb.push({ type: "vline", x: 0, color: C.token("--upwr-cat-wrzos", "#a07894"), width: 2, dash: "dashed" });
-      lb.push(dot(c.diff, 0, R.est, 7, true));
-      if (step === 3) lb.push(txt(c.diff, -0.22, c.lab_diff, R.est, 4.5));
-      if (step >= 4) {
-        lb.push(errbar([[c.diff - c.se, c.diff + c.se, 0]], 0.08, R.hit, 1.8));
-        if (step === 4) lb.push(txt(c.diff, 0.17, c.lab_se, R.hit, 4));
-      }
-      if (step >= 5) lb.push(errbar([[c.lo, c.hi, 0]], 0.14, R.ci, 2.2, 0.6), txt(c.diff, 0.2, c.lab_ci, R.ci, 4.8));
+      var lb = hypLayers(h, L.x, 0.5, R);
+      if (!h) lb.push(R.zeroLine(c.y_bot));
+      lb = oneAxis(lb, { lo: c.lo, hi: c.hi, se: c.se }, P, { step: step, x: c.diff, y0: c.y_bot[0], yb: 0.12, d: 2,
+        lift: 0.1, estStep: 3, seStep: 4, ciStep: 5, lab: c.lab_diff });
       return axis(L.x, c.y_bot, c.xlab_bot, lb, c.lab_diff + (step >= 5 ? "; " + c.lab_ci : ""));
     },
     // Krok 1 punkty grup, 2 średnie, 3 przedziały.
-    forest: function (c, k, step, h, L, R) {
+    forest: function (c, k, step, h, L, R, P) {
       var g = c.groups.length, ys = range(g);
-      var layers = ys.map(function (y) { return txt(L.raw[0], y - 0.38, c.groups[y - 1], R.sec, 4.5, { align: "left" }); });
-      layers = layers.concat(hypLayers(h, L.x, g + 0.45, R));
-      layers.push(dots(c.pts, R.ci, 2.3, 0.55));
-      if (step >= 2) {
-        var m = dots(ys.map(function (y) { return [c.means[y - 1], y]; }), R.est, 6);
-        m.symbol = "diamond"; m.z = 6;
-        layers.push(m);
-      }
-      if (step >= 3) layers.push(errbar(ys.map(function (y) { return [c.lo[y - 1], c.hi[y - 1], y]; }), 0.18, R.ci, 1.8));
-      return axis(L.x, c.y, c.xlab, layers, "Grupy: " + c.groups.join(", ") +
+      var layers = hypLayers(h, L.x, g + 0.45, R);
+      // Wiersz grupy: kropki na dole wiersza, średnia jako kreska do belki przedziału.
+      ys.forEach(function (y) {
+        layers.push(K.dots(c.pts.filter(function (p) { return Math.round(p[1]) === y; }).map(function (p) { return p[0]; }),
+                           y - 0.4, R.ci, { r: 3.5, alpha: step >= 3 ? 0.55 : 0.85 }));
+        if (step >= 2) layers.push(K.est(c.means[y - 1], y - 0.4, y + 0.14, P));
+        if (step >= 3) layers = layers.concat(K.ci(c.lo[y - 1], c.hi[y - 1], y + 0.14, P, { size: 1.05, leg: 10 }));
+      });
+      return rowAxis(L.x, c.y, c.xlab, c.groups, layers, "Grupy: " + c.groups.join(", ") +
         (step >= 3 ? "; przedziały 95% dla średnich" : step >= 2 ? "; średnie grup" : "; punkty pomiarów"));
     },
 
     // ---- Rozdział 4: proporcje ------------------------------------------------
     // Wykres 0: słupki TAK/NIE; wykres 1: p̂ (krok 2+), ± SE (3), przedział (4).
-    single_prop: function (c, k, step, h, L, R) {
+    single_prop: function (c, k, step, h, L, R, P) {
       if (k === 0) {
         return barAxis(bars([1, 2], 0.6, c.counts, [R.miss, R.ci], R), c.counts, ["NIE", "TAK"],
           "Liczba odpowiedzi NIE: " + c.counts[0] + ", TAK: " + c.counts[1]);
       }
       var layers = hypLayers(h, L.x, 0.5, R), aria = "Oś proporcji";
-      if (step >= 2) {
-        layers.push(dot(c.phat, 0, R.est, 7, true));
-        if (step === 2) layers.push(txt(c.phat, -0.22, c.lab_phat, R.est, 4.8));
-        aria += "; " + c.lab_phat;
-      }
-      // Krok 3: SE; pełny przedział zastępuje ten pasek w kroku 4.
-      if (step === 3) layers.push(errbar([[c.phat - c.se, c.phat + c.se, 0]], 0.08, R.hit, 1.8), txt(c.phat, 0.2, c.lab_se, R.hit, 4));
-      if (step >= 4) {
-        layers.push(errbar([[c.lo, c.hi, 0]], 0.14, R.ci, 2.2, 0.6), txt(c.phat, 0.2, c.lab_ci, R.ci, 4.8));
-        aria += "; " + c.lab_ci;
-      }
+      layers = oneAxis(layers, c, P, { step: step, x: c.phat, y0: c.y[0], yb: 0.05, d: 3, lift: 0.12,
+        estStep: 2, seStep: 3, ciStep: 4, lab: c.lab_phat });
+      if (step >= 2) aria += "; " + c.lab_phat;
+      if (step >= 4) aria += "; " + c.lab_ci;
       return axis(L.x, c.y, c.xlab, layers, aria);
     },
-    compare_n_prop: function (c, k, step, h, L, R) {
-      var g = c.lo.length, n = Math.min(step, g), ys = range(n);
-      var layers = range(g).map(function (y) { return txt(L.raw[0], y, c.lab_n[y - 1], R.sec, 4.5, { align: "left" }); });
-      layers = layers.concat(hypLayers(h, L.x, g + 0.45, R));
-      var m = dots(ys.map(function (y) { return [c.phat[y - 1], y]; }), R.est, 5);
-      m.symbol = "diamond";
-      layers.push(m, errbar(ys.map(function (y) { return [c.lo[y - 1], c.hi[y - 1], y]; }), 0.18, R.ci, 1.8, 0.7));
-      ys.forEach(function (y) {
-        layers.push(txt((c.lo[y - 1] + c.hi[y - 1]) / 2, y - 0.22, c.lab_ci[y - 1], R.ci, 3.8));
-      });
-      return axis(L.x, c.y, c.xlab, layers, "Przedziały 95% dla " +
-        ys.map(function (y) { return c.lab_n[y - 1] + ": " + c.lab_ci[y - 1]; }).join("; "));
-    },
     // Wykres 0: słupki dwóch grup; 1: dwie p̂ (krok 2+); 2: różnica (3), ± SE (4), przedział (5).
-    diff_props: function (c, k, step, h, L, R) {
+    diff_props: function (c, k, step, h, L, R, P) {
       if (k === 0) {
         var d = 0.1875;
         return barAxis(bars([1 - d, 1 + d, 2 - d, 2 + d], 0.325, c.counts, [R.miss, R.ci, R.miss, R.ci], R),
@@ -195,40 +159,28 @@
       if (k === 1) {
         var top = [];
         if (step >= 2) {
-          top.push(dot(c.p1, 1, R.est, 7, true), txt(c.p1, 1.45, c.lab_p1, R.est, 4.2),
-                   dot(c.p2, 2, R.est, 7, true), txt(c.p2, 2.45, c.lab_p2, R.est, 4.2));
+          top.push(K.mark(c.p1, 1, P, 14, 14), K.value(c.p1, 1.42, c.lab_p1, P.ink, { size: 1.05 }),
+                   K.mark(c.p2, 2, P, 14, 14), K.value(c.p2, 2.42, c.lab_p2, P.ink, { size: 1.05 }));
         }
         return { x: [-0.05, 1.05], y: c.y_top, xName: c.xlab, noYGrid: true,
                  yLabels: { 1: c.label1, 2: c.label2 }, layers: top,
                  aria: step >= 2 ? c.lab_p1 + ", " + c.lab_p2 : "Oś proporcji dla dwóch grup" };
       }
-      var lb = [{ type: "vline", x: 0, color: R.zero, width: 2, dash: "dashed" }].concat(hypLayers(h, L.x, 0.45, R, 4));
-      if (step >= 3) {
-        lb.push(dot(c.diff, 0, R.est, 7, true));
-        if (step === 3) lb.push(txt(c.diff, -0.22, c.lab_diff, R.est, 4.5));
-      }
-      if (step >= 4) {
-        lb.push(errbar([[c.diff - c.se, c.diff + c.se, 0]], 0.08, R.hit, 1.8));
-        if (step === 4) lb.push(txt(c.diff, 0.17, c.lab_se, R.hit, 4));
-      }
-      if (step >= 5) lb.push(errbar([[c.lo, c.hi, 0]], 0.14, R.ci, 2.2, 0.6), txt(c.diff, 0.2, c.lab_ci, R.ci, 4.8));
+      var lb = [R.zeroLine(c.y_bot)].concat(hypLayers(h, L.x, 0.42, R, 4));
+      lb = oneAxis(lb, { lo: c.lo, hi: c.hi, se: c.se }, P, { step: step, x: c.diff, y0: c.y_bot[0], yb: -0.02, d: 3,
+        lift: 0.26, estStep: 3, seStep: 4, ciStep: 5, lab: c.lab_diff });
       return axis(L.x, c.y_bot, c.xlab_bot, lb,
         step >= 5 ? c.lab_ci : step >= 3 ? c.lab_diff : "Oś różnicy proporcji z linią zera");
     },
     // Krok 1 nazwy i liczby, 2 proporcje, 3 przedziały.
-    forest_prop: function (c, k, step, h, L, R) {
+    forest_prop: function (c, k, step, h, L, R, P) {
       var g = c.lo.length, ys = range(g);
-      var layers = ys.map(function (y) {
-        return txt(L.raw[1], y, c.lab_groups[y - 1], R.sec, 4, { align: "right" });
+      var layers = hypLayers(h, L.x, g + 0.45, R);
+      ys.forEach(function (y) {
+        if (step >= 2) layers.push(K.mark(c.phat[y - 1], y, P));
+        if (step >= 3) layers = layers.concat(K.ci(c.lo[y - 1], c.hi[y - 1], y, P, { d: 3, size: 1, leg: 12 }));
       });
-      layers = layers.concat(hypLayers(h, L.x, g + 0.45, R));
-      if (step >= 2) {
-        var m = dots(ys.map(function (y) { return [c.phat[y - 1], y]; }), R.est, 6);
-        m.symbol = "diamond"; m.z = 6;
-        layers.push(m);
-      }
-      if (step >= 3) layers.push(errbar(ys.map(function (y) { return [c.lo[y - 1], c.hi[y - 1], y]; }), 0.18, R.ci, 1.8));
-      return axis(L.x, c.y, c.xlab, layers, c.lab_groups.join("; ") +
+      return rowAxis(L.x, c.y, c.xlab, c.lab_groups, layers, c.lab_groups.join("; ") +
         (step >= 3 ? "; przedziały 95% dla proporcji" : ""));
     }
   };
@@ -255,7 +207,7 @@
       state.step = step;
       // Hipoteza „które grupy się różnią” (pairwise) nie ma obszaru na wykresie.
       if (h && h.pairwise) h = null;
-      return TYPES[c.type](c, k, step, h, c.lims[key || "0"], roles(P));
+      return TYPES[c.type](c, k, step, h, c.lims[key || "0"], roles(P), P);
     },
     text: function (state, v, vals, step) {
       return step === state.config.n ? S.esc(state.config.text) : "";

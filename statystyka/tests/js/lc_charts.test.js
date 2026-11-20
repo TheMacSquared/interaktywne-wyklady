@@ -593,13 +593,22 @@ test("eksploratory CI (Ryc. 2.2, 3.4, 3.5): ECharts, klawiatura, presety i sprz�
   assert.match(diff.read.textContent, /^Różnica 0.44/);
   diff.el.emit("click", { target: diff.btns[0] });
   assert.equal(String(diff.fields[0].value), "0.3", "preset „Pułapka”");
-  // Ryc. 3.5: preset ustawia efekt i n, odczyt mówi o kierunku i użyteczności.
+  // Ryc. 3.5: preset ustawia efekt i n, odczyt daje jeden werdykt z położenia CI względem 0 i ±2 min.
   const tq = Array.from({ length: 1981 }, () => 1.96);
-  const useful = explorer("useful", { tq }, { effect: 0.4, n: 1000 }, ["useful"]);
+  const useful = explorer("useful", { tq }, { effect: 0.4, n: 1000 }, ["useful", "small", "tiny", "explain"]);
   env.mount(useful.el);
   useful.el.emit("click", { target: useful.btns[0] });
   assert.deepEqual(useful.fields.map(f => String(f.value)), ["4", "400"]);
-  assert.match(useful.read.textContent, /kierunek dodatni · oszczędność przekracza 2 min/);
+  // Domyślnie sam przedział; oko dokłada werdykt (i podpisy stref na wykresie).
+  assert.equal(useful.read.textContent, "95% CI [2.61, 5.39] min");
+  useful.el.emit("click", { target: useful.btns[3] });
+  assert.equal(useful.btns[3].getAttribute("aria-pressed"), "true");
+  assert.match(useful.read.textContent, /wyraźnie użyteczna: cały CI powyżej progu 2 min/);
+  useful.el.emit("click", { target: useful.btns[1] });
+  assert.deepEqual(useful.fields.map(f => String(f.value)), ["1", "1000"]);
+  assert.match(useful.read.textContent, /poprawia, ale pomijalnie/);
+  useful.el.emit("click", { target: useful.btns[2] });
+  assert.match(useful.read.textContent, /niejasny kierunek/);
   // Ryc. 2.2 bez mapy: wykres i odczyt działają, nowa seria przechodzi do kolejnych prób.
   const groups = [[{ xbar: 170, s: 10 }], [{ xbar: 190, s: 10 }]];
   const cov = explorer("coverage", { groups, tq: Array(20).fill(2.064) }, { level: 95 }, ["new"]);

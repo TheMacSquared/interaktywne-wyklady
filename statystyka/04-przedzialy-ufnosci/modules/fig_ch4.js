@@ -1,7 +1,7 @@
 // Ryc. 4.2 „Zero braków” (rozdz. 4): przedziały Walda i Wilsona dla x wadliwych
 // sztuk na n sprawdzonych, ufność 95%. Część Walda poniżej zera jest w terakocie,
-// reszta w kolorze przedziału; Wilson w szałwii. x zmienia suwak albo przeciąganie
-// punktu p̂ na wykresie (strzałki na uchwycie: ±1 sztuka). Kontener:
+// reszta w kolorze przedziału (burgund, jak klamry Ryc. 3.2–4.3), p̂ jako czarny punkt;
+// Wilson w szałwii. x zmienia suwak albo przeciąganie punktu p̂ na wykresie (strzałki na uchwycie: ±1 sztuka). Kontener:
 // .fig-zero[data-z][data-n][data-x][data-xmax] z <div class="lc-ec" data-role="ci">,
 // przyciskami [data-zero-n], suwakiem [data-role="x"] i odczytami
 // [data-role="phat|wald|wilson|caption|x-out"]. ECharts, wzorzec jak quantile_chart.js (stat. 03).
@@ -92,10 +92,11 @@
           { id: "below", areaStyle: { color: alpha(P.ref, 0.16) } },
           { id: "zero", lineStyle: { color: P.secondary } },
           { id: "waldNeg", lineStyle: { color: P.terakota, width: bar } },
-          { id: "waldPos", lineStyle: { color: P.niebo, width: bar } },
+          // Wald w kolorze przedziału jak na pozostałych rycinach (burgund), część poniżej zera w terakocie.
+          { id: "waldPos", lineStyle: { color: P.accent, width: bar } },
           { id: "wilson", lineStyle: { color: P.szalwia, width: bar } },
           { id: "dot", symbolSize: Math.round(bar * 1.35),
-            itemStyle: { color: P.bursztyn, borderColor: P.surface, borderWidth: 2 } }
+            itemStyle: { color: P.ink, borderColor: P.surface, borderWidth: 2 } }
         ]
       });
       positionHandle();

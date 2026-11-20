@@ -105,6 +105,8 @@ ui <- lecture_page(
     # Ryciny liczone w przeglądarce: silnik lcSF, rozkłady lcDist, ryciny wykładu.
     includeScript(file.path(shared_root, "lc_dist.js")),
     includeScript(file.path(shared_root, "lc_stat_figures.js")),
+    # Wspólny wygląd przedziałów (klamra, estymata, ± SE, stos kropek) dla rycin lcSF.
+    includeScript(file.path(app_dir, "modules", "ci_look.js")),
     lapply(file.path(app_dir, "modules", c("sf_ch12.js", "sf_steps.js", "sf_examples.js",
                                            "sf_ch5.js")),
            includeScript),

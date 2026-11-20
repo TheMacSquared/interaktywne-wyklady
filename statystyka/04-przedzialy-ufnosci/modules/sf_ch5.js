@@ -29,14 +29,9 @@
   function colors() {
     return { hyp: C.token("--upwr-cat-indygo", "#8e44ad"), wrzos: C.token("--upwr-cat-wrzos", "#a07894") };
   }
-  // Poziomy pasek przedziału jak geom_errorbar(orientation = "y"): odcinek i dwa wąsy.
-  function errorbar(lo, hi, y, cap, color, width, alpha) {
-    return { type: "segs", color: color, width: width, alpha: alpha, z: 4, items: [
-      { from: [lo, y], to: [hi, y] },
-      { from: [lo, y - cap / 2], to: [lo, y + cap / 2] },
-      { from: [hi, y - cap / 2], to: [hi, y + cap / 2] }] };
-  }
-  function diamond(x, y, color, size) { return { type: "point", x: x, y: y, color: color, symbol: "diamond", size: pt(size) }; }
+  // Wygląd przedziałów jak Ryc. 3.2–4.3 (ci_look.js): estymata jako czarna kreska, przedział
+  // jako burgundowa klamra z granicami po bokach, ± SE jako czarna klamra tylko w swoim kroku.
+  var K = window.lc04Look;
   function readout(label, value, color) {
     return '<div class="lc-read" style="--lc-read-color:' + color + ';"><span class="lc-read-label">' + esc(label) +
            '</span><span class="lc-read-value">' + esc(value) + "</span></div>";
@@ -66,11 +61,11 @@
         // Bieżący przedział (gruby) i do 12 poprzednich jako blade ślady; oś w procentach.
         var hist = ns.slice(0, -1).reverse().slice(0, 12), layers = [
           { type: "vline", x: 50, color: P.ref, width: 1.2, dash: [2, 3] }];
-        if (hist.length) layers.push({ type: "segs", color: P.niebo, alpha: 0.22, width: lw(1.6), items: hist.map(function (n, i) {
+        if (hist.length) layers.push({ type: "segs", color: P.accent, alpha: 0.25, width: 3, items: hist.map(function (n, i) {
           var me = 100 * pollMe(n); return { from: [50 - me, -(i + 1)], to: [50 + me, -(i + 1)] }; }) });
         var meNow = 100 * pollMe(now);
-        layers.push({ type: "segment", from: [50 - meNow, 0], to: [50 + meNow, 0], color: P.niebo, width: lw(3.4) },
-                    { type: "point", x: 50, y: 0, color: P.bursztyn, size: pt(3) });
+        layers = layers.concat(K.ci(50 - meNow, 50 + meNow, 0, P, { fmt: function (v) { return fmt(v, 1) + "%"; } }));
+        layers.push(K.mark(50, 0, P));
         return { x: expand(30, 70), y: expand(-hist.length - 0.7, 0.7), hideY: true, noYGrid: true,
                  xName: "Poparcie (%)", xLabels: { 30: "30%", 40: "40%", 50: "50%", 60: "60%", 70: "70%" },
                  layers: layers,
@@ -128,16 +123,16 @@
                  aria: "Margines błędu w zależności od n przy poziomie ufności " + Math.round(f.conf * 100) +
                        "% i s = " + f.s + "; przy n = " + f.n + " ME = " + fmt(f.me, 2) };
       }
-      // Stała oś: najszerszy przedział (n = 5, 99%, s = 12).
+      // Stała oś: najszerszy przedział (n = 5, 99%, s = 12) z miejscem na granice po bokach.
       var worst = D.qt(0.995, 4) * 12 / Math.sqrt(5);
-      return { x: expand(xbar - worst * 1.05, xbar + worst * 1.05), y: expand(-0.6, 0.6), alignLeft: true,
+      return { x: expand(xbar - worst * 1.4, xbar + worst * 1.4), y: expand(-0.6, 0.6), alignLeft: true,
                hideY: true, noYGrid: true, xName: "Wartość (np. wzrost w cm)",
                layers: [
                  { type: "vline", x: xbar, color: P.ref, width: lw(0.6), dash: [6, 4] },
                  { type: "text", x: xbar, y: 0.5, text: "środek", color: P.ref, align: "left", valign: "middle", size: ts(4) },
-                 errorbar(xbar - f.me, xbar + f.me, 0, 0.18, P.niebo, lw(2.4), 0.7),
-                 diamond(xbar, 0, P.bursztyn, 7),
-                 { type: "text", x: xbar, y: -0.42, text: Math.round(f.conf * 100) + "% CI", color: P.niebo, bold: true, valign: "middle", size: ts(4.8) }],
+                 // Poziom ufności widać na suwaku; pod klamrą nie ma na niego miejsca.
+                 K.mark(xbar, 0, P)].concat(
+                 K.ci(xbar - f.me, xbar + f.me, 0, P)),
                aria: "Przedział " + fmt(xbar - f.me, 2) + "–" + fmt(xbar + f.me, 2) + " wokół środka 170 na stałej osi" };
     },
     update: function (root) {
@@ -179,9 +174,9 @@
                layers: [
                  { type: "rect", x0: center - p.me, x1: center + p.me, y0: -0.66, y1: 0.66, fill: P.rule, alpha: 0.4, z: 1 },
                  { type: "vline", x: center, color: P.ref, width: lw(0.6), dash: [6, 4] },
-                 errorbar(center - p.meActual, center + p.meActual, 0, 0.18, P.szalwia, lw(2.4), 0.8),
-                 diamond(center, 0, P.bursztyn, 7),
-                 { type: "text", x: center, y: -0.42, text: "Osiągnięte ME ≤ wymagane ✓", color: P.szalwia, bold: true, valign: "middle", size: ts(4.8) }],
+                 K.mark(center, 0, P),
+                 { type: "text", x: center, y: 0.48, text: "Osiągnięte ME ≤ wymagane ✓", color: P.szalwia, bold: true, valign: "middle", halo: true, size: ts(4.8) }].concat(
+                 K.ci(center - p.meActual, center + p.meActual, 0, P)),
                aria: "Przedział przy n = " + p.n + " mieści się w dopuszczalnej strefie ± " + p.me };
     },
     update: function (root) {
@@ -216,15 +211,14 @@
                  layers: [{ type: "text", x: 0.5, y: 0.5, text: "Kliknij „Oblicz 3 przedziały”", color: P.ref, valign: "middle", size: ts(6) }],
                  aria: "Wykres pojawi się po kliknięciu „Oblicz 3 przedziały”" };
       }
-      var rows = cmpRows(d), cols = [P.bursztyn, P.niebo, colors().wrzos], layers = [];
+      // Trzy klamry z tej samej próby: wiersz = poziom ufności, granice po bokach.
+      var rows = cmpRows(d), layers = [], wid = rows[2].upper - rows[2].lower;
       rows.forEach(function (r, i) {
         var y = 3 - i;
-        layers.push(errorbar(r.lower, r.upper, y, 0.3, cols[i], lw(2), 1),
-                    diamond(d.xbar, y, P.bursztyn, 4),
-                    { type: "text", x: d.xbar, y: y + 0.28, text: "[" + fmt(r.lower, 2) + " ; " + fmt(r.upper, 2) + "]",
-                      color: P.ink, valign: "middle", size: ts(4) });
+        layers.push(K.mark(d.xbar, y, P));
+        layers = layers.concat(K.ci(r.lower, r.upper, y, P, { size: 1.1 }));
       });
-      return { x: expand(rows[2].lower, rows[2].upper), y: expand(0.85, 3.28), noYGrid: true,
+      return { x: expand(rows[2].lower - wid * 0.2, rows[2].upper + wid * 0.2), y: expand(0.7, 3.3), noYGrid: true,
                yLabels: { 1: "99%", 2: "95%", 3: "90%" }, xName: "Wartość", yName: "Poziom ufności", layers: layers,
                aria: "Trzy przedziały ufności z jednej próby: " + rows.map(function (r) {
                  return r.label + " od " + fmt(r.lower, 2) + " do " + fmt(r.upper, 2); }).join(", ") };
@@ -232,8 +226,8 @@
     update: function (root, state, v, P) {
       var d = state.key && state.config.data[state.key], html = "";
       if (d) {
-        var P2 = C.palette(), cols = [P2.bursztyn, P2.niebo, colors().wrzos];
-        html = cmpRows(d).map(function (r, i) { return readout(r.label, "±" + fmt(r.me, 2), cols[i]); }).join("");
+        var P2 = C.palette();
+        html = cmpRows(d).map(function (r) { return readout(r.label, "±" + fmt(r.me, 2), P2.accent); }).join("");
       }
       setHTML(root, "cmp_stats", html);
     }
@@ -287,15 +281,13 @@
         { type: "vline", x: c.bound, color: hyp, width: lw(1) },
         { type: "text", x: c.bound, y: 0.55, text: (c.dir === "gt" ? "≥ " : "≤ ") + c.bound, color: hyp, bold: true,
           align: "left", valign: "middle", size: ts(4.5) },
-        diamond(center, 0, P.bursztyn, 7),
-        { type: "text", x: center, y: -0.22, text: (c.kind === "mean" ? "x̄ = " : "p̂ = ") + fmt(center, 3), color: P.bursztyn,
-          bold: true, valign: "middle", size: ts(4.5) }];
+        K.mark(center, 0.05, P, 10, 22),
+        K.value(center, -0.42, (c.kind === "mean" ? "x̄ = " : "p̂ = ") + fmt(center, 3), P.ink, { size: 1.1 })];
       var aria = c.xlab + ": estymata " + fmt(center, 3) + ", granica hipotezy " + c.bound;
       if (state.conf != null) {
         var ci = edgeCi(c, state.conf);
-        layers.push(errorbar(ci.lower, ci.upper, 0, 0.18, P.niebo, lw(2.4), 0.7),
-          { type: "text", x: center, y: 0.24, text: Math.round(state.conf * 100) + "% CI: [" + fmt(ci.lower, 3) + " ; " + fmt(ci.upper, 3) + "]",
-            color: P.niebo, bold: true, valign: "middle", size: ts(4.8) });
+        layers = layers.concat(K.ci(ci.lower, ci.upper, 0.05, P, { d: 3, fmt: function (v) { return fmt(v, 3); } }));
+        layers.push(K.value(center, 0.34, Math.round(state.conf * 100) + "% CI", P.accent, { size: 1.05 }));
         aria += "; przedział " + Math.round(state.conf * 100) + "% od " + fmt(ci.lower, 3) + " do " + fmt(ci.upper, 3);
       } else {
         layers.push({ type: "text", x: (xl[0] + xl[1]) / 2, y: 0.35, text: "Wybierz poziom ufności powyżej", color: P.ref,
@@ -333,28 +325,32 @@
       var layers = [], label = function (y, t) {
         return { type: "text", x: 21.7, y: y, text: t, color: P.soft, align: "left", valign: "middle", size: ts(3.6) }; };
       var aria = "Czas dojazdu: estymata 28.5 min";
-      if (step >= 5) layers.push({ type: "rect", x0: 26, x1: 35, y0: -3.7, y1: 1, fill: P.accent, alpha: 0.07, z: 1 });
+      if (step >= 5) layers.push({ type: "rect", x0: 26, x1: 35, y0: -3.7, y1: 1.35, fill: P.accent, alpha: 0.07, z: 1 });
       if (step >= 4) {
-        layers.push({ type: "segs", color: P.niebo, alpha: 0.6, width: lw(1.2), items: variants.map(function (w) {
-          return { from: [w.r[0], w.y], to: [w.r[1], w.y] }; }) });
-        variants.forEach(function (w) { layers.push(label(w.y, w.lab)); });
+        // Węższe warianty: blade klamry pod głównym przedziałem, każda z kreską średniej.
+        variants.forEach(function (w) {
+          layers = layers.concat(K.ci(w.r[0], w.r[1], w.y, P, { labels: false, alpha: 0.5, width: 3, leg: 10 }));
+          layers.push(K.mark(xbar, w.y, P, 6, 12), label(w.y, w.lab));
+        });
         aria += "; węższe warianty: n × 4, s / 2, 90%";
       }
-      if (step >= 2) {
-        layers.push({ type: "segs", color: P.niebo, alpha: 0.45, width: lw(7), items: [{ from: [xbar - se, 0], to: [xbar + se, 0] }] });
+      // ± SE tylko w swoim kroku, jak na Ryc. 3.2; potem zastępuje go przedział.
+      if (step === 2) {
+        layers = layers.concat(K.se(xbar - se, xbar + se, 0, P, "± SE = " + fmt(se, 2) + " min", { side: "right" }));
         aria += "; ±1 SE = " + fmt(se, 2);
       }
       if (step >= 3) {
-        layers.push(errorbar(main[0], main[1], 0, 0.36, P.niebo, lw(1.6), 1), label(0, "95%"));
+        layers = layers.concat(K.ci(main[0], main[1], 0, P, { d: 1 }));
+        layers.push(label(0, "95%"));
         aria += "; przedział 95% od " + fmt(main[0], 1) + " do " + fmt(main[1], 1) + " min";
       }
-      layers.push(diamond(xbar, 0, P.bursztyn, 6));
+      layers.push(K.mark(xbar, 0, P, 14, 22), K.value(xbar, 0.5, "x̄ = 28.5", P.ink, { size: 1.1 }));
       if (step >= 5) {
         layers.push({ type: "vline", x: 26, color: P.secondary, width: 1.2, dash: [4, 4] },
-                    { type: "text", x: 26, y: 0.75, text: "próg 26 min", color: P.secondary, align: "left", valign: "middle", size: ts(3.6) });
+                    { type: "text", x: 26, y: 1.15, text: "próg 26 min", color: P.secondary, align: "left", valign: "middle", size: ts(3.6) });
         aria += "; próg 26 min wewnątrz przedziału";
       }
-      return { x: expand(21.5, 35), y: expand(-3.7, 1), xTicks: [22, 24, 26, 28, 30, 32, 34], hideY: true, noYGrid: true,
+      return { x: expand(21.5, 35), y: expand(-3.7, 1.35), xTicks: [22, 24, 26, 28, 30, 32, 34], hideY: true, noYGrid: true,
                xName: "Czas dojazdu (min)", layers: layers, aria: aria };
     },
     text: function (state, v, vals, step) { return esc(state.config.texts[step - 1]); }

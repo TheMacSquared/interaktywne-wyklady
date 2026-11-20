@@ -30,9 +30,10 @@ fig_4a_ui <- fig_panel("4a", "Ryc. 4.2", "Zero braków",
           tags$span("0"), tags$span("15"))
       ),
       lc_readouts(
-        lc_readout("p̂", tags$span(`data-role` = "phat", "0.0%"), color = col_estimate),
-        lc_readout("Wald", tags$span(`data-role` = "wald", "od 0.0% do 0.0%")),
-        lc_readout("Wilson", tags$span(`data-role` = "wilson", "od 0.0% do 7.1%"))
+        # Kolory jak na wykresie: p̂ czarne, Wald w burgundzie, Wilson w szałwii.
+        lc_readout("p̂", tags$span(`data-role` = "phat", "0.0%"), color = "var(--upwr-ink)"),
+        lc_readout("Wald", tags$span(`data-role` = "wald", "od 0.0% do 0.0%"), color = "var(--upwr-accent)"),
+        lc_readout("Wilson", tags$span(`data-role` = "wilson", "od 0.0% do 7.1%"), color = unname(upwr_cat["szalwia"]))
       ),
       lc_chart_zoom_button()
     ),

@@ -40,20 +40,6 @@ ch3_cases <- list(
            explain_no = "Górna granica CI (≈ 176.5) leży poniżej 180, cały przedział jest poza obszarem hipotezy. Dane wykluczają średni wzrost powyżej 180 cm.")
     )
   ),
-  A2 = list(
-    type = "compare_n",
-    data = list(xbar = 32.0, s = 8.0, ns = c(10, 50, 200)),
-    xlab = "Stężenie (µg/m³)",
-    steps = c("1. n = 10", "2. n = 50", "3. n = 200"),
-    hypotheses = list(
-      list(text = "Stężenie przekracza 25 µg/m³",
-           bound = 25, dir = "gt",
-           explain_yes = "Wszystkie trzy przedziały leżą powyżej 25, nawet najszerszy (n = 10) ma dolną granicę ≈ 26.3. Każde z badań potwierdza hipotezę, większe n daje tylko węższy przedział."),
-      list(text = "Stężenie przekracza 35 µg/m³",
-           bound = 35, dir = "gt",
-           explain_no = "Werdykt dotyczy najdokładniejszego badania: dla n = 200 górna granica (≈ 33.1) leży poniżej 35. Dla n = 10 przedział sięga do 37.7 i przecina 35, więc samo małe badanie by tego nie rozstrzygnęło.")
-    )
-  ),
   B1 = list(
     type = "diff_means",
     data = list(x1 = 12.3, s1 = 4.5, n1 = 40, x2 = 4.1, s2 = 4.2, n2 = 40,
@@ -171,18 +157,6 @@ ch3_case_config <- function(cfg) {
            lab_mean = paste0("x̄ = ", round(d$xbar, 2)), lab_se = paste0("± SE = ±", round(ci$se, 2)),
            lab_ci = paste0("95% CI: [", round(ci$lower, 2), " ; ", round(ci$upper, 2), "]"))
     },
-    compare_n = {
-      cis <- lapply(d$ns, function(n) ch3_case_ci_mean(d$xbar, d$s, n))
-      lo <- vapply(cis, `[[`, 0, "lower"); hi <- vapply(cis, `[[`, 0, "upper")
-      lim <- function(h) {
-        xl <- range(c(min(lo), max(hi), h$bound))
-        xl + c(-1, 1) * diff(xl) * 0.1
-      }
-      list(xbar = d$xbar, lo = lo, hi = hi, y = s4_expand(c(0.3, length(d$ns) + 0.7)),
-           lims = s4_lims_by_hyp(hyps, lim),
-           lab_n = paste0("n = ", d$ns),
-           lab_ci = paste0("[", round(lo, 2), " ; ", round(hi, 2), "]"))
-    },
     diff_means = {
       cid <- ch3_case_ci_diff(d$x1, d$s1, d$n1, d$x2, d$s2, d$n2)
       # Ta sama kolejność losowań co w dawnej wersji R; przy n > 80 losowa podpróba.
@@ -241,8 +215,6 @@ ch3_case_verdict <- function(cfg) function(hyp) {
   d <- cfg$data
   ci <- switch(cfg$type,
     single_mean = ch3_case_ci_mean(d$xbar, d$s, d$n),
-    # Werdykt dla najdokładniejszego badania (największe n).
-    compare_n   = ch3_case_ci_mean(d$xbar, d$s, max(d$ns)),
     diff_means  = ch3_case_ci_diff(d$x1, d$s1, d$n1, d$x2, d$s2, d$n2))
   s4_case_verdict(ci$lower, ci$upper, hyp$bound, hyp$dir)
 }
@@ -748,15 +720,6 @@ ch3_ui <- list(
       ch3_case_ui("A1")
     ),
 
-    figure_panel(
-      label = "Przykład A2",
-      title = "Ten sam pomiar, trzy różne wielkości próby",
-      p("Trzy badania mierzą stężenie zanieczyszczenia (µg/m³). Wszystkie
-        dały średnią 32.0 i s = 8.0, ale różnią się liczebnością próby:
-        n = 10, 50 i 200. Kolejne kroki dodają przedziały jeden po drugim."),
-      ch3_case_ui("A2")
-    ),
-
     lc_h3("Przedział dla różnicy średnich", num = "B"),
 
     figure_panel(
@@ -816,12 +779,8 @@ ch3_ui <- list(
       ch3_case_ui("C2")
     ),
 
-    lc_p("Przypadki powtarzają wnioski z całego rozdziału. W A2 przedział
-      zwęża się wraz z liczebnością próby: ma około 11.4 µg/m³ szerokości
-      przy n = 10, 4.5 przy n = 50 i 2.2 przy n = 200. Czterokrotnie większa
-      próba daje mniej więcej dwukrotnie węższy przedział, bo błąd
-      standardowy maleje jak \\(1/\\sqrt{n}\\). B3 to pułapka ze scenariusza C:
-      przedziały grup się nakładają, a przedział różnicy [-22.2, -1.8] ms
+    lc_p("Przypadki powtarzają wnioski z całego rozdziału. B3 to pułapka ze
+      scenariusza C: przedziały grup się nakładają, a przedział różnicy [-22.2, -1.8] ms
       leży w całości poniżej zera. B4 pokazuje drugą stronę dużych prób.
       Przy 20 000 osób w grupie przedział różnicy [0.11, 0.69] pkt nie
       zawiera zera, ale różnica 0.4 punktu to około 0.03 odchylenia
@@ -830,8 +789,13 @@ ch3_ui <- list(
 
     lc_p("Żeby ocenić znaczenie praktyczne, trzeba przed badaniem ustalić, jaka
       zmiana jest użyteczna. Na Ryc. 3.5 progiem jest oszczędność 2 minut.
-      Przedział może leżeć nad zerem, a mimo to w całości poniżej progu. Może też
-      być tak szeroki, że nie rozstrzyga ani kierunku, ani użyteczności."),
+      Zielony pas to zmiany mniejsze niż 2 minuty w którąkolwiek stronę, za
+      małe, żeby miały znaczenie. Przedział może leżeć w całości w tym pasie,
+      a mimo to obejmować zero: wtedy nie wiemy nawet, czy nowa metoda trochę
+      pomaga, czy trochę szkodzi, wiemy tylko, że zmiana jest pomijalna. Może
+      leżeć nad zerem, ale w całości poniżej progu: metoda poprawia, ale
+      pomijalnie. Może też być tak szeroki, że nie rozstrzyga ani kierunku,
+      ani użyteczności."),
 
     ci_explorer("useful"),
 

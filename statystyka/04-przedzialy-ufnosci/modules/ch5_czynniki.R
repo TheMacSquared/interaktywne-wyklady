@@ -133,14 +133,14 @@ ch5_ui <- list(
     figure_panel(
       label = "Ryc. 5.2", title = "Jak zmienia się szerokość przedziału?",
       full_width = TRUE,
-      # W przeglądarce: sf_ch5.js (c5-factors) — krzywa ME(n) i pasek przedziału.
+      # W przeglądarce: sf_ch5.js (c5-factors) — krzywa ME(n) i klamra przedziału.
       lc_sf_figure("c5-factors",
         control = list(
           lc_sf_slider("ch5_n", "Wielkość próby (n)", 5, 100, 30, 1),
           lc_sf_slider("ch5_conf", "Poziom ufności", 0.80, 0.99, 0.95, 0.01),
           lc_sf_slider("ch5_s", "Odchylenie std. (s)", 1, 12, 8, 1)),
         toolbar = lc_readouts(
-          lc_readout("ME", lc_sf_value("f_me", "2.99"), color = col_ci),
+          lc_readout("ME", lc_sf_value("f_me", "2.99"), color = "var(--upwr-accent)"),  # kolor klamry przedziału
           lc_readout("Szer.", lc_sf_value("f_width", "5.97"), color = upwr_secondary),
           lc_readout("t*", lc_sf_value("f_t", "2.045"), color = col_estimate)),
         body = tagList(

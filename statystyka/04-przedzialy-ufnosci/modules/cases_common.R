@@ -117,7 +117,7 @@ s4_case_body <- function(type) {
   grid <- function(cols, ...) tags$div(
     style = paste0("display:grid;grid-template-columns:", cols, ";gap:.4em;align-items:stretch"), ...)
   switch(type,
-    single_mean = , compare_n = , compare_n_prop = s4_case_chart(0, "2.4/1"),
+    single_mean = s4_case_chart(0, "2.4/1"),
     forest = , forest_prop = s4_case_chart(0, "1.6/1"),
     diff_means = tagList(s4_case_chart(0, "2.4/1"), s4_case_chart(1, "4.8/1", "200px")),
     # Słupki TAK/NIE | oś proporcji (szerokości 1 : 2.5).

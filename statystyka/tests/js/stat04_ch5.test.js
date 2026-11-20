@@ -7,6 +7,7 @@ const { environment, Element, root } = require("./harness");
 function load() {
   const env = environment();
   env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
+  env.load("04-przedzialy-ufnosci/modules/ci_look.js");
   env.load("04-przedzialy-ufnosci/modules/sf_ch5.js");
   const F = env.window.lcSF.figures, P = env.window.lcCharts.palette(), H = env.window.lc04Ch5;
   const run = (name, config, rootEl) => {
@@ -27,12 +28,14 @@ test("Ryc. 5.1: dokup, podwój, reset; ślady, ścieżka i odczyty", () => {
   const r = run("c5-poll", null);
   assert.deepEqual(Array.from(r.state.ns), [100]);
   let s = r.spec(0);
-  assert.deepEqual(types(s), ["vline", "segment", "point"], "bez śladów na starcie");
+  // Bieżący przedział jako burgundowa klamra z granicami w procentach, środek jako kreska.
+  assert.deepEqual(types(s), ["vline", "bracket", "text", "text", "tick"], "bez śladów na starcie");
+  assert.deepEqual(texts(s), ["40.2%", "59.8%"]);
   r.fig.act(r.state, "dokup"); r.fig.act(r.state, "double");
   assert.deepEqual(Array.from(r.state.ns), [100, 200, 400]);
   s = r.spec(0);
   assert.equal(s.layers[1].items.length, 2, "dwa poprzednie przedziały jako ślady");
-  near(s.layers[2].to[0] - 50, 100 * 1.96 * Math.sqrt(0.25 / 400));
+  near(s.layers[2].hi - 50, 100 * 1.96 * Math.sqrt(0.25 / 400));
   const p = r.spec(1);
   const path = p.layers.find(l => l.type === "points");
   assert.deepEqual(Array.from(path.data, d => d[0]), [2, 4, 8], "koszt w tys. zł");
@@ -56,16 +59,16 @@ test("Ryc. 5.2: t*, ME i szerokość jak w R; suwaki zmieniają wykres", () => {
   assert.deepEqual(read(), ["2.99", "5.97", "2.045"]);
   let top = r.spec(0), bot = r.spec(1);
   assert.equal(top.layers[0].data.length, 96, "krzywa dla n = 5…100");
-  const bar = bot.layers.find(l => l.type === "segs").items[0];
-  near(bar.to[0] - 170, 2.98727, 1e-4);
-  assert.ok(texts(bot).includes("95% CI"));
+  const bar = bot.layers.find(l => l.type === "bracket");
+  near(bar.hi - 170, 2.98727, 1e-4);
+  assert.ok(texts(bot).includes("172.99"), "granica przedziału przy klamrze");
   const xFixed = Array.from(bot.x);
   n.value = "10"; conf.value = "0.99";
   r.fig.update(el, r.state);
   assert.deepEqual(read(), ["8.22", "16.44", "3.25"]);
   bot = r.spec(1);
   assert.deepEqual(Array.from(bot.x), xFixed, "stała oś dolnego wykresu");
-  assert.ok(texts(bot).includes("99% CI"));
+  assert.ok(texts(bot).includes("178.22"));
   sd.value = "4"; n.value = "30"; conf.value = "0.95";
   r.fig.update(el, r.state);
   assert.equal(read()[0], "1.49");
@@ -106,14 +109,15 @@ test("Ryc. 5.4: przed kliknięciem zachęta; po kliknięciu trzy przedziały jak
   r.fig.update(el, r.state); assert.equal(stats.innerHTML, "");
   r.fig.act(r.state, "calc", el);
   const s = r.spec(0);
-  assert.deepEqual(texts(s), ["[166.79 ; 174.58]", "[166 ; 175.37]", "[164.37 ; 177]"]);
+  assert.deepEqual(texts(s), ["166.79", "174.58", "166.00", "175.37", "164.37", "177.00"]);
+  assert.equal(types(s).filter(t => t === "bracket").length, 3);
   assert.deepEqual(Object.values(s.yLabels), ["99%", "95%", "90%"]);
   r.fig.update(el, r.state);
   assert.match(stats.innerHTML, /90%.*±3\.89.*95%.*±4\.69.*99%.*±6\.32/);
   sel.value = "commute";
-  assert.deepEqual(texts(r.spec(0))[0], "[166.79 ; 174.58]", "zmiana danych dopiero po kliknięciu");
+  assert.deepEqual(texts(r.spec(0))[0], "166.79", "zmiana danych dopiero po kliknięciu");
   r.fig.act(r.state, "calc", el);
-  assert.notEqual(texts(r.spec(0))[0], "[166.79 ; 174.58]");
+  assert.notEqual(texts(r.spec(0))[0], "166.79");
 });
 
 test("Przykład 1–3: poziom ufności, odsłonięcie werdyktu, granice jak w R", () => {
@@ -135,7 +139,8 @@ test("Przykład 1–3: poziom ufności, odsłonięcie werdyktu, granice jak w R"
   assert.ok(bs[0].classList.contains("is-solid") && bs[1].classList.contains("is-outline"));
   assert.equal(bs[3].hidden, false);
   assert.match(ex.innerHTML, /Poziom ufności:<\/strong> 90%/);
-  assert.ok(texts(r.spec(0)).includes("90% CI: [26.369 ; 30.631]"));
+  s = r.spec(0);
+  assert.ok(texts(s).includes("26.369") && texts(s).includes("30.631") && texts(s).includes("90% CI"));
   r.fig.act(r.state, "reveal"); r.fig.update(el, r.state);
   assert.equal(bs[3].hidden, true);
   assert.match(ex.innerHTML, /lc-status-ok.*Werdykt przy 90% ufności: TAK/);
@@ -160,12 +165,16 @@ test("Przykład 1–3: poziom ufności, odsłonięcie werdyktu, granice jak w R"
 test("Ryc. 5.5: warstwy kroków i tekst kroku z config", () => {
   const { run } = load();
   const r = run("c5-anatomy", { texts: ["a", "b", "c", "d", "e"] });
-  assert.deepEqual(types(r.spec(0, 1)), ["point"]);
-  assert.deepEqual(types(r.spec(0, 2)), ["segs", "point"]);
+  // Krok 1 estymata, 2 tylko ± SE, 3 przedział (± SE znika), jak Ryc. 3.2.
+  assert.deepEqual(types(r.spec(0, 1)), ["tick", "text"]);
+  assert.deepEqual(types(r.spec(0, 2)), ["bracket", "text", "tick", "text"]);
+  assert.ok(r.spec(0, 2).layers[0].sym, "± SE jako klamra w obie strony");
   const s3 = r.spec(0, 3);
-  assert.deepEqual(types(s3), ["segs", "segs", "text", "point"]);
-  near(s3.layers[1].items[0].from[0], 25.94148, 1e-4);
-  near(s3.layers[1].items[0].to[0], 31.05852, 1e-4);
+  assert.deepEqual(types(s3), ["bracket", "text", "text", "text", "tick", "text"]);
+  assert.ok(!s3.layers[0].sym);
+  near(s3.layers[0].lo, 25.94148, 1e-4);
+  near(s3.layers[0].hi, 31.05852, 1e-4);
+  assert.deepEqual(texts(s3), ["25.9", "31.1", "95%", "x̄ = 28.5"]);
   const s5 = r.spec(0, 5);
   assert.equal(s5.layers[0].type, "rect");
   assert.ok(texts(s5).includes("próg 26 min"));

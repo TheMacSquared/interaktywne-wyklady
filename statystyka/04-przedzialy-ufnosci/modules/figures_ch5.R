@@ -35,7 +35,7 @@ fig_5a_ui <- fig_panel("5a", "Ryc. 5.1", "Pracownia dokupuje ankiety", width_mod
 
 fig_D1_texts <- c(
   "Rozdz. 1: średnia z 40 pomiarów wynosi x̄ = 28.5 min. To najlepsza pojedyncza wartość, ale nie mówi, jak bardzo może się mylić.",
-  "Rozdz. 1: pasek to ±1 SE = 8/√40 = 1.26 min. Tyle średnia typowo odchodzi od prawdziwej wartości.",
+  "Rozdz. 1: klamra to ±1 SE = 8/√40 = 1.26 min. Tyle średnia typowo odchodzi od prawdziwej wartości.",
   "Rozdz. 2–3: x̄ ± t*·SE, z t* = 2.023 dla 95% i 39 stopni swobody. Przedział to 25.9–31.1 min.",
   "Rozdz. 5: większa próba (n × 4), mniejsze s (s / 2) i niższa ufność (90%) zawężają przedział. Dwa pierwsze działają przez SE, trzeci przez t*.",
   "Rozdz. 5: próg 26 min leży wewnątrz przedziału, więc dane tego nie rozstrzygają. Wykład 05 wróci do takich pytań."

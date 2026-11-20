@@ -38,20 +38,6 @@ ch4_cases <- list(
            explain_no = "Górna granica CI leży poniżej 60%. Cały CI leży poza obszarem hipotezy, więc nie ma podstaw do twierdzenia, że poparcie przekracza 60%.")
     )
   ),
-  A2 = list(
-    type = "compare_n_prop",
-    data = list(phat = 0.08, ns = c(50, 200, 1000)),
-    xlab = "Odsetek wadliwych produktów",
-    steps = c("1. n = 50", "2. n = 200", "3. n = 1000"),
-    hypotheses = list(
-      list(text = "Odsetek wadliwych produktów przekracza 5%",
-           bound = 0.05, dir = "gt",
-           explain_yes = "Dla największej próby (n = 1000) dolna granica CI leży powyżej 5%, więc z 95% ufnością odsetek wadliwych przekracza normę 5%. Dla n = 50 i n = 200 CI obejmuje 5%, więc na mniejszej próbie nie dałoby się tego stwierdzić."),
-      list(text = "Odsetek wadliwych produktów przekracza 12%",
-           bound = 0.12, dir = "gt",
-           explain_no = "Dla n = 1000 górna granica CI leży poniżej 12%. Dla n = 50 CI sięga prawie 16%, więc na małej próbie tej hipotezy nie dałoby się wykluczyć. Duże n daje bardziej jednoznaczne odpowiedzi.")
-    )
-  ),
   B1 = list(
     type = "diff_props",
     data = list(x1 = 124, n1 = 200, x2 = 84, n2 = 200,
@@ -132,19 +118,6 @@ ch4_case_config <- function(cfg) {
            lab_phat = paste0("p̂ = ", round(ci$phat, 3)), lab_se = paste0("± SE = ±", round(ci$se, 3)),
            lab_ci = paste0("95% CI: [", round(ci$lower, 3), " ; ", round(ci$upper, 3), "]"))
     },
-    compare_n_prop = {
-      cis <- lapply(d$ns, function(n) ch4_case_ci_prop(round(d$phat * n), n))
-      ph <- vapply(cis, `[[`, 0, "phat")
-      lo <- vapply(cis, `[[`, 0, "lower"); hi <- vapply(cis, `[[`, 0, "upper")
-      lim <- function(h) {
-        xl <- c(max(0, min(lo) - 0.05), min(1, max(hi) + 0.05))
-        if (!is.null(h)) xl <- pmin(1, pmax(0, range(c(xl, h$bound))))
-        xl
-      }
-      list(phat = ph, lo = lo, hi = hi, y = s4_expand(c(0.3, length(d$ns) + 0.7)),
-           lims = s4_lims_by_hyp(hyps, lim), lab_n = paste0("n = ", d$ns),
-           lab_ci = paste0("[", round(lo, 3), " ; ", round(hi, 3), "]"))
-    },
     diff_props = {
       cd <- ch4_case_ci_diff(d$x1, d$n1, d$x2, d$n2)
       lim <- function(h) {
@@ -178,8 +151,6 @@ ch4_case_verdict <- function(cfg) function(hyp) {
   d <- cfg$data
   ci <- switch(cfg$type,
     single_prop    = ch4_case_ci_prop(d$x, d$n),
-    # Werdykt dla największego n (najbardziej precyzyjny CI).
-    compare_n_prop = ch4_case_ci_prop(round(d$phat * max(d$ns)), max(d$ns)),
     diff_props     = ch4_case_ci_diff(d$x1, d$n1, d$x2, d$n2))
   s4_case_verdict(ci$lower, ci$upper, hyp$bound, hyp$dir)
 }
@@ -492,16 +463,6 @@ ch4_ui <- list(
       ch4_case_ui("A1")
     ),
 
-    figure_panel(
-      label = "Przykład A2",
-      title = "Ten sam odsetek, trzy różne wielkości próby",
-      p("Trzy badania mierzą odsetek wadliwych produktów w fabryce.
-        W każdym ", withMathJax("\\(\\hat{p} = 0.08\\)"), " (8%), ale próby
-        mają różną liczebność: 50, 200 i 1000 sztuk. Kolejne kroki dokładają
-        przedziały od najmniejszej próby do największej."),
-      ch4_case_ui("A2")
-    ),
-
     lc_h3("Przedział dla różnicy proporcji", num = "B"),
 
     figure_panel(
@@ -544,11 +505,7 @@ ch4_ui <- list(
       ch4_case_ui("C1")
     ),
 
-    lc_p("Przypadki powtarzają kilka lekcji. W A2 ta sama proporcja 8% daje
-      przedział o szerokości 15 punktów procentowych przy 50 sztukach i tylko
-      3.4 punktu przy 1000 sztukach. Dwudziestokrotnie większa próba zwęża
-      przedział około 4.5 raza, bo \\(n\\) stoi we wzorze pod pierwiastkiem.
-      W B2 i B3 obserwowana różnica nie wystarcza do wniosku: w B3 dziesięć
+    lc_p("Przypadki powtarzają kilka lekcji. W B2 i B3 obserwowana różnica nie wystarcza do wniosku: w B3 dziesięć
       punktów procentowych różnicy przy 30 osobach w grupie daje przedział od
       -32 do +12 punktów, który obejmuje zero i różnice w obu kierunkach.
       W C1 szpital D (20.6% powikłań) odstaje od pozostałych trzech (od 5.6%

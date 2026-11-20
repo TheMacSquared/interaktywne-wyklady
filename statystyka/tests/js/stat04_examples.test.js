@@ -6,6 +6,7 @@ const { environment, Element, root } = require("./harness");
 function load() {
   const env = environment();
   env.load("../shared/lc_dist.js"); env.load("../shared/lc_stat_figures.js");
+  env.load("04-przedzialy-ufnosci/modules/ci_look.js");
   env.load("04-przedzialy-ufnosci/modules/sf_examples.js");
   const fig = env.window.lcSF.figures["s4-case"], P = env.window.lcCharts.palette();
   const run = config => {
@@ -15,6 +16,7 @@ function load() {
   };
   return { env, fig, run };
 }
+const plain = o => JSON.parse(JSON.stringify(o));  // obiekt z kontekstu vm
 const types = spec => Array.from(spec.layers, l => l.type);
 const texts = spec => Array.from(spec.layers.filter(l => l.type === "text"), l => l.text);
 const lims = (raw, x) => ({ raw, x });
@@ -32,21 +34,28 @@ const A1 = {
 test("Przykład A1 (średnia): kroki budują przedział, hipoteza tylko na ostatnim kroku", () => {
   const { fig, run } = load();
   const r = run(A1);
+  // Wygląd Ryc. 3.2: stos kropek na osi, średnia jako czarna kreska, ± SE jako czarna
+  // klamra tylko w kroku 3, przedział jako burgundowa klamra z granicami po bokach.
   let s = r.spec(0, 1);
-  assert.deepEqual(types(s), ["points"]);
+  assert.deepEqual(types(s), ["dotstack"]);
+  assert.deepEqual(Array.from(s.layers[0].data), [181.9, 169.3, 160]);
+  assert.equal(s.layers[0].y, A1.y[0], "kropki stoją na osi");
   assert.deepEqual(Array.from(s.x), [152.2, 191.3]);
   assert.equal(s.xName, "Wzrost (cm)");
   s = r.spec(0, 2);
   assert.deepEqual(texts(s), ["x̄ = 173.4"]);
-  assert.equal(s.layers.find(l => l.type === "vline").dash, "dotted");
+  const mean = s.layers.find(l => l.type === "vline");
+  assert.deepEqual([mean.x, mean.from, mean.width], [173.4, A1.y[0], 3.5]);
   s = r.spec(0, 3);
-  assert.deepEqual(texts(s), ["± SE = ±1.5"], "napis średniej znika, SE z napisem");
-  const se = s.layers.find(l => l.type === "segs");
-  assert.deepEqual(Array.from(se.items[0].from), [173.4 - 1.4971, 0]);
+  assert.deepEqual(texts(s), ["± SE = 1.50"], "napis średniej znika, SE z napisem");
+  const se = s.layers.find(l => l.type === "bracket");
+  assert.ok(se.sym, "klamra ± SE w obie strony");
+  assert.deepEqual([se.lo, se.hi], [173.4 - 1.4971, 173.4 + 1.4971]);
   s = r.spec(0, 4);
-  assert.deepEqual(texts(s), ["95% CI: [170.34 ; 176.46]"]);
-  const ci = s.layers.filter(l => l.type === "segs")[1];
-  assert.deepEqual([ci.items[0].from[0], ci.items[0].to[0]], [A1.lo, A1.hi], "granice CI z R");
+  assert.deepEqual(texts(s), ["170.34", "176.46", "x̄ = 173.4"]);
+  const ci = s.layers.filter(l => l.type === "bracket");
+  assert.equal(ci.length, 1, "w kroku 4 przedział zastępuje ± SE");
+  assert.deepEqual([ci[0].lo, ci[0].hi], [A1.lo, A1.hi], "granice CI z R");
   assert.equal(fig.text(r.state, null, {}, 4), "Przedział gotowy.");
   assert.equal(fig.text(r.state, null, {}, 3), "");
 
@@ -89,33 +98,19 @@ test("Przykład B (różnica średnich): dolny wykres od kroku 3, linia zera bez
   const r = run(cfg);
   assert.equal(r.spec(1, 2), null, "różnica ukryta przed krokiem 3");
   assert.deepEqual(texts(r.spec(0, 1)), ["Grupa A", "Grupa B"]);
+  assert.deepEqual(types(r.spec(0, 1)).filter(t => t === "dotstack").length, 2);
   assert.deepEqual(texts(r.spec(0, 2)), ["Grupa A", "Grupa B", "x̄₁ = 350", "x̄₂ = 362"]);
   let s = r.spec(1, 3);
   assert.equal(s.xName, "Różnica (ms)  —  A − B");
   assert.equal(s.layers[0].type, "vline"); assert.equal(s.layers[0].x, 0);
   assert.deepEqual(texts(s), ["x̄₁ − x̄₂ = -12"]);
+  assert.deepEqual(texts(r.spec(1, 4)), ["± SE = 5.20"]);
   fig.act(r.state, "hyp1");
   s = r.spec(1, 5);
   const band = s.layers.find(l => l.type === "band");
   assert.deepEqual([band.lo, band.hi], [-29.5, 0], "obszar „< 0” od lewej krawędzi do granicy");
-  assert.ok(!s.layers.some(l => l.type === "vline" && l.dash === "dashed"), "z hipotezą bez linii zera");
-  assert.deepEqual(texts(s), ["≤ 0", "95% CI: [-22.23 ; -1.77]"]);
-});
-
-test("Przykład A2 (trzy n): krok k pokazuje k przedziałów z etykietami", () => {
-  const { run } = load();
-  const cfg = {
-    type: "compare_n", n: 3, xlab: "Stężenie", text: "x", hyps: [{ bound: 25, dir: "gt", label: "≥ 25" }],
-    xbar: 32, lo: [26.28, 29.73, 30.88], hi: [37.72, 34.27, 33.12], y: [0.13, 3.87],
-    lims: { 0: lims([25.1, 38.9], [24.4, 39.6]), 1: lims([23.7, 39], [23, 39.8]) },
-    lab_n: ["n = 10", "n = 50", "n = 200"], lab_ci: ["[26.28 ; 37.72]", "[29.73 ; 34.27]", "[30.88 ; 33.12]"]
-  };
-  const r = run(cfg);
-  assert.deepEqual(texts(r.spec(0, 1)), ["n = 10", "[26.28 ; 37.72]"]);
-  const s = r.spec(0, 3);
-  assert.equal(texts(s).length, 6);
-  assert.equal(s.layers.find(l => l.type === "segs").items.length, 9, "trzy odcinki z wąsami");
-  assert.equal(s.layers.find(l => l.type === "text" && l.text === "n = 200").x, 25.1, "etykieta n przy lewej krawędzi z R");
+  assert.ok(!s.layers.some(l => l.type === "vline" && l.x === 0 && l.dash), "z hipotezą bez linii zera");
+  assert.deepEqual(texts(s), ["≤ 0", "-22.23", "-1.77", "x̄₁ − x̄₂ = -12"]);
 });
 
 test("Przykład C (forest): hipoteza pairwise bez obszaru, werdykt z R", () => {
@@ -126,11 +121,12 @@ test("Przykład C (forest): hipoteza pairwise bez obszaru, werdykt z R", () => {
     lims: { 0: lims([25, 36], [24.5, 36.5]), 1: lims([25, 36], [24.5, 36.5]) }
   };
   const r = run(cfg);
-  assert.deepEqual(types(r.spec(0, 1)), ["text", "text", "points"]);
+  assert.deepEqual(types(r.spec(0, 1)), ["dotstack", "dotstack"]);
+  assert.deepEqual(plain(r.spec(0, 1).yLabels), { 1: "A", 2: "B" });
   fig.act(r.state, "hyp1");
   const s = r.spec(0, 3);
   assert.ok(!types(s).includes("band"));
-  assert.deepEqual(types(s).slice(-2), ["points", "segs"]);
+  assert.equal(types(s).filter(t => t === "bracket").length, 2);
   assert.equal(r.key(), "h1");
 });
 
@@ -148,8 +144,9 @@ test("Przykłady proporcji: słupki TAK/NIE, dwie p̂, różnica z linią zera i
   assert.equal(s.xLabels[2], "TAK");
   assert.deepEqual(texts(s), ["188", "212"]);
   assert.deepEqual(types(A.spec(1, 1)), [], "oś proporcji pusta na kroku 1");
-  assert.deepEqual(texts(A.spec(1, 3)), ["± SE = ±0.025"]);
-  assert.equal(A.spec(1, 4).layers.filter(l => l.type === "segs").length, 1, "w kroku 4 przedział zastępuje SE");
+  assert.deepEqual(texts(A.spec(1, 3)), ["± SE = 0.025"]);
+  assert.equal(A.spec(1, 4).layers.filter(l => l.type === "bracket").length, 1, "w kroku 4 przedział zastępuje SE");
+  assert.deepEqual(texts(A.spec(1, 4)), ["0.481", "0.579", "p̂ = 0.53"]);
 
   const B = run({
     type: "diff_props", n: 5, xlab: "Odsetek", text: "x",
@@ -171,7 +168,7 @@ test("Przykłady proporcji: słupki TAK/NIE, dwie p̂, różnica z linią zera i
   fig.act(B.state, "hyp2");
   s = B.spec(2, 5);
   assert.ok(texts(s).includes("≥ 0.25"));
-  assert.ok(texts(s).includes("95% CI: [0.104 ; 0.296]"));
+  assert.ok(texts(s).includes("0.104") && texts(s).includes("0.296"));
   assert.equal(B.key(), "h2");
 
   const C = run({
@@ -181,9 +178,9 @@ test("Przykłady proporcji: słupki TAK/NIE, dwie p̂, różnica z linią zera i
     lab_groups: ["Szpital A · 12/150", "Szpital D · 35/170"]
   });
   s = C.spec(0, 1);
-  assert.deepEqual(texts(s), ["Szpital A · 12/150", "Szpital D · 35/170"]);
-  assert.equal(s.layers[0].x, 0.39); assert.equal(s.layers[0].align, "right");
-  assert.deepEqual(types(C.spec(0, 3)).slice(-2), ["points", "segs"]);
+  assert.deepEqual(plain(s.yLabels), { 1: "Szpital A · 12/150", 2: "Szpital D · 35/170" });
+  assert.deepEqual(types(s), []);
+  assert.deepEqual(texts(C.spec(0, 3)), ["0.040", "0.120", "0.150", "0.270"]);
 });
 
 test("Rycina w DOM: przełącznik i „Pokaż werdykt” działają bez serwera", () => {

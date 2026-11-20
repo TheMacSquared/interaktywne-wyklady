@@ -12,13 +12,6 @@
   var Z = D.qnorm(0.975);
 
   function cat(name, fallback) { return C.token("--upwr-cat-" + name, fallback); }
-  // geom_errorbar(orientation = "y"): odcinek lo–hi i wąsy o łącznej wysokości cap.
-  function errbar(lo, hi, y, cap, color, width, alpha) {
-    var h = cap / 2;
-    return { type: "segs", color: color, width: width, alpha: alpha, z: 4, items: [
-      { from: [lo, y], to: [hi, y] }, { from: [lo, y - h], to: [lo, y + h] }, { from: [hi, y - h], to: [hi, y + h] }] };
-  }
-
   // ---- Ryc. 3.1 ---------------------------------------------------------------
   function tnorm(v, P) {
     var df = 4, t = D.qt(0.975, df), z = Z, indygo = cat("indygo", "#3a5a8a");
@@ -50,39 +43,39 @@
 
   // ---- Przykłady A–C: górny wykres CI grup, dolny CI różnicy ------------------
   // config: g1_name, g2_name, unit, m1, m2, ci1, ci2, md, ci_d (policzone w R).
-  function pad(lo, hi) { var e = (hi - lo) * 0.05; return [lo - e, hi + e]; }
+  // Szeroki margines: granice przedziałów stoją po bokach klamer, więc potrzebują miejsca.
+  function pad(lo, hi) { var e = (hi - lo) * 0.2; return [lo - e, hi + e]; }
+  // Wygląd jak Ryc. 3.2–3.3 (ci_look.js): średnia jako czarna kreska, przedział jako
+  // burgundowa klamra z granicami po bokach, zero jako przerywana linia „brak różnicy”.
+  var K = window.lc04Look;
   var comp = {
     draw: function (v, P, k, state) {
-      var c = state.config, ci = cat("niebo", P.niebo), est = cat("bursztyn", P.bursztyn);
-      var two = function (n) { return n.toFixed(2); };
+      var c = state.config, two = function (n) { return n.toFixed(2); };
       if (k === 0) {
         var lo = Math.max(c.ci1[0], c.ci2[0]), hi = Math.min(c.ci1[1], c.ci2[1]);
         var layers = [];
+        // Wspólny odcinek obu przedziałów (żółty pas w tekście wykładu).
         if (lo <= hi) layers.push({ type: "band", lo: lo, hi: hi, color: "#f1c40f", alpha: 0.25 });
         [[c.m1, c.ci1, 2], [c.m2, c.ci2, 1]].forEach(function (g) {
-          layers.push(errbar(g[1][0], g[1][1], g[2], 0.18, ci, 2.8),
-                      { type: "point", x: g[0], y: g[2], color: est, size: 9 },
-                      { type: "text", x: g[0], y: g[2] + 0.1, text: two(g[0]), color: est, bold: true });
+          layers.push(K.mark(g[0], g[2], P), K.value(g[0], g[2] + 0.36, two(g[0]), P.ink, { size: 1.05 }));
+          layers = layers.concat(K.ci(g[1][0], g[1][1], g[2], P, { size: 1.1 }));
         });
         var yl = {}; yl[2] = c.g1_name; yl[1] = c.g2_name;
-        return { x: pad(Math.min(c.ci1[0], c.ci2[0]), Math.max(c.ci1[1], c.ci2[1])), y: [0.5, 2.5],
+        return { x: pad(Math.min(c.ci1[0], c.ci2[0]), Math.max(c.ci1[1], c.ci2[1])), y: [0.5, 2.6],
                  yLabels: yl, xName: c.unit, noYGrid: true, layers: layers,
                  aria: "95% CI grup: " + c.g1_name + " od " + two(c.ci1[0]) + " do " + two(c.ci1[1]) + ", " +
                        c.g2_name + " od " + two(c.ci2[0]) + " do " + two(c.ci2[1]) };
       }
       // Dolny panel: wiersz 1 na osi [0, 2] (w R: 1.5 na [0.5, 2.5]).
       var yd = {}; yd[1] = c.g1_name + " − " + c.g2_name;
-      var wrzos = cat("wrzos", "#a07894");
       return { x: pad(Math.min(0, c.ci_d[0]), Math.max(0, c.ci_d[1])), y: [0, 2], yLabels: yd, noYGrid: true,
                xName: "różnica — " + c.unit,
                aria: "95% CI różnicy od " + two(c.ci_d[0]) + " do " + two(c.ci_d[1]) + "; linia przerywana w zerze",
                layers: [
-                 { type: "vline", x: 0, color: wrzos, width: 2, dash: "dashed" },
-                 { type: "text", x: 0, y: 1.8, text: "0", color: wrzos, bold: true, valign: "middle" },
-                 errbar(c.ci_d[0], c.ci_d[1], 1, 0.18, ci, 2.8),
-                 { type: "point", x: c.md, y: 1, color: est, size: 9 },
-                 { type: "text", x: c.md, y: 1.1, text: two(c.md), color: est, bold: true }
-               ] };
+                 { type: "vline", x: 0, color: P.ref, width: 1.3, dash: [4, 4] },
+                 { type: "text", x: 0, y: 1.75, text: "brak różnicy", color: P.ref, valign: "middle", halo: true }
+               ].concat([K.mark(c.md, 1, P), K.value(c.md, 1.5, two(c.md), P.ink, { size: 1.05 })],
+                        K.ci(c.ci_d[0], c.ci_d[1], 1, P, { size: 1.1 })) };
     }
   };
 
