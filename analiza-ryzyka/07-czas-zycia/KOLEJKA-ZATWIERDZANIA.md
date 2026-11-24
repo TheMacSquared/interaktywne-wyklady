@@ -1,6 +1,6 @@
 # Wykład 07 — kolejka zatwierdzania prototypów
 
-Stan: 14 listopada 2026. Opis i uzasadnienie w
+Stan: 24 listopada 2026 (część A rozstrzygnięta, część B czeka). Opis i uzasadnienie w
 [PUNKTY-STOP-PROPOZYCJA.md](PUNKTY-STOP-PROPOZYCJA.md).
 
 Oglądanie (z katalogu repo, osobny port, bez restartu huba):
@@ -9,30 +9,41 @@ Oglądanie (z katalogu repo, osobny port, bez restartu huba):
 system("Rscript scripts/build_static.R analiza-ryzyka/07-czas-zycia")   # → dist/analiza-ryzyka/07-czas-zycia.html
 ```
 
-Każdy prototyp ma złotą plakietkę „Prototyp Pn · rodzaj” i stoi w miejscu,
+Każdy nierozstrzygnięty prototyp ma złotą plakietkę „Prototyp Pn · rodzaj” i stoi w miejscu,
 w którym miałby zostać. Tam, gdzie są warianty, nad panelem jest notka
 „Wariant: …”. Istniejące widgety zostały obok do porównania (z poprawionymi
 osiami i odczytami).
 
-## Inwentarz
+## Decyzje: część A (rozdziały 1–4), 24 listopada 2026
+
+Przyjęte, bez złotej plakietki (`c7p_accepted` w `modules/stop_proto_common.R`):
+
+| Rozdz. | Punkt | Decyzja |
+|---|---|---|
+| 1 | P1 „Dwie oferty, jedna średnia” | przyjęty; stoi raz, po głosowaniu (wariant A) |
+| 1 | P2B „Dwie oferty, jedna średnia: gęstości osobno” | przyjęty; P2A (jedna oś) odrzucony i usunięty |
+| 2 | P3, P5, P6 | przyjęte |
+| 2 | P4 „Koniec badania a średnia z awarii” | przyjęty; zastąpił dwa panele osi czasu |
+| 3 | P7 „Te same awarie, dwa mianowniki” | przyjęty; okno zostaje 300 h |
+| 3 | P8 „Cztery funkcje, jedna chwila” | przyjęty; zastąpił „Wspólny suwak czasu”, polecenie i odczyt przepisane |
+| 3 | P9, P10 | przyjęte |
+| 4 | P11 „Ocalali wyglądają jak nowi” | przyjęty; czwarty kadr (oferta B) zostaje |
+| 4 | P12 „Stały hazard” | przyjęty; zastąpił widget „Stały hazard” |
+| 4 | P13 „Magazyn” | przyjęty |
+| 4 | P14 „Czas do k-tej awarii” | przyjęty; zastąpił widget gamma |
+
+Zostało po części A:
+
+- `modules/wykresy.js` nadal rejestruje ryciny `c7m_timeline`, `c7m_functions`,
+  `c7m_exp` i `c7m_gamma`, a `modules/wykresy.R` liczy `c7_timeline_config`.
+  Strona ich nie używa; funkcje pomocnicze sprawdza `test-c7-wykresy.R`.
+- P2B: przy wąskim ekranie napisy „misja 1000 h” i „MTTF” nachodzą na siebie.
+- Pliki `ra`–`ri` czekają na nazwy według rozdziałów do decyzji o części B.
+
+## Inwentarz: część B (rozdziały 5–8), do decyzji
 
 | Rozdz. | Prototyp | Rodzaj | Plik | Decyzja do podjęcia |
 |---|---|---|---|---|
-| 1 | P1 „Dwie oferty, jedna średnia” | scena | ra | miejsce: na otwarcie rozdziału, przed głosowaniem (B) czy po nim (A); stoi w obu |
-| 1 | P2A „Dwie gęstości, jedna średnia” | galeria | rb | P2A (jedna oś) czy P2B (dwa wykresy) |
-| 1 | P2B „Dwie oferty, jedna średnia: gęstości osobno” | galeria | rb | jak wyżej |
-| 2 | P3 „Badanie kończy się po 1200 h” | scena | rc | przyjąć / odrzucić |
-| 2 | P4 „Koniec badania a średnia z awarii” | piaskownica | rd | zastępuje dwa panele ggplot (suwak i oś czasu) |
-| 2 | P5 „Łączny czas pracy” | pojęcie (kadry) | rc | przyjąć / odrzucić |
-| 2 | P6 „To samo badanie powtórzone wiele razy” | symulacja | rd | przyjąć / odrzucić |
-| 3 | P7 „Te same awarie, dwa mianowniki” | piaskownica | re | przyjąć / odrzucić; szerokość okna (300 h) |
-| 3 | P8 „Cztery funkcje, jedna chwila” | pojęcie | rb | zastępuje widget „Wspólny suwak czasu” |
-| 3 | P9 „MTTF to pole pod R(t)” | pojęcie (kadry) | re | przyjąć / odrzucić |
-| 3 | P10 „Pole pod hazardem” | pojęcie | rb | przyjąć / odrzucić |
-| 4 | P11 „Ocalali wyglądają jak nowi” | pojęcie (kadry) | re | przyjąć / odrzucić; czwarty kadr (oferta B) zostaje czy idzie do P22 |
-| 4 | P12 „Stały hazard: jedna krzywa, inna skala” | piaskownica | ra | zastępuje widget „Stały hazard” |
-| 4 | P13 „Magazyn z trzema zapasowymi wentylatorami” | scena | rg | przyjąć / odrzucić |
-| 4 | P14 „Czas do k-tej awarii” | piaskownica | rf | zastępuje widget gamma |
 | 5 | P15 „Trzy dzienniki awarii” | scena | ri | przyjąć / odrzucić (otwarcie części B) |
 | 5 | P16B „Rodzina Weibulla: cztery kształty, jedna skala” | galeria | rf | P16A, P16B albo oba (różne miejsca) |
 | 5 | P16A „β obraca hazard, η rozciąga oś” | piaskownica | rf | zastępuje widget „R(t) i h(t) reagują razem” |

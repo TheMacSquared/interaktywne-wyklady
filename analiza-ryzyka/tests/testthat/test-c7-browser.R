@@ -24,23 +24,23 @@ testthat::test_that("wykład 07: prototypy punktów stop są wpięte i działaj�
     )
   }, args = list(path = file.path(risk_root, "07-czas-zycia")), show = FALSE)
 
-  # P1 stoi dwa razy (na otwarcie rozdziału i po głosowaniu), pozostałe po razie.
-  expected <- c("P1", "P1", "P2A", "P2B", paste0("P", 3:15), "P16A", "P16B", "P17A", "P17B",
+  # Część A po decyzjach z 2026-11-24: P1 raz (po głosowaniu), z pary P2 został P2B.
+  expected <- c("P1", "P2B", paste0("P", 3:15), "P16A", "P16B", "P17A", "P17B",
     "P18", "P19", "P20", "P21A", "P21B", "P22", "P23A", "P23B")
   testthat::expect_equal(sort(res$protos), sort(expected))
   testthat::expect_false(res$pending)
 
-  # Sceny: kadry (P1 ×2, P3, P5, P9, P11, P15, P18) i trzy sceny w JS.
-  testthat::expect_equal(sort(res$scenes), sort(c(rep("kadry", 8), "okno", "parki", "magazyn")))
+  # Sceny: kadry (P1, P3, P5, P9, P11, P15, P18) i trzy sceny w JS.
+  testthat::expect_equal(sort(res$scenes), sort(c(rep("kadry", 7), "okno", "parki", "magazyn")))
   for (cfg in res$configs[res$scenes == "kadry"]) {
     testthat::expect_gte(length(cfg$frames), 3L)
     for (fr in cfg$frames) testthat::expect_true(grepl("^<svg", fr$svg))
   }
-  testthat::expect_setequal(res$figs, c("c7_staly", "c7_gestosci", "c7_gestosci_b", "c7_cztery",
+  testthat::expect_setequal(res$figs, c("c7_staly", "c7_gestosci_b", "c7_cztery",
     "c7_pole_hazardu", "c7_koniec", "c7_powtorki", "c7_gamma", "c7_weibull", "c7_rodzina",
     "c7_ranking", "c7_wanna", "c7_jeden_weibull", "c7_termin", "c7_termin_pole", "c7_stary_nowy",
-    # Osiem głównych wykresów wykładu (dawniej ggplot na serwerze): modules/wykresy.js.
-    "c7m_timeline", "c7m_functions", "c7m_exp", "c7m_gamma", "c7m_weibull", "c7m_same_mean",
+    # Główne wykresy części B (modules/wykresy.js); cztery z części A zastąpiły P4, P8, P12 i P14.
+    "c7m_weibull", "c7m_same_mean",
     "c7m_bathtub", "c7m_plan"))
   testthat::expect_equal(anyDuplicated(res$ids), 0L)
 

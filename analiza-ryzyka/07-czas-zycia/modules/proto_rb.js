@@ -1,9 +1,8 @@
-// Prototypy punktów stop wykładu 07, grupa rb (P2A, P2B, P8, P10). Ryciny lcSF
+// Prototypy punktów stop wykładu 07, grupa rb (P2B, P8, P10). Ryciny lcSF
 // liczone w przeglądarce; kontenery w R: lc_sf_figure() w stop_proto_rb.R.
 //
-//   c7_gestosci      — „Dwie gęstości, jedna średnia” (P2A): gęstości A i B na jednym
-//                      wykresie, pola za kreską misji, stałe osie.
-//   c7_gestosci_b    — P2A osobno (P2B): dwa wykresy, pole przed kreską w akcencie.
+//   c7_gestosci_b    — „Dwie oferty, jedna średnia: gęstości osobno” (P2B): dwa wykresy,
+//                      stałe osie, pole przed kreską misji w akcencie.
 //   c7_cztery        — „Cztery funkcje, jedna chwila” (P8): F i R na górze, h i f na dole.
 //   c7_pole_hazardu  — „Pole pod hazardem” (P10): pole H(t) pod hazardem, R(t) = exp(−H(t)).
 (function () {
@@ -12,7 +11,7 @@
   if (!C || !S || !Z) return;
   var U = Z.util;
 
-  // Wspólne osie gęstości i czasu w rycinach P2A/P2B.
+  // Wspólne osie gęstości i czasu w rycinie P2B.
   var X_DENS = [0, 5000], Y_DENS = [0, 0.0008];
 
   // Gęstości obu ofert (1/h): A wykładnicza z MTTF, B Weibull z β i η.
@@ -44,30 +43,7 @@
   }
 
   S.register({
-    c7_gestosci: {
-      draw: function (v, P, k, state) {
-        var cfg = state.config, t = Number(v), fA = dA(cfg), fB = dB(cfg);
-        state.t = t;
-        return {
-          x: X_DENS, y: Y_DENS, xLabelEvery: 1000,
-          layers: [].concat(
-            [area(fA, t, X_DENS[1], P.niebo, 0.3), area(fB, t, X_DENS[1], P.bursztyn, 0.3),
-             curve(fA, X_DENS[0], X_DENS[1], P.niebo, 2.6), curve(fB, X_DENS[0], X_DENS[1], P.bursztyn, 2.6)],
-            mttfLayers(cfg, P, 0.0007),
-            missionLayers(t, P)),
-          legend: [{ text: "oferta A (wykładnicza)", color: P.niebo }, { text: "oferta B (Weibull)", color: P.bursztyn }],
-          xName: "Czas pracy (h)", yName: "Gęstość (1/h)",
-          aria: "Gęstości obu ofert z kreską misji " + t + " godzin: pole za kreską to niezawodność R(t)."
-        };
-      },
-      update: function (root, state, v) {
-        var cfg = state.config, t = Number(v);
-        S.setValue(root, "ra", U.fmtP(U.wR(t, 1, cfg.mttf)));
-        S.setValue(root, "rb", U.fmtP(U.wR(t, cfg.beta, cfg.eta)));
-      }
-    },
-
-    // ---- P2B: jak P2A, dwa wykresy, pole przed kreską w akcencie ----------------
+    // ---- P2B: dwa wykresy, pole przed kreską w akcencie -------------------------
     c7_gestosci_b: {
       draw: function (v, P, k, state) {
         var cfg = state.config, t = Number(v), isA = k === 0;

@@ -31,9 +31,14 @@ c7p_q <- function(u, beta, eta) eta * (-log(1 - u))^(1 / beta)
 # Park n wentylatorów: czasy życia = kwantyle (i − 0.5)/n, rosnąco.
 c7p_park <- function(n, beta, eta) c7p_q((seq_len(n) - 0.5) / n, beta, eta)
 
-# Panel prototypu: złota plakietka „Prototyp P4 · piaskownica”. Po akceptacji
-# proto = FALSE daje zwykłą figurę z etykietą rodzaju.
-c7p_panel <- function(num, kind, title, ..., width_mode = "wide", proto = TRUE) {
+# Punkty stop przyjęte do wykładu (część A, rozdziały 1–4; decyzje 2026-11-24).
+# P1 stoi po głosowaniu, z pary P2 został P2B. Część B (P15–P23) czeka w
+# KOLEJKA-ZATWIERDZANIA.md.
+c7p_accepted <- c(paste0("P", c(1, 3:14)), "P2B")
+
+# Panel punktu stop. Prototyp ma złotą plakietkę „Prototyp P4 · piaskownica”;
+# przyjęty (c7p_accepted) jest zwykłą figurą z etykietą rodzaju.
+c7p_panel <- function(num, kind, title, ..., width_mode = "wide", proto = !(num %in% c7p_accepted)) {
   body <- tags$div(`data-proto` = num, ...)
   if (!proto) return(figure_panel(label = kind, title = title, width_mode = width_mode, body))
   figure_panel(label = paste0("Prototyp ", num, " · ", kind), title = title,
