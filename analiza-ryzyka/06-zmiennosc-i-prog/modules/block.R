@@ -33,7 +33,7 @@ prog_exercises <- list(
   list(
     task = "Transfer: dla obciążenia i wytrzymałości konstrukcji policz ryzyko jako P(L>S), nie jako pole nakładania krzywych.",
     answer = c(
-      "Przyjmijmy dane liny z rozdziału 5: L ~ N(85; 8) kN, S ~ N(95; 7) kN, niezależne. Ze wzoru (6.9): μ_D = 10 kN, σ_D = √(8² + 7²) = √113 ≈ 10.63 kN. Indeks niezawodności β = 10/10.63 ≈ 0.94, więc ze wzoru (6.10) P(L > S) = Φ(-0.94) ≈ 0.173.",
+      "Przyjmijmy dane liny z rozdziału 6: L ~ N(85; 8) kN, S ~ N(95; 7) kN, niezależne. Ze wzoru (6.9): μ_D = 10 kN, σ_D = √(8² + 7²) = √113 ≈ 10.63 kN. Indeks niezawodności β = 10/10.63 ≈ 0.94, więc ze wzoru (6.10) P(L > S) = Φ(-0.94) ≈ 0.173.",
       "Pole nakładania się obu gęstości wynosi w tym przykładzie około 0.50 — prawie trzy razy więcej. To liczba bez interpretacji probabilistycznej: nie mówi, jak często losowe obciążenie trafi na słabszą od niego wytrzymałość."
     )
   ),
@@ -53,23 +53,64 @@ prog_exercises <- list(
   )
 )
 
+# Mapa wykładu: wiersze raportu P21 i rozdziały, które je poprawiają.
+prog_map_table <- lc_table(
+  data.frame(
+    row = c("Wiersz 2: poziom ryzyka",
+            "Skąd liczba w wierszu 2",
+            "Wiersze 3 i 4: częstość alarmu, źródło ryzyka",
+            "Wiersz 6: postępowanie z ryzykiem",
+            "Drugi raport: lina dźwigu",
+            "Wiersz 5: założenia i niepewność",
+            "Wiersze 1 i 7: zakres i kryteria, monitorowanie"),
+    chapter = c("Zmienność a próg", "Rozkład normalny", "Prawdopodobieństwo przekroczenia",
+                "Hierarchia interwencji", "Obciążenie–wytrzymałość", "Wykres kwantylowy", "Komunikat o ryzyku"),
+    tool = c("odchylenie standardowe σ", "gęstość, pole pod krzywą, N(μ, σ)",
+             "standaryzacja z, przekroczenie w zmianie", "przesunąć μ, zwęzić σ albo zmienić próg",
+             "P(L > S), margines D = S − L", "wykres kwantylowy, ogon rozkładu",
+             "komunikat o ryzyku w trzech zdaniach")
+  ),
+  cols = list(
+    lc_col("row", "Co poprawiamy", "row"),
+    lc_col("chapter", "Rozdział", "text"),
+    lc_col("tool", "Narzędzie", "text")
+  ),
+  caption = "Jeden raport, siedem rozdziałów",
+  narrow = "cards", prose = TRUE
+)
+
 prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
   list(
-    id = "glosowanie", title = "Zmienność a próg", hook = "Średnia w normie, a próg przekroczony",
-    # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
-    widget = z6p_21_fix(1),
-    lead = "Bez informacji o zmienności średnia nie odpowiada na pytanie o przekroczenie.",
+    id = "raport", title = "Raport o łożysku", hook = "Siedem wierszy, każdy do poprawki",
+    lead = "Każda poprawka raportu zależy od tego, czy przekroczenia biorą się ze średniej, czy z rozrzutu.",
     intro = c(
-      "Na biurko kierownika dojrzewalni trafia raport z oceny ryzyka dla łożyska wentylatora 2. Stoi niżej, w siedmiu wierszach, i wygląda uspokajająco: średnia temperatura 82°C, próg ostrzegawczy 85°C, trzy stopnie zapasu, „w normie”. Każdy jego wiersz jest jednak błędny albo pusty. Przez cały wykład będziemy go poprawiać, wiersz po wierszu; poprawkę zobaczysz na końcu rozdziału, który ją uzasadnia.",
-      "Ten wykład wprowadza zmienne ciągłe i rozkład normalny, ale jego prawdziwym tematem jest zmienność: dlaczego bez miary rozrzutu nie da się odpowiedzieć na żadne pytanie o przekroczenie progu. Zaczynamy od wiersza 2, czyli od tego, co mówi średnia, a czego nie mówi."
+      "Na biurko kierownika dojrzewalni trafia raport z oceny ryzyka dla łożyska wentylatora 2. Stoi niżej, w siedmiu wierszach, i wygląda uspokajająco: średnia temperatura 82°C, próg ostrzegawczy 85°C, trzy stopnie zapasu, „w normie”. Każdy jego wiersz jest jednak błędny albo pusty. Przez cały wykład będziemy go poprawiać, wiersz po wierszu; poprawkę zobaczysz na końcu rozdziału, który ją uzasadnia."
     ),
     callout = list(
       label = "Dane Bananpolu",
       text = "Temperatura łożyska wentylatora: średnia 82°C, odchylenie standardowe 3°C, wewnętrzny próg ostrzegawczy 85°C. Jednostka obserwacji: pojedynczy pomiar w ustalonym trybie pracy; temperatura w °C. Udział pomiarów ponad progiem nie jest prawdopodobieństwem co najmniej jednego przekroczenia w całej zmianie. Próg jest demonstracyjny, a liczby fikcyjne.",
       color = "uwaga"
     ),
-    # Raport P21 (przyjęty 17.11.2026): zła wersja szablonu raportu, oś całego wykładu
-    body = list(z6p_get("z6p_21_ui")),
+    body = list(
+      # Raport P21 (przyjęty 17.11.2026): zła wersja szablonu raportu, oś całego wykładu
+      z6p_get("z6p_21_ui"),
+      "Raport odpowiada „w normie”, bo patrzy tylko na średnią. Żadnego z jego wierszy nie da się jednak poprawić bez odpowiedzi na pytanie, które prowadzi przez cały wykład: jak często przekraczamy granicę — i czy przekroczenia to wyjątki, czy zwykła praca łożyska? Jeśli temperatura trzyma się blisko średniej, próg leży daleko w ogonie i przekroczenia są rzadkie. Jeśli wyniki rozrzucają się szeroko, przy tej samej średniej spora część pomiarów wypada ponad progiem, a o tym, co zrobić, decyduje źródło: zbyt wysoka średnia czy zbyt duży rozrzut.",
+      lc_h3("Mapa wykładu"),
+      "Każdy rozdział poprawia swój wiersz raportu i dokłada jedno narzędzie. Jeden rozdział poprawia drugi raport tego samego działu, o linie dźwigu w magazynie: tam zmienne są dwie, obciążenie i wytrzymałość.",
+      prog_map_table,
+      lc_h3("Co już umiemy"),
+      "W wykładach 04 i 05 zmienne losowe zliczały zdarzenia: wady w partii, kontrole do wykrycia. Stamtąd wracają wartość oczekiwana i ogon rozkładu — a ogon okaże się tu najważniejszą częścią modelu, tak jak w limicie planistycznym liczył się kwantyl, nie średnia. Z wykładu 01 wraca stabilizacja częstości w długiej serii. Dochodzi zmienna ciągła: temperatura nie zlicza niczego, więc prawdopodobieństwa czytamy z pól pod gęstością, a obok średniej potrzebna jest druga liczba — miara rozrzutu."
+    )
+  ),
+  list(
+    id = "glosowanie", title = "Zmienność a próg", hook = "Średnia w normie, a próg przekroczony",
+    # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
+    widget = z6p_21_fix(2),
+    lead = "Bez informacji o zmienności średnia nie odpowiada na pytanie o przekroczenie.",
+    intro = c(
+      "Pierwsza poprawka: wiersz 2, poziom ryzyka. Raport ocenia łożysko po samej średniej — 82°C przy progu 85°C, trzy stopnie zapasu, więc „w normie”.",
+      "Ten wykład wprowadza zmienne ciągłe i rozkład normalny, ale jego prawdziwym tematem jest zmienność: dlaczego bez miary rozrzutu nie da się odpowiedzieć na żadne pytanie o przekroczenie progu. Zaczynamy od tego, co mówi średnia, a czego nie mówi."
+    ),
     sections = list(
       list(
         id = "rozrzut", title = "Średnia to za mało",
@@ -87,7 +128,7 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
             )),
           c(
             "Odpowiedź „tak” zakłada, że wszystkie pomiary leżą blisko średniej. Odpowiedź „50%” myli średnią z progiem: połowa wyników leży powyżej średniej, a nie powyżej dowolnego progu. Poprawna odpowiedź jest mniej efektowna, ale uczciwa: z samych dwóch liczb, 82 i 85, nie da się wyznaczyć ryzyka. Brakuje trzeciej — miary rozrzutu, czyli odchylenia standardowego σ.",
-            "Ile zmienia ta trzecia liczba? Poniższy przykład wyprzedza rachunek, który wyprowadzimy w rozdziale 3; na razie wystarczy zauważyć skalę różnic."
+            "Ile zmienia ta trzecia liczba? Poniższy przykład wyprzedza rachunek, który wyprowadzimy w rozdziale 4; na razie wystarczy zauważyć skalę różnic."
           ),
           # Scena P1 (przyjęta 17.11.2026): po głosowaniu, przed przykładem 6.1
           z6p_get("z6p_1_ui"),
@@ -241,7 +282,7 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
   list(
     id = "standaryzacja", title = "Prawdopodobieństwo przekroczenia", hook = "Trzy stopnie zapasu nie chronią łożyska",
     # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
-    widget = z6p_21_fix(3),
+    widget = z6p_21_fix(4),
     lead = "Prawdopodobieństwo przekroczenia to pole pod krzywą ponad progiem; standaryzacja pozwala je policzyć dla każdego rozkładu normalnego.",
     intro = c(
       "Ten rozdział poprawia dwa wiersze raportu: częstość alarmu („16% pomiarów, więc 16% zmian”) i źródło ryzyka („pojedyncze, przypadkowe gorące odczyty”).",
@@ -363,7 +404,7 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
   list(
     id = "dzialania", title = "Hierarchia interwencji", hook = "Schłodzić, uspokoić albo przesunąć próg",
     # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
-    widget = z6p_21_fix(4),
+    widget = z6p_21_fix(5),
     lead = "Chłodzenie przesuwa średnią, stabilizacja zwęża rozkład, zmiana progu przesuwa granicę.",
     intro = c(
       "Wiersz 6 raportu proponuje podnieść próg do 87°C, bo wtedy przekroczeń będzie mniej. Ten rozdział porównuje to z chłodzeniem i stabilizacją i pokazuje, czym te działania naprawdę się różnią.",
@@ -547,7 +588,7 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
   list(
     id = "nienormalny", title = "Wykres kwantylowy", hook = "Ta sama średnia, zupełnie inny ogon",
     # Poprawka raportu z rozdziału 1 (przyjęta 17.11.2026)
-    widget = z6p_21_fix(6),
+    widget = z6p_21_fix(7),
     lead = "Skośność i ciężki ogon mogą silnie zmienić ryzyko progowe mimo podobnej średniej i odchylenia.",
     intro = c(
       "Wiersz 5 raportu brzmi po prostu: „Model standardowy”. Ten rozdział sprawdza, co kryje się za tym słowem.",
@@ -562,7 +603,7 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
           z6p_get("z6p_19b_ui"),
           c(
             "W obu komorach łożysko ma średnio 82°C i odchylenie 3°C, a mimo to w komorze 2 próg 91°C pada kilka razy częściej: około 12 na 1000 pomiarów wobec 1.3 w komorze 1. Różnicę robi kształt. Świeżo nasmarowane łożysko w komorze 2 ma około 77°C i chłodniejsze nie będzie, więc rozkład ma twardą dolną granicę. Każdy dzień bez smarowania dokłada ciepła, a spóźnione smarowanie dokłada go jeszcze więcej, więc prawy ogon jest długi. Rozkład, którego jeden ogon jest wyraźnie dłuższy od drugiego, nazywamy skośnym; tu długi ogon leży po prawej, więc to skośność prawostronna.",
-            "Wszystkie rachunki z rozdziałów 2–5 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.",
+            "Wszystkie rachunki z rozdziałów 3–6 korzystały z funkcji Φ, czyli zakładały, że kształt rozkładu jest dokładnie normalny. Średnia i odchylenie standardowe nie wyznaczają jednak kształtu. Dwa rozkłady o μ = 82°C i σ = 3°C mogą mieć zupełnie różne ogony, a ryzyko progowe mieszka właśnie w ogonie.",
             "Galeria poniżej porównuje trzy modele temperatury, wszystkie ze średnią 82°C i odchyleniem 3°C. Symetryczny to N(82, 3), jak w komorze 1. Skośny to przesunięty rozkład gamma, jak w komorze 2: dolna granica tuż po smarowaniu, około 76.8°C, i dłuższy prawy ogon. Trzeci model opisuje inny mechanizm: rzadkie, gwałtowne odchylenia w obie strony, np. przy chwilowych zakłóceniach pomiaru. To przeskalowany rozkład t-Studenta z trzema stopniami swobody: większość pomiarów skupia się ciaśniej wokół 82°C, ale rzadkie skoki są znacznie dalsze niż w modelu normalnym."
           ),
           risk_example("6.10", "Trzy modele, trzy ryzyka",
@@ -631,7 +672,7 @@ prog_block <- list(id = "prog", title = "Przekroczenie progu", chapters = list(
     id = "komunikat", title = "Komunikat o ryzyku", hook = "Wynik ma wskazać, co zrobić",
     lead = "Komunikat o ryzyku łączy poziom ryzyka i częstość alarmu, źródło ryzyka i postępowanie z ryzykiem — dopiero wtedy kierownik wie, co zrobić.",
     intro = c(
-      "Wszystkie poprawki z rozdziałów 1–6 składamy teraz w jeden raport. Dochodzą dwa wiersze, których wcześniej brakowało: zakres z kryterium decyzji i monitorowanie po wdrożeniu.",
+      "Wszystkie poprawki z rozdziałów 2–7 składamy teraz w jeden raport. Dochodzą dwa wiersze, których wcześniej brakowało: zakres z kryterium decyzji i monitorowanie po wdrożeniu.",
       "Kompletny komunikat o ryzyku mieści się w trzech zdaniach: jaka część wyników przekracza próg i w jakim okresie odniesienia (na pomiar, na zmianę), co jest źródłem ryzyka w ogonie, które postępowanie z ryzykiem — chłodzenie, stabilizacja czy rewizja progu — rekomendujesz i dlaczego. Liczba bez źródła ryzyka nie wskazuje działania; działanie bez liczby nie ma uzasadnienia."
     ),
     sections = list(

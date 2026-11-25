@@ -1,4 +1,4 @@
-# SCENA (2026-11-17, przyjęta) — grupa rj: P19B, rozdział 6 -----------------------------
+# SCENA (2026-11-17, przyjęta) — grupa rj: P19B, rozdział 7 -----------------------------
 #
 # Dwa światy z powtórzeniem, przed pojęciem skośności. Dwa procesy z inżynierii
 # bezpieczeństwa o tej samej średniej i tym samym SD: A symetryczny N(μ, σ), B z twardą

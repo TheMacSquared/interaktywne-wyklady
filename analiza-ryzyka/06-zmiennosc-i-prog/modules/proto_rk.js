@@ -1,4 +1,4 @@
-// Prototypy widgetów wykładu 06, rozdział 7 „Komunikat o ryzyku” (P20A–P20C).
+// Prototypy widgetów wykładu 06, rozdział 8 „Komunikat o ryzyku” (P20A–P20C).
 // Kontenery w R: z6p_scene_ui() w stop_proto_rk.R; konfiguracja i teksty z R.
 //
 //   redaktor — piaskownica „Redaktor komunikatu” (P20A): suwaki μ, σ, c, n, kształt
@@ -8,7 +8,7 @@
 //   budzet   — „Decyzja z budżetem” (P20C): pakiet działań z kosztami, cel ≤ 10 na
 //              1000 pomiarów, komunikat z wybranego pakietu.
 // Model temperatury: normalny N(μ, σ) albo skośny 82-style (przesunięta gamma o kształcie 3,
-// ta sama średnia i σ co normalny, jak w rozdziale 6).
+// ta sama średnia i σ co normalny, jak w rozdziale 7).
 (function () {
   "use strict";
   var Z = window.lcZ6, D = window.lcDist;

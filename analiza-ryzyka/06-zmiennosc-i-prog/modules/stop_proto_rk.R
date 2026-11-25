@@ -1,10 +1,10 @@
-# WIDGETY (2026-11-17, przyjęte) — grupa rk: P20A–P20C, rozdział 7 „Komunikat o ryzyku”
+# WIDGETY (2026-11-17, przyjęte) — grupa rk: P20A–P20C, rozdział 8 „Komunikat o ryzyku”
 #
 #   z6p_20a_ui — piaskownica „Redaktor komunikatu” (P20A): suwaki μ, σ, próg, liczba
 #                pomiarów na zmianę, kształt rozkładu i działanie; trzy zdania komunikatu
 #                i ostrzeżenia składa JS (modules/proto_rk.js, scena „redaktor”).
 #   z6p_20b_ui — galeria „Popraw raport” (P20B): pięć raportów w szablonie raportu o łożysku,
-#                w każdym jeden błędny wiersz (pułapki z rozdziałów 1–6); scena „raporty”.
+#                w każdym jeden błędny wiersz (pułapki z rozdziałów 2–7); scena „raporty”.
 #   z6p_20c_ui — „Decyzja z budżetem” (P20C): pakiet działań z kosztem, cel ≤ 10
 #                przekroczeń na 1000 przy budżecie 20 tys. zł; scena „budzet”.
 # Koszty i efekty działań są ilustracyjne (jak liczby Bananpolu). σ łączonych działań:

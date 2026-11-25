@@ -1,4 +1,4 @@
-// Prototypy sceny wykładu 06, rozdział 6 (P19A, P19B): „dwa światy z powtórzeniem”.
+// Prototypy sceny wykładu 06, rozdział 7 (P19A, P19B): „dwa światy z powtórzeniem”.
 // Kontener w R: z6p_scene_ui(..., "dwa_swiaty", cfg) w stop_proto_rj.R.
 //
 //   dwa_swiaty — dwa procesy o tej samej średniej i tym samym SD: A symetryczny

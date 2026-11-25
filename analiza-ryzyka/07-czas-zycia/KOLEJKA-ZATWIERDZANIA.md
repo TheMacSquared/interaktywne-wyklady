@@ -22,9 +22,10 @@ Przyjęte, bez złotej plakietki (`c7p_accepted` w `modules/stop_proto_common.R`
 |---|---|---|
 | 1 | P1 „Dwie oferty, jedna średnia” | przyjęty; stoi raz, po głosowaniu (wariant A) |
 | 1 | P2B „Dwie oferty, jedna średnia: gęstości osobno” | przyjęty; P2A (jedna oś) odrzucony i usunięty |
-| 2 | P3, P5 | przyjęte |
+| 2 | P3 „Badanie kończy się po 1200 h” | przyjęty; od 25.11 zaczyna od rejestru awarii (cztery wpisy, 612.5 h) |
+| 2 | P5 „Łączny czas pracy” | przyjęty; od 25.11 pięć kadrów, z dolną granicą 7250/8 ≈ 906 h |
 | 2 | P6 „To samo badanie powtórzone wiele razy” | przyjęty 24.11, usunięty 25.11: symulacja nie pasowała do narracji o ośmiu wentylatorach |
-| 2 | P4 „Koniec badania a średnia z awarii” | przyjęty; zastąpił dwa panele osi czasu |
+| 2 | P4 „Trzy rachunki a koniec badania” | przyjęty; od 25.11 pokazuje rejestr, dolną granicę i szacunek (7.2), stoi po przykładzie 7.2 |
 | 3 | P7 „Te same awarie, dwa mianowniki” | przyjęty; okno zostaje 300 h |
 | 3 | P8 „Cztery funkcje, jedna chwila” | przyjęty; zastąpił „Wspólny suwak czasu”, polecenie i odczyt przepisane |
 | 3 | P9, P10 | przyjęte |

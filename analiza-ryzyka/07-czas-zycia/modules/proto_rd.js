@@ -1,8 +1,8 @@
 // Prototypy punktów stop wykładu 07, grupa rd (P4): rycina lcSF liczona w przeglądarce.
 // Kontenery w R: lc_sf_figure() w stop_proto_rd.R (c7p_4_ui).
 //
-//   c7_koniec    — Koniec badania a średnia z awarii (P4): osiem wentylatorów jako linie
-//                  życia, suwak końca badania c, naiwna średnia z awarii i szacunek (7.2).
+//   c7_koniec    — Trzy rachunki a koniec badania (P4): osiem wentylatorów jako linie
+//                  życia, suwak końca badania c, średnia z samych awarii.
 //                  Opcjonalnie prawdziwe czasy życia (przerywane przyszłe awarie).
 (function () {
   "use strict";
@@ -18,15 +18,17 @@
   function hours(x, d) { return num(x, d) + " h"; }
 
   // ---- P4: pomiar badania przerwanego po c godzinach --------------------------
-  // d = awarie (T ≤ c), sum = łączny czas obserwacji Σ min(T, c),
-  // naive = średnia z samych awarii, est = szacunek (7.2) = sum / d.
+  // d = awarie (T ≤ c), sum = łączny czas pracy Σ min(T, c). Trzy rachunki:
+  // naive = średnia z rejestru awarii, lower = sum / n (dolna granica),
+  // est = sum / d (wzór 7.2).
   function measure(times, c) {
     var sum = 0, failSum = 0, d = 0;
     times.forEach(function (t) {
       sum += Math.min(t, c);
       if (t <= c) { d++; failSum += t; }
     });
-    return { c: c, d: d, sum: sum, naive: d ? failSum / d : NaN, est: d ? sum / d : NaN };
+    return { c: c, d: d, sum: sum, naive: d ? failSum / d : NaN,
+             lower: sum / times.length, est: d ? sum / d : NaN };
   }
 
   var figKoniec = {
@@ -59,8 +61,9 @@
       // Przy prawej krawędzi osi napis stoi po lewej stronie kreski, żeby się nie ucinał.
       layers.push({ type: "text", x: c, y: "top", text: "koniec badania", color: P.ink,
                     align: c > 2800 ? "right" : "left", mono: true });
-      // Wiersz „średnie” (y = 0): naiwna średnia, szacunek (7.2) przycięty do osi, prawdziwa średnia.
+      // Wiersz „średnie” (y = 0): trzy rachunki i, po zaznaczeniu pola, prawdziwa średnia.
       if (isFinite(m.naive)) layers.push({ type: "point", x: m.naive, y: 0, symbol: "diamond", size: 14, color: P.accent });
+      layers.push({ type: "point", x: m.lower, y: 0, symbol: "diamond", size: 14, color: P.szalwia });
       if (isFinite(m.est)) layers.push({ type: "point", x: Math.min(m.est, X4[1]), y: 0, symbol: "diamond", size: 14, color: P.niebo });
       if (truth) layers.push({ type: "point", x: TRUE_MEAN, y: 0, symbol: "diamond", size: 14, color: P.ink });
 
@@ -70,21 +73,24 @@
       return {
         x: X4, y: Y4, xLabelEvery: 500, xName: "Czas pracy (h)", yLabels: yLabels, noYGrid: true,
         legend: [
-          { text: "średnia z samych awarii", color: P.accent, box: true },
-          { text: "szacunek ze wzoru (7.2)", color: P.niebo, box: true },
+          { text: "średnia z rejestru awarii", color: P.accent, box: true },
+          { text: "dolna granica", color: P.szalwia, box: true },
+          { text: "szacunek (7.2)", color: P.niebo, box: true },
           { text: "prawdziwa średnia (zwykle nieznana)", color: P.ink, box: true }
         ],
         layers: layers,
         aria: "Osiem wentylatorów, badanie przerwane po " + c + " godzinach. Awarii: " + m.d +
-          ". Średnia z samych awarii " + num(m.naive, 1) + " godzin, szacunek " + num(m.est, 1) + " godzin."
+          ". Średnia z rejestru awarii " + num(m.naive, 1) + ", dolna granica " + num(m.lower, 0) +
+          ", szacunek ze wzoru 7.2 " + num(m.est, 0) + " godzin."
       };
     },
     update: function (root, state) {
       var m = state.calc, n = state.config.times.length;
       S.setValue(root, "d", m.d + " z " + n);
-      S.setValue(root, "sum", hours(m.sum, 1));
       S.setValue(root, "naive", isFinite(m.naive) ? hours(m.naive, 1) : "–");
-      S.setValue(root, "est", isFinite(m.est) ? hours(m.est, 1) : "–");
+      S.setValue(root, "lower", hours(m.lower, 0));
+      S.setValue(root, "est", isFinite(m.est) ? hours(m.est, 0) : "–");
+      S.setValue(root, "truth", m.truth ? hours(TRUE_MEAN, 2) : "nieznana");
     }
   };
 

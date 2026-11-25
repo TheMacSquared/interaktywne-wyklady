@@ -58,7 +58,7 @@ z6p1_strip <- function(j, step) {
   )
 }
 
-# Kadr 1 (17.11.2026): wiersz 2 raportu P21 z początku rozdziału — ten sam szablon,
+# Kadr 1 (17.11.2026): wiersz 2 raportu P21 z rozdziału 1 — ten sam szablon,
 # wycinek jednego wiersza; ocena „w normie” wyróżniona.
 z6p1_report <- function() {
   paste0(
@@ -78,7 +78,7 @@ z6p1_report <- function() {
 
 z6p1_frames <- list(
   list(name = "Raport",
-    text = "Wiersz 2 raportu z początku rozdziału ocenia wentylator 2 po samej średniej: 82°C przy progu 85°C, więc „w normie”.",
+    text = "Wiersz 2 raportu z rozdziału 1 ocenia wentylator 2 po samej średniej: 82°C przy progu 85°C, więc „w normie”.",
     read = "średnia 82°C · próg 85°C · zapas 3°C"),
   list(name = "Dzienniki",
     text = "Tę samą średnią mogą mieć bardzo różne dzienniki. Obok wentylatora 2 stawiamy dwa inne, też ze średnią 82°C. Punkt to jeden pomiar, przerywana linia to średnia.",

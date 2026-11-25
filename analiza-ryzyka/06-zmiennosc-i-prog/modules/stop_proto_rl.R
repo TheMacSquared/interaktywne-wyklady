@@ -6,51 +6,51 @@
 #   z6p_21_ui      — wersja zła na otwarcie rozdziału 1 (pole body rozdziału).
 #   z6p_21_fix(k)  — notka „Poprawka do raportu” na końcu rozdziału k (pole widget):
 #                    wiersze poprawiane w tym rozdziale, stare skreślone, nowe pod nimi.
-#                    Rozdz. 1: poziom ryzyka; 3: częstość alarmu i źródło ryzyka;
-#                    4: postępowanie z ryzykiem; 6: założenia i niepewność.
-#   z6p_21_lina_ui — karta liny dźwigu w wersji złej na otwarcie rozdziału 5 (pole body).
-#   z6p_21_lina    — ta sama karta na końcu rozdziału 5, przed i po (pole widget).
-#   z6p_16a_ui     — domknięcie P16A (rozdz. 7): wersja poprawiona, z przełącznikiem na
+#                    Rozdz. 2: poziom ryzyka; 4: częstość alarmu i źródło ryzyka;
+#                    5: postępowanie z ryzykiem; 7: założenia i niepewność.
+#   z6p_21_lina_ui — karta liny dźwigu w wersji złej na otwarcie rozdziału 6 (pole body).
+#   z6p_21_lina    — ta sama karta na końcu rozdziału 6, przed i po (pole widget).
+#   z6p_16a_ui     — domknięcie P16A (rozdz. 8): wersja poprawiona, z przełącznikiem na
 #                    wersję z rozdziału 1; tu dochodzą wiersze „zakres i kryteria” oraz „monitorowanie i przegląd”.
 # Wygląd: klasy z6p16a-* (stop_proto_rg.R). Liczby z wykładu: przykłady 6.1, 6.7, 6.9,
 # 6.10, wzory (6.4), (6.5), (6.7). Statyczne, bez JS.
 
 z6p21_rows <- list(
-  list(key = "pytanie", lbl = "Zakres i kryteria", ch = 7,
+  list(key = "pytanie", lbl = "Zakres i kryteria", ch = 8,
     bad = "Czy łożyska wentylatorów są w normie?",
     good = "Jak często temperatura łożyska przekracza próg 85°C? Cel: najwyżej 10 przekroczeń na 1000 pomiarów.",
     note = "Pytanie bez kryterium nie prowadzi do decyzji: liczba przekroczeń nic nie mówi, dopóki nie wiadomo, ile to za dużo.",
-    why = "pytanie bez kryterium", src = "rozdz. 7"),
-  list(key = "wynik", lbl = "Poziom ryzyka", ch = 1,
+    why = "pytanie bez kryterium", src = "rozdz. 8"),
+  list(key = "wynik", lbl = "Poziom ryzyka", ch = 2,
     bad = "Średnia 82°C przy progu 85°C: w normie, ryzyko przekroczeń pomijalne.",
     good = "Średnia temperatura 82°C, odchylenie standardowe 3°C. Próg 85°C przekracza około 159 na 1000 pomiarów.",
     note = "Sama średnia i próg nie wystarczą do oceny ryzyka: bez rozrzutu nie da się policzyć, jak często wyniki przekraczają próg.",
     why = "brakowało rozrzutu", src = "przykład 6.1"),
-  list(key = "horyzont", lbl = "Częstość alarmu", ch = 3,
+  list(key = "horyzont", lbl = "Częstość alarmu", ch = 4,
     bad = "Ponad progiem leży 16% pomiarów, więc alarm pojawi się w około 16% zmian.",
     good = "Przy ośmiu pomiarach na zmianę alarm pojawia się w około 75% zmian (przy niezależnych pomiarach).",
     note = "Odsetek pomiarów to nie odsetek zmian: pytanie o zmianę dotyczy co najmniej jednego z ośmiu pomiarów. Przy skorelowanych pomiarach zmian z alarmem jest mniej.",
     why = "pomylono pomiar ze zmianą", src = "wzór (6.7)"),
-  list(key = "mechanizm", lbl = "Źródło ryzyka", ch = 3,
+  list(key = "mechanizm", lbl = "Źródło ryzyka", ch = 4,
     bad = "Przyczyna: pojedyncze, przypadkowe gorące odczyty.",
     good = "Łożysko stale pracuje za blisko progu i z dużymi wahaniami: przekroczenia to zwykła praca, nie awaria. Źródła: niewystarczające chłodzenie (średnia 82°C, tylko 3°C pod progiem) i nierówne obciążenie (wahania σ = 3°C).",
     note = "Gorące odczyty nie są przypadkiem: przy z = 1 mniej więcej co szósty pomiar musi wypaść ponad progiem. Średnią przesuwa chłodzenie, rozrzut zależy od obciążenia i warunków pracy.",
     why = "przypadek zamiast mechanizmu", src = "wzór (6.4)"),
-  list(key = "zalozenia", lbl = "Założenia i niepewność", ch = 6,
+  list(key = "zalozenia", lbl = "Założenia i niepewność", ch = 7,
     bad = "Model standardowy.",
     good = "Normalność sprawdzona: na wykresie kwantylowym z miesiąca pomiarów punkty leżą wzdłuż prostej, bez łuku i bez zagiętych końców. Model normalny jest uzasadniony także w ogonie, więc prognozy z wierszy 2 i 6 można liczyć z Φ.",
     note = "„Model standardowy” to założenie, nie fakt. Tu sprawdzenie wypadło pomyślnie; gdyby rozkład był prawostronnie skośny jak w komorze 2, po chłodzeniu i stabilizacji przekroczeń byłoby około 23 na 1000, a nie 6, i cel nie zostałby osiągnięty.",
     why = "„standard” bez sprawdzenia", src = "wzór (6.11)"),
-  list(key = "dzialanie", lbl = "Postępowanie z ryzykiem", ch = 4,
+  list(key = "dzialanie", lbl = "Postępowanie z ryzykiem", ch = 5,
     bad = "Podnosimy próg do 87°C: przekroczeń będzie 48 na 1000 zamiast 159.",
     good = "Rekomendujemy chłodzenie o 2°C i ograniczenie σ do 2°C: przewidywana częstość około 6 na 1000. Próg bez zmian do czasu badania materiałowego.",
     note = "Podniesienie progu zmienia definicję przekroczenia, nie temperaturę łożyska. Rewizja progu wymaga dowodu konstrukcyjnego, nie liczby alarmów.",
     why = "zmiana definicji udawała poprawę", src = "przykład 6.7"),
-  list(key = "kontrola", lbl = "Monitorowanie i przegląd", ch = 7,
+  list(key = "kontrola", lbl = "Monitorowanie i przegląd", ch = 8,
     bad = NULL,
     good = "Po wdrożeniu: miesiąc pomiarów, powtórzony rachunek i wykres kwantylowy.",
     note = "Bez kontroli nie wiadomo, czy działanie przyniosło przewidywany skutek.",
-    why = "nie sprawdzono skutku", src = "rozdz. 7")
+    why = "nie sprawdzono skutku", src = "rozdz. 8")
 )
 
 z6p21_lina <- list(
@@ -123,7 +123,7 @@ z6p21_head <- "Raport z oceny ryzyka · wentylator 2 · maj"
 z6p_21_ui <- z6p_panel("P21", "scena", "Raport, który przejdzie przez cały wykład", proto = FALSE, z6p_css, z6p16a_css, z6p21_css,
   tags$div(class = "z6p16a",
     z6p21_card(z6p21_rows, "bad", z6p21_head, sign = "Wniosek działu: sytuacja pod kontrolą, bez inwestycji.")),
-  lc_caption("Każdy wiersz brzmi rozsądnie i każdy jest błędny albo pusty. Kolejne rozdziały poprawiają je po kolei; poprawiony raport składamy w rozdziale 7."))
+  lc_caption("Każdy wiersz brzmi rozsądnie i każdy jest błędny albo pusty. Kolejne rozdziały poprawiają je po kolei; poprawiony raport składamy w rozdziale 8."))
 
 # ---- Poprawka na końcu rozdziału --------------------------------------------------
 z6p_21_fix <- function(ch) {
@@ -136,19 +136,19 @@ z6p_21_fix <- function(ch) {
           paste(tolower(vapply(z6p21_rows[idx], `[[`, "", "lbl")), collapse = " i ")))))
 }
 
-# ---- Lina dźwigu (rozdz. 5) -------------------------------------------------------
+# ---- Lina dźwigu (rozdz. 6) -------------------------------------------------------
 z6p21_lina_head <- "Raport z oceny ryzyka · lina dźwigu w magazynie"
 
-z6p_21_lina_ui <- z6p_panel("P21-5a", "scena", "Raport o linie dźwigu", width_mode = "text", proto = FALSE,
+z6p_21_lina_ui <- z6p_panel("P21-6a", "scena", "Raport o linie dźwigu", width_mode = "text", proto = FALSE,
   z6p_css, z6p16a_css, z6p21_css,
   tags$div(class = "z6p16a", z6p21_card(z6p21_lina, "bad", z6p21_lina_head)),
   lc_caption("Ten sam szablon co raport o łożysku i te same pułapki: liczba, której nie da się obronić, brak modelu i działanie bez rachunku. Poprawiamy go na końcu rozdziału."))
 
-z6p_21_lina <- z6p_panel("P21-5", "poprawka", "Raport o linie dźwigu, przed i po", width_mode = "text", proto = FALSE,
+z6p_21_lina <- z6p_panel("P21-6", "poprawka", "Raport o linie dźwigu, przed i po", width_mode = "text", proto = FALSE,
   z6p_css, z6p16a_css, z6p21_css,
   tags$div(class = "z6p16a", z6p21_card(z6p21_lina, "fix", z6p21_lina_head)))
 
-# ---- Domknięcie (rozdz. 7): wersja poprawiona z przełącznikiem ----------------------
+# ---- Domknięcie (rozdz. 8): wersja poprawiona z przełącznikiem ----------------------
 z6p_16a_ui <- z6p_panel("P16A", "domknięcie", "Raport, wersja poprawiona", proto = FALSE, z6p_css, z6p16a_css, z6p21_css,
   lc_toggle_button("z6p16a_toggle", "Pokaż raport z rozdziału 1", "Pokaż raport poprawiony", variant = "outline"),
   lc_toggle_content("z6p16a_toggle",

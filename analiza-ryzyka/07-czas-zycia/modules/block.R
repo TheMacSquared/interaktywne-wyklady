@@ -102,19 +102,21 @@ zycie_functions_table <- lc_table(
   narrow = "cards", prose = TRUE
 )
 
-# Zapis danych z badania przerwanego po 1200 h (definicja 7.4): para (czas, status).
-zycie_censor_table <- lc_table(
+# Trzy rachunki z tych samych danych (badanie przerwane po 1200 h, przykład 7.2).
+zycie_three_table <- lc_table(
   data.frame(
-    unit = as.character(1:8),
-    record = c("(220, awaria)", "(480, awaria)", "(760, awaria)", "(990, awaria)", rep("(1200, cenzorowana)", 4)),
-    known = c("\\(T = 220\\) h", "\\(T = 480\\) h", "\\(T = 760\\) h", "\\(T = 990\\) h", rep("\\(T > 1200\\) h", 4))
+    calc = c("\\(2450/4\\)", "\\(7250/8\\)", "\\(7250/4\\)"),
+    result = c("612.5 h", "906 h", "1812.5 h"),
+    alive = c("pomija je", "liczy im 1200 h, jakby wtedy zawiodły", "liczy ich godziny, ale nie liczy ich jako awarii"),
+    assume = c("żadne; odpowiada na inne pytanie", "żadne; pewna dolna granica", "ryzyko awarii nie zależy od wieku")
   ),
   cols = list(
-    lc_col("unit", "Wentylator", "row"),
-    lc_col("record", "Zapis", "text"),
-    lc_col("known", "Co wiemy o czasie życia", "text")
+    lc_col("calc", "Rachunek", "row"),
+    lc_col("result", "Wynik", "text"),
+    lc_col("alive", "Co robi z działającymi", "text"),
+    lc_col("assume", "Założenie", "text")
   ),
-  caption = "Każda obserwacja to para: czas i status",
+  caption = "Trzy rachunki, te same dane; prawdziwa średnia to 1368.75 h",
   narrow = "cards", prose = TRUE
 )
 
@@ -243,59 +245,80 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     id = "cenzorowanie", title = "Obserwacja cenzorowana", hook = "Działa do dziś — to też jest informacja",
     lead = "Element nadal działający na końcu badania wnosi informację: jego czas życia jest co najmniej tak długi.",
     intro = c(
-      "Drugie pytanie kierownika: co mówi badanie, w którym połowa wentylatorów jeszcze działa? Badanie trwałości zakończyło się po 1200 godzinach, a cztery z ośmiu egzemplarzy wciąż pracowały. Usunięcie ich z danych jest poważnym błędem: ich czas życia nie jest całkiem nieznany — wiemy, że przekroczył moment zakończenia obserwacji, i ta informacja musi zostać w analizie.",
-      "Rozdział ma dwa kroki. Najpierw oglądamy błąd: średnią liczoną z samych awarii. Wychodzi za mała i zależy od tego, kiedy przerwano badanie — nie dlatego, że wentylatory są gorsze, lecz dlatego, że najdłużej żyjące egzemplarze jeszcze nie zdążyły się zepsuć. Potem poprawkę: rachunek, w którym liczą się wszystkie przepracowane godziny, także egzemplarzy wciąż działających."
+      "Drugie pytanie kierownika: co mówi badanie, w którym połowa wentylatorów jeszcze działa? Badanie trwałości zakończyło się po 1200 godzinach, a cztery z ośmiu egzemplarzy wciąż pracowały. Ich czas życia nie jest całkiem nieznany — wiemy, że przekroczył 1200 godzin, i ta informacja musi zostać w analizie.",
+      "Rozdział ma trzy kroki. Najpierw błąd, który zdarza się w praktyce: średnia liczona z rejestru awarii, w którym działających wentylatorów po prostu nie ma. Potem pierwsza poprawka, która nie wymaga żadnych założeń i daje pewną dolną granicę średniego czasu życia. Na końcu druga poprawka, która daje szacunek MTTF, ale za cenę założenia o tym, jak wentylatory się psują."
     ),
     body = list(
       c(
         "Dane o czasie życia rzadko przychodzą kompletne. Badanie ma budżet i termin, egzemplarze montuje się w różnych tygodniach, część z nich zostaje zdemontowana z przyczyn niezwiązanych z awarią. W każdym z tych przypadków dla części elementów znamy nie czas życia, lecz tylko dolne ograniczenie: „działał co najmniej tyle”. Taką obserwację nazywamy cenzorowaną.",
         "W badaniu Bananpolu osiem wentylatorów ma rzeczywiste czasy życia 220, 480, 760, 990, 1350, 1750, 2300 i 3100 h. W prawdziwym badaniu tych liczb nie znamy — widzimy je tylko do końca obserwacji. Symulacja pozwala nam spojrzeć na nie z góry i porównać, co zobaczyłby analityk przy różnych terminach zakończenia badania."
       ),
-      # P3: scena badania przerwanego po 1200 h, przed definicją
+      # P3: scena od rejestru awarii do pełnego obrazu badania, przed definicją
       c7p_get("c7p_3_ui"),
       risk_definition("7.4", "Obserwacja cenzorowana prawostronnie", c(
         "Obserwacja czasu życia jest cenzorowana prawostronnie w chwili \\(c\\), jeśli do chwili \\(c\\) element nie uległ awarii, a potem przestaliśmy go obserwować. Zapisujemy wtedy parę (\\(c\\), cenzorowana) i wiemy tylko, że \\(T > c\\). Obserwację zakończoną awarią zapisujemy jako (\\(t\\), awaria)."
-      ))      ,
-      # Przykładowa realizacja: zapis ośmiu wentylatorów z badania przerwanego po 1200 h.
-      figure_panel("Zapis danych", title = "Osiem wentylatorów po 1200 h", width_mode = "text",
-        zycie_censor_table,
-        tags$p("Cztery pierwsze wiersze to czasy życia. Cztery ostatnie to tylko dolne granice: te wentylatory zawiodą później, ale badanie już tego nie zobaczy."))
+      )),
+      # Protokół badania: ten sam dokument co rejestr awarii z P3, wypełniony poprawnie.
+      c7p_get("c7p_protocol_ui")
     ),
     sections = list(
       list(
-        id = "os-czasu", title = "Błąd: średnia z samych awarii",
+        id = "os-czasu", title = "Błąd: średnia z rejestru awarii",
         body = list(
-          zycie_try("ustaw koniec obserwacji na 1200 h i policz awarie oraz obserwacje ucięte. Potem przesuń suwak do 800 h i do 2500 h. Dla każdego ustawienia zapisz, które czasy byłyby widoczne jako awarie."),
-          # P4: piaskownica końca badania w przeglądarce
-          c7p_get("c7p_4_ui"),
-          zycie_reading(c(
-            "Przy końcu obserwacji 1200 h widzimy cztery awarie (220, 480, 760, 990 h) i cztery obserwacje ucięte. Średnia z samych awarii wynosi 612.5 h. Przy 800 h awarie są trzy, a ich średnia spada do około 487 h; przy 2500 h awarii jest siedem, a średnia rośnie do około 1121 h. Tymczasem średnia wszystkich ośmiu rzeczywistych czasów to 1368.75 h.",
-            "Naiwna średnia rośnie wraz z długością badania, choć wentylatory się nie zmieniają. Powód jest prosty: dłuższe badanie dopuszcza do zbioru awarii coraz dłuższe czasy życia. Średnia z zakończonych awarii jest w istocie średnią warunkową — liczoną tylko wśród egzemplarzy, które zdążyły się zepsuć — i zawsze leży poniżej prawdziwego MTTF. Nie jest więc szacunkiem czasu życia, tylko błędem, który trzeba umieć rozpoznać."
-          ))
+          c(
+            "Skąd bierze się ten błąd, skoro na rysunku widać go od razu? Stąd, że analityk rzadko dostaje rysunek. Dostaje rejestr awarii albo listę reklamacji: tabelę, w której są wyłącznie egzemplarze zepsute. Wentylator, który działa, nie ma w niej wiersza. Średnia z kolumny „czas do awarii” jest wtedy naturalnym odruchem i trafia do raportu jako średnia żywotność.",
+            "W naszym badaniu rejestr ma cztery wpisy, a średnia z nich to \\(2450/4 = 612.5\\) h. Ta liczba odpowiada na pytanie, ile średnio przepracowały wentylatory, które zdążyły się zepsuć przed końcem badania. O to nikt nie pytał. Jest mniejsza niż czas pracy każdego z czterech egzemplarzy, które wciąż działają, i rośnie, gdy badanie trwa dłużej, choć wentylatory są te same. Nie jest szacunkiem czasu życia, tylko błędem, który trzeba umieć rozpoznać."
+          )
         )
       ),
       list(
-        id = "szacunek", title = "Poprawka: liczą się wszystkie godziny pracy",
+        id = "dolna-granica", title = "Pierwsza poprawka: dolna granica bez założeń",
         body = list(
           c(
-            "Informację „co najmniej \\(c\\) godzin” da się wykorzystać bardzo prosto, jeśli przyjmiemy jedno założenie: awaria jest tak samo prawdopodobna w każdej godzinie pracy, niezależnie od wieku wentylatora. Wtedy każda przepracowana godzina — zakończona awarią czy nie — jest jednakowo „narażona”, a naturalny szacunek intensywności awarii to liczba awarii podzielona przez łączny czas pracy wszystkich egzemplarzy, także tych, które przetrwały badanie. To założenie nazwiemy stałym hazardem i sprawdzimy w rozdziale o rozkładzie wykładniczym."
+            "Najprostsza poprawka zwraca działającym wentylatorom ich wiersze. Każdemu wpisujemy tyle godzin, ile naprawdę przepracował w badaniu: do awarii albo do końca obserwacji. Średnia z ośmiu takich czasów to \\(7250/8 \\approx 906\\) h.",
+            "Ten rachunek traktuje cztery działające wentylatory tak, jakby zawiodły dokładnie w chwili zakończenia badania. Każdy z nich będzie żył dłużej, więc prawdziwa średnia jest na pewno większa. Dostajemy dolną granicę średniego czasu życia, do której nie potrzeba żadnego założenia o tym, jak wentylatory się psują: wynika z samych danych. Im dłużej trwa badanie, tym bliżej prawdy leży ta granica."
+          ),
+          zycie_note("Co wiemy na pewno", "Średni czas życia wentylatora wynosi co najmniej 906 h. Rejestr awarii podawał 612.5 h, czyli mniej, niż dane pozwalają stwierdzić bez żadnego modelu.")
+        )
+      ),
+      list(
+        id = "szacunek", title = "Druga poprawka: godziny pracy na awarię",
+        body = list(
+          c(
+            "Dolna granica to jeszcze nie szacunek. Żeby go dostać, trzeba coś założyć o przyszłości działających wentylatorów. Najprostsze założenie brzmi: awaria jest tak samo prawdopodobna w każdej godzinie pracy, niezależnie od wieku wentylatora. Wtedy każda przepracowana godzina — zakończona awarią czy nie — jest jednakowo „narażona”, a naturalny szacunek intensywności awarii to liczba awarii podzielona przez łączny czas pracy wszystkich egzemplarzy. To założenie nazwiemy stałym hazardem i sprawdzimy w rozdziale o rozkładzie wykładniczym."
           ),
           zycie_note("Założenie rachunku", "Wzór (7.2) działa tylko wtedy, gdy ryzyko awarii nie zależy od wieku elementu. W tym przykładzie obserwację kończymy w ustalonej chwili; do sumy czasu pracy wliczamy także egzemplarze nadal działające."),
           risk_formula("⟦1|\\hat\\lambda⟧=\\frac{⟦2|d⟧}{⟦3|\\sum_{i=1}^{n} t_i⟧},\\qquad \\widehat{MTTF}=\\frac{\\sum_{i=1}^{n} t_i}{d}", num = "7.2",
             notes = list("oszacowana intensywność awarii", "liczba awarii", "łączny czas pracy wszystkich egzemplarzy"),
             note_colors = c("terakota", "accent", "szalwia"), above = 2),
+          "Licznik jest ten sam co w dolnej granicy: łączny czas pracy. Zmienia się mianownik. Dolna granica dzieli godziny przez liczbę wentylatorów, a wzór (7.2) przez liczbę awarii, bo działające egzemplarze dołożyły godzin, ale nie dołożyły awarii.",
           risk_example("7.2", "Badanie przerwane po 1200 h",
-            problem = "Badanie ośmiu wentylatorów przerwano po 1200 h. Awarie wystąpiły po 220, 480, 760 i 990 h; cztery egzemplarze działały do końca. Oszacuj MTTF wzorem (7.2) i porównaj z naiwną średnią z samych awarii.",
+            problem = "Badanie ośmiu wentylatorów przerwano po 1200 h. Awarie wystąpiły po 220, 480, 760 i 990 h; cztery egzemplarze działały do końca. Policz średnią z rejestru awarii, dolną granicę średniego czasu życia i szacunek MTTF ze wzoru (7.2).",
             steps = c(
-              "Czas pracy egzemplarzy z awarią: \\(220 + 480 + 760 + 990 = 2450\\) h.",
-              "Czas pracy egzemplarzy cenzorowanych: \\(4 \\cdot 1200 = 4800\\) h. Łącznie \\(\\sum t_i = 7250\\) h.",
-              "Liczba awarii \\(d = 4\\), więc \\(\\hat\\lambda = 4/7250 \\approx 0.00055\\) na godzinę, a \\(\\widehat{MTTF} = 7250/4 = 1812.5\\) h.",
-              "Naiwna średnia z samych awarii: \\(2450/4 = 612.5\\) h."
+              "Rejestr awarii: \\(220 + 480 + 760 + 990 = 2450\\) h, średnia \\(2450/4 = 612.5\\) h.",
+              "Czas pracy egzemplarzy działających: \\(4 \\cdot 1200 = 4800\\) h. Łącznie \\(\\sum t_i = 7250\\) h.",
+              "Dolna granica: \\(7250/8 \\approx 906\\) h.",
+              "Wzór (7.2): liczba awarii \\(d = 4\\), więc \\(\\hat\\lambda = 4/7250 \\approx 0.00055\\) na godzinę, a \\(\\widehat{MTTF} = 7250/4 = 1812.5\\) h."
             ),
-            answer = "Szacunek z wykorzystaniem cenzorowania to około 1813 h, naiwna średnia — 612.5 h. Szacunek (7.2) nie trafia dokładnie w średnią ośmiu rzeczywistych czasów (1368.75 h): opiera się na czterech awariach i na założeniu, że ryzyko awarii nie zależy od wieku. W przeciwieństwie do naiwnej średniej nie jest jednak zaniżony z samej konstrukcji."
+            answer = "Rejestr awarii daje 612.5 h, dolna granica 906 h, szacunek (7.2) około 1813 h. Średnia ośmiu rzeczywistych czasów to 1368.75 h: leży powyżej dolnej granicy, bo musi, i poniżej szacunku (7.2), który opiera się na czterech awariach i na założeniu, że ryzyko awarii nie zależy od wieku."
           ),
-          # P5: łączny czas pracy jako jedna taśma
+          zycie_three_table,
+          # P5: trzy rachunki na jednej taśmie łącznego czasu pracy
           c7p_get("c7p_5_ui"),
+          zycie_try("ustaw koniec badania na 1200 h i odczytaj trzy rachunki. Potem przesuń suwak do 800 h i do 2500 h. Zaznacz „Pokaż prawdziwe czasy życia” i sprawdź, po której stronie prawdziwej średniej leży każdy z nich."),
+          # P4: piaskownica — trzy rachunki przy różnych końcach badania
+          c7p_get("c7p_4_ui"),
+          zycie_reading(c(
+            "Przy 1200 h panel pokazuje 612.5 h, około 906 h i 1812.5 h. Przy 800 h awarie są trzy: średnia z rejestru spada do około 487 h, dolna granica do około 683 h, a szacunek (7.2) wynosi 1820 h. Przy 2500 h awarii jest siedem i liczby zbliżają się do siebie: około 1121 h, 1294 h i 1479 h. Prawdziwa średnia to 1368.75 h.",
+            "Średnia z rejestru i dolna granica rosną z długością badania, bo dłuższe badanie widzi dłuższe życia; dolna granica zawsze leży bliżej prawdy. Szacunek (7.2) w tych danych wychodzi powyżej prawdziwej średniej i schodzi do niej dopiero, gdy prawie wszystkie wentylatory zawiodą. To cena założenia: tych osiem wentylatorów nie psuje się ze stałym ryzykiem. Żaden z trzech rachunków nie trafia w prawdę, ale tylko pierwszy jest błędem."
+          )),
+          "Czy wzór (7.2) zawsze zawyża? Nie. Kierunek błędu zależy od tego, jak ryzyko awarii zmienia się z wiekiem. Galeria pokazuje to samo badanie, przerwane po 1200 h, w trzech parkach o tej samej średniej 1500 h.",
+          # Galeria: trzy parki o tej samej średniej, szacunek (7.2) trafia, zawyża albo zaniża
+          c7p_get("c7p_bias_ui"),
+          zycie_reading(c(
+            "Przy stałym ryzyku wzór daje około 1500 h, czyli trafia. Przy zużyciu wychodzi około 2570 h, a przy wczesnych wadach około 1100 h, choć we wszystkich trzech parkach prawdziwa średnia jest ta sama.",
+            "Wzór mierzy tempo awarii w oknie badania i zakłada, że potem będzie takie samo. Przy zużyciu badanie widzi tylko spokojny początek życia (16 awarii z 40) i przedłuża go w nieskończoność, więc zawyża. Przy wczesnych wadach widzi najgorszy okres (25 awarii z 40), więc zaniża. Szacunek (7.2) jest dobry dokładnie wtedy, gdy jego założenie jest prawdziwe; jak to sprawdzić i czym go zastąpić, pokaże druga część wykładu."
+          )),
           "Wzór (7.2) jest najprostszym przykładem ogólnej zasady: obserwacja cenzorowana wchodzi do analizy z informacją, którą rzeczywiście niesie. Bez założenia o ryzyku niezależnym od wieku robi się to przez funkcję wiarygodności albo estymator Kaplana–Meiera; na tym kursie nie estymujemy parametrów, ale musimy umieć rozpoznać, kiedy ktoś zrobił to źle.",
           risk_check("c7_chk_cenzor",
             "Dlaczego średnia z samych zakończonych awarii rośnie, gdy przedłużamy badanie tych samych wentylatorów?",

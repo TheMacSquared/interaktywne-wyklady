@@ -13,7 +13,7 @@ expected_apps <- c(
   "03-alarm-i-prawda" = 6L,
   "04-wiele-prob" = 6L,
   "05-do-zdarzenia" = 6L,
-  "06-zmiennosc-i-prog" = 8L,
+  "06-zmiennosc-i-prog" = 9L,
   "07-czas-zycia" = 9L,
   "08-niezawodnosc-systemu" = 7L,
   "09-drzewo-bledow" = 7L,

@@ -1,4 +1,4 @@
-// Prototypy punktów stop wykładu 06 „Przekroczenie progu”, grupa re (rozdział 5,
+// Prototypy punktów stop wykładu 06 „Przekroczenie progu”, grupa re (rozdział 6,
 // „Obciążenie–wytrzymałość”). Kontener w R: stop_proto_re.R.
 //
 //   dzwig — Scena „Lina dźwigu” (P11): każde podniesienie losuje obciążenie

@@ -1,4 +1,4 @@
-# PROTOTYPY PUNKTÓW STOP (2026-11-14) — grupa re: rozdział 5 „Obciążenie–wytrzymałość” ----
+# PROTOTYPY PUNKTÓW STOP (2026-11-14) — grupa re: rozdział 6 „Obciążenie–wytrzymałość” ----
 #
 #   z6p_11_ui — Scena „Lina dźwigu” (P11): historia z powtórzeniem na otwarcie rozdziału,
 #               przed pojęciem. Cztery kadry, przyciski „Podnieś ładunek”, +10, +100, +1000,
