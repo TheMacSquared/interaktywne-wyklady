@@ -89,11 +89,11 @@ i10p_15_ui <- i10p_panel("P15", "przypadek brzegowy", "Ranking się odwraca",
 
 i10p_16_ui <- i10p_panel("P16", "piaskownica", "Ranking to nie kryterium",
   lc_sf_figure("i10_kryterium",
-    control = list(lc_sf_slider("i10p16_limit", "Demonstracyjny limit P(TOP) na misję", 0.0005, 0.003, i10p_cfg$limit, 0.0001)),
+    control = list(lc_sf_slider("i10p16_limit", "Demonstracyjny limit P(TOP) na okres pracy", 0.0005, 0.003, i10p_cfg$limit, 0.0001)),
     toolbar = lc_readouts(i10p_read("best", "Najlepsza w budżecie"), i10p_read("worst", "Jej najgorszy scenariusz"),
       i10p_read("verdict", "Kryterium", upwr_accent)),
     ratio = "2.4/1", max_height = "340px", legend = TRUE,
     config = i10p_cfg,
-    after = lc_caption(sprintf("Model wykładniczy, misja %s %s, budżet %s, zakres u = %s. Z limitem porównujemy najgorszy z rozpatrzonych scenariuszy, czyli prawy koniec odcinka.",
+    after = lc_caption(sprintf("Model wykładniczy, okres pracy %s %s, budżet %s, zakres u = %s. Z limitem porównujemy najgorszy z rozpatrzonych scenariuszy, czyli prawy koniec odcinka.",
       i10p_cfg$time, i10p_cfg$unit, i10p_cfg$budget, i10p_cfg$u)))
 )

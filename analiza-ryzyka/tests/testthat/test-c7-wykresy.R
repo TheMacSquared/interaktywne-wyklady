@@ -51,7 +51,7 @@ testthat::test_that("wykład 07: funkcje w przeglądarce dają liczby R", {
     out.exp = [0, 1000, 4000].map(t => Z.exponential(t, 1500));
     out.expText = []; for (let t = 0; t <= 4000; t += 50) { const e = Z.exponential(t, 1500); out.expText.push([R.fmtP(e.cdf), R.fmtP(e.reliability), e.density.toFixed(6), e.hazard.toFixed(6)]); }
     out.weib = []; for (let b = 4; b <= 40; b++) out.weib.push(R.fmtP(R.weibull(1000, b / 10, 1700).reliability));
-    out.plan = []; for (let t = 100; t <= 3000; t += 50) { const r = R.weibull(t, 2, 1700).reliability; out.plan.push([R.fmtP(r), R.fmtP(1 - r)]); }
+    out.plan = []; for (let t = 100; t <= 3000; t += 50) { const r = R.weibull(t, 2, 1693).reliability; out.plan.push([R.fmtP(r), R.fmtP(1 - r)]); }
     out.bath = Z.bathtub(1310, 1);
     out.obs = Z.observe([220, 480, 760, 990, 1350, 1750, 2300, 3100], 1200);
     out.idx = [Z.sliderIndex("0.2", 0.2, 0.1), Z.sliderIndex("1", 0.2, 0.1), Z.sliderIndex("2", 0.2, 0.1), Z.sliderIndex("1200", 300, 50)];
@@ -75,7 +75,7 @@ testthat::test_that("wykład 07: funkcje w przeglądarce dają liczby R", {
   testthat::expect_equal(res$expText[, 4], formatC(e$hazard, format = "f", digits = 6))
 
   testthat::expect_equal(res$weib, vapply((4:40) / 10, function(b) env$risk_fmt_p(env$risk_weibull(1000, b, 1700)$reliability), ""))
-  r <- env$risk_weibull(seq(100, 3000, 50), 2, 1700)$reliability
+  r <- env$risk_weibull(seq(100, 3000, 50), 2, 1693)$reliability
   testthat::expect_equal(res$plan[, 1], vapply(r, env$risk_fmt_p, ""))
   testthat::expect_equal(res$plan[, 2], vapply(1 - r, env$risk_fmt_p, ""))
 

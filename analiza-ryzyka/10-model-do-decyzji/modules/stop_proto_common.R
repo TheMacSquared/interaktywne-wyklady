@@ -11,20 +11,20 @@
 # Każdy plik stop_proto_r*.R definiuje obiekty UI i10p_<nr>_ui; wpięcie w block.R
 # przez i10p_get("i10p_<nr>_ui") — brakujący obiekt daje panel „w budowie”.
 #
-# PARAMETRY MISJI stoją w jednym miejscu: i10p_cfg (niżej), liczone z
+# PARAMETRY OKRESU PRACY stoją w jednym miejscu: i10p_cfg (niżej), liczone z
 # bananpol$integration, bananpol$lifetime i bananpol$interventions. Do JS trafiają
-# w data-config; pliki proto_*.js nie mają wpisanych liczb modelu. Rachunek misji
+# w data-config; pliki proto_*.js nie mają wpisanych liczb modelu. Rachunek okresu pracy
 # w R: i10p_mission() (opakowanie risk_mission_analysis()), w JS: lcI10.util.mission().
-# Po unifikacji misji z danymi Bananpolu (TODO.md, „10 — od modelu do decyzji”)
+# Po unifikacji okresu pracy z danymi Bananpolu (TODO.md, „10 — od modelu do decyzji”)
 # wystarczy zmienić i10p_cfg i jednostkę i10p_cfg$unit.
 #
-# Wspólny język wizualny: stała oś P(TOP) na misję z czarną przerywaną kreską
+# Wspólny język wizualny: stała oś P(TOP) na okres pracy z czarną przerywaną kreską
 # limitu i szarą kreską stanu bazowego; drzewo I – (D ∪ S) z liczbami przy liściach;
-# 10 000 misji jako częstości naturalne; kartki z biurka (P1, P18B).
+# 10 000 okresów pracy jako częstości naturalne; kartki z biurka (P1, P18B).
 
 i10p_cfg <- list(
-  unit = "h",                                        # jednostka czasu misji
-  time = 1000,                                       # misja bazowa
+  unit = "h",                                        # jednostka wymaganego czasu pracy
+  time = 1000,                                       # bazowy okres pracy
   base_time = 1000,                                  # czas, dla którego podano R zasilania i sterownika
   time_max = 3000,                                   # zakres suwaków czasu i osi czasu
   mttf = bananpol$lifetime$exponential_mttf,         # model wykładniczy wentylatora
@@ -36,8 +36,8 @@ i10p_cfg <- list(
   sens = bananpol$integration$sensitivity,
   fpr = bananpol$integration$false_positive_rate,
   efficacy = bananpol$integration$intervention_efficacy,
-  missions = 3,                                      # misje w roku (wzór 10.9)
-  limit = .002,                                      # demonstracyjny limit P(TOP) na misję
+  missions = 3,                                      # okresy pracy w roku (wzór 10.9)
+  limit = .002,                                      # demonstracyjny limit P(TOP) na okres pracy
   budget = 2,                                        # budżet bazowy
   u = .2,                                            # bazowy zakres niepewności
   u_max = .5,
@@ -48,7 +48,7 @@ i10p_cfg <- list(
     cost = bananpol$interventions$cost_index[i]))
 )
 
-# Rachunek misji na parametrach i10p_cfg (te same domyślne co widgety wykładu).
+# Rachunek okresu pracy na parametrach i10p_cfg (te same domyślne co widgety wykładu).
 i10p_mission <- function(intervention = "none", stress = 1, model = "exp", time = i10p_cfg$time,
                          sens = i10p_cfg$sens, init = i10p_cfg$init) {
   risk_mission_analysis(time, model, i10p_cfg$power_r, i10p_cfg$controller_r, init, sens, intervention, stress)

@@ -1,7 +1,7 @@
 // Prototypy punktów stop wykładu 08, grupa RE (ryciny lcSF) — ECharts liczony w przeglądarce.
 // Kontenery w R: lc_sf_figure() w stop_proto_re.R.
 //
-//   s8_horyzont     — Piaskownica „Wspólny czas misji” (P4B): wentylator, czujnik i system w czasie.
+//   s8_horyzont     — Piaskownica „Wspólny czas pracy” (P4B): wentylator, czujnik i system w czasie.
 //   s8_kwadrat      — Piaskownica „Kwadrat dwóch elementów” (P9A): pola R₁ × R₂ dla szeregu i równoległego.
 //   s8_architektury — Piaskownica „Te same R, dwa systemy” (P9B): elementy, szereg i układ równoległy.
 //   s8_czas         — Piaskownica „System pod najsłabszym szeregiem” (P11A): wentylatory A, B i sterownik C.
@@ -32,7 +32,7 @@
   function rsys(t) { return rc(t) * (1 - (1 - ra(t)) * (1 - rb(t))); }
 
   S.register({
-    // P4B — wspólny czas misji. Dwa stałe punkty z karty w różnych chwilach.
+    // P4B — wspólny czas pracy. Dwa stałe punkty z karty w różnych chwilach.
     s8_horyzont: {
       draw: function (v, P, k, state, vals) {
         var t = Number(vals.s8p4b_t);
@@ -58,7 +58,7 @@
             { text: "czujnik", color: P.szalwia },
             { text: "system (wymaga obu)", color: P.accent }
           ],
-          xName: "Czas misji (h)", yName: "R(t)",
+          xName: "Wymagany czas pracy (h)", yName: "R(t)",
           aria: "Wentylator " + U.fmt(fan, 3) + ", czujnik " + U.fmt(sens, 3) + ", system " + U.fmt(sys, 3) + " przy t = " + t + " h."
         };
       },

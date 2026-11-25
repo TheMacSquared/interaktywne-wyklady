@@ -21,7 +21,7 @@ policzone w R i oznaczone „nowe”.
 | „Wszystkie muszą działać” i „Co najmniej jedna gałąź” (rozdz. 3) | piaskownica bez obrazu | Pola wyboru i jedno zdanie statusu. Schematu, o którym mówi rozdział 2, tu nie ma. |
 | „Te same R, inny system” (rozdz. 3) | piaskownica | Naraz widać tylko jedną architekturę, więc porównanie 0.874 a 0.996 wymaga pamięci. Słupki bez wartości, kolory bez znaczenia, brak ryzyka w odczytach (tekst porównuje ryzyko). |
 | „Sterownik C oraz wentylatory A/B” (rozdz. 4) | pojęcie bez obrazu | Trzy kroki redukcji jako trzy zdania; schemat się nie zwija, liczby 0.996 i 0.976 nie padają. |
-| „Elementy i system mieszany” (rozdz. 4) | piaskownica | Krzywa systemu ma kolor jak pozostałe i ginie między nimi; oś Y nie zaczyna się od zera; brak punktów w chwili misji i odczytów R elementów, które cytuje przykład 8.6 (0.574, 0.607, 0.670). |
+| „Elementy i system mieszany” (rozdz. 4) | piaskownica | Krzywa systemu ma kolor jak pozostałe i ginie między nimi; oś Y nie zaczyna się od zera; brak punktów dla wymaganego czasu pracy i odczytów R elementów, które cytuje przykład 8.6 (0.574, 0.607, 0.670). |
 | „Wspólne zasilanie” (rozdz. 5) | piaskownica | Linia bez punktu odniesienia: nie widać obiecanego 0.996 ani tego, ile ryzyka pochodzi ze wspólnej przyczyny (72% z przykładu 8.8). Odczyt tylko R. |
 | „Liczba gałęzi i koszt” (rozdz. 6) | piaskownica | Oś Y dopasowuje się do suwaka R gałęzi, więc przy r = 0.6 krzywa wygląda tak samo jak przy 0.9, zmieniają się tylko liczby na osi. Polecenie każe zapisywać przyrost, a odczytu przyrostu nie ma. Sufitu 1 − q z tekstu nie ma na rysunku. |
 | „Spadek ryzyka po poprawie R o 0.02” (rozdz. 6) | materiał bez obrazu | Trzy odczyty; pytanie z polecenia („gdyby zasilanie miało 0.90”) nie ma kontrolki. Układu mieszanego, w którym różnica jest dwudziestokrotna, nie ma wcale. |
@@ -40,16 +40,16 @@ działające bloki, i gasną za zepsutym blokiem. Lampka „chłodzenie” na
 prawym końcu świeci, gdy dochodzi do niej choć jedna droga. Ten sam
 schemat wraca w trzech skalach: duży i klikalny (5, 21, 22), w kadrach
 historii (1, 3, 10, 15, 18, 24) i jako kafel stanu w tabeli stanów
-(6, 8, 12, 13, 14, 20). Drugi motyw to kratki misji: sto albo tysiąc
-misji, zawiedzione w kolorze akcentu (2, 15, 18).
+(6, 8, 12, 13, 14, 20). Drugi motyw to kratki okresów pracy: sto albo tysiąc
+okresów pracy, nieudane w kolorze akcentu (2, 15, 18).
 
 ## Propozycja
 
 | # | Gdzie | Rodzaj · moment | Puenta |
 |---|---|---|---|
 | 1 | rozdz. 1, przy głosowaniu | scena · wprowadzenie | Nocą staje jeden z dwóch wentylatorów. Rano trzy osoby piszą trzy raporty: „system zawiódł”, „nic się nie stało”, „nie dotyczy”. Te same części i ta sama noc, a werdykt zależy od tego, co uznano za sukces. |
-| 2 | rozdz. 1, po przykładzie 8.1 | galeria albo symulacja | Sto misji tych samych dwóch elementów: 81 razy działają oba, 9 + 9 razy jeden, raz żaden. Trzy logiki czytają te same kratki jako 19, 10 i 1 zawiedzioną misję. |
-| 3 | rozdz. 2, otwarcie sekcji „Niezawodność systemu na czas misji” | scena · wprowadzenie | Ta sama instalacja z dwiema definicjami sukcesu: „utrzymać 14.5 °C” wymaga wentylatora i zasilania (0.902, nowe), „utrzymać i zaalarmować” dokłada czujnik (0.857). Kto wymaga więcej, dostaje dłuższy szereg. |
+| 2 | rozdz. 1, po przykładzie 8.1 | galeria albo symulacja | Sto okresów pracy tych samych dwóch elementów: 81 razy działają oba, 9 + 9 razy jeden, raz żaden. Trzy logiki czytają te same kratki jako 19, 10 i 1 nieudany okres pracy. |
+| 3 | rozdz. 2, otwarcie sekcji „Niezawodność systemu na wymagany czas pracy” | scena · wprowadzenie | Ta sama instalacja z dwiema definicjami sukcesu: „utrzymać 14.5 °C” wymaga wentylatora i zasilania (0.902, nowe), „utrzymać i zaalarmować” dokłada czujnik (0.857). Kto wymaga więcej, dostaje dłuższy szereg. |
 | 4 | rozdz. 2, przykład 8.2 | pojęcie (kadry) · przypadek brzegowy | 0.92 i 0.95 z karty leżą na osi czasu w dwóch różnych miejscach: 1000 h i 8760 h. Mnożyć wolno tylko punkty z jednej pionowej kreski: 0.92 · 0.994 = 0.915, nie 0.874. |
 | 5 | rozdz. 2, obecny „Schemat” | piaskownica | Kliknięty blok gaśnie, a za nim gaśnie droga. Szereg traci lampkę po jednym kliknięciu, układ równoległy po dwóch, w mieszanym wystarczy sterownik C. |
 | 6 | rozdz. 3, zamiast pól wyboru szeregu | galeria | Osiem możliwych stanów trzech elementów jako osiem małych schematów: w szeregu świeci jeden. Stąd iloczyn R. |
@@ -61,16 +61,16 @@ misji, zawiedzione w kolorze akcentu (2, 15, 18).
 | 12 | rozdz. 4, przykład 8.7 | pojęcie | Tabela stanów jako osiem schematów z prawdopodobieństwami: świecą trzy, 0.85652 + 0.04508 + 0.07448 = 0.97608. |
 | 13 | rozdz. 4, przy oszacowaniu (8.9) | galeria | Te same osiem kafli dla szeregu, układu mieszanego i równoległego: świeci 1, 3 i 7. Każdy układ koherentny leży między 0.857 a 0.99992. |
 | 14 | rozdz. 4, przy sprawdzeniu koherentności | przypadek brzegowy | φ = x_A(1 − x_B): naprawa B gasi lampkę. Takiego układu nie da się narysować schematem blokowym. |
-| 15 | rozdz. 5, otwarcie, przed definicją 8.7 | scena · wprowadzenie | Schemat obiecuje 4 zawiedzione misje na 1000. W hali oba wentylatory wiszą na jednej rozdzielnicy: gdy pada, stają oba w tej samej sekundzie. Na schemacie brakowało bloku; z nim jest 14 na 1000. |
+| 15 | rozdz. 5, otwarcie, przed definicją 8.7 | scena · wprowadzenie | Schemat obiecuje 4 nieudane okresy pracy na 1000. W hali oba wentylatory wiszą na jednej rozdzielnicy: gdy pada, stają oba w tej samej sekundzie. Na schemacie brakowało bloku; z nim jest 14 na 1000. |
 | 16 | rozdz. 5, obecny panel „Zależność” | piaskownica | Obiecane 0.996 jako linia odniesienia i ryzyko rozłożone na dwie części: przy q = 0.01 wspólne zasilanie to 72% ryzyka. |
 | 17 | rozdz. 5, model beta-factor | piaskownica | β przenosi część awarii z gałęzi do wspólnego bloku: przy β = 0.1 ryzyko rośnie z 0.0064 do 0.0135, choć każdy wentylator ma nadal 0.92. |
-| 18 | rozdz. 6, otwarcie | scena · wprowadzenie | Kierownik dokłada wentylatory po 100 jednostek. Na 10 000 misji pierwszy zapas ratuje 900, drugi 90, trzeci 9. Cena ta sama, zakup dziesięć razy mniejszy. |
+| 18 | rozdz. 6, otwarcie | scena · wprowadzenie | Kierownik dokłada wentylatory po 100 jednostek. Na 10 000 okresów pracy pierwszy zapas ratuje 900, drugi 90, trzeci 9. Cena ta sama, zakup dziesięć razy mniejszy. |
 | 19 | rozdz. 6, obecny panel „Trade-off” | piaskownica + przypadek brzegowy | Stała oś: przy r = 0.9 krzywa kładzie się po drugiej gałęzi, przy r = 0.6 rośnie dłużej. Przełącznik wspólnego zasilania kładzie sufit 0.99, pod którym cel 0.9999 jest nieosiągalny. |
 | 20 | rozdz. 6, „Układ k z n” | galeria | Osiem kafli trzech czujników: przy k = 1 świeci 7, przy k = 2 cztery, przy k = 3 jeden; 0.999, 0.972, 0.729. k przesuwa układ od równoległego do szeregu. |
 | 21 | rozdz. 6, „Kopie zapasowe” | scena (jeden obraz z „co, jeśli”) | Trzy kopie w jednej serwerowni przeżywają awarię dysku, ale nie pożar ani ransomware. Układ 3-2-1 przeżywa wszystkie trzy zdarzenia. |
 | 22 | rozdz. 6, po definicji 8.8 | galeria | Element rozstrzyga tylko w niektórych stanach pozostałych: sterownik prawie zawsze (0.996), wentylator A tylko wtedy, gdy B już stoi (0.049). |
 | 23 | rozdz. 6, obecne „Porównanie” | piaskownica | Ta sama poprawa o 0.02 w trzech miejscach szeregu: 0.019, 0.018, 0.017. Gdy zasilanie spada do 0.90, kolejność się odwraca. |
-| 24 | rozdz. 7, podsumowanie albo „Pięć kroków” | domknięcie | Pięć kroków na jednym schemacie, każdy z wynikiem: sukces, misja 1000 h, redukcja 0.976, wspólne zasilanie 0.966 (nowe), ranking interwencji. |
+| 24 | rozdz. 7, podsumowanie albo „Pięć kroków” | domknięcie | Pięć kroków na jednym schemacie, każdy z wynikiem: sukces, wymagany czas pracy 1000 h, redukcja 0.976, wspólne zasilanie 0.966 (nowe), ranking interwencji. |
 
 Punkty 6, 8, 12, 13, 14 i 20 to jeden obraz (kafle stanów) w sześciu rolach;
 jeśli to za dużo powtórzeń, 13 i 14 mogą być przełącznikami w 12, a 8
@@ -81,8 +81,8 @@ przełącznikiem w 6. Wtedy zostaje 20 przystanków.
 | # | Wariant A | Wariant B |
 |---|---|---|
 | 1 | scena po głosowaniu | scena przed głosowaniem |
-| 2 | kratki z przełącznikiem logiki (dokładne 19 / 10 / 1) | symulacja „misja za misją” (+1 / +10 / +100) |
-| 4 | kadry na osi czasu | piaskownica z suwakiem wspólnego czasu misji |
+| 2 | kratki z przełącznikiem logiki (dokładne 19 / 10 / 1) | symulacja „okres po okresie” (+1 / +10 / +100) |
+| 4 | kadry na osi czasu | piaskownica z suwakiem wspólnego czasu pracy |
 | 5 | jeden schemat z przełącznikiem architektury | trzy schematy obok siebie |
 | 9 | kwadrat czterech pól | słupki obu architektur naraz |
 | 11 | krzywe elementów i systemu | blok A/B a sam wentylator A: mnożnik redundancji |

@@ -1,6 +1,6 @@
 # PROTOTYPY PUNKTÓW STOP (2026-11-14) — wykład 08, grupa RE: piaskownice z ryciny lcSF ----
 #
-#   s8p_4b_ui  — P4B „Wspólny czas misji”: wentylator, czujnik i system w czasie (s8_horyzont)
+#   s8p_4b_ui  — P4B „Wspólny czas pracy”: wentylator, czujnik i system w czasie (s8_horyzont)
 #   s8p_9a_ui  — P9A „Kwadrat dwóch elementów”: pola R₁ × R₂ dla szeregu i równoległego (s8_kwadrat)
 #   s8p_9b_ui  — P9B „Te same R, dwa systemy”: elementy, szereg i układ równoległy (s8_architektury)
 #   s8p_11a_ui — P11A „System pod najsłabszym szeregiem”: wentylatory A, B i sterownik C (s8_czas)
@@ -10,12 +10,12 @@
 # suwaki, przełączniki i odczyty. Wymaga: stop_proto_common.R, R/lc_stat_figures.R.
 
 # ============================================================================
-# P4B — WSPÓLNY CZAS MISJI
+# P4B — WSPÓLNY CZAS PRACY
 # ============================================================================
 
-s8p_4b_ui <- s8p_panel("P4B", "piaskownica", "Wspólny czas misji",
+s8p_4b_ui <- s8p_panel("P4B", "piaskownica", "Wspólny czas pracy",
   lc_sf_figure("s8_horyzont",
-    control = list(lc_sf_slider("s8p4b_t", "Czas misji t", 200, 8760, 1000, 20, suffix = " h")),
+    control = list(lc_sf_slider("s8p4b_t", "Wymagany czas pracy t", 200, 8760, 1000, 20, suffix = " h")),
     toolbar = lc_readouts(
       s8p_read("fan", "R wentylatora"),
       s8p_read("sens", "R czujnika"),
@@ -76,7 +76,7 @@ s8p_9b_ui <- s8p_panel("P9B", "piaskownica", "Te same R, dwa systemy",
 
 s8p_11a_ui <- s8p_panel("P11A", "piaskownica", "System pod najsłabszym szeregiem",
   lc_sf_figure("s8_czas",
-    control = list(lc_sf_slider("s8p11a_t", "Czas misji", 100, 3000, 1000, 50, suffix = " h")),
+    control = list(lc_sf_slider("s8p11a_t", "Wymagany czas pracy",100, 3000, 1000, 50, suffix = " h")),
     toolbar = lc_readouts(
       s8p_read("ra", "R wentylatora A"),
       s8p_read("rb", "R wentylatora B"),
@@ -94,13 +94,13 @@ s8p_11a_ui <- s8p_panel("P11A", "piaskownica", "System pod najsłabszym szeregie
 
 s8p_11b_ui <- s8p_panel("P11B", "piaskownica", "Ile daje druga gałąź",
   lc_sf_figure("s8_przewaga",
-    control = list(lc_sf_slider("s8p11b_t", "Czas misji", 100, 3000, 1000, 50, suffix = " h")),
+    control = list(lc_sf_slider("s8p11b_t", "Wymagany czas pracy",100, 3000, 1000, 50, suffix = " h")),
     toolbar = lc_readouts(
       s8p_read("risk_a", "Ryzyko samego A"),
       s8p_read("risk_ab", "Ryzyko bloku A/B", upwr_accent),
       s8p_read("mult", "Mnożnik 1 − R_B(t)")
     ),
     ratio = "2.2/1", max_height = "380px", legend = TRUE,
-    after = lc_caption("Druga gałąź mnoży ryzyko przez 1 − R_B(t). Im dłuższa misja, tym bliżej jedynki jest ten mnożnik.")
+    after = lc_caption("Druga gałąź mnoży ryzyko przez 1 − R_B(t). Im dłuższy wymagany czas pracy, tym bliżej jedynki jest ten mnożnik.")
   )
 )

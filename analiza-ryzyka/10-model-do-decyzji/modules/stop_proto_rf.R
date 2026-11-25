@@ -17,7 +17,7 @@
 
 i10pf_base <- i10p_mission()
 i10pf_top <- i10pf_base$top
-# Roczne ryzyko: 1 − (1 − P(TOP))^(liczba misji w roku), wzór 10.9.
+# Roczne ryzyko: 1 − (1 − P(TOP))^(liczba okresów pracy w roku), wzór 10.9.
 i10pf_year <- 1 - (1 - i10pf_top)^i10p_cfg$missions
 
 # Ograniczenie źródła ciepła w trzech scenariuszach: m = 1 − u, 1, 1 + u.
@@ -31,7 +31,7 @@ i10pf_iv <- function(id) Filter(function(x) identical(x$id, id), i10p_cfg$interv
 i10pf_rec <- i10pf_iv("prevention")
 i10pf_in_budget <- i10pf_rec$cost <= i10p_cfg$budget
 
-# Liczba słowna dla „z trzech misji” (odmiana dopasowana do tekstu).
+# Liczba słowna dla „z trzech okresów pracy” (odmiana dopasowana do tekstu).
 i10pf_word <- function(n) c("1" = "jednej", "2" = "dwóch", "3" = "trzech", "4" = "czterech")[[as.character(n)]]
 
 # ============================================================================
@@ -62,7 +62,7 @@ i10p17_css <- tags$style(HTML("
 
 i10p17_rows <- list(
   list(lbl = "Wynik",
-    text = sprintf("P(TOP) ≈ %s na misję, czyli około %s na 10 000 misji; około %s rocznie przy %s misjach.",
+    text = sprintf("P(TOP) ≈ %s na okres pracy, czyli około %s na 10 000 okresów pracy; około %s rocznie przy %s okresach pracy.",
       i10p_p(i10pf_top), i10p_num(1e4 * i10pf_top, 0), i10p_p(i10pf_year), i10pf_word(i10p_cfg$missions)),
     src = "wzory 10.8, 10.9"),
   list(lbl = "Rekomendacja",
@@ -74,18 +74,18 @@ i10p17_rows <- list(
     src = "wzory 10.10, 10.11"),
   list(lbl = "Kryterium",
     text = if (i10pf_met)
-        sprintf("Limit demonstracyjny %s na misję jest spełniony we wszystkich scenariuszach; najgorszy wynik %s.",
+        sprintf("Limit demonstracyjny %s na okres pracy jest spełniony we wszystkich scenariuszach; najgorszy wynik %s.",
           i10p_p(i10p_cfg$limit), i10p_p(i10pf_worst))
       else
-        sprintf("Limit demonstracyjny %s na misję nie jest spełniony we wszystkich scenariuszach; najgorszy wynik %s.",
+        sprintf("Limit demonstracyjny %s na okres pracy nie jest spełniony we wszystkich scenariuszach; najgorszy wynik %s.",
           i10p_p(i10p_cfg$limit), i10p_p(i10pf_worst)),
     src = "definicja 10.4"),
   list(lbl = "Założenia i granice",
-    text = sprintf("Brak napraw w misji, elementy nowe, D i S niezależne przy I; skuteczność działania %s%% to hipoteza bez pilotażu.",
+    text = sprintf("Brak napraw w okresie pracy, elementy nowe, D i S niezależne przy I; skuteczność działania %s%% to hipoteza bez pilotażu.",
       i10p_num(100 * i10p_cfg$efficacy, 0)),
     src = "definicje 10.2, 10.3"),
   list(lbl = "Właściciel i kontrola",
-    text = "Kierownik utrzymania; pomiar częstości zapotrzebowania po pierwszych misjach, przegląd po każdej zmianie instalacji.",
+    text = "Kierownik utrzymania; pomiar częstości zapotrzebowania po pierwszych okresach pracy, przegląd po każdej zmianie instalacji.",
     src = "definicja 10.6")
 )
 
@@ -116,7 +116,7 @@ i10p17_svg <- function() {
 i10p_17_ui <- i10p_panel("P17", "domknięcie", "Notatka na jednej stronie", i10p_css, i10p17_css,
   tags$div(class = "i10p17-card",
     tags$div(class = "i10p17-head",
-      sprintf("NOTATKA DECYZYJNA · ochrona termiczna komory · misja %s %s",
+      sprintf("NOTATKA DECYZYJNA · ochrona termiczna komory · okres pracy %s %s",
         i10p_num(i10p_cfg$time, 0), i10p_cfg$unit)),
     tags$ol(class = "i10p17-rows",
       lapply(seq_along(i10p17_rows), function(i) {
@@ -141,7 +141,7 @@ i10p18a_stage <- c("dane", "parametr", "model", "model", "decyzja", "decyzja")
 
 # Wyniki ogniw: wiersze tekstu w ogniwie i klasa każdego wiersza.
 i10p18a_res <- list(
-  list(lines = c(sprintf("misja %s %s", i10p_num(i10p_cfg$time, 0), i10p_cfg$unit),
+  list(lines = c(sprintf("okres pracy %s %s", i10p_num(i10p_cfg$time, 0), i10p_cfg$unit),
       c("P(I) =", i10p_p(i10p_cfg$init))),
     cls = c("", "", "")),
   list(lines = c("P(D | I) =", i10p_p(1 - i10p_cfg$sens),
@@ -157,16 +157,16 @@ i10p18a_res <- list(
 
 i10p18a_frames <- list(
   list(name = "Teczka",
-    text = "Teczka ustala jednostkę i warunki: jedna misja, zapotrzebowanie na początku, elementy nowe.",
+    text = "Teczka ustala jednostkę i warunki: jeden okres pracy, zapotrzebowanie na początku, elementy nowe.",
     read = NULL),
   list(name = "Karty",
     text = "Karty dają liczby cząstkowe: przeoczenia detektora i niezawodność wentylatora.",
     read = NULL),
   list(name = "Układ",
-    text = "Schemat układu sprowadza cztery elementy do jednej liczby dla wspólnego czasu misji.",
+    text = "Schemat układu sprowadza cztery elementy do jednej liczby dla wspólnego czasu pracy.",
     read = NULL),
   list(name = "Drzewo",
-    text = sprintf("Drzewo łączy zapotrzebowanie, detekcję i chłodzenie: około %s misji na 10 000 bez ochrony.",
+    text = sprintf("Drzewo łączy zapotrzebowanie, detekcję i chłodzenie: około %s okresów pracy na 10 000 bez ochrony.",
       i10p_num(1e4 * i10pf_top, 0)),
     read = NULL),
   list(name = "Scenariusze",
@@ -261,11 +261,11 @@ i10p18b_css <- tags$style(HTML("
 i10p18b_say <- c(
   sprintf("Wśród alarmów %s jest fałszywych: <span class='i10p18b-f'>P(I | alarm) = %s</span>. To miara zaufania do alarmu; do drzewa idzie <span class='i10p18b-f'>1 − czułość = %s</span>.",
     i10p1_notes[[1]]$num, i10p_p(i10p1_post), i10p_p(1 - i10p_cfg$sens)),
-  sprintf("Gdy jest zapotrzebowanie, układ nie wytrzymuje misji w %s przypadków: <span class='i10p18b-f'>P(S | I) = %s</span>.",
+  sprintf("Gdy jest zapotrzebowanie, układ nie wytrzymuje okresu pracy w %s przypadków: <span class='i10p18b-f'>P(S | I) = %s</span>.",
     i10p1_notes[[2]]$num, i10p_p(i10pf_base$cooling_failure)),
-  sprintf("Gdyby układ musiał pracować w każdej z %s misji, zawiódłby w %s lat. Roczne ryzyko utraty ochrony to %s.",
+  sprintf("Gdyby układ musiał pracować w każdym z %s okresów pracy, zawiódłby w %s lat. Roczne ryzyko utraty ochrony to %s.",
     i10pf_word(i10p_cfg$missions), i10p1_notes[[3]]$num, i10p_p(i10pf_year)),
-  sprintf("Wśród wszystkich misji %s na 10 000 kończy się bez ochrony: P(TOP) = %s.",
+  sprintf("Wśród wszystkich okresów pracy %s na 10 000 kończy się bez ochrony: P(TOP) = %s.",
     i10p1_notes[[4]]$num, i10p_p(i10pf_top))
 )
 i10p18b_pills <- c("karta 1 · poza drzewem", "liść drzewa", "pułapka: zgubiony warunek I", "punkt 1 notatki")

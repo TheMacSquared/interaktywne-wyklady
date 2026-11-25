@@ -5,8 +5,8 @@
 //   c7_gamma   — P14: gęstość gamma(k, skala 500 h) z suwaka, pole od 1000 h, kreska
 //                k = 1 (wykładniczy), kreska średniej 500·k, stałe osie.
 //   c7_weibull — P16A: R(t) (wykres 1) i h(t) (wykres 2) Weibulla z suwaków β i η.
-//   c7_rodzina — P16B: cztery kształty β przy η = 1700 h, R(t) i h(t), bez kontrolek.
-//   c7_ranking — P17A: trzy modele o MTTF 1500 h, pasek „kto prowadzi”, suwak misji.
+//   c7_rodzina — P16B: cztery kształty β przy η = 1693 h, R(t) i h(t), bez kontrolek.
+//   c7_ranking — P17A: trzy modele o MTTF 1500 h, pasek „kto prowadzi”, suwak wymaganego czasu pracy.
 (function () {
   "use strict";
   var C = window.lcCharts, S = window.lcSF, Z = window.lcC7, D = window.lcDist;
@@ -87,7 +87,7 @@
               { type: "point", x: eta, y: e1, color: P.bursztyn, size: 12 },
               { type: "text", x: eta, y: e1, text: "t = η", color: P.soft, align: "left", halo: true },
               { type: "vline", x: 1000, color: P.ink, width: 1.8, dash: [6, 4] },
-              { type: "text", x: 1000, y: "top", text: "misja 1000 h", color: P.ink, align: "left", mono: true },
+              { type: "text", x: 1000, y: "top", text: "wymagane 1000 h", color: P.ink, align: "left", mono: true },
               { type: "point", x: 1000, y: U.wR(1000, beta, eta), color: P.accent, size: 12 }
             ],
             legend: [
@@ -108,7 +108,7 @@
           x: [0, 5000], y: [0, 0.004], xLabelEvery: 1000, alignLeft: true,
           xName: "Czas pracy (h)", yName: "h(t) (1/h)",
           layers: layers,
-          aria: "Hazard Weibulla z β = " + beta + " i η = " + eta + " godzin z kreską misji 1000 godzin."
+          aria: "Hazard Weibulla z β = " + beta + " i η = " + eta + " godzin z kreską 1000 godzin pracy."
         };
       },
       update: function (root, state) {
@@ -125,7 +125,7 @@
 
     c7_rodzina: {
       draw: function (v, P, k) {
-        var eta = 1700, e1 = Math.exp(-1), X = [0, 5000], top = 0.0036;
+        var eta = 1693, e1 = Math.exp(-1), X = [0, 5000], top = 0.0036;
         var models = [
           { beta: 0.5, color: P.terakota, text: "β = 0.5: hazard maleje (wczesne defekty)" },
           { beta: 1, color: P.niebo, text: "β = 1: hazard stały" },
@@ -143,7 +143,7 @@
             xName: "Czas pracy (h)", yName: "R(t)",
             layers: rl,
             legend: models.map(function (m) { return { text: m.text, color: m.color }; }),
-            aria: "Cztery krzywe niezawodności Weibulla przy skali 1700 godzin, przecinające się w punkcie 0.37."
+            aria: "Cztery krzywe niezawodności Weibulla przy skali 1693 godzin, przecinające się w punkcie 0.37."
           };
         }
         return {
@@ -152,7 +152,7 @@
           layers: models.map(function (m) {
             return { type: "line", data: U.fcurve(capped(function (t) { return U.wh(t, m.beta, eta); }, top), 5, X[1], 300), color: m.color, width: 2.4 };
           }),
-          aria: "Cztery funkcje hazardu Weibulla przy skali 1700 godzin."
+          aria: "Cztery funkcje hazardu Weibulla przy skali 1693 godzin."
         };
       }
     },
@@ -174,7 +174,7 @@
           layers.push({ type: "line", data: U.fcurve(function (x) { return U.wR(x, m.beta, m.eta); }, X[0], X[1], 350), color: m.color, width: 2.6 });
         });
         layers.push({ type: "vline", x: t, color: P.ink, width: 1.8, dash: [6, 4] });
-        layers.push({ type: "text", x: t, y: "top", text: "misja " + t + " h", color: P.ink, align: "left", mono: true });
+        layers.push({ type: "text", x: t, y: "top", text: "wymagane " + t + " h", color: P.ink, align: "left", mono: true });
         models.forEach(function (m) {
           layers.push({ type: "point", x: t, y: U.wR(t, m.beta, m.eta), color: m.color, size: 11 });
         });
@@ -188,7 +188,7 @@
             { text: models[2].text, color: models[2].color },
             { text: "pasek przy osi: model o najwyższym R(t)", color: P.subtle, box: true }
           ],
-          aria: "Trzy krzywe niezawodności o tym samym MTTF 1500 godzin, z kreską misji " + t + " godzin."
+          aria: "Trzy krzywe niezawodności o tym samym MTTF 1500 godzin, z kreską " + t + " godzin pracy."
         };
       },
       update: function (root, state) {

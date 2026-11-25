@@ -2,7 +2,7 @@
 // liczone w przeglądarce; kontenery w R: lc_sf_figure() w stop_proto_rb.R.
 //
 //   c7_gestosci_b    — „Dwie oferty, jedna średnia: gęstości osobno” (P2B): dwa wykresy,
-//                      stałe osie, pole przed kreską misji w akcencie.
+//                      stałe osie, pole przed kreską wymaganego czasu pracy w akcencie.
 //   c7_cztery        — „Cztery funkcje, jedna chwila” (P8): F i R na górze, h i f na dole.
 //   c7_pole_hazardu  — „Pole pod hazardem” (P10): pole H(t) pod hazardem, R(t) = exp(−H(t)).
 (function () {
@@ -26,19 +26,19 @@
   function curve(f, from, to, color, width) {
     return { type: "line", data: U.fcurve(f, from, to, 200), color: color, width: width };
   }
-  // Kreska MTTF (przerywana, szara); napis tuż za kreską, niżej niż napis misji u góry,
-  // żeby przy misji 1000 h oba napisy nie nachodziły na siebie.
+  // Kreska MTTF (przerywana, szara); napis tuż za kreską, niżej niż napis wymaganego czasu pracy u góry,
+  // żeby przy wymaganym czasie pracy 1000 h oba napisy nie nachodziły na siebie.
   function mttfLayers(cfg, P, yLabel) {
     return [
       { type: "vline", x: cfg.mttf, color: P.subtle, width: 1.4, dash: [3, 3] },
       { type: "text", x: cfg.mttf, y: yLabel, text: "MTTF", color: P.soft, align: "left" }
     ];
   }
-  // Kreska misji z napisem u góry (ink, przerywana).
+  // Kreska wymaganego czasu pracy z napisem u góry (ink, przerywana).
   function missionLayers(t, P) {
     return [
       { type: "vline", x: t, color: P.ink, width: 1.8, dash: [6, 4] },
-      { type: "text", x: t, y: "top", text: "misja " + t + " h", color: P.ink, align: "left", mono: true }
+      { type: "text", x: t, y: "top", text: "wymagane " + t + " h", color: P.ink, align: "left", mono: true }
     ];
   }
 
@@ -57,8 +57,8 @@
             mttfLayers(cfg, P, 0.00055),
             missionLayers(t, P)),
           xName: "Czas pracy (h)", yName: "",
-          aria: (isA ? "Gęstość oferty A" : "Gęstość oferty B") + " z kreską misji " + t +
-            " godzin: pole przed kreską to wentylatory, które zawiodły."
+          aria: (isA ? "Gęstość oferty A" : "Gęstość oferty B") + " z kreską " + t +
+            " godzin pracy: pole przed kreską to wentylatory, które zawiodły."
         };
       },
       update: function (root, state, v) {

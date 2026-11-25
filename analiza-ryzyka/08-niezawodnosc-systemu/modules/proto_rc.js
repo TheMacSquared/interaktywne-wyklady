@@ -1,9 +1,9 @@
 // Prototypy punktów stop wykładu 08: scena losowa „misje” (P2B).
 //
-//   misje — symulacja „Misja za misją”: w każdej misji losujemy stany dwóch
+//   misje — symulacja „Okres po okresie”: w każdym okresie pracy losujemy stany dwóch
 //           elementów (R = cfg.r) i oceniamy je w trzech logikach sukcesu:
 //           oba wymagane, tylko E₁, wystarczy jeden. Liczniki porażek narastają
-//           (+1 / +10 / +100 / +1000); pasek pokazuje ostatnie 100 misji.
+//           (+1 / +10 / +100 / +1000); pasek pokazuje ostatnie 100 okresów pracy.
 // Kontener w R: s8p_scene_ui(…, "misje", …) w stop_proto_rc.R.
 (function () {
   "use strict";
@@ -37,8 +37,8 @@
         },
         render: function () {
           var W = 800, x0 = 170, cw = 4.6, rowH = 46, top = 46, s = "";
-          // wiersz stanów elementów w ostatnich misjach
-          s += '<text class="s8p-subtle" x="' + x0 + '" y="16" font-size="12">ostatnie misje (najnowsza po prawej)</text>';
+          // wiersz stanów elementów w ostatnich okresach pracy
+          s += '<text class="s8p-subtle" x="' + x0 + '" y="16" font-size="12">ostatnie okresy pracy (najnowszy po prawej)</text>';
           ["E₁", "E₂"].forEach(function (lab, e) {
             s += '<text class="s8p-mono s8p-subtle" x="' + (x0 - 10) + '" y="' + (30 + e * 9) + '" font-size="10" text-anchor="end">' + lab + "</text>";
             runs.forEach(function (r, i) {
@@ -57,11 +57,11 @@
                  '<rect class="s8p-cell-bad" x="' + bx + '" y="' + (y + 8) + '" width="' + U.g(bw * Math.min(share, SCALE) / SCALE) + '" height="14" rx="2"/>' +
                  '<line class="s8p-dash" x1="' + U.g(ex) + '" x2="' + U.g(ex) + '" y1="' + (y + 3) + '" y2="' + (y + 27) + '"/>';
           });
-          ui.set("stage", U.svgWrap(W, top + 3 * rowH, "Ostatnie misje ocenione w trzech logikach sukcesu; zawiedzione misje w kolorze akcentu.", s));
+          ui.set("stage", U.svgWrap(W, top + 3 * rowH, "Ostatnie okresy pracy ocenione w trzech logikach sukcesu; nieudane okresy pracy w kolorze akcentu.", s));
           var read = LOGICS.map(function (L, j) {
             return U.esc(L.name) + ": " + fails[j] + (total ? " (" + U.fmt(100 * fails[j] / total, 1) + "%)" : "");
           }).join(" · ");
-          ui.set("body", '<p class="s8p-read">misje: ' + total + " · zawiedzione — " + read + "</p>");
+          ui.set("body", '<p class="s8p-read">okresy pracy: ' + total + " · nieudane — " + read + "</p>");
         }
       };
     }

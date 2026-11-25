@@ -7,7 +7,7 @@ języka zdarzeń i podstaw prawdopodobieństwa.
 ## Status
 
 - klucz ćwiczeń i wskazówki prowadzenia: `~/praca/dydaktyka/przedmioty/analiza-ryzyka/listy/przewodnik-prowadzacego.md`;
-- korekty spójności: model misji w 10, warunkowe wejścia FTA, quizy tematyczne
+- korekty spójności: model okresu pracy w 10, warunkowe wejścia FTA, quizy tematyczne
   z objaśnieniami, niepewność parametrów i kryterium decyzji;
 - plan kanoniczny: `~/praca/dydaktyka/przedmioty/analiza-ryzyka/plan-kanoniczny.md`;
 - graf wiedzy prowadzącego (dawne `graph/`): `~/praca/dydaktyka/przedmioty/analiza-ryzyka/graf/`;
@@ -67,6 +67,6 @@ komponentów w `R/risk_block.R`. `R/course_catalog.R` jest indeksem kolejności 
 metadanych; treść każdego bloku pozostaje w jego własnym `modules/block.R`.
 
 Blok 09 dotyczy pożaru z warunkowymi niepowodzeniami detekcji i tłumienia.
-Blok 10 jest osobnym studium utraty ochrony termicznej w jednej misji: model
+Blok 10 jest osobnym studium utraty ochrony termicznej w jednym okresie pracy: model
 czasu życia zasila układ chłodzenia, a interwencje porównujemy w trzech
 scenariuszach, z budżetem i demonstracyjnym kryterium pozostałego ryzyka.

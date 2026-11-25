@@ -46,8 +46,8 @@
           function cls(a, b) { return ch(a, b) ? "i10p-box-hit" : "i10p-box"; }
           var svg =
             link(400, 86, 160, 150) + link(400, 86, 590, 150) + link(590, 222, 480, 270) + link(590, 222, 700, 270) +
-            node(280, 10, 240, 76, ch(m.top, base.top) ? "i10p-box-ok" : "i10p-box", "TOP: utrata ochrony w misji", U.fmtP(m.top),
-              ch(m.top, base.top) ? "było " + U.fmtP(base.top) + " (" + pct(m.top, base.top) + ")" : U.per10000(m.top) + " misji") +
+            node(280, 10, 240, 76, ch(m.top, base.top) ? "i10p-box-ok" : "i10p-box", "TOP: utrata ochrony w okresie pracy", U.fmtP(m.top),
+              ch(m.top, base.top) ? "było " + U.fmtP(base.top) + " (" + pct(m.top, base.top) + ")" : U.per10000(m.top) + " okresów pracy") +
             gate(400, 118, "ORAZ") +
             node(60, 150, 200, 72, cls(m.initiation, base.initiation), "I: zapotrzebowanie", U.fmtP(m.initiation), was(m.initiation, base.initiation), "i10p-bad") +
             node(480, 150, 220, 72, "i10p-box-dim", "D ∪ S: brak detekcji lub chłodzenia", U.fmtP(or), was(or, orBase)) +
@@ -58,7 +58,7 @@
             ", przeoczenie " + U.fmtP(m.miss) + ", awaria chłodzenia " + U.fmtP(m.cooling_failure) + ".", svg));
           var cost = cfg.variants[k].cost;
           ui.set("read", '<p class="i10p-read">P(TOP) = ' + U.fmtP(m.initiation) + " · [1 − " + U.fmtP(1 - m.miss) + " · " + U.fmtP(m.system_r) +
-            "] = " + U.fmtP(m.top) + " · " + U.per10000(m.top) + " misji" + (cost != null ? " · koszt " + cost : "") + "</p>");
+            "] = " + U.fmtP(m.top) + " · " + U.per10000(m.top) + " okresów pracy" + (cost != null ? " · koszt " + cost : "") + "</p>");
         }
       };
     }
@@ -95,7 +95,7 @@
         layers.push({ type: "vline", x: base, color: P.ink, width: 1.6, dash: [6, 4] });
         layers.push({ type: "text", x: base, y: "top", text: "bez działania " + U.fmtP(base), color: P.ink, align: "right", mono: true });
         return { x: [0, cfg.axis], y: [0.4, rs.length + 0.9], yLabels: yLabels(rs), noYGrid: true, layers: layers,
-          xName: "P(TOP) na misję po działaniu",
+          xName: "P(TOP) na okres pracy po działaniu",
           aria: "Ryzyko po czterech interwencjach na wspólnej osi; bez działania " + U.fmtP(base) + "." };
       },
       update: function (root, state) {
@@ -128,7 +128,7 @@
         });
         return { x: [0, cfg.top_axis], y: [0.4, rs.length + 0.9], yLabels: yLabels(rs), noYGrid: true, layers: layers,
           legend: [{ text: "od scenariusza optymistycznego do ostrożnego", color: P.niebo }, { text: "scenariusz bazowy", color: P.ink, box: true }],
-          xName: "P(TOP) na misję po działaniu",
+          xName: "P(TOP) na okres pracy po działaniu",
           aria: "Przedziały ryzyka po działaniu w trzech scenariuszach przy zakresie niepewności " + u + "." };
       },
       update: function (root, state) {
@@ -209,7 +209,7 @@
         return { x: [0, cfg.top_axis], y: [0.4, rs.length + 0.9], yLabels: yLabels(rs), noYGrid: true, layers: layers,
           legend: [{ text: "najgorszy scenariusz w limicie", color: P.szalwia }, { text: "najgorszy scenariusz ponad limitem", color: P.accent },
                    { text: "scenariusz bazowy", color: P.ink, box: true }],
-          xName: "P(TOP) na misję po działaniu",
+          xName: "P(TOP) na okres pracy po działaniu",
           aria: "Przedziały ryzyka po działaniu na tle limitu " + U.fmtP(limit) + "." };
       },
       update: function (root, state) {

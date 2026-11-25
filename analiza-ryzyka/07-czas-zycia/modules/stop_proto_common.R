@@ -11,7 +11,7 @@
 # Każdy plik stop_proto_r*.R definiuje obiekty UI c7p_<nr>_ui; wpięcie w block.R
 # przez c7p_get("c7p_<nr>_ui") — brakujący obiekt daje panel „w budowie”.
 #
-# Wspólny język wizualny: oś czasu pracy w godzinach, kreska misji 1000 h,
+# Wspólny język wizualny: oś czasu pracy w godzinach, kreska 1000 h pracy,
 # wentylator jako pozioma linia życia zakończona kreską awarii (akcent) albo
 # trójkątem „działa” (szałwia). Park wentylatorów to linie życia ułożone rosnąco:
 # obwiednia jest krzywą R(t). Linie parku nie są losowane — wentylator i ma czas
@@ -22,8 +22,8 @@
 # Karty katalogowe Bananpolu (R/bananpol.R, lifetime.*; decyzja 2026-10-02).
 c7p_mttf <- 1500     # oferta A: wykładniczy, MTTF (h)
 c7p_beta <- 2        # oferta B: Weibull, kształt
-c7p_eta <- 1700      # oferta B: Weibull, skala (h)
-c7p_mission <- 1000  # czas misji (h)
+c7p_eta <- 1693      # oferta B: Weibull, skala (h)
+c7p_mission <- 1000  # wymagany czas pracy (h)
 
 # Niezawodność i kwantyl Weibulla (β = 1: wykładniczy z MTTF = η).
 c7p_R <- function(t, beta, eta) exp(-(t / eta)^beta)
@@ -151,7 +151,7 @@ c7p_lifelines <- function(t, y, x_of, cut = Inf, cls = "", tmax = Inf, tick = 4,
   )
 }
 
-# Pionowa kreska (misja, koniec badania) z podpisem u góry.
+# Pionowa kreska (wymagany czas pracy, koniec badania) z podpisem u góry.
 c7p_vmark <- function(x, y0, y1, label = NULL, cls = "c7p-limit", anchor = "start") {
   paste0(sprintf('<line class="%s" x1="%.1f" x2="%.1f" y1="%g" y2="%g"/>', cls, x, x, y0, y1),
     if (!is.null(label)) sprintf('<text class="c7p-mono" x="%.1f" y="%g" font-size="13" text-anchor="%s">%s</text>',

@@ -5,9 +5,9 @@
 #   c7p_16a_ui — Piaskownica „β obraca hazard, η rozciąga oś” (P16A): rycina c7_weibull,
 #                suwaki β i η, R(t) i h(t) obok siebie, stałe osie.
 #   c7p_16b_ui — Galeria „Rodzina Weibulla” (P16B): rycina c7_rodzina, cztery kształty
-#                β przy η = 1700 h, bez kontrolek.
+#                β przy η = 1693 h, bez kontrolek.
 #   c7p_17a_ui — Piaskownica „Ten sam MTTF, inny ranking” (P17A): rycina c7_ranking,
-#                suwak czasu misji, pasek „kto prowadzi” przy osi.
+#                suwak wymaganego czasu pracy, pasek „kto prowadzi” przy osi.
 # Wymaga: stop_proto_common.R, R/lc_stat_figures.R, R/lc_dist.js (window.lcDist),
 # modules/sceny.js (window.lcC7.util), modules/proto_rf.js.
 
@@ -47,7 +47,7 @@ c7p_16b_ui <- c7p_panel("P16B", "galeria", "Rodzina Weibulla: cztery kształty, 
   lc_sf_figure("c7_rodzina",
     legend = TRUE,
     body = c7p_stack(c("Niezawodność R(t)", "Hazard h(t) w jednostkach 1/h")),
-    after = lc_caption("Skala η = 1700 h jest wspólna. Kształt β decyduje, czy ryzyko dla działającego elementu maleje, stoi czy rośnie."))
+    after = lc_caption("Skala η = 1693 h jest wspólna. Kształt β decyduje, czy ryzyko dla działającego elementu maleje, stoi czy rośnie."))
 )
 
 # ============================================================================
@@ -56,7 +56,7 @@ c7p_16b_ui <- c7p_panel("P16B", "galeria", "Rodzina Weibulla: cztery kształty, 
 
 c7p_17a_ui <- c7p_panel("P17A", "piaskownica", "Ten sam MTTF, inny ranking",
   lc_sf_figure("c7_ranking",
-    control = list(lc_sf_slider("c7p17_t", "Czas misji", 100, 3500, 1000, 50, suffix = " h")),
+    control = list(lc_sf_slider("c7p17_t", "Wymagany czas pracy", 100, 3500, 1000, 50, suffix = " h")),
     toolbar = lc_readouts(c7p_read("r1", "R(t), β = 0.7"), c7p_read("r2", "R(t), β = 1"),
       c7p_read("r3", "R(t), β = 2.5"), c7p_read("best", "Prowadzi")),
     ratio = "2.2/1", max_height = "360px", legend = TRUE,

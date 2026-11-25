@@ -9,7 +9,7 @@ testthat::test_that("granica dla zera awarii odwraca prawdopodobieństwo obserwa
   testthat::expect_error(env$risk_zero_failure_upper(0))
 })
 
-testthat::test_that("misja łączy czas życia, system i warunkowy scenariusz", {
+testthat::test_that("okres pracy łączy czas życia, system i warunkowy scenariusz", {
   b <- env$risk_mission_analysis(1000, "exp", .98, .95, .005, .95)
   fan <- exp(-1000 / 1500)
   testthat::expect_equal(b$fan_r, fan)
@@ -65,8 +65,8 @@ testthat::test_that("karty, scenariusze i notatka reagują na ustawienia", {
   testthat::expect_equal(res$cells, 12L)                           # 4 działania × 3 scenariusze
   testthat::expect_equal(res$fan, exp(-1000 / 1500), tolerance = 1e-12)
   testthat::expect_lt(res$weibull, res$initial)                    # zmiana modelu obniża P(TOP)
-  testthat::expect_gt(res$weibull2000, res$weibull)                # dłuższa misja je podnosi
-  # FPR nie wchodzi do kontraktu misji: P(TOP) od niego nie zależy (nie jest argumentem mission()).
+  testthat::expect_gt(res$weibull2000, res$weibull)                # dłuższy okres pracy je podnosi
+  # FPR nie wchodzi do kontraktu okresu pracy: P(TOP) od niego nie zależy (nie jest argumentem mission()).
   # Notatka: niezależne zasilanie (koszt 4) jest poza budżetem 1 i nie spełnia limitu 0.0001.
   testthat::expect_gt(res$worst_power, .0001)
 })

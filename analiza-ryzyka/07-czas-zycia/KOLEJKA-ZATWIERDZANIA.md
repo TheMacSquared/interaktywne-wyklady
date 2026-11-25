@@ -37,7 +37,7 @@ Zostało po części A:
 - `modules/wykresy.js` nadal rejestruje ryciny `c7m_timeline`, `c7m_functions`,
   `c7m_exp` i `c7m_gamma`, a `modules/wykresy.R` liczy `c7_timeline_config`.
   Strona ich nie używa; funkcje pomocnicze sprawdza `test-c7-wykresy.R`.
-- P2B: przy wąskim ekranie napisy „misja 1000 h” i „MTTF” nachodzą na siebie.
+- P2B: przy wąskim ekranie napisy „wymagane 1000 h” i „MTTF” nachodzą na siebie.
 - Pliki `ra`–`ri` czekają na nazwy według rozdziałów do decyzji o części B.
 
 ## Inwentarz: część B (rozdziały 5–8), do decyzji
@@ -74,7 +74,7 @@ mają tylko kadry z R, bez JS); wspólne narzędzia w
   na obrazie nie ma liczb hazardu.
 - P19: hazard w dnie wanny 0.184 (także w poprawionym widgecie ggplot).
 - P22 i P23A: wczesne defekty β = 0.7, η = 1185 h — używany 0.747, nowy 0.579.
-- P21A: terminy dla R* = 0.95 i 0.80 (385 i 803 h; wykładniczy 77 i 335 h).
+- P21A: terminy dla R* = 0.95 i 0.80 (383 i 800 h; wykładniczy 77 i 335 h).
 
 ## Znane słabości
 

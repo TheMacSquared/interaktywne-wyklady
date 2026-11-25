@@ -60,8 +60,8 @@
   }
 
   // ---- P21A / P21B / P22: niezawodność i gęstość -----------------------------
-  // Liczby z tekstu wykładu: wykładniczy MTTF 1500 h, Weibull β = 2, η = 1700 h.
-  var WEIB = { beta: 2, eta: 1700 }, EXP = { beta: 1, eta: 1500 };
+  // Liczby z tekstu wykładu: wykładniczy MTTF 1500 h, Weibull β = 2, η = 1693 h.
+  var WEIB = { beta: 2, eta: 1693 }, EXP = { beta: 1, eta: 1500 };
 
   S.register({
     c7_wanna: {
@@ -174,7 +174,7 @@
             { type: "point", x: t, y: rW, color: P.accent, size: 12 }
           ],
           legend: [
-            { text: "Weibull β = 2, η = 1700 h", color: P.bursztyn },
+            { text: "Weibull β = 2, η = 1693 h", color: P.bursztyn },
             { text: "wykładniczy, MTTF 1500 h", color: P.niebo, dash: true },
             { text: "ryzyko awarii przed przeglądem: 1 − R(t)", color: P.accent }
           ],
@@ -211,7 +211,7 @@
           legend: [
             { text: "zawiedzie przed przeglądem", color: P.accent, box: true },
             { text: "dotrwa do przeglądu", color: P.szalwia, box: true },
-            { text: "gęstość czasu życia (Weibull β = 2, η = 1700 h)", color: P.bursztyn }
+            { text: "gęstość czasu życia (Weibull β = 2, η = 1693 h)", color: P.bursztyn }
           ],
           xName: "Czas do awarii (h)", yName: "Gęstość (1/h)",
           aria: "Gęstość czasu życia Weibulla z kreską przeglądu po " + t + " godzinach. Pole przed kreską to ryzyko awarii."
@@ -228,7 +228,7 @@
       draw: function (v, P, k, state, vals) {
         var s = Number(vals.c7p22_s);
         var models = {
-          wear: { beta: 2, eta: 1700, color: P.bursztyn },
+          wear: { beta: 2, eta: 1693, color: P.bursztyn },
           "const": { beta: 1, eta: 1500, color: P.niebo },
           early: { beta: 0.7, eta: 1500 / U.gammaFn(1 + 1 / 0.7), color: P.terakota }
         };

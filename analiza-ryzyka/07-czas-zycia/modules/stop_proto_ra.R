@@ -1,11 +1,11 @@
 # PROTOTYPY PUNKTÓW STOP (2026-11-14) — P1 i P12 (wzorzec dla pozostałych) --------
 #
 #   c7p_1_ui  — Scena „Dwie oferty, jedna średnia” (P1), 5 kadrów policzonych w R:
-#               karty katalogowe → sto linii życia → od najkrótszej → misja 1000 h
-#               → misja 3000 h. Park to kwantyle modelu (c7p_park), więc po 1000 h
+#               karty katalogowe → sto linii życia → od najkrótszej → okres pracy 1000 h
+#               → okres pracy 3000 h. Park to kwantyle modelu (c7p_park), więc po 1000 h
 #               działa 51 i 71 ze 100, po 3000 h 14 i 4 — jak w przykładzie 7.1.
 #   c7p_12_ui — Piaskownica „Stały hazard” (P12): rycina lcSF c7_staly
-#               (modules/proto_ra.js), stałe osie, kreska misji 1000 h,
+#               (modules/proto_ra.js), stałe osie, kreska 1000 h pracy,
 #               punkt (MTTF, 0.37).
 # Wymaga: stop_proto_common.R, R/lc_stat_figures.R.
 
@@ -34,7 +34,7 @@ c7p1_panel <- function(k, step) {
   cut <- c(NA, NA, NA, 1000, 3000)[step]
   cls <- paste0("c7p-life-", k)
   if (!is.na(cut)) cls <- ifelse(t > cut, cls, paste(cls, "c7p-life-dim"))
-  name <- c(a = "Oferta A · MTTF 1500 h", b = "Oferta B · MTTF 1507 h")[[k]]
+  name <- c(a = "Oferta A · MTTF 1500 h", b = "Oferta B · MTTF 1500 h")[[k]]
   paste0(
     sprintf('<rect class="c7p-fill-%s" x="%g" y="18" width="14" height="14" rx="2"/>', k, c7p1_x0[[k]]),
     sprintf('<text x="%g" y="30" font-size="15" font-weight="700">%s</text>', c7p1_x0[[k]] + 22, name),
@@ -42,7 +42,7 @@ c7p1_panel <- function(k, step) {
     c7p_axis(x_of, c7p1_base, seq(0, 4000, 1000), "czas pracy (h)"),
     if (!is.na(cut)) paste0(
       c7p_vmark(x_of(cut), c7p1_top - 12, c7p1_base, NULL),
-      # Liczba stoi w pustym rogu nad liniami; przy misji 3000 h po lewej stronie kreski.
+      # Liczba stoi w pustym rogu nad liniami; przy okresie pracy 3000 h po lewej stronie kreski.
       sprintf('<text class="c7p-mono c7p-ink" x="%g" y="%g" font-size="34" font-weight="700" text-anchor="end">%d</text>',
         if (cut > 2000) x_of(cut) - 10 else c7p1_x0[[k]] + c7p1_w, c7p1_top + 44, c7p1_alive(cut)[[k]]),
       sprintf('<text class="c7p-mono c7p-subtle" x="%g" y="%g" font-size="13" text-anchor="end">ze 100 działa po %d h</text>',
@@ -62,31 +62,31 @@ c7p1_cards <- function() {
     sprintf('<text class="c7p-subtle" x="%g" y="178" font-size="14">średni czas do awarii (MTTF)</text>', x + 24),
     sprintf('<text class="c7p-mono" x="%g" y="226" font-size="38" font-weight="700">%s h</text>', x + 24, mttf))
   paste0(card(70, "a", "Wentylator A", "dojrzewalnia, praca ciągła", "1500"),
-    card(460, "b", "Wentylator B", "dojrzewalnia, praca ciągła", "1507"),
+    card(460, "b", "Wentylator B", "dojrzewalnia, praca ciągła", "1500"),
     '<text class="c7p-subtle" x="430" y="300" font-size="15" text-anchor="middle">Pytanie kierownika: ile wentylatorów dotrwa do przeglądu po 1000 h?</text>')
 }
 
 c7p1_frames <- list(
   list(name = "Dwie karty",
-    text = "Dział zakupów porównuje dwie oferty. Obie karty katalogowe podają niemal ten sam średni czas do awarii.",
-    read = "MTTF: 1500 h i 1507 h"),
+    text = "Dział zakupów porównuje dwie oferty. Obie karty katalogowe podają ten sam średni czas do awarii.",
+    read = "MTTF: 1500 h w obu ofertach"),
   list(name = "Sto wentylatorów",
     text = "Z każdej oferty uruchamiamy sto wentylatorów. Linia to czas pracy jednego egzemplarza, kreska na końcu to awaria.",
     read = NULL),
   list(name = "Od najkrótszej",
     text = "Te same linie ułożone od najkrócej do najdłużej żyjącego. Oferta A ma wiele bardzo krótkich i kilka bardzo długich żyć; oferta B trzyma się środka.",
     read = NULL),
-  list(name = "Misja 1000 h",
+  list(name = "Po 1000 h",
     text = "Kreska przeglądu po 1000 h. Linie, które jej nie sięgają, to wentylatory, które zawiodły wcześniej.",
     read = sprintf("po 1000 h działa: A %d ze 100 · B %d ze 100", c7p1_alive(1000)[["a"]], c7p1_alive(1000)[["b"]])),
-  list(name = "Misja 3000 h",
+  list(name = "Po 3000 h",
     text = "Ta sama kreska przesunięta na 3000 h. Kolejność ofert się odwraca, choć średnie się nie zmieniły.",
     read = sprintf("po 3000 h działa: A %d ze 100 · B %d ze 100", c7p1_alive(3000)[["a"]], c7p1_alive(3000)[["b"]]))
 )
 
 c7p1_svg <- function(step) {
   if (step == 1) return(c7p_svg(860, 320,
-    "Dwie karty katalogowe wentylatorów: średni czas do awarii 1500 i 1507 godzin.", c7p1_cards()))
+    "Dwie karty katalogowe wentylatorów: średni czas do awarii 1500 godzin na obu.", c7p1_cards()))
   aria <- c("",
     "Sto linii życia z każdej oferty w kolejności montażu.",
     "Sto linii życia z każdej oferty ułożonych od najkrótszej do najdłuższej.",

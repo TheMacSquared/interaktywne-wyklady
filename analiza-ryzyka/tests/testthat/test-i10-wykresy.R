@@ -1,5 +1,5 @@
 # Ryciny wykładu 10 liczone w przeglądarce (modules/wykresy.js) względem R:
-# kontrakt misji, karty, scenariusze i notatka dają liczby dawnego serwera.
+# kontrakt okresu pracy, karty, scenariusze i notatka dają liczby dawnego serwera.
 
 i10_node <- function(script) {
   out <- system2("node", c("-e", shQuote(script)), stdout = TRUE, stderr = TRUE)
@@ -27,7 +27,7 @@ testthat::test_that("wykład 10: dane rycin z tabeli interwencji Bananpolu", {
     c("conditional", "bayes", "binomial", "geometric", "negative", "threshold", "survival", "system"))
 })
 
-testthat::test_that("wykład 10: kontrakt misji w przeglądarce jak risk_mission_analysis() w R", {
+testthat::test_that("wykład 10: kontrakt okresu pracy w przeglądarce jak risk_mission_analysis() w R", {
   testthat::skip_if(Sys.which("node") == "", "Node.js nie jest dostępny")
   env <- i10_env()
   root <- normalizePath(dirname(risk_root))
@@ -73,7 +73,7 @@ testthat::test_that("wykład 10: kontrakt misji w przeglądarce jak risk_mission
   testthat::expect_equal(res$cards$insp, do.call(rbind, lapply(insp, function(x) c(
     as.character(round(x[1] * x[2], 2)), env$risk_fmt_p(env$risk_at_least_one(x[1], x[2])), env$risk_fmt_p(env$risk_zero_failure_upper(x[1]))))))
   t <- c(100, 1000, 1950, 3000)
-  testthat::expect_equal(res$cards$life, cbind(vapply(exp(-t / 1500), env$risk_fmt_p, ""), vapply(exp(-(t / 1700)^2), env$risk_fmt_p, "")))
+  testthat::expect_equal(res$cards$life, cbind(vapply(exp(-t / 1500), env$risk_fmt_p, ""), vapply(exp(-(t / 1693)^2), env$risk_fmt_p, "")))
 
   testthat::expect_equal(res$text$label, "wykładniczy · 1000 h · P(I) 0.00500 · czułość 0.950")
   testthat::expect_equal(res$text$format, vapply(c(.00162, .0023, .002, .0001, .01, .325, 0), env$risk_format_probability, ""))

@@ -11,31 +11,31 @@ const near = (a, b, tol) => assert.ok(Math.abs(a - b) <= tol, `${a} ≉ ${b}`);
 
 test("Weibull i wykładniczy zgadzają się z przykładami wykładu", () => {
   near(U.wR(1000, 1, 1500), 0.5134171, 1e-6);       // przykład 7.1, oferta A
-  near(U.wR(1000, 2, 1700), 0.7075, 1e-4);          // oferta B
-  near(U.wR(3000, 2, 1700), 0.0444, 1e-4);
-  near(U.wh(1000, 2, 1700), 0.000692, 1e-6);        // przykład 7.4
+  near(U.wR(1000, 2, 1693), 0.7055, 1e-4);          // oferta B
+  near(U.wR(3000, 2, 1693), 0.0433, 1e-4);
+  near(U.wh(1000, 2, 1693), 0.000698, 1e-6);        // przykład 7.4
   near(U.wh(1000, 1, 1500), 1 / 1500, 1e-12);
   near(U.wf(1000, 1, 1500), 0.000342, 1e-6);        // przykład 7.3
-  near(U.wH(1000, 2, 1700), 0.346, 1e-3);
+  near(U.wH(1000, 2, 1693), 0.349, 1e-3);
   near(U.wF(1500, 1, 1500), 1 - Math.exp(-1), 1e-12);
   assert.equal(U.wR(0, 0.5, 1700), 1);
 });
 
 test("termin Bq, kwantyl i MTTF (wzory 7.14 i 7.16)", () => {
-  near(U.wTime(0.90, 2, 1700), 551.8, 0.1);         // przykład 7.10: B10 ≈ 552 h
-  near(U.wTime(0.95, 2, 1700), 385.0, 0.1);
+  near(U.wTime(0.90, 2, 1693), 549.5, 0.1);         // przykład 7.10: B10 ≈ 550 h
+  near(U.wTime(0.95, 2, 1693), 383.4, 0.1);
   near(U.wTime(0.90, 1, 1500), 158.0, 0.1);
   near(U.wq(0.5, 1, 1500), 1500 * Math.LN2, 1e-9);  // mediana ≈ 1040 h
   near(U.gammaFn(1.5), Math.sqrt(Math.PI) / 2, 1e-12);
   near(U.gammaFn(5), 24, 1e-9);
-  near(U.wMean(2, 1700), 1506.6, 0.1);              // przykład 7.7: MTTF ≈ 1507 h
+  near(U.wMean(2, 1693), 1500.4, 0.1);              // przykład 7.7: MTTF ≈ 1500 h
   near(1500 / U.gammaFn(1 + 1 / 0.7), 1185.0, 0.1); // przykład 7.8
   near(1500 / U.gammaFn(1 + 1 / 2.5), 1690.6, 0.1);
 });
 
 test("park kwantyli daje liczby z tekstu", () => {
   const alive = (p, t) => p.filter(x => x > t).length;
-  const a = U.park(100, 1, 1500), b = U.park(100, 2, 1700);
+  const a = U.park(100, 1, 1500), b = U.park(100, 2, 1693);
   assert.equal(a.length, 100);
   assert.deepEqual([alive(a, 1000), alive(b, 1000)], [51, 71]);
   assert.deepEqual([alive(a, 3000), alive(b, 3000)], [14, 4]);

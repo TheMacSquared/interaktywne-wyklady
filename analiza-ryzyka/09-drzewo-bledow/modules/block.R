@@ -106,7 +106,7 @@ fta_block <- list(id = "fta", title = "Analiza drzewa błędów", chapters = lis
           )),
           c(
             "Kryterium rozstrzygnięcia jest najczęściej pomijanym składnikiem. „Nieopanowany” może znaczyć: pożar, który przeniósł się poza strefę zapłonu; pożar, do którego wezwano straż; albo pożar, który zniszczył towar o wartości powyżej ustalonego progu. Każda z tych wersji prowadzi do nieco innego drzewa. Nie ma jednej właściwej — ważne, żeby wybór był jawny i żeby wszyscy uczestnicy analizy używali tego samego.",
-            "Horyzont ma też znaczenie rachunkowe. Prawdopodobieństwo inicjacji 0.005 dotyczy jednego roku; gdybyśmy pytali o pięć lat, liczba ta byłaby inna, a pozostałe parametry — warunkowe względem jednej inicjacji — pozostałyby bez zmian. Mieszanie horyzontów w jednym drzewie jest tym samym błędem, co mieszanie czasów misji w układzie szeregowym z wykładu 08."
+            "Horyzont ma też znaczenie rachunkowe. Prawdopodobieństwo inicjacji 0.005 dotyczy jednego roku; gdybyśmy pytali o pięć lat, liczba ta byłaby inna, a pozostałe parametry — warunkowe względem jednej inicjacji — pozostałyby bez zmian. Mieszanie horyzontów w jednym drzewie jest tym samym błędem, co mieszanie wymaganych czasów pracy w układzie szeregowym z wykładu 08."
           ),
           risk_example("9.1", "Poprawianie definicji zdarzenia szczytowego",
             problem = "Kierownik logistyki proponuje zdarzenie szczytowe: „Awaria chłodni”. Popraw tę definicję tak, żeby spełniała definicję 9.1, i wskaż, które decyzje musiałeś podjąć.",

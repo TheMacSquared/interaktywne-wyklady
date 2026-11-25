@@ -3,7 +3,7 @@
 // przychodzą z R w data-config (i10p_cfg) — w tym pliku nie ma liczb modelu.
 //
 //   i10_modele — Galeria „Ta sama średnia, inne ryzyko” (P7): R(t) modelu
-//                wykładniczego i Weibulla na stałych osiach, czas misji z suwaka.
+//                wykładniczego i Weibulla na stałych osiach, wymagany czas pracy z suwaka.
 (function () {
   "use strict";
   var C = window.lcCharts, S = window.lcSF, Z = window.lcI10;
@@ -37,8 +37,8 @@
           ],
           legend: [{ text: "model wykładniczy (stały hazard)", color: P.secondary },
                    { text: "Weibull (zużycie)", color: P.accent }],
-          xName: "Czas misji (" + cfg.unit + ")", yName: "R(t)",
-          aria: "Krzywe niezawodności wentylatora w modelu wykładniczym i Weibulla; przy czasie misji " + t +
+          xName: "Wymagany czas pracy (" + cfg.unit + ")", yName: "R(t)",
+          aria: "Krzywe niezawodności wentylatora w modelu wykładniczym i Weibulla; przy wymaganym czasie pracy " + t +
                 " wartości " + U.fmtP(re) + " i " + U.fmtP(rw) + "." };
       },
       update: function (root, state) {

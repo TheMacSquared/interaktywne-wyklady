@@ -2,7 +2,7 @@
 // w przeglądarce; kontener w R: lc_sf_figure() w stop_proto_ra.R.
 //
 //   c7_staly — Piaskownica „Stały hazard” (P12): R(t) = exp(−t/MTTF) z suwaka na
-//              tle oferty A, kreska misji 1000 h, punkt (MTTF, e⁻¹), stałe osie.
+//              tle oferty A, kreska 1000 h pracy, punkt (MTTF, e⁻¹), stałe osie.
 (function () {
   "use strict";
   var C = window.lcCharts, S = window.lcSF, Z = window.lcC7;
@@ -26,12 +26,12 @@
             { type: "vline", x: t0, color: P.ink, width: 1.8, dash: [6, 4] },
             { type: "point", x: m, y: e1, color: P.niebo, size: 12 },
             { type: "point", x: t0, y: r0, color: P.accent, size: 12 },
-            { type: "text", x: t0, y: "top", text: "misja " + t0 + " h", color: P.ink, align: "left", mono: true },
+            { type: "text", x: t0, y: "top", text: "wymagane " + t0 + " h", color: P.ink, align: "left", mono: true },
             { type: "text", x: m, y: e1, text: "t = MTTF", color: P.soft, align: "left", halo: true }
           ],
           legend: [{ text: "R(t) dla MTTF z suwaka", color: P.niebo }, { text: "oferta A (MTTF 1500 h)", color: P.ref, dash: true }],
           xName: "Czas pracy (h)", yName: "R(t)",
-          aria: "Krzywa niezawodności rozkładu wykładniczego o średniej " + m + " godzin z kreską misji " + t0 + " godzin." };
+          aria: "Krzywa niezawodności rozkładu wykładniczego o średniej " + m + " godzin z kreską " + t0 + " godzin pracy." };
       },
       update: function (root, state) {
         var m = state.m;

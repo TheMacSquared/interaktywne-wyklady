@@ -1,8 +1,8 @@
 # PROTOTYPY PUNKTÓW STOP (2026-11-14) — grupa rb: P2, P3, P4 ----------------------
 #
-#   i10p_2_ui — Scena „Cztery protokoły misji” (P2), 5 kadrów policzonych w R:
-#               cztery misje na osi czasu i zestawienie. Zdarzenia (I, D, S) i werdykt
-#               TOP = I ∩ (D ∪ S) wynikają z flag misji; liczby z i10p_cfg.
+#   i10p_2_ui — Scena „Cztery protokoły okresu pracy” (P2), 5 kadrów policzonych w R:
+#               cztery okresy pracy na osi czasu i zestawienie. Zdarzenia (I, D, S) i werdykt
+#               TOP = I ∩ (D ∪ S) wynikają z flag okresów pracy; liczby z i10p_cfg.
 #   i10p_3_ui — Scena „Awaria to nie niedostępność” (P3), scena JS „rok”
 #               (modules/proto_rb.js): suwak dnia zapotrzebowania na osi roku,
 #               okna niesprawności z i10p3_cfg (dane scenariusza, nie model).
@@ -12,12 +12,12 @@
 # sceny.js (window.lcI10) i proto_rb.js (scena „rok”).
 
 # ============================================================================
-# P2 — CZTERY PROTOKOŁY MISJI
+# P2 — CZTERY PROTOKOŁY OKRESU PRACY
 # ============================================================================
 
-# Chwile zatrzymania jako ułamki czasu misji (scenariusz, nie parametr modelu).
-i10p2_stop_a <- 0.4   # sterownik C w misji a
-i10p2_stop_c <- 0.2   # wentylator A w misji c
+# Chwile zatrzymania jako ułamki wymaganego czasu pracy (scenariusz, nie parametr modelu).
+i10p2_stop_a <- 0.4   # sterownik C w okresie pracy a
+i10p2_stop_c <- 0.2   # wentylator A w okresie pracy c
 
 i10p2_T <- function() i10p_cfg$time
 i10p2_h <- function(frac) i10p_num(frac * i10p2_T(), 0)
@@ -25,22 +25,22 @@ i10p2_h <- function(frac) i10p_num(frac * i10p2_T(), 0)
 # Zdarzenia: I zapotrzebowanie; D detektor milczy; S = sterownik zatrzymany
 # albo oba wentylatory zatrzymane; TOP = I ∩ (D ∪ S).
 i10p2_missions <- list(
-  list(name = "Misja a", demand = TRUE, detector = "alarm", ctrl_stop = i10p2_stop_a,
+  list(name = "Okres a", demand = TRUE, detector = "alarm", ctrl_stop = i10p2_stop_a,
     fan_a_stop = NA, fan_b_stop = NA, dim = FALSE, expect = TRUE,
     zapis = "I ∩ Dᶜ ∩ S", short = "padł sterownik",
     text = paste0("Zapotrzebowanie wykryto, ale po ", i10p2_h(i10p2_stop_a), " ", i10p_cfg$unit,
       " zatrzymał się sterownik. Sterownik jest szeregowy, więc chłodzenia zabrakło. ",
       "Wentylatory A i B pracują do końca, lecz bez sterownika nie dają chłodzenia.")),
-  list(name = "Misja b", demand = FALSE, detector = "fałszywy", ctrl_stop = NA,
+  list(name = "Okres b", demand = FALSE, detector = "fałszywy", ctrl_stop = NA,
     fan_a_stop = NA, fan_b_stop = NA, dim = FALSE, expect = FALSE,
     zapis = "Iᶜ", short = "fałszywy alarm",
     text = "Alarm był fałszywy. Bez zapotrzebowania ochrony nie da się utracić; zbędne uruchomienie ma koszt, ale leży poza TOP."),
-  list(name = "Misja c", demand = TRUE, detector = "alarm", ctrl_stop = NA,
+  list(name = "Okres c", demand = TRUE, detector = "alarm", ctrl_stop = NA,
     fan_a_stop = i10p2_stop_c, fan_b_stop = NA, dim = FALSE, expect = FALSE,
     zapis = "I ∩ Dᶜ ∩ Sᶜ", short = "padł tylko A",
     text = paste0("Wentylator A zatrzymał się po ", i10p2_h(i10p2_stop_c), " ", i10p_cfg$unit,
       ", B pracował do końca. Jeden wentylator wystarcza.")),
-  list(name = "Misja d", demand = TRUE, detector = "milczy", ctrl_stop = NA,
+  list(name = "Okres d", demand = TRUE, detector = "milczy", ctrl_stop = NA,
     fan_a_stop = NA, fan_b_stop = NA, dim = TRUE, expect = TRUE,
     zapis = "I ∩ D", short = "detektor milczał",
     text = "Detektor milczał. Sprawny układ nie pomoże, jeśli nie dostanie sygnału.")
@@ -51,7 +51,7 @@ i10p2_top <- function(m) {
   D <- m$detector == "milczy"
   m$demand && (D || S)
 }
-# Kontrola: werdykt z flag zgadza się z zapisem w wykładzie (TOP w misjach a i d).
+# Kontrola: werdykt z flag zgadza się z zapisem w wykładzie (TOP w okresach pracy a i d).
 stopifnot(identical(vapply(i10p2_missions, i10p2_top, logical(1)),
                     vapply(i10p2_missions, function(m) m$expect, logical(1))))
 
@@ -77,7 +77,7 @@ i10p2_mission_svg <- function(m) {
   # Wiersz 1: zapotrzebowanie.
   demand <- if (m$demand)
     paste0(sprintf('<rect class="i10p-fill-warn" x="%g" y="%g" width="%g" height="%g" rx="3"/>', X0, yo(1), W, BH),
-      sprintf('<text x="%g" y="%g" font-size="13">jest od początku misji</text>', X0 + 10, mid(1) + 5))
+      sprintf('<text x="%g" y="%g" font-size="13">jest od początku okresu pracy</text>', X0 + 10, mid(1) + 5))
   else
     paste0(sprintf('<rect class="i10p-fill-idle" x="%g" y="%g" width="%g" height="%g" rx="3"/>', X0, yo(1), W, BH),
       sprintf('<text class="i10p-subtle" x="%g" y="%g" font-size="13">brak</text>', X0 + 10, mid(1) + 5))
@@ -130,17 +130,17 @@ i10p2_table_svg <- function() {
       sprintf('<text class="%s" x="685" y="%g" font-size="14" font-weight="700" text-anchor="middle">%s</text>',
         if (top) "i10p-bad" else "i10p-ok", mid + 5, if (top) "TOP" else "brak TOP"))
   }, character(1))
-  i10p_svg(800, 270, "Zestawienie: misje a i d kończą się TOP, b i c nie.", paste(rows, collapse = ""))
+  i10p_svg(800, 270, "Zestawienie: okresy a i d kończą się TOP, b i c nie.", paste(rows, collapse = ""))
 }
 
 i10p2_frames <- c(
   lapply(i10p2_missions, function(m) list(name = m$name, text = m$text, read = NULL)),
   list(list(name = "Zestawienie",
-    text = "Ochronę utracono w misjach a i d. W nawiasie jest suma D ∪ S: brak każdej z dwóch funkcji wystarcza.",
+    text = "Ochronę utracono w okresach pracy a i d. W nawiasie jest suma D ∪ S: brak każdej z dwóch funkcji wystarcza.",
     read = "TOP = I ∩ (D ∪ S)"))
 )
 
-i10p_2_ui <- i10p_frames_ui("P2", "przykłady", "Cztery protokoły misji", i10p2_frames,
+i10p_2_ui <- i10p_frames_ui("P2", "przykłady", "Cztery protokoły okresu pracy", i10p2_frames,
   function(i) if (i <= length(i10p2_missions)) i10p2_mission_svg(i10p2_missions[[i]]) else i10p2_table_svg())
 
 # ============================================================================

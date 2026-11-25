@@ -103,7 +103,7 @@ s8p4_plot <- function(step) {
   fan_col <- "var(--upwr-secondary)"; det_col <- "var(--upwr-sage)"
   vline <- function(t, cls = "s8p-rule", extra = "") sprintf('<line class="%s" x1="%g" x2="%g" y1="%g" y2="%g" %s/>', cls, s8p4_x(t), s8p4_x(t), s8p4_y(1), s8p4_y(0.85), extra)
   paste0(
-    s8pd_axis_x(s8p4_x, 250, seq(0, 9000, 1000), label = "czas misji (h)"),
+    s8pd_axis_x(s8p4_x, 250, seq(0, 9000, 1000), label = "wymagany czas pracy (h)"),
     s8pd_axis_y(s8p4_y, 80, c(0.85, 0.90, 0.95, 1), s8p_fix(c(0.85, 0.90, 0.95, 1), 2)),
     s8p_text(86, 34, "R(t)", 12, "s8p-subtle"),
     vline(1000, extra = 'stroke-dasharray="4 4"'), vline(8760, extra = 'stroke-dasharray="4 4"'),
@@ -127,9 +127,9 @@ s8p4_card <- paste0(
   s8p_text(196, 194, "iloczyn?", 15, "s8p-subtle"), s8p_text(390, 194, "0.874", 19, "s8p-mono s8p-bad", weight = 700))
 s8p4_frames <- list(
   list(name = "Karta", text = "Karta podaje dwie niezawodności. Iloczyn 0.92 · 0.95 = 0.874 wygląda jak niezawodność szeregu.", read = NULL),
-  list(name = "Oś czasu", text = "Każda liczba ma swój czas misji: 1000 h i rok, czyli 8760 h. Na osi czasu leżą w dwóch różnych miejscach.", read = NULL),
+  list(name = "Oś czasu", text = "Każda liczba ma swój wymagany czas pracy: 1000 h i rok, czyli 8760 h. Na osi czasu leżą w dwóch różnych miejscach.", read = NULL),
   list(name = "Krzywe", text = "Niezawodność maleje z czasem. W modelu wykładniczym przez każdy punkt przechodzi jedna krzywa R(t).", read = NULL),
-  list(name = "Wspólna kreska", text = "Na misję 1000 h czujnik ma 0.9942, nie 0.95. Mnożyć wolno tylko wartości z jednej pionowej kreski.",
+  list(name = "Wspólna kreska", text = "Dla wymaganego czasu pracy 1000 h czujnik ma 0.9942, nie 0.95. Mnożyć wolno tylko wartości z jednej pionowej kreski.",
     read = sprintf("0.92 · %s = %s · ryzyko %s zamiast 0.126", s8p_fix(s8p4_det1000, 4), s8p_fix(s8p4_sys, 3), s8p_fix(1 - s8p4_sys, 3)))
 )
 s8p4_svg <- function(step) {
@@ -186,10 +186,10 @@ s8p_10_ui <- s8p_frames_ui("P10", "pojęcie", "Zwijanie schematu", s8p10_frames,
 
 s8p15_r <- risk_common_cause_reliability(s8p_r_ab, s8p_q)     # 0.98604
 s8p15_n <- 1000
-s8p15_pow <- round(s8p15_n * s8p_q)                           # 10 misji: zasilanie
-s8p15_fans0 <- round(s8p15_n * (1 - s8p_r_ab))                # 4 misje: oba wentylatory (obietnica)
-s8p15_fans <- round(s8p15_n * (1 - s8p_q) * (1 - s8p_r_ab))   # 4 misje (3.96)
-# Tysiąc misji w kratkach 100 × 10.
+s8p15_pow <- round(s8p15_n * s8p_q)                           # 10 okresów pracy: zasilanie
+s8p15_fans0 <- round(s8p15_n * (1 - s8p_r_ab))                # 4 okresy pracy: oba wentylatory (obietnica)
+s8p15_fans <- round(s8p15_n * (1 - s8p_q) * (1 - s8p_r_ab))   # 4 okresy pracy (3.96)
+# Tysiąc okresów pracy w kratkach 100 × 10.
 s8p15_grid <- function(y, counts, label) paste0(
   s8p_text(25, y - 8, label, 13, "s8p-subtle"),
   s8p_cells(counts, 100, 25, y, size = 6, gap = 1.5))
@@ -208,25 +208,25 @@ s8p15_hall <- function(up) {
     s8p_fan(500, 150, 26, up), s8p_text(540, 155, if (up) "wentylator B" else "B stoi", 14, if (!up) "s8p-bad", weight = 600))
 }
 s8p15_frames <- list(
-  list(name = "Obietnica", text = "Schemat dwóch wentylatorów obiecuje R = 0.996. Na tysiąc misji zawodzą cztery: te, w których stają oba naraz.",
-    read = sprintf("zawiedzione: %d na 1000", s8p15_fans0)),
+  list(name = "Obietnica", text = "Schemat dwóch wentylatorów obiecuje R = 0.996. Na tysiąc okresów pracy zawodzą cztery: te, w których stają oba naraz.",
+    read = sprintf("nieudane: %d na 1000", s8p15_fans0)),
   list(name = "Hala", text = "W hali oba wentylatory są wpięte w jedną rozdzielnicę. Na schemacie jej nie było.", read = NULL),
   list(name = "Awaria", text = "Rozdzielnica pada i oba wentylatory stają w tej samej sekundzie. To nie zbieg dwóch awarii, tylko jedna awaria o dwóch skutkach.", read = NULL),
-  list(name = "Brakujący blok", text = "Dopisujemy zasilanie jako blok w szeregu. Na tysiąc misji 10 kończy utrata zasilania, a 4 awaria obu wentylatorów.",
-    read = sprintf("zawiedzione: %d na 1000 · R = 0.99 · 0.996 = %s", s8p15_pow + s8p15_fans, s8p_fix(s8p15_r, 3)))
+  list(name = "Brakujący blok", text = "Dopisujemy zasilanie jako blok w szeregu. Na tysiąc okresów pracy 10 kończy utrata zasilania, a 4 awaria obu wentylatorów.",
+    read = sprintf("nieudane: %d na 1000 · R = 0.99 · 0.996 = %s", s8p15_pow + s8p15_fans, s8p_fix(s8p15_r, 3)))
 )
 s8p15_svg <- function(step) {
   lab <- c("Wentylator A", "Wentylator B", "Zasilanie"); sub <- c("0.92", "0.95", "0.99")
   switch(step,
-    s8p_svg(800, 280, "Schemat równoległy dwóch wentylatorów i tysiąc misji, z których cztery są zawiedzione.",
+    s8p_svg(800, 280, "Schemat równoległy dwóch wentylatorów i tysiąc okresów pracy, z których cztery są nieudane.",
       s8p_rbd_center(400, 84, stages = list(c(1, 2)), labels = lab, sub = sub, bw = 132),
-      s8p15_grid(196, c("s8p-cell-bad" = s8p15_fans0, "s8p-cell-ok" = s8p15_n - s8p15_fans0), "tysiąc misji · burgund: stają oba wentylatory")),
+      s8p15_grid(196, c("s8p-cell-bad" = s8p15_fans0, "s8p-cell-ok" = s8p15_n - s8p15_fans0), "tysiąc okresów pracy · burgund: stają oba wentylatory")),
     s8p_svg(800, 218, "Hala: rozdzielnica zasila kablami oba wentylatory.", s8p15_hall(TRUE)),
     s8p_svg(800, 218, "Rozdzielnica pada, oba wentylatory stoją.", s8p15_hall(FALSE)),
-    s8p_svg(800, 280, "Schemat z blokiem zasilania w szeregu przed wentylatorami i tysiąc misji, z których czternaście jest zawiedzionych.",
+    s8p_svg(800, 280, "Schemat z blokiem zasilania w szeregu przed wentylatorami i tysiąc okresów pracy, z których czternaście jest nieudanych.",
       s8p_rbd_center(400, 84, stages = list(3, c(1, 2)), labels = lab, sub = sub, mark = 3, bw = 132),
       s8p15_grid(196, c("s8p-cell-alt" = s8p15_pow, "s8p-cell-bad" = s8p15_fans, "s8p-cell-ok" = s8p15_n - s8p15_pow - s8p15_fans),
-        "tysiąc misji · złote: pada zasilanie · burgund: stają oba wentylatory"))
+        "tysiąc okresów pracy · złote: pada zasilanie · burgund: stają oba wentylatory"))
   )
 }
 s8p_15_ui <- s8p_frames_ui("P15", "scena", "Jedna rozdzielnica", s8p15_frames, s8p15_svg)
@@ -250,20 +250,20 @@ s8p18_row <- function(k) {
     sprintf('<rect class="s8p-cell-bad" x="330" y="%g" width="%g" height="18" rx="2"/>', y - 9, max(w, 1.2)),
     s8p_text(330 + max(w, 1.2) + 8, y + 5, s8p18_fail[k], 15, "s8p-mono s8p-bad", weight = 700),
     if (k > 1) paste0(s8p_text(790, y - 2, sprintf("uratował %d", s8p18_saved[k - 1]), 15, "s8p-mono s8p-ok", "end", 700),
-      s8p_text(790, y + 16, "misji", 12, "s8p-subtle", "end")) else "")
+      s8p_text(790, y + 16, "okresów pracy", 12, "s8p-subtle", "end")) else "")
 }
 s8p18_frames <- list(
-  list(name = "Jeden wentylator", text = "Gałąź chłodzenia ma niezawodność 0.9. Na 10 000 misji zawodzi tysiąc.", read = "koszt 100 jedn. · zawiedzione 1000 na 10 000"),
-  list(name = "Drugi", text = "Kierownik dokłada drugi wentylator za kolejne 100 jednostek. Zawiedzionych misji jest dziesięć razy mniej.", read = "koszt 200 jedn. · zawiedzione 100 na 10 000"),
-  list(name = "Trzeci", text = "Trzeci znowu zmniejsza ryzyko dziesięciokrotnie. Ratuje jednak już tylko 90 misji.", read = "koszt 300 jedn. · zawiedzione 10 na 10 000"),
-  list(name = "Czwarty", text = "Czwarty ratuje 9 misji. Kosztuje tyle samo co drugi, który uratował 900.", read = "koszt 400 jedn. · zawiedzione 1 na 10 000"),
-  list(name = "Rachunek", text = "Cena jednej uratowanej misji rośnie z każdym wentylatorem dziesięć razy. Względna korzyść jest stała, bezwzględna znika.",
-    read = sprintf("cena uratowanej misji: %s jedn.", paste(s8p_num(s8p18_cost / s8p18_saved, 2), collapse = " → ")))
+  list(name = "Jeden wentylator", text = "Gałąź chłodzenia ma niezawodność 0.9. Na 10 000 okresów pracy zawodzi tysiąc.", read = "koszt 100 jedn. · nieudane 1000 na 10 000"),
+  list(name = "Drugi", text = "Kierownik dokłada drugi wentylator za kolejne 100 jednostek. Nieudanych okresów pracy jest dziesięć razy mniej.", read = "koszt 200 jedn. · nieudane 100 na 10 000"),
+  list(name = "Trzeci", text = "Trzeci znowu zmniejsza ryzyko dziesięciokrotnie. Ratuje jednak już tylko 90 okresów pracy.", read = "koszt 300 jedn. · nieudane 10 na 10 000"),
+  list(name = "Czwarty", text = "Czwarty ratuje 9 okresów pracy. Kosztuje tyle samo co drugi, który uratował 900.", read = "koszt 400 jedn. · nieudane 1 na 10 000"),
+  list(name = "Rachunek", text = "Cena jednego uratowanego okresu pracy rośnie z każdym wentylatorem dziesięć razy. Względna korzyść jest stała, bezwzględna znika.",
+    read = sprintf("cena uratowanego okresu pracy: %s jedn.", paste(s8p_num(s8p18_cost / s8p18_saved, 2), collapse = " → ")))
 )
 s8p18_svg <- function(step) {
   k <- min(step, 4)
-  s8p_svg(800, 30 + k * 72, sprintf("Liczba wentylatorów od 1 do %d; zawiedzione misje na 10 000: %s.", k, paste(s8p18_fail[1:k], collapse = ", ")),
-    s8p_text(238, 16, "koszt", 12, "s8p-subtle"), s8p_text(330, 16, "zawiedzione misje na 10 000", 12, "s8p-subtle"),
+  s8p_svg(800, 30 + k * 72, sprintf("Liczba wentylatorów od 1 do %d; nieudane okresy pracy na 10 000: %s.", k, paste(s8p18_fail[1:k], collapse = ", ")),
+    s8p_text(238, 16, "koszt", 12, "s8p-subtle"), s8p_text(330, 16, "nieudane okresy pracy na 10 000", 12, "s8p-subtle"),
     paste(vapply(seq_len(k), s8p18_row, character(1)), collapse = ""))
 }
 s8p_18_ui <- s8p_frames_ui("P18", "scena", "Czwarty wentylator", s8p18_frames, s8p18_svg)
@@ -279,10 +279,10 @@ s8p24_r <- risk_common_cause_reliability(s8p_r_mixed, s8p_q)          # 0.9663
 # Zysk z poprawy elementu o 0.01 w pełnym układzie (istotność Birnbauma · 0.01).
 s8p24_gain <- 0.01 * c("Sterownik C" = (1 - s8p_q) * s8p_r_ab, "Zasilanie" = s8p_r_mixed,
   "Wentylator B" = (1 - s8p_q) * s8p_r_c * (1 - s8p_r_a), "Wentylator A" = (1 - s8p_q) * s8p_r_c * (1 - s8p_r_b))
-s8p24_steps <- c("Zdefiniuj sukces", "Wspólny czas misji", "Zredukuj etapami", "Wspólne przyczyny", "Wrażliwość")
+s8p24_steps <- c("Zdefiniuj sukces", "Wspólny czas pracy", "Zredukuj etapami", "Wspólne przyczyny", "Wrażliwość")
 s8p24_frames <- list(
   list(name = s8p24_steps[1], text = "Sukces: komora nie przekracza 14.5 °C. Potrzebny jest sterownik i co najmniej jeden wentylator.", read = "φ = x_C · [1 − (1 − x_A)(1 − x_B)]"),
-  list(name = s8p24_steps[2], text = "Każdy blok dostaje niezawodność na tę samą misję: 1000 h.", read = "R_C = 0.98 · R_A = 0.92 · R_B = 0.95"),
+  list(name = s8p24_steps[2], text = "Każdy blok dostaje niezawodność na ten sam wymagany czas pracy: 1000 h.", read = "R_C = 0.98 · R_A = 0.92 · R_B = 0.95"),
   list(name = s8p24_steps[3], text = "Wentylatory zwijamy w jeden blok, potem mnożymy szereg.", read = sprintf("0.98 · 0.996 = %s", s8p_fix(s8p_r_mixed, 3))),
   list(name = s8p24_steps[4], text = "Wspólne zasilanie dopisujemy jako blok w szeregu przed całym układem.", read = sprintf("0.99 · %s = %s", s8p_fix(s8p_r_mixed, 3), s8p_fix(s8p24_r, 3))),
   list(name = s8p24_steps[5], text = "Ta sama poprawa o 0.01 jest warta prawie dwadzieścia razy więcej w bloku szeregowym niż w gałęzi z zapasem.",
@@ -315,7 +315,7 @@ s8p24_results <- list(
   c(sprintf("0.99 · %s", s8p_fix(s8p_r_mixed, 3)), sprintf("= %s", s8p_fix(s8p24_r, 3))),
   c(sprintf("C: +%s", s8p_fix(s8p24_gain[["Sterownik C"]], 4)), sprintf("A: +%s", s8p_fix(s8p24_gain[["Wentylator A"]], 4))))
 s8p_24b_ui <- s8p_panel("P24B", "domknięcie", "Pięć kroków i ich wyniki", s8p_css,
-  s8p_svg(800, 170, "Mapa pięciu kroków analizy: sukces, czas misji, redukcja 0.976, wspólna przyczyna 0.966, wrażliwość.",
+  s8p_svg(800, 170, "Mapa pięciu kroków analizy: sukces, wymagany czas pracy, redukcja 0.976, wspólna przyczyna 0.966, wrażliwość.",
     paste(vapply(1:5, function(i) { x <- 8 + (i - 1) * 160; paste0(
       sprintf('<rect class="s8p-paper" x="%g" y="10" width="144" height="148" rx="8"/>', x),
       sprintf('<circle cx="%g" cy="36" r="13" fill="var(--upwr-accent)"/>', x + 24),

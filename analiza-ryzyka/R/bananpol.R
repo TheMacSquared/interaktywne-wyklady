@@ -84,7 +84,7 @@ bananpol <- list(
   lifetime = list(
     exponential_mttf = 1500,
     weibull_shape = 2,
-    weibull_scale = 1700,
+    weibull_scale = 1693,
     unit = "godzina pracy",
     horizon = "czas do awarii wentylatora",
     source = "fikcyjne parametry dydaktyczne"
@@ -95,7 +95,7 @@ bananpol <- list(
     detector_reliability = 0.95,
     power_reliability = 0.98,
     common_power_failure = 0.01,
-    unit = "planowany czas misji",
+    unit = "planowany czas pracy",
     horizon = "1000 godzin",
     source = "fikcyjne parametry dydaktyczne"
   ),
@@ -108,15 +108,15 @@ bananpol <- list(
     source = "fikcyjne parametry dydaktyczne"
   ),
   integration = list(
-    label = "Utrata wymaganej ochrony termicznej podczas misji",
+    label = "Utrata wymaganej ochrony termicznej w trakcie okresu pracy",
     initiation = .005,
     sensitivity = .95,
     false_positive_rate = .05,
     power_r1000 = .98,
     controller_r1000 = .95,
     intervention_efficacy = .5,
-    unit = "jedna misja; zapotrzebowanie na początku, brak napraw",
-    horizon = "1000 h bazowo; czas misji zmieniany przez użytkownika",
+    unit = "jeden okres pracy; zapotrzebowanie na początku, brak napraw",
+    horizon = "1000 h bazowo; wymagany czas pracy zmieniany przez użytkownika",
     source = "fikcyjny scenariusz; osobna detekcja, dwa pracujące wentylatory; skuteczność działań jest hipotezą"
   ),
   interventions = data.frame(
@@ -152,19 +152,19 @@ bananpol_parameters <- data.frame(
   ),
   value = c(
     1000, .10, .12, .005, .01, .01, .95, .05, 10000, .02, 100, .10, 3,
-    82, 3, 85, 1500, 2, 1700, 1000, .92, .95, .98, .01, .005, .05, .08
+    82, 3, 85, 1500, 2, 1693, 1000, .92, .95, .98, .01, .005, .05, .08
   ),
   unit = c(
     "zmiana", rep("udział zmian", 4), "udział zmian",
     rep("prawdopodobieństwo warunkowe", 2), "zmiana",
     "udział elementów", "element", "udział palet", "wykrycie",
     rep("°C", 3), "godzina", "bezwymiarowy", "godzina", "godzina",
-    rep("prawdopodobieństwo misji", 4), "prawdopodobieństwo roczne", rep("prawdopodobieństwo warunkowe przy inicjacji", 2)
+    rep("prawdopodobieństwo na okres pracy", 4), "prawdopodobieństwo roczne", rep("prawdopodobieństwo warunkowe przy inicjacji", 2)
   ),
   horizon = c(
     rep("1000 porównywalnych zmian", 5), rep("10 000 porównywalnych zmian", 4),
     rep("jedna partia kontrolna", 4), rep("ustalony tryb pracy", 3),
-    rep("czas do awarii wentylatora", 3), rep("misja 1000 godzin", 5),
+    rep("czas do awarii wentylatora", 3), rep("okres pracy 1000 godzin", 5),
     "jeden rok pracy magazynu", rep("podczas zapotrzebowania wywołanego inicjacją", 2)
   ),
   source = rep("fikcyjny parametr dydaktyczny Bananpolu", 27),

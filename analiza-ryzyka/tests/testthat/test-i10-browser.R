@@ -37,7 +37,7 @@ testthat::test_that("wykład 10: prototypy punktów stop są wpięte i działaj�
     testthat::expect_gte(length(cfg$frames), 2L)
     for (fr in cfg$frames) testthat::expect_true(grepl("^<svg", fr$svg))
   }
-  # Sceny liczące misję dostają parametry z R (nic nie jest wpisane w JS).
+  # Sceny liczące okres pracy dostają parametry z R (nic nie jest wpisane w JS).
   for (cfg in res$configs[res$scenes %in% c("uklad", "drzewo")]) {
     for (k in c("time", "base_time", "mttf", "beta", "eta", "power_r", "controller_r", "init", "sens", "efficacy")) {
       testthat::expect_equal(cfg[[k]], res$cfg[[k]], info = k)

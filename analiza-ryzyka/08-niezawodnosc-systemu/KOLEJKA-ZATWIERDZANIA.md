@@ -18,11 +18,11 @@ w którym miałby zostać. Tam, gdzie są warianty, nad panelem jest notka
 | Rozdz. | Prototyp | Rodzaj | Plik | Decyzja do podjęcia |
 |---|---|---|---|---|
 | 1 | P1 „Nocna awaria, trzy raporty” | scena | ra | miejsce: przed głosowaniem (B) czy po nim (A); stoi w obu |
-| 1 | P2A „Sto misji, trzy logiki” | galeria | rc | P2A (dokładne kratki) czy P2B (symulacja) |
-| 1 | P2B „Misja za misją” | symulacja | rc | jak wyżej |
+| 1 | P2A „Sto okresów pracy, trzy logiki” | galeria | rc | P2A (dokładne kratki) czy P2B (symulacja) |
+| 1 | P2B „Okres po okresie” | symulacja | rc | jak wyżej |
 | 2 | P3 „Co znaczy »działa«?” | scena | rd | przyjąć / odrzucić; wynik 0.902 jest nowy |
 | 2 | P4A „Dwa horyzonty na jednej osi czasu” | pojęcie (kadry) | rd | P4A (kadry) czy P4B (suwak) |
-| 2 | P4B „Wspólny czas misji” | piaskownica | re | jak wyżej |
+| 2 | P4B „Wspólny czas pracy” | piaskownica | re | jak wyżej |
 | 2 | P5A „Zepsuj blok, szukaj drogi” | piaskownica | rc | P5A (przełącznik) czy P5B (obok siebie); zastępuje widget „Schemat” |
 | 2 | P5B „Trzy schematy obok siebie” | galeria | rc | jak wyżej |
 | 3 | P6 „Osiem stanów, jedna wygrana” | galeria | rb | zastępuje pola wyboru szeregu |

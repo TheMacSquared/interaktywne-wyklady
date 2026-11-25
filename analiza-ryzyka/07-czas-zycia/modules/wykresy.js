@@ -98,7 +98,7 @@
   figures.c7m_exp = {
     draw: function (v, P) {
       var mttf = Number(v), rel = function (t) { return Math.exp(-t / mttf); }, e1 = Math.exp(-1);
-      // Kreska misji 1000 h (odczyt R(1000 h)) i punkt (MTTF, e⁻¹), o którym mówi tekst.
+      // Kreska 1000 h pracy (odczyt R(1000 h)) i punkt (MTTF, e⁻¹), o którym mówi tekst.
       return { x: [0, 5000], y: [0, 1],
         layers: [{ type: "vline", x: 1000, color: P.ref, width: 1.4, dash: DASH },
                  { type: "line", data: R.curve(rel, 0, 5000, 400), color: P.accent, width: 2.4 },
@@ -170,7 +170,7 @@
         legend: cfg.shapes.map(function (b, i) { return { color: cols[i], text: "β=" + b }; }),
         xName: "Czas (h)", yName: "R(t)", aria: "Trzy krzywe Weibulla o tym samym średnim czasie życia i różnych kształtach." };
     },
-    // Trzy wartości R(t) na linii misji, w kolorach krzywych (przykład 7.8).
+    // Trzy wartości R(t) na linii wymaganego czasu pracy, w kolorach krzywych (przykład 7.8).
     update: function (el, state, v) {
       var cfg = state.config;
       cfg.shapes.forEach(function (b, i) { S.setValue(el, "same_r" + (i + 1), R.fmtP(R.weibull(Number(v), b, cfg.scales[i]).reliability)); });
@@ -198,11 +198,11 @@
     }
   };
 
-  // R(t) modelu Weibulla (β = 2, η = 1700 h), wymaganie R = 0.90 i wybrany termin;
+  // R(t) modelu Weibulla (β = 2, η = 1693 h), wymaganie R = 0.90 i wybrany termin;
   // odcinek w kolorze akcentu to ryzyko awarii 1 − R(t).
   figures.c7m_plan = {
     draw: function (v, P) {
-      var t = Number(v), rel = function (x) { return R.weibull(x, 2, 1700).reliability; }, now = rel(t);
+      var t = Number(v), rel = function (x) { return R.weibull(x, 2, 1693).reliability; }, now = rel(t);
       return { x: [0, 3000], y: [0, 1],
         layers: [{ type: "segment", from: [t, now], to: [t, 1], color: P.accent, width: 6 },
                  { type: "line", data: [[0, 0.9], [3000, 0.9]], color: P.ref, width: 1.8, dash: DOT },
@@ -213,7 +213,7 @@
         aria: "Krzywa niezawodności Weibulla z wybranym terminem przeglądu, wymaganiem 0.90 i odcinkiem ryzyka awarii przed przeglądem." };
     },
     update: function (el, state, v) {
-      var r = R.weibull(Number(v), 2, 1700).reliability;
+      var r = R.weibull(Number(v), 2, 1693).reliability;
       S.setValue(el, "plan_r", R.fmtP(r)); S.setValue(el, "plan_risk", R.fmtP(1 - r));
     }
   };

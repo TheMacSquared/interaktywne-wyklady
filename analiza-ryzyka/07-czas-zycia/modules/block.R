@@ -39,7 +39,7 @@ zycie_exercises <- list(
   ),
   list(
     task = tagList(
-      "Plan wymiany: wentylator ma rozkład Weibulla z β = 2 i η = 1700 h.",
+      "Plan wymiany: wentylator ma rozkład Weibulla z β = 2 i η = 1693 h.",
       risk_parts(
         "Po ilu godzinach niezawodność spada do 0.80?",
         "Wentylator przepracował już 800 h bez awarii. Jakie jest prawdopodobieństwo, że przetrwa kolejne 300 h? Porównaj z nowym wentylatorem."
@@ -47,8 +47,8 @@ zycie_exercises <- list(
     ),
     answer = list(
       risk_parts(
-        "Ze wzoru (7.16): t = 1700 · (-ln 0.80)^(1/2) = 1700 · √0.2231 ≈ 1700 · 0.472 ≈ 803 h.",
-        "Ze wzoru (7.17): R(1100)/R(800) = exp[-(1100/1700)² + (800/1700)²] ≈ 0.821. Nowy wentylator przetrwa 300 h z prawdopodobieństwem R(300) = exp[-(300/1700)²] ≈ 0.969. Przy hazardzie rosnącym wiek ma znaczenie: używany egzemplarz jest wyraźnie bardziej ryzykowny."
+        "Ze wzoru (7.16): t = 1693 · (-ln 0.80)^(1/2) = 1693 · √0.2231 ≈ 1693 · 0.472 ≈ 800 h.",
+        "Ze wzoru (7.17): R(1100)/R(800) = exp[-(1100/1693)² + (800/1693)²] ≈ 0.820. Nowy wentylator przetrwa 300 h z prawdopodobieństwem R(300) = exp[-(300/1693)²] ≈ 0.969. Przy hazardzie rosnącym wiek ma znaczenie: używany egzemplarz jest wyraźnie bardziej ryzykowny."
       )
     )
   ),
@@ -105,14 +105,14 @@ zycie_functions_table <- lc_table(
 zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = list(
   list(
     id = "mttf", title = "MTTF", hook = "Ta sama średnia żywotność, inne ryzyko",
-    lead = "Ta sama średnia nie gwarantuje tej samej niezawodności w czasie misji.",
+    lead = "Ta sama średnia nie gwarantuje tej samej niezawodności w wymaganym czasie pracy.",
     intro = c(
-      "Dwa wentylatory z kart katalogowych mają identyczny średni czas życia. Po roku eksploatacji jeden park maszyn wygląda wyraźnie lepiej od drugiego. Średnia nie mówi, jak awarie rozkładają się w czasie — a właśnie od tego zależy, czy element dotrwa do końca misji.",
+      "Dwa wentylatory z kart katalogowych mają identyczny średni czas życia. Po roku eksploatacji jeden park maszyn wygląda wyraźnie lepiej od drugiego. Średnia nie mówi, jak awarie rozkładają się w czasie — a właśnie od tego zależy, czy element dotrwa do końca okresu pracy.",
       "Czas do awarii jest zmienną ciągłą, więc cały warsztat poprzedniego wykładu — gęstość, pola, ogony — działa również tutaj. Dochodzi jedno nowe pojęcie, które zmieni sposób myślenia o starzeniu: hazard, czyli chwilowe tempo awarii elementu, który wciąż działa."
     ),
     body = list(
       zycie_note("Dane Bananpolu",
-        "Wentylatory dojrzewalni: model wykładniczy o \\(MTTF = 1500\\) h oraz model Weibulla o kształcie \\(\\beta = 2\\) i skali \\(\\eta = 1700\\) h. Jednostka: godzina pracy; horyzont: czas do awarii wentylatora. Liczby są fikcyjne.")
+        "Wentylatory dojrzewalni: model wykładniczy o \\(MTTF = 1500\\) h oraz model Weibulla o kształcie \\(\\beta = 2\\) i skali \\(\\eta = 1693\\) h. Jednostka: godzina pracy; horyzont: czas do awarii wentylatora. Liczby są fikcyjne.")
     ),
     sections = list(list(
       id = "srednia", title = "Czym jest MTTF",
@@ -126,9 +126,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           "Czas życia \\(T\\) to nieujemna zmienna losowa mierząca czas od ustalonego początku (uruchomienia, montażu, ostatniej wymiany) do pierwszej awarii elementu. Definicja wymaga trzech ustaleń: co rozpoczyna zegar, w jakiej jednostce go mierzymy (godziny pracy, cykle, kilometry) i co uznajemy za awarię."
         )),
         risk_definition("7.2", "Funkcja niezawodności", c(
-          "Funkcja niezawodności \\(R(t) = P(T > t)\\) to prawdopodobieństwo, że element przepracuje bez awarii dłużej niż \\(t\\), czyli przetrwa misję o długości \\(t\\). Wśród wielu jednakowych elementów uruchomionych jednocześnie \\(R(t)\\) jest udziałem tych, które w chwili \\(t\\) wciąż działają."
+          "Funkcja niezawodności \\(R(t) = P(T > t)\\) to prawdopodobieństwo, że element przepracuje bez awarii dłużej niż \\(t\\). Gdy \\(t\\) jest wymaganym czasem pracy, czyli czasem, przez który element ma działać bez awarii (na przykład do planowego przeglądu), \\(R(t)\\) jest prawdopodobieństwem, że element go przetrwa. Wśród wielu jednakowych elementów uruchomionych jednocześnie \\(R(t)\\) jest udziałem tych, które w chwili \\(t\\) wciąż działają."
         )),
-        "Pytanie kierownika utrzymania ruchu to pytanie o \\(R(1000\\,\\text{h})\\). Sama wielkość nie jest nowa: w wykładzie 06 liczyliśmy ogon \\(P(X > c) = 1 - F(c)\\), a w wykładzie 05 szansę \\(P(X > x) = (1 - p)^x\\), że zdarzenie jeszcze nie nastąpiło. Tutaj progiem jest czas misji, a ogon dostaje własną nazwę i symbol, bo wróci w każdym kolejnym wykładzie.",
+        "Pytanie kierownika utrzymania ruchu to pytanie o \\(R(1000\\,\\text{h})\\). Sama wielkość nie jest nowa: w wykładzie 06 liczyliśmy ogon \\(P(X > c) = 1 - F(c)\\), a w wykładzie 05 szansę \\(P(X > x) = (1 - p)^x\\), że zdarzenie jeszcze nie nastąpiło. Tutaj progiem jest wymagany czas pracy, a ogon dostaje własną nazwę i symbol, bo wróci w każdym kolejnym wykładzie.",
         risk_definition("7.3", "MTTF", c(
           "Średni czas do awarii (MTTF, mean time to failure) to wartość oczekiwana czasu życia: \\(MTTF = E(T)\\). Dla zmiennej ciągłej o gęstości \\(f(t)\\) oblicza się ją wzorem (7.1)."
         )),
@@ -155,7 +155,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
               ),
               tags$section(class = "life-offer",
                 tags$p(tags$strong("Oferta B:"), " rozkład Weibulla"),
-                tags$p("\\(\\beta = 2\\), \\(\\eta = 1700\\) h; \\(MTTF \\approx 1507\\) h; ", withMathJax("\\(R(t)=\\exp[-(t/1700)^2]\\)"))
+                tags$p("\\(\\beta = 2\\), \\(\\eta = 1693\\) h; \\(MTTF \\approx 1500\\) h; ", withMathJax("\\(R(t)=\\exp[-(t/1693)^2]\\)"))
               )
             ),
             tags$p(tags$strong("Do obliczenia:"), " dla obu ofert wyznacz prawdopodobieństwo, że wentylator przepracuje bez awarii 500 h, 1000 h i 3000 h."),
@@ -163,19 +163,19 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           ),
           steps = c(
             "Oferta A: \\(R(500) = e^{-1/3} \\approx 0.717\\); \\(R(1000) = e^{-2/3} \\approx 0.513\\); \\(R(3000) = e^{-2} \\approx 0.135\\).",
-            "Oferta B: \\(R(500) = \\exp[-(500/1700)^2] = \\exp(-0.0865) \\approx 0.917\\); \\(R(1000) = \\exp(-0.346) \\approx 0.707\\); \\(R(3000) = \\exp(-3.114) \\approx 0.044\\).",
+            "Oferta B: \\(R(500) = \\exp[-(500/1693)^2] = \\exp(-0.0872) \\approx 0.916\\); \\(R(1000) = \\exp(-0.349) \\approx 0.705\\); \\(R(3000) = \\exp(-3.140) \\approx 0.043\\).",
             "Do 1000 h oferta B jest wyraźnie lepsza: przetrwa ją 71% zamiast 51% wentylatorów. Przy 3000 h kolejność się odwraca: B przetrwa 4%, A — 14%."
           ),
-          answer = "Przy niemal równym MTTF niezawodność w horyzoncie 1000 h różni się o 19 punktów procentowych, a w horyzoncie 3000 h przewaga przechodzi na drugą ofertę. O wyborze decyduje czas misji, nie średnia."
+          answer = "Przy tym samym MTTF niezawodność w horyzoncie 1000 h różni się o 19 punktów procentowych, a w horyzoncie 3000 h przewaga przechodzi na drugą ofertę. O wyborze decyduje wymagany czas pracy, nie średnia."
         ),
-        "Skąd bierze się ta różnica? Oferta A psuje się „równomiernie w czasie”: część egzemplarzy zawodzi bardzo wcześnie, a część żyje kilka razy dłużej niż średnia. Oferta B się zużywa: wczesne awarie są rzadkie, ale awarie skupiają się wokół 1000–2500 godzin. Obie średnie wychodzą podobnie, bo w ofercie A krótkie życia równoważą się bardzo długimi.",
+        "Skąd bierze się ta różnica? Oferta A psuje się „równomiernie w czasie”: część egzemplarzy zawodzi bardzo wcześnie, a część żyje kilka razy dłużej niż średnia. Oferta B się zużywa: wczesne awarie są rzadkie, ale awarie skupiają się wokół 1000–2500 godzin. Obie średnie wychodzą takie same, bo w ofercie A krótkie życia równoważą się bardzo długimi.",
         # P2B: dwie gęstości o tej samej średniej, jedna pod drugą
         c7p_get("c7p_2b_ui"),
         risk_check("c7_chk_mttf",
           "Dwa typy wentylatorów mają MTTF = 1500 h. Które stwierdzenie jest uprawnione bez znajomości rozkładów?",
           c("Oba mają taką samą niezawodność po 1000 h" = "same_r", "W obu połowa egzemplarzy psuje się przed 1500 h" = "half", "Średnio żyją tyle samo, ale R(t) w konkretnym horyzoncie może się różnić" = "mean_only"),
           correct = "mean_only",
-          explanation = "MTTF to tylko wartość oczekiwana. Przykład 7.1 pokazuje dwa rozkłady o niemal tej samej średniej i R(1000) równym 0.513 oraz 0.707.",
+          explanation = "MTTF to tylko wartość oczekiwana. Przykład 7.1 pokazuje dwa rozkłady o tej samej średniej i R(1000) równym 0.513 oraz 0.705.",
           hints = c(same_r = "Porównaj wartości R(1000) w przykładzie 7.1.", half = "Połowa egzemplarzy psuje się przed medianą, nie przed średnią. W modelu wykładniczym przed upływem MTTF psuje się aż około 63% egzemplarzy.")
         )
       )
@@ -300,7 +300,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           risk_formula("P(⟦1|t<T\\le t+\\Delta t⟧\\mid ⟦2|T>t⟧)\\approx ⟦3|h(t)⟧\\,⟦4|\\Delta t⟧", num = "7.5",
             notes = list("awaria w najbliższym krótkim przedziale", "warunek: działa w chwili t", "hazard", "długość przedziału"),
             note_colors = c("accent", "szalwia", "terakota", "niebo"), above = c(2, 4)),
-          zycie_note("Granica modelu: pierwsza awaria a naprawy", "Niezawodność \\(R(t)\\) pyta o przetrwanie całej misji bez awarii. Gotowość pyta, czy funkcja jest dostępna w danej chwili, także po naprawach. Liczba kolejnych awarii na godzinę w systemie naprawialnym opisuje proces zliczający; nie jest automatycznie hazardem czasu do pierwszej awarii. MTTF dotyczy pierwszej awarii, MTBF odstępów między awariami; nie mieszaj tych wielkości."),
+          zycie_note("Granica modelu: pierwsza awaria a naprawy", "Niezawodność \\(R(t)\\) pyta o przetrwanie całego okresu pracy bez awarii. Gotowość pyta, czy funkcja jest dostępna w danej chwili, także po naprawach. Liczba kolejnych awarii na godzinę w systemie naprawialnym opisuje proces zliczający; nie jest automatycznie hazardem czasu do pierwszej awarii. MTTF dotyczy pierwszej awarii, MTBF odstępów między awariami; nie mieszaj tych wielkości."),
           risk_example("7.3", "Cztery funkcje w jednej chwili",
             problem = "Wentylator ma wykładniczy czas życia z \\(MTTF = 1500\\) h, czyli \\(R(t) = e^{-t/1500}\\). Oblicz \\(F(1000)\\), \\(R(1000)\\), \\(f(1000)\\) i \\(h(1000)\\). Następnie oszacuj prawdopodobieństwo, że wentylator, który działa po 1000 h, zawiedzie w ciągu najbliższych 10 h.",
             steps = c(
@@ -356,14 +356,14 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           # P9: MTTF jako pole pod R(t) — kadry na parku
           c7p_get("c7p_9_ui"),
           risk_example("7.4", "Hazard rośnie liniowo",
-            problem = "Utrzymanie ruchu zakłada, że hazard wentylatora rośnie proporcjonalnie do wieku: \\(h(t) = 2t/1700^2\\) na godzinę. Wyznacz \\(R(t)\\) i oblicz \\(R(1000)\\) oraz \\(h(1000)\\).",
+            problem = "Utrzymanie ruchu zakłada, że hazard wentylatora rośnie proporcjonalnie do wieku: \\(h(t) = 2t/1693^2\\) na godzinę. Wyznacz \\(R(t)\\) i oblicz \\(R(1000)\\) oraz \\(h(1000)\\).",
             steps = c(
-              "Ze wzoru (7.6): \\(H(t) = \\int_0^t 2u/1700^2\\,du = t^2/1700^2 = (t/1700)^2\\).",
-              "\\(R(t) = \\exp[-(t/1700)^2]\\). To dokładnie model oferty B z przykładu 7.1.",
-              "\\(H(1000) = (1000/1700)^2 \\approx 0.346\\), więc \\(R(1000) = e^{-0.346} \\approx 0.707\\).",
-              "\\(h(1000) = 2 \\cdot 1000/1700^2 \\approx 0.000692\\) na godzinę — niemal tyle samo co stały hazard oferty A (0.000667)."
+              "Ze wzoru (7.6): \\(H(t) = \\int_0^t 2u/1693^2\\,du = t^2/1693^2 = (t/1693)^2\\).",
+              "\\(R(t) = \\exp[-(t/1693)^2]\\). To dokładnie model oferty B z przykładu 7.1.",
+              "\\(H(1000) = (1000/1693)^2 \\approx 0.349\\), więc \\(R(1000) = e^{-0.349} \\approx 0.705\\).",
+              "\\(h(1000) = 2 \\cdot 1000/1693^2 \\approx 0.000698\\) na godzinę — prawie tyle samo co stały hazard oferty A (0.000667)."
             ),
-            answer = "\\(R(1000) \\approx 0.707\\). W chwili 1000 h oba modele mają prawie równy hazard, ale oferta B dochodzi do niego od zera, więc do tego momentu zgromadziła mniejszy skumulowany hazard (0.346 wobec 0.667) i ma wyższą niezawodność."
+            answer = "\\(R(1000) \\approx 0.705\\). W chwili 1000 h oba modele mają prawie równy hazard, ale oferta B dochodzi do niego od zera, więc do tego momentu zgromadziła mniejszy skumulowany hazard (0.349 wobec 0.667) i ma wyższą niezawodność."
           ),
           # P10: pole pod hazardem decyduje o niezawodności
           c7p_get("c7p_10_ui")
@@ -514,7 +514,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         id = "parametry", title = "β i η",
         body = list(
           c(
-            "W przykładzie 7.4 hazard rósł liniowo i otrzymaliśmy R(t) = exp[-(t/1700)²]. Uogólnijmy ten pomysł: niech skumulowany hazard będzie potęgą czasu, H(t) = (t/η)^β. Wykładnik β decyduje o tym, czy narażenie narasta coraz szybciej, równomiernie czy coraz wolniej, a η ustala, w jakiej skali czasu to się dzieje."
+            "W przykładzie 7.4 hazard rósł liniowo i otrzymaliśmy R(t) = exp[-(t/1693)²]. Uogólnijmy ten pomysł: niech skumulowany hazard będzie potęgą czasu, H(t) = (t/η)^β. Wykładnik β decyduje o tym, czy narażenie narasta coraz szybciej, równomiernie czy coraz wolniej, a η ustala, w jakiej skali czasu to się dzieje."
           ),
           risk_definition("7.9", "Rozkład Weibulla", c(
             "Czas życia T ma rozkład Weibulla z parametrem kształtu β > 0 i parametrem skali η > 0, jeśli jego skumulowany hazard wynosi H(t) = (t/η)^β, a więc niezawodność dana jest wzorem (7.12)."
@@ -558,16 +558,16 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           c7p_variant("P16B — galeria czterech kształtów przy tabeli. Wariant 16A (suwaki) stoi niżej, przy widgecie."),
           c7p_get("c7p_16b_ui"),
           risk_example("7.7", "Wentylator zużywający się",
-            problem = "Wentylator oferty B ma rozkład Weibulla z β = 2 i η = 1700 h. Oblicz R(1000), h(500), h(1000), h(2000), R(1700) oraz MTTF.",
+            problem = "Wentylator oferty B ma rozkład Weibulla z β = 2 i η = 1693 h. Oblicz R(1000), h(500), h(1000), h(2000), R(1693) oraz MTTF.",
             steps = c(
-              "Ze wzoru (7.12): R(1000) = exp[-(1000/1700)²] = exp(-0.346) ≈ 0.707.",
-              "Ze wzoru (7.13) z β = 2: h(t) = 2t/1700². Stąd h(500) ≈ 0.000346, h(1000) ≈ 0.000692 i h(2000) ≈ 0.001384 na godzinę — hazard rośnie proporcjonalnie do wieku.",
-              "R(1700) = exp(-1) ≈ 0.368 — w chwili t = η zawsze pozostaje około 37% działających egzemplarzy.",
-              "Ze wzoru (7.14): MTTF = 1700 · Γ(1.5) ≈ 1700 · 0.886 ≈ 1507 h."
+              "Ze wzoru (7.12): R(1000) = exp[-(1000/1693)²] = exp(-0.349) ≈ 0.705.",
+              "Ze wzoru (7.13) z β = 2: h(t) = 2t/1693². Stąd h(500) ≈ 0.000349, h(1000) ≈ 0.000698 i h(2000) ≈ 0.001396 na godzinę — hazard rośnie proporcjonalnie do wieku.",
+              "R(1693) = exp(-1) ≈ 0.368 — w chwili t = η zawsze pozostaje około 37% działających egzemplarzy.",
+              "Ze wzoru (7.14): MTTF = 1693 · Γ(1.5) ≈ 1693 · 0.886 ≈ 1500 h — tyle samo co w ofercie A."
             ),
-            answer = "R(1000) ≈ 0.707; hazard podwaja się przy podwojeniu wieku (0.00035 → 0.00069 → 0.00138 na godzinę); R(1700) ≈ 0.368; MTTF ≈ 1507 h."
+            answer = "R(1000) ≈ 0.705; hazard podwaja się przy podwojeniu wieku (0.00035 → 0.00070 → 0.00140 na godzinę); R(1693) ≈ 0.368; MTTF ≈ 1500 h."
           ),
-          zycie_try("zacznij od β = 2 i η = 1700 h. Następnie ustaw β = 1 i η = 1500 h, a potem β = 0.5 i η = 1700 h. Za każdym razem odczytaj kierunek hazardu i R(1000 h) w panelu; na dolnym wykresie zwróć uwagę na przebieg h(t) tuż po uruchomieniu."),
+          zycie_try("zacznij od β = 2 i η = 1700 h (najbliżej oferty B, η = 1693 h, na jaką pozwala suwak). Następnie ustaw β = 1 i η = 1500 h, a potem β = 0.5 i η = 1700 h. Za każdym razem odczytaj kierunek hazardu i R(1000 h) w panelu; na dolnym wykresie zwróć uwagę na przebieg h(t) tuż po uruchomieniu."),
           risk_sf_panel("Model", "R(t) i h(t) reagują razem", "c7m_weibull",
             controls = list(lc_sf_slider("c7_beta", "β", .4, 4, 2, .1), lc_sf_slider("c7_eta", "η (h)", 300, 4000, 1700, 50)),
             reads = list(risk_sf_read("weib_dir", "Kierunek hazardu"), risk_sf_read("weib_r", "R(1000 h)", color = upwr_accent)),
@@ -580,7 +580,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           c7p_variant("P16A — suwaki β i η."),
           c7p_get("c7p_16a_ui"),
           zycie_reading(c(
-            "Dla β = 2 i η = 1700 h panel pokazuje hazard rosnący i R(1000 h) ≈ 0.707, jak w przykładzie 7.7; dolny wykres to prosta linia wychodząca z zera. Dla β = 1 i η = 1500 h hazard jest poziomy, a R(1000 h) ≈ 0.513 — odtworzyliśmy ofertę A. Dla β = 0.5 (przy η = 1700 h) hazard startuje bardzo wysoko i szybko opada: w chwili 100 h wynosi około 0.0012, a w chwili 1000 h około 0.0004 na godzinę.",
+            "Dla β = 2 i η = 1700 h panel pokazuje hazard rosnący i R(1000 h) ≈ 0.707, blisko 0.705 z przykładu 7.7; dolny wykres to prosta linia wychodząca z zera. Dla β = 1 i η = 1500 h hazard jest poziomy, a R(1000 h) ≈ 0.513 — odtworzyliśmy ofertę A. Dla β = 0.5 (przy η = 1700 h) hazard startuje bardzo wysoko i szybko opada: w chwili 100 h wynosi około 0.0012, a w chwili 1000 h około 0.0004 na godzinę.",
             "Zmiana η przy stałym β nie zmienia kształtu żadnej krzywej, tylko rozciąga lub ściska oś czasu. To dlatego η nazywa się parametrem skali: dwa parki maszyn o tym samym mechanizmie awarii, ale różnej jakości wykonania, różnią się η, a nie β."
           )),
           risk_check("c7_chk_beta",
@@ -597,7 +597,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         id = "same-mttf", title = "Ten sam MTTF, inne R(t)",
         text = c(
           "Wracamy do głosowania z początku wykładu, tym razem z rachunkiem. Trzy modele Weibulla — o hazardzie malejącym, stałym i rosnącym — skalibrowano tak, żeby wszystkie miały MTTF równy dokładnie 1500 godzin. Karta katalogowa nie odróżni ich od siebie.",
-          "Przesuń czas misji i odczytaj trzy wartości R(t) na pionowej linii. Dla krótkich misji najlepszy jest model zużyciowy (β > 1): awarie przychodzą późno, ale zbiorowo. Dla długich misji przewaga się odwraca. Wniosek praktyczny: porównywanie urządzeń po MTTF bez czasu misji jest porównywaniem nieporównywalnego."
+          "Przesuń wymagany czas pracy i odczytaj trzy wartości R(t) na pionowej linii. Dla krótkich okresów pracy najlepszy jest model zużyciowy (β > 1): awarie przychodzą późno, ale zbiorowo. Dla długich okresów pracy przewaga się odwraca. Wniosek praktyczny: porównywanie urządzeń po MTTF bez wymaganego czasu pracy jest porównywaniem nieporównywalnego."
         ),
         body = list(
           risk_example("7.8", "Kalibracja do wspólnego MTTF",
@@ -607,35 +607,35 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
               "β = 0.7: Γ(1 + 1/0.7) ≈ 1.266, więc η ≈ 1185 h. β = 1: Γ(2) = 1, więc η = 1500 h. β = 2.5: Γ(1.4) ≈ 0.887, więc η ≈ 1691 h.",
               "Ze wzoru (7.12): R(1000) ≈ exp[-(1000/1185)^0.7] ≈ 0.41; R(1000) = e^(-1000/1500) ≈ 0.51; R(1000) ≈ exp[-(1000/1691)^2.5] ≈ 0.76."
             ),
-            answer = "η ≈ 1185, 1500 i 1691 h; R(1000) ≈ 0.41, 0.51 i 0.76. Przy tej samej średniej różnica w niezawodności misji 1000 h sięga 35 punktów procentowych."
+            answer = "η ≈ 1185, 1500 i 1691 h; R(1000) ≈ 0.41, 0.51 i 0.76. Przy tej samej średniej różnica w niezawodności przy wymaganym czasie pracy 1000 h sięga 35 punktów procentowych."
           ),
-          zycie_try("zacznij od misji 1000 h i odczytaj trzy wartości R(t) na pionowej linii. Potem przesuwaj czas misji w prawo i znajdź moment, w którym krzywa β = 2.5 spada poniżej pozostałych."),
+          zycie_try("zacznij od okresu pracy 1000 h i odczytaj trzy wartości R(t) na pionowej linii. Potem przesuwaj wymagany czas pracy w prawo i znajdź moment, w którym krzywa β = 2.5 spada poniżej pozostałych."),
           risk_sf_panel("Porównanie", "Modele skalibrowane do MTTF=1500 h", "c7m_same_mean", legend = TRUE,
-            controls = lc_sf_slider("c7_mission", "Czas misji (h)", 100, 3000, 1000, 50),
-            # Trzy wartości R(t) na linii misji, w kolorach krzywych (przykład 7.8).
+            controls = lc_sf_slider("c7_mission", "Wymagany czas pracy (h)", 100, 3000, 1000, 50),
+            # Trzy wartości R(t) na linii wymaganego czasu pracy, w kolorach krzywych (przykład 7.8).
             reads = lapply(seq_along(c7_same_mean_config$shapes), function(i) {
               lc_readout(paste0("R(t), β = ", c7_same_mean_config$shapes[i]), lc_sf_value(paste0("same_r", i)),
                          color = upwr_cat_n(3)[i], swatch = TRUE)
             }),
             config = c7_same_mean_config),
           # PROTOTYPY P17A i P17B: ten sam MTTF, inne R(t)
-          c7p_variant("P17A — trzy krzywe z suwakiem misji."),
+          c7p_variant("P17A — trzy krzywe z suwakiem wymaganego czasu pracy."),
           c7p_get("c7p_17a_ui"),
           c7p_variant("P17B — trzy parki wentylatorów."),
           c7p_get("c7p_17b_ui"),
           zycie_reading(c(
-            "Dla misji 1000 h pionowa linia przecina krzywe przy wartościach 0.41 (β = 0.7), 0.51 (β = 1) i 0.76 (β = 2.5), zgodnie z przykładem 7.8. Model zużyciowy przestaje być najlepszy około 1830 h, kiedy jego krzywa przecina krzywą wykładniczą, a około 1940 h spada także poniżej krzywej β = 0.7. Około 2600 h krzywa wykładnicza przecina krzywą β = 0.7 i od tej chwili model z malejącym hazardem jest najlepszy. Przy 3000 h wartości R wynoszą 0.147, 0.135 i zaledwie 0.015.",
-            "Mechanizm jest ten sam co w przykładzie 7.1. Model β = 0.7 traci wiele egzemplarzy wcześnie, ale te, które przetrwały, żyją bardzo długo. Model β = 2.5 prawie nie traci egzemplarzy na początku, ale później zużycie dopada wszystkie niemal jednocześnie. Średnie się wyrównują, a niezawodności misji — nie."
+            "Dla okresu pracy 1000 h pionowa linia przecina krzywe przy wartościach 0.41 (β = 0.7), 0.51 (β = 1) i 0.76 (β = 2.5), zgodnie z przykładem 7.8. Model zużyciowy przestaje być najlepszy około 1830 h, kiedy jego krzywa przecina krzywą wykładniczą, a około 1940 h spada także poniżej krzywej β = 0.7. Około 2600 h krzywa wykładnicza przecina krzywą β = 0.7 i od tej chwili model z malejącym hazardem jest najlepszy. Przy 3000 h wartości R wynoszą 0.147, 0.135 i zaledwie 0.015.",
+            "Mechanizm jest ten sam co w przykładzie 7.1. Model β = 0.7 traci wiele egzemplarzy wcześnie, ale te, które przetrwały, żyją bardzo długo. Model β = 2.5 prawie nie traci egzemplarzy na początku, ale później zużycie dopada wszystkie niemal jednocześnie. Średnie się wyrównują, a niezawodności w wymaganym czasie pracy — nie."
           )),
           risk_check("c7_chk_misja",
-            "Wentylator ma pracować bez przeglądu przez 3000 h. Który z trzech modeli o MTTF = 1500 h daje najwyższą niezawodność misji?",
+            "Wentylator ma pracować bez przeglądu przez 3000 h. Który z trzech modeli o MTTF = 1500 h daje najwyższą niezawodność w wymaganym czasie pracy?",
             c("β = 2.5, bo nie ma wczesnych awarii" = "wear", "β = 0.7" = "early", "Wszystkie jednakowo, bo mają ten sam MTTF" = "equal"),
             correct = "early",
-            explanation = "R(3000) wynosi około 0.147 dla β = 0.7, 0.135 dla β = 1 i tylko 0.015 dla β = 2.5. Przy długiej misji zużycie eliminuje prawie cały park, a egzemplarze modelu z malejącym hazardem, które przetrwały start, żyją długo.",
-            hints = c(wear = "Brak wczesnych awarii pomaga w krótkiej misji. Co dzieje się z hazardem β = 2.5 po 2000 h?", equal = "Wróć do przykładu 7.1: ta sama średnia nie oznacza tego samego R(t).")
+            explanation = "R(3000) wynosi około 0.147 dla β = 0.7, 0.135 dla β = 1 i tylko 0.015 dla β = 2.5. Przy długim okresie pracy zużycie eliminuje prawie cały park, a egzemplarze modelu z malejącym hazardem, które przetrwały start, żyją długo.",
+            hints = c(wear = "Brak wczesnych awarii pomaga w krótkim okresie pracy. Co dzieje się z hazardem β = 2.5 po 2000 h?", equal = "Wróć do przykładu 7.1: ta sama średnia nie oznacza tego samego R(t).")
           )
         ),
-        decision = "Wybieraj urządzenie pod konkretny czas misji: porównuj R(t) w horyzoncie eksploatacji, nie sam MTTF z katalogu."
+        decision = "Wybieraj urządzenie pod konkretny wymagany czas pracy: porównuj R(t) w horyzoncie eksploatacji, nie sam MTTF z katalogu."
       )
     )
   ),
@@ -708,7 +708,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     id = "przeglad", title = "Czas życia Bq", hook = "Wymiana na zapas nie zawsze pomaga",
     lead = "Czas interwencji wynika z wymaganego R(t), kosztów i mechanizmu awarii.",
     intro = c(
-      "Pytanie utrzymaniowe brzmi konkretnie: po ilu godzinach zaplanować przegląd wentylatora, żeby ryzyko awarii przed przeglądem pozostało akceptowalne? Suwak poniżej liczy R(t) dla modelu zużyciowego Weibulla (β = 2, η = 1700 h) — przesuwaj czas przeglądu i obserwuj, jak rośnie ryzyko.",
+      "Pytanie utrzymaniowe brzmi konkretnie: po ilu godzinach zaplanować przegląd wentylatora, żeby ryzyko awarii przed przeglądem pozostało akceptowalne? Suwak poniżej liczy R(t) dla modelu zużyciowego Weibulla (β = 2, η = 1693 h) — przesuwaj czas przeglądu i obserwuj, jak rośnie ryzyko.",
       "Zauważ, że sensowność wymiany profilaktycznej zależy od mechanizmu: przy hazardzie rosnącym wcześniejsza wymiana naprawdę redukuje ryzyko, ale przy stałym hazardzie wymiana sprawnego elementu na nowy niczego nie zmienia — nowy ma dokładnie ten sam hazard co stary. Plan przeglądów bez hipotezy o hazardzie jest strzałem w ciemno."
     ),
     sections = list(
@@ -725,16 +725,16 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             legend = c("R^*" = "wymagana niezawodność do chwili przeglądu", "t_{R^*}" = "najpóźniejszy termin przeglądu spełniający wymaganie")),
           "Wzór (7.16) otrzymujemy, rozwiązując równanie exp[-(t/η)^β] = R* ze wzoru (7.12): logarytmujemy obie strony, mnożymy przez -1 i podnosimy do potęgi 1/β. Dla β = 1 dostajemy t = -MTTF · ln R*, czyli termin w modelu wykładniczym.",
           risk_example("7.10", "Termin B10 dla wentylatora",
-            problem = "Wentylator ma rozkład Weibulla z β = 2 i η = 1700 h. Wyznacz termin przeglądu, do którego zawiedzie co najwyżej 10% wentylatorów (B10). Powtórz dla 5% oraz dla modelu wykładniczego z MTTF = 1500 h.",
+            problem = "Wentylator ma rozkład Weibulla z β = 2 i η = 1693 h. Wyznacz termin przeglądu, do którego zawiedzie co najwyżej 10% wentylatorów (B10). Powtórz dla 5% oraz dla modelu wykładniczego z MTTF = 1500 h.",
             steps = c(
-              "Ze wzoru (7.16): t = 1700 · (-ln 0.90)^(1/2) = 1700 · √0.1054 ≈ 1700 · 0.325 ≈ 552 h.",
-              "Dla R* = 0.95: t = 1700 · √0.0513 ≈ 385 h.",
+              "Ze wzoru (7.16): t = 1693 · (-ln 0.90)^(1/2) = 1693 · √0.1054 ≈ 1693 · 0.325 ≈ 550 h.",
+              "Dla R* = 0.95: t = 1693 · √0.0513 ≈ 383 h.",
               "Model wykładniczy: t = -1500 · ln 0.90 ≈ 1500 · 0.1054 ≈ 158 h."
             ),
-            answer = "B10 ≈ 552 h, B5 ≈ 385 h. W modelu wykładniczym o podobnym MTTF B10 wynosi tylko 158 h — ale tam, jak zobaczymy, przegląd z wymianą niczego nie poprawia."
+            answer = "B10 ≈ 550 h, B5 ≈ 383 h. W modelu wykładniczym o tym samym MTTF B10 wynosi tylko 158 h — ale tam, jak zobaczymy, przegląd z wymianą niczego nie poprawia."
           ),
           zycie_try("przesuwaj czas do przeglądu i znajdź największą wartość, dla której R(t) nie spada poniżej 0.90. Porównaj ją z wynikiem przykładu 7.10. Potem ustaw 1000 h i odczytaj ryzyko awarii."),
-          risk_sf_panel("Decyzja", "Czy wentylator dotrwa do końca misji?", "c7m_plan",
+          risk_sf_panel("Decyzja", "Czy wentylator dotrwa do końca okresu pracy?", "c7m_plan",
             controls = lc_sf_slider("c7_plan_time", "Czas do przeglądu (h)", 100, 3000, 1000, 50),
             reads = list(risk_sf_read("plan_r", "R(t)", color = upwr_accent), risk_sf_read("plan_risk", "Ryzyko awarii")),
             max_height = "300px", full_width = TRUE),
@@ -744,8 +744,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           c7p_variant("P21B — ryzyko jako pole pod gęstością przed kreską przeglądu."),
           c7p_get("c7p_21b_ui"),
           zycie_reading(c(
-            "Suwak ma krok 50 h, więc najbliższa wartość to 550 h: R ≈ 0.901, ryzyko awarii ≈ 0.099. Przy 600 h wymaganie jest już złamane. Przy domyślnych 1000 h ryzyko awarii przed przeglądem wynosi około 0.293 — prawie trzy razy więcej, niż dopuszcza kierownik. Przy 1500 h przekracza połowę (0.541).",
-            "Zwróć uwagę, jak szybko rośnie ryzyko przy β = 2. Między 500 a 1000 h ryzyko wzrasta z około 0.083 do 0.293, czyli ponad trzykrotnie przy dwukrotnie dłuższym okresie. To bezpośrednia konsekwencja rosnącego hazardu: każda kolejna godzina jest groźniejsza od poprzedniej."
+            "Suwak ma krok 50 h. Przy 500 h R ≈ 0.916 i wymaganie jest spełnione z zapasem; przy 550 h R ≈ 0.900, o włos poniżej wymagania, bo dokładny termin to 549.5 h. Przy domyślnych 1000 h ryzyko awarii przed przeglądem wynosi około 0.295 — prawie trzy razy więcej, niż dopuszcza kierownik. Przy 1500 h przekracza połowę (0.544).",
+            "Zwróć uwagę, jak szybko rośnie ryzyko przy β = 2. Między 500 a 1000 h ryzyko wzrasta z około 0.084 do 0.295, czyli ponad trzykrotnie przy dwukrotnie dłuższym okresie. To bezpośrednia konsekwencja rosnącego hazardu: każda kolejna godzina jest groźniejsza od poprzedniej."
           )
         )
       )),
@@ -759,13 +759,13 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           risk_formula("R(t\\mid s)=P(T>s+t\\mid T>s)=\\frac{R(s+t)}{R(s)}=e^{-[H(s+t)-H(s)]}", num = "7.17",
             legend = c("s" = "wiek elementu, który wciąż działa", "t" = "planowany dalszy czas pracy")),
           risk_example("7.11", "Stary czy nowy wentylator?",
-            problem = "Wentylator przepracował 1000 h bez awarii. Oblicz prawdopodobieństwo, że przetrwa kolejne 500 h, i porównaj z nowym wentylatorem. Zrób to dla modelu Weibulla (β = 2, η = 1700 h) i dla modelu wykładniczego (MTTF = 1500 h).",
+            problem = "Wentylator przepracował 1000 h bez awarii. Oblicz prawdopodobieństwo, że przetrwa kolejne 500 h, i porównaj z nowym wentylatorem. Zrób to dla modelu Weibulla (β = 2, η = 1693 h) i dla modelu wykładniczego (MTTF = 1500 h).",
             steps = c(
-              "Weibull, egzemplarz używany: ze wzoru (7.17) R(1500)/R(1000) = exp[-(1500/1700)² + (1000/1700)²] = exp(-0.779 + 0.346) = exp(-0.433) ≈ 0.649.",
-              "Weibull, egzemplarz nowy: R(500) = exp[-(500/1700)²] ≈ 0.917.",
+              "Weibull, egzemplarz używany: ze wzoru (7.17) R(1500)/R(1000) = exp[-(1500/1693)² + (1000/1693)²] = exp(-0.785 + 0.349) = exp(-0.436) ≈ 0.647.",
+              "Weibull, egzemplarz nowy: R(500) = exp[-(500/1693)²] ≈ 0.916.",
               "Model wykładniczy: z braku pamięci (7.9) oba prawdopodobieństwa są równe e^(-500/1500) ≈ 0.717."
             ),
-            answer = "Przy zużyciu wymiana podnosi szansę przetrwania kolejnych 500 h z 0.649 do 0.917. Przy stałym hazardzie wymiana nie zmienia niczego: 0.717 przed i po."
+            answer = "Przy zużyciu wymiana podnosi szansę przetrwania kolejnych 500 h z 0.647 do 0.916. Przy stałym hazardzie wymiana nie zmienia niczego: 0.717 przed i po."
           ),
           # PROTOTYP P22: używany a nowy na kolejne 500 h
           c7p_get("c7p_22_ui"),
@@ -780,7 +780,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         )
       )
     ),
-    decision = "Podaj model, czas misji i prawdopodobieństwo dotrwania. Przegląd sam nie odnawia elementu: trzeba określić, co wykrywa i czy prowadzi do wymiany lub naprawy. MTTF samo nie wyznacza harmonogramu."
+    decision = "Podaj model, wymagany czas pracy i prawdopodobieństwo dotrwania. Przegląd sam nie odnawia elementu: trzeba określić, co wykrywa i czy prowadzi do wymiany lub naprawy. MTTF samo nie wyznacza harmonogramu."
   ),
   list(
     id = "sciaga", title = "Ściąga i sprawdzenie", hook = "Najpierw mechanizm, potem termin",
@@ -798,13 +798,13 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           lc_h3("Stały hazard i czas oczekiwania"),
           "Stały hazard wyznacza rozkład wykładniczy (7.8) — ciągłą wersję geometrycznego z wykładu 05 — i jego brak pamięci (7.9), odpowiednik wzoru (5.4). Suma k wykładniczych etapów daje rozkład gamma i Erlanga (7.10), a tożsamość (7.11) łączy czas do k-tego zdarzenia z liczbą zdarzeń Poissona, tak jak wzór (5.7) łączył ujemny dwumianowy z dwumianowym.",
           lc_h3("Starzenie i decyzja o wymianie"),
-          "Część B dodała parametr kształtu. W modelu Weibulla (7.12) kierunek zmiany hazardu (7.13) wyznacza β, a MTTF (7.14) zależy od obu parametrów — dlatego modele o tej samej średniej różnią się niezawodnością misji. Pełna krzywa wannowa wymaga sumy hazardów kilku mechanizmów (7.15). Plan przeglądu wynika z wymaganej niezawodności (7.16), a o sensie wymiany decyduje niezawodność warunkowa (7.17): przy zużyciu wymiana pomaga, przy stałym hazardzie nic nie zmienia.",
+          "Część B dodała parametr kształtu. W modelu Weibulla (7.12) kierunek zmiany hazardu (7.13) wyznacza β, a MTTF (7.14) zależy od obu parametrów — dlatego modele o tej samej średniej różnią się niezawodnością w wymaganym czasie pracy. Pełna krzywa wannowa wymaga sumy hazardów kilku mechanizmów (7.15). Plan przeglądu wynika z wymaganej niezawodności (7.16), a o sensie wymiany decyduje niezawodność warunkowa (7.17): przy zużyciu wymiana pomaga, przy stałym hazardzie nic nie zmienia.",
           # PROTOTYP P23A: domknięcie — karty katalogowe z rozdziału 1 poprawione
           c7p_variant("P23A — karty katalogowe z rozdziału 1 wracają poprawione."),
           c7p_get("c7p_23a_ui")
         )
       ),
-      list(id = "lista", title = "Pięć pytań", bullets = c("Co rozpoczyna i kończy czas życia?", "Jaki jest wspólny czas misji?", "Czy obserwacje działające są cenzorowane?", "Czy hazard jest stały, rośnie czy maleje?", "Jak wynik zmienia decyzję utrzymaniową?"),
+      list(id = "lista", title = "Pięć pytań", bullets = c("Co rozpoczyna i kończy czas życia?", "Jaki jest wspólny czas pracy?", "Czy obserwacje działające są cenzorowane?", "Czy hazard jest stały, rośnie czy maleje?", "Jak wynik zmienia decyzję utrzymaniową?"),
         # PROTOTYP P23B: domknięcie — pięć pytań z odpowiedziami dla wentylatora
         body = list(
           c7p_variant("P23B — pięć pytań z odpowiedziami dla wentylatora Bananpolu."),

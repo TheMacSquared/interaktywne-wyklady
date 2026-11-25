@@ -3,11 +3,11 @@
 #   i10p_9_ui   — Pojęcie (kadry) „Redukcja schematu” (P9): schemat P – C – (A ∥ B) redukowany
 #                 krok po kroku, 5 kadrów; liczby z i10p_mission() dla modelu wykładniczego
 #                 i Weibulla. Bloki i schemat rysuje R (i10re_block, i10re_scheme).
-#   i10p_10_ui  — Piaskownica „Wspólny czas misji” (P10): suwak czasu i przełącznik modelu
+#   i10p_10_ui  — Piaskownica „Wspólny czas pracy” (P10): suwak czasu i przełącznik modelu
 #                 przeliczają wszystkie elementy naraz. Scena „uklad” w modules/proto_re.js.
-#   i10p_11b_ui — Pojęcie (kadry) „Lejek 10 000 misji” (P11B): 5 kadrów, trzy poziomy pasków,
+#   i10p_11b_ui — Pojęcie (kadry) „Lejek 10 000 okresów pracy” (P11B): 5 kadrów, trzy poziomy pasków,
 #                 każdy niższy jest powiększeniem fragmentu wyższego.
-#   i10p_12_ui  — Przypadek brzegowy (kadry) „Tysiąc lat po trzy misje” (P12): siatka 1000 lat,
+#   i10p_12_ui  — Przypadek brzegowy (kadry) „Tysiąc lat po trzy okresy pracy” (P12): siatka 1000 lat,
 #                 4 kadry; położenia kratek losowane raz, ze stałym ziarnem (set.seed(10)).
 # Wymaga: stop_proto_common.R (i10p_cfg, i10p_mission, i10p_panel, i10p_frames_ui, i10p_scene_ui,
 # i10p_svg, i10p_p, i10p_num) oraz risk_math.R / risk_block.R (risk_fmt_p).
@@ -15,7 +15,7 @@
 # wartości. Jedyne stałe w tym pliku to wymiary rysunku (px) i układ siatki 50 × 20 = 1000 lat.
 
 # ============================================================================
-# WSPÓLNE: rachunek misji i rysowanie schematu
+# WSPÓLNE: rachunek okresu pracy i rysowanie schematu
 # ============================================================================
 
 i10re_m_exp <- i10p_mission()
@@ -108,7 +108,7 @@ i10re_9_num <- list(
 
 i10re_9_frames <- list(
   list(name = "Schemat",
-    text = sprintf("Wszystkie cztery elementy liczymy dla tej samej misji %s %s. Zasilanie i sterownik są konieczne, z dwóch wentylatorów wystarcza jeden.",
+    text = sprintf("Wszystkie cztery elementy liczymy dla tego samego okresu pracy %s %s. Zasilanie i sterownik są konieczne, z dwóch wentylatorów wystarcza jeden.",
       i10p_cfg$time, i10p_cfg$unit),
     read = NULL),
   list(name = "Gałąź równoległa",
@@ -151,7 +151,7 @@ i10re_9_svg <- function(i) {
 i10p_9_ui <- i10p_frames_ui("P9", "pojęcie (kadry)", "Redukcja schematu", i10re_9_frames, i10re_9_svg)
 
 # ============================================================================
-# P10 — PIASKOWNICA „WSPÓLNY CZAS MISJI”
+# P10 — PIASKOWNICA „WSPÓLNY CZAS PRACY”
 # ============================================================================
 # Scena „uklad” (modules/proto_re.js) czyta suwak i10p10_t i przełącznik model
 # z kontenera i przelicza U.mission() w przeglądarce; R podaje tylko config i sloty.
@@ -164,21 +164,21 @@ i10re_slider <- function(id, label, min, max, value, step, suffix = NULL) {
     tags$input(id = id, type = "range", min = min, max = max, value = value, step = step))
 }
 
-i10p_10_ui <- i10p_scene_ui("P10", "piaskownica", "Wspólny czas misji", "uklad", i10p_cfg,
+i10p_10_ui <- i10p_scene_ui("P10", "piaskownica", "Wspólny czas pracy", "uklad", i10p_cfg,
   tags$div(class = "i10p-nav",
-    i10re_slider("i10p10_t", "Czas misji", 100, i10p_cfg$time_max, i10p_cfg$time, 50,
+    i10re_slider("i10p10_t", "Wymagany czas pracy", 100, i10p_cfg$time_max, i10p_cfg$time, 50,
       suffix = paste0(" ", i10p_cfg$unit)),
     i10p_seg("model", "Model wentylatora", c("Wykładniczy" = "exp", "Weibull" = "weibull"))),
   i10p_out("stage"),
   i10p_out("read"))
 
 # ============================================================================
-# P11B — POJĘCIE (KADRY) „LEJEK 10 000 MISJI”
+# P11B — POJĘCIE (KADRY) „LEJEK 10 000 OKRESÓW PRACY”
 # ============================================================================
 
 i10p11_n <- 10000
 
-# Lejek: liczby misji na każdym poziomie (ten sam rachunek co w przykładzie 10.8).
+# Lejek: liczby okresów pracy na każdym poziomie (ten sam rachunek co w przykładzie 10.8).
 i10re_11 <- local({
   m <- i10p_mission()
   dem <- i10p11_n * i10p_cfg$init
@@ -192,23 +192,23 @@ i10re_11 <- local({
 })
 
 i10re_11_frames <- list(
-  list(name = "10 000 misji",
-    text = "Jednostką rachunku jest misja. Zaczynamy od 10 000 porównywalnych misji.",
+  list(name = "10 000 okresów pracy",
+    text = "Jednostką rachunku jest okres pracy. Zaczynamy od 10 000 porównywalnych okresów pracy.",
     read = NULL),
   list(name = "Zapotrzebowanie",
-    text = sprintf("Zapotrzebowanie na chłodzenie pojawia się w %s z nich. Tylko w tych misjach można utracić ochronę.",
+    text = sprintf("Zapotrzebowanie na chłodzenie pojawia się w %s z nich. Tylko w tych okresach pracy można utracić ochronę.",
       i10re_fmt(i10re_11$dem)),
     read = NULL),
   list(name = "Przeoczenia",
-    text = sprintf("Detektor przeocza %s zapotrzebowań, czyli %s misji.",
+    text = sprintf("Detektor przeocza %s zapotrzebowań, czyli %s okresów pracy.",
       sprintf("%g%%", round(100 * i10re_11$miss_p, 6)), i10re_fmt(i10re_11$miss)),
     read = NULL),
   list(name = "Chłodzenie",
-    text = sprintf("W %s wykrytych misjach układ musi przepracować całą misję. Nie udaje się to w %s z nich.",
+    text = sprintf("W %s wykrytych okresach pracy układ musi przepracować cały okres pracy. Nie udaje się to w %s z nich.",
       i10re_fmt(i10re_11$det), i10re_fmt(i10re_11$cool)),
     read = NULL),
   list(name = "Razem",
-    text = sprintf("Ochronę tracimy w około %d misjach na %s.", round(i10re_11$loss), format(i10p11_n, big.mark = " ", scientific = FALSE)),
+    text = sprintf("Ochronę tracimy w około %d okresach pracy na %s.", round(i10re_11$loss), format(i10p11_n, big.mark = " ", scientific = FALSE)),
     read = sprintf("P(TOP) = %s · [1 − %s · %s] = %s",
       i10p_num(i10re_11$init, 3), i10p_num(1 - i10re_11$miss_p, 3), i10p_num(i10re_11$sys, 3),
       i10p_p(i10re_11$top)))
@@ -225,18 +225,18 @@ i10re_11_svg <- function(k) {
   p <- character(0)
   add <- function(...) p <<- c(p, ...)
 
-  # Poziom 1: 10 000 misji z wyróżnionym fragmentem.
+  # Poziom 1: 10 000 okresów pracy z wyróżnionym fragmentem.
   add(sprintf('<rect class="i10p-fill-idle" x="%g" y="%g" width="%g" height="%g"/>', x0, y1, W, h),
     sprintf('<rect class="i10p-fill-warn" x="%g" y="%g" width="%g" height="%g"/>', x0, y1, frag, h),
     i10re_txt(x0 + frag + 10, y1 + 22, "50 z zapotrzebowaniem", anchor = "start"),
-    i10re_txt(x0 + W - 10, y1 + 22, "10 000 misji", anchor = "end"))
+    i10re_txt(x0 + W - 10, y1 + 22, "10 000 okresów pracy", anchor = "end"))
 
   # Poziom 2: 50 z zapotrzebowaniem, od kadru 3 podzielone na przeoczone i wykryte.
   if (k >= 2) {
     add(i10re_link(x0, y1 + h, x0, y2), i10re_link(x0 + frag, y1 + h, x0 + W, y2))
     if (k == 2) {
       add(sprintf('<rect class="i10p-fill-warn" x="%g" y="%g" width="%g" height="%g"/>', x0, y2, W, h),
-        i10re_txt(x0 + W / 2, y2 + 22, "50 misji z zapotrzebowaniem"))
+        i10re_txt(x0 + W / 2, y2 + 22, "50 okresów pracy z zapotrzebowaniem"))
     } else {
       add(sprintf('<rect class="i10p-fill-bad" x="%g" y="%g" width="%g" height="%g"/>', x0, y2, miss_w, h),
         sprintf('<rect class="i10p-fill-warn" x="%g" y="%g" width="%g" height="%g"/>', x0 + miss_w, y2, W - miss_w, h),
@@ -245,7 +245,7 @@ i10re_11_svg <- function(k) {
     }
   }
 
-  # Poziom 3: wykryte misje, od kadru 4 podzielone na awarie chłodzenia i utrzymaną ochronę.
+  # Poziom 3: wykryte okresy pracy, od kadru 4 podzielone na awarie chłodzenia i utrzymaną ochronę.
   if (k >= 4) {
     add(i10re_link(x0 + miss_w, y2 + h, x0, y3), i10re_link(x0 + W, y2 + h, x0 + W, y3),
       sprintf('<rect class="i10p-fill-bad" x="%g" y="%g" width="%g" height="%g"/>', x0, y3, cool_w, h),
@@ -258,29 +258,29 @@ i10re_11_svg <- function(k) {
   # Kadr 5: wynik.
   if (k == 5) {
     add(sprintf('<rect class="i10p-box-hit" x="200" y="250" width="400" height="48" rx="6"/>'),
-      i10re_txt(400, 280, sprintf("%s + %s ≈ %d misji bez ochrony", i10re_fmt(R$miss), sprintf("%.1f", R$cool), round(R$loss)),
+      i10re_txt(400, 280, sprintf("%s + %s ≈ %d okresów pracy bez ochrony", i10re_fmt(R$miss), sprintf("%.1f", R$cool), round(R$loss)),
         size = 18, extra = ' font-weight="700"'))
   }
   i10p_svg(800, 320, c(
-    sprintf("Lejek: z %s misji %s ma zapotrzebowanie.", format(i10p11_n, big.mark = " ", scientific = FALSE), i10re_fmt(R$dem)),
-    sprintf("Poziom zapotrzebowania: %s misji.", i10re_fmt(R$dem)),
+    sprintf("Lejek: z %s okresów pracy %s ma zapotrzebowanie.", format(i10p11_n, big.mark = " ", scientific = FALSE), i10re_fmt(R$dem)),
+    sprintf("Poziom zapotrzebowania: %s okresów pracy.", i10re_fmt(R$dem)),
     sprintf("Poziom zapotrzebowania podzielony na przeoczone %s i wykryte %s.", i10re_fmt(R$miss), i10re_fmt(R$det)),
-    sprintf("Poziom wykrytych misji podzielony na awarie chłodzenia %s i ochronę utrzymaną %s.", i10re_fmt(R$cool), i10re_fmt(R$ok)),
-    sprintf("Wynik: około %d misji na %s bez ochrony.", round(R$loss), format(i10p11_n, big.mark = " ", scientific = FALSE)))[k], p)
+    sprintf("Poziom wykrytych okresów pracy podzielony na awarie chłodzenia %s i ochronę utrzymaną %s.", i10re_fmt(R$cool), i10re_fmt(R$ok)),
+    sprintf("Wynik: około %d okresów pracy na %s bez ochrony.", round(R$loss), format(i10p11_n, big.mark = " ", scientific = FALSE)))[k], p)
 }
 
-i10p_11b_ui <- i10p_frames_ui("P11B", "pojęcie (kadry)", "Lejek 10 000 misji", i10re_11_frames,
+i10p_11b_ui <- i10p_frames_ui("P11B", "pojęcie (kadry)", "Lejek 10 000 okresów pracy", i10re_11_frames,
   function(i) i10re_11_svg(i))
 
 # ============================================================================
-# P12 — PRZYPADEK BRZEGOWY „TYSIĄC LAT PO TRZY MISJE”
+# P12 — PRZYPADEK BRZEGOWY „TYSIĄC LAT PO TRZY OKRESY PRACY”
 # ============================================================================
 
 i10re_12_m <- i10p_mission()
 i10re_12_k <- i10p_cfg$missions
 i10re_12_p <- list(
-  sys = 1 - i10re_12_m$system_r^i10re_12_k,            # układ by zawiódł w co najmniej jednej misji
-  dem = 1 - (1 - i10p_cfg$init)^i10re_12_k,            # zapotrzebowanie w co najmniej jednej misji
+  sys = 1 - i10re_12_m$system_r^i10re_12_k,            # układ by zawiódł w co najmniej jednym okresie pracy
+  dem = 1 - (1 - i10p_cfg$init)^i10re_12_k,            # zapotrzebowanie w co najmniej jednym okresie pracy
   year = 1 - (1 - i10re_12_m$top)^i10re_12_k)          # utrata ochrony w roku
 i10re_12_n <- lapply(i10re_12_p, function(p) round(1000 * p))   # liczba lat na 1000
 
@@ -341,10 +341,10 @@ i10re_12_svg <- function(k) {
 
 i10re_12_frames <- list(
   list(name = "1000 lat",
-    text = sprintf("Każda kratka to jeden rok z trzema misjami po %s %s.", i10p_cfg$time, i10p_cfg$unit),
+    text = sprintf("Każda kratka to jeden rok z trzema okresami pracy po %s %s.", i10p_cfg$time, i10p_cfg$unit),
     read = NULL),
   list(name = "Układ by zawiódł",
-    text = sprintf("Gdyby układ chłodzenia musiał pracować w każdej misji, zawiódłby w co najmniej jednej z trzech w %d latach na 1000.",
+    text = sprintf("Gdyby układ chłodzenia musiał pracować w każdym okresie pracy, zawiódłby w co najmniej jednym z trzech okresów pracy w %d latach na 1000.",
       i10re_12_n$sys),
     read = sprintf("1 − %s³ = %s", i10p_num(i10re_12_m$system_r, 3), i10p_p(i10re_12_p$sys))),
   list(name = "Zapotrzebowanie",
@@ -359,5 +359,5 @@ i10re_12_frames <- list(
 
 i10p_12_ui <- tagList(
   tags$style(HTML(".i10p-svg .i10re-dem { stroke: var(--upwr-ink); stroke-width: 2.5; }")),
-  i10p_frames_ui("P12", "przypadek brzegowy", "Tysiąc lat po trzy misje", i10re_12_frames,
+  i10p_frames_ui("P12", "przypadek brzegowy", "Tysiąc lat po trzy okresy pracy", i10re_12_frames,
     function(i) i10re_12_svg(i)))

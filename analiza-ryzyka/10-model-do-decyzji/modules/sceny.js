@@ -71,13 +71,13 @@
     if (x > 0 && x < 0.01) d = Math.max(3, Math.min(12, Math.ceil(-Math.log10(x)) + 2));
     return x.toFixed(d);
   }
-  // Naturalna częstość na 10 000 misji: „16 na 10 000”; poniżej 10 z jedną cyfrą po kropce.
+  // Naturalna częstość na 10 000 okresów pracy: „16 na 10 000”; poniżej 10 z jedną cyfrą po kropce.
   function per10000(p) {
     var k = 10000 * p;
     return (k >= 9.95 ? k.toFixed(0) : k.toFixed(1)) + " na 10 000";
   }
 
-  // --- Rachunek misji (jak risk_mission_analysis() w R/risk_math.R) ---------------
+  // --- Rachunek okresu pracy (jak risk_mission_analysis() w R/risk_math.R) ---------------
   // Wszystkie parametry przychodzą z R w cfg (i10p_cfg w stop_proto_common.R):
   // mttf, beta, eta, base_time, power_r, controller_r, init, sens, efficacy, time.
   // Niezawodność wentylatora (wzór 10.4).

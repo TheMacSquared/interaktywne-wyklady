@@ -3,8 +3,8 @@
 // funkcje kursu: window.lcRisk (R/risk_figures.js). Przedrostek i10m_ odróżnia je
 // od rycin prototypów punktów stop (modules/proto_*.js).
 //
-// Wszystkie panele liczą na jednym kontrakcie misji (mission(), odpowiednik
-// risk_mission_analysis() z R/risk_math.R). Ustawienia — czas misji, model wentylatora,
+// Wszystkie panele liczą na jednym kontrakcie okresu pracy (mission(), odpowiednik
+// risk_mission_analysis() z R/risk_math.R). Ustawienia — wymagany czas pracy, model wentylatora,
 // R zasilania i sterownika, P(I), czułość, budżet, zakres u — stoją na kartach w różnych
 // rozdziałach; settings() czyta je z całego dokumentu, a zmiana dowolnego z nich
 // odświeża wszystkie ryciny (zdarzenie lc:sf-redraw).
@@ -12,7 +12,7 @@
 //   i10m_alarm          — Karta 1: P(I | alarm) i P(D | I) (same odczyty)
 //   i10m_inspection     — Karta 2: partia zaworów (same odczyty)
 //   i10m_life           — Karta 3: oba modele czasu życia wentylatora
-//   i10m_system         — Redukcja: elementy systemu w tej samej misji (same odczyty)
+//   i10m_system         — Redukcja: elementy systemu w tym samym okresie pracy (same odczyty)
 //   i10m_fta            — Integracja: P(I), P(D | I), P(S | I) i P(TOP)
 //   i10m_interventions  — Opcje: P(TOP) po każdym działaniu, budżet
 //   i10m_scenarios      — Niepewność: opcje w trzech scenariuszach
@@ -26,8 +26,8 @@
 
   // risk_parallel_reliability(rep(r, k)).
   function parallel(r, k) { var q = 1; for (var i = 0; i < k; i++) q *= 1 - r; return 1 - q; }
-  function lifeCurve(model, t) { var x = t / 1700; return model === "exp" ? Math.exp(-t / 1500) : Math.exp(-(x * x)); }
-  // risk_mission_analysis(): jeden kontrakt misji dla kart, interwencji, scenariuszy i rekomendacji.
+  function lifeCurve(model, t) { var x = t / 1693; return model === "exp" ? Math.exp(-t / 1500) : Math.exp(-(x * x)); }
+  // risk_mission_analysis(): jeden kontrakt okresu pracy dla kart, interwencji, scenariuszy i rekomendacji.
   // s: {time, model, power, controller, init, sens}; id: "none" albo interwencja; stress: mnożnik scenariusza.
   function mission(s, id, stress) {
     var m = stress == null ? 1 : stress;
@@ -133,7 +133,7 @@
                  { type: "vline", x: s.time, color: P.ref, width: 1.4, dash: DASH },
                  { type: "point", x: s.time, y: lifeCurve(s.model, s.time), color: P.accent, size: 11 }],
         xName: "Czas (h)", yName: "R(t)",
-        aria: "Krzywe obu modeli czasu życia wentylatora; wybrany model linią ciągłą, z zaznaczonym czasem misji." };
+        aria: "Krzywe obu modeli czasu życia wentylatora; wybrany model linią ciągłą, z zaznaczonym wymaganym czasem pracy." };
     },
     update: function (el) {
       var s = settings(), other = s.model === "exp" ? "weibull" : "exp";
@@ -163,7 +163,7 @@
       });
       nodes.forEach(function (n, i) { layers.push({ type: "text", x: i + 1, y: n[1], text: R.fmtP(n[1]), color: P.ink }); });
       return { x: [0.4, 4.6], y: [0, 1], layers: layers, xLabels: labels, xName: "", yName: "Prawdopodobieństwo",
-        aria: "Prawdopodobieństwo inicjacji, warunkowe prawdopodobieństwa niepowodzeń oraz wynik na jedną misję." };
+        aria: "Prawdopodobieństwo inicjacji, warunkowe prawdopodobieństwa niepowodzeń oraz wynik na jeden okres pracy." };
     },
     update: function (el) {
       var s = settings(), top = mission(s, "none").top;
@@ -189,7 +189,7 @@
       layers.push({ type: "vline", x: mission(s, "none").top, color: P.ref, width: 1.4, dash: DASH });
       return { x: [0, max * 1.08], y: [0.4, 4.6], layers: layers, yLabels: labels, noYGrid: true,
         legend: [{ color: cat[1], text: "W budżecie", box: true }, { color: cat[0], text: "Poza budżetem", box: true }],
-        xName: "P(TOP) na misję (linia przerywana: bez działania)", yName: "",
+        xName: "P(TOP) na okres pracy (linia przerywana: bez działania)", yName: "",
         aria: "Porównanie ryzyka po czterech działaniach z oznaczeniem dostępności w budżecie." };
     },
     update: function (el, state) {
@@ -237,8 +237,8 @@
       var top = mission(s, "none").top, at = options.indexOf(o);
       var worst = Math.max.apply(null, scenarios(s, ids(options), u).map(function (row) { return row[at]; }));
       var affordable = o.cost_index <= budget, meets = worst <= target;
-      S.setValue(el, "memo_1", "Przy misji " + s.time + " h bazowe P utraty ochrony wynosi " + formatProbability(top) + "; to " +
-        R.naturalFrequency(top, 10000) + " porównywalnych misji.");
+      S.setValue(el, "memo_1", "Przy okresie pracy " + s.time + " h bazowe P utraty ochrony wynosi " + formatProbability(top) + "; to " +
+        R.naturalFrequency(top, 10000) + " porównywalnych okresów pracy.");
       S.setValue(el, "memo_2", "Rozważamy: " + o.label + "; koszt " + o.cost_index + ", " + (affordable ? "w budżecie" : "poza budżetem") +
         "; P(TOP) po działaniu bazowo " + formatProbability(mission(s, o.id).top) + ", w najgorszym rozpatrzonym scenariuszu " +
         formatProbability(worst) + ".");

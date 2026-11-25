@@ -26,7 +26,7 @@ system_exercises <- list(
   ),
   list(
     task = "Bananpol: policz R systemu szeregowego dla R1=0.92, R2=0.95 i R3=0.98.",
-    answer = "Ze wzoru (8.2): R_s = 0.92 · 0.95 · 0.98 = 0.85652 ≈ 0.857. Prawdopodobieństwo awarii systemu w czasie misji to około 0.143 — więcej niż awaria najsłabszego elementu (0.08). Wynik jest poprawny tylko przy wspólnym czasie misji i niezależności elementów."
+    answer = "Ze wzoru (8.2): R_s = 0.92 · 0.95 · 0.98 = 0.85652 ≈ 0.857. Prawdopodobieństwo awarii systemu w wymaganym czasie pracy to około 0.143 — więcej niż awaria najsłabszego elementu (0.08). Wynik jest poprawny tylko przy wspólnym czasie pracy i niezależności elementów."
   ),
   list(
     task = "Diagnostyka: wskaż, dlaczego wspólne zasilanie podważa zwykły rachunek redundancji.",
@@ -99,7 +99,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     ),
     callout = list(
       label = "Dane Bananpolu",
-      text = "Instalacja chłodzenia dojrzewalni: R wentylatora 0.92, R czujnika 0.95, R zasilania 0.98 — wszystkie dla wspólnego czasu misji 1000 h. P utraty wspólnego zasilania: 0.01. Liczby są fikcyjne.",
+      text = "Instalacja chłodzenia dojrzewalni: R wentylatora 0.92, R czujnika 0.95, R zasilania 0.98 — wszystkie dla wspólnego czasu pracy 1000 h. P utraty wspólnego zasilania: 0.01. Liczby są fikcyjne.",
       color = "uwaga"
     ),
     body = list(
@@ -121,7 +121,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
       s8p_get("s8p_1_ui"),
       risk_example("8.1", "Trzy logiki sukcesu",
         problem = list(
-          "Dwa niezależne elementy E₁ i E₂ mają niezawodność 0.9 w tym samym czasie misji. Oblicz R systemu, gdy:",
+          "Dwa niezależne elementy E₁ i E₂ mają niezawodność 0.9 w tym samym wymaganym czasie pracy. Oblicz R systemu, gdy:",
           risk_parts(
             "System wymaga obu elementów.",
             "System wymaga tylko E₁, a E₂ jest dla funkcji obojętny.",
@@ -136,14 +136,14 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         steps_type = "a",
         answer = "0.81, 0.90 i 0.99. Te same części dają trzy różne systemy; o wyniku rozstrzyga definicja sukcesu, a nie katalog elementów."
       ),
-      # PROTOTYPY P2A i P2B: sto misji w trzech logikach
+      # PROTOTYPY P2A i P2B: sto okresów pracy w trzech logikach
       s8p_variant("P2A — kratki z przełącznikiem logiki (dokładne liczby z przykładu 8.1)."),
       s8p_get("s8p_2a_ui"),
-      s8p_variant("P2B — symulacja: misje dochodzą po kolei."),
+      s8p_variant("P2B — symulacja: okresy pracy dochodzą po kolei."),
       s8p_get("s8p_2b_ui"),
       c(
-        "Różnica między skrajnymi odpowiedziami jest ogromna, jeśli spojrzeć na ryzyko zamiast na niezawodność: w wariancie (a) system zawodzi w 19 misjach na 100, w wariancie (c) w jednej. Dziewiętnastokrotna różnica ryzyka przy identycznych częściach to najlepszy argument, że architektura jest pełnoprawną zmienną decyzyjną.",
-        "Wykład prowadzi przez kolejne kroki tego rachunku: definicję sukcesu i czasu misji, układy szeregowe i równoległe, układy mieszane i ich zapis funkcją struktury, niezawodność w czasie, wspólne przyczyny awarii oraz wybór redundancji i elementu do poprawy."
+        "Różnica między skrajnymi odpowiedziami jest ogromna, jeśli spojrzeć na ryzyko zamiast na niezawodność: w wariancie (a) system zawodzi w 19 okresach pracy na 100, w wariancie (c) w jednym. Dziewiętnastokrotna różnica ryzyka przy identycznych częściach to najlepszy argument, że architektura jest pełnoprawną zmienną decyzyjną.",
+        "Wykład prowadzi przez kolejne kroki tego rachunku: definicję sukcesu i wymaganego czasu pracy, układy szeregowe i równoległe, układy mieszane i ich zapis funkcją struktury, niezawodność w czasie, wspólne przyczyny awarii oraz wybór redundancji i elementu do poprawy."
       ),
       risk_check("s8_chk_logika",
         "Ktoś twierdzi, że dwa wentylatory po R = 0.9 dają system o R = 0.99. Jakie założenia przyjął, choć ich nie wypowiedział?",
@@ -159,11 +159,11 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     lead = "Najpierw definiujemy, co system ma zrobić i przez jak długi czas, a potem rysujemy drogi sukcesu.",
     intro = c(
       "„System działa” to zdanie bez treści, dopóki nie powiemy, co dokładnie ma robić: utrzymywać temperaturę poniżej progu? podnieść alarm w ciągu minuty? pracować bez przerwy przez tysiąc godzin? Każda definicja sukcesu wyznacza inny zbiór wymaganych elementów — i inną liczbę na końcu rachunku.",
-      "Drugi filar to wspólny czas misji. Niezawodność 0.92 „na tysiąc godzin” i 0.95 „na rok” nie są liczbami z tej samej analizy; ich iloczyn nie znaczy nic. Zanim pomnożysz cokolwiek, sprowadź wszystkie R_i do jednego horyzontu."
+      "Drugi filar to wspólny czas pracy. Niezawodność 0.92 „na tysiąc godzin” i 0.95 „na rok” nie są liczbami z tej samej analizy; ich iloczyn nie znaczy nic. Zanim pomnożysz cokolwiek, sprowadź wszystkie R_i do jednego horyzontu."
     ),
     sections = list(
       list(
-        id = "sukces", title = "Niezawodność systemu na czas misji",
+        id = "sukces", title = "Niezawodność systemu na wymagany czas pracy",
         body = list(
           # PROTOTYP P3: scena na otwarcie sekcji, przed definicją 8.1
           s8p_get("s8p_3_ui"),
@@ -172,29 +172,29 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Drugą decyzją jest horyzont. Z wykładu o czasie życia wiemy, że R(t) maleje z czasem, więc bez t liczba nie ma sensu. Dla systemu obowiązuje ta sama zasada: niezawodność systemu to funkcja czasu, a do jednego rachunku wchodzą tylko niezawodności elementów liczone dla tego samego t."
           ),
           risk_definition("8.1", "Niezawodność systemu", c(
-            "Niech T_s oznacza czas od uruchomienia do pierwszej chwili, w której system przestaje realizować zdefiniowaną funkcję. Niezawodność systemu na czas misji t to prawdopodobieństwo, że system realizuje tę funkcję nieprzerwanie przez cały przedział [0, t].",
-            "Definicja ma trzy obowiązkowe składniki: opis funkcji (co jest sukcesem), czas misji t oraz warunki pracy, w których podane są niezawodności elementów."
+            "Niech T_s oznacza czas od uruchomienia do pierwszej chwili, w której system przestaje realizować zdefiniowaną funkcję. Niezawodność systemu na wymagany czas pracy t to prawdopodobieństwo, że system realizuje tę funkcję nieprzerwanie przez cały przedział [0, t].",
+            "Definicja ma trzy obowiązkowe składniki: opis funkcji (co jest sukcesem), wymagany czas pracy t oraz warunki pracy, w których podane są niezawodności elementów."
           )),
           risk_formula("R_s(t)=P(T_s>t)", num = "8.1",
-            legend = c("T_s" = "czas życia systemu — chwila pierwszej utraty funkcji", "t" = "czas misji, wspólny dla wszystkich elementów", "R_s(t)" = "niezawodność systemu na czas misji t")),
-          "Wzór (8.1) jest dosłownie tym samym, co definicja niezawodności elementu z wykładu 07, zastosowanym do czasu życia całego systemu. Cała trudność polega na tym, jak T_s zależy od czasów życia elementów — to wyznacza architektura. Zanim ją opiszemy, zobaczmy, co się dzieje, gdy czasy misji się nie zgadzają.",
+            legend = c("T_s" = "czas życia systemu — chwila pierwszej utraty funkcji", "t" = "wymagany czas pracy, wspólny dla wszystkich elementów", "R_s(t)" = "niezawodność systemu na wymagany czas pracy t")),
+          "Wzór (8.1) jest dosłownie tym samym, co definicja niezawodności elementu z wykładu 07, zastosowanym do czasu życia całego systemu. Cała trudność polega na tym, jak T_s zależy od czasów życia elementów — to wyznacza architektura. Zanim ją opiszemy, zobaczmy, co się dzieje, gdy wymagane czasy pracy się nie zgadzają.",
           risk_example("8.2", "Dwa horyzonty w jednej karcie",
-            problem = "W dokumentacji wentylator ma R = 0.92 na 1000 h, a czujnik R = 0.95 „na rok pracy ciągłej” (8760 h). System wymaga obu elementów. Oblicz R systemu na misję 1000 h, zakładając wykładnicze czasy życia, i porównaj z naiwnym iloczynem 0.92 · 0.95.",
+            problem = "W dokumentacji wentylator ma R = 0.92 na 1000 h, a czujnik R = 0.95 „na rok pracy ciągłej” (8760 h). System wymaga obu elementów. Oblicz R systemu na wymagany czas pracy 1000 h, zakładając wykładnicze czasy życia, i porównaj z naiwnym iloczynem 0.92 · 0.95.",
             steps = c(
-              "W modelu wykładniczym R(t) = e^(-λt), więc R(t₂) = R(t₁)^(t₂/t₁) — niezawodność na krótszą misję to potęga niezawodności na dłuższą.",
+              "W modelu wykładniczym R(t) = e^(-λt), więc R(t₂) = R(t₁)^(t₂/t₁) — niezawodność na krótszy wymagany czas pracy to potęga niezawodności na dłuższy.",
               "Czujnik na 1000 h: 0.95^(1000/8760) = 0.95^0.114 ≈ 0.9942.",
               "System: 0.92 · 0.9942 ≈ 0.915.",
-              "Naiwny iloczyn: 0.92 · 0.95 = 0.874 — to niezawodność na misję, której nie ma: wentylator liczony na 1000 h, czujnik na rok."
+              "Naiwny iloczyn: 0.92 · 0.95 = 0.874 — to niezawodność na okres pracy, którego nie ma: wentylator liczony na 1000 h, czujnik na rok."
             ),
             answer = "Około 0.915, a nie 0.874. Pomieszanie horyzontów zawyżyło ryzyko prawie półtora raza (0.126 zamiast 0.085); przy odwrotnym pomieszaniu równie łatwo je zaniżyć. Przeliczenie wymaga założenia o kształcie R(t) — tu wykładniczego."
           ),
           # PROTOTYPY P4A i P4B: dwa horyzonty z przykładu 8.2
           s8p_variant("P4A — kadry na osi czasu."),
           s8p_get("s8p_4a_ui"),
-          s8p_variant("P4B — piaskownica: wspólny czas misji na suwaku."),
+          s8p_variant("P4B — piaskownica: wspólny czas pracy na suwaku."),
           s8p_get("s8p_4b_ui"),
           risk_check("s8_chk_misja",
-            "Element A ma R = 0.90 na 500 h, element B ma R = 0.90 na 2000 h. Który jest bardziej niezawodny na misję 1000 h?",
+            "Element A ma R = 0.90 na 500 h, element B ma R = 0.90 na 2000 h. Który jest bardziej niezawodny na wymagany czas pracy 1000 h?",
             c("B, bo na dłuższym horyzoncie ma tę samą niezawodność" = "b", "A i B są jednakowe, bo oba mają 0.90" = "same", "A, bo jego liczba dotyczy krótszego czasu" = "a"),
             correct = "b",
             explanation = "Dla każdego rozsądnego modelu R(t) maleje z czasem. B osiąga 0.90 dopiero po 2000 h, więc na 1000 h ma R > 0.90, a A po 1000 h ma R < 0.90. Liczby bez horyzontu nie da się porównać.",
@@ -207,7 +207,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         text = "Z powyższych rozważań wynika krótka lista warunków, które musi spełnić każda analiza niezawodności systemu, zanim pojawi się pierwsze mnożenie. Warto ją traktować jak kontrakt: jeśli któryś punkt jest niespełniony, liczba na końcu nie ma jasnej interpretacji.",
         bullets = c("jednoznaczna funkcja systemu", "ten sam horyzont dla wszystkich R_i", "stany elementów adekwatne do funkcji", "jawne zależności i wspólne zasoby"),
         body = "Trzeci punkt bywa pomijany. Stan „działa / nie działa” musi odnosić się do funkcji: wentylator, który się kręci, ale daje połowę wydajności, dla definicji „utrzymać 14.5 °C w pełnym załadunku” jest w stanie awarii. Czwarty punkt rozwiniemy w rozdziale o wspólnej przyczynie.",
-        pitfall = "Nie wolno mnożyć niezawodności podanych dla różnych czasów misji."
+        pitfall = "Nie wolno mnożyć niezawodności podanych dla różnych wymaganych czasów pracy."
       ),
       list(
         id = "schemat", title = "Schemat blokowy systemu",
@@ -265,7 +265,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           s8p_get("s8p_6_ui"),
           "Kombinacja wygrywająca jest dokładnie jedna: wszyscy działają. Skoro system wymaga wszystkich elementów naraz, a awarie są niezależne, prawdopodobieństwa działania mnożą się wzdłuż łańcucha:",
           risk_formula("R_s=\\prod_{i=1}^{n} R_i", num = "8.2",
-            legend = c("R_i" = "niezawodność i-tego elementu na wspólny czas misji", "n" = "liczba elementów w szeregu", "R_s" = "niezawodność układu szeregowego")),
+            legend = c("R_i" = "niezawodność i-tego elementu na wspólny czas pracy", "n" = "liczba elementów w szeregu", "R_s" = "niezawodność układu szeregowego")),
           risk_derivation("iloczyn dla szeregu", c(
             "Sukces systemu to zdarzenie „działa E₁ i działa E₂ i … i działa Eₙ”, czyli przecięcie n zdarzeń. Z wykładu 02 wiemy, że dla zdarzeń niezależnych prawdopodobieństwo przecięcia jest iloczynem prawdopodobieństw. Bez niezależności trzeba by mnożyć prawdopodobieństwa warunkowe: P(E₁) · P(E₂ | E₁) · …, i to one niosą informację o wspólnych zasobach."
           ), lines = c("R_s = P(E₁ ∩ E₂ ∩ … ∩ Eₙ)", "    = P(E₁) · P(E₂) · … · P(Eₙ)     (niezależność)", "    = R₁ · R₂ · … · Rₙ")),
@@ -273,7 +273,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           # PROTOTYP P7: długi łańcuch
           s8p_get("s8p_7_ui"),
           risk_example("8.3", "Ile ogniw zmieści się w łańcuchu?",
-            problem = "Linia sterowania chłodzeniem składa się z jednakowych, niezależnych modułów, każdy o R = 0.99 na misję 1000 h. System wymaga wszystkich modułów. Ilu modułów można użyć, żeby R systemu nie spadło poniżej 0.90? Porównaj wynik dokładny z przybliżeniem R_s ≈ 1 - Σ(1 - R_i).",
+            problem = "Linia sterowania chłodzeniem składa się z jednakowych, niezależnych modułów, każdy o R = 0.99 na wymagany czas pracy 1000 h. System wymaga wszystkich modułów. Ilu modułów można użyć, żeby R systemu nie spadło poniżej 0.90? Porównaj wynik dokładny z przybliżeniem R_s ≈ 1 - Σ(1 - R_i).",
             steps = c(
               "Ze wzoru (8.2): R_s = 0.99ⁿ ≥ 0.90, czyli n ≤ ln 0.90 / ln 0.99 ≈ 10.48.",
               "Sprawdzenie: 0.99¹⁰ ≈ 0.904, a 0.99¹¹ ≈ 0.895 — jedenasty moduł przekracza próg.",
@@ -296,7 +296,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         text = "Dwa wentylatory pracują równocześnie, ale jeden wystarcza do wymaganej wydajności. Zakładamy, że awaria jednego nie zmienia obciążenia ani charakterystyki drugiego. Rezerwa oczekująca na uruchomienie to inny model: trzeba uwzględnić stan podczas oczekiwania i niezawodność przełącznika. System równoległy działa, dopóki działa co najmniej jedna gałąź, więc zawodzi tylko wtedy, gdy zawiodą wszystkie naraz. Przełącz stany gałęzi i znajdź jedyną kombinację, która kładzie system.",
         body = list(
           risk_definition("8.4", "Układ równoległy (redundancja czynna)", c(
-            "Układ n elementów jest równoległy, jeśli działa wtedy i tylko wtedy, gdy działa co najmniej jeden element. Wszystkie gałęzie pracują od początku misji (redundancja czynna, gorąca), a czas życia systemu to T_s = max(T₁, …, Tₙ)."
+            "Układ n elementów jest równoległy, jeśli działa wtedy i tylko wtedy, gdy działa co najmniej jeden element. Wszystkie gałęzie pracują od początku okresu pracy (redundancja czynna, gorąca), a czas życia systemu to T_s = max(T₁, …, Tₙ)."
           )),
           figure_panel(label = "Stany", title = "Co najmniej jedna gałąź musi działać", checkboxGroupInput("s8_parallel_states", "Działające wentylatory", choices = c("A" = "a", "B" = "b"), selected = c("a", "b")),
             conditionalPanel("input.s8_parallel_states.length >= 1", lc_status(
@@ -308,7 +308,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           s8p_get("s8p_8_ui"),
           "Tym razem przegrywająca kombinacja jest jedna — i to jest zaproszenie do triku z dopełnieniem, znanego z wykładu o wielu próbach: zamiast wielu scenariuszy sukcesu liczymy jeden scenariusz porażki.",
           risk_formula("R_p=1-\\prod_{i=1}^{n}(1-R_i)", num = "8.3",
-            legend = c("1-R_i" = "prawdopodobieństwo awarii i-tej gałęzi w czasie misji", "\\prod_{i}(1-R_i)" = "prawdopodobieństwo, że zawiodą wszystkie gałęzie", "R_p" = "niezawodność układu równoległego")),
+            legend = c("1-R_i" = "prawdopodobieństwo awarii i-tej gałęzi w wymaganym czasie pracy", "\\prod_{i}(1-R_i)" = "prawdopodobieństwo, że zawiodą wszystkie gałęzie", "R_p" = "niezawodność układu równoległego")),
           "Przy niezależnych gałęziach prawdopodobieństwa awarii się mnożą — dwie gałęzie po R = 0.9 dają awarię systemu 0.1 · 0.1 = 0.01, czyli R = 0.99. Wzór (8.3) jest lustrzanym odbiciem wzoru (8.2): w szeregu mnożymy niezawodności, w układzie równoległym — zawodności. Dlatego dobrze jest zapamiętać regułę „szereg: iloczyn R; równolegle: iloczyn 1 - R”.",
           risk_example("8.4", "Dwa wentylatory w dojrzewalni",
             problem = "Wentylator A ma R = 0.92 na 1000 h, a wentylator B, nowszego typu, R = 0.95. Jeden wentylator wystarcza do utrzymania temperatury. Oblicz R układu dwóch wentylatorów i sprawdź wynik drugą metodą.",
@@ -357,7 +357,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
     lead = "Redukujemy najpierw gałęzie równoległe, potem łączymy wynik z elementem szeregowym, a całą logikę sukcesu zapisujemy jedną funkcją.",
     intro = c(
       "Prawdziwe instalacje rzadko są czystym szeregiem albo czystą redundancją. Chłodzenie dojrzewalni to sterownik (wymagany zawsze) i dwa wentylatory (zastępowalne). Takie układy liczy się przez redukcję: zwiń każdą grupę równoległą do jednego zastępczego bloku, a potem pomnóż powstały szereg.",
-      "Redukcja działa także w czasie: podstawiając R_i(t) z wykładu o czasie życia, otrzymujemy krzywą niezawodności całego systemu. Zwróć uwagę na jej położenie — system nigdy nie jest lepszy od najsłabszego wymaganego szeregu, a względna przewaga redundancji topnieje z czasem misji."
+      "Redukcja działa także w czasie: podstawiając R_i(t) z wykładu o czasie życia, otrzymujemy krzywą niezawodności całego systemu. Zwróć uwagę na jej położenie — system nigdy nie jest lepszy od najsłabszego wymaganego szeregu, a względna przewaga redundancji topnieje z wymaganym czasem pracy."
     ),
     sections = list(
       list(
@@ -395,7 +395,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         id = "czas", title = "Systemowa R(t)",
         body = list(
           c(
-            "Dotąd każde R_i było jedną liczbą dla ustalonej misji. Z wykładu 07 wiemy jednak, że R_i(t) to cała funkcja czasu. Wzory (8.2)–(8.4) obowiązują dla każdego t osobno, więc wystarczy podstawić w nich R_i(t), żeby dostać R_s(t) — krzywą niezawodności całego systemu.",
+            "Dotąd każde R_i było jedną liczbą dla ustalonego wymaganego czasu pracy. Z wykładu 07 wiemy jednak, że R_i(t) to cała funkcja czasu. Wzory (8.2)–(8.4) obowiązują dla każdego t osobno, więc wystarczy podstawić w nich R_i(t), żeby dostać R_s(t) — krzywą niezawodności całego systemu.",
             "Najprostszy przypadek to elementy o wykładniczych czasach życia, R_i(t) = e^(-λᵢt). Dla szeregu iloczyn wykładników daje znowu wykładnik: szereg elementów wykładniczych ma wykładniczy czas życia z intensywnością równą sumie intensywności. Układ równoległy już tej własności nie ma."
           ),
           risk_formula("R_s(t)=e^{-(\\lambda_1+\\cdots+\\lambda_n)t},\\qquad MTTF_s=\\frac{1}{\\lambda_1+\\cdots+\\lambda_n}", num = "8.5",
@@ -407,7 +407,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             "Dla dwóch jednakowych gałęzi (λ_A = λ_B = λ) to 2/λ - 1/(2λ) = 3/(2λ): druga gałąź wydłuża średni czas życia o połowę, a nie dwukrotnie. Hazard układu równoległego nie jest stały — na początku jest bliski zeru, a z czasem rośnie do λ, gdy zostaje jedna gałąź."
           ), lines = c("MTTF_p = ∫ [e^(-λ_A t) + e^(-λ_B t) - e^(-(λ_A+λ_B)t)] dt", "       = 1/λ_A + 1/λ_B - 1/(λ_A + λ_B)", "λ_A = λ_B = λ:  MTTF_p = 3/(2λ)")),
           risk_example("8.6", "R systemu na 1000 h z MTTF elementów",
-            problem = "W widgecie poniżej elementy mają wykładnicze czasy życia: wentylator A — MTTF 1800 h, wentylator B — 2000 h, sterownik — 2500 h (wartości ilustracyjne, inne niż w danych Bananpolu). Oblicz R systemu mieszanego na misję 1000 h oraz średni czas do awarii systemu.",
+            problem = "W widgecie poniżej elementy mają wykładnicze czasy życia: wentylator A — MTTF 1800 h, wentylator B — 2000 h, sterownik — 2500 h (wartości ilustracyjne, inne niż w danych Bananpolu). Oblicz R systemu mieszanego na wymagany czas pracy 1000 h oraz średni czas do awarii systemu.",
             steps = c(
               "R_A(1000) = e^(-1000/1800) ≈ 0.574; R_B(1000) = e^(-0.5) ≈ 0.607; R_C(1000) = e^(-0.4) ≈ 0.670.",
               "Blok równoległy: R_AB = 1 - 0.426 · 0.393 ≈ 0.832.",
@@ -416,19 +416,19 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
             ),
             answer = "R_sys(1000) ≈ 0.558, MTTF systemu ≈ 1470 h. System ma niższą niezawodność niż sam wentylator A (0.574), bo sterownik o R = 0.670 jest wymagany na każdej drodze sukcesu. Dla porównania szereg wszystkich trzech elementów miałby MTTF = 1/(1/1800 + 1/2000 + 1/2500) ≈ 687 h."
           ),
-          risk_try("ustaw czas misji na 1000 h i odczytaj R systemu. Potem przesuń suwak na 100 h i na 3000 h; za każdym razem porównaj krzywą systemu z krzywą sterownika i wentylatora A."),
+          risk_try("ustaw wymagany czas pracy na 1000 h i odczytaj R systemu. Potem przesuń suwak na 100 h i na 3000 h; za każdym razem porównaj krzywą systemu z krzywą sterownika i wentylatora A."),
           risk_sf_panel("Czas", "Elementy i system mieszany", "s8m_time", legend = TRUE,
-            controls = lc_sf_slider("s8_mission", "Czas misji (h)", 100, 3000, 1000, 50),
+            controls = lc_sf_slider("s8_mission", "Wymagany czas pracy (h)", 100, 3000, 1000, 50),
             reads = list(risk_sf_read("time_a", "R wentylatora A"), risk_sf_read("time_b", "R wentylatora B"),
                          risk_sf_read("time_c", "R sterownika"), risk_sf_read("time_sys", "R systemu", color = upwr_accent))),
           # PROTOTYPY P11A i P11B: systemowa R(t), dwie puenty
           s8p_variant("P11A — puenta „system leży pod najsłabszym szeregiem”."),
           s8p_get("s8p_11a_ui"),
-          s8p_variant("P11B — puenta „przewaga redundancji topnieje z czasem misji”."),
+          s8p_variant("P11B — puenta „przewaga redundancji topnieje z wymaganym czasem pracy”."),
           s8p_get("s8p_11b_ui"),
           c(
-            "Ta sama redukcja działa w czasie: krzywe elementów i całego systemu muszą używać wspólnego czasu misji, a krzywa systemu zawsze leży poniżej najsłabszego wymaganego szeregu — tutaj poniżej krzywej sterownika. Przy 1000 h panel pokazuje R systemu 0.558.",
-            "Warto porównać, ile redundancja wentylatorów zmniejsza ryzyko w zależności od t. Prawdopodobieństwo awarii bloku A/B to prawdopodobieństwo awarii A pomnożone przez 1 - R_B(t). Przy 100 h ten mnożnik wynosi około 0.05 — redundancja zmniejsza ryzyko dwudziestokrotnie. Przy 1000 h mnożnik to około 0.39, a przy 3000 h już około 0.78. W długiej misji druga gałąź sama jest prawdopodobnie zepsuta, zanim będzie potrzebna."
+            "Ta sama redukcja działa w czasie: krzywe elementów i całego systemu muszą używać wspólnego czasu pracy, a krzywa systemu zawsze leży poniżej najsłabszego wymaganego szeregu — tutaj poniżej krzywej sterownika. Przy 1000 h panel pokazuje R systemu 0.558.",
+            "Warto porównać, ile redundancja wentylatorów zmniejsza ryzyko w zależności od t. Prawdopodobieństwo awarii bloku A/B to prawdopodobieństwo awarii A pomnożone przez 1 - R_B(t). Przy 100 h ten mnożnik wynosi około 0.05 — redundancja zmniejsza ryzyko dwudziestokrotnie. Przy 1000 h mnożnik to około 0.39, a przy 3000 h już około 0.78. W długim okresie pracy druga gałąź sama jest prawdopodobnie zepsuta, zanim będzie potrzebna."
           ),
           risk_check("s8_chk_czas",
             "Dwa elementy o wykładniczych czasach życia z intensywnościami λ₁ i λ₂ połączono szeregowo. Jaki rozkład ma czas życia systemu?",
@@ -526,10 +526,10 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
           )),
           "Jeśli Z zachodzi z prawdopodobieństwem q i poza nim gałęzie są niezależne, to ze wzoru na prawdopodobieństwo całkowite (wykład 02) dostajemy: R = P(Z̄) · R_niez + P(Z) · 0. Drugi składnik znika, bo po utracie zasilania system nie działa niezależnie od stanu gałęzi.",
           risk_formula("R=(1-q)R_{bez\\ wspólnej\\ awarii}", num = "8.10",
-            legend = c("q" = "prawdopodobieństwo zdarzenia wspólnego w czasie misji", "R_{bez\\ wspólnej\\ awarii}" = "niezawodność układu obliczona przy niezależnych gałęziach")),
+            legend = c("q" = "prawdopodobieństwo zdarzenia wspólnego w wymaganym czasie pracy", "R_{bez\\ wspólnej\\ awarii}" = "niezawodność układu obliczona przy niezależnych gałęziach")),
           "W języku schematu blokowego wzór (8.10) to nic innego jak dopisanie bloku „zasilanie” szeregowo przed układem równoległym. Wspólna przyczyna przestaje być ukrytą korelacją, a staje się elementem architektury, który da się policzyć, ocenić i poprawić.",
           risk_example("8.8", "Rozdzielnica w dojrzewalni",
-            problem = "Wentylatory 0.92 i 0.95 pracują równolegle, a prawdopodobieństwo utraty wspólnego zasilania w czasie misji wynosi q = 0.01. Oblicz R układu i ustal, jaka część ryzyka pochodzi ze wspólnej przyczyny.",
+            problem = "Wentylatory 0.92 i 0.95 pracują równolegle, a prawdopodobieństwo utraty wspólnego zasilania w wymaganym czasie pracy wynosi q = 0.01. Oblicz R układu i ustal, jaka część ryzyka pochodzi ze wspólnej przyczyny.",
             steps = c(
               "Bez wspólnej przyczyny: R_niez = 0.996 (przykład 8.4).",
               "Ze wzoru (8.10): R = 0.99 · 0.996 = 0.98604; ryzyko 1 - 0.98604 = 0.01396.",
@@ -719,16 +719,16 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
   ),
   list(
     id = "sciaga", title = "Ściąga i sprawdzenie", hook = "Najpierw architektura, potem rachunek",
-    lead = "Funkcja → misja → architektura → zależności → wynik; rachunek ma odzwierciedlać fizyczną architekturę.",
+    lead = "Funkcja → wymagany czas pracy → architektura → zależności → wynik; rachunek ma odzwierciedlać fizyczną architekturę.",
     intro = c(
-      "Rachunek systemowy sprowadza się do dwóch wzorów i jednej dyscypliny: iloczyn dla szeregu, dopełnienie iloczynu dla redundancji, i bezwzględny wymóg wspólnego czasu misji oraz jawnych wspólnych przyczyn. Pięć kroków poniżej wystarcza do audytu każdej analizy — własnej i cudzej.",
+      "Rachunek systemowy sprowadza się do dwóch wzorów i jednej dyscypliny: iloczyn dla szeregu, dopełnienie iloczynu dla redundancji, i bezwzględny wymóg wspólnego czasu pracy oraz jawnych wspólnych przyczyn. Pięć kroków poniżej wystarcza do audytu każdej analizy — własnej i cudzej.",
       "Quiz sprawdza logikę sukcesu i porażki w obu układach, koherentność modelu i rezerwę oczekującą. Ćwiczenia zaczynają się od zapisu funkcji struktury, prowadzą przez rachunek szeregowy, diagnozę wspólnego zasilania i logikę systemu hamulcowego — transfer warsztatu poza chłodnię — a kończą na modelu beta-factor i doborze liczby gałęzi."
     ),
     sections = list(
       list(
         id = "podsumowanie", title = "Podsumowanie",
         text = c(
-          "Wykład zaczął się od obserwacji, że te same części mogą tworzyć systemy o bardzo różnej niezawodności. Dlatego rachunek zaczyna się od definicji: funkcji systemu i wspólnego czasu misji (8.1). Logikę sukcesu zapisujemy schematem blokowym, a dwa podstawowe układy mają lustrzane wzory — iloczyn niezawodności dla szeregu (8.2) i iloczyn zawodności dla układu równoległego (8.3). Układy mieszane redukujemy etapami (8.4), a w czasie podstawiamy R_i(t): szereg elementów wykładniczych jest wykładniczy (8.5), układ równoległy już nie (8.6).",
+          "Wykład zaczął się od obserwacji, że te same części mogą tworzyć systemy o bardzo różnej niezawodności. Dlatego rachunek zaczyna się od definicji: funkcji systemu i wspólnego czasu pracy (8.1). Logikę sukcesu zapisujemy schematem blokowym, a dwa podstawowe układy mają lustrzane wzory — iloczyn niezawodności dla szeregu (8.2) i iloczyn zawodności dla układu równoległego (8.3). Układy mieszane redukujemy etapami (8.4), a w czasie podstawiamy R_i(t): szereg elementów wykładniczych jest wykładniczy (8.5), układ równoległy już nie (8.6).",
           "Funkcja struktury oddziela logikę od liczb (8.7), a niezawodność systemu jest jej wartością oczekiwaną (8.8). Systemy koherentne — monotoniczne i bez zbędnych elementów — leżą zawsze między szeregiem a układem równoległym (8.9). Wszystkie te wzory zakładają niezależność; wspólną przyczynę dopisujemy do architektury jako jawne zdarzenie (8.10) albo przez model beta-factor (8.11)–(8.12). Nawet małe q lub β potrafi zdominować ryzyko układu redundantnego.",
           "Decyzje projektowe wynikają z dwóch ostatnich narzędzi. Liczba gałęzi (8.13)–(8.14) daje malejącą bezwzględną korzyść i ma sufit wyznaczony przez wspólne przyczyny. Istotność Birnbauma (8.15) mówi, ile daje poprawa elementu w konkretnym miejscu architektury — wąskie gardło szeregowe jest zwykle warte więcej niż gałąź redundantna. Ostateczny wybór łączy ten zysk z kosztem i wykonalnością."
         ),
@@ -739,7 +739,7 @@ system_block <- list(id = "system", title = "Niezawodność systemu", chapters =
         )
       ),
       list(id = "tabela", title = "Ściąga wzorów", widget = system_sciaga_widget),
-      list(id = "lista", title = "Pięć kroków", bullets = c("Zdefiniuj sukces systemu", "Ustal wspólny czas misji", "Zredukuj logikę etapami", "Dodaj jawne wspólne przyczyny", "Sprawdź wrażliwość na interwencje"),
+      list(id = "lista", title = "Pięć kroków", bullets = c("Zdefiniuj sukces systemu", "Ustal wspólny czas pracy", "Zredukuj logikę etapami", "Dodaj jawne wspólne przyczyny", "Sprawdź wrażliwość na interwencje"),
         # PROTOTYP P24B: mapa pięciu kroków z wynikami
         body = list(
           s8p_variant("P24B — mapa pięciu kroków z wynikiem każdego kroku."),

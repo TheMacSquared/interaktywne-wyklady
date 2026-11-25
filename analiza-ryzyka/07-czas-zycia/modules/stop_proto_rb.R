@@ -2,7 +2,7 @@
 #
 #   c7p_2b_ui  — galeria „Dwie oferty, jedna średnia: gęstości osobno” (P2B):
 #                gęstości A i B jedna pod drugą, stałe osie; pole przed kreską
-#                misji w kolorze akcentu, za kreską w kolorze oferty.
+#                wymaganego czasu pracy w kolorze akcentu, za kreską w kolorze oferty.
 #                (Wariant P2A na jednej osi odrzucony 2026-11-24.)
 #   c7p_8_ui   — pojęcie „Cztery funkcje, jedna chwila” (P8): F i R na górze,
 #                h i f na dole; suwak czasu i wybór modelu.
@@ -15,7 +15,7 @@
 # Parametry obu ofert dla JS (jedno źródło: stałe z stop_proto_common.R).
 c7p_rb_cfg <- list(mttf = c7p_mttf, beta = c7p_beta, eta = c7p_eta)
 
-# Wybór czasu misji dla P2B.
+# Wybór wymaganego czasu pracy dla P2B.
 c7p_rb_mission <- c("500 h" = "500", "1000 h" = "1000", "3000 h" = "3000")
 
 # ============================================================================
@@ -24,11 +24,11 @@ c7p_rb_mission <- c("500 h" = "500", "1000 h" = "1000", "3000 h" = "3000")
 
 c7p_2b_ui <- c7p_panel("P2B", "galeria", "Dwie oferty, jedna średnia: gęstości osobno",
   lc_sf_figure("c7_gestosci_b",
-    control = lc_segmented("c7p2b_t", "Czas misji", c7p_rb_mission, selected = "1000"),
+    control = lc_segmented("c7p2b_t", "Wymagany czas pracy", c7p_rb_mission, selected = "1000"),
     toolbar = lc_readouts(c7p_read("ra", "R(t) oferty A"), c7p_read("rb", "R(t) oferty B")),
     body = c7p_stack(c("Oferta A: rozkład wykładniczy", "Oferta B: rozkład Weibulla"), "4.2/1", "200px"),
     config = c7p_rb_cfg,
-    after = lc_caption("Pole w kolorze akcentu to wentylatory, które zawiodły przed końcem misji; pole w kolorze oferty to te, które dotrwały."))
+    after = lc_caption("Pole w kolorze akcentu to wentylatory, które zawiodły przed końcem okresu pracy; pole w kolorze oferty to te, które dotrwały."))
 )
 
 # ============================================================================

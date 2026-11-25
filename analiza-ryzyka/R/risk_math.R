@@ -223,7 +223,7 @@ risk_zero_failure_upper <- function(n, confidence = .95) {
   -expm1(log1p(-confidence) / n)
 }
 
-# Jeden kontrakt misji dla kart, interwencji, scenariuszy i rekomendacji.
+# Jeden kontrakt okresu pracy dla kart, interwencji, scenariuszy i rekomendacji.
 # Zapotrzebowanie występuje na początku; brak napraw i zmiany obciążenia gałęzi.
 risk_mission_analysis <- function(time, model, power_r1000, controller_r1000,
                                   initiation, sensitivity, intervention = "none",
@@ -233,9 +233,9 @@ risk_mission_analysis <- function(time, model, power_r1000, controller_r1000,
   risk_assert_probability(c(power_r1000, controller_r1000, initiation, sensitivity))
   if (length(time) != 1L || !is.finite(time) || time <= 0 ||
       length(stress) != 1L || !is.finite(stress) || stress <= 0) {
-    stop("Czas misji i mnożnik scenariusza muszą być dodatnie.")
+    stop("Wymagany czas pracy i mnożnik scenariusza muszą być dodatnie.")
   }
-  fan_r <- if (model == "exp") exp(-time / 1500) else exp(-(time / 1700)^2)
+  fan_r <- if (model == "exp") exp(-time / 1500) else exp(-(time / 1693)^2)
   # Scenariusz skaluje skumulowany hazard, zachowując spójność czasu.
   fan_r <- fan_r^stress
   power_r <- power_r1000^(time / 1000 * stress)

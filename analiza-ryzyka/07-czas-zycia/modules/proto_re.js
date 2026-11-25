@@ -6,7 +6,7 @@
 //           po parku; awarie w oknie dzielone przez wszystkie nowe (gęstość · Δt)
 //           albo przez działające w chwili t (hazard · Δt).
 //   parki — Piaskownica „Trzy parki, jedna średnia” (P17B): trzy parki o tym samym
-//           MTTF i kreska misji z suwaka; liczba działających w każdym parku.
+//           MTTF i kreska wymaganego czasu pracy z suwaka; liczba działających w każdym parku.
 (function () {
   "use strict";
   var Z = window.lcC7;

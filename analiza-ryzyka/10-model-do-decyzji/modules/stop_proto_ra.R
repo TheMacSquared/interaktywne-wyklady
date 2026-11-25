@@ -2,7 +2,7 @@
 #
 #   i10p_1_ui — Scena „Cztery liczby na biurku” (P1), 4 kadry policzone w R: kartki →
 #               pytania → warunki → która odpowiada zarządowi. Liczby z i10p_cfg:
-#               1 − P(I | alarm), P(S | I), 1 − R_sys³ i P(TOP) na 10 000 misji.
+#               1 − P(I | alarm), P(S | I), 1 − R_sys³ i P(TOP) na 10 000 okresów pracy.
 #               Dane kartek (i10p1_notes) wracają w domknięciu P18B.
 #   i10p_7_ui — Galeria „Ta sama średnia, inne ryzyko” (P7): rycina lcSF i10_modele
 #               (modules/proto_ra.js), oba modele czasu życia na stałych osiach.
@@ -21,12 +21,12 @@ i10p1_pct <- function(p) paste0(round(100 * p), "%")
 i10p1_notes <- list(
   list(who = "OPERATOR", num = i10p1_pct(1 - i10p1_post), says = c("alarmów jest", "fałszywych"),
     ask = c("Czy wierzyć", "alarmowi?"), cond = "wśród alarmów", back = "wraca: rozdz. 2"),
-  list(who = "SERWIS", num = i10p1_pct(i10p1_base$cooling_failure), says = c("misji kończy się", "awarią chłodzenia"),
-    ask = c("Czy układ wytrzyma", "misję, gdy jest potrzebny?"), cond = "gdy jest zapotrzebowanie", back = "wraca: rozdz. 3"),
+  list(who = "SERWIS", num = i10p1_pct(i10p1_base$cooling_failure), says = c("okresów pracy kończy się", "awarią chłodzenia"),
+    ask = c("Czy układ wytrzyma", "okres pracy, gdy jest potrzebny?"), cond = "gdy jest zapotrzebowanie", back = "wraca: rozdz. 3"),
   list(who = "UTRZYMANIE", num = i10p1_pct(i10p1_year_sys), says = c("rocznie: ryzyko", "awarii chłodzenia"),
-    ask = c("Czy układ przepracuje", "trzy misje bez awarii?"), cond = "zapotrzebowanie pominięte", back = "pułapka: rozdz. 3"),
-  list(who = "ANALITYK", num = as.character(round(1e4 * i10p1_base$top)), says = c("na 10 000 misji", "kończy się bez ochrony"),
-    ask = c("Jak często misja", "zostaje bez ochrony?"), cond = "wśród wszystkich misji", back = "odpowiada zarządowi")
+    ask = c("Czy układ przepracuje", "trzy okresy pracy bez awarii?"), cond = "zapotrzebowanie pominięte", back = "pułapka: rozdz. 3"),
+  list(who = "ANALITYK", num = as.character(round(1e4 * i10p1_base$top)), says = c("na 10 000 okresów pracy", "kończy się bez ochrony"),
+    ask = c("Jak często okres pracy", "zostaje bez ochrony?"), cond = "wśród wszystkich okresów pracy", back = "odpowiada zarządowi")
 )
 
 i10p1_card <- function(j, step) {
@@ -59,11 +59,11 @@ i10p1_frames <- list(
     text = "Każda liczba jest poprawnie policzona. Każda odpowiada jednak na inne pytanie.",
     read = NULL),
   list(name = "Warunki",
-    text = "Liczby różni warunek: wśród których misji je liczono. Tego na kartkach nie było.",
+    text = "Liczby różni warunek: wśród których okresów pracy je liczono. Tego na kartkach nie było.",
     read = NULL),
   list(name = "Która liczba",
     text = "Na pytanie zarządu odpowiada tylko ostatnia kartka. Pozostałe trzy wrócą jako składniki rachunku albo jako pułapki.",
-    read = sprintf("P(TOP) ≈ %s na misję %s %s", i10p_p(i10p1_base$top), i10p_cfg$time, i10p_cfg$unit))
+    read = sprintf("P(TOP) ≈ %s na okres pracy %s %s", i10p_p(i10p1_base$top), i10p_cfg$time, i10p_cfg$unit))
 )
 
 i10p1_svg <- function(step) {
@@ -87,7 +87,7 @@ i10p7_mttf_w <- i10p_cfg$eta * gamma(1 + 1 / i10p_cfg$beta)
 
 i10p_7_ui <- i10p_panel("P7", "galeria", "Ta sama średnia, inne ryzyko",
   lc_sf_figure("i10_modele",
-    control = list(lc_sf_slider("i10p7_t", "Czas misji", 100, i10p_cfg$time_max, i10p_cfg$time, 50, suffix = paste0(" ", i10p_cfg$unit))),
+    control = list(lc_sf_slider("i10p7_t", "Wymagany czas pracy", 100, i10p_cfg$time_max, i10p_cfg$time, 50, suffix = paste0(" ", i10p_cfg$unit))),
     toolbar = lc_readouts(i10p_read("re", "R wykładniczy", upwr_secondary), i10p_read("rw", "R Weibull", upwr_accent),
       i10p_read("d", "Różnica")),
     ratio = "2.2/1", max_height = "360px", legend = TRUE,

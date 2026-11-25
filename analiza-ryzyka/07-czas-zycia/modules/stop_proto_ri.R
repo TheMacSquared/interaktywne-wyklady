@@ -226,9 +226,9 @@ c7p_23a_ui <- c7p_panel("P23A", "domknięcie", "Karty katalogowe, wersja poprawi
   tags$div(class = "c7pi-cards",
     c7p23_card("Wentylator A", "var(--upwr-cat-niebo)", "1500", 1, c7p_mttf, "stały", "(7.8)",
       "nic nie zmienia; lepiej wydać na redundancję."),
-    c7p23_card("Wentylator B", "var(--upwr-cat-bursztyn)", "1507", c7p_beta, c7p_eta, "rośnie", "(7.13)",
+    c7p23_card("Wentylator B", "var(--upwr-cat-bursztyn)", "1500", c7p_beta, c7p_eta, "rośnie", "(7.13)",
       "pomaga; termin przed B10.")),
-  lc_caption("Dwie karty z rozdziału 1. Średnie są prawie równe, a każda z pozostałych liczb jest inna; o wyborze decyduje czas misji i mechanizm awarii."))
+  lc_caption("Dwie karty z rozdziału 1. Średnie są prawie równe, a każda z pozostałych liczb jest inna; o wyborze decyduje wymagany czas pracy i mechanizm awarii."))
 
 # ============================================================================
 # P23B — DOMKNIĘCIE „PIĘĆ PYTAŃ O WENTYLATOR”
@@ -241,12 +241,12 @@ c7p_23b_ui <- c7p_panel("P23B", "domknięcie", "Pięć pytań o wentylator Banan
   tags$div(
     c7p23_q("1", "Co rozpoczyna i kończy czas życia?",
       "Montaż wentylatora i pierwsza awaria; zegar liczy godziny pracy (definicja 7.1)."),
-    c7p23_q("2", "Jaki jest wspólny czas misji?",
-      "1000 h do planowego przeglądu: R(1000 h) = 0.513 dla oferty A i 0.707 dla oferty B."),
+    c7p23_q("2", "Jaki jest wspólny czas pracy?",
+      "1000 h do planowego przeglądu: R(1000 h) = 0.513 dla oferty A i 0.705 dla oferty B."),
     c7p23_q("3", "Czy obserwacje działające są cenzorowane?",
       "Tak: po 1200 h działały 4 z 8. Szacunek z ich godzinami pracy to 1812.5 h, średnia z samych awarii 612.5 h (7.2)."),
     c7p23_q("4", "Czy hazard jest stały, rośnie czy maleje?",
       "Oferta A: stały, bez pamięci (7.9). Oferta B: rośnie, β = 2 (7.13). Pełna wanna to suma trzech mechanizmów (7.15)."),
     c7p23_q("5", "Jak wynik zmienia decyzję utrzymaniową?",
-      "Oferta B: przegląd z wymianą przed 552 h utrzymuje R ≥ 0.90 (7.16). Oferta A: wymiana sprawnego egzemplarza niczego nie zmienia (7.17).")),
+      "Oferta B: przegląd z wymianą przed 550 h utrzymuje R ≥ 0.90 (7.16). Oferta A: wymiana sprawnego egzemplarza niczego nie zmienia (7.17).")),
   width_mode = "text")

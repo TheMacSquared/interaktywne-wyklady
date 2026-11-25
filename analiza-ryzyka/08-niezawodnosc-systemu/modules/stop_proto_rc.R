@@ -1,8 +1,8 @@
 # PROTOTYPY PUNKTÓW STOP (2026-11-14) — P2A, P2B, P5A, P5B, P21, P22 ---------------
 #
-#   s8p_2a_ui — Galeria „Sto misji, trzy logiki” (P2A): kratki 81 / 9 / 9 / 1
-#               z przełącznikiem logiki; 19, 10 i 1 zawiedziona misja (przykład 8.1).
-#   s8p_2b_ui — Symulacja „Misja za misją” (P2B): scena „misje” (modules/proto_rc.js).
+#   s8p_2a_ui — Galeria „Sto okresów pracy, trzy logiki” (P2A): kratki 81 / 9 / 9 / 1
+#               z przełącznikiem logiki; 19, 10 i 1 nieudany okres pracy (przykład 8.1).
+#   s8p_2b_ui — Symulacja „Okres po okresie” (P2B): scena „misje” (modules/proto_rc.js).
 #   s8p_5a_ui — Piaskownica „Zepsuj blok, szukaj drogi” (P5A): klikalny schemat,
 #               trzy architektury pod przełącznikiem.
 #   s8p_5b_ui — to samo, trzy schematy obok siebie (P5B).
@@ -12,16 +12,16 @@
 # Wymaga: stop_proto_common.R.
 
 # ============================================================================
-# P2A — STO MISJI, TRZY LOGIKI
+# P2A — STO OKRESÓW PRACY, TRZY LOGIKI
 # ============================================================================
 
 s8p2_r <- 0.9
-# Sto misji według stanu dwóch elementów: oba działają, tylko E₁, tylko E₂, żaden.
+# Sto okresów pracy według stanu dwóch elementów: oba działają, tylko E₁, tylko E₂, żaden.
 s8p2_n <- round(100 * c(both = s8p2_r^2, e1 = s8p2_r * (1 - s8p2_r), e2 = (1 - s8p2_r) * s8p2_r, none = (1 - s8p2_r)^2))
 s8p2_logic <- list(
-  series = list(stages = list(1, 2), fail = c("e1", "e2", "none"), text = "System wymaga obu elementów. Zawiedziona jest każda misja, w której zawiódł choć jeden."),
-  single = list(stages = list(1), fail = c("e2", "none"), text = "System wymaga tylko E₁. Zawiedzione są misje, w których E₁ stał, bez względu na E₂."),
-  parallel = list(stages = list(c(1, 2)), fail = "none", text = "Wystarczy którykolwiek element. Zawiedziona jest tylko misja, w której stały oba.")
+  series = list(stages = list(1, 2), fail = c("e1", "e2", "none"), text = "System wymaga obu elementów. Nieudany jest każdy okres pracy, w którym zawiódł choć jeden."),
+  single = list(stages = list(1), fail = c("e2", "none"), text = "System wymaga tylko E₁. Nieudane są okresy pracy, w których E₁ stał, bez względu na E₂."),
+  parallel = list(stages = list(c(1, 2)), fail = "none", text = "Wystarczy którykolwiek element. Nieudany jest tylko okres pracy, w którym stały oba.")
 )
 s8p2_failed <- function(key) sum(s8p2_n[s8p2_logic[[key]]$fail])
 
@@ -36,36 +36,36 @@ s8p2_svg <- function(key) {
     s8p_cells(stats::setNames(s8p2_n[[g]], cls(g)), cols[[g]], xs[[g]], 42, size = 16, gap = 4),
     s8p_text(xs[[g]] + cols[[g]] * 10 - 2, 244, s8p2_n[[g]], 15, "s8p-mono", "middle", 700)
   ), character(1)), collapse = "")
-  s8p_svg(800, 256, sprintf("Sto misji w czterech grupach: 81, 9, 9 i 1. W tej logice zawiedzionych jest %d.", s8p2_failed(key)),
+  s8p_svg(800, 256, sprintf("Sto okresów pracy w czterech grupach: 81, 9, 9 i 1. W tej logice nieudanych jest %d.", s8p2_failed(key)),
     groups,
     s8p_rbd(lg$stages, c("E₁", "E₂"), x = 480, y = 80, scale = .85, lamp = NULL),
     s8p_text(480, 190, s8p2_failed(key), 54, "s8p-mono s8p-bad", weight = 700),
-    s8p_text(480 + if (s8p2_failed(key) > 9) 76 else 44, 190, "na 100 misji zawiedzionych", 15, "s8p-subtle"))
+    s8p_text(480 + if (s8p2_failed(key) > 9) 76 else 44, 190, "na 100 nieudanych okresów pracy", 15, "s8p-subtle"))
 }
 s8p2_views <- lapply(names(s8p2_logic), function(key) list(svg = s8p2_svg(key), text = s8p2_logic[[key]]$text,
   read = sprintf("R = %s", s8p_fix(1 - s8p2_failed(key) / 100, 2))))
 names(s8p2_views) <- names(s8p2_logic)
 
-s8p_2a_ui <- s8p_views_ui("P2A", "galeria", "Sto misji, trzy logiki",
+s8p_2a_ui <- s8p_views_ui("P2A", "galeria", "Sto okresów pracy, trzy logiki",
   s8p_seg("view", "Logika sukcesu", c("Oba wymagane" = "series", "Tylko E₁" = "single", "Wystarczy jeden" = "parallel")),
   s8p2_views,
-  lc_caption("Kratka to jedna misja dwóch elementów o R = 0.9. Kratki stoją w miejscu; przełącznik zmienia tylko to, które z nich liczą się jako porażka."))
+  lc_caption("Kratka to jeden okres pracy dwóch elementów o R = 0.9. Kratki stoją w miejscu; przełącznik zmienia tylko to, które z nich liczą się jako porażka."))
 
 # ============================================================================
-# P2B — MISJA ZA MISJĄ (symulacja w przeglądarce)
+# P2B — OKRES PO OKRESIE (symulacja w przeglądarce)
 # ============================================================================
 
-s8p_2b_ui <- s8p_scene_ui("P2B", "symulacja", "Misja za misją", "misje",
+s8p_2b_ui <- s8p_scene_ui("P2B", "symulacja", "Okres po okresie", "misje",
   list(r = s8p2_r, seed = 81, exact = list(series = 0.19, single = 0.10, parallel = 0.01)),
   tags$div(class = "s8p-nav",
-    lc_group("Przeprowadź misje", tags$div(class = "lc-seg", role = "group", `aria-label` = "Przeprowadź misje",
+    lc_group("Symuluj okresy pracy", tags$div(class = "lc-seg", role = "group", `aria-label` = "Symuluj okresy pracy",
       tags$button(type = "button", `data-s8p` = "add", `data-value` = "1", "+1"),
       tags$button(type = "button", `data-s8p` = "add", `data-value` = "10", "+10"),
       tags$button(type = "button", `data-s8p` = "add", `data-value` = "100", "+100"),
       tags$button(type = "button", `data-s8p` = "add", `data-value` = "1000", "+1000"))),
     s8p_button("clear", "Od nowa", icon = "reset")),
   s8p_out("stage"), s8p_out("body"),
-  lc_caption("Każda kolumna kratek to jedna misja: te same stany E₁ i E₂ ocenione w trzech logikach. Pasek pokazuje ostatnie 100 misji; przerywane kreski to 19, 10 i 1 na 100 z przykładu 8.1."))
+  lc_caption("Każda kolumna kratek to jeden okres pracy: te same stany E₁ i E₂ ocenione w trzech logikach. Pasek pokazuje ostatnie 100 okresów pracy; przerywane kreski to 19, 10 i 1 na 100 z przykładu 8.1."))
 
 # ============================================================================
 # P5A i P5B — ZEPSUJ BLOK, SZUKAJ DROGI

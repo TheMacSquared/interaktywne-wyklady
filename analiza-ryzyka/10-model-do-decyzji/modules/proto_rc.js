@@ -56,7 +56,7 @@
           var miss = 1 - sens;
           var postOk = isFinite(post) ? post : 0;
 
-          var body = bar(52, "Wśród misji z zapotrzebowaniem", [
+          var body = bar(52, "Wśród okresów pracy z zapotrzebowaniem", [
               { name: "alarm", share: sens, cls: "i10p-fill-ok", inv: false },
               { name: "przeoczenie", share: miss, cls: "i10p-fill-bad", inv: true }
             ], "P(D | I) = " + U.fmtP(miss), "do drzewa") +
@@ -66,13 +66,13 @@
             ], "P(I | alarm) = " + U.fmtP(post), "dla operatora");
 
           ui.set("stage", U.svgWrap(800, 230,
-            "Dwa paski: wśród misji z zapotrzebowaniem przeoczenia " + U.fmtP(miss) +
+            "Dwa paski: wśród okresów pracy z zapotrzebowaniem przeoczenia " + U.fmtP(miss) +
             "; wśród alarmów zapotrzebowania " + U.fmtP(post) + ".", body));
 
-          // Częstości naturalne na n misji (bez zaokrągleń w modelu, tylko w druku).
+          // Częstości naturalne na n okresów pracy (bez zaokrągleń w modelu, tylko w druku).
           var I = prev * n;
           var pair = function (label, x) { return label + NBSP + count(x); };
-          ui.set("read", '<p class="i10p-read">na ' + thou(n) + " misji: " + [pair("alarmy prawdziwe", I * sens),
+          ui.set("read", '<p class="i10p-read">na ' + thou(n) + " okresów pracy: " + [pair("alarmy prawdziwe", I * sens),
             pair("alarmy fałszywe", (n - I) * fpr), pair("przeoczenia", I * miss)].join(" · ") + "</p>");
         }
       };

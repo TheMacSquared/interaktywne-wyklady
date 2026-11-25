@@ -90,7 +90,7 @@ c7p9_svg <- function(step) {
   aria <- c("Sto linii życia oferty A ułożonych od najkrótszej do najdłuższej.",
     "Obwiednia linii życia to krzywa niezawodności; po 1000 godzinach działa 51 ze 100.",
     "Prostokąt o podstawie 1500 godzin i wysokości 1 ma to samo pole co obszar pod krzywą niezawodności.",
-    "Oferta B: inny kształt krzywej niezawodności, to samo pole 1507 godzin.")[step]
+    "Oferta B: inny kształt krzywej niezawodności, to samo pole 1500 godzin.")[step]
   c7p_svg(860, c7pe_base + 44, aria,
     c7pe_park(t, if (b) "c7p-life-b" else "c7p-life-a"),
     c7p_axis(c7pe_x, c7pe_base + 4, seq(0, 4000, 1000), "czas pracy (h)"),
@@ -99,7 +99,7 @@ c7p9_svg <- function(step) {
       sprintf('<circle class="c7p-bad" cx="%.1f" cy="%.1f" r="5.5"/>', c7pe_x(1000), c7pe_yr(.51)),
       sprintf('<text class="c7p-mono" x="%.1f" y="%.1f" font-size="13">51 linii sięga dalej: R = 0.51</text>', c7pe_x(1000) + 12, c7pe_yr(.51) - 8)),
     if (step == 3) c7p9_box(1500, "1500 h × 1"),
-    if (step == 4) c7p9_box(1507, "1507 h × 1"))
+    if (step == 4) c7p9_box(1500, "1500 h × 1"))
 }
 
 c7p9_frames <- list(
@@ -113,8 +113,8 @@ c7p9_frames <- list(
     text = "Zamalowany obszar to suma długości linii podzielona przez ich liczbę, czyli średni czas życia. Prostokąt 1500 h × 1 ma to samo pole.",
     read = "MTTF = pole pod R(t) = 1500 h"),
   list(name = "Oferta B",
-    text = "Oferta B ma inną krzywą: mało krótkich linii, żadnej bardzo długiej. Pole wychodzi prawie to samo.",
-    read = "pole pod R(t): A 1500 h · B 1507 h")
+    text = "Oferta B ma inną krzywą: mało krótkich linii, żadnej bardzo długiej. Pole wychodzi to samo.",
+    read = "pole pod R(t): 1500 h w obu ofertach")
 )
 
 c7p_9_ui <- tagList(c7pe_css,
@@ -195,8 +195,8 @@ c7p_17b_ui <- tagList(c7pe_css,
       list(beta = 0.7, eta = c7p17b_scales[1], cls = "c", name = "β = 0.7 · hazard maleje", short = "β = 0.7"),
       list(beta = 1, eta = c7p17b_scales[2], cls = "a", name = "β = 1 · hazard stały", short = "β = 1"),
       list(beta = 2.5, eta = c7p17b_scales[3], cls = "b", name = "β = 2.5 · hazard rośnie", short = "β = 2.5"))),
-    tags$div(class = "c7p-nav", c7pe_slider("c7p17b_t", "Czas misji", 100, 3500, 1000, 50, suffix = " h")),
+    tags$div(class = "c7p-nav", c7pe_slider("c7p17b_t", "Wymagany czas pracy", 100, 3500, 1000, 50, suffix = " h")),
     c7p_out("stage"),
     tags$p(class = "c7p-read", c7p_out("read")),
     tags$p(class = "c7p-caption",
-      "Każdy park ma sto wentylatorów i średni czas życia 1500 h, więc zamalowane pola są równe. Kreska misji odcina z każdego inną liczbę linii.")))
+      "Każdy park ma sto wentylatorów i średni czas życia 1500 h, więc zamalowane pola są równe. Kreska wymaganego czasu pracy odcina z każdego inną liczbę linii.")))

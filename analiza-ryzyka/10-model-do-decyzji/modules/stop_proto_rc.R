@@ -1,6 +1,6 @@
 # PROTOTYPY PUNKTÓW STOP (2026-11-14) — grupa rc: P5A i P5B (karta detekcji, przykład 10.3) ----
 #
-#   i10p_5a_ui — Scena „10 000 misji, dwa pytania” (P5A, kadry policzone w R): ta sama
+#   i10p_5a_ui — Scena „10 000 okresów pracy, dwa pytania” (P5A, kadry policzone w R): ta sama
 #                tabela 2 × 2 czytana dwa razy. Operator czyta kolumnę alarmów
 #                (P(I | alarm)), analityk wiersz zapotrzebowań (P(D | I) = liść drzewa).
 #   i10p_5b_ui — Piaskownica „Co zmienia FPR, a co czułość” (P5B): scena JS „detektor”
@@ -9,10 +9,10 @@
 # Wymaga: stop_proto_common.R (i10p_cfg, i10p_p, i10p_num, i10p_frames_ui, i10p_scene_ui,
 # i10p_slider), R/risk_math.R (risk_bayes).
 
-# Populacja porównywalnych misji dla częstości naturalnych (10 000 misji).
+# Populacja porównywalnych okresów pracy dla częstości naturalnych (10 000 okresów pracy).
 i10p5_n <- 10000
 
-# Liczebności tabeli 2 × 2 na i10p5_n misji (wszystkie liczone z i10p_cfg).
+# Liczebności tabeli 2 × 2 na i10p5_n okresów pracy (wszystkie liczone z i10p_cfg).
 i10p5_t <- list(
   need     = i10p5_n * i10p_cfg$init,                          # zapotrzebowanie
   no_need  = i10p5_n * (1 - i10p_cfg$init),                    # brak zapotrzebowania
@@ -32,7 +32,7 @@ stopifnot(
 i10p5_thou <- function(x) format(x, big.mark = " ", scientific = FALSE, trim = TRUE)
 
 # ============================================================================
-# P5A — SCENA „10 000 MISJI, DWA PYTANIA”
+# P5A — SCENA „10 000 OKRESÓW PRACY, DWA PYTANIA”
 # ============================================================================
 
 # Geometria tabeli: kolumny (alarm, brak alarmu), wiersze (zapotrzebowanie, brak).
@@ -117,24 +117,24 @@ i10p5a_svg <- function(step) {
   )
   # Kolejność: najpierw tło i sumy, potem komórki (komórki nie nachodzą na napisy).
   aria <- c(
-    "Tabela z sumami: zapotrzebowanie 50 i brak zapotrzebowania 9950 misji.",
+    "Tabela z sumami: zapotrzebowanie 50 i brak zapotrzebowania 9950 okresów pracy.",
     sprintf("Tabela 2 na 2 z liczbami: alarm prawdziwy %s, przeoczenie %s, alarm fałszywy %s, spokój %s.",
       num(t$true_al), num(t$miss), num(t$false_al), num(t$calm)),
     sprintf("Tabela z kolumną alarmów wyróżnioną: %s alarmów prawdziwych i %s fałszywych z %s alarmów.",
       num(t$true_al), num(t$false_al), num(t$true_al + t$false_al)),
-    sprintf("Tabela z wierszem zapotrzebowań wyróżnionym: %s alarmów i %s przeoczeń z %s misji.",
+    sprintf("Tabela z wierszem zapotrzebowań wyróżnionym: %s alarmów i %s przeoczeń z %s okresów pracy.",
       num(t$true_al), num(t$miss), num(t$need))
   )[step]
   i10p_svg(800, 312, aria, paste(unlist(body), collapse = ""))
 }
 
 i10p5a_frames <- list(
-  list(name = "Misje",
-    text = sprintf("Na %s porównywalnych misji zapotrzebowanie na chłodzenie pojawia się w %s.",
+  list(name = "Okresy pracy",
+    text = sprintf("Na %s porównywalnych okresów pracy zapotrzebowanie na chłodzenie pojawia się w %s.",
       i10p5_thou(i10p5_n), i10p_num(i10p5_t$need)),
     read = NULL),
   list(name = "Alarmy",
-    text = sprintf("Detektor alarmuje w %s z %s misji z zapotrzebowaniem i w %s z %s pozostałych.",
+    text = sprintf("Detektor alarmuje w %s z %s okresów pracy z zapotrzebowaniem i w %s z %s pozostałych.",
       i10p_num(i10p5_t$true_al), i10p_num(i10p5_t$need), i10p_num(i10p5_t$false_al), i10p_num(i10p5_t$no_need)),
     read = NULL),
   list(name = "Pytanie operatora",
@@ -147,7 +147,7 @@ i10p5a_frames <- list(
       i10p_num(i10p5_t$miss), i10p_num(i10p5_t$need), i10p_p(i10p5_dI)))
 )
 
-i10p_5a_ui <- i10p_frames_ui("P5A", "pojęcie (kadry)", "10 000 misji, dwa pytania",
+i10p_5a_ui <- i10p_frames_ui("P5A", "pojęcie (kadry)", "10 000 okresów pracy, dwa pytania",
   i10p5a_frames, i10p5a_svg)
 
 # ============================================================================

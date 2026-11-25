@@ -18,20 +18,20 @@ w którym miałby zostać. Tam, gdzie są warianty, nad panelem jest notka
 | Rozdz. | Prototyp | Rodzaj | Plik | Decyzja do podjęcia |
 |---|---|---|---|---|
 | 1 | P1 „Cztery liczby na biurku” | scena | ra | miejsce: przed głosowaniem (B) czy po nim (A); stoi w obu |
-| 1 | P2 „Cztery protokoły misji” | przykłady | rb | przyjąć / odrzucić (obraz przykładu 10.1) |
+| 1 | P2 „Cztery protokoły okresu pracy” | przykłady | rb | przyjąć / odrzucić (obraz przykładu 10.1) |
 | 1 | P3 „Awaria to nie niedostępność” | przypadek brzegowy | rb | przyjąć / odrzucić; oś roku jest wymyślona |
 | 1 | P4 „Osiem pytań, osiem modeli” | domknięcie (mapa kursu) | rb | zastępuje listę „Wybierz pytanie” albo stoi obok |
-| 2 | P5A „10 000 misji, dwa pytania” | pojęcie (kadry) | rc | P5A, P5B albo oba (różne miejsca) |
+| 2 | P5A „10 000 okresów pracy, dwa pytania” | pojęcie (kadry) | rc | P5A, P5B albo oba (różne miejsca) |
 | 2 | P5B „Co zmienia FPR, a co czułość” | piaskownica | rc | zastępuje panel „Karta 1”? (jej suwaki zasilają dziś dalsze rozdziały) |
 | 2 | P6A „Zero wad w n kontrolach” | piaskownica | rg | P6A, P6B albo żaden (karta 2 nie zasila drzewa) |
 | 2 | P6B „Dziesięć razy niżej, dziesięć razy więcej” | pojęcie | rg | jak wyżej |
 | 2 | P7 „Ta sama średnia, inne ryzyko” | galeria | ra | zastępuje widget ggplot „Karta 3” |
 | 2 | P8 „Trzy polityki odnowy” | galeria | rg | przyjąć / odrzucić |
 | 3 | P9 „Redukcja schematu” | pojęcie (kadry) | re | przyjąć / odrzucić |
-| 3 | P10 „Wspólny czas misji” | piaskownica | re | zastępuje panel „Redukcja” |
-| 3 | P11B „Lejek 10 000 misji” | pojęcie (kadry) | re | P11A, P11B albo oba |
+| 3 | P10 „Wspólny czas pracy” | piaskownica | re | zastępuje panel „Redukcja” |
+| 3 | P11B „Lejek 10 000 okresów pracy” | pojęcie (kadry) | re | P11A, P11B albo oba |
 | 3 | P11A „Drzewo z liczbami” | galeria | rd | zastępuje słupki „Integracja” |
-| 3 | P12 „Tysiąc lat po trzy misje” | przypadek brzegowy | re | przyjąć / odrzucić |
+| 3 | P12 „Tysiąc lat po trzy okresy pracy” | przypadek brzegowy | re | przyjąć / odrzucić |
 | 4 | P13A „Cztery interwencje na jednej osi” | galeria | rd | P13A czy P13B; zastępuje widget „Opcje” |
 | 4 | P13B „Który liść się zmienia” | galeria | rd | jak wyżej |
 | 4 | P15 „Ranking się odwraca” | przypadek brzegowy | rd | przyjąć / odrzucić |
@@ -45,10 +45,10 @@ Pliki: `modules/stop_proto_<plik>.R` i `modules/proto_<plik>.js` (grupa `rf`
 nie ma pliku JS); wspólne narzędzia w `modules/stop_proto_common.R`
 i `modules/sceny.js`.
 
-## Parametry i odłożona unifikacja misji
+## Parametry i odłożona unifikacja okresu pracy
 
 Prototypy używają obecnych liczb i jednostek wykładu (godziny, MTTF 1500 h,
-η = 1700 h, misja 1000 h, limit demonstracyjny 0.002). Zadanie z `TODO.md`
+η = 1693 h, okres pracy 1000 h, limit demonstracyjny 0.002). Zadanie z `TODO.md`
 („10 — od modelu do decyzji”: przejście na miesiące i dane Bananpolu) nie
 zostało wykonane.
 
@@ -64,8 +64,8 @@ JS nie ma liczb modelu. Po unifikacji wystarczy zmienić `i10p_cfg` (w tym
   sam model wentylatora co `risk_mission_analysis()`; po sparametryzowaniu
   tej funkcji trzeba przekazać jej parametry z `i10p_cfg`;
 - przeczytać zdania kadrów pisane w R (P1, P2, P9, P11B, P12, P17, P18A,
-  P18B): liczby wstawia `sprintf`, ale słowa („trzy misje”, „1000 h”
-  w podpisach przykładu 10.1: zatrzymania po 0.4 i 0.2 misji) są pisane ręcznie;
+  P18B): liczby wstawia `sprintf`, ale słowa („trzy okresy pracy”, „1000 h”
+  w podpisach przykładu 10.1: zatrzymania po 0.4 i 0.2 okresu pracy) są pisane ręcznie;
 - zakresy suwaków P6A/P6B (n), P16 (limit 0.0005–0.003) i P3 (dni roku) są
   ustawione w R obok obiektów; oś P13A to `top_axis / 2`, oś P15 `0.75 · top_axis`;
 - test `tests/js/i10_sceny.test.js` ma liczby kontrolne obecnego modelu.

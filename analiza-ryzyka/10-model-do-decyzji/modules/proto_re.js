@@ -2,7 +2,7 @@
 // Kontener w R: i10p_scene_ui("P10", …, "uklad", i10p_cfg, …) w stop_proto_re.R.
 // Parametry modelu przychodzą z R w data-config (i10p_cfg); w tym pliku nie ma liczb modelu.
 //
-//   uklad — Piaskownica „Wspólny czas misji” (P10): suwak czasu misji (i10p10_t) i przełącznik
+//   uklad — Piaskownica „Wspólny czas pracy” (P10): suwak wymaganego czasu pracy (i10p10_t) i przełącznik
 //           modelu wentylatora przeliczają zasilanie, sterownik, oba wentylatory, gałąź A ∥ B i R_sys naraz
 //           na wspólnej, stałej skali 0–1.
 (function () {
@@ -53,7 +53,7 @@
       '<text class="i10p-mono" x="670" y="' + (SYS_Y + 13) + '" font-size="18" font-weight="700">' + U.fmtP(m.system_r) + "</text>" +
       U.axis(sysX, SYS_Y + 34, [0, 0.5, 1], null, ["0", "0.5", "1"]);
     return U.svgWrap(800, 300,
-      "Schemat układu chłodzenia przy czasie misji " + t + " " + cfg.unit + ": zasilanie " +
+      "Schemat układu chłodzenia przy wymaganym czasie pracy " + t + " " + cfg.unit + ": zasilanie " +
       U.fmtP(m.power_r) + ", sterownik " + U.fmtP(m.controller_r) + ", wentylatory po " + U.fmtP(m.fan_r) +
       ", gałąź A ∥ B " + U.fmtP(m.parallel_r) + ", układ " + U.fmtP(m.system_r) + ".", body);
   }

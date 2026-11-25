@@ -17,7 +17,7 @@
 # Wspólny język wizualny: schemat blokowy niezawodności (s8p_rbd) z lampką na
 # wyjściu. Linie świecą szałwią tam, dokąd da się dojść od wejścia przez
 # działające bloki; blok zepsuty jest w kolorze akcentu, z krzyżykiem w rogu.
-# Drugi motyw: kratki misji (s8p_cells), zawiedzione w kolorze akcentu.
+# Drugi motyw: kratki okresów pracy (s8p_cells), nieudane w kolorze akcentu.
 
 # Dane Bananpolu (R/bananpol.R) i liczby przykładów 8.4–8.8.
 s8p_sys <- bananpol$system
@@ -93,7 +93,7 @@ s8p_css <- tags$style(HTML("
   .s8p-tile { fill: var(--upwr-surface); stroke: var(--upwr-rule); stroke-width: 1.2; }
   .s8p-tile.is-lit { fill: color-mix(in srgb, var(--upwr-sage) 13%, var(--upwr-surface)); stroke: var(--upwr-sage); stroke-width: 2; }
   .s8p-tile.is-out { fill: color-mix(in srgb, var(--upwr-accent) 7%, var(--upwr-surface)); }
-  /* Kratki misji */
+  /* Kratki okresów pracy */
   .s8p-cell-ok { fill: color-mix(in srgb, var(--upwr-sage) 55%, var(--upwr-surface)); }
   .s8p-cell-one { fill: color-mix(in srgb, var(--upwr-cat-kurkuma) 70%, var(--upwr-surface)); }
   .s8p-cell-bad { fill: var(--upwr-accent); }
@@ -287,7 +287,7 @@ s8p_states <- function(n) {
 s8p_mask <- function(up) sum(2^(which(up) - 1))
 
 # ============================================================================
-# KRATKI MISJI
+# KRATKI OKRESÓW PRACY
 # ============================================================================
 
 # Siatka kratek: counts = c(klasa = liczba, …) w kolejności rysowania (wierszami).
