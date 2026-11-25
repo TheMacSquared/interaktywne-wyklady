@@ -112,26 +112,31 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     ),
     body = list(
       zycie_note("Dane Bananpolu",
-        "Wentylatory dojrzewalni: model wykładniczy o MTTF 1500 h oraz model Weibulla o kształcie β = 2 i skali η = 1700 h. Jednostka: godzina pracy; horyzont: czas do awarii wentylatora. Liczby są fikcyjne.")
+        "Wentylatory dojrzewalni: model wykładniczy o \\(MTTF = 1500\\) h oraz model Weibulla o kształcie \\(\\beta = 2\\) i skali \\(\\eta = 1700\\) h. Jednostka: godzina pracy; horyzont: czas do awarii wentylatora. Liczby są fikcyjne.")
     ),
     sections = list(list(
       id = "srednia", title = "Czym jest MTTF",
-      text = "MTTF (mean time to failure) to wartość oczekiwana czasu życia E(T) — jedna liczba z całego rozkładu, dokładnie tak jak E(X) = np w wykładzie o partiach. Dwa rozkłady o tej samej średniej mogą mieć zupełnie różne udziały wczesnych awarii, a dla planu utrzymania liczą się właśnie one.",
+      text = "MTTF (mean time to failure) to wartość oczekiwana czasu życia \\(E(T)\\) — jedna liczba z całego rozkładu, dokładnie tak jak \\(E(X) = np\\) w wykładzie o partiach. Dwa rozkłady o tej samej średniej mogą mieć zupełnie różne udziały wczesnych awarii, a dla planu utrzymania liczą się właśnie one.",
       body = list(
         c(
           "W dojrzewalni Bananpolu wentylator pracuje bez przerwy, a jego awaria przerywa kontrolę temperatury w komorze. Dział zakupów porównuje dwie oferty. Obie karty katalogowe podają ten sam MTTF, około 1500 godzin. Kierownik utrzymania ruchu pyta jednak o coś innego: jaka część wentylatorów dotrwa do planowego przeglądu po 1000 godzinach? Na to pytanie średnia nie odpowiada, bo nie mówi, jak awarie rozkładają się wokół niej.",
           "Żeby odpowiedzieć, musimy nazwać wielkość losową, o której mówimy. W wykładzie 05 liczyliśmy dyskretne próby do zdarzenia; tu zegar biegnie w sposób ciągły, a zdarzeniem jest awaria."
         ),
         risk_definition("7.1", "Czas życia", c(
-          "Czas życia T to nieujemna zmienna losowa mierząca czas od ustalonego początku (uruchomienia, montażu, ostatniej wymiany) do pierwszej awarii elementu. Definicja wymaga trzech ustaleń: co rozpoczyna zegar, w jakiej jednostce go mierzymy (godziny pracy, cykle, kilometry) i co uznajemy za awarię."
+          "Czas życia \\(T\\) to nieujemna zmienna losowa mierząca czas od ustalonego początku (uruchomienia, montażu, ostatniej wymiany) do pierwszej awarii elementu. Definicja wymaga trzech ustaleń: co rozpoczyna zegar, w jakiej jednostce go mierzymy (godziny pracy, cykle, kilometry) i co uznajemy za awarię."
         )),
-        risk_definition("7.2", "MTTF", c(
-          "Średni czas do awarii (MTTF, mean time to failure) to wartość oczekiwana czasu życia: MTTF = E(T). Dla zmiennej ciągłej o gęstości f(t) oblicza się ją wzorem (7.1)."
+        risk_definition("7.2", "Funkcja niezawodności", c(
+          "Funkcja niezawodności \\(R(t) = P(T > t)\\) to prawdopodobieństwo, że element przepracuje bez awarii dłużej niż \\(t\\), czyli przetrwa misję o długości \\(t\\). Wśród wielu jednakowych elementów uruchomionych jednocześnie \\(R(t)\\) jest udziałem tych, które w chwili \\(t\\) wciąż działają."
         )),
-        risk_formula("MTTF=E(T)=\\int_{0}^{\\infty} t\\,f(t)\\,dt", num = "7.1",
-          legend = c("T" = "czas życia elementu", "f(t)" = "gęstość czasu życia", "t" = "czas pracy (h)")),
-        "Gęstość f(t) i niezawodność R(t) pojawiają się tu przed formalną definicją; dokładnie zdefiniujemy je w definicji 7.4, a na razie wystarczy intuicja: f(t) opisuje, jak gęsto awarie skupiają się wokół chwili t.",
-        "Wzór (7.1) jest ciągłą wersją średniej ważonej: każdy możliwy moment awarii t mnożymy przez jego „wagę” f(t) dt i sumujemy. Wynik jest jedną liczbą. Dwie gęstości o zupełnie różnych kształtach mogą dać tę samą całkę — tak jak dwie klasy o różnym rozkładzie ocen mogą mieć tę samą średnią. Zanim policzymy, dlaczego tak jest, zagłosuj.",
+        "Pytanie kierownika utrzymania ruchu to pytanie o \\(R(1000\\,\\text{h})\\). Sama wielkość nie jest nowa: w wykładzie 06 liczyliśmy ogon \\(P(X > c) = 1 - F(c)\\), a w wykładzie 05 szansę \\(P(X > x) = (1 - p)^x\\), że zdarzenie jeszcze nie nastąpiło. Tutaj progiem jest czas misji, a ogon dostaje własną nazwę i symbol, bo wróci w każdym kolejnym wykładzie.",
+        risk_definition("7.3", "MTTF", c(
+          "Średni czas do awarii (MTTF, mean time to failure) to wartość oczekiwana czasu życia: \\(MTTF = E(T)\\). Dla zmiennej ciągłej o gęstości \\(f(t)\\) oblicza się ją wzorem (7.1)."
+        )),
+        risk_formula("⟦1|MTTF⟧=E(T)=\\int_{0}^{\\infty} ⟦2|t⟧\\,⟦3|f(t)\\,dt⟧", num = "7.1",
+          notes = list("średni czas do awarii", "moment awarii", "prawdopodobieństwo awarii wokół chwili t"),
+          note_colors = c("indygo", "bursztyn", "niebo")),
+        "Gęstość \\(f(t)\\) pojawia się tu przed formalną definicją; dokładnie zdefiniujemy ją w definicji 7.5, a na razie wystarczy intuicja: \\(f(t)\\) opisuje, jak gęsto awarie skupiają się wokół chwili \\(t\\).",
+        "Wzór (7.1) jest ciągłą wersją średniej ważonej: każdy możliwy moment awarii \\(t\\) mnożymy przez jego „wagę” \\(f(t)\\,dt\\) i sumujemy. Wynik jest jedną liczbą. Dwie gęstości o zupełnie różnych kształtach mogą dać tę samą całkę — tak jak dwie klasy o różnym rozkładzie ocen mogą mieć tę samą średnią. Zanim policzymy, dlaczego tak jest, zagłosuj.",
         risk_vote_panel("c7_vote", "c7_vote_feedback", "Czy ten sam MTTF oznacza takie samo R(1000 h)?", c("Tak" = "yes", "Nie — znaczenie ma cały rozkład" = "distribution", "Tylko dla Weibulla" = "weibull"), full_width = FALSE, correct = "distribution",
           feedback = list(
             "distribution" = lc_status(lc_verdict(tags$strong("Nie."), type = "ok"),
@@ -146,19 +151,19 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             tags$div(class = "life-offers",
               tags$section(class = "life-offer",
                 tags$p(tags$strong("Oferta A:"), " rozkład wykładniczy"),
-                tags$p("MTTF = 1500 h; ", withMathJax("\\(R(t)=e^{-t/1500}\\)"))
+                tags$p("\\(MTTF = 1500\\) h; ", withMathJax("\\(R(t)=e^{-t/1500}\\)"))
               ),
               tags$section(class = "life-offer",
                 tags$p(tags$strong("Oferta B:"), " rozkład Weibulla"),
-                tags$p("β = 2, η = 1700 h; MTTF ≈ 1507 h; ", withMathJax("\\(R(t)=\\exp[-(t/1700)^2]\\)"))
+                tags$p("\\(\\beta = 2\\), \\(\\eta = 1700\\) h; \\(MTTF \\approx 1507\\) h; ", withMathJax("\\(R(t)=\\exp[-(t/1700)^2]\\)"))
               )
             ),
             tags$p(tags$strong("Do obliczenia:"), " dla obu ofert wyznacz prawdopodobieństwo, że wentylator przepracuje bez awarii 500 h, 1000 h i 3000 h."),
-            tags$p("Wzory na R(t) wyprowadzimy w dalszych rozdziałach; tu potraktuj je jako dane z kart katalogowych.")
+            tags$p("Wzory na \\(R(t)\\) wyprowadzimy w dalszych rozdziałach; tu potraktuj je jako dane z kart katalogowych.")
           ),
           steps = c(
-            "Oferta A: R(500) = e^(-1/3) ≈ 0.717; R(1000) = e^(-2/3) ≈ 0.513; R(3000) = e^(-2) ≈ 0.135.",
-            "Oferta B: R(500) = exp[-(500/1700)²] = exp(-0.0865) ≈ 0.917; R(1000) = exp(-0.346) ≈ 0.707; R(3000) = exp(-3.114) ≈ 0.044.",
+            "Oferta A: \\(R(500) = e^{-1/3} \\approx 0.717\\); \\(R(1000) = e^{-2/3} \\approx 0.513\\); \\(R(3000) = e^{-2} \\approx 0.135\\).",
+            "Oferta B: \\(R(500) = \\exp[-(500/1700)^2] = \\exp(-0.0865) \\approx 0.917\\); \\(R(1000) = \\exp(-0.346) \\approx 0.707\\); \\(R(3000) = \\exp(-3.114) \\approx 0.044\\).",
             "Do 1000 h oferta B jest wyraźnie lepsza: przetrwa ją 71% zamiast 51% wentylatorów. Przy 3000 h kolejność się odwraca: B przetrwa 4%, A — 14%."
           ),
           answer = "Przy niemal równym MTTF niezawodność w horyzoncie 1000 h różni się o 19 punktów procentowych, a w horyzoncie 3000 h przewaga przechodzi na drugą ofertę. O wyborze decyduje czas misji, nie średnia."
@@ -190,8 +195,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
       ),
       # P3: scena badania przerwanego po 1200 h, przed definicją
       c7p_get("c7p_3_ui"),
-      risk_definition("7.3", "Obserwacja cenzorowana prawostronnie", c(
-        "Obserwacja czasu życia jest cenzorowana prawostronnie w chwili c, jeśli do chwili c element nie uległ awarii, a potem przestaliśmy go obserwować. Zapisujemy wtedy parę (c, cenzorowana) i wiemy tylko, że T > c. Obserwację zakończoną awarią zapisujemy jako (t, awaria)."
+      risk_definition("7.4", "Obserwacja cenzorowana prawostronnie", c(
+        "Obserwacja czasu życia jest cenzorowana prawostronnie w chwili \\(c\\), jeśli do chwili \\(c\\) element nie uległ awarii, a potem przestaliśmy go obserwować. Zapisujemy wtedy parę (\\(c\\), cenzorowana) i wiemy tylko, że \\(T > c\\). Obserwację zakończoną awarią zapisujemy jako (\\(t\\), awaria)."
       ))
     ),
     sections = list(
@@ -211,18 +216,19 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         id = "szacunek", title = "Jak wykorzystać obserwacje ucięte",
         body = list(
           c(
-            "Jeżeli przyjmiemy model wykładniczy, informację „co najmniej c godzin” da się wykorzystać bardzo prosto. W tym modelu hazard jest stały, więc każda godzina pracy — zakończona awarią czy nie — jest jednakowo „narażona”. Naturalny szacunek intensywności awarii to liczba awarii podzielona przez łączny czas pracy wszystkich egzemplarzy, także tych, które przetrwały badanie."
+            "Jeżeli przyjmiemy model wykładniczy, informację „co najmniej \\(c\\) godzin” da się wykorzystać bardzo prosto. W tym modelu hazard jest stały, więc każda godzina pracy — zakończona awarią czy nie — jest jednakowo „narażona”. Naturalny szacunek intensywności awarii to liczba awarii podzielona przez łączny czas pracy wszystkich egzemplarzy, także tych, które przetrwały badanie."
           ),
           zycie_note("Założenie rachunku", "Wzór (7.2) dotyczy modelu wykładniczego ze stałym hazardem. W tym przykładzie obserwację kończymy w ustalonej chwili; do sumy czasu pracy wliczamy także egzemplarze nadal działające."),
-          risk_formula("\\hat\\lambda=\\frac{d}{\\sum_{i=1}^{n} t_i},\\qquad \\widehat{MTTF}=\\frac{\\sum_{i=1}^{n} t_i}{d}", num = "7.2",
-            legend = c("d" = "liczba zaobserwowanych awarii", "t_i" = "czas obserwacji i-tego egzemplarza: do awarii albo do końca badania", "n" = "liczba badanych egzemplarzy", "\\hat\\lambda" = "oszacowana intensywność awarii (1/h)")),
+          risk_formula("⟦1|\\hat\\lambda⟧=\\frac{⟦2|d⟧}{⟦3|\\sum_{i=1}^{n} t_i⟧},\\qquad \\widehat{MTTF}=\\frac{⟦3|\\sum_{i=1}^{n} t_i⟧}{⟦2|d⟧}", num = "7.2",
+            notes = list("oszacowana intensywność awarii", "liczba awarii", "łączny czas pracy wszystkich egzemplarzy"),
+            note_colors = c("terakota", "accent", "szalwia")),
           risk_example("7.2", "Badanie przerwane po 1200 h",
             problem = "Badanie ośmiu wentylatorów przerwano po 1200 h. Awarie wystąpiły po 220, 480, 760 i 990 h; cztery egzemplarze działały do końca. Oszacuj MTTF wzorem (7.2) i porównaj z naiwną średnią z samych awarii.",
             steps = c(
-              "Czas pracy egzemplarzy z awarią: 220 + 480 + 760 + 990 = 2450 h.",
-              "Czas pracy egzemplarzy cenzorowanych: 4 · 1200 = 4800 h. Łącznie Σ tᵢ = 7250 h.",
-              "Liczba awarii d = 4, więc λ̂ = 4/7250 ≈ 0.00055 na godzinę, a MTTF ≈ 7250/4 = 1812.5 h.",
-              "Naiwna średnia z samych awarii: 2450/4 = 612.5 h."
+              "Czas pracy egzemplarzy z awarią: \\(220 + 480 + 760 + 990 = 2450\\) h.",
+              "Czas pracy egzemplarzy cenzorowanych: \\(4 \\cdot 1200 = 4800\\) h. Łącznie \\(\\sum t_i = 7250\\) h.",
+              "Liczba awarii \\(d = 4\\), więc \\(\\hat\\lambda = 4/7250 \\approx 0.00055\\) na godzinę, a \\(\\widehat{MTTF} = 7250/4 = 1812.5\\) h.",
+              "Naiwna średnia z samych awarii: \\(2450/4 = 612.5\\) h."
             ),
             answer = "Szacunek z wykorzystaniem cenzorowania to około 1813 h, naiwna średnia — 612.5 h. Szacunek (7.2) nie trafia dokładnie w średnią ośmiu rzeczywistych czasów (1368.75 h): opiera się na czterech awariach i na założeniu stałego hazardu. W przeciwieństwie do naiwnej średniej nie jest jednak zaniżony z samej konstrukcji."
           ),
@@ -254,15 +260,16 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     sections = list(
       list(
         id = "zmienna", title = "Zmienna losowa T",
-        text = "Czas życia elementu opisujemy zmienną losową T: czasem od uruchomienia do awarii. Wszystkie cztery funkcje mówią o tym samym T — dystrybuanta F(t)=P(T≤t) to prawdopodobieństwo awarii do chwili t, a niezawodność R(t)=P(T>t) to prawdopodobieństwo przetrwania poza t. O tę zmienną pytaliśmy już w głosowaniu o MTTF: średnia E(T) jest tylko jedną liczbą z całego rozkładu.",
+        text = "Czas życia elementu opisujemy zmienną losową \\(T\\): czasem od uruchomienia do awarii. Wszystkie cztery funkcje mówią o tym samym \\(T\\) — dystrybuanta \\(F(t) = P(T \\le t)\\) to prawdopodobieństwo awarii do chwili \\(t\\), a niezawodność \\(R(t) = P(T > t)\\) to prawdopodobieństwo przetrwania poza \\(t\\). O tę zmienną pytaliśmy już w głosowaniu o MTTF: średnia \\(E(T)\\) jest tylko jedną liczbą z całego rozkładu.",
         body = list(
-          risk_definition("7.4", "Dystrybuanta, niezawodność i gęstość", c(
-            "Dystrybuanta czasu życia F(t) = P(T ≤ t) to prawdopodobieństwo, że element zawiedzie najpóźniej w chwili t. Funkcja niezawodności R(t) = P(T > t) to prawdopodobieństwo, że element przetrwa chwilę t. Gęstość f(t) opisuje, jak gęsto rozłożone są momenty awarii: prawdopodobieństwo awarii w krótkim przedziale (t, t + Δt] wynosi w przybliżeniu f(t)Δt."
+          risk_definition("7.5", "Dystrybuanta i gęstość czasu życia", c(
+            "Dystrybuanta czasu życia \\(F(t) = P(T \\le t)\\) to prawdopodobieństwo, że element zawiedzie najpóźniej w chwili \\(t\\); jest dopełnieniem funkcji niezawodności \\(R(t)\\) z definicji 7.2. Gęstość \\(f(t)\\) opisuje, jak gęsto rozłożone są momenty awarii: prawdopodobieństwo awarii w krótkim przedziale \\((t,\\, t + \\Delta t]\\) wynosi w przybliżeniu \\(f(t)\\,\\Delta t\\)."
           )),
-          risk_formula("R(t)=1-F(t),\\qquad f(t)=F'(t)=-R'(t)", num = "7.3",
-            legend = c("F(t)" = "prawdopodobieństwo awarii do chwili t", "R(t)" = "prawdopodobieństwo przetrwania chwili t", "f(t)" = "gęstość momentów awarii (1/h)")),
+          risk_formula("⟦1|R(t)⟧=1-⟦2|F(t)⟧,\\qquad ⟦3|f(t)⟧=F'(t)=-R'(t)", num = "7.3",
+            notes = list("niezawodność: działa po chwili t", "dystrybuanta: zawiodło do chwili t", "gęstość momentów awarii"),
+            note_colors = c("szalwia", "accent", "niebo")),
           c(
-            "Z definicji wynika kilka własności, które warto umieć sprawdzić na każdym wykresie. R(0) = 1, bo nowy element działa. R(t) nigdy nie rośnie: kto przetrwał 2000 h, przetrwał też 1000 h, więc zdarzenie {T > 2000} zawiera się w {T > 1000}. Gdy t rośnie bez końca, R(t) dąży do zera — każdy element kiedyś zawiedzie. Gęstość jest spadkiem niezawodności w jednostce czasu: im szybciej ubywa działających egzemplarzy, tym większa f(t).",
+            "Z definicji wynika kilka własności, które warto umieć sprawdzić na każdym wykresie. \\(R(0) = 1\\), bo nowy element działa. \\(R(t)\\) nigdy nie rośnie: kto przetrwał 2000 h, przetrwał też 1000 h, więc zdarzenie \\(\\{T > 2000\\}\\) zawiera się w \\(\\{T > 1000\\}\\). Gdy \\(t\\) rośnie bez końca, \\(R(t)\\) dąży do zera — każdy element kiedyś zawiedzie. Gęstość jest spadkiem niezawodności w jednostce czasu: im szybciej ubywa działających egzemplarzy, tym większa \\(f(t)\\).",
             "Te trzy funkcje opisują jednak całą populację nowych elementów. Utrzymanie ruchu zadaje inne pytanie: ten konkretny wentylator działa już od 1000 godzin — jak ryzykowna jest dla niego najbliższa godzina? Odpowiedź wymaga warunkowania na przetrwanie."
           )
         )
@@ -272,41 +279,43 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         body = list(
           # P7: okno na parku — gęstość a hazard, przed definicją
           c7p_get("c7p_7_ui"),
-          risk_definition("7.5", "Hazard", c(
-            "Hazard (funkcja intensywności awarii) h(t) to granica ilorazu warunkowego prawdopodobieństwa awarii w przedziale (t, t + Δt], pod warunkiem przetrwania do chwili t, przez długość przedziału Δt, gdy Δt dąży do zera. Hazard mierzy chwilowe tempo awarii wśród elementów, które wciąż działają; ma jednostkę 1/h."
+          risk_definition("7.6", "Hazard", c(
+            "Hazard (funkcja intensywności awarii) \\(h(t)\\) to granica ilorazu warunkowego prawdopodobieństwa awarii w przedziale \\((t,\\, t + \\Delta t]\\), pod warunkiem przetrwania do chwili \\(t\\), przez długość przedziału \\(\\Delta t\\), gdy \\(\\Delta t\\) dąży do zera. Hazard mierzy chwilowe tempo awarii wśród elementów, które wciąż działają; ma jednostkę 1/h."
           )),
-          risk_formula("R(t)=1-F(t),\\qquad h(t)=\\frac{f(t)}{R(t)}", num = "7.4",
-            legend = c("h(t)" = "hazard w chwili t (1/h)", "f(t)" = "gęstość czasu życia", "R(t)" = "niezawodność, czyli udział elementów działających w chwili t")),
+          risk_formula("R(t)=1-F(t),\\qquad ⟦1|h(t)⟧=\\frac{⟦2|f(t)⟧}{⟦3|R(t)⟧}", num = "7.4",
+            notes = list("hazard", "gęstość: awarie na wszystkie nowe elementy", "niezawodność: elementy, które dożyły t"),
+            note_colors = c("terakota", "niebo", "szalwia")),
           risk_derivation("h(t) = f(t)/R(t)", c(
-            "Zaczynamy od prawdopodobieństwa warunkowego z wykładu 02. Zdarzenie „awaria w (t, t + Δt]” zawiera się w zdarzeniu „przetrwanie do t”, więc iloczyn obu zdarzeń to po prostu awaria w tym przedziale.",
-            "Licznik to przyrost dystrybuanty, który dla małego Δt jest w przybliżeniu równy f(t)Δt. Po podzieleniu przez Δt i przejściu do granicy zostaje iloraz gęstości i niezawodności."
+            "Zaczynamy od prawdopodobieństwa warunkowego z wykładu 02. Zdarzenie „awaria w \\((t,\\, t + \\Delta t]\\)” zawiera się w zdarzeniu „przetrwanie do \\(t\\)”, więc iloczyn obu zdarzeń to po prostu awaria w tym przedziale.",
+            "Licznik to przyrost dystrybuanty, który dla małego \\(\\Delta t\\) jest w przybliżeniu równy \\(f(t)\\,\\Delta t\\). Po podzieleniu przez \\(\\Delta t\\) i przejściu do granicy zostaje iloraz gęstości i niezawodności."
           ), lines = c(
             "P(t < T ≤ t + Δt | T > t) = P(t < T ≤ t + Δt) / P(T > t)",
             "                           = [F(t + Δt) - F(t)] / R(t)",
             "                           ≈ f(t) · Δt / R(t)",
             "h(t) = lim (Δt → 0) P(t < T ≤ t + Δt | T > t) / Δt = f(t) / R(t)"
           )),
-          "Wzór (7.4) mówi, że gęstość i hazard różnią się tylko mianownikiem. Gęstość odpowiada na pytanie „jaka część wszystkich nowych elementów zawiedzie w okolicy chwili t”, hazard — „jaka część tych, które dożyły t”. Gdy działających zostaje mało, R(t) w mianowniku jest małe i hazard może być duży, choć gęstość jest już niewielka.",
+          "Wzór (7.4) mówi, że gęstość i hazard różnią się tylko mianownikiem. Gęstość odpowiada na pytanie „jaka część wszystkich nowych elementów zawiedzie w okolicy chwili \\(t\\)”, hazard — „jaka część tych, które dożyły \\(t\\)”. Gdy działających zostaje mało, \\(R(t)\\) w mianowniku jest małe i hazard może być duży, choć gęstość jest już niewielka.",
           zycie_functions_table,
-          zycie_note("Jednostki: prawdopodobieństwo a tempo awarii", "F(t) i R(t) są bezwymiarowymi prawdopodobieństwami. Gęstość f(t) i hazard h(t) mają jednostkę 1/h, gdy czas mierzymy w godzinach. Hazard nie jest prawdopodobieństwem i może być większy od 1/h: dopiero h(t)Δt przybliża prawdopodobieństwo awarii w krótkim przedziale, warunkowo dla działającego elementu."),
-          risk_formula("P(t<T\\le t+\\Delta t\\mid T>t)\\approx h(t)\\Delta t", num = "7.5",
-            legend = c("\\Delta t" = "krótki przedział czasu, w którym hazard jest prawie stały")),
-          zycie_note("Granica modelu: pierwsza awaria a naprawy", "Niezawodność R(t) pyta o przetrwanie całej misji bez awarii. Gotowość pyta, czy funkcja jest dostępna w danej chwili, także po naprawach. Liczba kolejnych awarii na godzinę w systemie naprawialnym opisuje proces zliczający; nie jest automatycznie hazardem czasu do pierwszej awarii. MTTF dotyczy pierwszej awarii, MTBF odstępów między awariami; nie mieszaj tych wielkości."),
+          zycie_note("Jednostki: prawdopodobieństwo a tempo awarii", "\\(F(t)\\) i \\(R(t)\\) są bezwymiarowymi prawdopodobieństwami. Gęstość \\(f(t)\\) i hazard \\(h(t)\\) mają jednostkę 1/h, gdy czas mierzymy w godzinach. Hazard nie jest prawdopodobieństwem i może być większy od 1/h: dopiero \\(h(t)\\,\\Delta t\\) przybliża prawdopodobieństwo awarii w krótkim przedziale, warunkowo dla działającego elementu."),
+          risk_formula("P(⟦1|t<T\\le t+\\Delta t⟧\\mid ⟦2|T>t⟧)\\approx ⟦3|h(t)⟧\\,⟦4|\\Delta t⟧", num = "7.5",
+            notes = list("awaria w najbliższym krótkim przedziale", "warunek: działa w chwili t", "hazard", "długość przedziału"),
+            note_colors = c("accent", "szalwia", "terakota", "niebo"), above = c(2, 4)),
+          zycie_note("Granica modelu: pierwsza awaria a naprawy", "Niezawodność \\(R(t)\\) pyta o przetrwanie całej misji bez awarii. Gotowość pyta, czy funkcja jest dostępna w danej chwili, także po naprawach. Liczba kolejnych awarii na godzinę w systemie naprawialnym opisuje proces zliczający; nie jest automatycznie hazardem czasu do pierwszej awarii. MTTF dotyczy pierwszej awarii, MTBF odstępów między awariami; nie mieszaj tych wielkości."),
           risk_example("7.3", "Cztery funkcje w jednej chwili",
-            problem = "Wentylator ma wykładniczy czas życia z MTTF = 1500 h, czyli R(t) = e^(-t/1500). Oblicz F(1000), R(1000), f(1000) i h(1000). Następnie oszacuj prawdopodobieństwo, że wentylator, który działa po 1000 h, zawiedzie w ciągu najbliższych 10 h.",
+            problem = "Wentylator ma wykładniczy czas życia z \\(MTTF = 1500\\) h, czyli \\(R(t) = e^{-t/1500}\\). Oblicz \\(F(1000)\\), \\(R(1000)\\), \\(f(1000)\\) i \\(h(1000)\\). Następnie oszacuj prawdopodobieństwo, że wentylator, który działa po 1000 h, zawiedzie w ciągu najbliższych 10 h.",
             steps = c(
-              "R(1000) = e^(-1000/1500) ≈ 0.513, więc F(1000) = 1 - 0.513 ≈ 0.487.",
-              "Ze wzoru (7.3): f(t) = -R'(t) = (1/1500) · e^(-t/1500), więc f(1000) ≈ 0.513/1500 ≈ 0.000342 na godzinę.",
-              "Ze wzoru (7.4): h(1000) = f(1000)/R(1000) = 1/1500 ≈ 0.000667 na godzinę.",
-              "Ze wzoru (7.5): P(awarii w ciągu 10 h | działa po 1000 h) ≈ 0.000667 · 10 ≈ 0.0067. Dokładnie: 1 - e^(-10/1500) ≈ 0.0066 — przybliżenie jest bardzo dobre, bo przedział jest krótki."
+              "\\(R(1000) = e^{-1000/1500} \\approx 0.513\\), więc \\(F(1000) = 1 - 0.513 \\approx 0.487\\).",
+              "Ze wzoru (7.3): \\(f(t) = -R'(t) = \\tfrac{1}{1500}\\, e^{-t/1500}\\), więc \\(f(1000) \\approx 0.513/1500 \\approx 0.000342\\) na godzinę.",
+              "Ze wzoru (7.4): \\(h(1000) = f(1000)/R(1000) = 1/1500 \\approx 0.000667\\) na godzinę.",
+              "Ze wzoru (7.5): \\(P(\\text{awarii w ciągu 10 h} \\mid \\text{działa po 1000 h}) \\approx 0.000667 \\cdot 10 \\approx 0.0067\\). Dokładnie: \\(1 - e^{-10/1500} \\approx 0.0066\\) — przybliżenie jest bardzo dobre, bo przedział jest krótki."
             ),
-            answer = "F ≈ 0.487, R ≈ 0.513, f ≈ 0.00034/h, h ≈ 0.00067/h. Hazard jest prawie dwa razy większy od gęstości, bo odnosi się tylko do połowy populacji, która dożyła 1000 h."
+            answer = "\\(F \\approx 0.487\\), \\(R \\approx 0.513\\), \\(f \\approx 0.00034\\) na godzinę, \\(h \\approx 0.00067\\) na godzinę. Hazard jest prawie dwa razy większy od gęstości, bo odnosi się tylko do połowy populacji, która dożyła 1000 h."
           ),
-          zycie_try("zostaw model A (stały hazard) i przesuwaj czas t od 0 do 4000 h. Porównaj, jak zmieniają się F(t) i R(t) na górnym wykresie oraz jak przebiegają f(t) i h(t) na dolnym. Potem przełącz na model B i sprawdź, co dzieje się z hazardem."),
+          zycie_try("zostaw model A (stały hazard) i przesuwaj czas \\(t\\) od 0 do 4000 h. Porównaj, jak zmieniają się \\(F(t)\\) i \\(R(t)\\) na górnym wykresie oraz jak przebiegają \\(f(t)\\) i \\(h(t)\\) na dolnym. Potem przełącz na model B i sprawdź, co dzieje się z hazardem."),
           # P8: cztery funkcje bez przeskalowania
           c7p_get("c7p_8_ui"),
           zycie_reading(c(
-            "Dla t = 1000 h panel pokazuje F ≈ 0.487, R ≈ 0.513, f ≈ 0.000342 na godzinę i h ≈ 0.000667 na godzinę, jak w przykładzie 7.3. Suma F i R zawsze wynosi 1. Gęstość i hazard mają jednostkę 1/h, dlatego stoją na osobnym wykresie. W modelu A hazard jest poziomą linią, a gęstość zaczyna się w tym samym punkcie i opada razem z R(t), bo f(t) = h(t) · R(t). W modelu B hazard rośnie od zera.",
+            "Dla \\(t = 1000\\) h panel pokazuje \\(F \\approx 0.487\\), \\(R \\approx 0.513\\), \\(f \\approx 0.000342\\) na godzinę i \\(h \\approx 0.000667\\) na godzinę, jak w przykładzie 7.3. Suma \\(F\\) i \\(R\\) zawsze wynosi 1. Gęstość i hazard mają jednostkę 1/h, dlatego stoją na osobnym wykresie. W modelu A hazard jest poziomą linią, a gęstość zaczyna się w tym samym punkcie i opada razem z \\(R(t)\\), bo \\(f(t) = h(t) \\cdot R(t)\\). W modelu B hazard rośnie od zera.",
             "Najważniejsza obserwacja: gęstość maleje, choć hazard stoi w miejscu. Mniej awarii w okolicy 3000 h nie oznacza, że stare wentylatory są bezpieczniejsze — po prostu mało który dożył tego wieku. O ryzyku dla działającego egzemplarza mówi hazard, nie gęstość."
           )),
           risk_check("c7_chk_gestosc",
@@ -323,35 +332,38 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         body = list(
           c(
             "Wzór (7.4) można odwrócić. Inżynier często zna nie gęstość, lecz mechanizm: wie, że hazard jest stały, rośnie liniowo z wiekiem albo maleje po docieraniu. Z takiej hipotezy o hazardzie da się jednoznacznie odtworzyć niezawodność, a z niej — gęstość i średnią. Dzięki temu cztery funkcje naprawdę są czterema widokami jednego obiektu.",
-            "Kluczowa jest skumulowana funkcja hazardu H(t) — pole pod krzywą hazardu od zera do t. Mierzy ona łączne „narażenie” elementu na awarię od chwili uruchomienia."
+            "Kluczowa jest skumulowana funkcja hazardu \\(H(t)\\) — pole pod krzywą hazardu od zera do \\(t\\). Mierzy ona łączne „narażenie” elementu na awarię od chwili uruchomienia."
           ),
-          risk_formula("H(t)=\\int_{0}^{t} h(u)\\,du,\\qquad R(t)=e^{-H(t)}", num = "7.6",
-            legend = c("H(t)" = "skumulowany hazard do chwili t (bezwymiarowy)", "h(u)" = "hazard w chwili u")),
+          risk_formula("⟦1|H(t)⟧=\\int_{0}^{t} ⟦2|h(u)⟧\\,du,\\qquad ⟦3|R(t)⟧=e^{-⟦1|H(t)⟧}", num = "7.6",
+            notes = list("skumulowany hazard: pole pod hazardem", "hazard", "niezawodność"),
+            note_colors = c("bursztyn", "terakota", "szalwia")),
           risk_derivation("R(t) = e^(-H(t))", c(
-            "Ze wzorów (7.3) i (7.4) hazard to -R'(t)/R(t), czyli pochodna funkcji -ln R(t). Całkujemy od 0 do t i korzystamy z tego, że R(0) = 1, więc ln R(0) = 0."
+            "Ze wzorów (7.3) i (7.4) hazard to \\(-R'(t)/R(t)\\), czyli pochodna funkcji \\(-\\ln R(t)\\). Całkujemy od 0 do \\(t\\) i korzystamy z tego, że \\(R(0) = 1\\), więc \\(\\ln R(0) = 0\\)."
           ), lines = c(
             "h(t) = f(t)/R(t) = -R'(t)/R(t) = -[ln R(t)]'",
             "∫₀ᵗ h(u) du = -ln R(t) + ln R(0) = -ln R(t)",
             "R(t) = exp(-H(t))"
           )),
-          "Ta sama logika daje drugi, często wygodniejszy wzór na MTTF. Zamiast całkować t · f(t), wystarczy zsumować pole pod krzywą niezawodności.",
+          "Ta sama logika daje drugi, często wygodniejszy wzór na MTTF. Zamiast całkować \\(t \\cdot f(t)\\), wystarczy zsumować pole pod krzywą niezawodności.",
           lc_h3("Średnia jako pole pod niezawodnością"),
-          risk_formula("MTTF=\\int_{0}^{\\infty} R(t)\\,dt", num = "7.7"),
+          risk_formula("⟦1|MTTF⟧=⟦2|\\int_{0}^{\\infty}⟧ ⟦3|R(t)⟧\\,dt", num = "7.7",
+            notes = list("średni czas do awarii", "pole pod krzywą", "niezawodność"),
+            note_colors = c("indygo", "bursztyn", "szalwia")),
           risk_derivation("MTTF jako pole pod R(t)", c(
-            "Czas życia T można zapisać jako „sumę” jedynek: dla każdej chwili t < T element jeszcze działa. Formalnie T = ∫₀^∞ 1{T > t} dt, gdzie 1{T > t} równa się 1, gdy element działa w chwili t, i 0 w przeciwnym razie.",
-            "Wartość oczekiwana wskaźnika to prawdopodobieństwo zdarzenia, więc E(1{T > t}) = R(t). Zamiana kolejności wartości oczekiwanej i całki daje wzór (7.7)."
+            "Czas życia \\(T\\) można zapisać jako „sumę” jedynek: dla każdej chwili \\(t < T\\) element jeszcze działa. Formalnie \\(T = \\int_0^\\infty \\mathbf{1}\\{T > t\\}\\,dt\\), gdzie \\(\\mathbf{1}\\{T > t\\}\\) równa się 1, gdy element działa w chwili \\(t\\), i 0 w przeciwnym razie.",
+            "Wartość oczekiwana wskaźnika to prawdopodobieństwo zdarzenia, więc \\(E(\\mathbf{1}\\{T > t\\}) = R(t)\\). Zamiana kolejności wartości oczekiwanej i całki daje wzór (7.7)."
           )),
           # P9: MTTF jako pole pod R(t) — kadry na parku
           c7p_get("c7p_9_ui"),
           risk_example("7.4", "Hazard rośnie liniowo",
-            problem = "Utrzymanie ruchu zakłada, że hazard wentylatora rośnie proporcjonalnie do wieku: h(t) = 2t/1700² na godzinę. Wyznacz R(t) i oblicz R(1000) oraz h(1000).",
+            problem = "Utrzymanie ruchu zakłada, że hazard wentylatora rośnie proporcjonalnie do wieku: \\(h(t) = 2t/1700^2\\) na godzinę. Wyznacz \\(R(t)\\) i oblicz \\(R(1000)\\) oraz \\(h(1000)\\).",
             steps = c(
-              "Ze wzoru (7.6): H(t) = ∫₀ᵗ 2u/1700² du = t²/1700² = (t/1700)².",
-              "R(t) = exp[-(t/1700)²]. To dokładnie model oferty B z przykładu 7.1.",
-              "H(1000) = (1000/1700)² ≈ 0.346, więc R(1000) = e^(-0.346) ≈ 0.707.",
-              "h(1000) = 2 · 1000/1700² ≈ 0.000692 na godzinę — niemal tyle samo co stały hazard oferty A (0.000667)."
+              "Ze wzoru (7.6): \\(H(t) = \\int_0^t 2u/1700^2\\,du = t^2/1700^2 = (t/1700)^2\\).",
+              "\\(R(t) = \\exp[-(t/1700)^2]\\). To dokładnie model oferty B z przykładu 7.1.",
+              "\\(H(1000) = (1000/1700)^2 \\approx 0.346\\), więc \\(R(1000) = e^{-0.346} \\approx 0.707\\).",
+              "\\(h(1000) = 2 \\cdot 1000/1700^2 \\approx 0.000692\\) na godzinę — niemal tyle samo co stały hazard oferty A (0.000667)."
             ),
-            answer = "R(1000) ≈ 0.707. W chwili 1000 h oba modele mają prawie równy hazard, ale oferta B dochodzi do niego od zera, więc do tego momentu zgromadziła mniejszy skumulowany hazard (0.346 wobec 0.667) i ma wyższą niezawodność."
+            answer = "\\(R(1000) \\approx 0.707\\). W chwili 1000 h oba modele mają prawie równy hazard, ale oferta B dochodzi do niego od zera, więc do tego momentu zgromadziła mniejszy skumulowany hazard (0.346 wobec 0.667) i ma wyższą niezawodność."
           ),
           # P10: pole pod hazardem decyduje o niezawodności
           c7p_get("c7p_10_ui")
@@ -364,40 +376,42 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     lead = "Stały hazard daje model bez pamięci; suma k takich etapów daje rozkład gamma, a dla całkowitego k — Erlanga.",
     intro = c(
       "Najprostsza hipoteza o hazardzie brzmi: jest stały. Element nie dociera się i nie zużywa — psuje się od losowych zaburzeń, które w każdej godzinie są tak samo prawdopodobne. Ta hipoteza wyznacza dokładnie jeden rozkład: wykładniczy, ciągły odpowiednik geometrycznego z wykładu piątego.",
-      "Konsekwencją stałego hazardu jest brak pamięci: wentylator pracujący od 1000 godzin ma przed sobą dokładnie taki sam rozkład dalszego życia jak fabrycznie nowy. Jeśli dane pokazują, że stare egzemplarze psują się częściej niż nowe, model wykładniczy jest z góry wykluczony — żaden dobór λ tego nie naprawi."
+      "Konsekwencją stałego hazardu jest brak pamięci: wentylator pracujący od 1000 godzin ma przed sobą dokładnie taki sam rozkład dalszego życia jak fabrycznie nowy. Jeśli dane pokazują, że stare egzemplarze psują się częściej niż nowe, model wykładniczy jest z góry wykluczony — żaden dobór \\(\\lambda\\) tego nie naprawi."
     ),
     sections = list(
       list(
         id = "staly-hazard", title = "Stały hazard",
         body = list(
           c(
-            "Ze wzoru (7.6) hipoteza „hazard równy stałej λ” od razu wyznacza niezawodność: skumulowany hazard rośnie liniowo, H(t) = λt, więc R(t) = e^(-λt). Gęstość jest pochodną dystrybuanty, a MTTF — polem pod krzywą niezawodności ze wzoru (7.7), czyli ∫₀^∞ e^(-λt) dt = 1/λ. Cały rozkład wyznacza jedna liczba."
+            "Ze wzoru (7.6) hipoteza „hazard równy stałej \\(\\lambda\\)” od razu wyznacza niezawodność: skumulowany hazard rośnie liniowo, \\(H(t) = \\lambda t\\), więc \\(R(t) = e^{-\\lambda t}\\). Gęstość jest pochodną dystrybuanty, a MTTF — polem pod krzywą niezawodności ze wzoru (7.7), czyli \\(\\int_0^\\infty e^{-\\lambda t}\\,dt = 1/\\lambda\\). Cały rozkład wyznacza jedna liczba."
           ),
-          risk_definition("7.6", "Rozkład wykładniczy", c(
-            "Czas życia T ma rozkład wykładniczy z parametrem λ > 0 (intensywnością awarii), jeśli jego hazard jest stały i równy λ. Gęstość, niezawodność i średnią podaje wzór (7.8)."
+          risk_definition("7.7", "Rozkład wykładniczy", c(
+            "Czas życia \\(T\\) ma rozkład wykładniczy z parametrem \\(\\lambda > 0\\) (intensywnością awarii), jeśli jego hazard jest stały i równy \\(\\lambda\\). Gęstość, niezawodność i średnią podaje wzór (7.8)."
           )),
-          risk_formula("f(t)=\\lambda e^{-\\lambda t},\\qquad R(t)=e^{-\\lambda t},\\qquad h(t)=\\lambda,\\qquad MTTF=1/\\lambda", num = "7.8",
-            legend = c("\\lambda" = "stała intensywność awarii (1/h)", "t" = "czas pracy (h)")),
+          risk_formula("⟦1|f(t)⟧=\\lambda e^{-\\lambda t},\\qquad ⟦2|R(t)⟧=e^{-\\lambda t},\\qquad ⟦3|h(t)=\\lambda⟧,\\qquad ⟦4|MTTF=1/\\lambda⟧", num = "7.8",
+            notes = list("gęstość", "niezawodność", "stały hazard", "średni czas do awarii"),
+            note_colors = c("niebo", "szalwia", "terakota", "indygo"), above = c(2, 4)),
           risk_derivation("wykładniczy jako granica geometrycznego", c(
-            "Podzielmy czas pracy na krótkie kroki długości Δ, na przykład jednej godziny. Jeśli w każdym kroku awaria zdarza się niezależnie z prawdopodobieństwem p = λΔ, liczba kroków do awarii ma rozkład geometryczny z wykładu 05, a ze wzoru (5.2) P(X > n) = (1 - p)ⁿ.",
-            "Chwila t odpowiada n = t/Δ krokom. Gdy kroki stają się coraz krótsze, (1 - λΔ)^(t/Δ) dąży do e^(-λt). Dla MTTF = 1500 h i kroków godzinnych (1 - 1/1500)¹⁰⁰⁰ ≈ 0.5133, a dokładne e^(-1000/1500) ≈ 0.5134."
+            "Podzielmy czas pracy na krótkie kroki długości \\(\\Delta\\), na przykład jednej godziny. Jeśli w każdym kroku awaria zdarza się niezależnie z prawdopodobieństwem \\(p = \\lambda\\Delta\\), liczba kroków do awarii ma rozkład geometryczny z wykładu 05, a ze wzoru (5.2) \\(P(X > n) = (1 - p)^n\\).",
+            "Chwila \\(t\\) odpowiada \\(n = t/\\Delta\\) krokom. Gdy kroki stają się coraz krótsze, \\((1 - \\lambda\\Delta)^{t/\\Delta}\\) dąży do \\(e^{-\\lambda t}\\). Dla \\(MTTF = 1500\\) h i kroków godzinnych \\((1 - 1/1500)^{1000} \\approx 0.5133\\), a dokładne \\(e^{-1000/1500} \\approx 0.5134\\)."
           ), lines = c(
             "P(T > t) ≈ (1 - λΔ)^(t/Δ)",
             "ln P(T > t) ≈ (t/Δ) · ln(1 - λΔ) ≈ (t/Δ) · (-λΔ) = -λt",
             "P(T > t) → e^(-λt)   gdy Δ → 0"
           )),
           c(
-            "Wykładniczy dziedziczy po geometrycznym najważniejszą własność. We wzorze (5.4) pokazaliśmy, że seria kontroli bez wykrycia nie przybliża wykrycia. W czasie ciągłym brzmi to tak: jeśli element przetrwał s godzin, prawdopodobieństwo, że przetrwa jeszcze t godzin, jest takie samo jak dla elementu nowego."
+            "Wykładniczy dziedziczy po geometrycznym najważniejszą własność. We wzorze (5.4) pokazaliśmy, że seria kontroli bez wykrycia nie przybliża wykrycia. W czasie ciągłym brzmi to tak: jeśli element przetrwał \\(s\\) godzin, prawdopodobieństwo, że przetrwa jeszcze \\(t\\) godzin, jest takie samo jak dla elementu nowego."
           ),
           lc_h3("Brak pamięci: przyszłość działającego elementu"),
-          risk_formula("P(T>s+t\\mid T>s)=P(T>t)=e^{-\\lambda t}", num = "7.9",
-            legend = c("s" = "czas, który element już przepracował", "t" = "dodatkowy czas pracy")),
+          risk_formula("P(⟦1|T>s+t⟧\\mid ⟦2|T>s⟧)=⟦3|P(T>t)⟧=e^{-\\lambda t}", num = "7.9",
+            notes = list("przetrwa jeszcze t godzin", "warunek: przepracował już s godzin", "jak nowy element"),
+            note_colors = c("szalwia", "wrzos", "indygo")),
           # P11: ocalali wyglądają jak nowi
           c7p_get("c7p_11_ui"),
-          "Dowód jest przepisaniem dowodu wzoru (5.4): P(T > s + t | T > s) = R(s + t)/R(s) = e^(-λ(s+t)) / e^(-λs) = e^(-λt). W języku hazardu brak pamięci jest oczywisty — skoro ryzyko najbliższej chwili nie zależy od wieku, to dalsza przyszłość elementu też od niego nie zależy.",
+          "Dowód jest przepisaniem dowodu wzoru (5.4): \\(P(T > s + t \\mid T > s) = R(s + t)/R(s) = e^{-\\lambda(s+t)} / e^{-\\lambda s} = e^{-\\lambda t}\\). W języku hazardu brak pamięci jest oczywisty — skoro ryzyko najbliższej chwili nie zależy od wieku, to dalsza przyszłość elementu też od niego nie zależy.",
           risk_example("7.5", "Wentylator po 1000 godzinach",
             problem = list(
-              "Wentylator o wykładniczym czasie życia z MTTF = 1500 h przepracował bez awarii 1000 h.",
+              "Wentylator o wykładniczym czasie życia z \\(MTTF = 1500\\) h przepracował bez awarii 1000 h.",
               risk_parts(
                 "Jakie jest prawdopodobieństwo, że przetrwa kolejne 500 h?",
                 "Porównaj z nowym wentylatorem.",
@@ -406,17 +420,17 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             ),
             steps_type = "a",
             steps = c(
-              "Ze wzoru (7.9): P(T > 1500 | T > 1000) = e^(-500/1500) = e^(-1/3) ≈ 0.717.",
-              "Nowy wentylator: R(500) = e^(-1/3) ≈ 0.717 — dokładnie to samo.",
-              "F(MTTF) = 1 - e^(-λ · 1/λ) = 1 - e⁻¹ ≈ 0.632. Mediana m spełnia e^(-m/1500) = 0.5, więc m = 1500 · ln 2 ≈ 1040 h."
+              "Ze wzoru (7.9): \\(P(T > 1500 \\mid T > 1000) = e^{-500/1500} = e^{-1/3} \\approx 0.717\\).",
+              "Nowy wentylator: \\(R(500) = e^{-1/3} \\approx 0.717\\) — dokładnie to samo.",
+              "\\(F(MTTF) = 1 - e^{-\\lambda \\cdot 1/\\lambda} = 1 - e^{-1} \\approx 0.632\\). Mediana \\(m\\) spełnia \\(e^{-m/1500} = 0.5\\), więc \\(m = 1500 \\cdot \\ln 2 \\approx 1040\\) h."
             ),
             answer = "(a) i (b) około 0.717; (c) około 63% wentylatorów zawodzi przed upływem średniej, a połowa — przed 1040 h. Średnią 1500 h podnoszą rzadkie, bardzo długie życia z prawego ogona, jak w rozkładzie geometrycznym."
           ),
-          zycie_try("zmieniaj MTTF od 300 do 4000 h i obserwuj wartość R(1000 h) w panelu. Sprawdź, dla jakiego MTTF niezawodność w horyzoncie 1000 h przekracza 0.7."),
+          zycie_try("zmieniaj MTTF od 300 do 4000 h i obserwuj wartość \\(R(1000\\,\\text{h})\\) w panelu. Sprawdź, dla jakiego MTTF niezawodność w horyzoncie 1000 h przekracza 0.7."),
           # P12: piaskownica stałego hazardu w przeglądarce
           c7p_get("c7p_12_ui"),
           zycie_reading(c(
-            "Przy MTTF = 1500 h panel pokazuje R(1000 h) ≈ 0.513. Podwojenie MTTF do 3000 h podnosi tę wartość do około 0.717, a MTTF = 4000 h daje około 0.779. Przy MTTF = 500 h niezawodność w horyzoncie 1000 h spada do 0.135. Kształt krzywej zawsze jest ten sam — zmienia się tylko skala osi czasu, a w chwili t = MTTF krzywa przechodzi przez e⁻¹ ≈ 0.368.",
+            "Przy \\(MTTF = 1500\\) h panel pokazuje \\(R(1000\\,\\text{h}) \\approx 0.513\\). Podwojenie MTTF do 3000 h podnosi tę wartość do około 0.717, a \\(MTTF = 4000\\) h daje około 0.779. Przy \\(MTTF = 500\\) h niezawodność w horyzoncie 1000 h spada do 0.135. Kształt krzywej zawsze jest ten sam — zmienia się tylko skala osi czasu, a w chwili \\(t = MTTF\\) krzywa przechodzi przez \\(e^{-1} \\approx 0.368\\).",
             "Ta sztywność jest zaletą i wadą zarazem. Zaletą, bo jeden parametr łatwo oszacować ze wzoru (7.2). Wadą, bo model nie ma czym opisać docierania ani zużycia. Jeśli dane pokazują starzenie, trzeba sięgnąć po rodzinę z dodatkowym parametrem kształtu."
           )),
           risk_check("c7_chk_pamiec",
@@ -432,39 +446,42 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
       list(
         id = "gamma", title = "Rozkład gamma i przypadek Erlanga",
         text = c(
-          "W wykładzie piątym czekaliśmy na r-te wykrycie, licząc dyskretne próby; gamma robi to samo w czasie ciągłym. Liczbę zdarzeń, na którą czekamy, oznaczamy tu przez k — to ta sama wielkość co r z wykładu piątego. Model zdarzeń w czasie nazywamy jednorodnym procesem Poissona, gdy zdarzenia pojawiają się pojedynczo, ze stałą intensywnością λ, a liczby zdarzeń w rozłącznych odcinkach czasu są niezależne; liczba zdarzeń w przedziale [0, t] ma wtedy rozkład Poissona o średniej λt. W jednorodnym procesie Poissona o intensywności λ czas do k-tego zdarzenia jest sumą k niezależnych czasów wykładniczych o tej samej intensywności — tak jak ujemny dwumianowy był sumą k oczekiwań geometrycznych. Ta paralela to nie przypadek, lecz ta sama konstrukcja w dwóch skalach czasu.",
-          "Erlang jest rozkładem gamma o całkowitym parametrze kształtu k: sumą k niezależnych etapów o wykładniczych czasach — na przykład czasem do k-tej awarii w jednorodnym procesie Poissona. Ogólny rozkład gamma dopuszcza dowolne k>0. Kształt niecałkowity traci interpretację etapów, ale pozwala modelować hazard rosnący (k>1) albo malejący (k<1) i dopasowywać rozkład do danych bez sztucznego zaokrąglania."
+          "W wykładzie piątym czekaliśmy na \\(r\\)-te wykrycie, licząc dyskretne próby; gamma robi to samo w czasie ciągłym. Liczbę zdarzeń, na którą czekamy, oznaczamy tu przez \\(k\\) — to ta sama wielkość co \\(r\\) z wykładu piątego. Model zdarzeń w czasie nazywamy jednorodnym procesem Poissona, gdy zdarzenia pojawiają się pojedynczo, ze stałą intensywnością \\(\\lambda\\), a liczby zdarzeń w rozłącznych odcinkach czasu są niezależne; liczba zdarzeń w przedziale \\([0, t]\\) ma wtedy rozkład Poissona o średniej \\(\\lambda t\\). W jednorodnym procesie Poissona o intensywności \\(\\lambda\\) czas do \\(k\\)-tego zdarzenia jest sumą \\(k\\) niezależnych czasów wykładniczych o tej samej intensywności — tak jak ujemny dwumianowy był sumą \\(k\\) oczekiwań geometrycznych. Ta paralela to nie przypadek, lecz ta sama konstrukcja w dwóch skalach czasu.",
+          "Erlang jest rozkładem gamma o całkowitym parametrze kształtu \\(k\\): sumą \\(k\\) niezależnych etapów o wykładniczych czasach — na przykład czasem do \\(k\\)-tej awarii w jednorodnym procesie Poissona. Ogólny rozkład gamma dopuszcza dowolne \\(k > 0\\). Kształt niecałkowity traci interpretację etapów, ale pozwala modelować hazard rosnący (\\(k > 1\\)) albo malejący (\\(k < 1\\)) i dopasowywać rozkład do danych bez sztucznego zaokrąglania."
         ),
         body = list(
           # P13: scena magazynu z trzema zapasowymi wentylatorami
           c7p_get("c7p_13_ui"),
-          risk_definition("7.7", "Rozkład gamma", c(
-            "Czas T ma rozkład gamma z parametrem kształtu k > 0 i intensywnością λ > 0, jeśli jego gęstość dana jest wzorem (7.10). Dla całkowitego k rozkład nazywamy rozkładem Erlanga; opisuje on wtedy sumę k niezależnych czasów wykładniczych z parametrem λ. Dla k = 1 otrzymujemy rozkład wykładniczy."
+          risk_definition("7.8", "Rozkład gamma", c(
+            "Czas \\(T\\) ma rozkład gamma z parametrem kształtu \\(k > 0\\) i intensywnością \\(\\lambda > 0\\), jeśli jego gęstość dana jest wzorem (7.10). Dla całkowitego \\(k\\) rozkład nazywamy rozkładem Erlanga; opisuje on wtedy sumę \\(k\\) niezależnych czasów wykładniczych z parametrem \\(\\lambda\\). Dla \\(k = 1\\) otrzymujemy rozkład wykładniczy."
           )),
-          risk_formula("f(t)=\\frac{\\lambda^{k}t^{k-1}e^{-\\lambda t}}{\\Gamma(k)},\\qquad E(T)=k/\\lambda,\\qquad \\operatorname{Var}(T)=k/\\lambda^{2}", num = "7.10",
-            legend = c("k" = "parametr kształtu (dla Erlanga: liczba etapów)", "\\lambda" = "intensywność pojedynczego etapu (1/h)", "\\Gamma(k)" = "funkcja gamma; dla całkowitego k równa (k - 1)!")),
-          "Średnia i wariancja wynikają z tego samego rachunku co wzór (5.5): średnia sumy to suma k średnich 1/λ, a wariancja sumy niezależnych składników to suma k wariancji 1/λ². Do planowania potrzebujemy jednak prawdopodobieństwa, że k-te zdarzenie nastąpi dopiero po chwili t. Tu działa ta sama sztuczka, która w wykładzie 05 dała wzór (5.7).",
-          risk_formula("P(T_k>t)=P(N(t)\\le k-1)=\\sum_{j=0}^{k-1} e^{-\\lambda t}\\frac{(\\lambda t)^{j}}{j!}", num = "7.11",
-            legend = c("T_k" = "czas do k-tego zdarzenia", "N(t)" = "liczba zdarzeń w przedziale [0, t], rozkład Poissona o średniej λt")),
+          risk_formula("f(t)=\\frac{\\lambda^{k}t^{k-1}e^{-\\lambda t}}{⟦1|\\Gamma(k)⟧},\\qquad ⟦2|E(T)=k/\\lambda⟧,\\qquad ⟦3|\\operatorname{Var}(T)=k/\\lambda^{2}⟧", num = "7.10",
+            notes = list("funkcja gamma", "średnia", "wariancja"),
+            note_colors = c("wrzos", "indygo", "bursztyn"),
+            legend = c("k" = "parametr kształtu (dla Erlanga: liczba etapów)", "\\lambda" = "intensywność pojedynczego etapu (1/h)")),
+          "Średnia i wariancja wynikają z tego samego rachunku co wzór (5.5): średnia sumy to suma \\(k\\) średnich \\(1/\\lambda\\), a wariancja sumy niezależnych składników to suma \\(k\\) wariancji \\(1/\\lambda^2\\). Do planowania potrzebujemy jednak prawdopodobieństwa, że \\(k\\)-te zdarzenie nastąpi dopiero po chwili \\(t\\). Tu działa ta sama sztuczka, która w wykładzie 05 dała wzór (5.7).",
+          risk_formula("⟦1|P(T_k>t)⟧=⟦2|P(N(t)\\le k-1)⟧=\\sum_{j=0}^{k-1} ⟦3|e^{-\\lambda t}\\frac{(\\lambda t)^{j}}{j!}⟧", num = "7.11",
+            notes = list("k-te zdarzenie po chwili t", "do chwili t mniej niż k zdarzeń", "dokładnie j zdarzeń do chwili t (Poisson)"),
+            note_colors = c("szalwia", "wrzos", "niebo"), above = 2),
           risk_derivation("wzór (7.11)", c(
-            "k-te zdarzenie nastąpi po chwili t wtedy i tylko wtedy, gdy do chwili t zdarzeń było mniej niż k. To dwa opisy tego samego zdarzenia — jeden w języku czasu oczekiwania, drugi w języku liczby zdarzeń. Dokładnie tak we wzorze (5.7) zamienialiśmy „r-te wykrycie najpóźniej w n-tej kontroli” na „co najmniej r wykryć w n kontrolach”.",
-            "W jednorodnym procesie Poissona N(t) ma rozkład Poissona o średniej λt, więc wystarczy zsumować k pierwszych prawdopodobieństw tego rozkładu."
+            "Zdarzenie numer \\(k\\) nastąpi po chwili \\(t\\) wtedy i tylko wtedy, gdy do chwili \\(t\\) zdarzeń było mniej niż \\(k\\). To dwa opisy tego samego zdarzenia — jeden w języku czasu oczekiwania, drugi w języku liczby zdarzeń. Dokładnie tak we wzorze (5.7) zamienialiśmy „\\(r\\)-te wykrycie najpóźniej w \\(n\\)-tej kontroli” na „co najmniej \\(r\\) wykryć w \\(n\\) kontrolach”.",
+            "W jednorodnym procesie Poissona \\(N(t)\\) ma rozkład Poissona o średniej \\(\\lambda t\\), więc wystarczy zsumować \\(k\\) pierwszych prawdopodobieństw tego rozkładu."
           )),
           risk_example("7.6", "Czy zapas wentylatorów wystarczy?",
             problem = "W całej hali dojrzewalni awarie wentylatorów (z natychmiastową wymianą) pojawiają się jak jednorodny proces Poissona — średnio jedna na 500 h. Magazyn ma trzy wentylatory zapasowe; zapas wyczerpuje się w chwili trzeciej awarii. Jaki jest średni czas do wyczerpania zapasu i jakie jest prawdopodobieństwo, że zapas nie wyczerpie się przed upływem 1000 h?",
             steps = c(
-              "Czas do trzeciej awarii T₃ ma rozkład Erlanga z k = 3 i λ = 1/500 na godzinę. Ze wzoru (7.10): E(T₃) = 3 · 500 = 1500 h, a odchylenie standardowe √3 · 500 ≈ 866 h.",
-              "Ze wzoru (7.11) z λt = 1000/500 = 2: P(T₃ > 1000) = e⁻² · (1 + 2 + 2²/2) = 5e⁻² ≈ 0.677.",
-              "Dla porównania: gdyby zapas był jeden, P(T₁ > 1000) = e⁻² ≈ 0.135."
+              "Czas do trzeciej awarii \\(T_3\\) ma rozkład Erlanga z \\(k = 3\\) i \\(\\lambda = 1/500\\) na godzinę. Ze wzoru (7.10): \\(E(T_3) = 3 \\cdot 500 = 1500\\) h, a odchylenie standardowe \\(\\sqrt{3} \\cdot 500 \\approx 866\\) h.",
+              "Ze wzoru (7.11) z \\(\\lambda t = 1000/500 = 2\\): \\(P(T_3 > 1000) = e^{-2} \\cdot (1 + 2 + 2^2/2) = 5e^{-2} \\approx 0.677\\).",
+              "Dla porównania: gdyby zapas był jeden, \\(P(T_1 > 1000) = e^{-2} \\approx 0.135\\)."
             ),
             answer = "Średnio 1500 h; z prawdopodobieństwem około 0.68 zapas wystarczy na 1000 h. Mniej więcej w jednym okresie na trzy trzeba będzie zamówić wentylatory wcześniej — średnia sama nie wystarcza do planu, tak jak w wykładzie 05."
           ),
-          zycie_try("zacznij od k = 1 i porównaj kształt z krzywą wykładniczą. Potem ustaw k = 3 (przykład 7.6) i k = 8. Obserwuj, gdzie leży szczyt gęstości i jak zmienia się jej symetria."),
+          zycie_try("zacznij od \\(k = 1\\) i porównaj kształt z krzywą wykładniczą. Potem ustaw \\(k = 3\\) (przykład 7.6) i \\(k = 8\\). Obserwuj, gdzie leży szczyt gęstości i jak zmienia się jej symetria."),
           # P14: piaskownica kształtu k w przeglądarce
           c7p_get("c7p_14_ui"),
           zycie_reading(c(
-            "Wykres używa skali 500 h, czyli λ = 1/500, jak w przykładzie 7.6. Dla k = 1 gęstość jest najwyższa w zerze i opada wykładniczo. Dla k = 3 szczyt przesuwa się do (k - 1) · 500 = 1000 h, a średnia wynosi 1500 h. Dla k = 8 średnia to 4000 h, szczyt leży przy 3500 h, a kształt jest wyraźnie bardziej symetryczny — ten sam efekt, który w wykładzie 05 widzieliśmy dla ujemnego dwumianowego przy rosnącym r.",
-            "Dla k = 0.5 gęstość w pobliżu zera jest bardzo duża: ogólna gamma z k < 1 opisuje sytuację, w której wiele awarii zdarza się tuż po uruchomieniu, a hazard maleje. Takiej wartości nie da się czytać jako „pół etapu” — to już tylko parametr kształtu."
+            "Wykres używa skali 500 h, czyli \\(\\lambda = 1/500\\), jak w przykładzie 7.6. Dla \\(k = 1\\) gęstość jest najwyższa w zerze i opada wykładniczo. Dla \\(k = 3\\) szczyt przesuwa się do \\((k - 1) \\cdot 500 = 1000\\) h, a średnia wynosi 1500 h. Dla \\(k = 8\\) średnia to 4000 h, szczyt leży przy 3500 h, a kształt jest wyraźnie bardziej symetryczny — ten sam efekt, który w wykładzie 05 widzieliśmy dla ujemnego dwumianowego przy rosnącym \\(r\\).",
+            "Dla \\(k = 0.5\\) gęstość w pobliżu zera jest bardzo duża: ogólna gamma z \\(k < 1\\) opisuje sytuację, w której wiele awarii zdarza się tuż po uruchomieniu, a hazard maleje. Takiej wartości nie da się czytać jako „pół etapu” — to już tylko parametr kształtu."
           )),
           risk_check("c7_chk_gamma",
             "Awarie w hali pojawiają się średnio raz na 500 h (proces Poissona). Ile wynosi średni czas do czwartej awarii?",
@@ -474,7 +491,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             hints = c(one = "500 h to średni odstęp między kolejnymi awariami. Ile takich odstępów trzeba zsumować?", quarter = "Czekanie na więcej zdarzeń trwa dłużej, nie krócej. Wzór (7.10): E(T) = k/λ.")
           )
         ),
-        takeaway = "Most przez Poissona: przy stałej intensywności, niezależnych przyrostach i pojedynczych zdarzeniach liczba zdarzeń N(t) ma rozkład Poissona o średniej λt. Czas do pierwszego jest wykładniczy, do k-tego — Erlanga. Stała średnia liczba zgłoszeń nie wystarcza, jeśli zgłoszenia przychodzą grupami albo zależą od wcześniejszych."
+        takeaway = "Most przez Poissona: przy stałej intensywności, niezależnych przyrostach i pojedynczych zdarzeniach liczba zdarzeń \\(N(t)\\) ma rozkład Poissona o średniej \\(\\lambda t\\). Czas do pierwszego jest wykładniczy, do \\(k\\)-tego — Erlanga. Stała średnia liczba zgłoszeń nie wystarcza, jeśli zgłoszenia przychodzą grupami albo zależą od wcześniejszych."
       )
     )
   ),
@@ -499,7 +516,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           c(
             "W przykładzie 7.4 hazard rósł liniowo i otrzymaliśmy R(t) = exp[-(t/1700)²]. Uogólnijmy ten pomysł: niech skumulowany hazard będzie potęgą czasu, H(t) = (t/η)^β. Wykładnik β decyduje o tym, czy narażenie narasta coraz szybciej, równomiernie czy coraz wolniej, a η ustala, w jakiej skali czasu to się dzieje."
           ),
-          risk_definition("7.8", "Rozkład Weibulla", c(
+          risk_definition("7.9", "Rozkład Weibulla", c(
             "Czas życia T ma rozkład Weibulla z parametrem kształtu β > 0 i parametrem skali η > 0, jeśli jego skumulowany hazard wynosi H(t) = (t/η)^β, a więc niezawodność dana jest wzorem (7.12)."
           )),
           risk_formula("R(t)=\\exp[-(t/\\eta)^\\beta]", num = "7.12",
@@ -701,7 +718,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           c(
             "Kierownik utrzymania ruchu formułuje wymaganie: do chwili przeglądu awarii może doznać co najwyżej 10% wentylatorów. W języku funkcji czasu życia to warunek R(t) ≥ 0.90. Zamiast szukać terminu na wykresie metodą prób, możemy odwrócić wzór na niezawodność. W przemyśle taki czas ma własną nazwę."
           ),
-          risk_definition("7.9", "Czas życia Bq", c(
+          risk_definition("7.10", "Czas życia Bq", c(
             "Czas życia Bq to chwila, do której zawodzi q procent elementów, czyli rozwiązanie równania F(t) = q/100 albo równoważnie R(t) = 1 - q/100. Najczęściej podaje się B10 — czas, do którego przetrwa 90% egzemplarzy."
           )),
           risk_formula("t_{R^*}=\\eta\\,\\left(-\\ln R^*\\right)^{1/\\beta}", num = "7.16",

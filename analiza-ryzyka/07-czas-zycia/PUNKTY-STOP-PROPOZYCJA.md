@@ -1,5 +1,6 @@
 # Wykład 07 — propozycja punktów stop
 
+Numery definicji po 25 listopada 2026 (nowa definicja 7.2, funkcja niezawodności).
 Stan przeglądu: 14 listopada 2026, lokalny HEAD `f36fe81`.
 Prototypy wszystkich punktów i wariantów stoją w tekście wykładu ze złotą
 plakietką „Prototyp Pn · rodzaj” (stan: 14 listopada 2026); decyzje zbiera
@@ -52,19 +53,19 @@ osi wracają w punktach 2 i 21B.
 |---|---|---|---|
 | 1 | rozdz. 1, po głosowaniu, przed przykładem 7.1 (wariant: przed głosowaniem) | scena · wprowadzenie | Dwie karty katalogowe z tym samym MTTF. Sto linii życia z każdej oferty: po 1000 h działa 51 i 71, po 3000 h 14 i 4. Ta sama średnia, inna misja. |
 | 2 | rozdz. 1, po przykładzie 7.1 („Skąd bierze się ta różnica?”) | galeria | Dwie gęstości z tym samym MTTF: A najwyższa w zerze, B z garbem przy 1200 h. Pole za kreską misji 500 / 1000 / 3000 h daje liczby z przykładu 7.1. |
-| 3 | rozdz. 2, otwarcie, przed definicją 7.3 | scena · wprowadzenie | Badanie kończy się po 1200 h: cztery awarie, cztery wentylatory działają. Średnia z samych awarii to 612.5 h, a każdy z pominiętych żył dłużej niż 1200 h. |
+| 3 | rozdz. 2, otwarcie, przed definicją 7.4 | scena · wprowadzenie | Badanie kończy się po 1200 h: cztery awarie, cztery wentylatory działają. Średnia z samych awarii to 612.5 h, a każdy z pominiętych żył dłużej niż 1200 h. |
 | 4 | rozdz. 2, zamiast obecnej osi czasu | piaskownica | Koniec badania przesuwa naiwną średnią (487 → 612.5 → 1121 h), choć wentylatory są te same; prawdziwe 1368.75 h stoi w miejscu. |
 | 5 | rozdz. 2, przy wzorze (7.2) i przykładzie 7.2 | pojęcie (kadry) | Wszystkie godziny pracy sklejone w jedną taśmę 7250 h z czterema awariami: jedna awaria na 1812.5 h. Godziny działających też są w mianowniku. |
 | 6 | rozdz. 2, po przykładzie 7.2 | symulacja | Badanie ośmiu wentylatorów powtórzone wiele razy: naiwna średnia skupia się przy 520 h (nowa liczba), szacunek (7.2) rozrzuca się wokół 1500 h. Błąd naiwnej średniej jest systematyczny, nie losowy. |
-| 7 | rozdz. 3, przed definicją 7.5 (hazard) | piaskownica · wprowadzenie | Okno 300 h przesuwane po parku 200 wentylatorów: te same awarie w oknie dzielone przez wszystkie nowe (gęstość) albo przez te, które dożyły (hazard). W ofercie A drugi ułamek stoi przy 0.18, w B rośnie. |
+| 7 | rozdz. 3, przed definicją 7.6 (hazard) | piaskownica · wprowadzenie | Okno 300 h przesuwane po parku 200 wentylatorów: te same awarie w oknie dzielone przez wszystkie nowe (gęstość) albo przez te, które dożyły (hazard). W ofercie A drugi ułamek stoi przy 0.18, w B rośnie. |
 | 8 | rozdz. 3, zamiast „Wspólnego suwaka czasu” | pojęcie | Cztery funkcje w jednej chwili bez przeskalowania: F i R na osi prawdopodobieństwa, f i h na wspólnej osi 1/h. Dla t = 1000 h liczby z przykładu 7.3. |
 | 9 | rozdz. 3, przy wzorze (7.7) | pojęcie (kadry) | Linie życia ułożone rosnąco dają krzywą R(t); średnia długość linii to pole pod nią. Oferty A i B mają to samo pole i inny kształt. |
 | 10 | rozdz. 3, po przykładzie 7.4 (wzór 7.6) | pojęcie | O niezawodności decyduje pole pod hazardem do chwili t: przy 1000 h hazardy ofert są prawie równe, a pola wynoszą 0.667 i 0.346. |
 | 11 | rozdz. 4, przed wzorem (7.9) | pojęcie (kadry) | Park po 1000 h: 103 ocalałych z 200. Po wyzerowaniu ich zegara wyglądają jak nowi: 500 h dalej działa 0.72 ocalałych i 0.72 nowych. |
 | 12 | rozdz. 4, zamiast widgetu „Stały hazard” | piaskownica | MTTF tylko rozciąga oś czasu: krzywa zawsze przechodzi przez (MTTF, 0.37), więc 63% zawodzi przed średnią. |
-| 13 | rozdz. 4, otwarcie sekcji o gamma, przed definicją 7.7 | scena · wprowadzenie | Magazyn z trzema zapasowymi wentylatorami: okres po okresie trzecia awaria przychodzi średnio po 1500 h, ale w co trzecim okresie przed 1000 h. |
+| 13 | rozdz. 4, otwarcie sekcji o gamma, przed definicją 7.8 | scena · wprowadzenie | Magazyn z trzema zapasowymi wentylatorami: okres po okresie trzecia awaria przychodzi średnio po 1500 h, ale w co trzecim okresie przed 1000 h. |
 | 14 | rozdz. 4, zamiast widgetu gamma | piaskownica | Każdy kolejny etap przesuwa garb o 500 h w prawo i dokłada 500 h średniej; stałe osie, pole za 1000 h (0.677 dla k = 3). |
-| 15 | rozdz. 5, otwarcie części B, przed definicją 7.8 | scena · wprowadzenie | Trzy dzienniki awarii o tej samej średniej: w pierwszym awarie gęste na początku, w drugim równo rzedną, w trzecim zbijają się późno. Ryzyko dla działającego maleje, stoi albo rośnie. |
+| 15 | rozdz. 5, otwarcie części B, przed definicją 7.9 | scena · wprowadzenie | Trzy dzienniki awarii o tej samej średniej: w pierwszym awarie gęste na początku, w drugim równo rzedną, w trzecim zbijają się późno. Ryzyko dla działającego maleje, stoi albo rośnie. |
 | 16 | rozdz. 5, obecny panel β i η oraz tabela „Jak czytać β” | piaskownica (16A) i galeria (16B) | β obraca hazard, η tylko rozciąga oś; każda krzywa R(t) przechodzi przez (η, 0.37). |
 | 17 | rozdz. 5, obecny panel trzech modeli | piaskownica (17A) albo trzy parki (17B) | Ranking trzech modeli o MTTF 1500 h odwraca się z czasem misji: do 1830 h prowadzi β = 2.5, potem β = 1, od 2600 h β = 0.7. |
 | 18 | rozdz. 6, przed wzorem (7.15) | scena · wprowadzenie | Wentylator ma trzy zegary (lut, przepięcie, łożysko) i psuje go ten, który zadzwoni pierwszy. Wcześnie dzwoni lut, późno łożysko. |
