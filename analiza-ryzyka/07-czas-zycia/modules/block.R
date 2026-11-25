@@ -152,6 +152,22 @@ zycie_direction_table <- lc_table(
   narrow = "cards", prose = TRUE
 )
 
+# Analogia z podróżą: cztery funkcje czasu życia jako droga i prędkość.
+zycie_trip_table <- lc_table(
+  data.frame(
+    fun = c("\\(F(t)\\)", "\\(R(t)\\)", "\\(f(t) = F'(t)\\)", "\\(h(t) = f(t)/R(t)\\)"),
+    trip = c("przejechana część trasy", "część trasy, która została", "prędkość", "prędkość w stosunku do tego, co zostało"),
+    life = c("jaka część wentylatorów już zawiodła", "jaka część jeszcze działa", "w jakim tempie teraz przybywa zepsutych", "w jakim tempie teraz ubywa tych, które jeszcze działają")
+  ),
+  cols = list(
+    lc_col("fun", "Funkcja", "row"),
+    lc_col("trip", "W podróży", "text"),
+    lc_col("life", "Dla parku wentylatorów", "text")
+  ),
+  caption = "Cztery funkcje jako podróż",
+  narrow = "cards", prose = TRUE
+)
+
 # Mapa wykładu: pytania kierownika utrzymania ruchu i rozdziały, które na nie odpowiadają.
 zycie_map_table <- lc_table(
   data.frame(
@@ -398,8 +414,8 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             "Hazard (funkcja intensywności awarii) \\(h(t)\\) to granica ilorazu warunkowego prawdopodobieństwa awarii w przedziale \\((t,\\, t + \\Delta t]\\), pod warunkiem przetrwania do chwili \\(t\\), przez długość przedziału \\(\\Delta t\\), gdy \\(\\Delta t\\) dąży do zera. Hazard mierzy chwilowe tempo awarii wśród elementów, które wciąż działają; ma jednostkę 1/h."
           )),
           risk_formula("R(t)=1-F(t),\\qquad ⟦1|h(t)⟧=\\frac{⟦2|f(t)⟧}{⟦3|R(t)⟧}", num = "7.4",
-            notes = list("hazard", "gęstość: awarie na wszystkie nowe elementy", "niezawodność: elementy, które dożyły t"),
-            note_colors = c("terakota", "niebo", "szalwia")),
+            notes = list("hazard", "gęstość: awarie na wszystkie uruchomione elementy", "niezawodność: elementy, które dożyły t"),
+            note_colors = c("terakota", "niebo", "szalwia"), above = 2),
           risk_derivation("h(t) = f(t)/R(t)", c(
             "Zaczynamy od prawdopodobieństwa warunkowego z wykładu 02. Zdarzenie „awaria w \\((t,\\, t + \\Delta t]\\)” zawiera się w zdarzeniu „przetrwanie do \\(t\\)”, więc iloczyn obu zdarzeń to po prostu awaria w tym przedziale.",
             "Licznik to przyrost dystrybuanty, który dla małego \\(\\Delta t\\) jest w przybliżeniu równy \\(f(t)\\,\\Delta t\\). Po podzieleniu przez \\(\\Delta t\\) i przejściu do granicy zostaje iloraz gęstości i niezawodności."
@@ -412,6 +428,10 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           "Wzór (7.4) mówi, że gęstość i hazard różnią się tylko mianownikiem. Gęstość odpowiada na pytanie „jaka część wszystkich nowych elementów zawiedzie w okolicy chwili \\(t\\)”, hazard — „jaka część tych, które dożyły \\(t\\)”. Gdy działających zostaje mało, \\(R(t)\\) w mianowniku jest małe i hazard może być duży, choć gęstość jest już niewielka.",
           zycie_functions_table,
           zycie_note("Jednostki: prawdopodobieństwo a tempo awarii", "\\(F(t)\\) i \\(R(t)\\) są bezwymiarowymi prawdopodobieństwami. Gęstość \\(f(t)\\) i hazard \\(h(t)\\) mają jednostkę 1/h, gdy czas mierzymy w godzinach. Hazard nie jest prawdopodobieństwem i może być większy od 1/h: dopiero \\(h(t)\\,\\Delta t\\) przybliża prawdopodobieństwo awarii w krótkim przedziale, warunkowo dla działającego elementu."),
+          lc_h3("Tempo to nie wynik: analogia z prędkością"),
+          "Jednostka „na godzinę” mówi, w jakich jednostkach podajemy tempo, a nie, co się stanie w najbliższej godzinie. Tak samo jest z prędkością: 60 km/h nie znaczy, że za godzinę będziesz 60 km dalej, bo za minutę możesz hamować. To tempo w tej chwili. Gęstość i hazard są takimi chwilowymi tempami, a cała czwórka funkcji ma w podróży swoje odpowiedniki.",
+          zycie_trip_table,
+          "Ostatni wiersz tłumaczy, dlaczego gęstość i hazard się rozjeżdżają. Pod koniec podróży możesz jechać wolno (mała gęstość), ale jeśli zostały ci dwa kilometry, w kilka minut pokonasz dużą część tego, co zostało (duży hazard). I tak jak drogę dostajesz z prędkości dopiero po pomnożeniu przez czas, i to na odcinku, na którym prędkość się nie zmienia, tak prawdopodobieństwo dostajesz dopiero jako \\(f(t)\\,\\Delta t\\) albo \\(h(t)\\,\\Delta t\\) dla krótkiego \\(\\Delta t\\). Przy dużym tempie odcinek musi być krótki: element o hazardzie 2 na godzinę nie zawiedzie w ciągu godziny „z prawdopodobieństwem 2”, tylko około 0.86, a w ciągu minuty około 0.033.",
           risk_formula("P(⟦1|t<T\\le t+\\Delta t⟧\\mid ⟦2|T>t⟧)\\approx ⟦3|h(t)⟧\\,⟦4|\\Delta t⟧", num = "7.5",
             notes = list("awaria w najbliższym krótkim przedziale", "warunek: działa w chwili t", "hazard", "długość przedziału"),
             note_colors = c("accent", "szalwia", "terakota", "niebo"), above = c(2, 4)),
@@ -463,7 +483,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           lc_h3("Średnia jako pole pod niezawodnością"),
           risk_formula("⟦1|MTTF⟧=⟦2|\\int_{0}^{\\infty}⟧ ⟦3|R(t)⟧\\,dt", num = "7.7",
             notes = list("średni czas do awarii", "pole pod krzywą", "niezawodność"),
-            note_colors = c("indygo", "bursztyn", "szalwia")),
+            note_colors = c("indygo", "bursztyn", "szalwia"), above = 2),
           risk_derivation("MTTF jako pole pod R(t)", c(
             "Czas życia \\(T\\) można zapisać jako „sumę” jedynek: dla każdej chwili \\(t < T\\) element jeszcze działa. Formalnie \\(T = \\int_0^\\infty \\mathbf{1}\\{T > t\\}\\,dt\\), gdzie \\(\\mathbf{1}\\{T > t\\}\\) równa się 1, gdy element działa w chwili \\(t\\), i 0 w przeciwnym razie.",
             "Wartość oczekiwana wskaźnika to prawdopodobieństwo zdarzenia, więc \\(E(\\mathbf{1}\\{T > t\\}) = R(t)\\). Zamiana kolejności wartości oczekiwanej i całki daje wzór (7.7)."

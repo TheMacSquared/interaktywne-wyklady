@@ -15,6 +15,10 @@
 
 c7pe_css <- tags$style(HTML("
   .c7p7-hit { stroke: var(--upwr-accent) !important; stroke-width: 2.2 !important; }
+  .c7p7-brace { stroke: var(--upwr-ink-subtle); stroke-width: 1.6; fill: none; }
+  .c7p7-brace.is-alive { stroke: var(--upwr-ink); }
+  .c7p7-sym { font-family: var(--upwr-serif, Georgia, serif) !important; font-style: italic; font-size: 17px; }
+  .c7p7-halo { paint-order: stroke; stroke: var(--upwr-surface); stroke-width: 4px; }
   .c7pe-curve { stroke: var(--upwr-ink); stroke-width: 2.2; fill: none; }
   .c7pe-ghost { stroke: var(--upwr-ink); stroke-width: 1.6; stroke-dasharray: 5 4; fill: none; }
   .c7pe-box { fill: color-mix(in srgb, var(--upwr-ink) 7%, transparent); stroke: var(--upwr-ink); stroke-width: 1.6; stroke-dasharray: 6 4; }
@@ -41,13 +45,13 @@ c7p_7_ui <- tagList(c7pe_css,
       c7pe_slider("c7p7_t", "Początek okna t", 0, 3600, 1000, 100, suffix = " h"),
       c7p_seg("model", "Park", c("oferta A" = "a", "oferta B" = "b"))),
     tags$div(class = "c7pe-reads",
-      lc_readout("W oknie 300 h zawodzi", c7p_out("k"), color = upwr_accent),
-      lc_readout("Na wszystkie nowe", c7p_out("all")),
-      lc_readout("Na działające w chwili t", c7p_out("alive"), color = upwr_accent),
-      lc_readout("Z modelu (dla działających)", c7p_out("exact"))),
+      lc_readout("\\(F(t)\\): zawiodło przed t", c7p_out("before")),
+      lc_readout("\\(R(t)\\): działa w chwili t", c7p_out("surv")),
+      lc_readout("\\(f(t)\\): awarie w oknie na wszystkie nowe", c7p_out("all")),
+      lc_readout("\\(h(t)\\): awarie w oknie na działające", c7p_out("alive"), color = upwr_accent)),
     c7p_out("stage"),
     tags$p(class = "c7p-caption",
-      "Linia to jeden wentylator, od najkrócej do najdłużej żyjącego. Linie w kolorze akcentu kończą się w oknie. Te same awarie można odnieść do wszystkich dwustu nowych wentylatorów albo tylko do tych, które dożyły początku okna.")))
+      "Linia to jeden wentylator, od najkrócej do najdłużej żyjącego. Klamry po prawej dzielą park na \\(F(t)\\) i \\(R(t)\\). Linie w kolorze akcentu kończą się w oknie \\(\\Delta t = 300\\) h. Te same awarie podzielone przez wszystkie nowe wentylatory dają gęstość, a podzielone przez działające w chwili t dają hazard; obie liczby są w przeliczeniu na godzinę.")))
 
 # ============================================================================
 # Park w kadrach R: linie od najkrótszej (góra) do najdłuższej (dół), więc obwiednia
