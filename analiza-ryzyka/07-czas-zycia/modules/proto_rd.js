@@ -73,8 +73,6 @@
       return {
         x: X4, y: Y4, xLabelEvery: 500, xName: "Czas pracy (h)", yLabels: yLabels, noYGrid: true,
         legend: [
-          { text: "awaria", color: P.accent, box: true },
-          { text: "działa na końcu badania", color: P.szalwia, box: true },
           { text: "średnia z samych awarii", color: P.accent, box: true },
           { text: "szacunek ze wzoru (7.2)", color: P.niebo, box: true },
           { text: "prawdziwa średnia (zwykle nieznana)", color: P.ink, box: true }

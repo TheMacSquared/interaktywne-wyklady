@@ -192,9 +192,9 @@ c7p17b_scales <- c7p_mttf / gamma(1 + 1 / c7p17b_shapes)   # 1185, 1500, 1691 h 
 c7p_17b_ui <- tagList(c7pe_css,
   c7p_scene_ui("P17B", "piaskownica", "Trzy parki, jedna średnia", "parki",
     list(n = 100, tmax = 3600, models = list(
-      list(beta = 0.7, eta = c7p17b_scales[1], cls = "c", name = "β = 0.7 · hazard maleje", short = "β = 0.7"),
-      list(beta = 1, eta = c7p17b_scales[2], cls = "a", name = "β = 1 · hazard stały", short = "β = 1"),
-      list(beta = 2.5, eta = c7p17b_scales[3], cls = "b", name = "β = 2.5 · hazard rośnie", short = "β = 2.5"))),
+      list(beta = 0.7, eta = c7p17b_scales[1], cls = "c", name = "β = 0.7, hazard maleje", short = "β = 0.7"),
+      list(beta = 1, eta = c7p17b_scales[2], cls = "a", name = "β = 1, hazard stały", short = "β = 1"),
+      list(beta = 2.5, eta = c7p17b_scales[3], cls = "b", name = "β = 2.5, hazard rośnie", short = "β = 2.5"))),
     tags$div(class = "c7p-nav", c7pe_slider("c7p17b_t", "Wymagany czas pracy", 100, 3500, 1000, 50, suffix = " h")),
     c7p_out("stage"),
     tags$p(class = "c7p-read", c7p_out("read")),

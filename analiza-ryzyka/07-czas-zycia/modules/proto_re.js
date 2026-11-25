@@ -92,8 +92,8 @@
             " godzinach działa " + counts.join(", ") + ".", body));
           sliderOut(ui, "c7p17b_t", String(t));
           var best = Math.max.apply(null, counts);
-          ui.set("read", "po " + t + " h działa: " + cfg.models.map(function (m, j) { return m.short + " " + counts[j]; }).join(" · ") +
-            " · najwięcej: " + cfg.models.filter(function (m, j) { return counts[j] === best; }).map(function (m) { return m.short; }).join(" i "));
+          ui.set("read", "po " + t + " h działa: " + cfg.models.map(function (m, j) { return m.short + " " + counts[j]; }).join("; ") +
+            "; najwięcej: " + cfg.models.filter(function (m, j) { return counts[j] === best; }).map(function (m) { return m.short; }).join(" i "));
         }
       };
     }

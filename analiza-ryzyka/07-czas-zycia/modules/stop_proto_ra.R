@@ -34,7 +34,7 @@ c7p1_panel <- function(k, step) {
   cut <- c(NA, NA, NA, 1000, 3000)[step]
   cls <- paste0("c7p-life-", k)
   if (!is.na(cut)) cls <- ifelse(t > cut, cls, paste(cls, "c7p-life-dim"))
-  name <- c(a = "Oferta A · MTTF 1500 h", b = "Oferta B · MTTF 1500 h")[[k]]
+  name <- c(a = "Oferta A, MTTF 1500 h", b = "Oferta B, MTTF 1500 h")[[k]]
   paste0(
     sprintf('<rect class="c7p-fill-%s" x="%g" y="18" width="14" height="14" rx="2"/>', k, c7p1_x0[[k]]),
     sprintf('<text x="%g" y="30" font-size="15" font-weight="700">%s</text>', c7p1_x0[[k]] + 22, name),
@@ -78,10 +78,10 @@ c7p1_frames <- list(
     read = NULL),
   list(name = "Po 1000 h",
     text = "Kreska przeglądu po 1000 h. Linie, które jej nie sięgają, to wentylatory, które zawiodły wcześniej.",
-    read = sprintf("po 1000 h działa: A %d ze 100 · B %d ze 100", c7p1_alive(1000)[["a"]], c7p1_alive(1000)[["b"]])),
+    read = sprintf("po 1000 h działa: A %d ze 100; B %d ze 100", c7p1_alive(1000)[["a"]], c7p1_alive(1000)[["b"]])),
   list(name = "Po 3000 h",
     text = "Ta sama kreska przesunięta na 3000 h. Kolejność ofert się odwraca, choć średnie się nie zmieniły.",
-    read = sprintf("po 3000 h działa: A %d ze 100 · B %d ze 100", c7p1_alive(3000)[["a"]], c7p1_alive(3000)[["b"]]))
+    read = sprintf("po 3000 h działa: A %d ze 100; B %d ze 100", c7p1_alive(3000)[["a"]], c7p1_alive(3000)[["b"]]))
 )
 
 c7p1_svg <- function(step) {

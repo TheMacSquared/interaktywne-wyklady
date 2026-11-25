@@ -14,7 +14,7 @@ expected_apps <- c(
   "04-wiele-prob" = 6L,
   "05-do-zdarzenia" = 6L,
   "06-zmiennosc-i-prog" = 8L,
-  "07-czas-zycia" = 8L,
+  "07-czas-zycia" = 9L,
   "08-niezawodnosc-systemu" = 7L,
   "09-drzewo-bledow" = 7L,
   "10-model-do-decyzji" = 5L

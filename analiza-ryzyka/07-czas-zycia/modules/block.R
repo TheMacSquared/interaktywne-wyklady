@@ -102,24 +102,82 @@ zycie_functions_table <- lc_table(
   narrow = "cards", prose = TRUE
 )
 
+# Zapis danych z badania przerwanego po 1200 h (definicja 7.4): para (czas, status).
+zycie_censor_table <- lc_table(
+  data.frame(
+    unit = as.character(1:8),
+    record = c("(220, awaria)", "(480, awaria)", "(760, awaria)", "(990, awaria)", rep("(1200, cenzorowana)", 4)),
+    known = c("\\(T = 220\\) h", "\\(T = 480\\) h", "\\(T = 760\\) h", "\\(T = 990\\) h", rep("\\(T > 1200\\) h", 4))
+  ),
+  cols = list(
+    lc_col("unit", "Wentylator", "row"),
+    lc_col("record", "Zapis", "text"),
+    lc_col("known", "Co wiemy o czasie życia", "text")
+  ),
+  caption = "Każda obserwacja to para: czas i status",
+  narrow = "cards", prose = TRUE
+)
+
+# Mapa wykładu: pytania kierownika utrzymania ruchu i rozdziały, które na nie odpowiadają.
+zycie_map_table <- lc_table(
+  data.frame(
+    question = c("Którą ofertę kupić, skoro średnie są równe?",
+                 "Co mówi badanie, w którym połowa wentylatorów jeszcze działa?",
+                 "Jak ryzykowna jest najbliższa godzina dla wentylatora, który już pracuje?",
+                 "Co, jeśli wentylator się nie starzeje? Ile sztuk trzymać w zapasie?",
+                 "Co, jeśli się zużywa?",
+                 "Dlaczego psuje się na początku i na końcu życia?",
+                 "Kiedy zaplanować przegląd i czy wymieniać sprawny egzemplarz?"),
+    chapter = c("MTTF", "Obserwacja cenzorowana", "Niezawodność i hazard", "Rozkład wykładniczy i gamma",
+                "Rozkład Weibulla", "Krzywa wannowa", "Czas życia Bq"),
+    tool = c("niezawodność R(t)", "łączny czas pracy", "hazard h(t)", "brak pamięci, czas do k-tej awarii",
+             "kształt β i skala η", "suma trzech mechanizmów", "termin przeglądu, wymiana"),
+    part = c("A", "A", "A", "A", "B", "B", "B")
+  ),
+  cols = list(
+    lc_col("question", "Pytanie kierownika", "row"),
+    lc_col("chapter", "Rozdział", "text"),
+    lc_col("tool", "Narzędzie", "text"),
+    lc_col("part", "Część", "text")
+  ),
+  caption = "Siedem pytań o jeden wentylator",
+  narrow = "cards", prose = TRUE
+)
+
 zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = list(
+  list(
+    id = "pytania", title = "Pytania o wentylator", hook = "Jeden wentylator, cztery decyzje",
+    lead = "Każda decyzja o wentylatorze zależy od tego, czy psuje się on losowo, czy się zużywa.",
+    intro = c(
+      "W dojrzewalni Bananpolu wentylator pracuje bez przerwy, a jego awaria przerywa kontrolę temperatury w komorze. Kierownik utrzymania ruchu ma dziś na biurku cztery sprawy, a każda dotyczy tego samego urządzenia."
+    ),
+    body = list(
+      tags$ul(
+        tags$li("Dział zakupów przysłał dwie oferty wentylatorów. Obie karty katalogowe podają ten sam średni czas do awarii: 1500 godzin."),
+        tags$li("Laboratorium przysłało protokół z badania ośmiu wentylatorów. Badanie przerwano po 1200 godzinach, a połowa egzemplarzy wciąż działała."),
+        tags$li("Magazynier pyta, ile wentylatorów trzymać w zapasie do następnej dostawy."),
+        tags$li("Do zatwierdzenia czeka plan przeglądów: po ilu godzinach oglądać wentylator i czy wymieniać egzemplarz, który jeszcze działa.")
+      ),
+      "Żadnej z tych spraw nie rozstrzygnie jedna liczba z karty katalogowej. Wszystkie zależą od jednego pytania, które prowadzi przez cały wykład: czy wentylator psuje się losowo, czy się zużywa? Jeśli losowo, wiek egzemplarza nie ma znaczenia i wymiana sprawnego niczego nie daje. Jeśli się zużywa, każda kolejna godzina jest groźniejsza od poprzedniej, a termin przeglądu staje się najważniejszą decyzją.",
+      lc_h3("Mapa wykładu"),
+      "Cztery sprawy z biurka rozkładają się na siedem pytań. Każdy rozdział odpowiada na jedno z nich i dokłada jedno narzędzie. Część A to pierwsze spotkanie, część B drugie.",
+      zycie_map_table,
+      lc_h3("Co już umiemy"),
+      "Czas do awarii jest zmienną ciągłą, więc cały warsztat poprzedniego wykładu — gęstość, pola, ogony — działa również tutaj. Wraca też wykład 05: czekanie na zdarzenie, które tam liczyliśmy w próbach, tutaj mierzymy w godzinach. Dochodzi jedno nowe pojęcie, które zmieni sposób myślenia o starzeniu: hazard, czyli chwilowe tempo awarii elementu, który wciąż działa.",
+      zycie_note("Dane Bananpolu",
+        "Wentylatory dojrzewalni: model wykładniczy o \\(MTTF = 1500\\) h oraz model Weibulla o kształcie \\(\\beta = 2\\) i skali \\(\\eta = 1693\\) h. Jednostka: godzina pracy; horyzont: czas do awarii wentylatora. Liczby są fikcyjne.")
+    )
+  ),
   list(
     id = "mttf", title = "MTTF", hook = "Ta sama średnia żywotność, inne ryzyko",
     lead = "Ta sama średnia nie gwarantuje tej samej niezawodności w wymaganym czasie pracy.",
-    intro = c(
-      "Dwa wentylatory z kart katalogowych mają identyczny średni czas życia. Po roku eksploatacji jeden park maszyn wygląda wyraźnie lepiej od drugiego. Średnia nie mówi, jak awarie rozkładają się w czasie — a właśnie od tego zależy, czy element dotrwa do końca okresu pracy.",
-      "Czas do awarii jest zmienną ciągłą, więc cały warsztat poprzedniego wykładu — gęstość, pola, ogony — działa również tutaj. Dochodzi jedno nowe pojęcie, które zmieni sposób myślenia o starzeniu: hazard, czyli chwilowe tempo awarii elementu, który wciąż działa."
-    ),
-    body = list(
-      zycie_note("Dane Bananpolu",
-        "Wentylatory dojrzewalni: model wykładniczy o \\(MTTF = 1500\\) h oraz model Weibulla o kształcie \\(\\beta = 2\\) i skali \\(\\eta = 1693\\) h. Jednostka: godzina pracy; horyzont: czas do awarii wentylatora. Liczby są fikcyjne.")
-    ),
+    intro = "Pierwsze pytanie kierownika: którą ofertę kupić, skoro obie karty podają ten sam średni czas życia? Po roku eksploatacji jeden park maszyn może wyglądać wyraźnie lepiej od drugiego. Średnia nie mówi, jak awarie rozkładają się w czasie — a właśnie od tego zależy, czy element dotrwa do końca okresu pracy.",
     sections = list(list(
       id = "srednia", title = "Czym jest MTTF",
       text = "MTTF (mean time to failure) to wartość oczekiwana czasu życia \\(E(T)\\) — jedna liczba z całego rozkładu, dokładnie tak jak \\(E(X) = np\\) w wykładzie o partiach. Dwa rozkłady o tej samej średniej mogą mieć zupełnie różne udziały wczesnych awarii, a dla planu utrzymania liczą się właśnie one.",
       body = list(
         c(
-          "W dojrzewalni Bananpolu wentylator pracuje bez przerwy, a jego awaria przerywa kontrolę temperatury w komorze. Dział zakupów porównuje dwie oferty. Obie karty katalogowe podają ten sam MTTF, około 1500 godzin. Kierownik utrzymania ruchu pyta jednak o coś innego: jaka część wentylatorów dotrwa do planowego przeglądu po 1000 godzinach? Na to pytanie średnia nie odpowiada, bo nie mówi, jak awarie rozkładają się wokół niej.",
+          "Obie karty katalogowe podają ten sam MTTF, 1500 godzin. Kierownik utrzymania ruchu pyta jednak o coś innego: jaka część wentylatorów dotrwa do planowego przeglądu po 1000 godzinach? Na to pytanie średnia nie odpowiada, bo nie mówi, jak awarie rozkładają się wokół niej.",
           "Żeby odpowiedzieć, musimy nazwać wielkość losową, o której mówimy. W wykładzie 05 liczyliśmy dyskretne próby do zdarzenia; tu zegar biegnie w sposób ciągły, a zdarzeniem jest awaria."
         ),
         risk_definition("7.1", "Czas życia", c(
@@ -185,7 +243,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     id = "cenzorowanie", title = "Obserwacja cenzorowana", hook = "Działa do dziś — to też jest informacja",
     lead = "Element nadal działający na końcu badania wnosi informację: jego czas życia jest co najmniej tak długi.",
     intro = c(
-      "Badanie trwałości wentylatorów zakończyło się po 1200 godzinach, a spora część egzemplarzy wciąż działała. Usunięcie ich z danych jest poważnym błędem: ich czas życia nie jest całkiem nieznany — wiemy, że przekroczył moment zakończenia obserwacji, i ta informacja musi zostać w analizie.",
+      "Drugie pytanie kierownika: co mówi badanie, w którym połowa wentylatorów jeszcze działa? Badanie trwałości zakończyło się po 1200 godzinach, a cztery z ośmiu egzemplarzy wciąż pracowały. Usunięcie ich z danych jest poważnym błędem: ich czas życia nie jest całkiem nieznany — wiemy, że przekroczył moment zakończenia obserwacji, i ta informacja musi zostać w analizie.",
       "Przesuń koniec obserwacji na osi czasu i zobacz, jak zmienia się bilans awarii i obserwacji uciętych. Gdyby policzyć „średni czas życia” wyłącznie z zakończonych awarii, każdy wcześniejszy koniec badania dawałby krótszy wynik — nie dlatego, że wentylatory są gorsze, lecz dlatego, że najdłużej żyjące egzemplarze jeszcze nie zdążyły się zepsuć."
     ),
     body = list(
@@ -197,7 +255,11 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
       c7p_get("c7p_3_ui"),
       risk_definition("7.4", "Obserwacja cenzorowana prawostronnie", c(
         "Obserwacja czasu życia jest cenzorowana prawostronnie w chwili \\(c\\), jeśli do chwili \\(c\\) element nie uległ awarii, a potem przestaliśmy go obserwować. Zapisujemy wtedy parę (\\(c\\), cenzorowana) i wiemy tylko, że \\(T > c\\). Obserwację zakończoną awarią zapisujemy jako (\\(t\\), awaria)."
-      ))
+      ))      ,
+      # Przykładowa realizacja: zapis ośmiu wentylatorów z badania przerwanego po 1200 h.
+      figure_panel("Zapis danych", title = "Osiem wentylatorów po 1200 h", width_mode = "text",
+        zycie_censor_table,
+        tags$p("Cztery pierwsze wiersze to czasy życia. Cztery ostatnie to tylko dolne granice: te wentylatory zawiodą później, ale badanie już tego nie zobaczy."))
     ),
     sections = list(
       list(
@@ -219,9 +281,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
             "Jeżeli przyjmiemy model wykładniczy, informację „co najmniej \\(c\\) godzin” da się wykorzystać bardzo prosto. W tym modelu hazard jest stały, więc każda godzina pracy — zakończona awarią czy nie — jest jednakowo „narażona”. Naturalny szacunek intensywności awarii to liczba awarii podzielona przez łączny czas pracy wszystkich egzemplarzy, także tych, które przetrwały badanie."
           ),
           zycie_note("Założenie rachunku", "Wzór (7.2) dotyczy modelu wykładniczego ze stałym hazardem. W tym przykładzie obserwację kończymy w ustalonej chwili; do sumy czasu pracy wliczamy także egzemplarze nadal działające."),
-          risk_formula("⟦1|\\hat\\lambda⟧=\\frac{⟦2|d⟧}{⟦3|\\sum_{i=1}^{n} t_i⟧},\\qquad \\widehat{MTTF}=\\frac{⟦3|\\sum_{i=1}^{n} t_i⟧}{⟦2|d⟧}", num = "7.2",
+          risk_formula("⟦1|\\hat\\lambda⟧=\\frac{⟦2|d⟧}{⟦3|\\sum_{i=1}^{n} t_i⟧},\\qquad \\widehat{MTTF}=\\frac{\\sum_{i=1}^{n} t_i}{d}", num = "7.2",
             notes = list("oszacowana intensywność awarii", "liczba awarii", "łączny czas pracy wszystkich egzemplarzy"),
-            note_colors = c("terakota", "accent", "szalwia")),
+            note_colors = c("terakota", "accent", "szalwia"), above = 2),
           risk_example("7.2", "Badanie przerwane po 1200 h",
             problem = "Badanie ośmiu wentylatorów przerwano po 1200 h. Awarie wystąpiły po 220, 480, 760 i 990 h; cztery egzemplarze działały do końca. Oszacuj MTTF wzorem (7.2) i porównaj z naiwną średnią z samych awarii.",
             steps = c(
@@ -256,7 +318,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
   list(
     id = "jezyk", title = "Niezawodność i hazard", hook = "„Jak długo” i „czy do jutra” to różne pytania",
     lead = "Cztery funkcje odpowiadają na różne pytania o ten sam czas życia.",
-    intro = "Cztery funkcje brzmią groźnie, ale to cztery spojrzenia na jeden rozkład — znając jedną, można wyprowadzić pozostałe. Nowością jest hazard: dzieli gęstość przez niezawodność, więc pyta o ryzyko najbliższej chwili wśród elementów, które dożyły do t. To warunkowe spojrzenie — mianownik R(t) robi tu dokładnie to, co warunek B w wykładzie drugim.",
+    intro = "Trzecie pytanie: jak ryzykowna jest najbliższa godzina dla wentylatora, który już pracuje? Odpowiedź wymaga języka czterech funkcji. Brzmią groźnie, ale to cztery spojrzenia na jeden rozkład — znając jedną, można wyprowadzić pozostałe. Nowością jest hazard: dzieli gęstość przez niezawodność, więc pyta o ryzyko najbliższej chwili wśród elementów, które dożyły do t. To warunkowe spojrzenie — mianownik R(t) robi tu dokładnie to, co warunek B w wykładzie drugim.",
     sections = list(
       list(
         id = "zmienna", title = "Zmienna losowa T",
@@ -375,7 +437,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     id = "wykladniczy", title = "Rozkład wykładniczy i gamma", hook = "Urządzenie, które się nie starzeje",
     lead = "Stały hazard daje model bez pamięci; suma k takich etapów daje rozkład gamma, a dla całkowitego k — Erlanga.",
     intro = c(
-      "Najprostsza hipoteza o hazardzie brzmi: jest stały. Element nie dociera się i nie zużywa — psuje się od losowych zaburzeń, które w każdej godzinie są tak samo prawdopodobne. Ta hipoteza wyznacza dokładnie jeden rozkład: wykładniczy, ciągły odpowiednik geometrycznego z wykładu piątego.",
+      "Czwarte pytanie: co, jeśli wentylator się nie starzeje, i ile sztuk trzymać wtedy w zapasie? Najprostsza hipoteza o hazardzie brzmi: jest stały. Element nie dociera się i nie zużywa — psuje się od losowych zaburzeń, które w każdej godzinie są tak samo prawdopodobne. Ta hipoteza wyznacza dokładnie jeden rozkład: wykładniczy, ciągły odpowiednik geometrycznego z wykładu piątego.",
       "Konsekwencją stałego hazardu jest brak pamięci: wentylator pracujący od 1000 godzin ma przed sobą dokładnie taki sam rozkład dalszego życia jak fabrycznie nowy. Jeśli dane pokazują, że stare egzemplarze psują się częściej niż nowe, model wykładniczy jest z góry wykluczony — żaden dobór \\(\\lambda\\) tego nie naprawi."
     ),
     sections = list(
@@ -499,11 +561,11 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     id = "weibull", title = "Rozkład Weibulla", hook = "Nie każde urządzenie starzeje się tak samo",
     lead = "Parametr β opisuje kierunek zmiany hazardu, η skalę czasu, a ten sam MTTF może kryć różne R(t).",
     intro = c(
-      "Weibull jest domyślnym językiem inżynierii niezawodności, bo jednym parametrem odpowiada na najważniejsze pytanie diagnostyczne: co dzieje się z hazardem. β < 1 oznacza hazard malejący (wczesne defekty odsiewają się z parku), β = 1 odtwarza rozkład wykładniczy, a β > 1 — hazard rosnący, charakterystyczny dla zużycia.",
+      "Piąte pytanie: co, jeśli wentylator się zużywa? Weibull jest domyślnym językiem inżynierii niezawodności, bo jednym parametrem odpowiada na najważniejsze pytanie diagnostyczne: co dzieje się z hazardem. β < 1 oznacza hazard malejący (wczesne defekty odsiewają się z parku), β = 1 odtwarza rozkład wykładniczy, a β > 1 — hazard rosnący, charakterystyczny dla zużycia.",
       "Drugi parametr, η, jest czystą skalą czasu: mówi, kiedy rzeczy się dzieją, a nie jak. Przy każdym β niezawodność w chwili t = η wynosi e⁻¹ ≈ 0.37 — to punkt orientacyjny, po którym łatwo czytać wykresy."
     ),
     body = list(
-      lc_h2("zycie-czesc-b", "Część B · Od starzenia do planu przeglądów"),
+      lc_h2("zycie-czesc-b", "Część B: od starzenia do planu przeglądów"),
       "Tu zaczyna się druga część wykładu. Z części pierwszej potrzebujemy trzech narzędzi: wzoru (7.4), który definiuje hazard jako ryzyko najbliższej chwili dla działającego elementu, wzoru (7.6), który z hipotezy o hazardzie odtwarza niezawodność, oraz wzoru (7.7), który z niezawodności daje MTTF. Rozkład wykładniczy okazał się modelem jednej hipotezy — hazardu stałego — i dlatego nie potrafi opisać ani docierania, ani zużycia.",
       "Druga część odpowiada na pytanie, które w dojrzewalni jest najważniejsze: co zrobić, gdy hazard zmienia się z wiekiem? Zbudujemy model z parametrem kształtu, porównamy urządzenia o tym samym MTTF, rozłożymy krzywą wannową na mechanizmy i zamienimy wszystko w plan przeglądu.",
       # PROTOTYP P15: scena na otwarcie części B — trzy dzienniki awarii
@@ -642,7 +704,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
   list(
     id = "wanna", title = "Krzywa wannowa", hook = "Psuje się na początku i na końcu",
     lead = "Wczesne defekty, okres stabilny i zużycie tworzą trzy składowe hazardu.",
-    intro = "Podręcznikowa krzywa wannowa — wysoki hazard na początku, płaski środek, wznoszący koniec — bywa błędnie przedstawiana jako „kształt rozkładu Weibulla”. Tymczasem pojedynczy Weibull ma hazard monotoniczny: może odtworzyć jedno ramię wanny, nigdy całą. Wanna powstaje z nałożenia trzech mechanizmów, z których każdy ma własny przebieg i własne lekarstwo.",
+    intro = "Szóste pytanie: dlaczego urządzenia psują się na początku i na końcu życia? Podręcznikowa krzywa wannowa — wysoki hazard na początku, płaski środek, wznoszący koniec — bywa błędnie przedstawiana jako „kształt rozkładu Weibulla”. Tymczasem pojedynczy Weibull ma hazard monotoniczny: może odtworzyć jedno ramię wanny, nigdy całą. Wanna powstaje z nałożenia trzech mechanizmów, z których każdy ma własny przebieg i własne lekarstwo.",
     sections = list(
       list(
         id = "mechanizmy", title = "Trzy mechanizmy, trzy interwencje",
@@ -708,7 +770,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     id = "przeglad", title = "Czas życia Bq", hook = "Wymiana na zapas nie zawsze pomaga",
     lead = "Czas interwencji wynika z wymaganego R(t), kosztów i mechanizmu awarii.",
     intro = c(
-      "Pytanie utrzymaniowe brzmi konkretnie: po ilu godzinach zaplanować przegląd wentylatora, żeby ryzyko awarii przed przeglądem pozostało akceptowalne? Suwak poniżej liczy R(t) dla modelu zużyciowego Weibulla (β = 2, η = 1693 h) — przesuwaj czas przeglądu i obserwuj, jak rośnie ryzyko.",
+      "Siódme pytanie wraca do planu przeglądów z biurka kierownika i brzmi konkretnie: po ilu godzinach zaplanować przegląd wentylatora, żeby ryzyko awarii przed przeglądem pozostało akceptowalne? Suwak poniżej liczy R(t) dla modelu zużyciowego Weibulla (β = 2, η = 1693 h) — przesuwaj czas przeglądu i obserwuj, jak rośnie ryzyko.",
       "Zauważ, że sensowność wymiany profilaktycznej zależy od mechanizmu: przy hazardzie rosnącym wcześniejsza wymiana naprawdę redukuje ryzyko, ale przy stałym hazardzie wymiana sprawnego elementu na nowy niczego nie zmienia — nowy ma dokładnie ten sam hazard co stary. Plan przeglądów bez hipotezy o hazardzie jest strzałem w ciemno."
     ),
     sections = list(

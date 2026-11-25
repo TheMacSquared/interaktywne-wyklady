@@ -82,7 +82,7 @@ c7p3_svg <- function(step) {
 c7p3_frames <- list(
   list(name = "Koniec badania",
     text = "Osiem wentylatorów uruchomiono jednocześnie. Po 1200 h badanie się kończy: cztery zawiodły (kreska), cztery wciąż pracują (trójkąt).",
-    read = "awarie: 220, 480, 760 i 990 h · działa: 4 z 8"),
+    read = "awarie: 220, 480, 760 i 990 h; działa: 4 z 8"),
   list(name = "Tylko awarie",
     text = "Analityk liczy średni czas życia z tego, co się zepsuło. Działające egzemplarze pomija, bo nie mają wyniku.",
     read = "(220 + 480 + 760 + 990) / 4 = 612.5 h"),
@@ -91,7 +91,7 @@ c7p3_frames <- list(
     read = "cztery wentylatory: T > 1200 h"),
   list(name = "Podgląd przyszłości",
     text = "W symulacji możemy zajrzeć za koniec badania. Pominięte wentylatory zawiodłyby po 1350, 1750, 2300 i 3100 h.",
-    read = "średnia z awarii 612.5 h · prawdziwa średnia 1368.75 h")
+    read = "średnia z awarii 612.5 h; prawdziwa średnia 1368.75 h")
 )
 
 c7p_3_ui <- tagList(c7pc_css,
@@ -160,7 +160,7 @@ c7p5_frames <- list(
     read = "220 + 480 + 760 + 990 + 4 · 1200 = 7250 h"),
   list(name = "Jedna taśma",
     text = "Sklejamy wszystkie godziny pracy w jedną taśmę. Kreska to awaria; zielone odcinki należą do wentylatorów, które nie zawiodły.",
-    read = "7250 h pracy · 4 awarie"),
+    read = "7250 h pracy; 4 awarie"),
   list(name = "Godziny na awarię",
     text = "Przy stałym hazardzie każda godzina pracy jest tak samo narażona. Na jedną awarię przypada ćwierć taśmy.",
     read = "MTTF ≈ 7250 / 4 = 1812.5 h"),

@@ -108,7 +108,7 @@ c7p15_frames <- list(
     read = NULL),
   list(name = "Trzy kierunki",
     text = "Ta sama średnia, a ryzyko dla działającego egzemplarza zachowuje się na trzy sposoby. O tym, który dziennik prowadzimy, decyduje mechanizm awarii.",
-    read = sprintf("pierwsze → szóste okno: %s · %s · %s", c7p15_read(1), c7p15_read(2), c7p15_read(3)))
+    read = sprintf("pierwsze → szóste okno: %s; %s; %s", c7p15_read(1), c7p15_read(2), c7p15_read(3)))
 )
 
 c7p_15_ui <- tagList(c7pi_css,
@@ -192,7 +192,7 @@ c7p18_frames <- list(
     read = NULL),
   list(name = "Kto zadzwonił pierwszy",
     text = "Te same wentylatory od najkrócej żyjącego, w kolorze mechanizmu, który je zatrzymał. Początek należy do lutu, środek do przepięć, koniec do łożysk.",
-    read = sprintf("lut: %d · przepięcie: %d · łożysko: %d", sum(c7p18_who == 1), sum(c7p18_who == 2), sum(c7p18_who == 3)))
+    read = sprintf("lut: %d; przepięcie: %d; łożysko: %d", sum(c7p18_who == 1), sum(c7p18_who == 2), sum(c7p18_who == 3)))
 )
 
 c7p_18_ui <- tagList(c7pi_css,
@@ -209,7 +209,7 @@ c7p23_row <- function(label, value, src = NULL) tagList(tags$dt(label),
 c7p23_card <- function(name, color, mttf, beta, eta, hazard, hazard_src, verdict) {
   used <- c7p_R(1500, beta, eta) / c7p_R(1000, beta, eta)
   tags$section(class = "c7pi-card", style = paste0("--c7pi-color:", color),
-    tags$p(class = "c7pi-kicker", "KARTA KATALOGOWA · WERSJA POPRAWIONA"),
+    tags$p(class = "c7pi-kicker", "KARTA KATALOGOWA, WERSJA POPRAWIONA"),
     tags$h4(name),
     tags$p(class = "c7pi-old", tags$s(paste0("MTTF ", mttf, " h")), " — sama średnia nie wystarcza"),
     tags$dl(class = "c7pi-rows",
