@@ -4,6 +4,10 @@
 #               scena magazyn w modules/proto_rg.js (window.lcC7). Liczby z przykładu
 #               7.6: awarie średnio co 500 h, trzy zapasowe wentylatory, dostawa po
 #               1000 h; P(T₃ > 1000) = 5e⁻² ≈ 0.677, E(T₃) = 1500 h.
+#   c7p_24_ui — Scena „Wentylator za wentylatorem” (P24): ta sama scena magazyn
+#               z k = 1, czyli czas do pierwszej awarii przy stałym ryzyku
+#               (oferta A, MTTF 1500 h). Wentylator po wentylatorze powstaje
+#               rozkład wykładniczy: R(1000 h) = e^(−2/3) ≈ 0.513.
 # Wymaga: stop_proto_common.R.
 
 c7p13_css <- tags$style(HTML("
@@ -33,3 +37,32 @@ c7p_13_ui <- tagList(c7p13_css,
     tags$p(class = "c7p-read", c7p_out("model")),
     tags$p(class = "c7p-caption",
       "Magazynier zaczyna okres z trzema zapasowymi wentylatorami. Kreska to awaria w hali i wydanie jednego wentylatora; trzecia kreska opróżnia magazyn. Dostawa przychodzi po 1000 h: czerwona kropka oznacza okres, w którym zapas skończył się wcześniej.")))
+
+# ============================================================================
+# P24 — SCENA „WENTYLATOR ZA WENTYLATOREM” (rozkład wykładniczy, przed definicją 7.7)
+# ============================================================================
+
+c7p24_config <- list(gap = c7p_mttf, k = 1, limit = c7p_mission, tmax = 6000, bin = 250, seed = 11,
+  p = exp(-c7p_mission / c7p_mttf),   # R(1000 h) oferty A
+  txt = list(
+    axis = "czas pracy od montażu (h)", limit = "przegląd",
+    hist = "Kiedy przyszła awaria (wszystkie wentylatory)", haxis = "czas do awarii (h)",
+    aria = "Linie życia ostatnich wentylatorów z kreską awarii i histogram czasu do awarii.",
+    model = "Model wykładniczy: do przeglądu dotrwa wentylator z prawdopodobieństwem ",
+    model2 = ", średni czas do awarii "))
+
+c7p_24_ui <- tagList(c7p13_css,
+  c7p_scene_ui("P24", "scena", "Wentylator za wentylatorem", "magazyn", c7p24_config,
+    tags$div(class = "c7p13-reads",
+      lc_readout("Wentylatorów", c7p_out("n")),
+      lc_readout("Dotrwało do przeglądu po 1000 h", c7p_out("ok"), color = upwr_accent),
+      lc_readout("Średni czas do awarii", c7p_out("mean"))),
+    c7p_out("stage"),
+    tags$div(class = "c7p-nav",
+      c7p_button("one", "Następny wentylator", variant = "solid"),
+      c7p_button("m10", "+10"), c7p_button("m100", "+100"), c7p_button("m1000", "+1000"),
+      c7p_button("reset", "Od nowa"),
+      c7p_seg("model", "Model", c("ukryty" = "off", "pokazany" = "on"))),
+    tags$p(class = "c7p-read", c7p_out("model")),
+    tags$p(class = "c7p-caption",
+      "W komorze pracuje jeden wentylator; po awarii montuje się nowy tego samego typu. W każdej godzinie pracy szansa awarii jest taka sama, bez względu na to, ile wentylator już przepracował. Kreska to awaria, a kropka mówi, czy wentylator dotrwał do przeglądu po 1000 h.")))

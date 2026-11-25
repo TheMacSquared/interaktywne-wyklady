@@ -105,7 +105,7 @@ zycie_functions_table <- lc_table(
 # Trzy rachunki z tych samych danych (badanie przerwane po 1200 h, przykład 7.2).
 zycie_three_table <- lc_table(
   data.frame(
-    calc = c("\\(2450/4\\)", "\\(7250/8\\)", "\\(7250/4\\)"),
+    calc = c("średnia z rejestru: \\(2450/4\\)", "dolna granica: \\(7250/8\\)", "\\(1/\\hat\\lambda = 7250/4\\)"),
     result = c("612.5 h", "906 h", "1812.5 h"),
     alive = c("pomija je", "liczy im 1200 h, jakby wtedy zawiodły", "liczy ich godziny, ale nie liczy ich jako awarii"),
     assume = c("żadne; odpowiada na inne pytanie", "żadne; pewna dolna granica", "ryzyko awarii nie zależy od wieku")
@@ -117,6 +117,38 @@ zycie_three_table <- lc_table(
     lc_col("assume", "Założenie", "text")
   ),
   caption = "Trzy rachunki, te same dane; prawdziwa średnia to 1368.75 h",
+  narrow = "cards", prose = TRUE
+)
+
+# Ściąga: skumulowany hazard a udział awarii (R = e^(-H)).
+zycie_cumhaz_table <- lc_table(
+  data.frame(
+    H = c("0.1", "0.7", "1", "2.3"),
+    failed = c("około 10%", "około 50%", "około 63%", "około 90%"),
+    name = c("termin B10", "mediana czasu życia", "przy stałym hazardzie: chwila t = MTTF", "prawie cały park")
+  ),
+  cols = list(
+    lc_col("H", "Pole pod hazardem H(t)", "row"),
+    lc_col("failed", "Zawiodło do chwili t", "text"),
+    lc_col("name", "Co to za chwila", "text")
+  ),
+  caption = "Pole pod hazardem a udział awarii",
+  narrow = "cards", prose = TRUE
+)
+
+# Ściąga: kierunek hazardu a decyzja utrzymaniowa.
+zycie_direction_table <- lc_table(
+  data.frame(
+    dir = c("maleje", "stały", "rośnie"),
+    meaning = c("egzemplarz, który przetrwał początek, jest lepszy od nowego", "wiek nie ma znaczenia", "każda kolejna godzina jest groźniejsza"),
+    action = c("wygrzewanie i selekcja; wymiana sprawnego szkodzi", "zapas i zabezpieczenia; wymiana sprawnego nic nie daje", "przeglądy i wymiana przed terminem")
+  ),
+  cols = list(
+    lc_col("dir", "Hazard", "row"),
+    lc_col("meaning", "Co to znaczy", "text"),
+    lc_col("action", "Co robić", "text")
+  ),
+  caption = "Kierunek hazardu wybiera działanie",
   narrow = "cards", prose = TRUE
 )
 
@@ -287,20 +319,20 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           c(
             "Dolna granica to jeszcze nie szacunek. Żeby go dostać, trzeba coś założyć o przyszłości działających wentylatorów. Najprostsze założenie brzmi: awaria jest tak samo prawdopodobna w każdej godzinie pracy, niezależnie od wieku wentylatora. Wtedy każda przepracowana godzina — zakończona awarią czy nie — jest jednakowo „narażona”, a naturalny szacunek intensywności awarii to liczba awarii podzielona przez łączny czas pracy wszystkich egzemplarzy. To założenie nazwiemy stałym hazardem i sprawdzimy w rozdziale o rozkładzie wykładniczym."
           ),
-          zycie_note("Założenie rachunku", "Wzór (7.2) działa tylko wtedy, gdy ryzyko awarii nie zależy od wieku elementu. W tym przykładzie obserwację kończymy w ustalonej chwili; do sumy czasu pracy wliczamy także egzemplarze nadal działające."),
-          risk_formula("⟦1|\\hat\\lambda⟧=\\frac{⟦2|d⟧}{⟦3|\\sum_{i=1}^{n} t_i⟧},\\qquad \\widehat{MTTF}=\\frac{\\sum_{i=1}^{n} t_i}{d}", num = "7.2",
+          zycie_note("Założenie rachunku", "Szacunek \\(\\hat\\lambda\\) ze wzoru (7.2) ma sens tylko wtedy, gdy ryzyko awarii nie zależy od wieku elementu. W tym przykładzie obserwację kończymy w ustalonej chwili; do sumy czasu pracy wliczamy także egzemplarze nadal działające."),
+          risk_formula("⟦1|\\hat\\lambda⟧=\\frac{⟦2|d⟧}{⟦3|\\sum_{i=1}^{n} t_i⟧},\\qquad \\widehat{MTTF}=\\frac{1}{\\hat\\lambda}=\\frac{\\sum_{i=1}^{n} t_i}{d}", num = "7.2",
             notes = list("oszacowana intensywność awarii", "liczba awarii", "łączny czas pracy wszystkich egzemplarzy"),
             note_colors = c("terakota", "accent", "szalwia"), above = 2),
-          "Licznik jest ten sam co w dolnej granicy: łączny czas pracy. Zmienia się mianownik. Dolna granica dzieli godziny przez liczbę wentylatorów, a wzór (7.2) przez liczbę awarii, bo działające egzemplarze dołożyły godzin, ale nie dołożyły awarii.",
+          "Daszek nad symbolem oznacza wartość oszacowaną z danych. \\(\\hat\\lambda\\) to oszacowana intensywność awarii, czyli liczba awarii na godzinę pracy, a jej odwrotność \\(1/\\hat\\lambda\\) to oszacowany średni czas do awarii \\(\\widehat{MTTF}\\). Tego zapisu używamy dalej. Licznik w \\(1/\\hat\\lambda\\) jest ten sam co w dolnej granicy: łączny czas pracy. Zmienia się mianownik. Dolna granica dzieli godziny przez liczbę wentylatorów, a \\(1/\\hat\\lambda\\) przez liczbę awarii, bo działające egzemplarze dołożyły godzin, ale nie dołożyły awarii.",
           risk_example("7.2", "Badanie przerwane po 1200 h",
-            problem = "Badanie ośmiu wentylatorów przerwano po 1200 h. Awarie wystąpiły po 220, 480, 760 i 990 h; cztery egzemplarze działały do końca. Policz średnią z rejestru awarii, dolną granicę średniego czasu życia i szacunek MTTF ze wzoru (7.2).",
+            problem = "Badanie ośmiu wentylatorów przerwano po 1200 h. Awarie wystąpiły po 220, 480, 760 i 990 h; cztery egzemplarze działały do końca. Policz średnią z rejestru awarii, dolną granicę średniego czasu życia oraz \\(\\hat\\lambda\\) i \\(1/\\hat\\lambda\\) ze wzoru (7.2).",
             steps = c(
               "Rejestr awarii: \\(220 + 480 + 760 + 990 = 2450\\) h, średnia \\(2450/4 = 612.5\\) h.",
               "Czas pracy egzemplarzy działających: \\(4 \\cdot 1200 = 4800\\) h. Łącznie \\(\\sum t_i = 7250\\) h.",
               "Dolna granica: \\(7250/8 \\approx 906\\) h.",
-              "Wzór (7.2): liczba awarii \\(d = 4\\), więc \\(\\hat\\lambda = 4/7250 \\approx 0.00055\\) na godzinę, a \\(\\widehat{MTTF} = 7250/4 = 1812.5\\) h."
+              "Wzór (7.2): liczba awarii \\(d = 4\\), więc \\(\\hat\\lambda = 4/7250 \\approx 0.00055\\) na godzinę, a \\(1/\\hat\\lambda = 7250/4 = 1812.5\\) h."
             ),
-            answer = "Rejestr awarii daje 612.5 h, dolna granica 906 h, szacunek (7.2) około 1813 h. Średnia ośmiu rzeczywistych czasów to 1368.75 h: leży powyżej dolnej granicy, bo musi, i poniżej szacunku (7.2), który opiera się na czterech awariach i na założeniu, że ryzyko awarii nie zależy od wieku."
+            answer = "Rejestr awarii daje 612.5 h, dolna granica 906 h, szacunek \\(1/\\hat\\lambda\\) około 1813 h. Średnia ośmiu rzeczywistych czasów to 1368.75 h: leży powyżej dolnej granicy, bo musi, i poniżej szacunku \\(1/\\hat\\lambda\\), który opiera się na czterech awariach i na założeniu, że ryzyko awarii nie zależy od wieku."
           ),
           zycie_three_table,
           # P5: trzy rachunki na jednej taśmie łącznego czasu pracy
@@ -309,15 +341,15 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           # P4: piaskownica — trzy rachunki przy różnych końcach badania
           c7p_get("c7p_4_ui"),
           zycie_reading(c(
-            "Przy 1200 h panel pokazuje 612.5 h, około 906 h i 1812.5 h. Przy 800 h awarie są trzy: średnia z rejestru spada do około 487 h, dolna granica do około 683 h, a szacunek (7.2) wynosi 1820 h. Przy 2500 h awarii jest siedem i liczby zbliżają się do siebie: około 1121 h, 1294 h i 1479 h. Prawdziwa średnia to 1368.75 h.",
-            "Średnia z rejestru i dolna granica rosną z długością badania, bo dłuższe badanie widzi dłuższe życia; dolna granica zawsze leży bliżej prawdy. Szacunek (7.2) w tych danych wychodzi powyżej prawdziwej średniej i schodzi do niej dopiero, gdy prawie wszystkie wentylatory zawiodą. To cena założenia: tych osiem wentylatorów nie psuje się ze stałym ryzykiem. Żaden z trzech rachunków nie trafia w prawdę, ale tylko pierwszy jest błędem."
+            "Przy 1200 h panel pokazuje 612.5 h, około 906 h i 1812.5 h. Przy 800 h awarie są trzy: średnia z rejestru spada do około 487 h, dolna granica do około 683 h, a szacunek \\(1/\\hat\\lambda\\) wynosi 1820 h. Przy 2500 h awarii jest siedem i liczby zbliżają się do siebie: około 1121 h, 1294 h i 1479 h. Prawdziwa średnia to 1368.75 h.",
+            "Średnia z rejestru i dolna granica rosną z długością badania, bo dłuższe badanie widzi dłuższe życia; dolna granica zawsze leży bliżej prawdy. Szacunek \\(1/\\hat\\lambda\\) w tych danych wychodzi powyżej prawdziwej średniej i schodzi do niej dopiero, gdy prawie wszystkie wentylatory zawiodą. To cena założenia: tych osiem wentylatorów nie psuje się ze stałym ryzykiem. Żaden z trzech rachunków nie trafia w prawdę, ale tylko pierwszy jest błędem."
           )),
-          "Czy wzór (7.2) zawsze zawyża? Nie. Kierunek błędu zależy od tego, jak ryzyko awarii zmienia się z wiekiem. Galeria pokazuje to samo badanie, przerwane po 1200 h, w trzech parkach o tej samej średniej 1500 h.",
+          "Czy szacunek \\(1/\\hat\\lambda\\) zawsze zawyża? Nie. Kierunek błędu zależy od tego, jak ryzyko awarii zmienia się z wiekiem. Galeria pokazuje to samo badanie, przerwane po 1200 h, w trzech parkach o tej samej średniej 1500 h.",
           # Galeria: trzy parki o tej samej średniej, szacunek (7.2) trafia, zawyża albo zaniża
           c7p_get("c7p_bias_ui"),
           zycie_reading(c(
-            "Przy stałym ryzyku wzór daje około 1500 h, czyli trafia. Przy zużyciu wychodzi około 2570 h, a przy wczesnych wadach około 1100 h, choć we wszystkich trzech parkach prawdziwa średnia jest ta sama.",
-            "Wzór mierzy tempo awarii w oknie badania i zakłada, że potem będzie takie samo. Przy zużyciu badanie widzi tylko spokojny początek życia (16 awarii z 40) i przedłuża go w nieskończoność, więc zawyża. Przy wczesnych wadach widzi najgorszy okres (25 awarii z 40), więc zaniża. Szacunek (7.2) jest dobry dokładnie wtedy, gdy jego założenie jest prawdziwe; jak to sprawdzić i czym go zastąpić, pokaże druga część wykładu."
+            "Przy stałym ryzyku \\(1/\\hat\\lambda\\) wychodzi około 1500 h, czyli trafia. Przy zużyciu wychodzi około 2570 h, a przy wczesnych wadach około 1100 h, choć we wszystkich trzech parkach prawdziwa średnia jest ta sama.",
+            "Wzór mierzy tempo awarii w oknie badania i zakłada, że potem będzie takie samo. Przy zużyciu badanie widzi tylko spokojny początek życia (16 awarii z 40) i przedłuża go w nieskończoność, więc zawyża. Przy wczesnych wadach widzi najgorszy okres (25 awarii z 40), więc zaniża. Szacunek \\(1/\\hat\\lambda\\) jest dobry dokładnie wtedy, gdy jego założenie jest prawdziwe; jak to sprawdzić i czym go zastąpić, pokaże druga część wykładu."
           )),
           "Wzór (7.2) jest najprostszym przykładem ogólnej zasady: obserwacja cenzorowana wchodzi do analizy z informacją, którą rzeczywiście niesie. Bez założenia o ryzyku niezależnym od wieku robi się to przez funkcję wiarygodności albo estymator Kaplana–Meiera; na tym kursie nie estymujemy parametrów, ale musimy umieć rozpoznać, kiedy ktoś zrobił to źle.",
           risk_check("c7_chk_cenzor",
@@ -465,6 +497,9 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
       list(
         id = "staly-hazard", title = "Stały hazard",
         body = list(
+          # P24: scena — wentylator za wentylatorem, czas do awarii przy stałym ryzyku
+          c7p_get("c7p_24_ui"),
+          "Po kilkuset wentylatorach histogram ma kształt, którego nie da się pomylić: najwyższy słupek stoi przy zerze, a potem słupki równo maleją. Wiele wentylatorów zawodzi wcześnie, nieliczne żyją kilka razy dłużej niż średnia. Tak wygląda czas do awarii, gdy ryzyko nie zależy od wieku. Ten kształt ma nazwę i wzór.",
           c(
             "Ze wzoru (7.6) hipoteza „hazard równy stałej \\(\\lambda\\)” od razu wyznacza niezawodność: skumulowany hazard rośnie liniowo, \\(H(t) = \\lambda t\\), więc \\(R(t) = e^{-\\lambda t}\\). Gęstość jest pochodną dystrybuanty, a MTTF — polem pod krzywą niezawodności ze wzoru (7.7), czyli \\(\\int_0^\\infty e^{-\\lambda t}\\,dt = 1/\\lambda\\). Cały rozkład wyznacza jedna liczba."
           ),
@@ -514,7 +549,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           c7p_get("c7p_12_ui"),
           zycie_reading(c(
             "Przy \\(MTTF = 1500\\) h panel pokazuje \\(R(1000\\,\\text{h}) \\approx 0.513\\). Podwojenie MTTF do 3000 h podnosi tę wartość do około 0.717, a \\(MTTF = 4000\\) h daje około 0.779. Przy \\(MTTF = 500\\) h niezawodność w horyzoncie 1000 h spada do 0.135. Kształt krzywej zawsze jest ten sam — zmienia się tylko skala osi czasu, a w chwili \\(t = MTTF\\) krzywa przechodzi przez \\(e^{-1} \\approx 0.368\\).",
-            "Ta sztywność jest zaletą i wadą zarazem. Zaletą, bo jeden parametr łatwo oszacować ze wzoru (7.2). Wadą, bo model nie ma czym opisać docierania ani zużycia. Jeśli dane pokazują starzenie, trzeba sięgnąć po rodzinę z dodatkowym parametrem kształtu."
+            "Ta sztywność jest zaletą i wadą zarazem. Zaletą, bo jedyny parametr szacuje się wprost z danych jako λ̂ ze wzoru (7.2). Wadą, bo model nie ma czym opisać docierania ani zużycia. Jeśli dane pokazują starzenie, trzeba sięgnąć po rodzinę z dodatkowym parametrem kształtu."
           )),
           risk_check("c7_chk_pamiec",
             "Wentylator z wykładniczym czasem życia (MTTF = 1500 h) przepracował 2000 h. Ile wynosi oczekiwany dalszy czas jego pracy?",
@@ -886,6 +921,26 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
           c7p_variant("P23A — karty katalogowe z rozdziału 1 wracają poprawione."),
           c7p_get("c7p_23a_ui")
         )
+      ),
+      list(
+        id = "hazard-zasady", title = "Hazard: zasady kciuka",
+        body = list(
+          "Sześć reguł, które pozwalają czytać hazard bez liczenia całek. Liczby dotyczą oferty A, czyli hazardu 0.000667 na godzinę.",
+          lc_h3("Hazard razy krótki czas to szansa awarii"),
+          "Dla działającego elementu szansa awarii w najbliższym krótkim odcinku to w przybliżeniu \\(h \\cdot \\Delta t\\). Reguła jest dobra, dopóki wynik nie przekracza około 0.1. W najbliższych 10 h szansa wynosi około 0.0067, w najbliższych 100 h około 0.067. Dla 1000 h iloczyn daje 0.667, a prawdziwa szansa to 0.487: tu reguła już nie działa.",
+          lc_h3("Odwrotność hazardu to skala czasu"),
+          "Wielkość \\(1/h\\) mówi, po jakim czasie należy się spodziewać awarii, gdyby ryzyko zostało na obecnym poziomie. Przy stałym hazardzie to dokładnie MTTF: \\(1/0.000667 \\approx 1500\\) h. Wentylator, którego hazard urósł do 0.0014 na godzinę, zachowuje się w tej chwili jak urządzenie o średnim czasie życia około 700 h.",
+          lc_h3("Liczy się pole pod hazardem"),
+          "O niezawodności decyduje skumulowany hazard, czyli pole pod \\(h\\) od zera do \\(t\\): \\(R(t) = e^{-H(t)}\\). Dla małych pól zachodzi po prostu \\(F(t) \\approx H(t)\\). Cztery punkty warto pamiętać.",
+          zycie_cumhaz_table,
+          lc_h3("Kierunek hazardu mówi, co robić"),
+          zycie_direction_table,
+          lc_h3("Hazardy niezależnych mechanizmów się dodają"),
+          "Jeśli element może zawieść z kilku niezależnych powodów, jego hazard jest sumą hazardów, jak we wzorze (7.15). To samo dotyczy elementów połączonych szeregowo, o czym będzie następny wykład: dziesięć jednakowych elementów o stałym hazardzie ma razem MTTF dziesięć razy krótszy.",
+          lc_h3("Przy stałym hazardzie 63% zawodzi przed średnią"),
+          "Do chwili \\(t = MTTF\\) zawodzi około 63% egzemplarzy, a mediana to około \\(0.7 \\cdot MTTF\\). Dla 1500 h połowa wentylatorów zawodzi przed 1040 h, a nie przed 1500 h."
+        ),
+        pitfall = "Hazard nie jest prawdopodobieństwem ani gęstością: ma jednostkę „na godzinę”, może być większy od 1, a mało awarii w okolicy 3000 h nie znaczy, że stare egzemplarze są bezpieczne. Malejący hazard całej partii też nie dowodzi, że egzemplarze się poprawiają: wystarczy, że wadliwe sztuki odpadają pierwsze."
       ),
       list(id = "lista", title = "Pięć pytań", bullets = c("Co rozpoczyna i kończy czas życia?", "Jaki jest wspólny czas pracy?", "Czy obserwacje działające są cenzorowane?", "Czy hazard jest stały, rośnie czy maleje?", "Jak wynik zmienia decyzję utrzymaniową?"),
         # PROTOTYP P23B: domknięcie — pięć pytań z odpowiedziami dla wentylatora

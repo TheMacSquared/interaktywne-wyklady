@@ -72,16 +72,11 @@
 
       return {
         x: X4, y: Y4, xLabelEvery: 500, xName: "Czas pracy (h)", yLabels: yLabels, noYGrid: true,
-        legend: [
-          { text: "średnia z rejestru awarii", color: P.accent, box: true },
-          { text: "dolna granica", color: P.szalwia, box: true },
-          { text: "szacunek (7.2)", color: P.niebo, box: true },
-          { text: "prawdziwa średnia (zwykle nieznana)", color: P.ink, box: true }
-        ],
+        // Bez legendy: kolory znaczników powtarzają kolory odczytów nad wykresem.
         layers: layers,
         aria: "Osiem wentylatorów, badanie przerwane po " + c + " godzinach. Awarii: " + m.d +
           ". Średnia z rejestru awarii " + num(m.naive, 1) + ", dolna granica " + num(m.lower, 0) +
-          ", szacunek ze wzoru 7.2 " + num(m.est, 0) + " godzin."
+          ", szacunek jeden przez lambda z daszkiem " + num(m.est, 0) + " godzin."
       };
     },
     update: function (root, state) {

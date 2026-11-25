@@ -31,6 +31,7 @@ Przyjęte, bez złotej plakietki (`c7p_accepted` w `modules/stop_proto_common.R`
 | 3 | P9, P10 | przyjęte |
 | 4 | P11 „Ocalali wyglądają jak nowi” | przyjęty; czwarty kadr (oferta B) zostaje |
 | 4 | P12 „Stały hazard” | przyjęty; zastąpił widget „Stały hazard” |
+| 4 | P24 „Wentylator za wentylatorem” | dodany 25.11: scena magazynu z k = 1, rozkład wykładniczy przed definicją 7.7 |
 | 4 | P13 „Magazyn” | przyjęty |
 | 4 | P14 „Czas do k-tej awarii” | przyjęty; zastąpił widget gamma |
 

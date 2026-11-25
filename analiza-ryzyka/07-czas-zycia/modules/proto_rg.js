@@ -6,6 +6,8 @@
 //             pusty). Okres po okresie: oś czasu z kreskami awarii, licznik okresów,
 //             w których zapas wystarczył na 1000 h, i histogram czasu do trzeciej
 //             awarii. Model (Erlang k = 3) jest ukryty do ostatniego kroku.
+//             Ta sama scena z k = 1 i napisami z cfg.txt to P24 „Wentylator za
+//             wentylatorem”: czas do pierwszej awarii, czyli rozkład wykładniczy.
 (function () {
   "use strict";
   var Z = window.lcC7;
@@ -15,6 +17,10 @@
   Z.register({
     magazyn: function (cfg, ui) {
       var rnd, periods, ok, total, bins, model = "off";
+      // Napisy sceny: domyślnie magazyn (P13); cfg.txt podmienia je w innych wersjach.
+      var T = cfg.txt || {};
+      function tx(key, def) { return T[key] != null ? T[key] : def; }
+      var ticks = []; for (var tk = 0; tk <= cfg.tmax; tk += 1000) ticks.push(tk);
       var W = 860, x0 = 56, w = 700, rows = 10, top = 34, dy = 22, base = top + rows * dy + 8;
       var hTop = base + 70, hH = 110, hBase = hTop + hH, bw = cfg.bin, nb = Math.round(cfg.tmax / bw), yMax = 0.2;
       function xOf(t) { return x0 + Math.min(t, cfg.tmax) / cfg.tmax * w; }
@@ -37,8 +43,12 @@
           if (t < cfg.tmax) bins[Math.floor(t / bw)]++;
         }
       }
-      // Gęstość Erlanga k = 3: λ³ t² e^(−λt) / 2.
-      function erlang(t) { var l = 1 / cfg.gap; return l * l * l * t * t * Math.exp(-l * t) / 2; }
+      // Gęstość Erlanga: λ^k t^(k−1) e^(−λt) / (k−1)!; dla k = 1 rozkład wykładniczy.
+      function erlang(t) {
+        var l = 1 / cfg.gap, f = 1, i;
+        for (i = 2; i < cfg.k; i++) f *= i;
+        return Math.pow(l, cfg.k) * Math.pow(t, cfg.k - 1) * Math.exp(-l * t) / f;
+      }
 
       function stage() {
         var N = periods.length, start = Math.max(0, N - rows), body = "", r, ev, y, j, last, good;
@@ -56,12 +66,12 @@
           body += '<circle class="' + (good ? "c7p-ok" : "c7p-bad") + '" cx="' + (x0 + w + 22) + '" cy="' + y + '" r="6"/>' +
             '<text class="c7p-mono c7p-subtle" x="' + (x0 + w + 36) + '" y="' + (y + 4) + '" font-size="12">' + U.fmt(last, 0) + " h</text>";
         }
-        body += U.axis(xOf, base, [0, 1000, 2000, 3000, 4000], "czas od uzupełnienia magazynu (h)") +
+        body += U.axis(xOf, base, ticks, tx("axis", "czas od uzupełnienia magazynu (h)")) +
           '<line class="c7p-limit" x1="' + U.fmt(xOf(cfg.limit), 1) + '" x2="' + U.fmt(xOf(cfg.limit), 1) + '" y1="' + (top - 16) + '" y2="' + base + '"/>' +
           '<line class="c7p-limit" x1="' + U.fmt(xOf(cfg.limit), 1) + '" x2="' + U.fmt(xOf(cfg.limit), 1) + '" y1="' + hTop + '" y2="' + hBase + '"/>' +
-          '<text class="c7p-mono" x="' + U.fmt(xOf(cfg.limit) + 5, 1) + '" y="' + (top - 4) + '" font-size="13">' + cfg.limit + " h: dostawa</text>";
+          '<text class="c7p-mono" x="' + U.fmt(xOf(cfg.limit) + 5, 1) + '" y="' + (top - 4) + '" font-size="13">' + cfg.limit + " h: " + tx("limit", "dostawa") + "</text>";
         // Histogram czasu do trzeciej awarii (udział okresów w przedziale).
-        body += '<text x="' + x0 + '" y="' + (hTop - 14) + '" font-size="13" font-weight="700">Kiedy przyszła trzecia awaria (wszystkie okresy)</text>';
+        body += '<text x="' + x0 + '" y="' + (hTop - 14) + '" font-size="13" font-weight="700">' + tx("hist", "Kiedy przyszła trzecia awaria (wszystkie okresy)") + "</text>";
         for (j = 0; j < nb; j++) {
           if (!bins[j]) continue;
           var p = bins[j] / N, cls = (j + 1) * bw <= cfg.limit ? "c7p13-bar is-bad" : "c7p13-bar";
@@ -75,9 +85,9 @@
             '<line class="c7p-mean" x1="' + U.fmt(xOf(cfg.k * cfg.gap), 1) + '" x2="' + U.fmt(xOf(cfg.k * cfg.gap), 1) + '" y1="' + hTop + '" y2="' + hBase + '"/>' +
             '<text class="c7p-mono c7p-subtle" x="' + U.fmt(xOf(cfg.k * cfg.gap) + 5, 1) + '" y="' + (hTop + 10) + '" font-size="12">średnia ' + cfg.k * cfg.gap + " h</text>";
         }
-        body += U.axis(xOf, hBase, [0, 1000, 2000, 3000, 4000], "czas do trzeciej awarii (h)");
-        return U.svgWrap(W, hBase + 40, "Oś czasu ostatnich okresów z kreskami awarii i histogram czasu do trzeciej awarii z " + N +
-          " okresów; zapas wystarczył na " + cfg.limit + " godzin w " + ok + " okresach.", body);
+        body += U.axis(xOf, hBase, ticks, tx("haxis", "czas do trzeciej awarii (h)"));
+        return U.svgWrap(W, hBase + 40, tx("aria", "Oś czasu ostatnich okresów z kreskami awarii i histogram czasu do trzeciej awarii.") +
+          " Powtórzeń: " + N + "; ponad " + cfg.limit + " godzin w " + ok + " z nich.", body);
       }
 
       restart();
@@ -93,8 +103,8 @@
           ui.set("n", String(N));
           ui.set("ok", ok + " z " + N + " = " + U.fmt(ok / N, 3));
           ui.set("mean", U.fmtH(total / N));
-          ui.set("model", model === "on" ? "Model (Erlang, k = 3): zapas wystarczy z prawdopodobieństwem " + U.fmtP(cfg.p) +
-            ", średni czas do trzeciej awarii " + cfg.k * cfg.gap + " h." : "");
+          ui.set("model", model === "on" ? tx("model", "Model (Erlang, k = 3): zapas wystarczy z prawdopodobieństwem ") + U.fmtP(cfg.p) +
+            tx("model2", ", średni czas do trzeciej awarii ") + cfg.k * cfg.gap + " h." : "");
         }
       };
     }

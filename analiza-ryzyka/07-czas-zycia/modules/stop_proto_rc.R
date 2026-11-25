@@ -189,7 +189,7 @@ c7pb_svg <- function() {
       sprintf('<text x="20" y="%g" font-size="15" font-weight="700">%s</text>', y0 + 22, m$name),
       sprintf('<text class="c7p-subtle" x="20" y="%g" font-size="13">%s</text>', y0 + 42, m$sub),
       sprintf('<text class="c7p-mono" x="20" y="%g" font-size="13">awarie: %d z %d</text>', y0 + 70, m$d, c7pb_n),
-      sprintf('<text class="c7p-mono" x="20" y="%g" font-size="13" font-weight="700">wzór (7.2): %s h</text>', y0 + 90, c7p_num(c7pb_est[[k]], 0)),
+      sprintf('<text class="c7p-mono" x="20" y="%g" font-size="13" font-weight="700">1/λ̂ = %s h</text>', y0 + 90, c7p_num(c7pb_est[[k]], 0)),
       sprintf('<text class="c7p-mono %s" x="20" y="%g" font-size="13" font-weight="700">%s</text>', if (k == 1) "c7p-ok" else "c7p-bad", y0 + 110, verdict),
       paste(sprintf('<line class="c7pb-future" x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f"/>', x(c7pc_end), x(m$t[!failed]), y[!failed], y[!failed]), collapse = ""),
       paste(sprintf('<line class="c7pb-life%s" x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f"/>', ifelse(failed, "", " is-alive"), x(0), x(obs), y, y), collapse = ""),
@@ -200,7 +200,7 @@ c7pb_svg <- function() {
   bottom <- top + length(c7pb_calc) * rowh
   ticks <- seq(0, xmax, 1000)
   c7p_svg(860, bottom + 30,
-    sprintf("Trzy parki po %d wentylatorów o średnim czasie życia 1500 godzin, badanie przerwane po 1200 godzinach. Szacunek ze wzoru 7.2: około %s, %s i %s godzin.",
+    sprintf("Trzy parki po %d wentylatorów o średnim czasie życia 1500 godzin, badanie przerwane po 1200 godzinach. Szacunek jeden przez lambda z daszkiem: około %s, %s i %s godzin.",
       c7pb_n, c7p_num(c7pb_est[[1]], 0), c7p_num(c7pb_est[[2]], 0), c7p_num(c7pb_est[[3]], 0)),
     sprintf('<line class="c7p-limit" x1="%.1f" x2="%.1f" y1="%g" y2="%g"/><text class="c7p-mono" x="%.1f" y="%g" font-size="13" text-anchor="end">koniec badania 1200 h</text>',
       x(c7pc_end), x(c7pc_end), top - 8, bottom - 12, x(c7pc_end) - 6, top - 14),
@@ -211,9 +211,9 @@ c7pb_svg <- function() {
     sprintf('<text class="c7p-subtle" x="%.1f" y="%g" font-size="12" text-anchor="end">czas pracy (h)</text>', x(xmax), bottom + 24))
 }
 
-c7p_bias_ui <- figure_panel("Galeria", title = "Kiedy wzór (7.2) trafia, a kiedy nie", width_mode = "wide",
+c7p_bias_ui <- figure_panel("Galeria", title = "Kiedy szacunek \\(1/\\hat\\lambda\\) trafia, a kiedy nie", width_mode = "wide",
   c7pc_css, c7p_css, c7pb_css, c7pb_svg(),
-  tags$p("Trzy parki po 40 wentylatorów mają ten sam średni czas życia, 1500 h, i to samo badanie przerwane po 1200 h. Pełna linia to czas pracy widziany w badaniu, przerywana to dalsze życie, którego badanie nie widzi. Niebieski znacznik pokazuje szacunek ze wzoru (7.2)."))
+  tags$p("Trzy parki po 40 wentylatorów mają ten sam średni czas życia, 1500 h, i to samo badanie przerwane po 1200 h. Pełna linia to czas pracy widziany w badaniu, przerywana to dalsze życie, którego badanie nie widzi. Niebieski znacznik pokazuje szacunek \\(1/\\hat\\lambda\\) ze wzoru (7.2)."))
 
 # ============================================================================
 # P5 — POJĘCIE „ŁĄCZNY CZAS PRACY”
@@ -286,10 +286,10 @@ c7p5_frames <- list(
     read = "7250 / 8 ≈ 906 h (dolna granica)"),
   list(name = "Godziny na awarię",
     text = "Druga poprawka dzieli tę samą taśmę przez liczbę awarii. Jeśli ryzyko awarii nie zależy od wieku, każda godzina pracy jest tak samo narażona, a na jedną awarię przypada ćwierć taśmy.",
-    read = "MTTF ≈ 7250 / 4 = 1812.5 h"),
+    read = "1/λ̂ = 7250 / 4 = 1812.5 h"),
   list(name = "Bez działających",
     text = "Średnia z rejestru awarii używa tych samych czterech awarii, ale krótszej taśmy: wycina godziny wentylatorów, które przetrwały.",
-    read = "2450 / 4 = 612.5 h; 7250 / 8 ≈ 906 h; 7250 / 4 = 1812.5 h")
+    read = "rejestr 612.5 h; dolna granica 906 h; 1/λ̂ = 1812.5 h")
 )
 
 c7p_5_ui <- tagList(c7pc_css,

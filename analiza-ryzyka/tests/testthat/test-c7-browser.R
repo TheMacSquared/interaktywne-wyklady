@@ -25,13 +25,13 @@ testthat::test_that("wykład 07: prototypy punktów stop są wpięte i działaj�
   }, args = list(path = file.path(risk_root, "07-czas-zycia")), show = FALSE)
 
   # Część A po decyzjach z 2026-11-24: P1 raz (po głosowaniu), z pary P2 został P2B, P6 usunięty.
-  expected <- c("P1", "P2B", paste0("P", c(3:5, 7:15)), "P16A", "P16B", "P17A", "P17B",
+  expected <- c("P1", "P2B", "P24", paste0("P", c(3:5, 7:15)), "P16A", "P16B", "P17A", "P17B",
     "P18", "P19", "P20", "P21A", "P21B", "P22", "P23A", "P23B")
   testthat::expect_equal(sort(res$protos), sort(expected))
   testthat::expect_false(res$pending)
 
   # Sceny: kadry (P1, P3, P5, P9, P11, P15, P18) i trzy sceny w JS.
-  testthat::expect_equal(sort(res$scenes), sort(c(rep("kadry", 7), "okno", "parki", "magazyn")))
+  testthat::expect_equal(sort(res$scenes), sort(c(rep("kadry", 7), "okno", "parki", "magazyn", "magazyn")))
   for (cfg in res$configs[res$scenes == "kadry"]) {
     testthat::expect_gte(length(cfg$frames), 3L)
     for (fr in cfg$frames) testthat::expect_true(grepl("^<svg", fr$svg))

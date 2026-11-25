@@ -25,10 +25,10 @@ c7p_4_ui <- c7p_panel("P4", "piaskownica", "Trzy rachunki a koniec badania",
       c7p_read("d", "Awarie"),
       c7p_read("naive", "Średnia z rejestru awarii", upwr_accent),
       c7p_read("lower", "Dolna granica", upwr_cat[["szalwia"]]),
-      c7p_read("est", "Szacunek (7.2)", upwr_cat[["niebo"]]),
-      c7p_read("truth", "Prawdziwa średnia", text = "nieznana")
+      c7p_read("est", "Szacunek \\(1/\\hat\\lambda\\)", upwr_cat[["niebo"]]),
+      c7p_read("truth", "Prawdziwa średnia", "var(--upwr-ink)", text = "nieznana")
     ),
-    ratio = "2.2/1", max_height = "360px", legend = TRUE,
+    ratio = "2.2/1", max_height = "360px",
     config = list(times = c7p4_times),
     after = lc_caption("Wentylatory są te same przy każdym położeniu suwaka. Zmienia się tylko to, które czasy życia zdążyły zostać awariami. Dolna granica nigdy nie przekracza prawdziwej średniej.")
   )
