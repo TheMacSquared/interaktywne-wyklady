@@ -162,7 +162,7 @@ c7p5_frames <- list(
     text = "Sklejamy wszystkie godziny pracy w jedną taśmę. Kreska to awaria; zielone odcinki należą do wentylatorów, które nie zawiodły.",
     read = "7250 h pracy; 4 awarie"),
   list(name = "Godziny na awarię",
-    text = "Przy stałym hazardzie każda godzina pracy jest tak samo narażona. Na jedną awarię przypada ćwierć taśmy.",
+    text = "Jeśli ryzyko awarii nie zależy od wieku, każda godzina pracy jest tak samo narażona. Na jedną awarię przypada ćwierć taśmy.",
     read = "MTTF ≈ 7250 / 4 = 1812.5 h"),
   list(name = "Bez działających",
     text = "Średnia z samych awarii używa tych samych czterech awarii, ale krótszej taśmy: wycina godziny wentylatorów, które przetrwały.",

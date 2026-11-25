@@ -22,7 +22,8 @@ Przyjęte, bez złotej plakietki (`c7p_accepted` w `modules/stop_proto_common.R`
 |---|---|---|
 | 1 | P1 „Dwie oferty, jedna średnia” | przyjęty; stoi raz, po głosowaniu (wariant A) |
 | 1 | P2B „Dwie oferty, jedna średnia: gęstości osobno” | przyjęty; P2A (jedna oś) odrzucony i usunięty |
-| 2 | P3, P5, P6 | przyjęte |
+| 2 | P3, P5 | przyjęte |
+| 2 | P6 „To samo badanie powtórzone wiele razy” | przyjęty 24.11, usunięty 25.11: symulacja nie pasowała do narracji o ośmiu wentylatorach |
 | 2 | P4 „Koniec badania a średnia z awarii” | przyjęty; zastąpił dwa panele osi czasu |
 | 3 | P7 „Te same awarie, dwa mianowniki” | przyjęty; okno zostaje 300 h |
 | 3 | P8 „Cztery funkcje, jedna chwila” | przyjęty; zastąpił „Wspólny suwak czasu”, polecenie i odczyt przepisane |
@@ -64,8 +65,6 @@ mają tylko kadry z R, bez JS); wspólne narzędzia w
 
 ## Nowe liczby (nie ma ich w tekście wykładu)
 
-- P6: mediana średnich z awarii około 500–520 h, mediana szacunków (7.2) około
-  1500 h (symulacja, ziarno 2026; teoretyczna średnia warunkowa 521 h).
 - P7: ułamki liczone na 200 liniach parku (0.184 zamiast 0.181 z modelu;
   odczyt „z modelu” stoi obok).
 - P15: awarie na działających w oknach po 500 h (0.42 → 0.22, 0.28 → 0.29,
@@ -81,9 +80,8 @@ mają tylko kadry z R, bez JS); wspólne narzędzia w
 - P1, P9, P11, P17B: linie parku to kwantyle modelu, nie losowanie; kadr 2
   sceny P1 („w kolejności montażu”) pokazuje te same linie przetasowane.
   Linie oferty A dłuższe niż 4500 h są ucięte na krawędzi osi.
-- P6, P13: pierwszy widok to jedno badanie albo jeden okres, więc słupek
+- P13: pierwszy widok to jeden okres, więc słupek
   wychodzi ponad stałą oś, a licznik startuje od 100%.
-- P6: pasek odczytów zawija się do dwóch wierszy.
 - P8: przy t = 0 napis „t = 0 h” zachodzi na początek krzywej R(t).
 - P12, P16A: gdy suwaki stoją na modelu odniesienia (MTTF 1500 h, β = 1),
   przerywany kontur pokrywa się z krzywą.

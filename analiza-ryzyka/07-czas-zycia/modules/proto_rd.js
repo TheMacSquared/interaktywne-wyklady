@@ -1,16 +1,13 @@
-// Prototypy punktów stop wykładu 07, grupa rd: ryciny lcSF liczone w przeglądarce.
-// Kontenery w R: lc_sf_figure() w stop_proto_rd.R (c7p_4_ui, c7p_6_ui).
+// Prototypy punktów stop wykładu 07, grupa rd (P4): rycina lcSF liczona w przeglądarce.
+// Kontenery w R: lc_sf_figure() w stop_proto_rd.R (c7p_4_ui).
 //
 //   c7_koniec    — Koniec badania a średnia z awarii (P4): osiem wentylatorów jako linie
 //                  życia, suwak końca badania c, naiwna średnia z awarii i szacunek (7.2).
 //                  Opcjonalnie prawdziwe czasy życia (przerywane przyszłe awarie).
-//   c7_powtorki  — To samo badanie powtórzone wiele razy (P6): symulacja z modelu
-//                  wykładniczego MTTF 1500 h; dwa histogramy wyników jednego badania.
-//                  Przyciski dopisują badania, „Od nowa” wraca do ziarna 2026.
 (function () {
   "use strict";
-  var C = window.lcCharts, S = window.lcSF, Z = window.lcC7, D = window.lcDist;
-  if (!C || !S || !Z || !D) return;
+  var C = window.lcCharts, S = window.lcSF, Z = window.lcC7;
+  if (!C || !S || !Z) return;
   var U = Z.util;
 
   // Stałe: wspólna oś czasu P4, prawdziwa średnia ośmiu czasów (1368.75 h).
@@ -91,83 +88,7 @@
     }
   };
 
-  // ---- P6: symulacja powtórzeń badania ----------------------------------------
-  var X6 = [0, 4000], Y6 = 0.3, W6 = 100, NB6 = 40, MTTF_CUT = 4000;
-
-  function median(a) {
-    if (!a.length) return NaN;
-    var s = a.slice().sort(function (x, y) { return x - y; }), h = s.length >> 1;
-    return s.length % 2 ? s[h] : (s[h - 1] + s[h]) / 2;
-  }
-
-  // Jedno badanie: n wentylatorów z modelu wykładniczego, przerwane po c godzinach.
-  // Badanie bez awarii (d = 0) jest pomijane, ale liczone w runs.
-  function runOne(state) {
-    var cfg = state.config, d = 0, failSum = 0, sum = 0, i, t;
-    for (i = 0; i < cfg.n; i++) {
-      t = state.r.exp(1 / cfg.mttf);
-      if (t <= cfg.c) { d++; failSum += t; }
-      sum += Math.min(t, cfg.c);
-    }
-    state.runs++;
-    if (!d) { state.zero++; return; }
-    state.naive.push(failSum / d);
-    state.est.push(sum / d);
-  }
-
-  function startSim(state) {
-    state.r = D.rng(state.config.seed);
-    state.naive = []; state.est = []; state.runs = 0; state.zero = 0;
-    runOne(state);
-  }
-
-  var ADD = { add1: 1, add10: 10, add100: 100, add1000: 1000 };
-
-  var figPowtorki = {
-    init: function (state) { startSim(state); },
-    act: function (state, act) {
-      if (act === "reset") { startSim(state); return; }
-      var add = ADD[act] || 0;
-      for (var i = 0; i < add; i++) runOne(state);
-    },
-    draw: function (v, P, k, state) {
-      var cfg = state.config, vals = k === 0 ? state.naive : state.est;
-      var total = Math.max(1, state.naive.length), col = k === 0 ? P.accent : P.niebo;
-      var counts = [], j, bins = [];
-      for (j = 0; j < NB6; j++) counts.push(0);
-      vals.forEach(function (x) { if (x >= 0 && x < X6[1]) counts[Math.floor(x / W6)]++; });
-      for (j = 0; j < NB6; j++) bins.push([j * W6, (j + 1) * W6, counts[j] / total]);
-
-      var med = median(vals);
-      var layers = [
-        { type: "bins", data: bins, color: col, alpha: 0.75, stroke: P.surface, lineWidth: 0.6 },
-        { type: "vline", x: cfg.mttf, color: P.ink, width: 1.8, dash: [6, 4], from: 0, to: Y6 },
-        { type: "text", x: cfg.mttf, y: "top", text: "prawdziwy MTTF " + cfg.mttf + " h", color: P.ink, align: "left", mono: true }
-      ];
-      if (isFinite(med)) layers.push({ type: "vline", x: med, color: col, width: 2.4, from: 0, to: Y6 });
-
-      return {
-        x: X6, y: [0, Y6], xLabelEvery: 500, yName: "Udział badań",
-        xName: k === 1 ? "Wynik jednego badania (h)" : "",
-        alignLeft: true, layers: layers,
-        aria: (k === 0 ? "Histogram średnich z samych awarii" : "Histogram szacunków ze wzoru (7.2)") +
-          " z " + vals.length + " badań; pionowa kreska to mediana."
-      };
-    },
-    update: function (root, state) {
-      var nv = state.naive.length, est = state.est;
-      var below = state.naive.filter(function (x) { return x < state.config.mttf; }).length;
-      var out = est.filter(function (x) { return x >= MTTF_CUT; }).length;
-      S.setValue(root, "n", String(state.runs));
-      S.setValue(root, "naive", isFinite(median(state.naive)) ? U.fmt(median(state.naive), 0) + " h" : "–");
-      S.setValue(root, "est", isFinite(median(est)) ? U.fmt(median(est), 0) + " h" : "–");
-      S.setValue(root, "below", nv ? U.fmt(100 * below / nv, 0) + "%" : "–");
-      S.setValue(root, "out", String(out));
-    }
-  };
-
   S.register({
-    c7_koniec: figKoniec,
-    c7_powtorki: figPowtorki
+    c7_koniec: figKoniec
   });
 })();

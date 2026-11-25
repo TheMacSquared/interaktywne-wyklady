@@ -244,7 +244,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     lead = "Element nadal działający na końcu badania wnosi informację: jego czas życia jest co najmniej tak długi.",
     intro = c(
       "Drugie pytanie kierownika: co mówi badanie, w którym połowa wentylatorów jeszcze działa? Badanie trwałości zakończyło się po 1200 godzinach, a cztery z ośmiu egzemplarzy wciąż pracowały. Usunięcie ich z danych jest poważnym błędem: ich czas życia nie jest całkiem nieznany — wiemy, że przekroczył moment zakończenia obserwacji, i ta informacja musi zostać w analizie.",
-      "Przesuń koniec obserwacji na osi czasu i zobacz, jak zmienia się bilans awarii i obserwacji uciętych. Gdyby policzyć „średni czas życia” wyłącznie z zakończonych awarii, każdy wcześniejszy koniec badania dawałby krótszy wynik — nie dlatego, że wentylatory są gorsze, lecz dlatego, że najdłużej żyjące egzemplarze jeszcze nie zdążyły się zepsuć."
+      "Rozdział ma dwa kroki. Najpierw oglądamy błąd: średnią liczoną z samych awarii. Wychodzi za mała i zależy od tego, kiedy przerwano badanie — nie dlatego, że wentylatory są gorsze, lecz dlatego, że najdłużej żyjące egzemplarze jeszcze nie zdążyły się zepsuć. Potem poprawkę: rachunek, w którym liczą się wszystkie przepracowane godziny, także egzemplarzy wciąż działających."
     ),
     body = list(
       c(
@@ -263,24 +263,24 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
     ),
     sections = list(
       list(
-        id = "os-czasu", title = "Co widzi analityk",
+        id = "os-czasu", title = "Błąd: średnia z samych awarii",
         body = list(
           zycie_try("ustaw koniec obserwacji na 1200 h i policz awarie oraz obserwacje ucięte. Potem przesuń suwak do 800 h i do 2500 h. Dla każdego ustawienia zapisz, które czasy byłyby widoczne jako awarie."),
           # P4: piaskownica końca badania w przeglądarce
           c7p_get("c7p_4_ui"),
           zycie_reading(c(
             "Przy końcu obserwacji 1200 h widzimy cztery awarie (220, 480, 760, 990 h) i cztery obserwacje ucięte. Średnia z samych awarii wynosi 612.5 h. Przy 800 h awarie są trzy, a ich średnia spada do około 487 h; przy 2500 h awarii jest siedem, a średnia rośnie do około 1121 h. Tymczasem średnia wszystkich ośmiu rzeczywistych czasów to 1368.75 h.",
-            "Naiwna średnia rośnie wraz z długością badania, choć wentylatory się nie zmieniają. Powód jest prosty: dłuższe badanie dopuszcza do zbioru awarii coraz dłuższe czasy życia. Średnia z zakończonych awarii jest w istocie średnią warunkową — liczoną tylko wśród egzemplarzy, które zdążyły się zepsuć — i zawsze leży poniżej prawdziwego MTTF."
+            "Naiwna średnia rośnie wraz z długością badania, choć wentylatory się nie zmieniają. Powód jest prosty: dłuższe badanie dopuszcza do zbioru awarii coraz dłuższe czasy życia. Średnia z zakończonych awarii jest w istocie średnią warunkową — liczoną tylko wśród egzemplarzy, które zdążyły się zepsuć — i zawsze leży poniżej prawdziwego MTTF. Nie jest więc szacunkiem czasu życia, tylko błędem, który trzeba umieć rozpoznać."
           ))
         )
       ),
       list(
-        id = "szacunek", title = "Jak wykorzystać obserwacje ucięte",
+        id = "szacunek", title = "Poprawka: liczą się wszystkie godziny pracy",
         body = list(
           c(
-            "Jeżeli przyjmiemy model wykładniczy, informację „co najmniej \\(c\\) godzin” da się wykorzystać bardzo prosto. W tym modelu hazard jest stały, więc każda godzina pracy — zakończona awarią czy nie — jest jednakowo „narażona”. Naturalny szacunek intensywności awarii to liczba awarii podzielona przez łączny czas pracy wszystkich egzemplarzy, także tych, które przetrwały badanie."
+            "Informację „co najmniej \\(c\\) godzin” da się wykorzystać bardzo prosto, jeśli przyjmiemy jedno założenie: awaria jest tak samo prawdopodobna w każdej godzinie pracy, niezależnie od wieku wentylatora. Wtedy każda przepracowana godzina — zakończona awarią czy nie — jest jednakowo „narażona”, a naturalny szacunek intensywności awarii to liczba awarii podzielona przez łączny czas pracy wszystkich egzemplarzy, także tych, które przetrwały badanie. To założenie nazwiemy stałym hazardem i sprawdzimy w rozdziale o rozkładzie wykładniczym."
           ),
-          zycie_note("Założenie rachunku", "Wzór (7.2) dotyczy modelu wykładniczego ze stałym hazardem. W tym przykładzie obserwację kończymy w ustalonej chwili; do sumy czasu pracy wliczamy także egzemplarze nadal działające."),
+          zycie_note("Założenie rachunku", "Wzór (7.2) działa tylko wtedy, gdy ryzyko awarii nie zależy od wieku elementu. W tym przykładzie obserwację kończymy w ustalonej chwili; do sumy czasu pracy wliczamy także egzemplarze nadal działające."),
           risk_formula("⟦1|\\hat\\lambda⟧=\\frac{⟦2|d⟧}{⟦3|\\sum_{i=1}^{n} t_i⟧},\\qquad \\widehat{MTTF}=\\frac{\\sum_{i=1}^{n} t_i}{d}", num = "7.2",
             notes = list("oszacowana intensywność awarii", "liczba awarii", "łączny czas pracy wszystkich egzemplarzy"),
             note_colors = c("terakota", "accent", "szalwia"), above = 2),
@@ -292,13 +292,11 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
               "Liczba awarii \\(d = 4\\), więc \\(\\hat\\lambda = 4/7250 \\approx 0.00055\\) na godzinę, a \\(\\widehat{MTTF} = 7250/4 = 1812.5\\) h.",
               "Naiwna średnia z samych awarii: \\(2450/4 = 612.5\\) h."
             ),
-            answer = "Szacunek z wykorzystaniem cenzorowania to około 1813 h, naiwna średnia — 612.5 h. Szacunek (7.2) nie trafia dokładnie w średnią ośmiu rzeczywistych czasów (1368.75 h): opiera się na czterech awariach i na założeniu stałego hazardu. W przeciwieństwie do naiwnej średniej nie jest jednak zaniżony z samej konstrukcji."
+            answer = "Szacunek z wykorzystaniem cenzorowania to około 1813 h, naiwna średnia — 612.5 h. Szacunek (7.2) nie trafia dokładnie w średnią ośmiu rzeczywistych czasów (1368.75 h): opiera się na czterech awariach i na założeniu, że ryzyko awarii nie zależy od wieku. W przeciwieństwie do naiwnej średniej nie jest jednak zaniżony z samej konstrukcji."
           ),
           # P5: łączny czas pracy jako jedna taśma
           c7p_get("c7p_5_ui"),
-          # P6: symulacja — błąd naiwnej średniej jest systematyczny
-          c7p_get("c7p_6_ui"),
-          "Wzór (7.2) jest najprostszym przykładem ogólnej zasady: obserwacja cenzorowana wchodzi do analizy z informacją, którą rzeczywiście niesie. W modelach innych niż wykładniczy robi się to przez funkcję wiarygodności albo estymator Kaplana–Meiera; na tym kursie nie estymujemy parametrów, ale musimy umieć rozpoznać, kiedy ktoś zrobił to źle.",
+          "Wzór (7.2) jest najprostszym przykładem ogólnej zasady: obserwacja cenzorowana wchodzi do analizy z informacją, którą rzeczywiście niesie. Bez założenia o ryzyku niezależnym od wieku robi się to przez funkcję wiarygodności albo estymator Kaplana–Meiera; na tym kursie nie estymujemy parametrów, ale musimy umieć rozpoznać, kiedy ktoś zrobił to źle.",
           risk_check("c7_chk_cenzor",
             "Dlaczego średnia z samych zakończonych awarii rośnie, gdy przedłużamy badanie tych samych wentylatorów?",
             c("Bo wentylatory z czasem pracują coraz lepiej" = "better", "Bo do zbioru awarii dochodzą dłuższe czasy życia, wcześniej ucięte" = "longer", "To efekt przypadku, który zniknie przy większej próbie" = "chance"),

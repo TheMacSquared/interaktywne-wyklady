@@ -24,8 +24,8 @@ testthat::test_that("wykład 07: prototypy punktów stop są wpięte i działaj�
     )
   }, args = list(path = file.path(risk_root, "07-czas-zycia")), show = FALSE)
 
-  # Część A po decyzjach z 2026-11-24: P1 raz (po głosowaniu), z pary P2 został P2B.
-  expected <- c("P1", "P2B", paste0("P", 3:15), "P16A", "P16B", "P17A", "P17B",
+  # Część A po decyzjach z 2026-11-24: P1 raz (po głosowaniu), z pary P2 został P2B, P6 usunięty.
+  expected <- c("P1", "P2B", paste0("P", c(3:5, 7:15)), "P16A", "P16B", "P17A", "P17B",
     "P18", "P19", "P20", "P21A", "P21B", "P22", "P23A", "P23B")
   testthat::expect_equal(sort(res$protos), sort(expected))
   testthat::expect_false(res$pending)
@@ -37,7 +37,7 @@ testthat::test_that("wykład 07: prototypy punktów stop są wpięte i działaj�
     for (fr in cfg$frames) testthat::expect_true(grepl("^<svg", fr$svg))
   }
   testthat::expect_setequal(res$figs, c("c7_staly", "c7_gestosci_b", "c7_cztery",
-    "c7_pole_hazardu", "c7_koniec", "c7_powtorki", "c7_gamma", "c7_weibull", "c7_rodzina",
+    "c7_pole_hazardu", "c7_koniec", "c7_gamma", "c7_weibull", "c7_rodzina",
     "c7_ranking", "c7_wanna", "c7_jeden_weibull", "c7_termin", "c7_termin_pole", "c7_stary_nowy",
     # Główne wykresy części B (modules/wykresy.js); cztery z części A zastąpiły P4, P8, P12 i P14.
     "c7m_weibull", "c7m_same_mean",
