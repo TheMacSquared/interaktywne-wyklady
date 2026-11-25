@@ -147,7 +147,7 @@ zycie_map_table <- lc_table(
 zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = list(
   list(
     id = "pytania", title = "Pytania o wentylator", hook = "Jeden wentylator, cztery decyzje",
-    lead = "Każda decyzja o wentylatorze zależy od tego, czy psuje się on losowo, czy się zużywa.",
+    lead = "Każda decyzja o wentylatorze zależy od tego, jak ryzyko awarii zmienia się z jego wiekiem.",
     intro = c(
       "W dojrzewalni Bananpolu wentylator pracuje bez przerwy, a jego awaria przerywa kontrolę temperatury w komorze. Kierownik utrzymania ruchu ma dziś na biurku cztery sprawy, a każda dotyczy tego samego urządzenia."
     ),
@@ -158,7 +158,7 @@ zycie_block <- list(id = "zycie", title = "Czas życia elementu", chapters = lis
         tags$li("Magazynier pyta, ile wentylatorów trzymać w zapasie do następnej dostawy."),
         tags$li("Do zatwierdzenia czeka plan przeglądów: po ilu godzinach oglądać wentylator i czy wymieniać egzemplarz, który jeszcze działa.")
       ),
-      "Żadnej z tych spraw nie rozstrzygnie jedna liczba z karty katalogowej. Wszystkie zależą od jednego pytania, które prowadzi przez cały wykład: czy wentylator psuje się losowo, czy się zużywa? Jeśli losowo, wiek egzemplarza nie ma znaczenia i wymiana sprawnego niczego nie daje. Jeśli się zużywa, każda kolejna godzina jest groźniejsza od poprzedniej, a termin przeglądu staje się najważniejszą decyzją.",
+      "Żadnej z tych spraw nie rozstrzygnie jedna liczba z karty katalogowej. Moment awarii jest losowy w każdym wentylatorze: nikt nie wie, kiedy zepsuje się konkretny egzemplarz. Urządzenia różnią się czym innym — tym, jak ryzyko awarii zmienia się z wiekiem. To pytanie prowadzi przez cały wykład: czy ryzyko awarii jest takie samo przez całe życie wentylatora, czy rośnie w miarę zużycia, czy może maleje, gdy wczesne wady już się ujawniły? Jeśli jest stałe, wiek egzemplarza nie ma znaczenia i wymiana sprawnego niczego nie daje. Jeśli rośnie, każda kolejna godzina jest groźniejsza od poprzedniej, a termin przeglądu staje się najważniejszą decyzją.",
       lc_h3("Mapa wykładu"),
       "Cztery sprawy z biurka rozkładają się na siedem pytań. Każdy rozdział odpowiada na jedno z nich i dokłada jedno narzędzie. Część A to pierwsze spotkanie, część B drugie.",
       zycie_map_table,
