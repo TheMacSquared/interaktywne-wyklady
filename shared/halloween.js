@@ -1,17 +1,9 @@
 // ============================================================================
-// Tryb halloweenowy — ozdoby (nietoperze, dynie, cukierki) i domyślny tryb
-// od 20.10 do 2.11. Widoczność ozdób steruje CSS (html[data-lc-theme=halloween]).
+// Tryb halloweenowy — ozdoby (nietoperze, dynie, cukierki). Widoczność ozdób
+// steruje CSS (html[data-lc-theme=halloween]), daty (20.10–2.11): season.js.
 // ============================================================================
 (function () {
   "use strict";
-
-  // Domyślny tryb, gdy nikt nie wybrał trybu przyciskiem (używa shared_toc.js
-  // i skrypt startowy w lecture_page()).
-  window.lcDomyslnyTryb = function () {
-    var d = new Date();
-    var md = (d.getMonth() + 1) * 100 + d.getDate();
-    return "light"; // Halloween wyłączone; na przyszły rok: (md >= 1020 && md <= 1102) ? "halloween" : "light"
-  };
 
   var NIETOPERZ =
     '<svg viewBox="0 0 100 50" aria-hidden="true"><path fill="currentColor" d="M50 18C46 10 42 12 40 16C34 6 20 4 4 10' +

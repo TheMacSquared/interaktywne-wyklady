@@ -296,6 +296,17 @@ lecture_page <- function(lecture_id      = NULL,
         title = "Ciemny tryb",
         `aria-label` = "Ciemny tryb",
         "C"
+      ),
+      # Tryb sezonowy: przycisk zostaje tylko w sezonie (daty w season.js),
+      # poza nim usuwa go shared_toc.js.
+      tags$button(
+        class = "lc-theme-option",
+        type = "button",
+        `data-lc-theme` = "winter",
+        `data-lc-season` = "winter",
+        title = "Zimowy tryb",
+        `aria-label` = "Zimowy tryb",
+        "Z"
       )
     )
   )
@@ -332,12 +343,15 @@ lecture_page <- function(lecture_id      = NULL,
       # Wstrzyknięte po shared_styles.css, żeby wartości z palette.R miały
       # pierwszeństwo nad wartościami fallbackowymi w CSS.
       .lc_palette_css(),
-      # Tryb halloweenowy wyłączony (bez przycisku H, bez trybu wg daty); kod zostaje na przyszły rok.
+      # Tryby sezonowe: kalendarz w season.js, wygląd w winter.* i halloween.*.
+      # Tryb halloweenowy jest wyłączony (bez przycisku H i bez wpisu w kalendarzu).
+      includeCSS(file.path(shared_root, "winter.css")),
+      .lc_winter_peek_css(),
       includeCSS(file.path(shared_root, "halloween.css")),
       # data-lc-early: te dwa skrypty ustawiają tryb i rozmiar tekstu przed pierwszym
       # rysowaniem strony, więc build statyczny zostawia je w nagłówku (pozostałe
       # przenosi na koniec dokumentu).
-      includeScript(file.path(shared_root, "halloween.js"), `data-lc-early` = "true"),
+      includeScript(file.path(shared_root, "season.js"), `data-lc-early` = "true"),
       tags$script(`data-lc-early` = "true", HTML("
 (function() {
   try {
@@ -346,13 +360,15 @@ lecture_page <- function(lecture_id      = NULL,
       document.documentElement.setAttribute('data-lc-font-size', size);
     }
     var theme = window.localStorage.getItem('lc-theme') || window.lcDomyslnyTryb();
-    if (theme === 'light' || theme === 'dark') {
+    if (theme === 'light' || theme === 'dark' || theme === window.lcSeason()) {
       document.documentElement.setAttribute('data-lc-theme', theme);
     }
   } catch (e) {}
 })();
       ")),
       includeScript(file.path(shared_root, "shared_toc.js")),
+      includeScript(file.path(shared_root, "winter.js")),
+      includeScript(file.path(shared_root, "halloween.js")),
       includeScript(file.path(shared_root, "lc_widgets.js")),
       includeScript(file.path(shared_root, "lc_dragdrop.js")),
       includeScript(file.path(shared_root, "lc_formula.js")),
@@ -523,10 +539,25 @@ margin_note <- function(...) {
   lc_note("Notka", ...)
 }
 
+# Barwa z palety R → token motywu z zapasowym hexem, np.
+# upwr_accent → "var(--upwr-accent, #6b1a2a)". Dzięki temu kolor wpisany inline
+# (plakietka, odczyt, strefa) idzie za trybem: ciemnym i sezonowym. Wartości
+# spoza palety (inny hex, gotowe "var(...)") przechodzą bez zmian.
+.lc_css_color <- function(color) {
+  if (is.null(color)) return(NULL)
+  pal <- c(accent = upwr_accent, `single-alt` = upwr_single_alt,
+           secondary = upwr_secondary, reference = upwr_reference,
+           ink = upwr_ink, `ink-soft` = upwr_ink_soft, rule = upwr_rule,
+           stats::setNames(upwr_cat, paste0("cat-", names(upwr_cat))))
+  color <- unname(as.character(color))
+  hit <- match(tolower(color), tolower(pal))
+  ifelse(is.na(hit), color, sprintf("var(--upwr-%s, %s)", names(pal)[hit], color))
+}
+
 # Ramka z plakietką (wykresy, ćwiczenia, ściągi)
 # Domyślnie: szerokość kolumny tekstu (lepszy kontrast z narracją).
 # full_width = TRUE tylko gdy wykres naprawdę potrzebuje pełnej szerokości.
-figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
+figure_panel <- function(label, ..., title = NULL, color = NULL,
                           full_width = FALSE, width_mode = NULL) {
   if (!is.null(width_mode) && !missing(full_width)) {
     stop("Wybierz width_mode albo full_width, nie oba argumenty.")
@@ -540,7 +571,7 @@ figure_panel <- function(label, ..., title = NULL, color = "#6b1a26",
     class = outer_class,
     tags$div(
       class = "lc-figure-panel-badge",
-      style = paste0("background:", color, ";"),
+      style = if (!is.null(color)) paste0("background:", .lc_css_color(color), ";"),
       label
     ),
     if (!is.null(title))
@@ -656,7 +687,7 @@ lc_stat_box <- function(label, value = NULL, ..., caption = NULL,
   value_parts <- c(if (!is.null(value)) list(value), list(...))
   tags$div(
     class = "lc-stat-box",
-    style = paste0("--lc-stat-color:", color, ";"),
+    style = paste0("--lc-stat-color:", .lc_css_color(color), ";"),
     tags$div(class = "lc-stat-label", label),
     if (length(value_parts) > 0) tags$div(class = "lc-stat-value", value_parts),
     if (!is.null(caption)) tags$div(class = "lc-stat-caption", caption)
@@ -784,6 +815,15 @@ lc_chapter_next <- function(num, title, lead = NULL, target_id) {
 # duplikować hex-ów w palette.R — paleta ma zostać czysto semantyczna (role),
 # a zmienne UI pomocnicze są wariantami tych ról.
 # ============================================================================
+
+# Obrazek do żartu trybu zimowego (postać wychylająca się zza krawędzi, winter.js)
+# jako zmienna CSS z data-URI. Bez pliku shared/winter_peek.png żartu nie ma.
+.lc_winter_peek_css <- function() {
+  path <- file.path(shared_root, "winter_peek.png")
+  if (!file.exists(path)) return(NULL)
+  b64 <- gsub("\\s", "", jsonlite::base64_enc(readBin(path, "raw", file.size(path))))
+  tags$style(HTML(sprintf(":root { --lc-winter-peek: url(data:image/png;base64,%s); }", b64)))
+}
 
 .lc_palette_css <- function() {
   # Tokeny pochodne — wyliczone z palety sekwencyjnej i kat.
@@ -1054,7 +1094,7 @@ lc_slider <- function(input_id, label, min, max, value, step = NULL,
 # legendy serii (wtedy legend.position = "none" w ggplot).
 lc_readout <- function(label, value, color = NULL, swatch = FALSE) {
   tags$div(class = "lc-read",
-    style = if (!is.null(color)) paste0("--lc-read-color:", color, ";"),
+    style = if (!is.null(color)) paste0("--lc-read-color:", .lc_css_color(color), ";"),
     tags$span(class = "lc-read-label",
       if (isTRUE(swatch)) tags$i(class = "lc-read-swatch", `aria-hidden` = "true"),
       label
@@ -1114,7 +1154,7 @@ lc_drop_match <- function(input_id, items, zones, colors = NULL,
       `data-lc-dm-item` = items$id[[i]],
       `data-lc-dm-order` = i,
       style = if (!is.null(item_colors))
-        paste0("--lc-dm-item-color:", item_colors[[i]], ";"),
+        paste0("--lc-dm-item-color:", .lc_css_color(item_colors[[i]]), ";"),
       items$text[[i]]
     )
   })
@@ -1122,7 +1162,7 @@ lc_drop_match <- function(input_id, items, zones, colors = NULL,
   fields <- lapply(seq_along(zones), function(i) {
     tags$div(
       class = "lc-dm-zone",
-      style = paste0("--lc-dm-color:", colors[[i]], ";"),
+      style = paste0("--lc-dm-color:", .lc_css_color(colors[[i]]), ";"),
       `data-lc-dm-zone` = names(zones)[[i]],
       tags$div(class = "lc-dm-zone-label", unname(zones)[[i]]),
       tags$div(class = "lc-dm-slot")
@@ -1163,7 +1203,7 @@ lc_compare_rows <- function(rows) {
       state <- if (isTRUE(r$ok)) "is-ok" else if (isFALSE(r$ok)) "is-bad"
       share <- max(0, min(1, as.numeric(r$share)))
       tags$div(class = paste("lc-cmp-row", state),
-        style = if (!is.null(r$color)) paste0("--lc-cmp-color:", r$color, ";"),
+        style = if (!is.null(r$color)) paste0("--lc-cmp-color:", .lc_css_color(r$color), ";"),
         tags$div(class = "lc-cmp-label",
           if (!is.null(r$kicker)) tags$em(r$kicker), r$label),
         tags$div(class = "lc-cmp-bar", `aria-hidden` = "true",
@@ -1774,9 +1814,10 @@ lc_tile_quiz <- function(id, questions, n = length(questions), summary,
     # colors: letter (tło litery kafelka), score (odczyt wyniku), question i correct
     # (pozostałe odczyty), score_levels = list(start, ok, mid, low): kolor wyniku
     # w trakcie gry (≥ 70%, ≥ 50%, mniej).
-    colors = utils::modifyList(list(letter = upwr_secondary, score = upwr_accent), colors),
+    colors = rapply(utils::modifyList(list(letter = upwr_secondary, score = upwr_accent), colors),
+                    .lc_css_color, how = "replace"),
     option_colors = if (!is.null(options) && !is.null(options[[1]]$color)) {
-      as.list(unname(vapply(options, function(o) as.character(o$color), character(1))))
+      as.list(unname(vapply(options, function(o) .lc_css_color(o$color), character(1))))
     },
     # labels: question, score (odczyty w trakcie), result, correct (podsumowanie),
     # next, finish, again (przyciski).

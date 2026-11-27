@@ -387,6 +387,10 @@
 
   var storageKey = "lc-theme";
   var allowed = { light: true, dark: true };
+  // Tryb sezonowy jest dozwolony tylko w sezonie (daty: season.js). Poza nim
+  // zapisany wybór jest ignorowany i strona wraca do trybu jasnego.
+  var season = window.lcSeason ? window.lcSeason() : null;
+  if (season) allowed[season] = true;
 
   function getStoredTheme() {
     try {
@@ -418,6 +422,9 @@
   }
 
   function initThemeSwitcher() {
+    document.querySelectorAll(".lc-theme-option[data-lc-season]").forEach(function (button) {
+      if (button.getAttribute("data-lc-season") !== season) button.remove();
+    });
     setTheme(getStoredTheme() || (window.lcDomyslnyTryb ? window.lcDomyslnyTryb() : "light"), false);
 
     document.addEventListener("click", function (event) {

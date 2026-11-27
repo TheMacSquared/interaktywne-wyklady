@@ -677,6 +677,11 @@ html, body {
   text-transform: uppercase;
 }
 
+html[data-lc-theme="dark"] .lc-figure-panel-badge,
+html[data-lc-theme="dark"] .quiz-tiles .quiz-tile .tile-letter {
+  color: var(--upwr-bg);
+}
+
 .lc-figure-panel-title {
   font-family: var(--upwr-serif);
   font-size: calc(19px * var(--lc-font-scale));
@@ -777,6 +782,11 @@ html, body {
 
 .lc-theme-options {
   grid-template-columns: repeat(2, 1fr);
+}
+
+/* Trzeci przycisk: tryb sezonowy (poza sezonem usuwa go shared_toc.js) */
+.lc-theme-options:has(> :nth-child(3)) {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .lc-font-size-option,

@@ -37,10 +37,6 @@ html[data-lc-theme="halloween"] {
   --upwr-cat-wrzos:         #8a2a6a;
 }
 
-.lc-theme-options:has(> :nth-child(3)) {
-  grid-template-columns: repeat(3, 1fr);
-}
-
 /* Wzorek w tle: cukierek, kukurydzka, nietoperz. Leży na html (płótno strony),
    body i .lc-main są przezroczyste, żeby ozdoby z z-index:-1 były pod treścią,
    ale nad tłem. Karty, panel boczny i pasek górny mają własne tła. */

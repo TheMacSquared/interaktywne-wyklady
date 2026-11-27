@@ -17,7 +17,9 @@ Jeden system layoutu, stylów i bibliotek dla kursów `statystyka/` i
 | `lc_widgets.js`, `lc_dragdrop.js`, `lc_formula.js`, `shared_toc.js` | kontrolki v2, przeciąganie kart, wzór ze znacznikami, spis sekcji |
 | `lc_quiz.js` | quiz kafelkowy `lc_tile_quiz()`: losowanie pytań, ocena, wynik (`window.lcTileQuiz`) |
 | `shared_styles.css` | style powłoki i komponentów |
-| `halloween.css`, `halloween.js` | tryb sezonowy (wyłączony) |
+| `season.js` | kalendarz trybów sezonowych: `lcSeason()`, `lcDomyslnyTryb()` |
+| `winter.css`, `winter.js`, `winter_peek.png` | tryb zimowy (1.12–6.01): tokeny `--upwr-*`, wzorek tła, ozdoby; żart z postacią wychylającą się zza krawędzi (bez pliku PNG wyłączony) |
+| `halloween.css`, `halloween.js` | tryb halloweenowy (wyłączony) |
 | `fonts/` | IBM Plex Sans i Mono (wagi 400–700): wykresy R i strony statyczne |
 | `DESIGN_CONTRACT.md`, `LECTURE_LAYOUT.md` | kontrakt designu i opis komponentów |
 

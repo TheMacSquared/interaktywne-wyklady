@@ -1,0 +1,121 @@
+/* ============================================================================
+   Tryb zimowy (Z) — tryb sezonowy obok jasnego i ciemnego, tylko jasny.
+   Ładowany po .lc_palette_css(); selektor html[data-lc-theme="winter"]
+   ma wyższą specyficzność niż :root, więc nadpisuje tokeny --upwr-*.
+   Daty sezonu: shared/season.js. Ozdoby wstawia shared/winter.js.
+   ============================================================================ */
+
+html[data-lc-theme="winter"] {
+  color-scheme: light;
+  --upwr-bg:                #e8f0f5;
+  --upwr-panel:             #dce8ef;
+  --upwr-surface:           #f9fcfe;
+  --upwr-surface-sunken:    #d0dfe8;
+  --upwr-ink:               #14212b;
+  --upwr-ink-soft:          #2c3e4a;
+  /* tekst pomocniczy: kontrast ≥ 4,5:1 na wszystkich czterech tłach */
+  --upwr-ink-subtle:        #52646f;
+  --upwr-reference:         #5b6e7a;
+  --upwr-rule:              #aec4d1;
+  --upwr-rule-soft:         #c9dae4;
+  --upwr-accent:            #941a35;
+  --upwr-accent-hover:      #6f1328;
+  --upwr-accent-tint:       #f6dcdf;
+  --upwr-single-alt:        #86650f;
+  --upwr-single-alt-tint:   #f2e9cc;
+  --upwr-sage:              #1f6b47;
+  --upwr-sage-tint:         #d6eadd;
+  --upwr-warning:           #8a4b0f;
+  --upwr-secondary:         #2a4250;
+  /* serie danych: przyciemnione, kontrast ≥ 3:1 na chłodnym tle i na panelach;
+     bursztyn, kurkuma i terakota rozsunięte w odcieniu, żeby nie zlewały się
+     ze sobą ani z akcentem */
+  --upwr-cat-grafit:        #2a4250;
+  --upwr-cat-bursztyn:      #ac6e06;
+  --upwr-cat-niebo:         #2a72aa;
+  --upwr-cat-szalwia:       #1f7a54;
+  --upwr-cat-kurkuma:       #6f7a14;
+  --upwr-cat-indygo:        #33478f;
+  --upwr-cat-terakota:      #b5462a;
+  --upwr-cat-wrzos:         #8a4f85;
+}
+
+/* Wzorek w tle: śnieżynki i płatki. Leży na html (płótno strony), body
+   i .lc-main są przezroczyste, żeby ozdoby z z-index:-1 były pod treścią,
+   ale nad tłem. Karty, panel boczny i pasek górny mają własne tła. */
+html[data-lc-theme="winter"] body,
+html[data-lc-theme="winter"] .lc-main {
+  background: transparent;
+}
+html[data-lc-theme="winter"] {
+  background-color: var(--upwr-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cg fill='none' stroke='%235f8fb0' stroke-width='2' stroke-linecap='round' opacity='.2'%3E%3Cpath d='M60 44v32M46 52l28 16M46 68l28-16M60 44l-4-4M60 44l4-4M60 76l-4 4M60 76l4 4'/%3E%3Cpath d='M180 162v20M171 167l18 10M171 177l18-10'/%3E%3C/g%3E%3Cg fill='%23ffffff' opacity='.9'%3E%3Ccircle cx='150' cy='52' r='4'/%3E%3Ccircle cx='28' cy='150' r='3'/%3E%3Ccircle cx='108' cy='206' r='5'/%3E%3Ccircle cx='214' cy='104' r='3'/%3E%3Ccircle cx='96' cy='118' r='2.5'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+/* === Ozdoby (wstawiane przez winter.js) === */
+.lc-winter { display: none; }
+html[data-lc-theme="winter"] .lc-winter { display: block; }
+
+.lc-winter-el {
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  display: block;
+  line-height: 0;
+}
+.lc-winter-el svg { width: 100%; height: auto; display: block; }
+
+/* Śnieżynki pod paskiem rozdziałów, choinka z prezentami i bombki w prawym
+   dolnym rogu (na marginesie obok treści, która ma max ok. 820 px szerokości) */
+.lc-winter .s1, .lc-winter .s2, .lc-winter .s3 { color: #6f9cba; }
+.lc-winter .s1 { top: 66px;  right: 34px;  width: 54px; }
+.lc-winter .s2 { top: 126px; right: 96px;  width: 34px; }
+.lc-winter .s3 { top: 172px; right: 22px;  width: 28px; }
+.lc-winter .t1 { bottom: 6px;  right: 16px;  width: 96px; }
+.lc-winter .g1 { bottom: 4px;  right: 116px; width: 50px; }
+.lc-winter .g2 { bottom: 4px;  right: 172px; width: 36px; }
+.lc-winter .b1 { bottom: 150px; right: 30px;  width: 30px; }
+.lc-winter .b2 { bottom: 176px; right: 84px;  width: 24px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .lc-winter .s1 svg { animation: lc-snow 9s ease-in-out infinite; }
+  .lc-winter .s2 svg { animation: lc-snow 7s ease-in-out infinite .8s; }
+  .lc-winter .s3 svg { animation: lc-snow 11s ease-in-out infinite 1.6s; }
+  .lc-winter .b1 svg { animation: lc-bauble 4.2s ease-in-out infinite; transform-origin: 50% 0; }
+  .lc-winter .b2 svg { animation: lc-bauble 3.6s ease-in-out infinite .5s; transform-origin: 50% 0; }
+}
+@keyframes lc-snow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(8px) rotate(30deg); }
+}
+@keyframes lc-bauble {
+  0%, 100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(5deg); }
+}
+
+/* === Żart: postać wychylająca się zza prawej krawędzi (winter.js) ===
+   Obrazek (shared/winter_peek.png) trafia do strony jako zmienna
+   --lc-winter-peek z lecture_page(). Leży nad treścią, ale nie łapie kliknięć. */
+.lc-winter-peek {
+  position: fixed;
+  right: 0;
+  bottom: -30px;
+  width: 240px;
+  aspect-ratio: 515 / 560;
+  z-index: 9000;
+  pointer-events: none;
+  background: var(--lc-winter-peek) no-repeat center / contain;
+  transform-origin: 100% 100%;
+  transform: translateX(105%) rotate(0deg);
+  transition: transform .7s cubic-bezier(.3, 1.3, .5, 1);
+  display: none;
+}
+html[data-lc-theme="winter"] .lc-winter-peek { display: block; }
+.lc-winter-peek.is-out { transform: translateX(34%) rotate(-9deg); }
+@media (prefers-reduced-motion: reduce) { .lc-winter-peek { display: none !important; } }
+
+/* Węższe okna: margines się kurczy, więc najpierw znikają choinka, prezenty
+   i bombki, potem śnieżynki; zostaje wzorek w tle */
+@media (max-width: 1399px) { .lc-winter .t1, .lc-winter .g1, .lc-winter .g2, .lc-winter .b1, .lc-winter .b2 { display: none; } }
+@media (max-width: 1099px) { .lc-winter { display: none !important; } }
